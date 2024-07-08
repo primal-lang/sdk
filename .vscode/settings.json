@@ -8,5 +8,7 @@
     "editor.formatOnSave": true,
     "editor.fontFamily": "'Source Code Pro'",
     "files.autoSave": "afterDelay",
-    "dart.previewFlutterUiGuides": true
+    "dart.previewFlutterUiGuides": true,
+    "IDX.aI.enableInlineCompletion": true,
+    "IDX.aI.enableCodebaseIndexing": true
 }
