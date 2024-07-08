@@ -1,0 +1,17 @@
+greeting = "Hello World!"
+
+pi = 3.14
+
+add(x y) = x + y
+
+isEven(x) = eq(mod(x 2) 0)
+
+isOdd(x) = not(isEvent(x))
+
+factorial(n) = if(eq(n 0) 1 mul(1 factorial(sub(n 1)))
+
+factorial(n) = if(
+                           eq(n 0)
+                           1
+                            mul(1 factorial(sub(n 1))
+                         )
