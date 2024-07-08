@@ -1,3 +1,6 @@
+import 'package:dry/compiler.dart';
+
 void main(List<String> args) {
-  print('Hello world');
+  final Compiler compiler = Compiler.fromFile(args[0]);
+  compiler.compile();
 }

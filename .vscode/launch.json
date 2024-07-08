@@ -4,7 +4,10 @@
         {
             "name": "dry",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "example/script.dry"
+            ]
         }
     ]
 }
