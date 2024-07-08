@@ -1,8 +1,8 @@
 import 'package:test/test.dart';
 
 void main() {
-  group('dahttp', () {
-    test('non existent end point', () {
+  group('test group', () {
+    test('sample test', () {
       expect(true, isTrue);
     });
   });

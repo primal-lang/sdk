@@ -1,5 +1,5 @@
-name: myapp
-description: A server app using the shelf package and Docker.
+name: dry
+description: Do not apply water
 version: 0.0.1
 
 environment:
