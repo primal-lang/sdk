@@ -9,31 +9,42 @@ class LexicalAnalyzer {
   LexicalAnalyzer({required this.source});
 
   List<Token> analyze() {
-    final List<Token> result = [];
     final CharList charList = CharList(
       list: [...source.characters.toList(), '\n'],
     );
-    String accumulated = '';
+    final LexicalStateMachine stateMachine = LexicalStateMachine();
 
     while (charList.hasNext) {
-      final String character = charList.next;
-
-      if (state == State.init) {
-        if (character.isDigit) {
-          accumulated += character;
-          state = State.number;
-        }
-      } else if (state == State.number) {
-        if (character.isDigit) {
-          accumulated += character;
-        } else if (character.isDelimiter) {
-          result.add(Token(value: accumulated));
-          accumulated = '';
-        }
-      }
+      stateMachine.process(charList.next);
     }
 
-    return result;
+    return stateMachine.result;
+  }
+}
+
+class LexicalStateMachine {
+  String accumulated = '';
+  State state = State.init;
+  final List<Token> result = [];
+
+  void process(String character) {
+    if (state == State.init) {
+      if (character.isDigit) {
+        accumulated += character;
+        state = State.number;
+      }
+    } else if (state == State.number) {
+      if (character.isDigit) {
+        accumulated += character;
+      } else if (character.isDelimiter) {
+        _setToken();
+      }
+    }
+  }
+
+  void _setToken() {
+    result.add(Token(value: accumulated));
+    accumulated = '';
   }
 }
 

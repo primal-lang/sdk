@@ -20,23 +20,66 @@ void main() {
 
   group('Lexical Analyzer', () {
     test('isDigit', () {
-      expect(true, equals('0'.isDigit));
-      expect(true, equals('1'.isDigit));
-      expect(true, equals('2'.isDigit));
-      expect(true, equals('3'.isDigit));
-      expect(true, equals('4'.isDigit));
-      expect(true, equals('5'.isDigit));
-      expect(true, equals('6'.isDigit));
-      expect(true, equals('7'.isDigit));
-      expect(true, equals('8'.isDigit));
-      expect(true, equals('9'.isDigit));
+      const List<String> digits = [
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9'
+      ];
+
+      for (final String digit in digits) {
+        expect(true, equals(digit.isDigit));
+      }
+    });
+
+    test('isLetter', () {
+      const List<String> letters = [
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z',
+      ];
+
+      for (final String letter in letters) {
+        expect(true, equals(letter.isLetter));
+        expect(true, equals(letter.toUpperCase().isLetter));
+      }
     });
 
     test('isDelimiter', () {
-      expect(true, equals(' '.isDelimiter));
-      expect(true, equals('\r'.isDelimiter));
-      expect(true, equals('\n'.isDelimiter));
-      expect(true, equals('\t'.isDelimiter));
+      const List<String> delimiters = [' ', '\r', '\n', '\t'];
+
+      for (final String delimiter in delimiters) {
+        expect(true, equals(delimiter.isDelimiter));
+      }
     });
 
     test('Number', () {
