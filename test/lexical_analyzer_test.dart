@@ -74,12 +74,20 @@ void main() {
       }
     });
 
-    test('isDelimiter', () {
+    test('isWhitespace', () {
       const List<String> delimiters = [' ', '\r', '\n', '\t'];
 
       for (final String delimiter in delimiters) {
-        expect(true, equals(delimiter.isDelimiter));
+        expect(true, equals(delimiter.isWhitespace));
       }
+    });
+
+    test('isOther', () {
+      expect(true, equals('-'.isDash));
+      expect(true, equals(','.isComma));
+      expect(true, equals('='.isEquals));
+      expect(true, equals('('.isOpenParenthesis));
+      expect(true, equals(')'.isCloseParenthesis));
     });
 
     test('Number', () {
