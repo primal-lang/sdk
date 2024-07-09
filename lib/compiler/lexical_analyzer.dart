@@ -29,7 +29,7 @@ class LexicalStateMachine {
 
   void process(String character) {
     if (state == State.init) {
-      if (character.isDigit) {
+      if (character.isDigit || character.isDash) {
         accumulated += character;
         state = State.number;
       } else if (character.isLetter) {
@@ -39,7 +39,7 @@ class LexicalStateMachine {
         result.add(Token(value: character));
       }
     } else if (state == State.number) {
-      if (character.isDigit) {
+      if (character.isDigit || character.isDot) {
         accumulated += character;
       } else if (character.isDelimiter) {
         _setToken(character);
@@ -54,12 +54,18 @@ class LexicalStateMachine {
   }
 
   void _setToken(String character) {
+    if (state == State.number) {
+      num.parse(accumulated);
+    }
+
     result.add(Token(value: accumulated));
     accumulated = '';
 
     if (character.isSeparator) {
       result.add(Token(value: character));
     }
+
+    state = State.init;
   }
 }
 
@@ -79,8 +85,4 @@ enum State {
   string,
   number,
   symbol,
-  comma,
-  open_parenthesis,
-  close_parenthesis,
-  equals,
 }

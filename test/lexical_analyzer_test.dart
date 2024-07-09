@@ -84,6 +84,7 @@ void main() {
 
     test('isOther', () {
       expect(true, equals('-'.isDash));
+      expect(true, equals('.'.isDot));
       expect(true, equals(','.isComma));
       expect(true, equals('='.isEquals));
       expect(true, equals('('.isOpenParenthesis));
@@ -91,8 +92,8 @@ void main() {
     });
 
     test('Number', () {
-      final List<Token> tokens = _tokens('42');
-      _check(tokens, ['42']);
+      final List<Token> tokens = _tokens('42 -5 1.23 -0.99');
+      _check(tokens, ['42', '-5', '1.23', '-0.99']);
     });
 
     /*test('String', () {

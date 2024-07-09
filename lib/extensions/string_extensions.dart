@@ -7,6 +7,8 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_DASH = RegExp(r'-');
 
+  static final RegExp REGEX_DOT = RegExp(r'\.');
+
   static final RegExp REGEX_COMMA = RegExp(r',');
 
   static final RegExp REGEX_EQUALS = RegExp(r'=');
@@ -22,6 +24,8 @@ extension StringExtensions on String {
   bool get isWhitespace => REGEX_WHITESPACE.hasMatch(this);
 
   bool get isDash => REGEX_DASH.hasMatch(this);
+
+  bool get isDot => REGEX_DOT.hasMatch(this);
 
   bool get isComma => REGEX_COMMA.hasMatch(this);
 
