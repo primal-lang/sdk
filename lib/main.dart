@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dry/compiler.dart';
+import 'package:dry/compiler/compiler.dart';
 import 'package:dry/models/bytecode.dart';
 import 'package:dry/models/expression.dart';
 
