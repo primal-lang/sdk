@@ -1,6 +1,16 @@
 # Dry
 Dry is a purely functional programming language that emphasizes functions and immutability. It doesn't have statements, only declarations.
 
+### Tokens
+* Number
+* String
+* Boolean
+* Symbol
+* Comma
+* Open parenthesis
+* Close parenthesis
+* Equals
+
 ### Literal
 Number | String | Boolean
 

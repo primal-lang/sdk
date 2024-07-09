@@ -7,7 +7,9 @@ class LexicalAnalyzer {
   const LexicalAnalyzer({required this.source});
 
   List<Token> analyze() {
-    final CharList charList = CharList(list: source.characters.toList());
+    final CharList charList = CharList(
+      list: [...source.characters.toList(), '\n'],
+    );
 
     while (charList.hasNext) {
       print(charList.next);

@@ -1,3 +1,3 @@
-isEven(x) = eq(mod(x,2), 0)
+isEven(x) = eq(mod(x, 2), 0)
 
 main = isEven(4)
