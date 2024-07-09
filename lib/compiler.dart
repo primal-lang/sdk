@@ -1,12 +1,13 @@
 import 'dart:io';
+import 'package:dry/models/bytecode.dart';
 
 class Compiler {
   final String source;
 
   const Compiler._(this.source);
 
-  void compile() {
-    print(source);
+  ByteCode compile() {
+    return ByteCode();
   }
 
   factory Compiler.fromFile(String filePath) {
@@ -15,6 +16,4 @@ class Compiler {
 
     return Compiler._(content);
   }
-
-  factory Compiler.fromContent(String content) => Compiler._(content);
 }
