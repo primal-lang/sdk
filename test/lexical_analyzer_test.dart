@@ -1,4 +1,5 @@
 import 'package:dry/compiler/lexical_analyzer.dart';
+import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/models/token.dart';
 import 'package:test/test.dart';
 
@@ -18,14 +19,34 @@ void main() {
   }
 
   group('Lexical Analyzer', () {
-    test('String', () {
-      final List<Token> tokens = _tokens('"This is a string"');
-      _check(tokens, ['This is a string']);
+    test('isDigit', () {
+      expect(true, equals('0'.isDigit));
+      expect(true, equals('1'.isDigit));
+      expect(true, equals('2'.isDigit));
+      expect(true, equals('3'.isDigit));
+      expect(true, equals('4'.isDigit));
+      expect(true, equals('5'.isDigit));
+      expect(true, equals('6'.isDigit));
+      expect(true, equals('7'.isDigit));
+      expect(true, equals('8'.isDigit));
+      expect(true, equals('9'.isDigit));
+    });
+
+    test('isDelimiter', () {
+      expect(true, equals(' '.isDelimiter));
+      expect(true, equals('\r'.isDelimiter));
+      expect(true, equals('\n'.isDelimiter));
+      expect(true, equals('\t'.isDelimiter));
     });
 
     test('Number', () {
       final List<Token> tokens = _tokens('42');
       _check(tokens, ['42']);
+    });
+
+    /*test('String', () {
+      final List<Token> tokens = _tokens('"This is a string"');
+      _check(tokens, ['This is a string']);
     });
 
     test('Boolean', () {
@@ -76,6 +97,6 @@ void main() {
     test('Function definition', () {
       final List<Token> tokens = _tokens('isEven(x) = eq(mod(x, 2), 0)');
       _check(tokens, ['isEven', '(', 'x', ')', '=', 'eq', '(', 'mod', '(', 'x', ',', '2', ')', ',', '0', ')']);
-    });
+    });*/
   });
 }

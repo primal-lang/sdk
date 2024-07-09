@@ -1,21 +1,39 @@
 import 'package:characters/characters.dart';
+import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/models/token.dart';
 
 class LexicalAnalyzer {
   final String source;
+  State state = State.init;
 
-  const LexicalAnalyzer({required this.source});
+  LexicalAnalyzer({required this.source});
 
   List<Token> analyze() {
+    final List<Token> result = [];
     final CharList charList = CharList(
       list: [...source.characters.toList(), '\n'],
     );
+    String accumulated = '';
 
     while (charList.hasNext) {
-      print(charList.next);
+      final String character = charList.next;
+
+      if (state == State.init) {
+        if (character.isDigit) {
+          accumulated += character;
+          state = State.number;
+        }
+      } else if (state == State.number) {
+        if (character.isDigit) {
+          accumulated += character;
+        } else if (character.isDelimiter) {
+          result.add(Token(value: accumulated));
+          accumulated = '';
+        }
+      }
     }
 
-    return [];
+    return result;
   }
 }
 
@@ -28,4 +46,15 @@ class CharList {
   bool get hasNext => index < list.length;
 
   String get next => list[index++];
+}
+
+enum State {
+  init,
+  string,
+  number,
+  symbol,
+  comma,
+  open_parenthesis,
+  close_parenthesis,
+  equals,
 }
