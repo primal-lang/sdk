@@ -31,11 +31,8 @@ extension StringExtensions on String {
 
   bool get isCloseParenthesis => REGEX_CLOSE_PARENTHESIS.hasMatch(this);
 
-  bool get isDelimiter =>
-      isWhitespace ||
-      isDash ||
-      isComma ||
-      isEquals ||
-      isOpenParenthesis ||
-      isCloseParenthesis;
+  bool get isSeparator =>
+      isComma || isEquals || isOpenParenthesis || isCloseParenthesis;
+
+  bool get isDelimiter => isWhitespace || isDash || isSeparator;
 }

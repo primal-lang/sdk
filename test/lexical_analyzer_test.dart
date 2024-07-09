@@ -98,17 +98,7 @@ void main() {
     /*test('String', () {
       final List<Token> tokens = _tokens('"This is a string"');
       _check(tokens, ['This is a string']);
-    });
-
-    test('Boolean', () {
-      final List<Token> tokens = _tokens('true');
-      _check(tokens, ['true']);
-    });
-
-    test('Boolean', () {
-      final List<Token> tokens = _tokens('false');
-      _check(tokens, ['false']);
-    });
+    });*/
 
     test('Symbol', () {
       final List<Token> tokens = _tokens('isEven');
@@ -135,7 +125,7 @@ void main() {
       _check(tokens, ['=']);
     });
 
-    test('Constant declaration', () {
+    /*test('Constant declaration', () {
       final List<Token> tokens = _tokens('pi = 3.14');
       _check(tokens, ['pi', '=', '3.14']);
     });

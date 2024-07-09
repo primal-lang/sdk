@@ -32,19 +32,34 @@ class LexicalStateMachine {
       if (character.isDigit) {
         accumulated += character;
         state = State.number;
+      } else if (character.isLetter) {
+        accumulated += character;
+        state = State.symbol;
+      } else if (character.isSeparator) {
+        result.add(Token(value: character));
       }
     } else if (state == State.number) {
       if (character.isDigit) {
         accumulated += character;
       } else if (character.isDelimiter) {
-        _setToken();
+        _setToken(character);
+      }
+    } else if (state == State.symbol) {
+      if (character.isLetter || character.isDigit) {
+        accumulated += character;
+      } else if (character.isDelimiter) {
+        _setToken(character);
       }
     }
   }
 
-  void _setToken() {
+  void _setToken(String character) {
     result.add(Token(value: accumulated));
     accumulated = '';
+
+    if (character.isSeparator) {
+      result.add(Token(value: character));
+    }
   }
 }
 
