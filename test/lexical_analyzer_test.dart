@@ -83,6 +83,7 @@ void main() {
     });
 
     test('isOther', () {
+      expect(true, equals('"'.isQuote));
       expect(true, equals('.'.isDot));
       expect(true, equals(','.isComma));
       expect(true, equals('='.isEquals));
@@ -95,10 +96,10 @@ void main() {
       _check(tokens, ['42', '1.23']);
     });
 
-    /*test('String', () {
+    test('String', () {
       final List<Token> tokens = _tokens('"This is a string"');
       _check(tokens, ['This is a string']);
-    });*/
+    });
 
     test('Symbol', () {
       final List<Token> tokens = _tokens('isEven');

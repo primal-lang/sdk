@@ -28,43 +28,76 @@ class LexicalStateMachine {
   final List<Token> result = [];
 
   void process(String character) {
-    if (state == State.init) {
-      if (character.isDigit) {
-        accumulated += character;
-        state = State.number;
-      } else if (character.isLetter) {
-        accumulated += character;
-        state = State.symbol;
-      } else if (character.isSeparator) {
-        result.add(Token(value: character));
-      }
-    } else if (state == State.number) {
-      if (character.isDigit || character.isDot) {
-        accumulated += character;
-      } else if (character.isDelimiter) {
-        _setToken(character);
-      }
-    } else if (state == State.symbol) {
-      if (character.isLetter || character.isDigit) {
-        accumulated += character;
-      } else if (character.isDelimiter) {
-        _setToken(character);
-      }
+    switch (state) {
+      case State.init:
+        _processInit(character);
+        break;
+      case State.string:
+        _processString(character);
+        break;
+      case State.number:
+        _processNumber(character);
+        break;
+      case State.symbol:
+        _processSymbol(character);
+        break;
+    }
+  }
+
+  void _processInit(String character) {
+    if (character.isQuote) {
+      accumulated += character;
+      state = State.string;
+    } else if (character.isDigit) {
+      accumulated += character;
+      state = State.number;
+    } else if (character.isLetter) {
+      accumulated += character;
+      state = State.symbol;
+    } else if (character.isSeparator) {
+      result.add(Token.create(character));
+    }
+  }
+
+  void _processString(String character) {
+    if (character.isQuote) {
+      accumulated += character;
+      _setToken(character);
+    } else {
+      accumulated += character;
+    }
+  }
+
+  void _processNumber(String character) {
+    if (character.isDigit || character.isDot) {
+      accumulated += character;
+    } else if (character.isDelimiter) {
+      _setToken(character);
+    }
+  }
+
+  void _processSymbol(String character) {
+    if (character.isLetter || character.isDigit) {
+      accumulated += character;
+    } else if (character.isDelimiter) {
+      _setToken(character);
     }
   }
 
   void _setToken(String character) {
     if (state == State.number) {
       num.parse(accumulated);
+    } else if (state == State.string) {
+      accumulated = accumulated.substring(1, accumulated.length - 1);
     }
 
-    result.add(Token(value: accumulated));
-    accumulated = '';
+    result.add(Token.create(accumulated));
 
     if (character.isSeparator) {
-      result.add(Token(value: character));
+      result.add(Token.create(character));
     }
 
+    accumulated = '';
     state = State.init;
   }
 }

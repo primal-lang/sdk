@@ -5,6 +5,8 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_WHITESPACE = RegExp(r'\s');
 
+  static final RegExp REGEX_QUOTE = RegExp(r'"');
+
   static final RegExp REGEX_DOT = RegExp(r'\.');
 
   static final RegExp REGEX_COMMA = RegExp(r',');
@@ -20,6 +22,8 @@ extension StringExtensions on String {
   bool get isLetter => REGEX_LETTER.hasMatch(this);
 
   bool get isWhitespace => REGEX_WHITESPACE.hasMatch(this);
+
+  bool get isQuote => REGEX_QUOTE.hasMatch(this);
 
   bool get isDot => REGEX_DOT.hasMatch(this);
 
