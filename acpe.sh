@@ -5,4 +5,3 @@ set -e
 git add -A
 git commit -am "Improvements"
 git push
-exit
