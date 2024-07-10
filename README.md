@@ -38,6 +38,10 @@ Internal types
 
 Expression extends Typed, Evaluated
 
+Function "error" and try catch
+
+Functions negative and positive
+
 Features
 * types (start with uppercase)
 * curryfication
