@@ -126,19 +126,20 @@ void main() {
       _check(tokens, ['=']);
     });
 
-    /*test('Constant declaration', () {
+    test('Constant declaration', () {
       final List<Token> tokens = _tokens('pi = 3.14');
       _check(tokens, ['pi', '=', '3.14']);
     });
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('main = isEven(4)');
-      _check(tokens, ['main', '=', 'isEvent', '(', '4', ')']);
+      _check(tokens, ['main', '=', 'isEven', '(', '4', ')']);
     });
 
     test('Function definition', () {
-      final List<Token> tokens = _tokens('isEven(x) = eq(mod(x, 2), 0)');
-      _check(tokens, ['isEven', '(', 'x', ')', '=', 'eq', '(', 'mod', '(', 'x', ',', '2', ')', ',', '0', ')']);
-    });*/
+      final List<Token> tokens = _tokens('isZero(x) = eq(x, 0)');
+      _check(tokens,
+          ['isZero', '(', 'x', ')', '=', 'eq', '(', 'x', ',', '0', ')']);
+    });
   });
 }
