@@ -78,6 +78,11 @@ class Token {
       throw Exception('Invalid separator');
     }
   }
+
+  @override
+  String toString() {
+    return 'Token{type: ${type.name}, value: $value}';
+  }
 }
 
 enum TokenType {

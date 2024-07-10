@@ -15,6 +15,8 @@ class Compiler {
     final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(source: source);
     final List<Token> tokens = lexicalAnalyzer.analyze();
 
+    print('Tokens parsed:\n${tokens.join('\n')}');
+
     final SyntaxAnalyzer syntaxAnalyzer = SyntaxAnalyzer(tokens: tokens);
     final AbstractSyntaxTree ast = syntaxAnalyzer.analyze();
 
