@@ -1,11 +1,25 @@
-import 'package:dry/extensions/string_extensions.dart';
+import 'package:dry/compiler/lexical_analyzer.dart';
+import 'package:dry/compiler/syntactic_analyzer.dart';
+import 'package:dry/models/function_definition.dart';
+import 'package:dry/models/token.dart';
 import 'package:test/test.dart';
 
 void main() {
+  List<FunctionDefinition> _functions(String source) {
+    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(source: source);
+    final List<Token> tokens = lexicalAnalyzer.analyze();
+
+    final SyntacticAnalyzer syntacticAnalyzer =
+        SyntacticAnalyzer(tokens: tokens);
+
+    return syntacticAnalyzer.analyze();
+  }
+
   group('Syntactic Analyzer', () {
-    test('isBoolean', () {
-      expect(true, equals('true'.isBoolean));
-      expect(true, equals('false'.isBoolean));
+    test('Function definition', () {
+      final List<FunctionDefinition> functions =
+          _functions('isZero(x) = eq(x, 0)');
+      expect(0, equals(functions.length));
     });
   });
 }

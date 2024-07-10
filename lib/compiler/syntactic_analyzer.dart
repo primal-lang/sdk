@@ -1,4 +1,4 @@
-import 'package:dry/models/abstract_syntax_tree.dart';
+import 'package:dry/models/function_definition.dart';
 import 'package:dry/models/token.dart';
 import 'package:dry/utils/list_iterator.dart';
 
@@ -7,7 +7,7 @@ class SyntacticAnalyzer {
 
   const SyntacticAnalyzer({required this.tokens});
 
-  AbstractSyntaxTree analyze() {
+  List<FunctionDefinition> analyze() {
     final ListIterator<Token> iterator = ListIterator(tokens);
 
     final StateMachine stateMachine = StateMachine();
@@ -23,7 +23,7 @@ class SyntacticAnalyzer {
 class StateMachine {
   String accumulated = '';
   State state = State.init;
-  final AbstractSyntaxTree result = AbstractSyntaxTree();
+  final List<FunctionDefinition> result = [];
 
   void process(Token token) {
     switch (state) {
@@ -33,7 +33,9 @@ class StateMachine {
     }
   }
 
-  void _processInit(Token token) {}
+  void _processInit(Token token) {
+    print(token);
+  }
 }
 
 enum State {
