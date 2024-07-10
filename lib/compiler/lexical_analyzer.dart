@@ -29,7 +29,7 @@ class LexicalStateMachine {
 
   void process(String character) {
     if (state == State.init) {
-      if (character.isDigit || character.isDash) {
+      if (character.isDigit) {
         accumulated += character;
         state = State.number;
       } else if (character.isLetter) {
