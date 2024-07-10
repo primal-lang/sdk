@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dry/compiler/lexical_analyzer.dart';
 import 'package:dry/compiler/semantic_analyzer.dart';
-import 'package:dry/compiler/syntax_analyzer.dart';
+import 'package:dry/compiler/syntactic_analyzer.dart';
 import 'package:dry/models/abstract_syntax_tree.dart';
 import 'package:dry/models/bytecode.dart';
 import 'package:dry/models/token.dart';
@@ -17,8 +17,8 @@ class Compiler {
 
     print('Tokens parsed:\n${tokens.join('\n')}');
 
-    final SyntaxAnalyzer syntaxAnalyzer = SyntaxAnalyzer(tokens: tokens);
-    final AbstractSyntaxTree ast = syntaxAnalyzer.analyze();
+    final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens: tokens);
+    final AbstractSyntaxTree ast = syntacticAnalyzer.analyze();
 
     final SemanticAnalyzer semanticAnalyzer = SemanticAnalyzer(ast: ast);
     return semanticAnalyzer.analyze();

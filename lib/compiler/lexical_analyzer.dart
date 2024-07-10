@@ -1,6 +1,7 @@
 import 'package:characters/characters.dart';
 import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/models/token.dart';
+import 'package:dry/utils/list_iterator.dart';
 
 class LexicalAnalyzer {
   final String source;
@@ -9,20 +10,20 @@ class LexicalAnalyzer {
   LexicalAnalyzer({required this.source});
 
   List<Token> analyze() {
-    final CharList charList = CharList(
-      list: [...source.characters.toList(), '\n'],
+    final ListIterator<String> iterator = ListIterator(
+      [...source.characters.toList(), '\n'],
     );
-    final LexicalStateMachine stateMachine = LexicalStateMachine();
+    final StateMachine stateMachine = StateMachine();
 
-    while (charList.hasNext) {
-      stateMachine.process(charList.next);
+    while (iterator.hasNext) {
+      stateMachine.process(iterator.next);
     }
 
     return stateMachine.result;
   }
 }
 
-class LexicalStateMachine {
+class StateMachine {
   String accumulated = '';
   State state = State.init;
   final List<Token> result = [];
@@ -112,17 +113,6 @@ class LexicalStateMachine {
     accumulated = '';
     state = State.init;
   }
-}
-
-class CharList {
-  int index = 0;
-  final List<String> list;
-
-  CharList({required this.list});
-
-  bool get hasNext => index < list.length;
-
-  String get next => list[index++];
 }
 
 enum State {
