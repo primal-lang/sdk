@@ -55,7 +55,7 @@ class LexicalStateMachine {
       accumulated += character;
       state = State.symbol;
     } else if (character.isSeparator) {
-      result.add(Token.create(character));
+      result.add(Token.separator(character));
     }
   }
 
@@ -85,16 +85,28 @@ class LexicalStateMachine {
   }
 
   void _setToken(String character) {
-    if (state == State.number) {
-      num.parse(accumulated);
-    } else if (state == State.string) {
-      accumulated = accumulated.substring(1, accumulated.length - 1);
+    switch (state) {
+      case State.string:
+        final String value = accumulated.substring(1, accumulated.length - 1);
+        result.add(Token.string(value));
+        break;
+      case State.number:
+        num.parse(accumulated);
+        result.add(Token.number(accumulated));
+        break;
+      case State.symbol:
+        if (accumulated.isBoolean) {
+          result.add(Token.boolean(accumulated));
+        } else {
+          result.add(Token.symbol(accumulated));
+        }
+        break;
+      case State.init:
+        break;
     }
 
-    result.add(Token.create(accumulated));
-
     if (character.isSeparator) {
-      result.add(Token.create(character));
+      result.add(Token.separator(character));
     }
 
     accumulated = '';

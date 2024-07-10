@@ -17,6 +17,8 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_CLOSE_PARENTHESIS = RegExp(r'\)');
 
+  static final RegExp REGEX_BOOLEAN = RegExp(r'true|false');
+
   bool get isDigit => REGEX_DIGIT.hasMatch(this);
 
   bool get isLetter => REGEX_LETTER.hasMatch(this);
@@ -30,6 +32,8 @@ extension StringExtensions on String {
   bool get isComma => REGEX_COMMA.hasMatch(this);
 
   bool get isEquals => REGEX_EQUALS.hasMatch(this);
+
+  bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
 
   bool get isOpenParenthesis => REGEX_OPEN_PARENTHESIS.hasMatch(this);
 

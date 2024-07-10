@@ -10,11 +10,12 @@ void main() {
     return lexicalAnalyzer.analyze();
   }
 
-  void _check(List<Token> actual, List<String> expected) {
+  void _checkTokenValue(List<Token> actual, List<Token> expected) {
     expect(actual.length, equals(expected.length));
 
     for (int i = 0; i < actual.length; i++) {
-      expect(actual[i].value, equals(expected[i]));
+      expect(actual[i].type, equals(expected[i].type));
+      expect(actual[i].value, equals(expected[i].value));
     }
   }
 
@@ -93,53 +94,112 @@ void main() {
 
     test('Number', () {
       final List<Token> tokens = _tokens('42 1.23');
-      _check(tokens, ['42', '1.23']);
+      _checkTokenValue(tokens, [
+        Token.number('42'),
+        Token.number('1.23'),
+      ]);
     });
 
     test('String', () {
       final List<Token> tokens = _tokens('"This is a string"');
-      _check(tokens, ['This is a string']);
+      _checkTokenValue(tokens, [
+        Token.string('This is a string'),
+      ]);
     });
 
     test('Symbol', () {
       final List<Token> tokens = _tokens('isEven');
-      _check(tokens, ['isEven']);
+      _checkTokenValue(tokens, [
+        Token.symbol('isEven'),
+      ]);
     });
 
     test('Comma', () {
       final List<Token> tokens = _tokens(',');
-      _check(tokens, [',']);
-    });
-
-    test('Open parenthesis', () {
-      final List<Token> tokens = _tokens('(');
-      _check(tokens, ['(']);
-    });
-
-    test('Close parenthesis', () {
-      final List<Token> tokens = _tokens(')');
-      _check(tokens, [')']);
+      _checkTokenValue(tokens, [
+        Token.comma(','),
+      ]);
     });
 
     test('Equals', () {
       final List<Token> tokens = _tokens('=');
-      _check(tokens, ['=']);
+      _checkTokenValue(tokens, [
+        Token.equals('='),
+      ]);
+    });
+
+    test('Open parenthesis', () {
+      final List<Token> tokens = _tokens('(');
+      _checkTokenValue(tokens, [
+        Token.openParenthesis('('),
+      ]);
+    });
+
+    test('Close parenthesis', () {
+      final List<Token> tokens = _tokens(')');
+      _checkTokenValue(tokens, [
+        Token.closeParenthesis(')'),
+      ]);
     });
 
     test('Constant declaration', () {
       final List<Token> tokens = _tokens('pi = 3.14');
-      _check(tokens, ['pi', '=', '3.14']);
+      _checkTokenValue(tokens, [
+        Token.symbol('pi'),
+        Token.equals('='),
+        Token.number('3.14'),
+      ]);
     });
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('main = isEven(4)');
-      _check(tokens, ['main', '=', 'isEven', '(', '4', ')']);
+      _checkTokenValue(tokens, [
+        Token.symbol('main'),
+        Token.equals('='),
+        Token.symbol('isEven'),
+        Token.openParenthesis('('),
+        Token.number('4'),
+        Token.closeParenthesis(')'),
+      ]);
     });
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('isZero(x) = eq(x, 0)');
-      _check(tokens,
-          ['isZero', '(', 'x', ')', '=', 'eq', '(', 'x', ',', '0', ')']);
+      _checkTokenValue(tokens, [
+        Token.symbol('isZero'),
+        Token.openParenthesis('('),
+        Token.symbol('x'),
+        Token.closeParenthesis(')'),
+        Token.equals('='),
+        Token.symbol('eq'),
+        Token.openParenthesis('('),
+        Token.symbol('x'),
+        Token.comma(','),
+        Token.number('0'),
+        Token.closeParenthesis(')'),
+      ]);
+    });
+
+    test('Function definition', () {
+      final List<Token> tokens = _tokens('isTrue(x) = eq(x, true)');
+      _checkTokenValue(tokens, [
+        Token.symbol('isTrue'),
+        Token.openParenthesis('('),
+        Token.symbol('x'),
+        Token.closeParenthesis(')'),
+        Token.equals('='),
+        Token.symbol('eq'),
+        Token.openParenthesis('('),
+        Token.symbol('x'),
+        Token.comma(','),
+        Token.boolean('true'),
+        Token.closeParenthesis(')'),
+      ]);
+    });
+
+    test('isBoolean', () {
+      expect(true, equals('true'.isBoolean));
+      expect(true, equals('false'.isBoolean));
     });
   });
 }
