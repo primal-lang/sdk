@@ -19,7 +19,7 @@ void main() {
     test('Function definition', () {
       final List<FunctionDefinition> functions =
           _functions('isZero(x) = eq(x, 0)');
-      expect(0, equals(functions.length));
+      expect(1, equals(functions.length));
     });
   });
 }

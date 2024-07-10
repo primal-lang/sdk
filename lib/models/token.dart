@@ -9,19 +9,15 @@ class Token {
     required this.value,
   });
 
-  factory Token.string(String value) {
-    return Token._(
-      type: TokenType.string,
-      value: value,
-    );
-  }
+  factory Token.string(String value) => Token._(
+        type: TokenType.string,
+        value: value,
+      );
 
-  factory Token.number(String value) {
-    return Token._(
-      type: TokenType.number,
-      value: value,
-    );
-  }
+  factory Token.number(String value) => Token._(
+        type: TokenType.number,
+        value: value,
+      );
 
   factory Token.boolean(String value) {
     return Token._(
@@ -30,40 +26,30 @@ class Token {
     );
   }
 
-  factory Token.symbol(String value) {
-    return Token._(
-      type: TokenType.symbol,
-      value: value,
-    );
-  }
+  factory Token.symbol(String value) => Token._(
+        type: TokenType.symbol,
+        value: value,
+      );
 
-  factory Token.comma(String value) {
-    return Token._(
-      type: TokenType.comma,
-      value: value,
-    );
-  }
+  factory Token.comma(String value) => Token._(
+        type: TokenType.comma,
+        value: value,
+      );
 
-  factory Token.equals(String value) {
-    return Token._(
-      type: TokenType.equals,
-      value: value,
-    );
-  }
+  factory Token.equals(String value) => Token._(
+        type: TokenType.equals,
+        value: value,
+      );
 
-  factory Token.openParenthesis(String value) {
-    return Token._(
-      type: TokenType.openParenthesis,
-      value: value,
-    );
-  }
+  factory Token.openParenthesis(String value) => Token._(
+        type: TokenType.openParenthesis,
+        value: value,
+      );
 
-  factory Token.closeParenthesis(String value) {
-    return Token._(
-      type: TokenType.closeParenthesis,
-      value: value,
-    );
-  }
+  factory Token.closeParenthesis(String value) => Token._(
+        type: TokenType.closeParenthesis,
+        value: value,
+      );
 
   factory Token.separator(String value) {
     if (value.isComma) {
