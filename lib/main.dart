@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dry/compiler/compiler.dart';
-import 'package:dry/models/bytecode.dart';
-import 'package:dry/models/expression.dart';
+import 'package:dry/compiler/semantic/bytecode.dart';
+import 'package:dry/compiler/syntactic/expression.dart';
 
 void main(List<String> args) {
   final Compiler compiler = Compiler.fromFile(args[0]);

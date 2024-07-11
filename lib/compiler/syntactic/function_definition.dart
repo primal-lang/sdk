@@ -1,5 +1,5 @@
-import 'package:dry/models/expression.dart';
-import 'package:dry/models/type.dart';
+import 'package:dry/compiler/syntactic/expression.dart';
+import 'package:dry/compiler/syntactic/type.dart';
 
 class FunctionDefinition {
   final String name;

@@ -1,4 +1,4 @@
-import 'package:dry/models/type.dart';
+import 'package:dry/compiler/syntactic/type.dart';
 
 class Expression<T> {
   final Type type;

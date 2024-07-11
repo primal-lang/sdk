@@ -1,6 +1,6 @@
-import 'package:dry/compiler/lexical_analyzer.dart';
+import 'package:dry/compiler/lexical/lexical_analyzer.dart';
+import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/extensions/string_extensions.dart';
-import 'package:dry/models/token.dart';
 import 'package:test/test.dart';
 
 void main() {

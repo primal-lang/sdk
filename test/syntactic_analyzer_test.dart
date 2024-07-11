@@ -1,7 +1,7 @@
-import 'package:dry/compiler/lexical_analyzer.dart';
-import 'package:dry/compiler/syntactic_analyzer.dart';
-import 'package:dry/models/function_definition.dart';
-import 'package:dry/models/token.dart';
+import 'package:dry/compiler/lexical/lexical_analyzer.dart';
+import 'package:dry/compiler/lexical/token.dart';
+import 'package:dry/compiler/syntactic/function_definition.dart';
+import 'package:dry/compiler/syntactic/syntactic_analyzer.dart';
 import 'package:test/test.dart';
 
 void main() {

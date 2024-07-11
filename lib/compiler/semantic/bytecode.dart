@@ -1,8 +1,8 @@
-import 'package:dry/models/expression.dart';
-import 'package:dry/models/function_definition.dart';
+import 'package:dry/compiler/semantic/function_prototype.dart';
+import 'package:dry/compiler/syntactic/expression.dart';
 
 class ByteCode {
-  final Map<String, FunctionDefinition> functions;
+  final Map<String, FunctionPrototype> functions;
 
   const ByteCode({required this.functions});
 

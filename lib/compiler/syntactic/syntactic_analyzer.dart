@@ -1,5 +1,5 @@
-import 'package:dry/models/function_definition.dart';
-import 'package:dry/models/token.dart';
+import 'package:dry/compiler/lexical/token.dart';
+import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/utils/list_iterator.dart';
 
 class SyntacticAnalyzer {

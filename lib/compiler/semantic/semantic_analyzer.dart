@@ -1,5 +1,5 @@
-import 'package:dry/models/bytecode.dart';
-import 'package:dry/models/function_definition.dart';
+import 'package:dry/compiler/semantic/bytecode.dart';
+import 'package:dry/compiler/syntactic/function_definition.dart';
 
 class SemanticAnalyzer {
   final List<FunctionDefinition> functions;
