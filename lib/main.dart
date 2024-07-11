@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:dry/compiler/compiler.dart';
 import 'package:dry/compiler/semantic/bytecode.dart';
-import 'package:dry/compiler/syntactic/expression.dart';
 
 void main(List<String> args) {
   final Compiler compiler = Compiler.fromFile(args[0]);
@@ -14,8 +13,8 @@ void main(List<String> args) {
 
     while (input != null) {
       print('Evaluating: $input');
-      final Expression expression = Expression.parse(input);
-      bytecode.evaluate(expression);
+      //final Expression expression = Expression.parse(input);
+      //bytecode.evaluate(expression);
       input = stdin.readLineSync();
     }
   }
