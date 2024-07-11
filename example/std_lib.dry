@@ -1,0 +1,115 @@
+# Generic
+
+eq(a, b): bool
+
+neq(a, b): bool
+
+length(a): num
+
+at(a, num): T
+
+concat(a, b): T
+
+substr(str, start, length): T
+
+contains(list, a): bool
+
+# Arithmetic
+
+negative(num): num
+
+positive(num): num
+
+add(num1, num2): num
+
+sub(num1, num2): num
+
+mul(num1, num2): num
+
+div(num1, num2): num
+
+mod(num1, num2): num
+
+pow(num1, num2): num
+
+sqrt(num): num
+
+round(num): num
+
+floor(num): num
+
+ceil(num): num
+
+sin(num): num
+
+cos(num): num
+
+tan(num): num
+
+gt(num1, num2): bool
+
+lt(num1, num2): bool
+
+ge(num1, num2): bool
+
+le(num1, num2): bool
+
+# Logic
+
+and(bool1, bool2): bool
+
+or(bool1, bool2): bool
+
+not(bool): bool
+
+xor(bool1, bool2): bool
+
+# String
+
+startswith(str, text): T
+
+endswith(str, text): T
+
+replace(str, old, new): str
+
+uppercase(str): string
+
+lowercase(str): string
+
+trim(str): string
+
+split(str, delimiter): list
+
+join(list, delimiter): string
+
+format(str, ...args): string
+
+# Lists
+
+first(list): T
+
+last(list): T
+
+tail(list): T
+
+pushFirst(list, a): list
+
+pushLast(list, a): list
+
+# Control
+
+if(bool, expr1, expr2)
+
+try(expr, handler)
+
+# Error
+
+error(a)
+
+# Functions
+
+map(func, list): list
+
+filter(func, list): list
+
+reduce(func, list, initial): T
