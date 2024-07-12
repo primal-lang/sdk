@@ -100,8 +100,7 @@ class NumberState extends State<String, Character> {
         num.parse(accumulated);
         tokens.add(Token.number(accumulated));
       } catch (e) {
-        throw Exception(
-            'Invalid number format $accumulated for state NumberState');
+        throw Exception('Invalid number $accumulated at ${value.location}');
       }
 
       if (value.isSeparator) {
@@ -110,7 +109,7 @@ class NumberState extends State<String, Character> {
 
       return ResultState(tokens);
     } else {
-      throw Exception('Unknown character $value for state NumberState');
+      throw Exception('Invalid character $value');
     }
   }
 }
@@ -137,7 +136,7 @@ class SymbolState extends State<String, Character> {
 
       return ResultState(tokens);
     } else {
-      throw Exception('Unknown character $value for state SymbolState');
+      throw Exception('Invalid character $value');
     }
   }
 }
@@ -168,4 +167,9 @@ class Character {
   bool get isSeparator => value.isSeparator;
 
   bool get isDelimiter => value.isDelimiter;
+
+  String get location => '[$row, $column]';
+
+  @override
+  String toString() => '$value at $location';
 }
