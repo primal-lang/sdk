@@ -9,7 +9,6 @@ class SyntacticAnalyzer {
 
   List<FunctionDefinition> analyze() {
     final ListIterator<Token> iterator = ListIterator(tokens);
-
     final StateMachine stateMachine = StateMachine();
 
     while (iterator.hasNext) {
