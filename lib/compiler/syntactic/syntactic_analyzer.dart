@@ -1,4 +1,5 @@
 import 'package:dry/compiler/lexical/token.dart';
+import 'package:dry/compiler/models/state.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/utils/list_iterator.dart';
 
@@ -8,35 +9,34 @@ class SyntacticAnalyzer {
   const SyntacticAnalyzer({required this.tokens});
 
   List<FunctionDefinition> analyze() {
+    final List<FunctionDefinition> result = [];
     final ListIterator<Token> iterator = ListIterator(tokens);
-    final StateMachine stateMachine = StateMachine();
+    State state = InitState.empty();
 
     while (iterator.hasNext) {
-      stateMachine.process(iterator.next);
+      state = state.process(iterator.next);
+
+      if (state is ResultState) {
+        result.addAll(state.accumulated);
+        state = InitState.empty();
+      }
     }
 
-    return stateMachine.result;
+    return result;
   }
 }
 
-class StateMachine {
-  String accumulated = '';
-  State state = State.init;
-  final List<FunctionDefinition> result = [];
+class InitState extends State<void, Token> {
+  const InitState(super.accumulated);
 
-  void process(Token token) {
-    switch (state) {
-      case State.init:
-        _processInit(token);
-        break;
-    }
-  }
+  factory InitState.empty() => const InitState(null);
 
-  void _processInit(Token token) {
-    print(token);
+  @override
+  State process(Token value) {
+    return this;
   }
 }
 
-enum State {
-  init,
+class ResultState extends State<List<FunctionDefinition>, void> {
+  const ResultState(super.accumulated);
 }
