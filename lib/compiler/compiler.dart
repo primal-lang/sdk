@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dry/compiler/file/file_analyzer.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/semantic/bytecode.dart';
@@ -12,7 +13,11 @@ class Compiler {
   const Compiler._(this.source);
 
   ByteCode compile() {
-    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(source: source);
+    final FileAnalyzer fileAnalyzer = FileAnalyzer(source: source);
+    final List<Character> characters = fileAnalyzer.analyze();
+    
+    final LexicalAnalyzer lexicalAnalyzer =
+        LexicalAnalyzer(characters: characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();
 
     print('Tokens parsed:\n${tokens.join('\n')}');

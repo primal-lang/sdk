@@ -6,7 +6,10 @@ import 'package:test/test.dart';
 
 void main() {
   /*List<FunctionDefinition> _functions(String source) {
-    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(source: source);
+    final FileAnalyzer fileAnalyzer = FileAnalyzer(source: source);
+    final List<Character> characters = fileAnalyzer.analyze();
+    final LexicalAnalyzer lexicalAnalyzer =
+        LexicalAnalyzer(characters: characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();
 
     final SyntacticAnalyzer syntacticAnalyzer =
