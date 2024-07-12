@@ -1,5 +1,6 @@
 import 'package:characters/characters.dart';
 import 'package:dry/compiler/lexical/token.dart';
+import 'package:dry/compiler/models/state.dart';
 import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/utils/list_iterator.dart';
 
@@ -129,10 +130,4 @@ class ResultState extends State<Token> {
   State process(Token value) {
     return this;
   }
-}
-
-abstract class State<T> {
-  const State();
-
-  State process(T value);
 }
