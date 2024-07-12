@@ -125,9 +125,4 @@ class ResultState extends State<Token> {
   final List<Token> tokens;
 
   const ResultState(this.tokens);
-
-  @override
-  State process(Token value) {
-    return this;
-  }
 }

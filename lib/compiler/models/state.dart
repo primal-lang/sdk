@@ -1,5 +1,5 @@
-abstract class State<T> {
+class State<T> {
   const State();
 
-  State process(T value);
+  State process(T value) => this;
 }
