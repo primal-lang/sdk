@@ -7,7 +7,7 @@ import 'package:dry/utils/list_iterator.dart';
 class LexicalAnalyzer {
   final String source;
 
-  LexicalAnalyzer({required this.source});
+  const LexicalAnalyzer({required this.source});
 
   List<Token> analyze() {
     final List<Token> result = [];
