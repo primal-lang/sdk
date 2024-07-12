@@ -1,5 +1,7 @@
-class State<T> {
-  const State();
+class State<A, V> {
+  final A accumulated;
 
-  State process(T value) => this;
+  const State(this.accumulated);
+
+  State process(V value) => this;
 }

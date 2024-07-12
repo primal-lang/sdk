@@ -14,14 +14,14 @@ class LexicalAnalyzer {
     final ListIterator<String> iterator = ListIterator(
       [...source.characters.toList(), '\n'],
     );
-    State state = InitState();
+    State state = InitState.empty();
 
     while (iterator.hasNext) {
       state = state.process(iterator.next);
 
       if (state is ResultState) {
-        result.addAll(state.tokens);
-        state = InitState();
+        result.addAll(state.accumulated);
+        state = InitState.empty();
       }
     }
 
@@ -29,7 +29,11 @@ class LexicalAnalyzer {
   }
 }
 
-class InitState extends State<String> {
+class InitState extends State<void, String> {
+  const InitState(super.accumulated);
+
+  factory InitState.empty() => const InitState(null);
+
   @override
   State process(String value) {
     if (value.isQuote) {
@@ -46,10 +50,8 @@ class InitState extends State<String> {
   }
 }
 
-class StringState extends State<String> {
-  final String accumulated;
-
-  const StringState(this.accumulated);
+class StringState extends State<String, String> {
+  const StringState(super.accumulated);
 
   @override
   State process(String value) {
@@ -61,10 +63,8 @@ class StringState extends State<String> {
   }
 }
 
-class NumberState extends State<String> {
-  final String accumulated;
-
-  const NumberState(this.accumulated);
+class NumberState extends State<String, String> {
+  const NumberState(super.accumulated);
 
   @override
   State process(String value) {
@@ -92,10 +92,8 @@ class NumberState extends State<String> {
   }
 }
 
-class SymbolState extends State<String> {
-  final String accumulated;
-
-  const SymbolState(this.accumulated);
+class SymbolState extends State<String, String> {
+  const SymbolState(super.accumulated);
 
   @override
   State process(String value) {
@@ -121,8 +119,6 @@ class SymbolState extends State<String> {
   }
 }
 
-class ResultState extends State<Token> {
-  final List<Token> tokens;
-
-  const ResultState(this.tokens);
+class ResultState extends State<List<Token>, void> {
+  const ResultState(super.accumulated);
 }
