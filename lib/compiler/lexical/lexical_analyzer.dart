@@ -101,7 +101,7 @@ class NumberState extends State<String, Character> {
         tokens.add(Token.number(accumulated));
       } catch (e) {
         throw Exception(
-            'Invalid number format $accumulated in state NumberState');
+            'Invalid number format $accumulated for state NumberState');
       }
 
       if (value.isSeparator) {
@@ -161,17 +161,9 @@ class Character {
 
   bool get isLetter => value.isLetter;
 
-  bool get isWhitespace => value.isWhitespace;
-
   bool get isQuote => value.isQuote;
 
   bool get isDot => value.isDot;
-
-  bool get isComma => value.isComma;
-
-  bool get isEquals => value.isEquals;
-
-  bool get isBoolean => value.isBoolean;
 
   bool get isSeparator => value.isSeparator;
 
