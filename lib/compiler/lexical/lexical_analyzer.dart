@@ -5,119 +5,134 @@ import 'package:dry/utils/list_iterator.dart';
 
 class LexicalAnalyzer {
   final String source;
-  State state = State.init;
 
   LexicalAnalyzer({required this.source});
 
   List<Token> analyze() {
+    final List<Token> result = [];
     final ListIterator<String> iterator = ListIterator(
       [...source.characters.toList(), '\n'],
     );
-    final StateMachine stateMachine = StateMachine();
+    State state = InitState();
 
     while (iterator.hasNext) {
-      stateMachine.process(iterator.next);
+      state = state.process(iterator.next);
+
+      if (state is ResultState) {
+        result.addAll(state.tokens);
+        state = InitState();
+      }
     }
 
-    return stateMachine.result;
+    return result;
   }
 }
 
-class StateMachine {
-  String accumulated = '';
-  State state = State.init;
-  final List<Token> result = [];
-
-  void process(String character) {
-    switch (state) {
-      case State.init:
-        _processInit(character);
-        break;
-      case State.string:
-        _processString(character);
-        break;
-      case State.number:
-        _processNumber(character);
-        break;
-      case State.symbol:
-        _processSymbol(character);
-        break;
-    }
-  }
-
-  void _processInit(String character) {
-    if (character.isQuote) {
-      accumulated += character;
-      state = State.string;
-    } else if (character.isDigit) {
-      accumulated += character;
-      state = State.number;
-    } else if (character.isLetter) {
-      accumulated += character;
-      state = State.symbol;
-    } else if (character.isSeparator) {
-      result.add(Token.separator(character));
-    }
-  }
-
-  void _processString(String character) {
-    if (character.isQuote) {
-      accumulated += character;
-      _setToken(character);
+class InitState extends State<String> {
+  @override
+  State process(String value) {
+    if (value.isQuote) {
+      return const StringState('');
+    } else if (value.isDigit) {
+      return NumberState(value);
+    } else if (value.isLetter) {
+      return SymbolState(value);
+    } else if (value.isSeparator) {
+      return ResultState([Token.separator(value)]);
     } else {
-      accumulated += character;
+      return this;
     }
-  }
-
-  void _processNumber(String character) {
-    if (character.isDigit || character.isDot) {
-      accumulated += character;
-    } else if (character.isDelimiter) {
-      _setToken(character);
-    }
-  }
-
-  void _processSymbol(String character) {
-    if (character.isLetter || character.isDigit) {
-      accumulated += character;
-    } else if (character.isDelimiter) {
-      _setToken(character);
-    }
-  }
-
-  void _setToken(String character) {
-    switch (state) {
-      case State.string:
-        final String value = accumulated.substring(1, accumulated.length - 1);
-        result.add(Token.string(value));
-        break;
-      case State.number:
-        num.parse(accumulated);
-        result.add(Token.number(accumulated));
-        break;
-      case State.symbol:
-        if (accumulated.isBoolean) {
-          result.add(Token.boolean(accumulated));
-        } else {
-          result.add(Token.symbol(accumulated));
-        }
-        break;
-      case State.init:
-        break;
-    }
-
-    if (character.isSeparator) {
-      result.add(Token.separator(character));
-    }
-
-    accumulated = '';
-    state = State.init;
   }
 }
 
-enum State {
-  init,
-  string,
-  number,
-  symbol,
+class StringState extends State<String> {
+  final String accumulated;
+
+  const StringState(this.accumulated);
+
+  @override
+  State process(String value) {
+    if (value.isQuote) {
+      return ResultState([Token.string(accumulated)]);
+    } else {
+      return StringState(accumulated + value);
+    }
+  }
+}
+
+class NumberState extends State<String> {
+  final String accumulated;
+
+  const NumberState(this.accumulated);
+
+  @override
+  State process(String value) {
+    if (value.isDigit || value.isDot) {
+      return NumberState(accumulated + value);
+    } else if (value.isDelimiter) {
+      final List<Token> tokens = [];
+
+      try {
+        num.parse(accumulated);
+        tokens.add(Token.number(accumulated));
+      } catch (e) {
+        throw Exception(
+            'Invalid number format $accumulated in state NumberState');
+      }
+
+      if (value.isSeparator) {
+        tokens.add(Token.separator(value));
+      }
+
+      return ResultState(tokens);
+    } else {
+      throw Exception('Unknown character $value for state NumberState');
+    }
+  }
+}
+
+class SymbolState extends State<String> {
+  final String accumulated;
+
+  const SymbolState(this.accumulated);
+
+  @override
+  State process(String value) {
+    if (value.isLetter || value.isDigit) {
+      return SymbolState(accumulated + value);
+    } else if (value.isDelimiter) {
+      final List<Token> tokens = [];
+
+      if (accumulated.isBoolean) {
+        tokens.add(Token.boolean(accumulated));
+      } else {
+        tokens.add(Token.symbol(accumulated));
+      }
+
+      if (value.isSeparator) {
+        tokens.add(Token.separator(value));
+      }
+
+      return ResultState(tokens);
+    } else {
+      throw Exception('Unknown character $value for state SymbolState');
+    }
+  }
+}
+
+class ResultState extends State<Token> {
+  final List<Token> tokens;
+
+  const ResultState(this.tokens);
+
+  @override
+  State process(Token value) {
+    return this;
+  }
+}
+
+abstract class State<T> {
+  const State();
+
+  State process(T value);
 }
