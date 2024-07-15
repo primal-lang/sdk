@@ -27,7 +27,7 @@ class SyntacticAnalyzer
   }
 }
 
-class InitState extends State<void, Token> {
+class InitState extends State<Token, void> {
   const InitState(super.output);
 
   factory InitState.empty() => const InitState(null);
@@ -38,6 +38,6 @@ class InitState extends State<void, Token> {
   }
 }
 
-class ResultState extends State<List<FunctionDefinition>, void> {
+class ResultState extends State<void, List<FunctionDefinition>> {
   const ResultState(super.output);
 }

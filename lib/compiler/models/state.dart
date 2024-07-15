@@ -1,4 +1,4 @@
-class State<O, I> {
+class State<I, O> {
   final O output;
 
   const State(this.output);

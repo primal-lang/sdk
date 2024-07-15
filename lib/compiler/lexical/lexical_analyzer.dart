@@ -27,7 +27,7 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
   }
 }
 
-class InitState extends State<void, Character> {
+class InitState extends State<Character, void> {
   const InitState(super.output);
 
   factory InitState.empty() => const InitState(null);
@@ -48,7 +48,7 @@ class InitState extends State<void, Character> {
   }
 }
 
-class StringState extends State<String, Character> {
+class StringState extends State<Character, String> {
   const StringState(super.output);
 
   @override
@@ -61,7 +61,7 @@ class StringState extends State<String, Character> {
   }
 }
 
-class NumberState extends State<String, Character> {
+class NumberState extends State<Character, String> {
   const NumberState(super.output);
 
   @override
@@ -89,7 +89,7 @@ class NumberState extends State<String, Character> {
   }
 }
 
-class SymbolState extends State<String, Character> {
+class SymbolState extends State<Character, String> {
   const SymbolState(super.output);
 
   @override
@@ -116,6 +116,6 @@ class SymbolState extends State<String, Character> {
   }
 }
 
-class ResultState extends State<List<Token>, void> {
+class ResultState extends State<void, List<Token>> {
   const ResultState(super.output);
 }
