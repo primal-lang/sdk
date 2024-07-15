@@ -1,10 +1,10 @@
 import 'package:characters/characters.dart';
 import 'package:dry/extensions/string_extensions.dart';
 
-class FileAnalyzer {
+class InputAnalyzer {
   final String source;
 
-  const FileAnalyzer({required this.source});
+  const InputAnalyzer({required this.source});
 
   List<Character> analyze() {
     final List<Character> result = [];

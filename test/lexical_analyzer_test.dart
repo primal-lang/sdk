@@ -1,4 +1,4 @@
-import 'package:dry/compiler/file/file_analyzer.dart';
+import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/extensions/string_extensions.dart';
@@ -6,8 +6,8 @@ import 'package:test/test.dart';
 
 void main() {
   List<Token> _tokens(String source) {
-    final FileAnalyzer fileAnalyzer = FileAnalyzer(source: source);
-    final List<Character> characters = fileAnalyzer.analyze();
+    final InputAnalyzer inputAnalyzer = InputAnalyzer(source: source);
+    final List<Character> characters = inputAnalyzer.analyze();
     final LexicalAnalyzer lexicalAnalyzer =
         LexicalAnalyzer(characters: characters);
 
