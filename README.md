@@ -1,6 +1,12 @@
 # Dry
 Purely functional programming language that emphasizes functions and immutability. It doesn't have statements, only declarations.
 
+* Store toke location
+* Store list of character and then convert it to string to create a token
+* Create processors with inputs and outputs
+* Allow strings with double quote single quote accents, etc
+* Integer and Decimal states for numbers in lexical
+
 ### Literal
 Number | String | Boolean
 
