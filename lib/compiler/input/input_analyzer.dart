@@ -1,14 +1,14 @@
 import 'package:characters/characters.dart';
-import 'package:dry/extensions/string_extensions.dart';
+import 'package:dry/compiler/input/character.dart';
 
 class InputAnalyzer {
-  final String source;
+  final String input;
 
-  const InputAnalyzer({required this.source});
+  const InputAnalyzer({required this.input});
 
   List<Character> analyze() {
     final List<Character> result = [];
-    final List<String> rows = source.split('\n');
+    final List<String> rows = input.split('\n');
 
     for (int i = 0; i < rows.length; i++) {
       final List<String> columns = rows[i].characters.toList();
@@ -30,33 +30,4 @@ class InputAnalyzer {
 
     return result;
   }
-}
-
-class Character {
-  final String value;
-  final int row;
-  final int column;
-
-  const Character({
-    required this.value,
-    required this.row,
-    required this.column,
-  });
-
-  bool get isDigit => value.isDigit;
-
-  bool get isLetter => value.isLetter;
-
-  bool get isQuote => value.isQuote;
-
-  bool get isDot => value.isDot;
-
-  bool get isSeparator => value.isSeparator;
-
-  bool get isDelimiter => value.isDelimiter;
-
-  String get location => '[$row, $column]';
-
-  @override
-  String toString() => '$value at $location';
 }

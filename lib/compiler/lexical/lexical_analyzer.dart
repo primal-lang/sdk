@@ -1,4 +1,4 @@
-import 'package:dry/compiler/input/input_analyzer.dart';
+import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/state.dart';
 import 'package:dry/extensions/string_extensions.dart';

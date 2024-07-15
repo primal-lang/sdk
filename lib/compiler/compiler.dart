@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
@@ -13,7 +14,7 @@ class Compiler {
   const Compiler._(this.source);
 
   ByteCode compile() {
-    final InputAnalyzer inputAnalyzer = InputAnalyzer(source: source);
+    final InputAnalyzer inputAnalyzer = InputAnalyzer(input: source);
     final List<Character> characters = inputAnalyzer.analyze();
 
     final LexicalAnalyzer lexicalAnalyzer =
