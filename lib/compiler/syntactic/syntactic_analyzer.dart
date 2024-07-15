@@ -18,7 +18,7 @@ class SyntacticAnalyzer
       state = state.process(iterator.next);
 
       if (state is ResultState) {
-        result.addAll(state.accumulated);
+        result.addAll(state.output);
         state = InitState.empty();
       }
     }
@@ -28,16 +28,16 @@ class SyntacticAnalyzer
 }
 
 class InitState extends State<void, Token> {
-  const InitState(super.accumulated);
+  const InitState(super.output);
 
   factory InitState.empty() => const InitState(null);
 
   @override
-  State process(Token value) {
+  State process(Token input) {
     return this;
   }
 }
 
 class ResultState extends State<List<FunctionDefinition>, void> {
-  const ResultState(super.accumulated);
+  const ResultState(super.output);
 }

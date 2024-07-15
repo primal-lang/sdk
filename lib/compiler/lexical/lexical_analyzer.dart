@@ -18,7 +18,7 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       state = state.process(iterator.next);
 
       if (state is ResultState) {
-        result.addAll(state.accumulated);
+        result.addAll(state.output);
         state = InitState.empty();
       }
     }
@@ -28,20 +28,20 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
 }
 
 class InitState extends State<void, Character> {
-  const InitState(super.accumulated);
+  const InitState(super.output);
 
   factory InitState.empty() => const InitState(null);
 
   @override
-  State process(Character value) {
-    if (value.isQuote) {
+  State process(Character input) {
+    if (input.isQuote) {
       return const StringState('');
-    } else if (value.isDigit) {
-      return NumberState(value.value);
-    } else if (value.isLetter) {
-      return SymbolState(value.value);
-    } else if (value.isSeparator) {
-      return ResultState([Token.separator(value.value)]);
+    } else if (input.isDigit) {
+      return NumberState(input.value);
+    } else if (input.isLetter) {
+      return SymbolState(input.value);
+    } else if (input.isSeparator) {
+      return ResultState([Token.separator(input.value)]);
     } else {
       return this;
     }
@@ -49,73 +49,73 @@ class InitState extends State<void, Character> {
 }
 
 class StringState extends State<String, Character> {
-  const StringState(super.accumulated);
+  const StringState(super.output);
 
   @override
-  State process(Character value) {
-    if (value.isQuote) {
-      return ResultState([Token.string(accumulated)]);
+  State process(Character input) {
+    if (input.isQuote) {
+      return ResultState([Token.string(output)]);
     } else {
-      return StringState(accumulated + value.value);
+      return StringState(output + input.value);
     }
   }
 }
 
 class NumberState extends State<String, Character> {
-  const NumberState(super.accumulated);
+  const NumberState(super.output);
 
   @override
-  State process(Character value) {
-    if (value.isDigit || value.isDot) {
-      return NumberState(accumulated + value.value);
-    } else if (value.isDelimiter) {
+  State process(Character input) {
+    if (input.isDigit || input.isDot) {
+      return NumberState(output + input.value);
+    } else if (input.isDelimiter) {
       final List<Token> tokens = [];
 
       try {
-        num.parse(accumulated);
-        tokens.add(Token.number(accumulated));
+        num.parse(output);
+        tokens.add(Token.number(output));
       } catch (e) {
-        throw Exception('Invalid number $accumulated at ${value.location}');
+        throw Exception('Invalid number $output at ${input.location}');
       }
 
-      if (value.isSeparator) {
-        tokens.add(Token.separator(value.value));
+      if (input.isSeparator) {
+        tokens.add(Token.separator(input.value));
       }
 
       return ResultState(tokens);
     } else {
-      throw Exception('Invalid character $value');
+      throw Exception('Invalid character $input');
     }
   }
 }
 
 class SymbolState extends State<String, Character> {
-  const SymbolState(super.accumulated);
+  const SymbolState(super.output);
 
   @override
-  State process(Character value) {
-    if (value.isLetter || value.isDigit) {
-      return SymbolState(accumulated + value.value);
-    } else if (value.isDelimiter) {
+  State process(Character input) {
+    if (input.isLetter || input.isDigit) {
+      return SymbolState(output + input.value);
+    } else if (input.isDelimiter) {
       final List<Token> tokens = [];
 
-      if (accumulated.isBoolean) {
-        tokens.add(Token.boolean(accumulated));
+      if (output.isBoolean) {
+        tokens.add(Token.boolean(output));
       } else {
-        tokens.add(Token.symbol(accumulated));
+        tokens.add(Token.symbol(output));
       }
 
-      if (value.isSeparator) {
-        tokens.add(Token.separator(value.value));
+      if (input.isSeparator) {
+        tokens.add(Token.separator(input.value));
       }
 
       return ResultState(tokens);
     } else {
-      throw Exception('Invalid character $value');
+      throw Exception('Invalid character $input');
     }
   }
 }
 
 class ResultState extends State<List<Token>, void> {
-  const ResultState(super.accumulated);
+  const ResultState(super.output);
 }

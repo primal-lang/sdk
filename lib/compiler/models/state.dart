@@ -1,7 +1,7 @@
-class State<A, V> {
-  final A accumulated;
+class State<O, I> {
+  final O output;
 
-  const State(this.accumulated);
+  const State(this.output);
 
-  State process(V value) => this;
+  State process(I input) => this;
 }
