@@ -1,4 +1,4 @@
-import 'package:dry/compiler/analyzer.dart';
+import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/semantic/bytecode.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 
