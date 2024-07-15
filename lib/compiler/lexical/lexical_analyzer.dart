@@ -12,14 +12,14 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
   List<Token> analyze() {
     final List<Token> result = [];
     final ListIterator<Character> iterator = ListIterator(input);
-    State state = InitState.empty();
+    State state = const InitState();
 
     while (iterator.hasNext) {
       state = state.process(iterator.next);
 
       if (state is ResultState) {
         result.addAll(state.output);
-        state = InitState.empty();
+        state = const InitState();
       }
     }
 
@@ -28,18 +28,16 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
 }
 
 class InitState extends State<Character, void> {
-  const InitState(super.output);
-
-  factory InitState.empty() => const InitState(null);
+  const InitState([super.output]);
 
   @override
   State process(Character input) {
     if (input.isQuote) {
-      return const StringState('');
+      return const StringState();
     } else if (input.isDigit) {
-      return NumberState(input.value);
+      return NumberState(CharacterList([input]));
     } else if (input.isLetter) {
-      return SymbolState(input.value);
+      return SymbolState(CharacterList([input]));
     } else if (input.isSeparator) {
       return ResultState([Token.separator(input.value)]);
     } else {
@@ -48,32 +46,33 @@ class InitState extends State<Character, void> {
   }
 }
 
-class StringState extends State<Character, String> {
-  const StringState(super.output);
+class StringState extends State<Character, CharacterList> {
+  const StringState([super.output = const CharacterList([])]);
 
   @override
   State process(Character input) {
     if (input.isQuote) {
-      return ResultState([Token.string(output)]);
+      return ResultState([Token.string(output.string)]);
     } else {
-      return StringState(output + input.value);
+      return StringState(output.add(input));
     }
   }
 }
 
-class NumberState extends State<Character, String> {
+class NumberState extends State<Character, CharacterList> {
   const NumberState(super.output);
 
   @override
   State process(Character input) {
     if (input.isDigit || input.isDot) {
-      return NumberState(output + input.value);
+      return NumberState(output.add(input));
     } else if (input.isDelimiter) {
       final List<Token> tokens = [];
 
       try {
-        num.parse(output);
-        tokens.add(Token.number(output));
+        final String value = output.string;
+        num.parse(value);
+        tokens.add(Token.number(value));
       } catch (e) {
         throw Exception('Invalid number $output at ${input.location}');
       }
@@ -89,20 +88,21 @@ class NumberState extends State<Character, String> {
   }
 }
 
-class SymbolState extends State<Character, String> {
+class SymbolState extends State<Character, CharacterList> {
   const SymbolState(super.output);
 
   @override
   State process(Character input) {
     if (input.isLetter || input.isDigit) {
-      return SymbolState(output + input.value);
+      return SymbolState(output.add(input));
     } else if (input.isDelimiter) {
       final List<Token> tokens = [];
+      final String value = output.string;
 
-      if (output.isBoolean) {
-        tokens.add(Token.boolean(output));
+      if (value.isBoolean) {
+        tokens.add(Token.boolean(value));
       } else {
-        tokens.add(Token.symbol(output));
+        tokens.add(Token.symbol(value));
       }
 
       if (input.isSeparator) {
@@ -118,4 +118,14 @@ class SymbolState extends State<Character, String> {
 
 class ResultState extends State<void, List<Token>> {
   const ResultState(super.output);
+}
+
+class CharacterList {
+  final List<Character> list;
+
+  const CharacterList([this.list = const []]);
+
+  String get string => list.map((e) => e.value).toList().join();
+
+  CharacterList add(Character character) => CharacterList([...list, character]);
 }
