@@ -14,21 +14,18 @@ class Compiler {
   const Compiler._(this.source);
 
   ByteCode compile() {
-    final InputAnalyzer inputAnalyzer = InputAnalyzer(input: source);
+    final InputAnalyzer inputAnalyzer = InputAnalyzer(source);
     final List<Character> characters = inputAnalyzer.analyze();
 
-    final LexicalAnalyzer lexicalAnalyzer =
-        LexicalAnalyzer(characters: characters);
+    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();
 
     print('Tokens parsed:\n${tokens.join('\n')}');
 
-    final SyntacticAnalyzer syntacticAnalyzer =
-        SyntacticAnalyzer(tokens: tokens);
+    final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
     final List<FunctionDefinition> functions = syntacticAnalyzer.analyze();
 
-    final SemanticAnalyzer semanticAnalyzer =
-        SemanticAnalyzer(functions: functions);
+    final SemanticAnalyzer semanticAnalyzer = SemanticAnalyzer(functions);
     return semanticAnalyzer.analyze();
   }
 

@@ -3,7 +3,6 @@ Purely functional programming language that emphasizes functions and immutabilit
 
 * Store list of character and then convert it to string to create a token
 * Store toke location
-* Create processors with inputs and outputs
 * Integer and Decimal states for numbers in lexical
 
 ### Literal

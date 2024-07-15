@@ -1,11 +1,11 @@
+import 'package:dry/compiler/analyzer.dart';
 import 'package:dry/compiler/semantic/bytecode.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 
-class SemanticAnalyzer {
-  final List<FunctionDefinition> functions;
+class SemanticAnalyzer extends Analyzer<List<FunctionDefinition>, ByteCode> {
+  const SemanticAnalyzer(super.input);
 
-  const SemanticAnalyzer({required this.functions});
-
+  @override
   ByteCode analyze() {
     return const ByteCode(functions: {});
   }

@@ -1,16 +1,17 @@
+import 'package:dry/compiler/analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/state.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/utils/list_iterator.dart';
 
-class SyntacticAnalyzer {
-  final List<Token> tokens;
+class SyntacticAnalyzer
+    extends Analyzer<List<Token>, List<FunctionDefinition>> {
+  const SyntacticAnalyzer(super.tokens);
 
-  const SyntacticAnalyzer({required this.tokens});
-
+  @override
   List<FunctionDefinition> analyze() {
     final List<FunctionDefinition> result = [];
-    final ListIterator<Token> iterator = ListIterator(tokens);
+    final ListIterator<Token> iterator = ListIterator(input);
     State state = InitState.empty();
 
     while (iterator.hasNext) {

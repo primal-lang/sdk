@@ -1,11 +1,11 @@
 import 'package:characters/characters.dart';
+import 'package:dry/compiler/analyzer.dart';
 import 'package:dry/compiler/input/character.dart';
 
-class InputAnalyzer {
-  final String input;
+class InputAnalyzer extends Analyzer<String, List<Character>> {
+  const InputAnalyzer(super.input);
 
-  const InputAnalyzer({required this.input});
-
+  @override
   List<Character> analyze() {
     final List<Character> result = [];
     final List<String> rows = input.split('\n');

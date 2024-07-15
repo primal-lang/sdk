@@ -1,17 +1,17 @@
+import 'package:dry/compiler/analyzer.dart';
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/state.dart';
 import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/utils/list_iterator.dart';
 
-class LexicalAnalyzer {
-  final List<Character> characters;
+class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
+  const LexicalAnalyzer(super.input);
 
-  const LexicalAnalyzer({required this.characters});
-
+  @override
   List<Token> analyze() {
     final List<Token> result = [];
-    final ListIterator<Character> iterator = ListIterator(characters);
+    final ListIterator<Character> iterator = ListIterator(input);
     State state = InitState.empty();
 
     while (iterator.hasNext) {
