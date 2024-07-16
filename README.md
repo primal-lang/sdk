@@ -1,8 +1,6 @@
 # Dry
 Purely functional programming language that emphasizes functions and immutability. It doesn't have statements, only declarations.
 
-* Integer and Decimal states for numbers in lexical
-
 ### Literal
 Number | String | Boolean
 
@@ -22,11 +20,11 @@ Literal | FunctionCall
 Symbol=Expression
 
 TODO
-* show row and column if compilation fails
-* allow strings with double quote, single quote, accents, etc
-* support arrays
-* support maps
-* higher order functions
-* types (all start with uppercase)
-* curryfication
+* Show row and column if compilation fails
+* Allow strings with double quote, single quote, accents, etc
+* Support arrays
+* Support maps
+* Higher order functions
+* Types (all start with uppercase)
+* Curryfication
 * x:xs

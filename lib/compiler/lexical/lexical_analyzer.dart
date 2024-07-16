@@ -41,7 +41,7 @@ class InitState extends State<Character, void> {
             column: input.location.column + 1,
           )));
     } else if (input.isDigit) {
-      return NumberState(Lexeme.fromCharacter(input));
+      return IntegerState(Lexeme.fromCharacter(input));
     } else if (input.isLetter) {
       return SymbolState(Lexeme.fromCharacter(input));
     } else if (input.isSeparator) {
@@ -65,22 +65,38 @@ class StringState extends State<Character, Lexeme> {
   }
 }
 
-class NumberState extends State<Character, Lexeme> {
-  const NumberState(super.output);
+class IntegerState extends State<Character, Lexeme> {
+  const IntegerState(super.output);
 
   @override
   State process(Character input) {
-    if (input.isDigit || input.isDot) {
-      return NumberState(output.add(input));
+    if (input.isDigit) {
+      return IntegerState(output.add(input));
+    } else if (input.isDot) {
+      return DecimalState(output.add(input));
     } else if (input.isDelimiter) {
-      final List<Token> tokens = [];
+      final List<Token> tokens = [Token.number(output)];
 
-      try {
-        num.parse(output.value);
-        tokens.add(Token.number(output));
-      } catch (e) {
-        throw Exception('Invalid number $output at ${input.location}');
+      if (input.isSeparator) {
+        tokens.add(Token.separator(Lexeme.fromCharacter(input)));
       }
+
+      return ResultState(tokens);
+    } else {
+      throw Exception('Invalid character $input');
+    }
+  }
+}
+
+class DecimalState extends State<Character, Lexeme> {
+  const DecimalState(super.output);
+
+  @override
+  State process(Character input) {
+    if (input.isDigit) {
+      return DecimalState(output.add(input));
+    } else if (input.isDelimiter) {
+      final List<Token> tokens = [Token.number(output)];
 
       if (input.isSeparator) {
         tokens.add(Token.separator(Lexeme.fromCharacter(input)));
