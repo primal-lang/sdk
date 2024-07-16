@@ -1,3 +1,4 @@
+import 'package:dry/compiler/errors/lexical_error.dart';
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/input/location.dart';
@@ -26,7 +27,7 @@ void main() {
   }
 
   group('Lexical Analyzer', () {
-    test('Number', () {
+    test('Valid umber', () {
       final List<Token> tokens = _tokens('42 1.23');
       _checkTokens(tokens, [
         Token.number(const Lexeme(
@@ -44,6 +45,22 @@ void main() {
           ),
         )),
       ]);
+    });
+
+    test('Invalid integer', () {
+      try {
+        _tokens('42a');
+      } catch (e) {
+        expect(e, isA<LexicalError>());
+      }
+    });
+
+    test('Invalid decimal', () {
+      try {
+        _tokens('1..2');
+      } catch (e) {
+        expect(e, isA<LexicalError>());
+      }
     });
 
     test('String', () {
@@ -70,6 +87,14 @@ void main() {
           ),
         )),
       ]);
+    });
+
+    test('Invalid symbol', () {
+      try {
+        _tokens('func#');
+      } catch (e) {
+        expect(e, isA<LexicalError>());
+      }
     });
 
     test('Comma', () {
