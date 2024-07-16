@@ -33,11 +33,11 @@ extension StringExtensions on String {
 
   bool get isEquals => REGEX_EQUALS.hasMatch(this);
 
-  bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
-
   bool get isOpenParenthesis => REGEX_OPEN_PARENTHESIS.hasMatch(this);
 
   bool get isCloseParenthesis => REGEX_CLOSE_PARENTHESIS.hasMatch(this);
+
+  bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
 
   bool get isSeparator =>
       isComma || isEquals || isOpenParenthesis || isCloseParenthesis;
