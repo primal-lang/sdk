@@ -8,5 +8,6 @@ TODO
 * Support maps
 * Higher order functions
 * Types (all start with uppercase)
+* Lambdas
 * Curryfication
 * x:xs
