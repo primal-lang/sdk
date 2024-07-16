@@ -1,3 +1,4 @@
+import 'package:dry/compiler/errors/syntactic_error.dart';
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
@@ -37,6 +38,54 @@ void main() {
   }
 
   group('Syntactic Analyzer', () {
+    test('Invalid function definition 1', () {
+      try {
+        _functions('123');
+      } catch (e) {
+        expect(e, isA<SyntacticError>());
+      }
+    });
+
+    test('Invalid function definition 2', () {
+      try {
+        _functions('isEven ,');
+      } catch (e) {
+        expect(e, isA<SyntacticError>());
+      }
+    });
+
+    test('Invalid function definition 3', () {
+      try {
+        _functions('isEven()');
+      } catch (e) {
+        expect(e, isA<SyntacticError>());
+      }
+    });
+
+    test('Invalid function definition 4', () {
+      try {
+        _functions('isEven(1');
+      } catch (e) {
+        expect(e, isA<SyntacticError>());
+      }
+    });
+
+    test('Invalid function definition 5', () {
+      try {
+        _functions('isEven(a(');
+      } catch (e) {
+        expect(e, isA<SyntacticError>());
+      }
+    });
+
+    test('Invalid function definition 6', () {
+      try {
+        _functions('isEvent(x),');
+      } catch (e) {
+        expect(e, isA<SyntacticError>());
+      }
+    });
+
     test('Literal string definition', () {
       final List<FunctionDefinition> functions =
           _functions('greeting = "Hello, world!"');
