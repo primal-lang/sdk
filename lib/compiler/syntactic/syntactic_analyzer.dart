@@ -86,6 +86,8 @@ class FunctionWithNextParametersState extends State<Token, FunctionDefinition> {
   State process(Token input) {
     if (input.type.isComma) {
       return FunctionWithParametersState(output);
+    } else if (input.type.isCloseParenthesis) {
+      return FunctionParametrizedState(output);
     } else {
       throw SyntacticError.invalidToken(input);
     }
