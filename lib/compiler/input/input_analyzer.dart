@@ -1,21 +1,21 @@
 import 'package:characters/characters.dart';
-import 'package:dry/compiler/input/lexeme.dart';
+import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 
-class InputAnalyzer extends Analyzer<String, List<Lexeme>> {
+class InputAnalyzer extends Analyzer<String, List<Character>> {
   const InputAnalyzer(super.input);
 
   @override
-  List<Lexeme> analyze() {
-    final List<Lexeme> result = [];
+  List<Character> analyze() {
+    final List<Character> result = [];
     final List<String> rows = input.split('\n');
 
     for (int i = 0; i < rows.length; i++) {
       final List<String> columns = rows[i].characters.toList();
 
       for (int j = 0; j < columns.length; j++) {
-        result.add(Lexeme(
+        result.add(Character(
           value: columns[j],
           location: Location(
             row: i + 1,
@@ -25,7 +25,7 @@ class InputAnalyzer extends Analyzer<String, List<Lexeme>> {
       }
     }
 
-    result.add(Lexeme(
+    result.add(Character(
       value: '\n',
       location: Location(
         row: rows.length + 1,

@@ -1,11 +1,11 @@
 import 'package:dry/compiler/input/location.dart';
 import 'package:dry/extensions/string_extensions.dart';
 
-class Lexeme {
+class Character {
   final String value;
   final Location location;
 
-  const Lexeme({
+  const Character({
     required this.value,
     required this.location,
   });

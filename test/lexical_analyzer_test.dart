@@ -1,5 +1,6 @@
+import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
-import 'package:dry/compiler/input/lexeme.dart';
+import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/extensions/string_extensions.dart';
@@ -8,8 +9,8 @@ import 'package:test/test.dart';
 void main() {
   List<Token> _tokens(String source) {
     final InputAnalyzer inputAnalyzer = InputAnalyzer(source);
-    final List<Lexeme> lexemes = inputAnalyzer.analyze();
-    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(lexemes);
+    final List<Character> characters = inputAnalyzer.analyze();
+    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
 
     return lexicalAnalyzer.analyze();
   }
@@ -20,6 +21,8 @@ void main() {
     for (int i = 0; i < actual.length; i++) {
       expect(actual[i].type, equals(expected[i].type));
       expect(actual[i].value, equals(expected[i].value));
+      expect(actual[i].location.row, equals(expected[i].location.row));
+      expect(actual[i].location.column, equals(expected[i].location.column));
     }
   }
 
@@ -99,105 +102,339 @@ void main() {
     test('Number', () {
       final List<Token> tokens = _tokens('42 1.23');
       _checkTokenValue(tokens, [
-        Token.number('42'),
-        Token.number('1.23'),
+        Token.number(const Lexeme(
+          value: '42',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        Token.number(const Lexeme(
+          value: '1.23',
+          location: Location(
+            row: 1,
+            column: 4,
+          ),
+        )),
       ]);
     });
 
     test('String', () {
       final List<Token> tokens = _tokens('"This is a string"');
       _checkTokenValue(tokens, [
-        Token.string('This is a string'),
+        Token.string(const Lexeme(
+          value: 'This is a string',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
       ]);
     });
 
     test('Symbol', () {
       final List<Token> tokens = _tokens('isEven');
       _checkTokenValue(tokens, [
-        Token.symbol('isEven'),
+        Token.symbol(const Lexeme(
+          value: 'isEven',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
       ]);
     });
 
     test('Comma', () {
       final List<Token> tokens = _tokens(',');
       _checkTokenValue(tokens, [
-        Token.comma(','),
+        Token.comma(const Lexeme(
+          value: ',',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
       ]);
     });
 
     test('Equals', () {
       final List<Token> tokens = _tokens('=');
       _checkTokenValue(tokens, [
-        Token.equals('='),
+        Token.equals(const Lexeme(
+          value: '=',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
       ]);
     });
 
     test('Open parenthesis', () {
       final List<Token> tokens = _tokens('(');
       _checkTokenValue(tokens, [
-        Token.openParenthesis('('),
+        Token.openParenthesis(const Lexeme(
+          value: '(',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
       ]);
     });
 
     test('Close parenthesis', () {
       final List<Token> tokens = _tokens(')');
       _checkTokenValue(tokens, [
-        Token.closeParenthesis(')'),
+        Token.closeParenthesis(const Lexeme(
+          value: ')',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
       ]);
     });
 
     test('Constant declaration', () {
       final List<Token> tokens = _tokens('pi = 3.14');
       _checkTokenValue(tokens, [
-        Token.symbol('pi'),
-        Token.equals('='),
-        Token.number('3.14'),
+        Token.symbol(const Lexeme(
+          value: 'pi',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        Token.equals(const Lexeme(
+          value: '=',
+          location: Location(
+            row: 1,
+            column: 4,
+          ),
+        )),
+        Token.number(const Lexeme(
+          value: '3.14',
+          location: Location(
+            row: 1,
+            column: 6,
+          ),
+        )),
       ]);
     });
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('main = isEven(4)');
       _checkTokenValue(tokens, [
-        Token.symbol('main'),
-        Token.equals('='),
-        Token.symbol('isEven'),
-        Token.openParenthesis('('),
-        Token.number('4'),
-        Token.closeParenthesis(')'),
+        Token.symbol(const Lexeme(
+          value: 'main',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        Token.equals(const Lexeme(
+          value: '=',
+          location: Location(
+            row: 1,
+            column: 6,
+          ),
+        )),
+        Token.symbol(const Lexeme(
+          value: 'isEven',
+          location: Location(
+            row: 1,
+            column: 8,
+          ),
+        )),
+        Token.openParenthesis(const Lexeme(
+          value: '(',
+          location: Location(
+            row: 1,
+            column: 14,
+          ),
+        )),
+        Token.number(const Lexeme(
+          value: '4',
+          location: Location(
+            row: 1,
+            column: 15,
+          ),
+        )),
+        Token.closeParenthesis(const Lexeme(
+          value: ')',
+          location: Location(
+            row: 1,
+            column: 16,
+          ),
+        )),
       ]);
     });
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('isZero(x) = eq(x, 0)');
       _checkTokenValue(tokens, [
-        Token.symbol('isZero'),
-        Token.openParenthesis('('),
-        Token.symbol('x'),
-        Token.closeParenthesis(')'),
-        Token.equals('='),
-        Token.symbol('eq'),
-        Token.openParenthesis('('),
-        Token.symbol('x'),
-        Token.comma(','),
-        Token.number('0'),
-        Token.closeParenthesis(')'),
+        Token.symbol(const Lexeme(
+          value: 'isZero',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        Token.openParenthesis(const Lexeme(
+          value: '(',
+          location: Location(
+            row: 1,
+            column: 7,
+          ),
+        )),
+        Token.symbol(const Lexeme(
+          value: 'x',
+          location: Location(
+            row: 1,
+            column: 8,
+          ),
+        )),
+        Token.closeParenthesis(const Lexeme(
+          value: ')',
+          location: Location(
+            row: 1,
+            column: 9,
+          ),
+        )),
+        Token.equals(const Lexeme(
+          value: '=',
+          location: Location(
+            row: 1,
+            column: 11,
+          ),
+        )),
+        Token.symbol(const Lexeme(
+          value: 'eq',
+          location: Location(
+            row: 1,
+            column: 13,
+          ),
+        )),
+        Token.openParenthesis(const Lexeme(
+          value: '(',
+          location: Location(
+            row: 1,
+            column: 15,
+          ),
+        )),
+        Token.symbol(const Lexeme(
+          value: 'x',
+          location: Location(
+            row: 1,
+            column: 16,
+          ),
+        )),
+        Token.comma(const Lexeme(
+          value: ',',
+          location: Location(
+            row: 1,
+            column: 17,
+          ),
+        )),
+        Token.number(const Lexeme(
+          value: '0',
+          location: Location(
+            row: 1,
+            column: 19,
+          ),
+        )),
+        Token.closeParenthesis(const Lexeme(
+          value: ')',
+          location: Location(
+            row: 1,
+            column: 20,
+          ),
+        )),
       ]);
     });
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('isTrue(x) = eq(x, true)');
       _checkTokenValue(tokens, [
-        Token.symbol('isTrue'),
-        Token.openParenthesis('('),
-        Token.symbol('x'),
-        Token.closeParenthesis(')'),
-        Token.equals('='),
-        Token.symbol('eq'),
-        Token.openParenthesis('('),
-        Token.symbol('x'),
-        Token.comma(','),
-        Token.boolean('true'),
-        Token.closeParenthesis(')'),
+        Token.symbol(const Lexeme(
+          value: 'isTrue',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        Token.openParenthesis(const Lexeme(
+          value: '(',
+          location: Location(
+            row: 1,
+            column: 7,
+          ),
+        )),
+        Token.symbol(const Lexeme(
+          value: 'x',
+          location: Location(
+            row: 1,
+            column: 8,
+          ),
+        )),
+        Token.closeParenthesis(const Lexeme(
+          value: ')',
+          location: Location(
+            row: 1,
+            column: 9,
+          ),
+        )),
+        Token.equals(const Lexeme(
+          value: '=',
+          location: Location(
+            row: 1,
+            column: 11,
+          ),
+        )),
+        Token.symbol(const Lexeme(
+          value: 'eq',
+          location: Location(
+            row: 1,
+            column: 13,
+          ),
+        )),
+        Token.openParenthesis(const Lexeme(
+          value: '(',
+          location: Location(
+            row: 1,
+            column: 15,
+          ),
+        )),
+        Token.symbol(const Lexeme(
+          value: 'x',
+          location: Location(
+            row: 1,
+            column: 16,
+          ),
+        )),
+        Token.comma(const Lexeme(
+          value: ',',
+          location: Location(
+            row: 1,
+            column: 17,
+          ),
+        )),
+        Token.boolean(const Lexeme(
+          value: 'true',
+          location: Location(
+            row: 1,
+            column: 19,
+          ),
+        )),
+        Token.closeParenthesis(const Lexeme(
+          value: ')',
+          location: Location(
+            row: 1,
+            column: 23,
+          ),
+        )),
       ]);
     });
 

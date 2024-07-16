@@ -1,65 +1,79 @@
+import 'package:dry/compiler/input/location.dart';
+import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/extensions/string_extensions.dart';
 
 class Token {
   final TokenType type;
   final String value;
+  final Location location;
 
   const Token._({
     required this.type,
     required this.value,
+    required this.location,
   });
 
-  factory Token.string(String value) => Token._(
+  factory Token.string(Lexeme lexeme) => Token._(
         type: TokenType.string,
-        value: value,
+        value: lexeme.value,
+        location: lexeme.location,
       );
 
-  factory Token.number(String value) => Token._(
+  factory Token.number(Lexeme lexeme) => Token._(
         type: TokenType.number,
-        value: value,
+        value: lexeme.value,
+        location: lexeme.location,
       );
 
-  factory Token.boolean(String value) {
+  factory Token.boolean(Lexeme lexeme) {
     return Token._(
       type: TokenType.boolean,
-      value: value,
+      value: lexeme.value,
+      location: lexeme.location,
     );
   }
 
-  factory Token.symbol(String value) => Token._(
+  factory Token.symbol(Lexeme lexeme) => Token._(
         type: TokenType.symbol,
-        value: value,
+        value: lexeme.value,
+        location: lexeme.location,
       );
 
-  factory Token.comma(String value) => Token._(
+  factory Token.comma(Lexeme lexeme) => Token._(
         type: TokenType.comma,
-        value: value,
+        value: lexeme.value,
+        location: lexeme.location,
       );
 
-  factory Token.equals(String value) => Token._(
+  factory Token.equals(Lexeme lexeme) => Token._(
         type: TokenType.equals,
-        value: value,
+        value: lexeme.value,
+        location: lexeme.location,
       );
 
-  factory Token.openParenthesis(String value) => Token._(
+  factory Token.openParenthesis(Lexeme lexeme) => Token._(
         type: TokenType.openParenthesis,
-        value: value,
+        value: lexeme.value,
+        location: lexeme.location,
       );
 
-  factory Token.closeParenthesis(String value) => Token._(
+  factory Token.closeParenthesis(Lexeme lexeme) => Token._(
         type: TokenType.closeParenthesis,
-        value: value,
+        value: lexeme.value,
+        location: lexeme.location,
       );
 
-  factory Token.separator(String value) {
+  factory Token.separator(Lexeme lexeme) {
+    final String value = lexeme.value;
+
     if (value.isComma) {
-      return Token.comma(value);
+      return Token.comma(lexeme);
     } else if (value.isEquals) {
-      return Token.equals(value);
+      return Token.equals(lexeme);
     } else if (value.isOpenParenthesis) {
-      return Token.openParenthesis(value);
+      return Token.openParenthesis(lexeme);
     } else if (value.isCloseParenthesis) {
-      return Token.closeParenthesis(value);
+      return Token.closeParenthesis(lexeme);
     } else {
       throw Exception('Invalid separator');
     }
