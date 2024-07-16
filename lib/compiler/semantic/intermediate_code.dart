@@ -1,10 +1,10 @@
 import 'package:dry/compiler/semantic/function_prototype.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 
-class ByteCode {
+class IntermediateCode {
   final Map<String, FunctionPrototype> functions;
 
-  const ByteCode({required this.functions});
+  const IntermediateCode({required this.functions});
 
   bool get hasMain => true;
 

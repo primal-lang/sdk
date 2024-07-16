@@ -3,7 +3,7 @@ import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/input/lexeme.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
-import 'package:dry/compiler/semantic/bytecode.dart';
+import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/semantic/semantic_analyzer.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/compiler/syntactic/syntactic_analyzer.dart';
@@ -13,7 +13,7 @@ class Compiler {
 
   const Compiler._(this.source);
 
-  ByteCode compile() {
+  IntermediateCode compile() {
     final InputAnalyzer inputAnalyzer = InputAnalyzer(source);
     final List<Lexeme> lexemes = inputAnalyzer.analyze();
 
