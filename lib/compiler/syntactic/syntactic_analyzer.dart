@@ -38,6 +38,8 @@ class InitState extends State<Token, void> {
   State process(Token input) {
     if (input.type.isSymbol) {
       return FunctionNameState(FunctionDefinition.fromName(input.asString));
+    } else if (input.type.isNewLine) {
+      return this;
     } else {
       throw SyntacticError.invalidToken(input);
     }

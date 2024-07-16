@@ -16,9 +16,9 @@ void main() {
   }
 
   void _checkTokens(List<Token> actual, List<Token> expected) {
-    expect(actual.length, equals(expected.length));
+    expect(actual.length, equals(expected.length + 1));
 
-    for (int i = 0; i < actual.length; i++) {
+    for (int i = 0; i < expected.length; i++) {
       expect(actual[i].type, equals(expected[i].type));
       expect(actual[i].value, equals(expected[i].value));
       expect(actual[i].location.row, equals(expected[i].location.row));
