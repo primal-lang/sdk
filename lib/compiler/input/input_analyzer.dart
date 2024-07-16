@@ -1,5 +1,6 @@
 import 'package:characters/characters.dart';
 import 'package:dry/compiler/input/lexeme.dart';
+import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 
 class InputAnalyzer extends Analyzer<String, List<Lexeme>> {
@@ -16,16 +17,20 @@ class InputAnalyzer extends Analyzer<String, List<Lexeme>> {
       for (int j = 0; j < columns.length; j++) {
         result.add(Lexeme(
           value: columns[j],
-          row: i + 1,
-          column: j + 1,
+          location: Location(
+            row: i + 1,
+            column: j + 1,
+          ),
         ));
       }
     }
 
     result.add(Lexeme(
       value: '\n',
-      row: rows.length + 1,
-      column: 0,
+      location: Location(
+        row: rows.length + 1,
+        column: 0,
+      ),
     ));
 
     return result;

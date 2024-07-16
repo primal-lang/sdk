@@ -1,14 +1,13 @@
+import 'package:dry/compiler/input/location.dart';
 import 'package:dry/extensions/string_extensions.dart';
 
 class Lexeme {
   final String value;
-  final int row;
-  final int column;
+  final Location location;
 
   const Lexeme({
     required this.value,
-    required this.row,
-    required this.column,
+    required this.location,
   });
 
   bool get isDigit => value.isDigit;
@@ -22,8 +21,6 @@ class Lexeme {
   bool get isSeparator => value.isSeparator;
 
   bool get isDelimiter => value.isDelimiter;
-
-  String get location => '[$row, $column]';
 
   @override
   String toString() => '$value at $location';
