@@ -27,7 +27,7 @@ void main() {
   }
 
   group('Lexical Analyzer', () {
-    test('Valid umber', () {
+    test('Valid number', () {
       final List<Token> tokens = _tokens('42 1.23');
       _checkTokens(tokens, [
         Token.number(const Lexeme(

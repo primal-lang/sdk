@@ -59,7 +59,7 @@ void main() {
     });
 
     test('isWhitespace', () {
-      const List<String> delimiters = [' ', '\r', '\n', '\t'];
+      const List<String> delimiters = [' ', '\t'];
 
       for (final String delimiter in delimiters) {
         expect(true, equals(delimiter.isWhitespace));

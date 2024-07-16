@@ -25,6 +25,10 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       }
     }
 
+    while (result.last.type.isNewLine) {
+      result.removeLast();
+    }
+
     return result;
   }
 }

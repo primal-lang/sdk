@@ -18,6 +18,8 @@ class Character {
 
   bool get isDot => value.isDot;
 
+  bool get isNewLine => value.isNewLine;
+
   bool get isSeparator => value.isSeparator;
 
   bool get isDelimiter => value.isDelimiter;

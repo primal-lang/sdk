@@ -3,7 +3,9 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_LETTER = RegExp(r'[a-zA-Z]');
 
-  static final RegExp REGEX_WHITESPACE = RegExp(r'\s');
+  static final RegExp REGEX_WHITESPACE = RegExp(r'[^\S\r\n]');
+
+  static final RegExp REGEX_NEW_LINE = RegExp(r'\n');
 
   static final RegExp REGEX_QUOTE = RegExp(r'"');
 
@@ -39,8 +41,14 @@ extension StringExtensions on String {
 
   bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
 
+  bool get isNewLine => REGEX_NEW_LINE.hasMatch(this);
+
   bool get isSeparator =>
-      isComma || isEquals || isOpenParenthesis || isCloseParenthesis;
+      isComma ||
+      isEquals ||
+      isOpenParenthesis ||
+      isCloseParenthesis ||
+      isNewLine;
 
   bool get isDelimiter => isWhitespace || isSeparator;
 }
