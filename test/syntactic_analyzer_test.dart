@@ -34,6 +34,9 @@ void main() {
       for (int j = 0; j < actualParameters.length; j++) {
         expect(actualParameters[i], equals(expectedParameters[i]));
       }
+
+      expect(actual[i].expression.toString(),
+          equals(expected[i].expression.toString()));
     }
   }
 

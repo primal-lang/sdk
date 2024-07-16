@@ -5,7 +5,12 @@ class Expression {
     required this.type,
   });
 
+  String get body => '';
+
   factory Expression.empty() => const Expression(type: ExpressionType.empty);
+
+  @override
+  String toString() => '{type: $type, body: $body}';
 }
 
 class LiteralExpression<T> extends Expression {
@@ -35,6 +40,9 @@ class LiteralExpression<T> extends Expression {
         type: ExpressionType.literalSymbol,
         value: value,
       );
+
+  @override
+  String get body => value.toString();
 }
 
 class FunctionCallExpression extends Expression {
