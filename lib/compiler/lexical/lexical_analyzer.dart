@@ -1,17 +1,17 @@
-import 'package:dry/compiler/input/character.dart';
+import 'package:dry/compiler/input/lexeme.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/state.dart';
 import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/utils/list_iterator.dart';
 
-class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
+class LexicalAnalyzer extends Analyzer<List<Lexeme>, List<Token>> {
   const LexicalAnalyzer(super.input);
 
   @override
   List<Token> analyze() {
     final List<Token> result = [];
-    final ListIterator<Character> iterator = ListIterator(input);
+    final ListIterator<Lexeme> iterator = ListIterator(input);
     State state = const InitState();
 
     while (iterator.hasNext) {
@@ -27,17 +27,17 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
   }
 }
 
-class InitState extends State<Character, void> {
+class InitState extends State<Lexeme, void> {
   const InitState([super.output]);
 
   @override
-  State process(Character input) {
+  State process(Lexeme input) {
     if (input.isQuote) {
       return const StringState();
     } else if (input.isDigit) {
-      return NumberState(CharacterList([input]));
+      return NumberState(LexemeList([input]));
     } else if (input.isLetter) {
-      return SymbolState(CharacterList([input]));
+      return SymbolState(LexemeList([input]));
     } else if (input.isSeparator) {
       return ResultState([Token.separator(input.value)]);
     } else {
@@ -46,11 +46,11 @@ class InitState extends State<Character, void> {
   }
 }
 
-class StringState extends State<Character, CharacterList> {
-  const StringState([super.output = const CharacterList([])]);
+class StringState extends State<Lexeme, LexemeList> {
+  const StringState([super.output = const LexemeList([])]);
 
   @override
-  State process(Character input) {
+  State process(Lexeme input) {
     if (input.isQuote) {
       return ResultState([Token.string(output.string)]);
     } else {
@@ -59,11 +59,11 @@ class StringState extends State<Character, CharacterList> {
   }
 }
 
-class NumberState extends State<Character, CharacterList> {
+class NumberState extends State<Lexeme, LexemeList> {
   const NumberState(super.output);
 
   @override
-  State process(Character input) {
+  State process(Lexeme input) {
     if (input.isDigit || input.isDot) {
       return NumberState(output.add(input));
     } else if (input.isDelimiter) {
@@ -88,11 +88,11 @@ class NumberState extends State<Character, CharacterList> {
   }
 }
 
-class SymbolState extends State<Character, CharacterList> {
+class SymbolState extends State<Lexeme, LexemeList> {
   const SymbolState(super.output);
 
   @override
-  State process(Character input) {
+  State process(Lexeme input) {
     if (input.isLetter || input.isDigit) {
       return SymbolState(output.add(input));
     } else if (input.isDelimiter) {
@@ -120,12 +120,12 @@ class ResultState extends State<void, List<Token>> {
   const ResultState(super.output);
 }
 
-class CharacterList {
-  final List<Character> list;
+class LexemeList {
+  final List<Lexeme> list;
 
-  const CharacterList([this.list = const []]);
+  const LexemeList([this.list = const []]);
 
   String get string => list.map((e) => e.value).toList().join();
 
-  CharacterList add(Character character) => CharacterList([...list, character]);
+  LexemeList add(Lexeme lexeme) => LexemeList([...list, lexeme]);
 }

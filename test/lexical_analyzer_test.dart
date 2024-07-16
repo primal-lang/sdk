@@ -1,5 +1,5 @@
-import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
+import 'package:dry/compiler/input/lexeme.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/extensions/string_extensions.dart';
@@ -8,8 +8,8 @@ import 'package:test/test.dart';
 void main() {
   List<Token> _tokens(String source) {
     final InputAnalyzer inputAnalyzer = InputAnalyzer(source);
-    final List<Character> characters = inputAnalyzer.analyze();
-    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
+    final List<Lexeme> lexemes = inputAnalyzer.analyze();
+    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(lexemes);
 
     return lexicalAnalyzer.analyze();
   }

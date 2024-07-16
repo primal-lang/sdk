@@ -1,11 +1,11 @@
 import 'package:dry/extensions/string_extensions.dart';
 
-class Character {
+class Lexeme {
   final String value;
   final int row;
   final int column;
 
-  const Character({
+  const Lexeme({
     required this.value,
     required this.row,
     required this.column,
