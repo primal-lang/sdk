@@ -121,6 +121,31 @@ class FunctionEqualsState extends State<Token, FunctionDefinition> {
     } else if (input.type.isBoolean) {
       return ResultState(
           [output.withExpression(LiteralExpression.boolean(input.asBoolean))]);
+    } else if (input.type.isSymbol) {
+      return SymbolExpressionState(LiteralExpression.symbol(input.asString));
+    } else {
+      throw SyntacticError.invalidToken(input);
+    }
+  }
+}
+
+class SymbolExpressionState extends State<Token, Expression> {
+  const SymbolExpressionState(super.output);
+
+  @override
+  State process(Token input) {
+    if (input.type.isOpenParenthesis) {
+      return ResultState(
+          [output.withExpression(LiteralExpression.string(input.asString))]);
+    } else if (input.type.isNumber) {
+      return ResultState(
+          [output.withExpression(LiteralExpression.number(input.asNumber))]);
+    } else if (input.type.isBoolean) {
+      return ResultState(
+          [output.withExpression(LiteralExpression.boolean(input.asBoolean))]);
+    } else if (input.type.isSymbol) {
+      return ResultState(
+          [output.withExpression(LiteralExpression.boolean(input.asBoolean))]);
     } else {
       throw SyntacticError.invalidToken(input);
     }
