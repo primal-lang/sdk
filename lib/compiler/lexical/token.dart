@@ -1,3 +1,4 @@
+import 'package:dry/compiler/errors/lexical_error.dart';
 import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/extensions/string_extensions.dart';
@@ -75,13 +76,13 @@ class Token {
     } else if (value.isCloseParenthesis) {
       return Token.closeParenthesis(lexeme);
     } else {
-      throw Exception('Invalid separator');
+      throw LexicalError.invalidSeparator(value);
     }
   }
 
   @override
   String toString() {
-    return 'Token{type: ${type.name}, value: $value}';
+    return 'Token{type: ${type.name}, value: $value, location: $location}';
   }
 }
 
@@ -93,5 +94,21 @@ enum TokenType {
   comma,
   equals,
   openParenthesis,
-  closeParenthesis,
+  closeParenthesis;
+
+  bool get isString => this == string;
+
+  bool get isNumber => this == number;
+
+  bool get isBoolean => this == boolean;
+
+  bool get isSymbol => this == symbol;
+
+  bool get isComma => this == comma;
+
+  bool get isEquals => this == equals;
+
+  bool get isOpenParenthesis => this == openParenthesis;
+
+  bool get isCloseParenthesis => this == closeParenthesis;
 }

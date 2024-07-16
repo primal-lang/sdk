@@ -1,7 +1,10 @@
+import 'package:dry/compiler/errors/syntactic_error.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/state.dart';
+import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
+import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/utils/list_iterator.dart';
 
 class SyntacticAnalyzer
@@ -34,7 +37,46 @@ class InitState extends State<Token, void> {
 
   @override
   State process(Token input) {
-    return this;
+    if (input.type.isSymbol) {
+      return FunctionNameState(FunctionDefinition.fromName(input.value));
+    } else {
+      throw SyntacticError.invalidToken(input);
+    }
+  }
+}
+
+class FunctionNameState extends State<Token, FunctionDefinition> {
+  const FunctionNameState(super.output);
+
+  @override
+  State process(Token input) {
+    if (input.value.isEquals) {
+      return FunctionEqualsState(output);
+    } else {
+      throw SyntacticError.invalidToken(input);
+    }
+  }
+}
+
+class FunctionEqualsState extends State<Token, FunctionDefinition> {
+  const FunctionEqualsState(super.output);
+
+  @override
+  State process(Token input) {
+    if (input.type.isString) {
+      return ResultState(
+          [output.withExpression(LiteralExpression.string(input.value))]);
+    } else if (input.type.isNumber) {
+      return ResultState([
+        output.withExpression(LiteralExpression.number(num.parse(input.value)))
+      ]);
+    } else if (input.type.isBoolean) {
+      return ResultState([
+        output.withExpression(LiteralExpression.boolean(bool.parse(input.value)))
+      ]);
+    } else {
+      throw SyntacticError.invalidToken(input);
+    }
   }
 }
 

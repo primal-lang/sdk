@@ -1,3 +1,4 @@
+import 'package:dry/compiler/errors/lexical_error.dart';
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/token.dart';
@@ -83,7 +84,7 @@ class IntegerState extends State<Character, Lexeme> {
 
       return ResultState(tokens);
     } else {
-      throw Exception('Invalid character $input');
+      throw LexicalError.invalidCharacter(input);
     }
   }
 }
@@ -104,7 +105,7 @@ class DecimalState extends State<Character, Lexeme> {
 
       return ResultState(tokens);
     } else {
-      throw Exception('Invalid character $input');
+      throw LexicalError.invalidCharacter(input);
     }
   }
 }
@@ -131,7 +132,7 @@ class SymbolState extends State<Character, Lexeme> {
 
       return ResultState(tokens);
     } else {
-      throw Exception('Invalid character $input');
+      throw LexicalError.invalidCharacter(input);
     }
   }
 }

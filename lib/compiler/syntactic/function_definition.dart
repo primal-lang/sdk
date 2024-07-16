@@ -10,4 +10,16 @@ class FunctionDefinition {
     required this.parameters,
     required this.body,
   });
+
+  FunctionDefinition withExpression(Expression expression) => FunctionDefinition(
+        name: name,
+        parameters: parameters,
+        body: expression,
+      );
+
+  factory FunctionDefinition.fromName(String name) => FunctionDefinition(
+        name: name,
+        parameters: [],
+        body: Expression.empty(),
+      );
 }

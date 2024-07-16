@@ -4,32 +4,34 @@ class Expression {
   const Expression({
     required this.type,
   });
+
+  factory Expression.empty() => const Expression(type: ExpressionType.empty);
 }
 
 class LiteralExpression<T> extends Expression {
   final T value;
 
-  const LiteralExpression({
+  const LiteralExpression._({
     required super.type,
     required this.value,
   });
 
-  static LiteralExpression<String> string(String value) => LiteralExpression(
+  static LiteralExpression<String> string(String value) => LiteralExpression._(
         type: ExpressionType.literalString,
         value: value,
       );
 
-  static LiteralExpression<num> number(num value) => LiteralExpression(
+  static LiteralExpression<num> number(num value) => LiteralExpression._(
         type: ExpressionType.literalNumber,
         value: value,
       );
 
-  static LiteralExpression<bool> boolean(bool value) => LiteralExpression(
+  static LiteralExpression<bool> boolean(bool value) => LiteralExpression._(
         type: ExpressionType.literalBoolean,
         value: value,
       );
 
-  static LiteralExpression<String> symbol(String value) => LiteralExpression(
+  static LiteralExpression<String> symbol(String value) => LiteralExpression._(
         type: ExpressionType.literalSymbol,
         value: value,
       );
@@ -46,6 +48,7 @@ class FunctionCallExpression extends Expression {
 }
 
 enum ExpressionType {
+  empty,
   literalString,
   literalNumber,
   literalBoolean,
