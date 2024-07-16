@@ -4,7 +4,6 @@ import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/state.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
-import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/utils/list_iterator.dart';
 
 class SyntacticAnalyzer
@@ -38,7 +37,7 @@ class InitState extends State<Token, void> {
   @override
   State process(Token input) {
     if (input.type.isSymbol) {
-      return FunctionNameState(FunctionDefinition.fromName(input.value));
+      return FunctionNameState(FunctionDefinition.fromName(input.asString));
     } else {
       throw SyntacticError.invalidToken(input);
     }
@@ -50,7 +49,55 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input) {
-    if (input.value.isEquals) {
+    if (input.type.isEquals) {
+      return FunctionEqualsState(output);
+    } else if (input.type.isOpenParenthesis) {
+      return FunctionWithParametersState(output);
+    } else {
+      throw SyntacticError.invalidToken(input);
+    }
+  }
+}
+
+class FunctionWithParametersState extends State<Token, FunctionDefinition> {
+  const FunctionWithParametersState(super.output);
+
+  @override
+  State process(Token input) {
+    if (input.type.isSymbol) {
+      return FunctionWithNextParametersState(
+          output.withParameter(input.asString));
+    } else if (input.type.isCloseParenthesis) {
+      if (output.parameters.isEmpty) {
+        throw SyntacticError.invalidToken(input);
+      }
+
+      return FunctionParametrizedState(output);
+    } else {
+      throw SyntacticError.invalidToken(input);
+    }
+  }
+}
+
+class FunctionWithNextParametersState extends State<Token, FunctionDefinition> {
+  const FunctionWithNextParametersState(super.output);
+
+  @override
+  State process(Token input) {
+    if (input.type.isComma) {
+      return FunctionWithParametersState(output);
+    } else {
+      throw SyntacticError.invalidToken(input);
+    }
+  }
+}
+
+class FunctionParametrizedState extends State<Token, FunctionDefinition> {
+  const FunctionParametrizedState(super.output);
+
+  @override
+  State process(Token input) {
+    if (input.type.isEquals) {
       return FunctionEqualsState(output);
     } else {
       throw SyntacticError.invalidToken(input);
@@ -65,15 +112,13 @@ class FunctionEqualsState extends State<Token, FunctionDefinition> {
   State process(Token input) {
     if (input.type.isString) {
       return ResultState(
-          [output.withExpression(LiteralExpression.string(input.value))]);
+          [output.withExpression(LiteralExpression.string(input.asString))]);
     } else if (input.type.isNumber) {
-      return ResultState([
-        output.withExpression(LiteralExpression.number(num.parse(input.value)))
-      ]);
+      return ResultState(
+          [output.withExpression(LiteralExpression.number(input.asNumber))]);
     } else if (input.type.isBoolean) {
-      return ResultState([
-        output.withExpression(LiteralExpression.boolean(bool.parse(input.value)))
-      ]);
+      return ResultState(
+          [output.withExpression(LiteralExpression.boolean(input.asBoolean))]);
     } else {
       throw SyntacticError.invalidToken(input);
     }

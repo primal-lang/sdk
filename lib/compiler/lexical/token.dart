@@ -14,6 +14,12 @@ class Token {
     required this.location,
   });
 
+  String get asString => value;
+
+  num get asNumber => num.parse(value);
+
+  bool get asBoolean => bool.parse(value);
+
   factory Token.string(Lexeme lexeme) => Token._(
         type: TokenType.string,
         value: lexeme.value,

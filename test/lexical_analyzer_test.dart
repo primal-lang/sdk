@@ -15,7 +15,7 @@ void main() {
     return lexicalAnalyzer.analyze();
   }
 
-  void _checkTokenValue(List<Token> actual, List<Token> expected) {
+  void _checkTokens(List<Token> actual, List<Token> expected) {
     expect(actual.length, equals(expected.length));
 
     for (int i = 0; i < actual.length; i++) {
@@ -101,7 +101,7 @@ void main() {
 
     test('Number', () {
       final List<Token> tokens = _tokens('42 1.23');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.number(const Lexeme(
           value: '42',
           location: Location(
@@ -121,7 +121,7 @@ void main() {
 
     test('String', () {
       final List<Token> tokens = _tokens('"This is a string"');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.string(const Lexeme(
           value: 'This is a string',
           location: Location(
@@ -134,7 +134,7 @@ void main() {
 
     test('Symbol', () {
       final List<Token> tokens = _tokens('isEven');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'isEven',
           location: Location(
@@ -147,7 +147,7 @@ void main() {
 
     test('Comma', () {
       final List<Token> tokens = _tokens(',');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.comma(const Lexeme(
           value: ',',
           location: Location(
@@ -160,7 +160,7 @@ void main() {
 
     test('Equals', () {
       final List<Token> tokens = _tokens('=');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.equals(const Lexeme(
           value: '=',
           location: Location(
@@ -173,7 +173,7 @@ void main() {
 
     test('Open parenthesis', () {
       final List<Token> tokens = _tokens('(');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.openParenthesis(const Lexeme(
           value: '(',
           location: Location(
@@ -186,7 +186,7 @@ void main() {
 
     test('Close parenthesis', () {
       final List<Token> tokens = _tokens(')');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.closeParenthesis(const Lexeme(
           value: ')',
           location: Location(
@@ -199,7 +199,7 @@ void main() {
 
     test('Constant declaration', () {
       final List<Token> tokens = _tokens('pi = 3.14');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'pi',
           location: Location(
@@ -226,7 +226,7 @@ void main() {
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('main = isEven(4)');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'main',
           location: Location(
@@ -274,7 +274,7 @@ void main() {
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('isZero(x) = eq(x, 0)');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'isZero',
           location: Location(
@@ -357,7 +357,7 @@ void main() {
 
     test('Function definition', () {
       final List<Token> tokens = _tokens('isTrue(x) = eq(x, true)');
-      _checkTokenValue(tokens, [
+      _checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'isTrue',
           location: Location(
