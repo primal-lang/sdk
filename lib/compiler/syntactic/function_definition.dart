@@ -3,23 +3,23 @@ import 'package:dry/compiler/syntactic/expression.dart';
 class FunctionDefinition {
   final String name;
   final List<String> parameters;
-  final Expression body;
+  final Expression expression;
 
-  const FunctionDefinition({
+  const FunctionDefinition._({
     required this.name,
     required this.parameters,
-    required this.body,
+    required this.expression,
   });
 
-  FunctionDefinition withExpression(Expression expression) => FunctionDefinition(
+  FunctionDefinition withExpression(Expression expression) => FunctionDefinition._(
         name: name,
         parameters: parameters,
-        body: expression,
+        expression: expression,
       );
 
-  factory FunctionDefinition.fromName(String name) => FunctionDefinition(
+  factory FunctionDefinition.fromName(String name) => FunctionDefinition._(
         name: name,
         parameters: [],
-        body: Expression.empty(),
+        expression: Expression.empty(),
       );
 }
