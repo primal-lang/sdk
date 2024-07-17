@@ -210,5 +210,25 @@ void main() {
         ),
       );
     });
+
+    test('Chained function calls expression', () {
+      final Expression expression = _expression('eq(mod(x, 2), 0)');
+      _checkExpressions(
+        expression,
+        FunctionCallExpression(
+          name: 'eq',
+          arguments: [
+            FunctionCallExpression(
+              name: 'mod',
+              arguments: [
+                LiteralExpression.symbol('x'),
+                LiteralExpression.number(2),
+              ],
+            ),
+            LiteralExpression.number(0),
+          ],
+        ),
+      );
+    });
   });
 }

@@ -2,8 +2,6 @@ greeting = "Hello World!"
 
 pi = 3.14
 
-add(x y) = x + y
-
 isEven(x) = eq(mod(x, 2), 0)
 
 isOdd(x) = not(isEven(x))

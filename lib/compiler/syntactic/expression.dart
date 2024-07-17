@@ -1,14 +1,14 @@
-class Expression {
+abstract class Expression {
   final ExpressionType type;
 
   const Expression({
     required this.type,
   });
 
-  String get body => '';
+  String get body;
 
   @override
-  String toString() => '{type: $type, body: $body}';
+  String toString() => body;
 }
 
 class LiteralExpression<T> extends Expression {
@@ -53,7 +53,7 @@ class FunctionCallExpression extends Expression {
   }) : super(type: ExpressionType.functionCall);
 
   @override
-  String get body => '$name(${arguments.join(', ')})';
+  String get body => '$name(${arguments.map((e) => e.toString()).join(', ')})';
 }
 
 enum ExpressionType {
