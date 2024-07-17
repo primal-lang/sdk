@@ -23,6 +23,8 @@ class ExpressionParser {
       final Token next = iterator.peek;
 
       if (next.type.isOpenParenthesis) {
+        iterator.consume();
+
         return FunctionCallExpression(
           name: input.asString,
           arguments: getFunctionArguments(iterator),
@@ -36,17 +38,19 @@ class ExpressionParser {
   }
 
   List<Expression> getFunctionArguments(ListIterator<Token> iterator) {
-    final Token input = iterator.next;
+    final List<Expression> result = [getExpression(iterator)];
 
-    /*if (input.type.isNewLine) {
-      return LiteralExpression.symbol(symbol);
-    } else if (input.type.isOpenParenthesis) {
-      return getFunctionArguments(
-        functionName: symbol,
-        iterator: iterator,
-      );
-    } else {*/
-    throw SyntacticError.invalidToken(input);
-    //}
+    while (!iterator.peek.type.isCloseParenthesis) {
+      final Token next = iterator.next;
+
+      if (!next.type.isComma) {
+        throw SyntacticError.invalidToken(next);
+      }
+
+      final Expression expression = getExpression(iterator);
+      result.add(expression);
+    }
+
+    return result;
   }
 }

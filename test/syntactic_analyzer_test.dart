@@ -184,5 +184,31 @@ void main() {
       final Expression expression = _expression('isEven');
       _checkExpressions(expression, LiteralExpression.symbol('isEven'));
     });
+
+    test('Function call expression with one parameter', () {
+      final Expression expression = _expression('isEven(x)');
+      _checkExpressions(
+        expression,
+        FunctionCallExpression(
+          name: 'isEven',
+          arguments: [LiteralExpression.symbol('x')],
+        ),
+      );
+    });
+
+    test('Function call expression with several parameters', () {
+      final Expression expression = _expression('if(true, 1.23, "hello")');
+      _checkExpressions(
+        expression,
+        FunctionCallExpression(
+          name: 'if',
+          arguments: [
+            LiteralExpression.boolean(true),
+            LiteralExpression.number(1.23),
+            LiteralExpression.string('hello'),
+          ],
+        ),
+      );
+    });
   });
 }
