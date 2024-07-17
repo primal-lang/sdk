@@ -1,35 +1,15 @@
 import 'package:dry/compiler/errors/lexical_error.dart';
-import 'package:dry/compiler/input/character.dart';
-import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:test/test.dart';
+import 'test_utils.dart';
 
 void main() {
-  List<Token> _tokens(String source) {
-    final InputAnalyzer inputAnalyzer = InputAnalyzer(source);
-    final List<Character> characters = inputAnalyzer.analyze();
-    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
-
-    return lexicalAnalyzer.analyze();
-  }
-
-  void _checkTokens(List<Token> actual, List<Token> expected) {
-    expect(actual.length, equals(expected.length + 1));
-
-    for (int i = 0; i < expected.length; i++) {
-      expect(actual[i].type, equals(expected[i].type));
-      expect(actual[i].value, equals(expected[i].value));
-      expect(actual[i].location.row, equals(expected[i].location.row));
-      expect(actual[i].location.column, equals(expected[i].location.column));
-    }
-  }
-
   group('Lexical Analyzer', () {
     test('Valid number', () {
-      final List<Token> tokens = _tokens('42 1.23');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens('42 1.23');
+      checkTokens(tokens, [
         Token.number(const Lexeme(
           value: '42',
           location: Location(
@@ -49,7 +29,7 @@ void main() {
 
     test('Invalid integer', () {
       try {
-        _tokens('42a');
+        getTokens('42a');
       } catch (e) {
         expect(e, isA<LexicalError>());
       }
@@ -57,15 +37,15 @@ void main() {
 
     test('Invalid decimal', () {
       try {
-        _tokens('1..2');
+        getTokens('1..2');
       } catch (e) {
         expect(e, isA<LexicalError>());
       }
     });
 
     test('String', () {
-      final List<Token> tokens = _tokens('"This is a string"');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens('"This is a string"');
+      checkTokens(tokens, [
         Token.string(const Lexeme(
           value: 'This is a string',
           location: Location(
@@ -77,8 +57,8 @@ void main() {
     });
 
     test('Symbol', () {
-      final List<Token> tokens = _tokens('isEven');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens('isEven');
+      checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'isEven',
           location: Location(
@@ -91,15 +71,15 @@ void main() {
 
     test('Invalid symbol', () {
       try {
-        _tokens('func#');
+        getTokens('func#');
       } catch (e) {
         expect(e, isA<LexicalError>());
       }
     });
 
     test('Comma', () {
-      final List<Token> tokens = _tokens(',');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens(',');
+      checkTokens(tokens, [
         Token.comma(const Lexeme(
           value: ',',
           location: Location(
@@ -111,8 +91,8 @@ void main() {
     });
 
     test('Equals', () {
-      final List<Token> tokens = _tokens('=');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens('=');
+      checkTokens(tokens, [
         Token.equals(const Lexeme(
           value: '=',
           location: Location(
@@ -124,8 +104,8 @@ void main() {
     });
 
     test('Open parenthesis', () {
-      final List<Token> tokens = _tokens('(');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens('(');
+      checkTokens(tokens, [
         Token.openParenthesis(const Lexeme(
           value: '(',
           location: Location(
@@ -137,8 +117,8 @@ void main() {
     });
 
     test('Close parenthesis', () {
-      final List<Token> tokens = _tokens(')');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens(')');
+      checkTokens(tokens, [
         Token.closeParenthesis(const Lexeme(
           value: ')',
           location: Location(
@@ -150,8 +130,8 @@ void main() {
     });
 
     test('Constant declaration', () {
-      final List<Token> tokens = _tokens('pi = 3.14');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens('pi = 3.14');
+      checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'pi',
           location: Location(
@@ -177,8 +157,8 @@ void main() {
     });
 
     test('Main function definition', () {
-      final List<Token> tokens = _tokens('main = isEven(4)');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens('main = isEven(4)');
+      checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'main',
           location: Location(
@@ -225,8 +205,8 @@ void main() {
     });
 
     test('Function definition', () {
-      final List<Token> tokens = _tokens('isZero(x) = eq(x, 0)');
-      _checkTokens(tokens, [
+      final List<Token> tokens = getTokens('isZero(x) = eq(x, 0)');
+      checkTokens(tokens, [
         Token.symbol(const Lexeme(
           value: 'isZero',
           location: Location(
