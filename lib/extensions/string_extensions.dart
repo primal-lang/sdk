@@ -3,7 +3,7 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_LETTER = RegExp(r'[a-zA-Z]');
 
-  static final RegExp REGEX_WHITESPACE = RegExp(r'[^\S\r\n]');
+  static final RegExp REGEX_WHITESPACE = RegExp(r'\s');
 
   static final RegExp REGEX_NEW_LINE = RegExp(r'\n');
 

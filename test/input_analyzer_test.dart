@@ -73,6 +73,7 @@ void main() {
       expect(true, equals('='.isEquals));
       expect(true, equals('('.isOpenParenthesis));
       expect(true, equals(')'.isCloseParenthesis));
+      expect(true, equals('\n'.isNewLine));
     });
 
     test('isSeparator', () {
