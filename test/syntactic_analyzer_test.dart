@@ -210,7 +210,7 @@ void main() {
       );
     });
 
-    test('Chained function calls expression', () {
+    test('Chained function calls expression 1', () {
       final Expression expression = _expression('eq(mod(x, 2), 0)');
       _checkExpressions(
         expression,
@@ -225,6 +225,68 @@ void main() {
               ],
             ),
             LiteralExpression.number(0),
+          ],
+        ),
+      );
+    });
+
+    test('Chained function calls expression 2', () {
+      final Expression expression = _expression('not(isEven(positive(x)))');
+      _checkExpressions(
+        expression,
+        FunctionCallExpression(
+          name: 'not',
+          arguments: [
+            FunctionCallExpression(
+              name: 'isEven',
+              arguments: [
+                FunctionCallExpression(
+                  name: 'positive',
+                  arguments: [
+                    LiteralExpression.symbol('x'),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
+
+    test('Chained function calls expression 3', () {
+      final Expression expression =
+          _expression('if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))');
+      _checkExpressions(
+        expression,
+        FunctionCallExpression(
+          name: 'if',
+          arguments: [
+            FunctionCallExpression(
+              name: 'eq',
+              arguments: [
+                LiteralExpression.symbol('n'),
+                LiteralExpression.number(0),
+              ],
+            ),
+            LiteralExpression.number(1),
+            FunctionCallExpression(
+              name: 'mul',
+              arguments: [
+                LiteralExpression.symbol('n'),
+                FunctionCallExpression(
+                  name: 'factorial',
+                  arguments: [
+                    FunctionCallExpression(
+                      name: 'sub',
+                      arguments: [
+                        LiteralExpression.symbol('n'),
+                        LiteralExpression.number(1),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
       );
