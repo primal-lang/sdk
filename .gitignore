@@ -1,3 +1,4 @@
 .dart_tool/
+.idx/
 .vscode/
 acpe.sh
