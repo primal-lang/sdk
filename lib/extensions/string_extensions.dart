@@ -21,6 +21,8 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_CLOSE_PARENTHESIS = RegExp(r'\)');
 
+  static final RegExp REGEX_HASHTAG = RegExp(r'#');
+
   static final RegExp REGEX_BOOLEAN = RegExp(r'true|false');
 
   bool get isDigit => REGEX_DIGIT.hasMatch(this);
@@ -42,6 +44,8 @@ extension StringExtensions on String {
   bool get isOpenParenthesis => REGEX_OPEN_PARENTHESIS.hasMatch(this);
 
   bool get isCloseParenthesis => REGEX_CLOSE_PARENTHESIS.hasMatch(this);
+
+  bool get isHashtag => REGEX_HASHTAG.hasMatch(this);
 
   bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
 

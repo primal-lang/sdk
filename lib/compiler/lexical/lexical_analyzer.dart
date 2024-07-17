@@ -52,10 +52,25 @@ class InitState extends State<Character, void> {
       return IntegerState(Lexeme.fromCharacter(input));
     } else if (input.isLetter) {
       return SymbolState(Lexeme.fromCharacter(input));
+    } else if (input.isHashtag) {
+      return const CommentState();
     } else if (input.isSeparator) {
       return ResultState([Token.separator(Lexeme.fromCharacter(input))]);
     } else {
       return this;
+    }
+  }
+}
+
+class CommentState extends State<Character, void> {
+  const CommentState([super.output]);
+
+  @override
+  State process(Character input) {
+    if (!input.isNewLine) {
+      return const CommentState();
+    } else {
+      return const InitState();
     }
   }
 }

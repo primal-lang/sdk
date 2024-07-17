@@ -6,10 +6,13 @@ pi = 3.14
 
 isToday = true
 
+# Returns true if x is equal to zero
 isZero(x) = eq(x, 0)
 
+# Returns true if x is an even number
 isEven(x) = isZero(mod(x, 2))
 
+# Returns true if x is an odd number
 isOdd(x) = not(isEven(x))
 
 factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))

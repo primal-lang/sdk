@@ -20,6 +20,8 @@ class Character {
 
   bool get isDot => value.isDot;
 
+  bool get isHashtag => value.isHashtag;
+
   bool get isNewLine => value.isNewLine;
 
   bool get isSeparator => value.isSeparator;

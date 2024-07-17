@@ -10,7 +10,6 @@ The language has the following characteristics:
 * Case sensitive
 
 TODO
-* Support comments
 * Support arrays
 * Support maps
 * Higher order functions
