@@ -7,6 +7,8 @@ at(a, num): T
 concat(a, b): T
 substr/sublist(str, start, length): T
 contains(list, a): bool
+isEmpty(x): bool
+isNotEmpty(x): bool
 
 # Arithmetic
 
@@ -27,6 +29,7 @@ ceil(num): num
 sin(num): num
 cos(num): num
 tan(num): num
+log(num): num
 gt(num1, num2): bool
 lt(num1, num2): bool
 ge(num1, num2): bool
@@ -51,6 +54,7 @@ match(str, regex): bool
 split(str, delimiter): list
 join(list, delimiter): string
 format(str, ...args): string
+toString(T): string
 
 # Lists
 
@@ -60,6 +64,7 @@ tail(list): T
 addFirst(a, list): list
 addLast(a, list): list
 remove(index, list): list
+reverse(list): list
 
 # Casting
 
