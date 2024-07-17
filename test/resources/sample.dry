@@ -1,7 +1,19 @@
-greeting = "Hello World!"
+greeting = "Hello, world!"
+
+farewell = 'Goodbye, world!'
 
 pi = 3.14
 
-isEven(x) = eq(mod(x, 2), 0)
+isToday = true
+
+isZero(x) = eq(x, 0)
+
+isEven(x) = isZero(mod(x, 2))
 
 isOdd(x) = not(isEven(x))
+
+factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))
+
+fib(n) = if(eq(n, 0), 0, if(eq(n, 1), 1, add(fib(sub(n, 1)), fib(sub(n, 2)))))
+
+main = factorial(4)

@@ -219,7 +219,7 @@ void main() {
     test('Sample file', () {
       final String source = loadFile('sample.dry');
       final List<FunctionDefinition> functions = getFunctions(source);
-      print(functions);
+      expect(functions.length, equals(10));
     });
   });
 }
