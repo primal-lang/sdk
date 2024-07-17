@@ -8,6 +8,9 @@ class SyntacticError implements Exception {
   factory SyntacticError.invalidToken(Token token) =>
       SyntacticError('Invalid token $token');
 
+  factory SyntacticError.unexpectedEndOfFile() =>
+      const SyntacticError('Unexpected end of file');
+
   @override
   String toString() => message;
 }

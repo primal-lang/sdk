@@ -20,7 +20,9 @@ void main() {
   }
 
   void _checkFunctions(
-      List<FunctionDefinition> actual, List<FunctionDefinition> expected) {
+    List<FunctionDefinition> actual,
+    List<FunctionDefinition> expected,
+  ) {
     expect(actual.length, equals(expected.length));
 
     for (int i = 0; i < actual.length; i++) {

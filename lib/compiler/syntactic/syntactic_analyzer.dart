@@ -2,7 +2,7 @@ import 'package:dry/compiler/errors/syntactic_error.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/state.dart';
-import 'package:dry/compiler/syntactic/expression.dart';
+import 'package:dry/compiler/syntactic/function_declaration.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/utils/list_iterator.dart';
 
@@ -37,7 +37,7 @@ class InitState extends State<Token, void> {
   @override
   State process(Token input) {
     if (input.type.isSymbol) {
-      return FunctionNameState(FunctionDefinition.fromName(input.asString));
+      return FunctionNameState(FunctionDeclaration.withName(input.asString));
     } else if (input.type.isNewLine) {
       return this;
     } else {
@@ -46,7 +46,7 @@ class InitState extends State<Token, void> {
   }
 }
 
-class FunctionNameState extends State<Token, FunctionDefinition> {
+class FunctionNameState extends State<Token, FunctionDeclaration> {
   const FunctionNameState(super.output);
 
   @override
@@ -61,7 +61,7 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionWithParametersState extends State<Token, FunctionDefinition> {
+class FunctionWithParametersState extends State<Token, FunctionDeclaration> {
   const FunctionWithParametersState(super.output);
 
   @override
@@ -81,7 +81,8 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionWithMoreParametersState extends State<Token, FunctionDefinition> {
+class FunctionWithMoreParametersState
+    extends State<Token, FunctionDeclaration> {
   const FunctionWithMoreParametersState(super.output);
 
   @override
@@ -96,7 +97,7 @@ class FunctionWithMoreParametersState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionParametrizedState extends State<Token, FunctionDefinition> {
+class FunctionParametrizedState extends State<Token, FunctionDeclaration> {
   const FunctionParametrizedState(super.output);
 
   @override
@@ -109,30 +110,20 @@ class FunctionParametrizedState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionBodyState extends State<Token, FunctionDefinition> {
+class FunctionBodyState extends State<Token, FunctionDeclaration> {
   const FunctionBodyState(super.output);
 
   @override
   State process(Token input) {
-    if (input.type.isString) {
-      return ResultState(
-          output.withExpression(LiteralExpression.string(input.asString)));
-    } else if (input.type.isNumber) {
-      return ResultState(
-          output.withExpression(LiteralExpression.number(input.asNumber)));
-    } else if (input.type.isBoolean) {
-      return ResultState(
-          output.withExpression(LiteralExpression.boolean(input.asBoolean)));
-    } else if (input.type.isSymbol) {
-      return SymbolExpressionState(
-          output.withExpression(LiteralExpression.symbol(input.asString)));
+    if (!input.type.isNewLine) {
+      return FunctionBodyState(output.withBody(input));
     } else {
-      throw SyntacticError.invalidToken(input);
+      return ResultState(output.definition);
     }
   }
 }
 
-class SymbolExpressionState extends State<Token, FunctionDefinition> {
+class SymbolExpressionState extends State<Token, FunctionDeclaration> {
   const SymbolExpressionState(super.output);
 
   @override

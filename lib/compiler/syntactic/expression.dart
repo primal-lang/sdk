@@ -7,8 +7,6 @@ class Expression {
 
   String get body => '';
 
-  factory Expression.empty() => const Expression(type: ExpressionType.empty);
-
   @override
   String toString() => '{type: $type, body: $body}';
 }
@@ -53,10 +51,12 @@ class FunctionCallExpression extends Expression {
     required this.name,
     required this.arguments,
   }) : super(type: ExpressionType.functionCall);
+
+  @override
+  String get body => arguments.join(',');
 }
 
 enum ExpressionType {
-  empty,
   literalString,
   literalNumber,
   literalBoolean,

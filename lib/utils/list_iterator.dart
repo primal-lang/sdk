@@ -1,3 +1,5 @@
+import 'package:dry/compiler/errors/syntactic_error.dart';
+
 class ListIterator<T> {
   int index = 0;
   final List<T> list;
@@ -6,5 +8,19 @@ class ListIterator<T> {
 
   bool get hasNext => index < list.length;
 
-  T get next => list[index++];
+  T get peek {
+    if (index < list.length) {
+      return list[index];
+    } else {
+      throw SyntacticError.unexpectedEndOfFile();
+    }
+  }
+
+  T get next {
+    if (index < list.length) {
+      return list[index++];
+    } else {
+      throw SyntacticError.unexpectedEndOfFile();
+    }
+  }
 }
