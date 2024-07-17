@@ -67,7 +67,7 @@ void main() {
     });
 
     test('isOther', () {
-      expect(true, equals('"'.isQuote));
+      expect(true, equals('"'.isDoubleQuote));
       expect(true, equals('.'.isDot));
       expect(true, equals(','.isComma));
       expect(true, equals('='.isEquals));

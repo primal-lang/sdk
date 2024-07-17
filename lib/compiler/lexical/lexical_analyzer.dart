@@ -34,8 +34,15 @@ class InitState extends State<Character, void> {
 
   @override
   State process(Character input) {
-    if (input.isQuote) {
-      return StringState(Lexeme(
+    if (input.isDoubleQuote) {
+      return StringDoubleQuoteState(Lexeme(
+          value: '',
+          location: Location(
+            row: input.location.row,
+            column: input.location.column + 1,
+          )));
+    } else if (input.isSingleQuote) {
+      return StringSingleQuoteState(Lexeme(
           value: '',
           location: Location(
             row: input.location.row,
@@ -53,15 +60,28 @@ class InitState extends State<Character, void> {
   }
 }
 
-class StringState extends State<Character, Lexeme> {
-  const StringState(super.output);
+class StringDoubleQuoteState extends State<Character, Lexeme> {
+  const StringDoubleQuoteState(super.output);
 
   @override
   State process(Character input) {
-    if (input.isQuote) {
+    if (input.isDoubleQuote) {
       return ResultState([Token.string(output)]);
     } else {
-      return StringState(output.add(input));
+      return StringDoubleQuoteState(output.add(input));
+    }
+  }
+}
+
+class StringSingleQuoteState extends State<Character, Lexeme> {
+  const StringSingleQuoteState(super.output);
+
+  @override
+  State process(Character input) {
+    if (input.isSingleQuote) {
+      return ResultState([Token.string(output)]);
+    } else {
+      return StringSingleQuoteState(output.add(input));
     }
   }
 }

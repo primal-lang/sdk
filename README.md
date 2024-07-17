@@ -10,7 +10,6 @@ The language has the following characteristics:
 * Case sensitive
 
 TODO
-* Allow strings with double quote, single quote, accents, etc
 * Support arrays
 * Support maps
 * Higher order functions

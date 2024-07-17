@@ -54,7 +54,7 @@ void main() {
       }
     });
 
-    test('Literal string definition', () {
+    test('Literal double quoted string definition', () {
       final List<FunctionDefinition> functions =
           getFunctions('greeting = "Hello, world!"');
       checkFunctions(functions, [
@@ -62,6 +62,18 @@ void main() {
           name: 'greeting',
           parameters: [],
           expression: LiteralExpression.string('Hello, world!'),
+        ),
+      ]);
+    });
+
+    test('Literal single quoted string definition', () {
+      final List<FunctionDefinition> functions =
+          getFunctions("greeting = 'Goodbye, world!'");
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'greeting',
+          parameters: [],
+          expression: LiteralExpression.string('Goodbye, world!'),
         ),
       ]);
     });

@@ -7,7 +7,9 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_NEW_LINE = RegExp(r'\n');
 
-  static final RegExp REGEX_QUOTE = RegExp(r'"');
+  static final RegExp REGEX_DOUBLE_QUOTE = RegExp(r'"');
+
+  static final RegExp REGEX_SINGLE_QUOTE = RegExp(r"'");
 
   static final RegExp REGEX_DOT = RegExp(r'\.');
 
@@ -27,7 +29,9 @@ extension StringExtensions on String {
 
   bool get isWhitespace => REGEX_WHITESPACE.hasMatch(this);
 
-  bool get isQuote => REGEX_QUOTE.hasMatch(this);
+  bool get isDoubleQuote => REGEX_DOUBLE_QUOTE.hasMatch(this);
+
+  bool get isSingleQuote => REGEX_SINGLE_QUOTE.hasMatch(this);
 
   bool get isDot => REGEX_DOT.hasMatch(this);
 

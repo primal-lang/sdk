@@ -14,7 +14,9 @@ class Character {
 
   bool get isLetter => value.isLetter;
 
-  bool get isQuote => value.isQuote;
+  bool get isDoubleQuote => value.isDoubleQuote;
+
+  bool get isSingleQuote => value.isSingleQuote;
 
   bool get isDot => value.isDot;
 

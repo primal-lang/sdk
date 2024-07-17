@@ -7,6 +7,32 @@ import 'test_utils.dart';
 
 void main() {
   group('Lexical Analyzer', () {
+    test('Double quoted string', () {
+      final List<Token> tokens = getTokens('"This is a double quoted string"');
+      checkTokens(tokens, [
+        Token.string(const Lexeme(
+          value: 'This is a double quoted string',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
+      ]);
+    });
+
+    test('Single single string', () {
+      final List<Token> tokens = getTokens("'This is a single single string'");
+      checkTokens(tokens, [
+        Token.string(const Lexeme(
+          value: 'This is a single single string',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
+      ]);
+    });
+
     test('Valid number', () {
       final List<Token> tokens = getTokens('42 1.23');
       checkTokens(tokens, [
@@ -41,19 +67,6 @@ void main() {
       } catch (e) {
         expect(e, isA<LexicalError>());
       }
-    });
-
-    test('String', () {
-      final List<Token> tokens = getTokens('"This is a string"');
-      checkTokens(tokens, [
-        Token.string(const Lexeme(
-          value: 'This is a string',
-          location: Location(
-            row: 1,
-            column: 2,
-          ),
-        )),
-      ]);
     });
 
     test('Symbol', () {
