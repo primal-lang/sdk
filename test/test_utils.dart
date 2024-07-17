@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
@@ -87,4 +88,10 @@ void checkFunctions(
 
     checkExpressions(actual[i].expression, expected[i].expression);
   }
+}
+
+String loadFile(String path) {
+  final File file = File('./test/resources/$path');
+
+  return file.readAsStringSync();
 }
