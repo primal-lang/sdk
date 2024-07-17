@@ -10,10 +10,11 @@ The language has the following characteristics:
 * Case sensitive
 
 TODO
-* Support arrays
-* Support maps
+* Arrays
+* Maps
 * Higher order functions
 * Types (all start with uppercase)
+* Imports
 * Lambdas
 * Curryfication
 * x:xs
