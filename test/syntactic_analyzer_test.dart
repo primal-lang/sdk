@@ -110,5 +110,98 @@ void main() {
         ),
       ]);
     });
+
+    test('Complex function 1', () {
+      final List<FunctionDefinition> functions =
+          getFunctions('isEven(x) = eq(mod(x, 2), 0)');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'isEven',
+          parameters: ['x'],
+          expression: FunctionCallExpression(
+            name: 'eq',
+            arguments: [
+              FunctionCallExpression(
+                name: 'mod',
+                arguments: [
+                  LiteralExpression.symbol('x'),
+                  LiteralExpression.number(2),
+                ],
+              ),
+              LiteralExpression.number(0),
+            ],
+          ),
+        ),
+      ]);
+    });
+
+    test('Complex function 2', () {
+      final List<FunctionDefinition> functions =
+          getFunctions('isOdd(x) = not(isEven(positive(x)))');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'isOdd',
+          parameters: ['x'],
+          expression: FunctionCallExpression(
+            name: 'not',
+            arguments: [
+              FunctionCallExpression(
+                name: 'isEven',
+                arguments: [
+                  FunctionCallExpression(
+                    name: 'positive',
+                    arguments: [
+                      LiteralExpression.symbol('x'),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ]);
+    });
+
+    test('Complex function 3', () {
+      final List<FunctionDefinition> functions = getFunctions(
+          'factorial(x) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'factorial',
+          parameters: ['x'],
+          expression: FunctionCallExpression(
+            name: 'if',
+            arguments: [
+              FunctionCallExpression(
+                name: 'eq',
+                arguments: [
+                  LiteralExpression.symbol('n'),
+                  LiteralExpression.number(0),
+                ],
+              ),
+              LiteralExpression.number(1),
+              FunctionCallExpression(
+                name: 'mul',
+                arguments: [
+                  LiteralExpression.symbol('n'),
+                  FunctionCallExpression(
+                    name: 'factorial',
+                    arguments: [
+                      FunctionCallExpression(
+                        name: 'sub',
+                        arguments: [
+                          LiteralExpression.symbol('n'),
+                          LiteralExpression.number(1),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ]);
+    });
   });
 }
