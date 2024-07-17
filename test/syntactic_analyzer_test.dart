@@ -56,6 +56,21 @@ void main() {
 
   void _checkExpressions(Expression actual, Expression expected) {
     expect(actual.toString(), equals(expected.toString()));
+    expect(actual.type, equals(expected.type));
+
+    if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
+      expect(actual.value, equals(expected.value));
+    } else if ((actual is FunctionCallExpression) &&
+        (expected is FunctionCallExpression)) {
+      expect(actual.name, equals(expected.name));
+      expect(actual.arguments.length, equals(expected.arguments.length));
+
+      for (int i = 0; i < actual.arguments.length; i++) {
+        _checkExpressions(actual.arguments[i], expected.arguments[i]);
+      }
+    } else {
+      fail('Expression types do not match');
+    }
   }
 
   group('Syntactic Analyzer', () {
