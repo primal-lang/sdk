@@ -15,8 +15,7 @@ class FunctionDeclaration {
   });
 
   FunctionDefinition get definition {
-    final ListIterator<Token> iterator = ListIterator(body);
-    final ExpressionParser parser = ExpressionParser(iterator);
+    final ExpressionParser parser = ExpressionParser(ListIterator(body));
 
     return FunctionDefinition(
       name: name,

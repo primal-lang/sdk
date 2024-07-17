@@ -26,8 +26,7 @@ void main() {
     final List<Character> characters = inputAnalyzer.analyze();
     final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();
-    final ListIterator<Token> iterator = ListIterator(tokens);
-    final ExpressionParser parser = ExpressionParser(iterator);
+    final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
 
     return parser.expression;
   }
