@@ -6,7 +6,7 @@ import 'package:dry/utils/list_iterator.dart';
 class ExpressionParser {
   final ListIterator<Token> iterator;
 
-  const ExpressionParser({required this.iterator});
+  const ExpressionParser(this.iterator);
 
   Expression get expression => getExpression(iterator);
 

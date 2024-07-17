@@ -4,8 +4,10 @@ import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
+import 'package:dry/compiler/syntactic/expression_parser.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/compiler/syntactic/syntactic_analyzer.dart';
+import 'package:dry/utils/list_iterator.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -17,6 +19,17 @@ void main() {
     final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
 
     return syntacticAnalyzer.analyze();
+  }
+
+  Expression _expression(String source) {
+    final InputAnalyzer inputAnalyzer = InputAnalyzer(source);
+    final List<Character> characters = inputAnalyzer.analyze();
+    final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
+    final List<Token> tokens = lexicalAnalyzer.analyze();
+    final ListIterator<Token> iterator = ListIterator(tokens);
+    final ExpressionParser parser = ExpressionParser(iterator);
+
+    return parser.expression;
   }
 
   void _checkFunctions(
@@ -40,6 +53,10 @@ void main() {
       expect(actual[i].expression.toString(),
           equals(expected[i].expression.toString()));
     }
+  }
+
+  void _checkExpressions(Expression actual, Expression expected) {
+    expect(actual.toString(), equals(expected.toString()));
   }
 
   group('Syntactic Analyzer', () {
@@ -146,6 +163,26 @@ void main() {
           expression: LiteralExpression.boolean(true),
         ),
       ]);
+    });
+
+    test('String expression', () {
+      final Expression expression = _expression('"Hello, world!"');
+      _checkExpressions(expression, LiteralExpression.string('Hello, world!'));
+    });
+
+    test('Number expression', () {
+      final Expression expression = _expression('123');
+      _checkExpressions(expression, LiteralExpression.number(123));
+    });
+
+    test('Boolean expression', () {
+      final Expression expression = _expression('true');
+      _checkExpressions(expression, LiteralExpression.boolean(true));
+    });
+
+    test('Symbol expression', () {
+      final Expression expression = _expression('isEven');
+      _checkExpressions(expression, LiteralExpression.symbol('isEven'));
     });
   });
 }

@@ -53,7 +53,7 @@ class FunctionCallExpression extends Expression {
   }) : super(type: ExpressionType.functionCall);
 
   @override
-  String get body => arguments.join(',');
+  String get body => '$name(${arguments.join(', ')})';
 }
 
 enum ExpressionType {
