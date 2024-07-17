@@ -8,7 +8,9 @@ class ExpressionParser {
 
   const ExpressionParser(this.iterator);
 
-  Expression get expression {
+  Expression get expression => getExpression(iterator);
+
+  Expression getExpression(ListIterator<Token> iterator) {
     final Token input = iterator.next;
 
     if (input.type.isString) {
@@ -25,7 +27,7 @@ class ExpressionParser {
 
         return FunctionCallExpression(
           name: input.asString,
-          arguments: functionArguments,
+          arguments: getFunctionArguments(iterator),
         );
       } else {
         return LiteralExpression.symbol(input.asString);
@@ -35,8 +37,8 @@ class ExpressionParser {
     }
   }
 
-  List<Expression> get functionArguments {
-    final List<Expression> result = [expression];
+  List<Expression> getFunctionArguments(ListIterator<Token> iterator) {
+    final List<Expression> result = [getExpression(iterator)];
 
     while (!iterator.peek.type.isCloseParenthesis) {
       final Token next = iterator.next;
@@ -45,7 +47,7 @@ class ExpressionParser {
         throw SyntacticError.invalidToken(next);
       }
 
-      result.add(expression);
+      result.add(getExpression(iterator));
     }
 
     final Token next = iterator.next;
