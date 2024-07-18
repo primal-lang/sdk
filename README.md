@@ -8,6 +8,7 @@
 * Interpreted
 
 TODO
+- Allow negative numbers
 - Allow underscore function name
 - Store location of expression
 
