@@ -13,6 +13,8 @@ isNotEmpty(x): bool
 
 negative(num): num
 positive(num): num
+inc(num): num
+dec(num): num
 sum(num1, num2): num
 sub(num1, num2): num
 mul(num1, num2): num
