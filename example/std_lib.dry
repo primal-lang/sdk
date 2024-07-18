@@ -5,7 +5,6 @@ neq(a, b): bool
 length(a): num
 at(a, num): T
 concat(a, b): T
-substr/sublist(str, start, length): T
 contains(list, a): bool
 isEmpty(x): bool
 isNotEmpty(x): bool
@@ -44,9 +43,10 @@ xor(bool1, bool2): bool
 
 # String
 
-startswith(str, text): T
-endswith(str, text): T
-replace(str, old, new): str
+substring(str, start, length): string
+startswith(str, text): bool
+endswith(str, text): bool
+replace(str, old, new): string
 uppercase(str): string
 lowercase(str): string
 trim(str): string
@@ -61,6 +61,8 @@ toString(T): string
 first(list): T
 last(list): T
 tail(list): T
+take(x, list): list
+drop(x, list): list
 addFirst(a, list): list
 addLast(a, list): list
 remove(index, list): list
@@ -89,3 +91,6 @@ map(func, list): list
 filter(func, list): list
 reduce(func, list, initial): T
 sort(func, list): list
+all(func, list): bool
+any(func, list): bool
+zip(func, list1, list2): list
