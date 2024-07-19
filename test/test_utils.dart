@@ -19,14 +19,18 @@ List<Token> getTokens(String source) {
   return lexicalAnalyzer.analyze();
 }
 
+void checkLocations(Location actual, Location expected) {
+  expect(actual.row, equals(expected.row));
+  expect(actual.column, equals(expected.column));
+}
+
 void checkTokens(List<Token> actual, List<Token> expected) {
   expect(actual.length, equals(expected.length + 1));
 
   for (int i = 0; i < expected.length; i++) {
     expect(actual[i].type, equals(expected[i].type));
     expect(actual[i].value, equals(expected[i].value));
-    expect(actual[i].location.row, equals(expected[i].location.row));
-    expect(actual[i].location.column, equals(expected[i].location.column));
+    checkLocations(actual[i].location, expected[i].location);
   }
 }
 
