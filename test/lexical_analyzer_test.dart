@@ -14,7 +14,7 @@ void main() {
           value: 'This is a double quoted string',
           location: Location(
             row: 1,
-            column: 2,
+            column: 1,
           ),
         )),
       ]);
@@ -27,7 +27,7 @@ void main() {
           value: 'This is a single single string',
           location: Location(
             row: 1,
-            column: 2,
+            column: 1,
           ),
         )),
       ]);

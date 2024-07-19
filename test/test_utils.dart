@@ -47,6 +47,7 @@ Expression getExpression(String source) {
 void checkExpressions(Expression actual, Expression expected) {
   expect(actual.toString(), equals(expected.toString()));
   expect(actual.type, equals(expected.type));
+  checkLocations(actual.location, expected.location);
 
   if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
     expect(actual.value, equals(expected.value));

@@ -36,18 +36,14 @@ class InitState extends State<Character, void> {
   State process(Character input) {
     if (input.isDoubleQuote) {
       return StringDoubleQuoteState(Lexeme(
-          value: '',
-          location: Location(
-            row: input.location.row,
-            column: input.location.column + 1,
-          )));
+        value: '',
+        location: input.location,
+      ));
     } else if (input.isSingleQuote) {
       return StringSingleQuoteState(Lexeme(
-          value: '',
-          location: Location(
-            row: input.location.row,
-            column: input.location.column + 1,
-          )));
+        value: '',
+        location: input.location,
+      ));
     } else if (input.isDash) {
       return NegativeNumberState(Lexeme.fromCharacter(input));
     } else if (input.isDigit) {

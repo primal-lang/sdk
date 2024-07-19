@@ -7,8 +7,8 @@ void main() {
   group('Expression Parser', () {
     test('String expression', () {
       final Expression expression = getExpression('"Hello, world!"');
-      checkExpressions(
-          expression, LiteralExpression.string(stringToken('Hello, world!')));
+      checkExpressions(expression,
+          LiteralExpression.string(stringToken('Hello, world!', 1, 1)));
     });
 
     test('Number expression', () {
@@ -34,7 +34,7 @@ void main() {
         expression,
         FunctionCallExpression(
           name: 'isEven',
-          arguments: [LiteralExpression.symbol(symbolToken('x'))],
+          arguments: [LiteralExpression.symbol(symbolToken('x', 1, 8))],
           location: const Location(row: 1, column: 1),
         ),
       );
@@ -47,9 +47,9 @@ void main() {
         FunctionCallExpression(
           name: 'if',
           arguments: [
-            LiteralExpression.boolean(booleanToken(true)),
-            LiteralExpression.number(numberToken(1.23)),
-            LiteralExpression.string(stringToken('hello')),
+            LiteralExpression.boolean(booleanToken(true, 1, 4)),
+            LiteralExpression.number(numberToken(1.23, 1, 10)),
+            LiteralExpression.string(stringToken('hello', 1, 16)),
           ],
           location: const Location(row: 1, column: 1),
         ),
