@@ -25,6 +25,10 @@ class SyntacticAnalyzer
       }
     }
 
+    if (!(state is InitState)) {
+      throw SyntacticError.unexpectedEndOfFile();
+    }
+
     return result;
   }
 }

@@ -4,7 +4,6 @@
 ## TODO
 - Allow multi-line function declaration
 - Allow comments in between a function declaration
-- Remove new like character?
 
 * Arrays
 * Maps

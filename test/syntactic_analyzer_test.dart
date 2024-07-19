@@ -10,6 +10,7 @@ void main() {
     test('Invalid function definition 1', () {
       try {
         getFunctions('123');
+        fail('Should fail');
       } catch (e) {
         expect(e, isA<SyntacticError>());
       }
@@ -18,6 +19,7 @@ void main() {
     test('Invalid function definition 2', () {
       try {
         getFunctions('isEven ,');
+        fail('Should fail');
       } catch (e) {
         expect(e, isA<SyntacticError>());
       }
@@ -26,6 +28,7 @@ void main() {
     test('Invalid function definition 3', () {
       try {
         getFunctions('isEven()');
+        fail('Should fail');
       } catch (e) {
         expect(e, isA<SyntacticError>());
       }
@@ -34,6 +37,7 @@ void main() {
     test('Invalid function definition 4', () {
       try {
         getFunctions('isEven(1');
+        fail('Should fail');
       } catch (e) {
         expect(e, isA<SyntacticError>());
       }
@@ -42,6 +46,7 @@ void main() {
     test('Invalid function definition 5', () {
       try {
         getFunctions('isEven(a(');
+        fail('Should fail');
       } catch (e) {
         expect(e, isA<SyntacticError>());
       }
@@ -50,6 +55,16 @@ void main() {
     test('Invalid function definition 6', () {
       try {
         getFunctions('isEvent(x),');
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<SyntacticError>());
+      }
+    });
+
+    test('Invalid function definition 7', () {
+      try {
+        getFunctions('isEvent(x) = true');
+        fail('Should fail');
       } catch (e) {
         expect(e, isA<SyntacticError>());
       }
@@ -93,7 +108,8 @@ void main() {
     });
 
     test('Literal boolean definition', () {
-      final List<FunctionDefinition> functions = getFunctions('enabled = true;');
+      final List<FunctionDefinition> functions =
+          getFunctions('enabled = true;');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'enabled',
@@ -104,7 +120,8 @@ void main() {
     });
 
     test('Function with one parameter', () {
-      final List<FunctionDefinition> functions = getFunctions('test(a) = true;');
+      final List<FunctionDefinition> functions =
+          getFunctions('test(a) = true;');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
