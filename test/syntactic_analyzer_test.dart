@@ -57,7 +57,7 @@ void main() {
 
     test('Literal double quoted string definition', () {
       final List<FunctionDefinition> functions =
-          getFunctions('greeting = "Hello, world!"');
+          getFunctions('greeting = "Hello, world!";');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'greeting',
@@ -70,7 +70,7 @@ void main() {
 
     test('Literal single quoted string definition', () {
       final List<FunctionDefinition> functions =
-          getFunctions("greeting = 'Goodbye, world!'");
+          getFunctions("greeting = 'Goodbye, world!';");
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'greeting',
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('Literal number definition', () {
-      final List<FunctionDefinition> functions = getFunctions('pi = 3.14');
+      final List<FunctionDefinition> functions = getFunctions('pi = 3.14;');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'pi',
@@ -93,7 +93,7 @@ void main() {
     });
 
     test('Literal boolean definition', () {
-      final List<FunctionDefinition> functions = getFunctions('enabled = true');
+      final List<FunctionDefinition> functions = getFunctions('enabled = true;');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'enabled',
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('Function with one parameter', () {
-      final List<FunctionDefinition> functions = getFunctions('test(a) = true');
+      final List<FunctionDefinition> functions = getFunctions('test(a) = true;');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
@@ -116,7 +116,7 @@ void main() {
 
     test('Function with several parameters', () {
       final List<FunctionDefinition> functions =
-          getFunctions('test(a, b, c) = true');
+          getFunctions('test(a, b, c) = true;');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
@@ -128,7 +128,7 @@ void main() {
 
     test('Complex function 1', () {
       final List<FunctionDefinition> functions =
-          getFunctions('isEven(x) = eq(mod(x, 2), 0)');
+          getFunctions('isEven(x) = eq(mod(x, 2), 0);');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'isEven',
@@ -154,7 +154,7 @@ void main() {
 
     test('Complex function 2', () {
       final List<FunctionDefinition> functions =
-          getFunctions('isOdd(x) = not(isEven(positive(x)))');
+          getFunctions('isOdd(x) = not(isEven(positive(x)));');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'isOdd',
@@ -184,7 +184,7 @@ void main() {
 
     test('Complex function 3', () {
       final List<FunctionDefinition> functions = getFunctions(
-          'factorial(x) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))');
+          'factorial(x) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))));');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'factorial',

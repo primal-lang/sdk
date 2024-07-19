@@ -35,7 +35,7 @@ void checkTokens(List<Token> actual, List<Token> expected) {
 }
 
 Expression getExpression(String source) {
-  final InputAnalyzer inputAnalyzer = InputAnalyzer(source);
+  final InputAnalyzer inputAnalyzer = InputAnalyzer('$source;');
   final List<Character> characters = inputAnalyzer.analyze();
   final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
   final List<Token> tokens = lexicalAnalyzer.analyze();

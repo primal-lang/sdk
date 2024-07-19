@@ -70,6 +70,12 @@ class Token {
         location: lexeme.location,
       );
 
+  factory Token.semicolon(Lexeme lexeme) => Token._(
+        type: TokenType.semicolon,
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+
   factory Token.newLine(Lexeme lexeme) => Token._(
         type: TokenType.newLine,
         value: lexeme.value,
@@ -87,6 +93,8 @@ class Token {
       return Token.openParenthesis(lexeme);
     } else if (value.isCloseParenthesis) {
       return Token.closeParenthesis(lexeme);
+    } else if (value.isSemicolon) {
+      return Token.semicolon(lexeme);
     } else if (value.isNewLine) {
       return Token.newLine(lexeme);
     } else {
@@ -109,6 +117,7 @@ enum TokenType {
   equals,
   openParenthesis,
   closeParenthesis,
+  semicolon,
   newLine;
 
   bool get isString => this == string;
@@ -126,6 +135,8 @@ enum TokenType {
   bool get isOpenParenthesis => this == openParenthesis;
 
   bool get isCloseParenthesis => this == closeParenthesis;
+
+  bool get isSemicolon => this == semicolon;
 
   bool get isNewLine => this == newLine;
 }

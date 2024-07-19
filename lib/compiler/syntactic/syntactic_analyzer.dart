@@ -115,7 +115,7 @@ class FunctionBodyState extends State<Token, FunctionDeclaration> {
 
   @override
   State process(Token input) {
-    if (!input.type.isNewLine) {
+    if (!input.type.isSemicolon) {
       return FunctionBodyState(output.withBody(input));
     } else {
       return ResultState(output.definition);
