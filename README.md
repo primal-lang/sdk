@@ -3,13 +3,13 @@
 
 ## TODO
 * Arrays
-* Maps
 * Higher order functions
-* Types
 * Imports
-* Lambdas
+* Maps
 * Pattern matching
-* Curryfication
-* x:xs
+* Types
 * Maybe
 * Undefined value
+* Lambdas
+* Currying
+* x:xs
