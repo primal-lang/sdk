@@ -16,8 +16,9 @@ isEven(x) = isZero(mod(x, 2));
 isOdd(x) = not(isEven(x));
 
 isBiggerThan10(x) = if(
+    # if x is greater than 10, return true
     gt(x, 10), true,
-    false
+    false # otherwise, return false
 )
 
 factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))));
