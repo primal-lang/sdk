@@ -1,11 +1,5 @@
 # Dry
-**Dry** is a general-purpose, high-level, esoteric programming language. Although **Dry** is a general purpose language, it's mostly intended to be used as a tool for learning functional programming.
-
-## Characteristics
-* Declarative
-* Purely functional
-* Minimalist syntax
-* Interpreted
+**Dry** is a declararive, purely functional, esoteric programming language. Although **Dry** is a general purpose language, it's mostly intended to be used as a tool for learning functional programming.
 
 TODO
 - Allow negative numbers

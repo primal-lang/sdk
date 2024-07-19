@@ -35,6 +35,11 @@ gt(num1, num2): bool
 lt(num1, num2): bool
 ge(num1, num2): bool
 le(num1, num2): bool
+isNegative(num): bool
+isPositive(num): bool
+isZero(num): bool
+isEven(num): bool
+isOdd(num): bool
 
 # Logic
 
@@ -72,11 +77,16 @@ reverse(list): list
 
 # Casting
 
-number(a): number
-integer(a): number
-decimal(a): number
-string(a): string
-boolean(a): bool
+toNumber(a): number
+toInteger(a): number
+toDecimal(a): number
+toString(a): string
+toBoolean(a): bool
+isNumber(x): bool
+isInteger(x): bool
+isDecimal(x): bool
+isString(x): bool
+isBoolean(x): bool
 
 # Control
 
