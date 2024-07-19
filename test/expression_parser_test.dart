@@ -66,12 +66,12 @@ void main() {
             FunctionCallExpression(
               name: 'mod',
               arguments: [
-                LiteralExpression.symbol(symbolToken('x')),
-                LiteralExpression.number(numberToken(2)),
+                LiteralExpression.symbol(symbolToken('x', 1, 8)),
+                LiteralExpression.number(numberToken(2, 1, 11)),
               ],
               location: const Location(row: 1, column: 4),
             ),
-            LiteralExpression.number(numberToken(0)),
+            LiteralExpression.number(numberToken(0, 1, 15)),
           ],
           location: const Location(row: 1, column: 1),
         ),
@@ -91,7 +91,7 @@ void main() {
                 FunctionCallExpression(
                   name: 'positive',
                   arguments: [
-                    LiteralExpression.symbol(symbolToken('x')),
+                    LiteralExpression.symbol(symbolToken('x', 1, 21)),
                   ],
                   location: const Location(row: 1, column: 12),
                 ),
@@ -115,24 +115,24 @@ void main() {
             FunctionCallExpression(
               name: 'eq',
               arguments: [
-                LiteralExpression.symbol(symbolToken('n')),
-                LiteralExpression.number(numberToken(0)),
+                LiteralExpression.symbol(symbolToken('n', 1, 7)),
+                LiteralExpression.number(numberToken(0, 1, 10)),
               ],
               location: const Location(row: 1, column: 4),
             ),
-            LiteralExpression.number(numberToken(1)),
+            LiteralExpression.number(numberToken(1, 1, 14)),
             FunctionCallExpression(
               name: 'mul',
               arguments: [
-                LiteralExpression.symbol(symbolToken('n')),
+                LiteralExpression.symbol(symbolToken('n', 1, 21)),
                 FunctionCallExpression(
                   name: 'factorial',
                   arguments: [
                     FunctionCallExpression(
                       name: 'sub',
                       arguments: [
-                        LiteralExpression.symbol(symbolToken('n')),
-                        LiteralExpression.number(numberToken(1)),
+                        LiteralExpression.symbol(symbolToken('n', 1, 38)),
+                        LiteralExpression.number(numberToken(1, 1, 41)),
                       ],
                       location: const Location(row: 1, column: 34),
                     ),
