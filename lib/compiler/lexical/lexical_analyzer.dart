@@ -165,7 +165,7 @@ class SymbolState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.isLetter || input.isDigit) {
+    if (input.isLetter || input.isDigit || input.isUnderscore) {
       return SymbolState(output.add(input));
     } else if (input.isDelimiter) {
       final List<Token> tokens = [];

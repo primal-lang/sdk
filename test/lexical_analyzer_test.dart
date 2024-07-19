@@ -96,6 +96,45 @@ void main() {
       ]);
     });
 
+    test('Symbol with numbers', () {
+      final List<Token> tokens = getTokens('isBiggerThan10');
+      checkTokens(tokens, [
+        Token.symbol(const Lexeme(
+          value: 'isBiggerThan10',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+      ]);
+    });
+
+    test('Symbol with underscore', () {
+      final List<Token> tokens = getTokens('is_even');
+      checkTokens(tokens, [
+        Token.symbol(const Lexeme(
+          value: 'is_even',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+      ]);
+    });
+
+    test('Symbol complex', () {
+      final List<Token> tokens = getTokens('isToday_butNot31st');
+      checkTokens(tokens, [
+        Token.symbol(const Lexeme(
+          value: 'isToday_butNot31st',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+      ]);
+    });
+
     test('Invalid symbol', () {
       try {
         getTokens('func#');

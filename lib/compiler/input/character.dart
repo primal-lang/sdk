@@ -20,6 +20,8 @@ class Character {
 
   bool get isDash => value.isDash;
 
+  bool get isUnderscore => value.isUnderscore;
+
   bool get isDot => value.isDot;
 
   bool get isHashtag => value.isHashtag;
