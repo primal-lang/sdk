@@ -15,6 +15,11 @@ isEven(x) = isZero(mod(x, 2));
 # Returns true if x is an odd number
 isOdd(x) = not(isEven(x));
 
+isBiggerThan10(x) = if(
+    gt(x, 10), true,
+    false
+)
+
 factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))));
 
 fib(n) = if(eq(n, 0), 0, if(eq(n, 1), 1, add(fib(sub(n, 1)), fib(sub(n, 2)))));

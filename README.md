@@ -2,7 +2,6 @@
 **Dry** is a declararive, purely functional, esoteric programming language. Although **Dry** is a general purpose language, it's mostly intended to be used as a tool for learning functional programming.
 
 ## TODO
-- Allow multi-line function declaration
 - Allow comments in between a function declaration
 
 * Arrays
