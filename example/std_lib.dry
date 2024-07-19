@@ -11,8 +11,7 @@ isNotEmpty(x): bool
 
 # Arithmetic
 
-negative(num): num
-positive(num): num
+abs(num): num
 inc(num): num
 dec(num): num
 sum(num1, num2): num

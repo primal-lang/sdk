@@ -34,7 +34,7 @@ void main() {
     });
 
     test('Valid number', () {
-      final List<Token> tokens = getTokens('42 1.23');
+      final List<Token> tokens = getTokens('42 -9 1.23 -0.5');
       checkTokens(tokens, [
         Token.number(const Lexeme(
           value: '42',
@@ -44,10 +44,24 @@ void main() {
           ),
         )),
         Token.number(const Lexeme(
-          value: '1.23',
+          value: '-9',
           location: Location(
             row: 1,
             column: 4,
+          ),
+        )),
+        Token.number(const Lexeme(
+          value: '1.23',
+          location: Location(
+            row: 1,
+            column: 7,
+          ),
+        )),
+        Token.number(const Lexeme(
+          value: '-0.5',
+          location: Location(
+            row: 1,
+            column: 12,
           ),
         )),
       ]);

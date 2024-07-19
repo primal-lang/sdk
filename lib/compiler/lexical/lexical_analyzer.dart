@@ -48,6 +48,8 @@ class InitState extends State<Character, void> {
             row: input.location.row,
             column: input.location.column + 1,
           )));
+    } else if (input.isDash) {
+      return NegativeNumberState(Lexeme.fromCharacter(input));
     } else if (input.isDigit) {
       return IntegerState(Lexeme.fromCharacter(input));
     } else if (input.isLetter) {
@@ -97,6 +99,19 @@ class StringSingleQuoteState extends State<Character, Lexeme> {
       return ResultState([Token.string(output)]);
     } else {
       return StringSingleQuoteState(output.add(input));
+    }
+  }
+}
+
+class NegativeNumberState extends State<Character, Lexeme> {
+  const NegativeNumberState(super.output);
+
+  @override
+  State process(Character input) {
+    if (input.isDigit) {
+      return IntegerState(output.add(input));
+    } else {
+      throw LexicalError.invalidCharacter(input);
     }
   }
 }

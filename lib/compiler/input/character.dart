@@ -18,6 +18,8 @@ class Character {
 
   bool get isSingleQuote => value.isSingleQuote;
 
+  bool get isDash => value.isDash;
+
   bool get isDot => value.isDot;
 
   bool get isHashtag => value.isHashtag;
