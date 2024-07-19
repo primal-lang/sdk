@@ -14,11 +14,11 @@ class ExpressionParser {
     final Token input = iterator.next;
 
     if (input.type.isString) {
-      return LiteralExpression.string(input.asString);
+      return LiteralExpression.string(input);
     } else if (input.type.isNumber) {
-      return LiteralExpression.number(input.asNumber);
+      return LiteralExpression.number(input);
     } else if (input.type.isBoolean) {
-      return LiteralExpression.boolean(input.asBoolean);
+      return LiteralExpression.boolean(input);
     } else if (input.type.isSymbol) {
       final Token next = iterator.peek;
 
@@ -28,9 +28,10 @@ class ExpressionParser {
         return FunctionCallExpression(
           name: input.asString,
           arguments: getFunctionArguments(iterator),
+          location: input.location,
         );
       } else {
-        return LiteralExpression.symbol(input.asString);
+        return LiteralExpression.symbol(input);
       }
     } else {
       throw SyntacticError.invalidToken(input);

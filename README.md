@@ -3,6 +3,7 @@
 
 TODO
 - Store location of expression
+- Allow multi-line function declaration
 
 * Arrays
 * Maps

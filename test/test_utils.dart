@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
+import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
@@ -89,6 +90,30 @@ void checkFunctions(
     checkExpressions(actual[i].expression, expected[i].expression);
   }
 }
+
+Token stringToken(String value, [int row = 1, int column = 1]) =>
+    Token.string(Lexeme(
+      value: value,
+      location: Location(row: row, column: column),
+    ));
+
+Token numberToken(num value, [int row = 1, int column = 1]) =>
+    Token.number(Lexeme(
+      value: value.toString(),
+      location: Location(row: row, column: column),
+    ));
+
+Token booleanToken(bool value, [int row = 1, int column = 1]) =>
+    Token.boolean(Lexeme(
+      value: value.toString(),
+      location: Location(row: row, column: column),
+    ));
+
+Token symbolToken(String value, [int row = 1, int column = 1]) =>
+    Token.symbol(Lexeme(
+      value: value,
+      location: Location(row: row, column: column),
+    ));
 
 String loadFile(String path) {
   final File file = File('./test/resources/$path');

@@ -1,8 +1,13 @@
+import 'package:dry/compiler/input/location.dart';
+import 'package:dry/compiler/lexical/token.dart';
+
 abstract class Expression {
   final ExpressionType type;
+  final Location location;
 
   const Expression({
     required this.type,
+    required this.location,
   });
 
   String get body;
@@ -16,27 +21,32 @@ class LiteralExpression<T> extends Expression {
 
   const LiteralExpression._({
     required super.type,
+    required super.location,
     required this.value,
   });
 
-  static LiteralExpression<String> string(String value) => LiteralExpression._(
+  static LiteralExpression<String> string(Token token) => LiteralExpression._(
         type: ExpressionType.literalString,
-        value: value,
+        value: token.asString,
+        location: token.location,
       );
 
-  static LiteralExpression<num> number(num value) => LiteralExpression._(
+  static LiteralExpression<num> number(Token token) => LiteralExpression._(
         type: ExpressionType.literalNumber,
-        value: value,
+        value: token.asNumber,
+        location: token.location,
       );
 
-  static LiteralExpression<bool> boolean(bool value) => LiteralExpression._(
+  static LiteralExpression<bool> boolean(Token token) => LiteralExpression._(
         type: ExpressionType.literalBoolean,
-        value: value,
+        value: token.asBoolean,
+        location: token.location,
       );
 
-  static LiteralExpression<String> symbol(String value) => LiteralExpression._(
+  static LiteralExpression<String> symbol(Token token) => LiteralExpression._(
         type: ExpressionType.literalSymbol,
-        value: value,
+        value: token.asString,
+        location: token.location,
       );
 
   @override
@@ -48,6 +58,7 @@ class FunctionCallExpression extends Expression {
   final List<Expression> arguments;
 
   const FunctionCallExpression({
+    required super.location,
     required this.name,
     required this.arguments,
   }) : super(type: ExpressionType.functionCall);

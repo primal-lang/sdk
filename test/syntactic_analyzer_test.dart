@@ -1,4 +1,5 @@
 import 'package:dry/compiler/errors/syntactic_error.dart';
+import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
@@ -61,7 +62,7 @@ void main() {
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression: LiteralExpression.string('Hello, world!'),
+          expression: LiteralExpression.string(stringToken('Hello, world!')),
         ),
       ]);
     });
@@ -73,7 +74,7 @@ void main() {
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression: LiteralExpression.string('Goodbye, world!'),
+          expression: LiteralExpression.string(stringToken('Goodbye, world!')),
         ),
       ]);
     });
@@ -84,7 +85,7 @@ void main() {
         FunctionDefinition(
           name: 'pi',
           parameters: [],
-          expression: LiteralExpression.number(3.14),
+          expression: LiteralExpression.number(numberToken(3.14)),
         ),
       ]);
     });
@@ -95,7 +96,7 @@ void main() {
         FunctionDefinition(
           name: 'enabled',
           parameters: [],
-          expression: LiteralExpression.boolean(true),
+          expression: LiteralExpression.boolean(booleanToken(true)),
         ),
       ]);
     });
@@ -106,7 +107,7 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: ['a'],
-          expression: LiteralExpression.boolean(true),
+          expression: LiteralExpression.boolean(booleanToken(true)),
         ),
       ]);
     });
@@ -118,7 +119,7 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: ['a', 'b', 'c'],
-          expression: LiteralExpression.boolean(true),
+          expression: LiteralExpression.boolean(booleanToken(true)),
         ),
       ]);
     });
@@ -136,12 +137,14 @@ void main() {
               FunctionCallExpression(
                 name: 'mod',
                 arguments: [
-                  LiteralExpression.symbol('x'),
-                  LiteralExpression.number(2),
+                  LiteralExpression.symbol(symbolToken('x')),
+                  LiteralExpression.number(numberToken(2)),
                 ],
+                location: const Location(row: 1, column: 4),
               ),
-              LiteralExpression.number(0),
+              LiteralExpression.number(numberToken(0)),
             ],
+            location: const Location(row: 1, column: 1),
           ),
         ),
       ]);
@@ -163,12 +166,15 @@ void main() {
                   FunctionCallExpression(
                     name: 'positive',
                     arguments: [
-                      LiteralExpression.symbol('x'),
+                      LiteralExpression.symbol(symbolToken('x')),
                     ],
+                    location: const Location(row: 1, column: 12),
                   ),
                 ],
+                location: const Location(row: 1, column: 5),
               ),
             ],
+            location: const Location(row: 1, column: 1),
           ),
         ),
       ]);
@@ -187,30 +193,35 @@ void main() {
               FunctionCallExpression(
                 name: 'eq',
                 arguments: [
-                  LiteralExpression.symbol('n'),
-                  LiteralExpression.number(0),
+                  LiteralExpression.symbol(symbolToken('n')),
+                  LiteralExpression.number(numberToken(0)),
                 ],
+                location: const Location(row: 1, column: 4),
               ),
-              LiteralExpression.number(1),
+              LiteralExpression.number(numberToken(1)),
               FunctionCallExpression(
                 name: 'mul',
                 arguments: [
-                  LiteralExpression.symbol('n'),
+                  LiteralExpression.symbol(symbolToken('n')),
                   FunctionCallExpression(
                     name: 'factorial',
                     arguments: [
                       FunctionCallExpression(
                         name: 'sub',
                         arguments: [
-                          LiteralExpression.symbol('n'),
-                          LiteralExpression.number(1),
+                          LiteralExpression.symbol(symbolToken('n')),
+                          LiteralExpression.number(numberToken(1)),
                         ],
+                        location: const Location(row: 1, column: 34),
                       ),
                     ],
+                    location: const Location(row: 1, column: 24),
                   ),
                 ],
+                location: const Location(row: 1, column: 17),
               ),
             ],
+            location: const Location(row: 1, column: 1),
           ),
         ),
       ]);
