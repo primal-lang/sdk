@@ -5,7 +5,7 @@
 * Arrays
 * Maps
 * Higher order functions
-* Types (all start with uppercase)
+* Types
 * Imports
 * Lambdas
 * Pattern matching
