@@ -130,7 +130,7 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
       return ResultState(
           output.withExpression(LiteralExpression.boolean(input)));
     } else if (input.type.isSymbol) {
-      return FunctionBodyState(
+      return FunctionBodyExpressionState(
         output,
         stack.push(StackSymbol(SymbolExpression.fromToken(input))),
       );
@@ -140,40 +140,40 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionBodyState extends State<Token, FunctionDefinition> {
+class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
   final Stack<StackElement> stack;
 
-  const FunctionBodyState(super.output, this.stack);
+  const FunctionBodyExpressionState(super.output, this.stack);
 
   @override
   State process(Token input) {
     if (input.type.isString) {
-      return FunctionBodyState(
+      return FunctionBodyExpressionState(
         output,
         stack.push(StackLiteral(LiteralExpression.string(input))),
       );
     } else if (input.type.isNumber) {
-      return FunctionBodyState(
+      return FunctionBodyExpressionState(
         output,
         stack.push(StackLiteral(LiteralExpression.number(input))),
       );
     } else if (input.type.isBoolean) {
-      return FunctionBodyState(
+      return FunctionBodyExpressionState(
         output,
         stack.push(StackLiteral(LiteralExpression.boolean(input))),
       );
     } else if (input.type.isSymbol) {
-      return FunctionBodyState(
+      return FunctionBodyExpressionState(
         output,
         stack.push(StackSymbol(SymbolExpression.fromToken(input))),
       );
     } else if (input.type.isOpenParenthesis) {
-      return FunctionBodyState(
+      return FunctionBodyExpressionState(
         output,
         stack.push(StackOpenParenthesis(input)),
       );
     } else if (input.type.isComma) {
-      return FunctionBodyState(
+      return FunctionBodyExpressionState(
         output,
         stack.push(StackComma(input)),
       );
@@ -227,7 +227,7 @@ class FunctionBodyState extends State<Token, FunctionDefinition> {
       if (stack.isEmpty) {
         return ResultState(output.withExpression(functionCall));
       } else {
-        return FunctionBodyState(
+        return FunctionBodyExpressionState(
           output,
           stack.push(StackFunctionCall(functionCall)),
         );
