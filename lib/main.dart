@@ -4,6 +4,10 @@ import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 
 void main(List<String> args) {
+  if (args.isEmpty) {
+    print('Usage: dry <file.dry>');
+  }
+
   final Compiler compiler = Compiler.fromFile(args[0]);
   final IntermediateCode intermediateCode = compiler.compile();
 

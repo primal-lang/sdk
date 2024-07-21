@@ -4,6 +4,7 @@ import 'package:dry/compiler/syntactic/function_definition.dart';
 
 // unused parameter
 // undecleared symbol
+// invalid number of parameters
 // mismatch types
 // repeated parameter
 class SemanticAnalyzer
