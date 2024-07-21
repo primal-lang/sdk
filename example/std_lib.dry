@@ -43,17 +43,17 @@ xor(a: bool, b: bool): bool
 
 # String
 
-substring(string, num, num): string
-startswith(string, string): bool
-endswith(string, string): bool
-replace(string, string, string): string
-uppercase(str): string
-lowercase(str): string
-trim(str): string
-match(str, regex): bool
-split(str, delimiter): [string]
-join([T], delimiter): string
-format(str, ...args): string
+substring(text: string, start: num, length: num): string
+startswith(text: string, pattern: string): bool
+endswith(text: string, pattern: string): bool
+replace(text: string, old: string, new: string): string
+uppercase(text: string): string
+lowercase(text: string): string
+trim(text: string): string
+match(text: string, pattern: string): bool
+split(text: string, delimiter: string): [string]
+join([string], delimiter: string): string
+format(text: string, ...args): string
 
 # Associative arrays
 
@@ -80,37 +80,37 @@ reverse([T]): [T]
 
 # Casting
 
-toNumber(a): number
-toInteger(a): number
-toDecimal(a): number
-toString(a): string
-toBoolean(a): bool
-isNumber(x): bool
-isInteger(x): bool
-isDecimal(x): bool
-isString(x): bool
-isBoolean(x): bool
+toNumber(a: T): number
+toInteger(a: T): number
+toDecimal(a: T): number
+toString(a: T): string
+toBoolean(a: T): bool
+isNumber(a: T): bool
+isInteger(a: T): bool
+isDecimal(a: T): bool
+isString(a: T): bool
+isBoolean(a: T): bool
 
 # Control
 
-if(bool, expr1, expr2)
-try(expr, handler)
+if(condition: bool, expression1: T, expression2: T)
+try(expression: T, handler: T)
 
 # Error
 
-error(a)
+error(a: T)
 
 # Output
 
-print(T): T
-println(T): T
+print(a: T): T
+println(a: T): T
 
 # Functions
 
-map(func, [T]): [T]
-filter(func, [T]): [T]
-reduce(func, [T], T): T
-sort(func, [T]): [T]
-all(func, [T]): bool
-any(func, [T]): bool
-zip(func, [T], [T]): [T]
+map(func: function, [T]): [T]
+filter(func: function, [T]): [T]
+reduce(func: function, [T], T): T
+sort(func: function, [T]): [T]
+all(func: function, [T]): bool
+any(func: function, [T]): bool
+zip(func: function, [T], [T]): [T]
