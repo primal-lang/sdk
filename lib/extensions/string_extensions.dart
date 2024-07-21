@@ -15,8 +15,6 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_UNDERSCORE = RegExp(r'_');
 
-  static final RegExp REGEX_SEMICOLON = RegExp(r';');
-
   static final RegExp REGEX_DOT = RegExp(r'\.');
 
   static final RegExp REGEX_COMMA = RegExp(r',');
@@ -45,8 +43,6 @@ extension StringExtensions on String {
 
   bool get isUnderscore => REGEX_UNDERSCORE.hasMatch(this);
 
-  bool get isSemicolon => REGEX_SEMICOLON.hasMatch(this);
-
   bool get isDot => REGEX_DOT.hasMatch(this);
 
   bool get isComma => REGEX_COMMA.hasMatch(this);
@@ -67,8 +63,7 @@ extension StringExtensions on String {
       isComma ||
       isEquals ||
       isOpenParenthesis ||
-      isCloseParenthesis ||
-      isSemicolon;
+      isCloseParenthesis;
 
   bool get isDelimiter => isWhitespace || isSeparator;
 }

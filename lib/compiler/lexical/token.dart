@@ -70,12 +70,6 @@ class Token {
         location: lexeme.location,
       );
 
-  factory Token.semicolon(Lexeme lexeme) => Token._(
-        type: TokenType.semicolon,
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-
   factory Token.separator(Lexeme lexeme) {
     final String value = lexeme.value;
 
@@ -87,17 +81,14 @@ class Token {
       return Token.openParenthesis(lexeme);
     } else if (value.isCloseParenthesis) {
       return Token.closeParenthesis(lexeme);
-    } else if (value.isSemicolon) {
-      return Token.semicolon(lexeme);
     } else {
       throw LexicalError.invalidSeparator(value);
     }
   }
 
   @override
-  String toString() {
-    return 'Token{type: ${type.name}, value: $value, location: $location}';
-  }
+  String toString() =>
+      'Token{type: ${type.name}, value: $value, location: $location}';
 }
 
 enum TokenType {
@@ -108,8 +99,7 @@ enum TokenType {
   comma,
   equals,
   openParenthesis,
-  closeParenthesis,
-  semicolon;
+  closeParenthesis;
 
   bool get isString => this == string;
 
@@ -126,6 +116,4 @@ enum TokenType {
   bool get isOpenParenthesis => this == openParenthesis;
 
   bool get isCloseParenthesis => this == closeParenthesis;
-
-  bool get isSemicolon => this == semicolon;
 }

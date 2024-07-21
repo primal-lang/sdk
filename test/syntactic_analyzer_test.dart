@@ -61,18 +61,9 @@ void main() {
       }
     });
 
-    test('Invalid function definition 7', () {
-      try {
-        getFunctions('isEvent(x) = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<SyntacticError>());
-      }
-    });
-
     test('Literal double quoted string definition', () {
       final List<FunctionDefinition> functions =
-          getFunctions('greeting = "Hello, world!";');
+          getFunctions('greeting = "Hello, world!"');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'greeting',
@@ -97,7 +88,7 @@ void main() {
     });
 
     test('Literal number definition', () {
-      final List<FunctionDefinition> functions = getFunctions('pi = 3.14;');
+      final List<FunctionDefinition> functions = getFunctions('pi = 3.14');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'pi',
@@ -108,8 +99,7 @@ void main() {
     });
 
     test('Literal boolean definition', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('enabled = true;');
+      final List<FunctionDefinition> functions = getFunctions('enabled = true');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'enabled',
@@ -120,8 +110,7 @@ void main() {
     });
 
     test('Function with one parameter', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('test(a) = true;');
+      final List<FunctionDefinition> functions = getFunctions('test(a) = true');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
@@ -133,7 +122,7 @@ void main() {
 
     test('Function with several parameters', () {
       final List<FunctionDefinition> functions =
-          getFunctions('test(a, b, c) = true;');
+          getFunctions('test(a, b, c) = true');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
@@ -145,7 +134,7 @@ void main() {
 
     test('Complex function 1', () {
       final List<FunctionDefinition> functions =
-          getFunctions('isEven(x) = eq(mod(x, 2), 0);');
+          getFunctions('isEven(x) = eq(mod(x, 2), 0)');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'isEven',
@@ -156,7 +145,7 @@ void main() {
               FunctionCallExpression(
                 name: 'mod',
                 arguments: [
-                  LiteralExpression.symbol(symbolToken('x', 1, 20)),
+                  SymbolExpression.fromToken(symbolToken('x', 1, 20)),
                   LiteralExpression.number(numberToken(2, 1, 23)),
                 ],
                 location: const Location(row: 1, column: 16),
@@ -171,7 +160,7 @@ void main() {
 
     test('Complex function 2', () {
       final List<FunctionDefinition> functions =
-          getFunctions('isOdd(x) = not(isEven(positive(x)));');
+          getFunctions('isOdd(x) = not(isEven(positive(x)))');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'isOdd',
@@ -185,7 +174,7 @@ void main() {
                   FunctionCallExpression(
                     name: 'positive',
                     arguments: [
-                      LiteralExpression.symbol(symbolToken('x', 1, 32)),
+                      SymbolExpression.fromToken(symbolToken('x', 1, 32)),
                     ],
                     location: const Location(row: 1, column: 23),
                   ),
@@ -201,7 +190,7 @@ void main() {
 
     test('Complex function 3', () {
       final List<FunctionDefinition> functions = getFunctions(
-          'factorial(x) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))));');
+          'factorial(x) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'factorial',
@@ -212,7 +201,7 @@ void main() {
               FunctionCallExpression(
                 name: 'eq',
                 arguments: [
-                  LiteralExpression.symbol(symbolToken('n', 1, 22)),
+                  SymbolExpression.fromToken(symbolToken('n', 1, 22)),
                   LiteralExpression.number(numberToken(0, 1, 25)),
                 ],
                 location: const Location(row: 1, column: 19),
@@ -221,14 +210,14 @@ void main() {
               FunctionCallExpression(
                 name: 'mul',
                 arguments: [
-                  LiteralExpression.symbol(symbolToken('n', 1, 36)),
+                  SymbolExpression.fromToken(symbolToken('n', 1, 36)),
                   FunctionCallExpression(
                     name: 'factorial',
                     arguments: [
                       FunctionCallExpression(
                         name: 'sub',
                         arguments: [
-                          LiteralExpression.symbol(symbolToken('n', 1, 53)),
+                          SymbolExpression.fromToken(symbolToken('n', 1, 53)),
                           LiteralExpression.number(numberToken(1, 1, 56)),
                         ],
                         location: const Location(row: 1, column: 49),

@@ -1,19 +1,19 @@
-greeting = "Hello, world!";
+greeting = "Hello, world!"
 
-farewell = 'Goodbye, world!';
+farewell = 'Goodbye, world!'
 
-pi = 3.14;
+pi = 3.14
 
-isToday = true;
+isToday = true
 
 # Returns true if x is equal to zero
-isZero(x) = eq(x, 0);
+isZero(x) = eq(x, 0)
 
 # Returns true if x is an even number
-isEven(x) = isZero(mod(x, 2));
+isEven(x) = isZero(mod(x, 2))
 
 # Returns true if x is an odd number
-isOdd(x) = not(isEven(x));
+isOdd(x) = not(isEven(x))
 
 isBiggerThan10(x) = if(
     # if x is greater than 10, return true
@@ -21,14 +21,14 @@ isBiggerThan10(x) = if(
     false # otherwise, return false
 )
 
-factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))));
+factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))
 
 factorial(n) = if(
     isNegative(n), error('Negative number'),
     isZero(n), 1,
     mul(n, factorial(dec(n)))
-);
+)
 
-fib(n) = if(eq(n, 0), 0, if(eq(n, 1), 1, add(fib(sub(n, 1)), fib(sub(n, 2)))));
+fib(n) = if(eq(n, 0), 0, if(eq(n, 1), 1, add(fib(sub(n, 1)), fib(sub(n, 2)))))
 
-main = factorial(4);
+main = factorial(4)

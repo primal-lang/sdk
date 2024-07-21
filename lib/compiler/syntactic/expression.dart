@@ -13,7 +13,19 @@ abstract class Expression {
   String get body;
 
   @override
-  String toString() => body;
+  String toString() =>
+      'Expression{type: ${type.name}, value: $body, location: $location}';
+}
+
+class EmptyExpression extends Expression {
+  const EmptyExpression()
+      : super(
+          type: ExpressionType.empty,
+          location: const Location(row: 1, column: 1),
+        );
+
+  @override
+  String get body => '';
 }
 
 class LiteralExpression<T> extends Expression {
@@ -43,8 +55,19 @@ class LiteralExpression<T> extends Expression {
         location: token.location,
       );
 
-  static LiteralExpression<String> symbol(Token token) => LiteralExpression._(
-        type: ExpressionType.literalSymbol,
+  @override
+  String get body => value.toString();
+}
+
+class SymbolExpression extends Expression {
+  final String value;
+
+  const SymbolExpression._({
+    required super.location,
+    required this.value,
+  }) : super(type: ExpressionType.symbol);
+
+  factory SymbolExpression.fromToken(Token token) => SymbolExpression._(
         value: token.asString,
         location: token.location,
       );
@@ -67,10 +90,12 @@ class FunctionCallExpression extends Expression {
   String get body => '$name(${arguments.map((e) => e.toString()).join(', ')})';
 }
 
+// TODO(momo): remove and use casting?
 enum ExpressionType {
+  empty,
   literalString,
   literalNumber,
   literalBoolean,
-  literalSymbol,
+  symbol,
   functionCall,
 }

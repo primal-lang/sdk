@@ -5,10 +5,8 @@ import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
-import 'package:dry/compiler/syntactic/expression_parser.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/compiler/syntactic/syntactic_analyzer.dart';
-import 'package:dry/utils/list_iterator.dart';
 import 'package:test/test.dart';
 
 List<Token> getTokens(String source) {
@@ -34,22 +32,18 @@ void checkTokens(List<Token> actual, List<Token> expected) {
   }
 }
 
-Expression getExpression(String source) {
-  final InputAnalyzer inputAnalyzer = InputAnalyzer('$source;');
-  final List<Character> characters = inputAnalyzer.analyze();
-  final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
-  final List<Token> tokens = lexicalAnalyzer.analyze();
-  final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
-
-  return parser.expression;
-}
-
 void checkExpressions(Expression actual, Expression expected) {
   expect(actual.toString(), equals(expected.toString()));
   expect(actual.type, equals(expected.type));
   checkLocations(actual.location, expected.location);
 
   if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
+    expect(actual.value, equals(expected.value));
+  } else if ((actual is SymbolExpression) && (expected is SymbolExpression)) {
+    expect(actual.value, equals(expected.value));
+  } else if ((actual is SymbolExpression) && (expected is LiteralExpression)) {
+    expect(actual.value, equals(expected.value));
+  } else if ((actual is LiteralExpression) && (expected is SymbolExpression)) {
     expect(actual.value, equals(expected.value));
   } else if ((actual is FunctionCallExpression) &&
       (expected is FunctionCallExpression)) {

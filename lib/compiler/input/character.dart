@@ -22,8 +22,6 @@ class Character {
 
   bool get isUnderscore => value.isUnderscore;
 
-  bool get isSemicolon => value.isSemicolon;
-
   bool get isDot => value.isDot;
 
   bool get isHashtag => value.isHashtag;
