@@ -79,7 +79,7 @@ class StringDoubleQuoteState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.isDoubleQuote) {
-      return ResultState([Token.string(output)]);
+      return ResultState([StringToken(output)]);
     } else {
       return StringDoubleQuoteState(output.add(input));
     }
@@ -92,7 +92,7 @@ class StringSingleQuoteState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.isSingleQuote) {
-      return ResultState([Token.string(output)]);
+      return ResultState([StringToken(output)]);
     } else {
       return StringSingleQuoteState(output.add(input));
     }
@@ -122,7 +122,7 @@ class IntegerState extends State<Character, Lexeme> {
     } else if (input.isDot) {
       return DecimalState(output.add(input));
     } else if (input.isDelimiter) {
-      final List<Token> tokens = [Token.number(output)];
+      final List<Token> tokens = [NumberToken(output)];
 
       if (input.isSeparator) {
         tokens.add(Token.separator(Lexeme.fromCharacter(input)));
@@ -143,7 +143,7 @@ class DecimalState extends State<Character, Lexeme> {
     if (input.isDigit) {
       return DecimalState(output.add(input));
     } else if (input.isDelimiter) {
-      final List<Token> tokens = [Token.number(output)];
+      final List<Token> tokens = [NumberToken(output)];
 
       if (input.isSeparator) {
         tokens.add(Token.separator(Lexeme.fromCharacter(input)));
@@ -167,9 +167,9 @@ class SymbolState extends State<Character, Lexeme> {
       final List<Token> tokens = [];
 
       if (output.value.isBoolean) {
-        tokens.add(Token.boolean(output));
+        tokens.add(BooleanToken(output));
       } else {
-        tokens.add(Token.symbol(output));
+        tokens.add(SymbolToken(output));
       }
 
       if (input.isSeparator) {

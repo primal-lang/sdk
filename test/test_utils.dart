@@ -26,7 +26,7 @@ void checkTokens(List<Token> actual, List<Token> expected) {
   expect(actual.length, equals(expected.length));
 
   for (int i = 0; i < expected.length; i++) {
-    expect(actual[i].type, equals(expected[i].type));
+    expect(actual[i].runtimeType, equals(expected[i].runtimeType));
     expect(actual[i].value, equals(expected[i].value));
     checkLocations(actual[i].location, expected[i].location);
   }
@@ -91,25 +91,25 @@ void checkFunctions(
 }
 
 Token stringToken(String value, [int row = 1, int column = 1]) =>
-    Token.string(Lexeme(
+    StringToken(Lexeme(
       value: value,
       location: Location(row: row, column: column),
     ));
 
 Token numberToken(num value, [int row = 1, int column = 1]) =>
-    Token.number(Lexeme(
+    NumberToken(Lexeme(
       value: value.toString(),
       location: Location(row: row, column: column),
     ));
 
 Token booleanToken(bool value, [int row = 1, int column = 1]) =>
-    Token.boolean(Lexeme(
+    BooleanToken(Lexeme(
       value: value.toString(),
       location: Location(row: row, column: column),
     ));
 
 Token symbolToken(String value, [int row = 1, int column = 1]) =>
-    Token.symbol(Lexeme(
+    SymbolToken(Lexeme(
       value: value,
       location: Location(row: row, column: column),
     ));

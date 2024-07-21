@@ -18,17 +18,17 @@ class LiteralExpression<T> extends Expression {
   });
 
   static LiteralExpression<String> string(Token token) => LiteralExpression._(
-        value: token.asString,
+        value: token.value,
         location: token.location,
       );
 
   static LiteralExpression<num> number(Token token) => LiteralExpression._(
-        value: token.asNumber,
+        value: token.value,
         location: token.location,
       );
 
   static LiteralExpression<bool> boolean(Token token) => LiteralExpression._(
-        value: token.asBoolean,
+        value: token.value,
         location: token.location,
       );
 }
@@ -42,7 +42,7 @@ class SymbolExpression extends Expression {
   });
 
   factory SymbolExpression.fromToken(Token token) => SymbolExpression._(
-        value: token.asString,
+        value: token.value,
         location: token.location,
       );
 }

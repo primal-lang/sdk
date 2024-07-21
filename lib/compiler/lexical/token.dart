@@ -3,116 +3,94 @@ import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/extensions/string_extensions.dart';
 
-class Token extends Localized {
-  final TokenType type;
-  final String value;
+class Token<T> extends Localized {
+  final T value;
 
-  const Token._({
-    required this.type,
+  const Token({
     required this.value,
     required super.location,
   });
 
-  String get asString => value;
-
-  num get asNumber => num.parse(value);
-
-  bool get asBoolean => bool.parse(value);
-
-  factory Token.string(Lexeme lexeme) => Token._(
-        type: TokenType.string,
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-
-  factory Token.number(Lexeme lexeme) => Token._(
-        type: TokenType.number,
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-
-  factory Token.boolean(Lexeme lexeme) {
-    return Token._(
-      type: TokenType.boolean,
-      value: lexeme.value,
-      location: lexeme.location,
-    );
-  }
-
-  factory Token.symbol(Lexeme lexeme) => Token._(
-        type: TokenType.symbol,
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-
-  factory Token.comma(Lexeme lexeme) => Token._(
-        type: TokenType.comma,
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-
-  factory Token.equals(Lexeme lexeme) => Token._(
-        type: TokenType.equals,
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-
-  factory Token.openParenthesis(Lexeme lexeme) => Token._(
-        type: TokenType.openParenthesis,
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-
-  factory Token.closeParenthesis(Lexeme lexeme) => Token._(
-        type: TokenType.closeParenthesis,
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-
-  factory Token.separator(Lexeme lexeme) {
+  static Token separator(Lexeme lexeme) {
     final String value = lexeme.value;
 
     if (value.isComma) {
-      return Token.comma(lexeme);
+      return CommaToken(lexeme);
     } else if (value.isEquals) {
-      return Token.equals(lexeme);
+      return EqualsToken(lexeme);
     } else if (value.isOpenParenthesis) {
-      return Token.openParenthesis(lexeme);
+      return OpenParenthesisToken(lexeme);
     } else if (value.isCloseParenthesis) {
-      return Token.closeParenthesis(lexeme);
+      return CloseParenthesisToken(lexeme);
     } else {
       throw LexicalError.invalidLexeme(lexeme);
     }
   }
 
   @override
-  String toString() =>
-      'Token{type: ${type.name}, value: $value, location: $location}';
+  String toString() => 'Token{value: $value, location: $location}';
 }
 
-enum TokenType {
-  string,
-  number,
-  boolean,
-  symbol,
-  comma,
-  equals,
-  openParenthesis,
-  closeParenthesis;
+class StringToken extends Token<String> {
+  StringToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
 
-  bool get isString => this == string;
+class NumberToken extends Token<num> {
+  NumberToken(Lexeme lexeme)
+      : super(
+          value: num.parse(lexeme.value),
+          location: lexeme.location,
+        );
+}
 
-  bool get isNumber => this == number;
+class BooleanToken extends Token<bool> {
+  BooleanToken(Lexeme lexeme)
+      : super(
+          value: bool.parse(lexeme.value),
+          location: lexeme.location,
+        );
+}
 
-  bool get isBoolean => this == boolean;
+class SymbolToken extends Token<String> {
+  SymbolToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
 
-  bool get isSymbol => this == symbol;
+class CommaToken extends Token<String> {
+  CommaToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
 
-  bool get isComma => this == comma;
+class EqualsToken extends Token<String> {
+  EqualsToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
 
-  bool get isEquals => this == equals;
+class OpenParenthesisToken extends Token<String> {
+  OpenParenthesisToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
 
-  bool get isOpenParenthesis => this == openParenthesis;
-
-  bool get isCloseParenthesis => this == closeParenthesis;
+class CloseParenthesisToken extends Token<String> {
+  CloseParenthesisToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
 }

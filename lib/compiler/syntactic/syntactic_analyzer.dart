@@ -42,8 +42,8 @@ class InitState extends State<Token, void> {
 
   @override
   State process(Token input) {
-    if (input.type.isSymbol) {
-      return FunctionNameState(FunctionDefinition.withName(input.asString));
+    if (input is SymbolToken) {
+      return FunctionNameState(FunctionDefinition.withName(input.value));
     } else {
       throw SyntacticError.invalidToken(input);
     }
@@ -55,9 +55,9 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input) {
-    if (input.type.isEquals) {
+    if (input is EqualsToken) {
       return FunctionBodyInitState(output, Stack());
-    } else if (input.type.isOpenParenthesis) {
+    } else if (input is OpenParenthesisToken) {
       return FunctionWithParametersState(output);
     } else {
       throw SyntacticError.invalidToken(input);
@@ -70,10 +70,9 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input) {
-    if (input.type.isSymbol) {
-      return FunctionWithMoreParametersState(
-          output.withParameter(input.asString));
-    } else if (input.type.isCloseParenthesis) {
+    if (input is SymbolToken) {
+      return FunctionWithMoreParametersState(output.withParameter(input.value));
+    } else if (input is CloseParenthesisToken) {
       if (output.parameters.isEmpty) {
         throw SyntacticError.invalidToken(input);
       }
@@ -90,9 +89,9 @@ class FunctionWithMoreParametersState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input) {
-    if (input.type.isComma) {
+    if (input is CommaToken) {
       return FunctionWithParametersState(output);
-    } else if (input.type.isCloseParenthesis) {
+    } else if (input is CloseParenthesisToken) {
       return FunctionParametrizedState(output);
     } else {
       throw SyntacticError.invalidToken(input);
@@ -105,7 +104,7 @@ class FunctionParametrizedState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input) {
-    if (input.type.isEquals) {
+    if (input is EqualsToken) {
       return FunctionBodyInitState(output, Stack());
     } else {
       throw SyntacticError.invalidToken(input);
@@ -120,16 +119,16 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input) {
-    if (input.type.isString) {
+    if (input is StringToken) {
       return ResultState(
           output.withExpression(LiteralExpression.string(input)));
-    } else if (input.type.isNumber) {
+    } else if (input is NumberToken) {
       return ResultState(
           output.withExpression(LiteralExpression.number(input)));
-    } else if (input.type.isBoolean) {
+    } else if (input is BooleanToken) {
       return ResultState(
           output.withExpression(LiteralExpression.boolean(input)));
-    } else if (input.type.isSymbol) {
+    } else if (input is SymbolToken) {
       return FunctionBodyExpressionState(
         output,
         stack.push(StackSymbol(SymbolExpression.fromToken(input))),
@@ -147,7 +146,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input) {
-    if (input.type.isString) {
+    if (input is StringToken) {
       if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
         throw SyntacticError.invalidToken(input);
       }
@@ -156,7 +155,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         output,
         stack.push(StackLiteral(LiteralExpression.string(input))),
       );
-    } else if (input.type.isNumber) {
+    } else if (input is NumberToken) {
       if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
         throw SyntacticError.invalidToken(input);
       }
@@ -165,7 +164,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         output,
         stack.push(StackLiteral(LiteralExpression.number(input))),
       );
-    } else if (input.type.isBoolean) {
+    } else if (input is BooleanToken) {
       if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
         throw SyntacticError.invalidToken(input);
       }
@@ -174,7 +173,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         output,
         stack.push(StackLiteral(LiteralExpression.boolean(input))),
       );
-    } else if (input.type.isSymbol) {
+    } else if (input is SymbolToken) {
       if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
         throw SyntacticError.invalidToken(input);
       }
@@ -183,17 +182,17 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         output,
         stack.push(StackSymbol(SymbolExpression.fromToken(input))),
       );
-    } else if (input.type.isOpenParenthesis) {
+    } else if (input is OpenParenthesisToken) {
       return FunctionBodyExpressionState(
         output,
         stack.push(StackOpenParenthesis(input)),
       );
-    } else if (input.type.isComma) {
+    } else if (input is CommaToken) {
       return FunctionBodyExpressionState(
         output,
         stack.push(StackComma(input)),
       );
-    } else if (input.type.isCloseParenthesis) {
+    } else if (input is CloseParenthesisToken) {
       final StackElement firstParameter = stack.pop();
 
       if (!(firstParameter is StackExpression)) {
