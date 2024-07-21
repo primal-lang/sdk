@@ -68,8 +68,7 @@ extension StringExtensions on String {
       isEquals ||
       isOpenParenthesis ||
       isCloseParenthesis ||
-      isSemicolon ||
-      isNewLine;
+      isSemicolon;
 
   bool get isDelimiter => isWhitespace || isSeparator;
 }

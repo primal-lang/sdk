@@ -42,8 +42,6 @@ class InitState extends State<Token, void> {
   State process(Token input) {
     if (input.type.isSymbol) {
       return FunctionNameState(FunctionDeclaration.withName(input.asString));
-    } else if (input.type.isNewLine) {
-      return this;
     } else {
       throw SyntacticError.invalidToken(input);
     }
@@ -120,11 +118,7 @@ class FunctionBodyState extends State<Token, FunctionDeclaration> {
   @override
   State process(Token input) {
     if (!input.type.isSemicolon) {
-      if (input.type.isNewLine) {
-        return this;
-      } else {
-        return FunctionBodyState(output.withBody(input));
-      }
+      return FunctionBodyState(output.withBody(input));
     } else {
       return ResultState(output.definition);
     }

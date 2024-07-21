@@ -25,7 +25,7 @@ void checkLocations(Location actual, Location expected) {
 }
 
 void checkTokens(List<Token> actual, List<Token> expected) {
-  expect(actual.length, equals(expected.length + 1));
+  expect(actual.length, equals(expected.length));
 
   for (int i = 0; i < expected.length; i++) {
     expect(actual[i].type, equals(expected[i].type));
