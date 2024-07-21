@@ -1,7 +1,7 @@
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/location.dart';
 
-abstract class Expression extends Localized {
+class Expression extends Localized {
   const Expression({required super.location});
 }
 
