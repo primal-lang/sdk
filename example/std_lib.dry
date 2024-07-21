@@ -60,7 +60,6 @@ match(str, regex): bool
 split(str, delimiter): list
 join(list, delimiter): string
 format(str, ...args): string
-toString(T): string
 
 # Lists
 

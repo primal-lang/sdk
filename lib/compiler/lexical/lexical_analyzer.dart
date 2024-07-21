@@ -205,4 +205,7 @@ class Lexeme {
         value: value + character.value,
         location: location,
       );
+
+  @override
+  String toString() => '$value at $location';
 }

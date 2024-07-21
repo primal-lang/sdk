@@ -1,4 +1,5 @@
 import 'package:dry/compiler/input/character.dart';
+import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 
 class LexicalError implements Exception {
   final String message;
@@ -8,8 +9,8 @@ class LexicalError implements Exception {
   factory LexicalError.invalidCharacter(Character character) =>
       LexicalError('Invalid character $character');
 
-  factory LexicalError.invalidSeparator(String value) =>
-      LexicalError('Invalid separator $value');
+  factory LexicalError.invalidLexeme(Lexeme lexeme) =>
+      LexicalError('Invalid character $lexeme');
 
   @override
   String toString() => message;

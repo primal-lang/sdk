@@ -82,7 +82,7 @@ class Token {
     } else if (value.isCloseParenthesis) {
       return Token.closeParenthesis(lexeme);
     } else {
-      throw LexicalError.invalidSeparator(value);
+      throw LexicalError.invalidLexeme(lexeme);
     }
   }
 
