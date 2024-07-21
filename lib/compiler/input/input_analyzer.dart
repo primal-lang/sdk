@@ -1,7 +1,7 @@
 import 'package:characters/characters.dart';
 import 'package:dry/compiler/input/character.dart';
-import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/models/analyzer.dart';
+import 'package:dry/compiler/models/location.dart';
 
 class InputAnalyzer extends Analyzer<String, List<Character>> {
   const InputAnalyzer(super.input);

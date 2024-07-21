@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';

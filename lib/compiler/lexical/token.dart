@@ -1,5 +1,5 @@
-import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
+import 'package:dry/compiler/models/location.dart';
 
 class Token<T> extends Localized {
   final T value;

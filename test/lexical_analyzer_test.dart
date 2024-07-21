@@ -1,7 +1,7 @@
 import 'package:dry/compiler/errors/lexical_error.dart';
-import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
+import 'package:dry/compiler/models/location.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
 

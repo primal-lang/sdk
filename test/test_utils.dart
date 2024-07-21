@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/input/input_analyzer.dart';
-import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
+import 'package:dry/compiler/models/location.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/compiler/syntactic/syntactic_analyzer.dart';

@@ -1,5 +1,5 @@
 import 'package:dry/compiler/errors/syntactic_error.dart';
-import 'package:dry/compiler/input/location.dart';
+import 'package:dry/compiler/models/location.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';

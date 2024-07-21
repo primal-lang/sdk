@@ -1,8 +1,8 @@
 import 'package:dry/compiler/errors/lexical_error.dart';
 import 'package:dry/compiler/input/character.dart';
-import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/analyzer.dart';
+import 'package:dry/compiler/models/location.dart';
 import 'package:dry/compiler/models/state.dart';
 import 'package:dry/extensions/string_extensions.dart';
 import 'package:dry/utils/list_iterator.dart';
