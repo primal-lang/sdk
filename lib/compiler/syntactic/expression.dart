@@ -45,15 +45,9 @@ class BooleanExpression extends LiteralExpression<bool> {
 class SymbolExpression extends Expression {
   final String value;
 
-  const SymbolExpression._({
-    required super.location,
-    required this.value,
-  });
-
-  factory SymbolExpression.fromToken(Token token) => SymbolExpression._(
-        value: token.value,
-        location: token.location,
-      );
+  SymbolExpression(Token token)
+      : value = token.value,
+        super(location: token.location);
 }
 
 class FunctionCallExpression extends Expression {

@@ -128,7 +128,7 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
     } else if (input is SymbolToken) {
       return FunctionBodyExpressionState(
         output,
-        stack.push(StackSymbol(SymbolExpression.fromToken(input))),
+        stack.push(StackSymbol(SymbolExpression(input))),
       );
     } else {
       throw SyntacticError.invalidToken(input);
@@ -177,7 +177,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
 
       return FunctionBodyExpressionState(
         output,
-        stack.push(StackSymbol(SymbolExpression.fromToken(input))),
+        stack.push(StackSymbol(SymbolExpression(input))),
       );
     } else if (input is OpenParenthesisToken) {
       return FunctionBodyExpressionState(
