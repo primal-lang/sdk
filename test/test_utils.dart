@@ -34,7 +34,7 @@ void checkTokens(List<Token> actual, List<Token> expected) {
 
 void checkExpressions(Expression actual, Expression expected) {
   expect(actual.toString(), equals(expected.toString()));
-  expect(actual.type, equals(expected.type));
+  expect(actual.runtimeType, equals(expected.runtimeType));
   checkLocations(actual.location, expected.location);
 
   if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
