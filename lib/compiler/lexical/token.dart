@@ -28,7 +28,7 @@ class Token<T> extends Localized {
   }
 
   @override
-  String toString() => 'Token{value: $value, location: $location}';
+  String toString() => '$value at $location';
 }
 
 class StringToken extends Token<String> {
