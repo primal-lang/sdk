@@ -1,7 +1,5 @@
-import 'package:dry/compiler/errors/lexical_error.dart';
 import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
-import 'package:dry/extensions/string_extensions.dart';
 
 class Token<T> extends Localized {
   final T value;
@@ -10,22 +8,6 @@ class Token<T> extends Localized {
     required this.value,
     required super.location,
   });
-
-  static Token separator(Lexeme lexeme) {
-    final String value = lexeme.value;
-
-    if (value.isComma) {
-      return CommaToken(lexeme);
-    } else if (value.isEquals) {
-      return EqualsToken(lexeme);
-    } else if (value.isOpenParenthesis) {
-      return OpenParenthesisToken(lexeme);
-    } else if (value.isCloseParenthesis) {
-      return CloseParenthesisToken(lexeme);
-    } else {
-      throw LexicalError.invalidLexeme(lexeme);
-    }
-  }
 
   @override
   String toString() => '$value at $location';

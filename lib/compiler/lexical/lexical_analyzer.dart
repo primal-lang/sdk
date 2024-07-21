@@ -53,7 +53,7 @@ class InitState extends State<Character, void> {
     } else if (input.isHashtag) {
       return const CommentState();
     } else if (input.isSeparator) {
-      return ResultState([Token.separator(Lexeme.fromCharacter(input))]);
+      return ResultState([input.separator]);
     } else {
       return this;
     }
@@ -125,7 +125,7 @@ class IntegerState extends State<Character, Lexeme> {
       final List<Token> tokens = [NumberToken(output)];
 
       if (input.isSeparator) {
-        tokens.add(Token.separator(Lexeme.fromCharacter(input)));
+        tokens.add(input.separator);
       }
 
       return ResultState(tokens);
@@ -146,7 +146,7 @@ class DecimalState extends State<Character, Lexeme> {
       final List<Token> tokens = [NumberToken(output)];
 
       if (input.isSeparator) {
-        tokens.add(Token.separator(Lexeme.fromCharacter(input)));
+        tokens.add(input.separator);
       }
 
       return ResultState(tokens);
@@ -173,7 +173,7 @@ class SymbolState extends State<Character, Lexeme> {
       }
 
       if (input.isSeparator) {
-        tokens.add(Token.separator(Lexeme.fromCharacter(input)));
+        tokens.add(input.separator);
       }
 
       return ResultState(tokens);

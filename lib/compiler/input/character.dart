@@ -1,4 +1,7 @@
+import 'package:dry/compiler/errors/lexical_error.dart';
 import 'package:dry/compiler/input/location.dart';
+import 'package:dry/compiler/lexical/lexical_analyzer.dart';
+import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/extensions/string_extensions.dart';
 
 class Character extends Localized {
@@ -8,6 +11,22 @@ class Character extends Localized {
     required this.value,
     required super.location,
   });
+
+  Token get separator {
+    final Lexeme lexeme = Lexeme.fromCharacter(this);
+
+    if (value.isComma) {
+      return CommaToken(lexeme);
+    } else if (value.isEquals) {
+      return EqualsToken(lexeme);
+    } else if (value.isOpenParenthesis) {
+      return OpenParenthesisToken(lexeme);
+    } else if (value.isCloseParenthesis) {
+      return CloseParenthesisToken(lexeme);
+    } else {
+      throw LexicalError.invalidLexeme(lexeme);
+    }
+  }
 
   bool get isDigit => value.isDigit;
 
