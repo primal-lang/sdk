@@ -4,6 +4,7 @@
 ## TODO
 * Arrays and maps (as associative arrays)
 * Higher order functions
+* Operators (= + - / * ! & |)
 * Imports
 * Pattern matching
 * Types
