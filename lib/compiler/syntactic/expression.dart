@@ -5,18 +5,10 @@ abstract class Expression {
   final Location location;
 
   const Expression({required this.location});
-
-  String get body;
-
-  @override
-  String toString() => 'Expression{value: $body, location: $location}';
 }
 
 class EmptyExpression extends Expression {
   const EmptyExpression() : super(location: const Location(row: 1, column: 1));
-
-  @override
-  String get body => '';
 }
 
 class LiteralExpression<T> extends Expression {
@@ -41,9 +33,6 @@ class LiteralExpression<T> extends Expression {
         value: token.asBoolean,
         location: token.location,
       );
-
-  @override
-  String get body => value.toString();
 }
 
 class SymbolExpression extends Expression {
@@ -58,9 +47,6 @@ class SymbolExpression extends Expression {
         value: token.asString,
         location: token.location,
       );
-
-  @override
-  String get body => value.toString();
 }
 
 class FunctionCallExpression extends Expression {
@@ -72,7 +58,4 @@ class FunctionCallExpression extends Expression {
     required this.name,
     required this.arguments,
   });
-
-  @override
-  String get body => '$name(${arguments.map((e) => e.toString()).join(', ')})';
 }
