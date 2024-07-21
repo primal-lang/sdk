@@ -43,16 +43,15 @@ xor(a: bool, b: bool): bool
 
 # String
 
-substring(text: string, start: num, length: num): string
-startswith(text: string, pattern: string): bool
-endswith(text: string, pattern: string): bool
+subString(text: string, start: num, length: num): string
+startsWith(text: string, pattern: string): bool
+endsWith(text: string, pattern: string): bool
 replace(text: string, old: string, new: string): string
 uppercase(text: string): string
 lowercase(text: string): string
 trim(text: string): string
 match(text: string, pattern: string): bool
 split(text: string, delimiter: string): [string]
-join([string], delimiter: string): string
 format(text: string, ...args): string
 
 # Associative arrays
@@ -66,6 +65,7 @@ isNotEmpty(list: [T]): bool
 get(index: num, list: [T]): T
 set(index: num, value: T, list: [T]): [T]
 contains(a: T, list: [T]): bool
+join(list: [T], delimiter: string): string
 first(list: [T]): T
 last(list: [T]): T
 tail(list: [T]): [T]
@@ -73,6 +73,8 @@ take(a: num, list: [T]): [T]
 drop(a: num, list: [T]): [T]
 addFirst(a: T, list: [T]): [T]
 addLast(a: T, list: [T]): [T]
+push(a: T, list[T]): [T]
+pop(list: [T]): [T]
 remove(index: num, list: [T]): [T]
 removeFirst(list: [T]): [T]
 removeLast(list: [T]): [T]
@@ -93,8 +95,8 @@ isBoolean(a: T): bool
 
 # Control
 
-if(condition: bool, expression1: T, expression2: T)
-try(expression: T, handler: T)
+if(condition: bool, exp1: T, exp2: T): T
+try(exp1: T, exp2: T): T
 
 # Error
 
