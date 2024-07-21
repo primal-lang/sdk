@@ -17,7 +17,7 @@ void main(List<String> args) {
     while (input != null) {
       try {
         final Expression expression = compiler.expression(input);
-        print('Your input: $expression');
+        print(intermediateCode.evaluate(expression));
       } catch (e) {
         print(e);
       }

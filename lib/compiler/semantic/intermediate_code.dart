@@ -8,12 +8,11 @@ class IntermediateCode {
 
   bool get hasMain => functions.containsKey('main');
 
-  String executeMain() {
-    // TODO(momo): implement
-    return '';
-  }
+  // TODO(momo): implement
+  String executeMain() => evaluate(const EmptyExpression());
 
-  void evaluate(Expression expression) {
-    // TODO(momo): implement
+  // TODO(momo): implement
+  String evaluate(Expression expression) {
+    return expression.toString();
   }
 }
