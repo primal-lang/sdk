@@ -41,7 +41,7 @@ class InitState extends State<Token, void> {
   @override
   State process(Token input) {
     if (input is SymbolToken) {
-      return FunctionNameState(FunctionDefinition.withName(input.value));
+      return FunctionNameState(FunctionDefinition(name: input.value));
     } else {
       throw SyntacticError.invalidToken(input);
     }

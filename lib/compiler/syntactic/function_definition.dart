@@ -7,15 +7,9 @@ class FunctionDefinition {
 
   const FunctionDefinition({
     required this.name,
-    required this.parameters,
-    required this.expression,
+    this.parameters = const [],
+    this.expression = const EmptyExpression(),
   });
-
-  factory FunctionDefinition.withName(String name) => FunctionDefinition(
-        name: name,
-        parameters: [],
-        expression: const EmptyExpression(),
-      );
 
   FunctionDefinition withParameter(String parameter) => FunctionDefinition(
         name: name,
