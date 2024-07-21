@@ -45,11 +45,11 @@ class InitState extends State<Character, void> {
         location: input.location,
       ));
     } else if (input.isDash) {
-      return NegativeNumberState(Lexeme.fromCharacter(input));
+      return NegativeNumberState(input.lexeme);
     } else if (input.isDigit) {
-      return IntegerState(Lexeme.fromCharacter(input));
+      return IntegerState(input.lexeme);
     } else if (input.isLetter) {
-      return SymbolState(Lexeme.fromCharacter(input));
+      return SymbolState(input.lexeme);
     } else if (input.isHashtag) {
       return const CommentState();
     } else if (input.isSeparator) {
@@ -194,11 +194,6 @@ class Lexeme extends Localized {
     required this.value,
     required super.location,
   });
-
-  factory Lexeme.fromCharacter(Character character) => Lexeme(
-        value: character.value,
-        location: character.location,
-      );
 
   Lexeme add(Character character) => Lexeme(
         value: value + character.value,

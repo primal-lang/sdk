@@ -12,9 +12,12 @@ class Character extends Localized {
     required super.location,
   });
 
-  Token get separator {
-    final Lexeme lexeme = Lexeme.fromCharacter(this);
+  Lexeme get lexeme => Lexeme(
+        value: value,
+        location: location,
+      );
 
+  Token get separator {
     if (value.isComma) {
       return CommaToken(lexeme);
     } else if (value.isEquals) {
