@@ -1,32 +1,32 @@
 import 'package:dry/compiler/errors/syntactic_error.dart';
 
 class ListIterator<T> {
-  int index = 0;
-  final List<T> list;
+  int _index = 0;
+  final List<T> _list;
 
-  ListIterator(this.list);
+  ListIterator(this._list);
 
-  bool get hasNext => index < list.length;
+  bool get hasNext => _index < _list.length;
 
   void consume() {
-    if (index < list.length) {
-      index++;
+    if (_index < _list.length) {
+      _index++;
     } else {
       throw SyntacticError.unexpectedEndOfFile();
     }
   }
 
   T get peek {
-    if (index < list.length) {
-      return list[index];
+    if (_index < _list.length) {
+      return _list[_index];
     } else {
       throw SyntacticError.unexpectedEndOfFile();
     }
   }
 
   T get next {
-    if (index < list.length) {
-      return list[index++];
+    if (_index < _list.length) {
+      return _list[_index++];
     } else {
       throw SyntacticError.unexpectedEndOfFile();
     }
