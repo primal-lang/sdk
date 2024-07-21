@@ -242,16 +242,14 @@ class ResultState extends State<void, FunctionDefinition> {
   const ResultState(super.output);
 }
 
-class StackElement {
-  final Location location;
-
-  const StackElement(this.location);
+class StackElement extends Localized {
+  const StackElement({required super.location});
 }
 
 class StackExpression<T extends Expression> extends StackElement {
   final T expression;
 
-  StackExpression(this.expression) : super(expression.location);
+  StackExpression(this.expression) : super(location: expression.location);
 }
 
 class StackLiteral extends StackExpression<LiteralExpression> {
@@ -269,11 +267,11 @@ class StackFunctionCall extends StackExpression<FunctionCallExpression> {
 class StackOpenParenthesis extends StackElement {
   final Token token;
 
-  StackOpenParenthesis(this.token) : super(token.location);
+  StackOpenParenthesis(this.token) : super(location: token.location);
 }
 
 class StackComma extends StackElement {
   final Token token;
 
-  StackComma(this.token) : super(token.location);
+  StackComma(this.token) : super(location: token.location);
 }

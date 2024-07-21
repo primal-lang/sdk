@@ -10,3 +10,9 @@ class Location {
   @override
   String toString() => '[$row, $column]';
 }
+
+class Localized {
+  final Location location;
+
+  const Localized({required this.location});
+}

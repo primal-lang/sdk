@@ -1,10 +1,8 @@
 import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/token.dart';
 
-abstract class Expression {
-  final Location location;
-
-  const Expression({required this.location});
+abstract class Expression extends Localized {
+  const Expression({required super.location});
 }
 
 class EmptyExpression extends Expression {

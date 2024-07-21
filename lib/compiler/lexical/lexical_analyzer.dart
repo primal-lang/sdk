@@ -187,13 +187,12 @@ class ResultState extends State<void, List<Token>> {
   const ResultState(super.output);
 }
 
-class Lexeme {
+class Lexeme extends Localized {
   final String value;
-  final Location location;
 
   const Lexeme({
     required this.value,
-    required this.location,
+    required super.location,
   });
 
   factory Lexeme.fromCharacter(Character character) => Lexeme(

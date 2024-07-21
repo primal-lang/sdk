@@ -3,15 +3,14 @@ import 'package:dry/compiler/input/location.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/extensions/string_extensions.dart';
 
-class Token {
+class Token extends Localized {
   final TokenType type;
   final String value;
-  final Location location;
 
   const Token._({
     required this.type,
     required this.value,
-    required this.location,
+    required super.location,
   });
 
   String get asString => value;
