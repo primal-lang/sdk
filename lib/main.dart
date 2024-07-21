@@ -10,14 +10,14 @@ void main(List<String> args) {
     final String result = intermediateCode.executeMain();
     print(result);
   } else {
-    print('> ');
+    stdout.write('> ');
     String? input = stdin.readLineSync();
 
     while (input != null) {
       //final Expression expression = Expression.parse(input);
       //intermediateCode.evaluate(expression);
       print('Your input: $input');
-      print('> ');
+      stdout.write('> ');
       input = stdin.readLineSync();
     }
   }
