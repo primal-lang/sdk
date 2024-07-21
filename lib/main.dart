@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dry/compiler/compiler.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
+import 'package:dry/compiler/syntactic/expression.dart';
 
 void main(List<String> args) {
   final Compiler compiler = Compiler.fromFile(args[0]);
@@ -14,9 +15,13 @@ void main(List<String> args) {
     String? input = stdin.readLineSync();
 
     while (input != null) {
-      //final Expression expression = Expression.parse(input);
-      //intermediateCode.evaluate(expression);
-      print('Your input: $input');
+      try {
+        final Expression expression = compiler.expression(input);
+        print('Your input: $expression');
+      } catch (e) {
+        print(e);
+      }
+
       stdout.write('> ');
       input = stdin.readLineSync();
     }

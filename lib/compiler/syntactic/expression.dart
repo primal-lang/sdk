@@ -51,6 +51,9 @@ class SymbolExpression extends Expression {
   SymbolExpression(Token token)
       : value = token.value,
         super(location: token.location);
+
+  @override
+  String toString() => value.toString();
 }
 
 class FunctionCallExpression extends Expression {

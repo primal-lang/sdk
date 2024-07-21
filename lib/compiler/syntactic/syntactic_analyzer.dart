@@ -33,6 +33,30 @@ class SyntacticAnalyzer
 
     return result;
   }
+
+  Expression get expression {
+    final List<FunctionDefinition> result = [];
+    final ListIterator<Token> iterator = ListIterator(input);
+    State state = FunctionBodyInitState(
+      const FunctionDefinition(name: ''),
+      Stack(),
+    );
+
+    while (iterator.hasNext) {
+      state = state.process(iterator.next);
+
+      if (state is ResultState) {
+        result.add(state.output);
+        state = const InitState();
+      }
+    }
+
+    if (!(state is InitState)) {
+      throw SyntacticError.unexpectedEndOfFile();
+    }
+
+    return result[0].expression;
+  }
 }
 
 class InitState extends State<Token, void> {
