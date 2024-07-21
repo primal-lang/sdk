@@ -60,10 +60,7 @@ extension StringExtensions on String {
   bool get isNewLine => REGEX_NEW_LINE.hasMatch(this);
 
   bool get isSeparator =>
-      isComma ||
-      isEquals ||
-      isOpenParenthesis ||
-      isCloseParenthesis;
+      isComma || isEquals || isOpenParenthesis || isCloseParenthesis;
 
   bool get isDelimiter => isWhitespace || isSeparator;
 }
