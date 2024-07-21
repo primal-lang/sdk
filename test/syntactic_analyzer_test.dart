@@ -68,8 +68,7 @@ void main() {
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression:
-              LiteralExpression.string(stringToken('Hello, world!', 1, 12)),
+          expression: StringExpression(stringToken('Hello, world!', 1, 12)),
         ),
       ]);
     });
@@ -81,8 +80,7 @@ void main() {
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression:
-              LiteralExpression.string(stringToken('Goodbye, world!', 1, 12)),
+          expression: StringExpression(stringToken('Goodbye, world!', 1, 12)),
         ),
       ]);
     });
@@ -93,7 +91,7 @@ void main() {
         FunctionDefinition(
           name: 'pi',
           parameters: [],
-          expression: LiteralExpression.number(numberToken(3.14, 1, 6)),
+          expression: NumberExpression(numberToken(3.14, 1, 6)),
         ),
       ]);
     });
@@ -104,7 +102,7 @@ void main() {
         FunctionDefinition(
           name: 'enabled',
           parameters: [],
-          expression: LiteralExpression.boolean(booleanToken(true, 1, 11)),
+          expression: BooleanExpression(booleanToken(true, 1, 11)),
         ),
       ]);
     });
@@ -115,7 +113,7 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: ['a'],
-          expression: LiteralExpression.boolean(booleanToken(true, 1, 11)),
+          expression: BooleanExpression(booleanToken(true, 1, 11)),
         ),
       ]);
     });
@@ -127,7 +125,7 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: ['a', 'b', 'c'],
-          expression: LiteralExpression.boolean(booleanToken(true, 1, 17)),
+          expression: BooleanExpression(booleanToken(true, 1, 17)),
         ),
       ]);
     });
@@ -146,11 +144,11 @@ void main() {
                 name: 'mod',
                 arguments: [
                   SymbolExpression.fromToken(symbolToken('x', 1, 20)),
-                  LiteralExpression.number(numberToken(2, 1, 23)),
+                  NumberExpression(numberToken(2, 1, 23)),
                 ],
                 location: const Location(row: 1, column: 16),
               ),
-              LiteralExpression.number(numberToken(0, 1, 27)),
+              NumberExpression(numberToken(0, 1, 27)),
             ],
             location: const Location(row: 1, column: 13),
           ),
@@ -202,11 +200,11 @@ void main() {
                 name: 'eq',
                 arguments: [
                   SymbolExpression.fromToken(symbolToken('n', 1, 22)),
-                  LiteralExpression.number(numberToken(0, 1, 25)),
+                  NumberExpression(numberToken(0, 1, 25)),
                 ],
                 location: const Location(row: 1, column: 19),
               ),
-              LiteralExpression.number(numberToken(1, 1, 29)),
+              NumberExpression(numberToken(1, 1, 29)),
               FunctionCallExpression(
                 name: 'mul',
                 arguments: [
@@ -218,7 +216,7 @@ void main() {
                         name: 'sub',
                         arguments: [
                           SymbolExpression.fromToken(symbolToken('n', 1, 53)),
-                          LiteralExpression.number(numberToken(1, 1, 56)),
+                          NumberExpression(numberToken(1, 1, 56)),
                         ],
                         location: const Location(row: 1, column: 49),
                       ),

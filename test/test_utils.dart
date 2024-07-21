@@ -90,25 +90,25 @@ void checkFunctions(
   }
 }
 
-Token stringToken(String value, [int row = 1, int column = 1]) =>
+StringToken stringToken(String value, [int row = 1, int column = 1]) =>
     StringToken(Lexeme(
       value: value,
       location: Location(row: row, column: column),
     ));
 
-Token numberToken(num value, [int row = 1, int column = 1]) =>
+NumberToken numberToken(num value, [int row = 1, int column = 1]) =>
     NumberToken(Lexeme(
       value: value.toString(),
       location: Location(row: row, column: column),
     ));
 
-Token booleanToken(bool value, [int row = 1, int column = 1]) =>
+BooleanToken booleanToken(bool value, [int row = 1, int column = 1]) =>
     BooleanToken(Lexeme(
       value: value.toString(),
       location: Location(row: row, column: column),
     ));
 
-Token symbolToken(String value, [int row = 1, int column = 1]) =>
+SymbolToken symbolToken(String value, [int row = 1, int column = 1]) =>
     SymbolToken(Lexeme(
       value: value,
       location: Location(row: row, column: column),

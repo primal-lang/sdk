@@ -120,14 +120,11 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
   @override
   State process(Token input) {
     if (input is StringToken) {
-      return ResultState(
-          output.withExpression(LiteralExpression.string(input)));
+      return ResultState(output.withExpression(StringExpression(input)));
     } else if (input is NumberToken) {
-      return ResultState(
-          output.withExpression(LiteralExpression.number(input)));
+      return ResultState(output.withExpression(NumberExpression(input)));
     } else if (input is BooleanToken) {
-      return ResultState(
-          output.withExpression(LiteralExpression.boolean(input)));
+      return ResultState(output.withExpression(BooleanExpression(input)));
     } else if (input is SymbolToken) {
       return FunctionBodyExpressionState(
         output,
@@ -153,7 +150,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
 
       return FunctionBodyExpressionState(
         output,
-        stack.push(StackLiteral(LiteralExpression.string(input))),
+        stack.push(StackLiteral(StringExpression(input))),
       );
     } else if (input is NumberToken) {
       if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
@@ -162,7 +159,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
 
       return FunctionBodyExpressionState(
         output,
-        stack.push(StackLiteral(LiteralExpression.number(input))),
+        stack.push(StackLiteral(NumberExpression(input))),
       );
     } else if (input is BooleanToken) {
       if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
@@ -171,7 +168,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
 
       return FunctionBodyExpressionState(
         output,
-        stack.push(StackLiteral(LiteralExpression.boolean(input))),
+        stack.push(StackLiteral(BooleanExpression(input))),
       );
     } else if (input is SymbolToken) {
       if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {

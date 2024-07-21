@@ -12,25 +12,34 @@ class EmptyExpression extends Expression {
 class LiteralExpression<T> extends Expression {
   final T value;
 
-  const LiteralExpression._({
+  const LiteralExpression({
     required super.location,
     required this.value,
   });
+}
 
-  static LiteralExpression<String> string(Token token) => LiteralExpression._(
-        value: token.value,
-        location: token.location,
-      );
+class StringExpression extends LiteralExpression<String> {
+  StringExpression(Token token)
+      : super(
+          location: token.location,
+          value: token.value,
+        );
+}
 
-  static LiteralExpression<num> number(Token token) => LiteralExpression._(
-        value: token.value,
-        location: token.location,
-      );
+class NumberExpression extends LiteralExpression<num> {
+  NumberExpression(Token token)
+      : super(
+          location: token.location,
+          value: token.value,
+        );
+}
 
-  static LiteralExpression<bool> boolean(Token token) => LiteralExpression._(
-        value: token.value,
-        location: token.location,
-      );
+class BooleanExpression extends LiteralExpression<bool> {
+  BooleanExpression(Token token)
+      : super(
+          location: token.location,
+          value: token.value,
+        );
 }
 
 class SymbolExpression extends Expression {
