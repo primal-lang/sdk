@@ -1,4 +1,3 @@
-import 'package:characters/characters.dart';
 import 'package:dry/compiler/input/character.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/location.dart';
@@ -12,7 +11,8 @@ class InputAnalyzer extends Analyzer<String, List<Character>> {
     final List<String> rows = input.split('\n');
 
     for (int i = 0; i < rows.length; i++) {
-      final List<String> columns = rows[i].characters.toList();
+      final List<String> columns =
+          rows[i].runes.map(String.fromCharCode).toList();
 
       for (int j = 0; j < columns.length; j++) {
         result.add(Character(
