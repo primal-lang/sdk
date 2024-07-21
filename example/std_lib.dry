@@ -57,26 +57,26 @@ format(text: string, ...args): string
 
 # Associative arrays
 
-length([T]): num
-keys([T]): [String]
-values([T]): [T]
-concat([T], [T]): [T]
-isEmpty([T]): bool
-isNotEmpty([T]): bool
-get(num, [T]): T
-set(num, T, [T]): [T]
-contains(T, [T]): bool
-first([T]): T
-last([T]): T
-tail([T]): T
-take(num, [T]): [T]
-drop(num, [T]): [T]
-addFirst(T, [T]): [T]
-addLast(T, [T]): [T]
-remove(num, [T]): [T]
-removeFirst([T]): [T]
-removeLast([T]): [T]
-reverse([T]): [T]
+length(list: [T]): num
+keys(list: [T]): [string]
+values(list: [T]): [T]
+concat(list1: [T], list2: [T]): [T]
+isEmpty(list: [T]): bool
+isNotEmpty(list: [T]): bool
+get(index: num, list: [T]): T
+set(index: num, value: T, list: [T]): [T]
+contains(a: T, list: [T]): bool
+first(list: [T]): T
+last(list: [T]): T
+tail(list: [T]): [T]
+take(a: num, list: [T]): [T]
+drop(a: num, list: [T]): [T]
+addFirst(a: T, list: [T]): [T]
+addLast(a: T, list: [T]): [T]
+remove(index: num, list: [T]): [T]
+removeFirst(list: [T]): [T]
+removeLast(list: [T]): [T]
+reverse(list: [T]): [T]
 
 # Casting
 
@@ -107,10 +107,10 @@ println(a: T): T
 
 # Functions
 
-map(func: function, [T]): [T]
-filter(func: function, [T]): [T]
-reduce(func: function, [T], T): T
-sort(func: function, [T]): [T]
-all(func: function, [T]): bool
-any(func: function, [T]): bool
-zip(func: function, [T], [T]): [T]
+map(func: function, list: [T]): [T]
+filter(func: function, list: [T]): [T]
+reduce(func: function, list: [T], initial: T): T
+sort(func: function, list: [T]): [T]
+all(func: function, list: [T]): bool
+any(func: function, list: [T]): bool
+zip(func: function, list1: [T], list2: [T]): [T]
