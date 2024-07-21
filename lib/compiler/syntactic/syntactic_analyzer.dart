@@ -178,6 +178,10 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackSymbol(SymbolExpression(input))),
       );
     } else if (input is OpenParenthesisToken) {
+      if (topIsNot(StackSymbol)) {
+        throw SyntacticError.invalidToken(input);
+      }
+
       return FunctionBodyExpressionState(
         output,
         stack.push(StackOpenParenthesis(input)),
