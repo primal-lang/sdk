@@ -1,10 +1,9 @@
+import 'package:dry/compiler/errors/generic_error.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/syntactic/syntactic_analyzer.dart';
 
-class SyntacticError implements Exception {
-  final String message;
-
-  const SyntacticError(this.message);
+class SyntacticError extends GenericError {
+  const SyntacticError(super.message);
 
   factory SyntacticError.invalidToken(Token token) =>
       SyntacticError('Invalid token $token');
@@ -14,7 +13,4 @@ class SyntacticError implements Exception {
 
   factory SyntacticError.unexpectedEndOfFile() =>
       const SyntacticError('Unexpected end of file');
-
-  @override
-  String toString() => message;
 }
