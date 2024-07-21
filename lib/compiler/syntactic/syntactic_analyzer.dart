@@ -142,7 +142,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
   @override
   State process(Token input) {
     if (input is StringToken) {
-      if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
+      if (topIsNot([StackOpenParenthesis, StackComma])) {
         throw SyntacticError.invalidToken(input);
       }
 
@@ -151,7 +151,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackLiteral(StringExpression(input))),
       );
     } else if (input is NumberToken) {
-      if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
+      if (topIsNot([StackOpenParenthesis, StackComma])) {
         throw SyntacticError.invalidToken(input);
       }
 
@@ -160,7 +160,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackLiteral(NumberExpression(input))),
       );
     } else if (input is BooleanToken) {
-      if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
+      if (topIsNot([StackOpenParenthesis, StackComma])) {
         throw SyntacticError.invalidToken(input);
       }
 
@@ -169,7 +169,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackLiteral(BooleanExpression(input))),
       );
     } else if (input is SymbolToken) {
-      if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
+      if (topIsNot([StackOpenParenthesis, StackComma])) {
         throw SyntacticError.invalidToken(input);
       }
 
@@ -178,7 +178,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackSymbol(SymbolExpression(input))),
       );
     } else if (input is OpenParenthesisToken) {
-      if (topIsNot(StackSymbol)) {
+      if (topIsNot([StackSymbol])) {
         throw SyntacticError.invalidToken(input);
       }
 
@@ -187,9 +187,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackOpenParenthesis(input)),
       );
     } else if (input is CommaToken) {
-      if (topIsNot(StackLiteral) &&
-          topIsNot(StackSymbol) &&
-          topIsNot(StackFunctionCall)) {
+      if (topIsNot([StackLiteral, StackSymbol, StackFunctionCall])) {
         throw SyntacticError.invalidToken(input);
       }
 
@@ -206,7 +204,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
 
       final List<Expression> arguments = [firstParameter.expression];
 
-      while (stack.isNotEmpty && topIsNot(StackOpenParenthesis)) {
+      while (stack.isNotEmpty && topIsNot([StackOpenParenthesis])) {
         final StackElement commaElement = stack.pop();
 
         if (!(commaElement is StackComma)) {
@@ -259,7 +257,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
 
   bool topIs(Type type) => stack.peek.runtimeType == type;
 
-  bool topIsNot(Type type) => !topIs(type);
+  bool topIsNot(List<Type> types) => types.every((type) => !topIs(type));
 }
 
 class ResultState extends State<void, FunctionDefinition> {
