@@ -187,6 +187,12 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackOpenParenthesis(input)),
       );
     } else if (input is CommaToken) {
+      if (topIsNot(StackLiteral) &&
+          topIsNot(StackSymbol) &&
+          topIsNot(StackFunctionCall)) {
+        throw SyntacticError.invalidToken(input);
+      }
+
       return FunctionBodyExpressionState(
         output,
         stack.push(StackComma(input)),
