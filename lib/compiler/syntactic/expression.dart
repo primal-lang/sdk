@@ -16,6 +16,9 @@ class LiteralExpression<T> extends Expression {
     required super.location,
     required this.value,
   });
+
+  @override
+  String toString() => value.toString();
 }
 
 class StringExpression extends LiteralExpression<String> {
@@ -59,4 +62,7 @@ class FunctionCallExpression extends Expression {
     required this.name,
     required this.arguments,
   });
+
+  @override
+  String toString() => '$name(${arguments.join(', ')})';
 }

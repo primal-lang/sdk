@@ -7,14 +7,17 @@ void main(List<String> args) {
   final IntermediateCode intermediateCode = compiler.compile();
 
   if (intermediateCode.hasMain) {
-    intermediateCode.executeMain();
+    final String result = intermediateCode.executeMain();
+    print(result);
   } else {
+    print('> ');
     String? input = stdin.readLineSync();
 
     while (input != null) {
-      print('Evaluating: $input');
       //final Expression expression = Expression.parse(input);
       //intermediateCode.evaluate(expression);
+      print('Your input: $input');
+      print('> ');
       input = stdin.readLineSync();
     }
   }

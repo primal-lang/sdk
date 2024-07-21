@@ -6,10 +6,11 @@ class IntermediateCode {
 
   const IntermediateCode({required this.functions});
 
-  bool get hasMain => true;
+  bool get hasMain => functions.containsKey('main');
 
-  void executeMain() {
+  String executeMain() {
     // TODO(momo): implement
+    return '';
   }
 
   void evaluate(Expression expression) {

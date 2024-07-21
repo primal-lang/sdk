@@ -20,8 +20,6 @@ class Compiler {
     final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();
 
-    print('Tokens parsed:\n${tokens.join('\n')}');
-
     final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
     final List<FunctionDefinition> functions = syntacticAnalyzer.analyze();
 
