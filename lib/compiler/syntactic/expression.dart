@@ -27,6 +27,9 @@ class StringExpression extends LiteralExpression<String> {
           location: token.location,
           value: token.value,
         );
+
+  @override
+  String toString() => '"$value"';
 }
 
 class NumberExpression extends LiteralExpression<num> {
