@@ -16,14 +16,14 @@ class SyntacticAnalyzer
   List<FunctionDefinition> analyze() {
     final List<FunctionDefinition> result = [];
     final ListIterator<Token> iterator = ListIterator(input);
-    State state = InitState.empty();
+    State state = const InitState();
 
     while (iterator.hasNext) {
       state = state.process(iterator.next);
 
       if (state is ResultState) {
         result.add(state.output);
-        state = InitState.empty();
+        state = const InitState();
       }
     }
 
@@ -36,9 +36,7 @@ class SyntacticAnalyzer
 }
 
 class InitState extends State<Token, void> {
-  const InitState(super.output);
-
-  factory InitState.empty() => const InitState(null);
+  const InitState([super.output]);
 
   @override
   State process(Token input) {
