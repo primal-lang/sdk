@@ -17,6 +17,13 @@ List<Token> getTokens(String source) {
   return lexicalAnalyzer.analyze();
 }
 
+List<FunctionDefinition> getFunctions(String source) {
+  final List<Token> tokens = getTokens(source);
+  final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
+
+  return syntacticAnalyzer.analyze();
+}
+
 void checkLocations(Location actual, Location expected) {
   expect(actual.row, equals(expected.row));
   expect(actual.column, equals(expected.column));
@@ -58,16 +65,6 @@ void checkExpressions(Expression actual, Expression expected) {
   }
 }
 
-List<FunctionDefinition> getFunctions(String source) {
-  final InputAnalyzer inputAnalyzer = InputAnalyzer(source);
-  final List<Character> characters = inputAnalyzer.analyze();
-  final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
-  final List<Token> tokens = lexicalAnalyzer.analyze();
-  final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
-
-  return syntacticAnalyzer.analyze();
-}
-
 void checkFunctions(
   List<FunctionDefinition> actual,
   List<FunctionDefinition> expected,
@@ -90,25 +87,24 @@ void checkFunctions(
   }
 }
 
-StringToken stringToken(String value, [int row = 1, int column = 1]) =>
+StringToken stringToken(String value, int row, int column) =>
     StringToken(Lexeme(
       value: value,
       location: Location(row: row, column: column),
     ));
 
-NumberToken numberToken(num value, [int row = 1, int column = 1]) =>
-    NumberToken(Lexeme(
+NumberToken numberToken(num value, int row, int column) => NumberToken(Lexeme(
       value: value.toString(),
       location: Location(row: row, column: column),
     ));
 
-BooleanToken booleanToken(bool value, [int row = 1, int column = 1]) =>
+BooleanToken booleanToken(bool value, int row, int column) =>
     BooleanToken(Lexeme(
       value: value.toString(),
       location: Location(row: row, column: column),
     ));
 
-SymbolToken symbolToken(String value, [int row = 1, int column = 1]) =>
+SymbolToken symbolToken(String value, int row, int column) =>
     SymbolToken(Lexeme(
       value: value,
       location: Location(row: row, column: column),
