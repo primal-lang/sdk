@@ -196,13 +196,13 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackComma(input)),
       );
     } else if (input is CloseParenthesisToken) {
-      final StackElement lastArgument = stack.pop();
+      final StackElement lastArgumentElement = stack.pop();
 
-      if (!(lastArgument is StackExpression)) {
-        throw SyntacticError.invalidStackElement(lastArgument);
+      if (!(lastArgumentElement is StackExpression)) {
+        throw SyntacticError.invalidStackElement(lastArgumentElement);
       }
 
-      final List<Expression> arguments = [lastArgument.expression];
+      final List<Expression> arguments = [lastArgumentElement.expression];
 
       while (stack.isNotEmpty && topIsNot([StackOpenParenthesis])) {
         final StackElement commaElement = stack.pop();
@@ -224,10 +224,10 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         throw SyntacticError.invalidToken(input);
       }
 
-      final StackElement paranthesisElement = stack.pop();
+      final StackElement openParanthesisElement = stack.pop();
 
-      if (!(paranthesisElement is StackOpenParenthesis)) {
-        throw SyntacticError.invalidStackElement(paranthesisElement);
+      if (!(openParanthesisElement is StackOpenParenthesis)) {
+        throw SyntacticError.invalidStackElement(openParanthesisElement);
       }
 
       final StackElement symbolElement = stack.pop();
