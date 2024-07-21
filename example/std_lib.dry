@@ -2,14 +2,8 @@
 
 eq(a, b): bool
 neq(a, b): bool
-length(a): num
-at(a, num): T
-concat(a, b): T
-contains(list, a): bool
-isEmpty(x): bool
-isNotEmpty(x): bool
 
-# Arithmetic
+# Numbers
 
 abs(num): num
 inc(num): num
@@ -40,7 +34,7 @@ isZero(num): bool
 isEven(num): bool
 isOdd(num): bool
 
-# Logic
+# Booleans
 
 and(bool1, bool2): bool
 or(bool1, bool2): bool
@@ -61,17 +55,28 @@ split(str, delimiter): list
 join(list, delimiter): string
 format(str, ...args): string
 
-# Lists
+# Associative arrays
 
-first(list): T
-last(list): T
-tail(list): T
-take(x, list): list
-drop(x, list): list
-addFirst(a, list): list
-addLast(a, list): list
-remove(index, list): list
-reverse(list): list
+length([T]): num
+keys([T]): [String]
+values([T]): [T]
+concat([T], [T]): [T]
+isEmpty([T]): bool
+isNotEmpty([T]): bool
+get(num, [T]): T
+set(num, T, [T]): [T]
+contains(T, [T]): bool
+first([T]): T
+last([T]): T
+tail([T]): T
+take(num, [T]): [T]
+drop(num, [T]): [T]
+addFirst(T, [T]): [T]
+addLast(T, [T]): [T]
+remove(num, [T]): [T]
+removeFirst([T]): [T]
+removeLast([T]): [T]
+reverse([T]): [T]
 
 # Casting
 
@@ -97,10 +102,10 @@ error(a)
 
 # Functions
 
-map(func, list): list
-filter(func, list): list
-reduce(func, list, initial): T
-sort(func, list): list
-all(func, list): bool
-any(func, list): bool
-zip(func, list1, list2): list
+map(func, [T]): [T]
+filter(func, [T]): [T]
+reduce(func, [T], initial): T
+sort(func, [T]): list
+all(func, [T]): bool
+any(func, [T]): bool
+zip(func, [T], [T]): list
