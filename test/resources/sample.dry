@@ -4,6 +4,8 @@ farewell = 'Goodbye, world!'
 
 pi = 3.14
 
+rationalNumnber = pi
+
 isToday = true
 
 # Returns true if x is equal to zero

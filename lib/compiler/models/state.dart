@@ -3,5 +3,5 @@ class State<I, O> {
 
   const State(this.output);
 
-  State process(I input) => this;
+  State process(I input, I? next) => this;
 }

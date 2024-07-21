@@ -8,24 +8,16 @@ class ListIterator<T> {
 
   bool get hasNext => _index < _list.length;
 
-  void consume() {
-    if (_index < _list.length) {
-      _index++;
-    } else {
-      throw SyntacticError.unexpectedEndOfFile();
-    }
-  }
-
-  T get peek {
-    if (_index < _list.length) {
+  T? get peek {
+    if (hasNext) {
       return _list[_index];
     } else {
-      throw SyntacticError.unexpectedEndOfFile();
+      return null;
     }
   }
 
   T get next {
-    if (_index < _list.length) {
+    if (hasNext) {
       return _list[_index++];
     } else {
       throw SyntacticError.unexpectedEndOfFile();

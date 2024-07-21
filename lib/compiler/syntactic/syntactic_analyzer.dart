@@ -19,7 +19,8 @@ class SyntacticAnalyzer
     State state = const InitState();
 
     while (iterator.hasNext) {
-      state = state.process(iterator.next);
+      final Token input = iterator.next;
+      state = state.process(input, iterator.peek);
 
       if (state is ResultState) {
         result.add(state.output);
@@ -43,7 +44,8 @@ class SyntacticAnalyzer
     );
 
     while (iterator.hasNext) {
-      state = state.process(iterator.next);
+      final Token input = iterator.next;
+      state = state.process(input, iterator.peek);
 
       if (state is ResultState) {
         result.add(state.output);
@@ -63,7 +65,7 @@ class InitState extends State<Token, void> {
   const InitState([super.output]);
 
   @override
-  State process(Token input) {
+  State process(Token input, Token? next) {
     if (input is SymbolToken) {
       return FunctionNameState(FunctionDefinition(name: input.value));
     } else {
@@ -76,7 +78,7 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
   const FunctionNameState(super.output);
 
   @override
-  State process(Token input) {
+  State process(Token input, Token? next) {
     if (input is EqualsToken) {
       return FunctionBodyInitState(output, Stack());
     } else if (input is OpenParenthesisToken) {
@@ -91,7 +93,7 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
   const FunctionWithParametersState(super.output);
 
   @override
-  State process(Token input) {
+  State process(Token input, Token? next) {
     if (input is SymbolToken) {
       return FunctionWithMoreParametersState(output.withParameter(input.value));
     } else if (input is CloseParenthesisToken) {
@@ -110,7 +112,7 @@ class FunctionWithMoreParametersState extends State<Token, FunctionDefinition> {
   const FunctionWithMoreParametersState(super.output);
 
   @override
-  State process(Token input) {
+  State process(Token input, Token? next) {
     if (input is CommaToken) {
       return FunctionWithParametersState(output);
     } else if (input is CloseParenthesisToken) {
@@ -125,7 +127,7 @@ class FunctionParametrizedState extends State<Token, FunctionDefinition> {
   const FunctionParametrizedState(super.output);
 
   @override
-  State process(Token input) {
+  State process(Token input, Token? next) {
     if (input is EqualsToken) {
       return FunctionBodyInitState(output, Stack());
     } else {
@@ -140,7 +142,7 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
   const FunctionBodyInitState(super.output, this.stack);
 
   @override
-  State process(Token input) {
+  State process(Token input, Token? next) {
     if (input is StringToken) {
       return ResultState(output.withExpression(StringExpression(input)));
     } else if (input is NumberToken) {
@@ -148,10 +150,14 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
     } else if (input is BooleanToken) {
       return ResultState(output.withExpression(BooleanExpression(input)));
     } else if (input is SymbolToken) {
-      return FunctionBodyExpressionState(
-        output,
-        stack.push(StackSymbol(SymbolExpression(input))),
-      );
+      if (next is OpenParenthesisToken) {
+        return FunctionBodyExpressionState(
+          output,
+          stack.push(StackSymbol(SymbolExpression(input))),
+        );
+      } else {
+        return ResultState(output.withExpression(SymbolExpression(input)));
+      }
     } else {
       throw SyntacticError.invalidToken(input);
     }
@@ -164,7 +170,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
   const FunctionBodyExpressionState(super.output, this.stack);
 
   @override
-  State process(Token input) {
+  State process(Token input, Token? next) {
     if (input is StringToken) {
       if (topIsNot([StackOpenParenthesis, StackComma])) {
         throw SyntacticError.invalidToken(input);

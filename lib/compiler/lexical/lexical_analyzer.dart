@@ -17,7 +17,8 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
     State state = const InitState();
 
     while (iterator.hasNext) {
-      state = state.process(iterator.next);
+      final Character input = iterator.next;
+      state = state.process(input, iterator.peek);
 
       if (state is ResultState) {
         result.addAll(state.output);
@@ -33,7 +34,7 @@ class InitState extends State<Character, void> {
   const InitState([super.output]);
 
   @override
-  State process(Character input) {
+  State process(Character input, Character? next) {
     if (input.isDoubleQuote) {
       return StringDoubleQuoteState(Lexeme(
         value: '',
@@ -64,7 +65,7 @@ class CommentState extends State<Character, void> {
   const CommentState([super.output]);
 
   @override
-  State process(Character input) {
+  State process(Character input, Character? next) {
     if (!input.isNewLine) {
       return const CommentState();
     } else {
@@ -77,7 +78,7 @@ class StringDoubleQuoteState extends State<Character, Lexeme> {
   const StringDoubleQuoteState(super.output);
 
   @override
-  State process(Character input) {
+  State process(Character input, Character? next) {
     if (input.isDoubleQuote) {
       return ResultState([StringToken(output)]);
     } else {
@@ -90,7 +91,7 @@ class StringSingleQuoteState extends State<Character, Lexeme> {
   const StringSingleQuoteState(super.output);
 
   @override
-  State process(Character input) {
+  State process(Character input, Character? next) {
     if (input.isSingleQuote) {
       return ResultState([StringToken(output)]);
     } else {
@@ -103,7 +104,7 @@ class NegativeNumberState extends State<Character, Lexeme> {
   const NegativeNumberState(super.output);
 
   @override
-  State process(Character input) {
+  State process(Character input, Character? next) {
     if (input.isDigit) {
       return IntegerState(output.add(input));
     } else {
@@ -116,7 +117,7 @@ class IntegerState extends State<Character, Lexeme> {
   const IntegerState(super.output);
 
   @override
-  State process(Character input) {
+  State process(Character input, Character? next) {
     if (input.isDigit) {
       return IntegerState(output.add(input));
     } else if (input.isDot) {
@@ -139,7 +140,7 @@ class DecimalState extends State<Character, Lexeme> {
   const DecimalState(super.output);
 
   @override
-  State process(Character input) {
+  State process(Character input, Character? next) {
     if (input.isDigit) {
       return DecimalState(output.add(input));
     } else if (input.isDelimiter) {
@@ -160,7 +161,7 @@ class SymbolState extends State<Character, Lexeme> {
   const SymbolState(super.output);
 
   @override
-  State process(Character input) {
+  State process(Character input, Character? next) {
     if (input.isLetter || input.isDigit || input.isUnderscore) {
       return SymbolState(output.add(input));
     } else if (input.isDelimiter) {

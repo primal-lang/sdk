@@ -236,7 +236,7 @@ void main() {
     test('Sample file', () {
       final String source = loadFile('sample.dry');
       final List<FunctionDefinition> functions = getFunctions(source);
-      expect(functions.length, equals(12));
+      expect(functions.length, equals(13));
     });
   });
 }
