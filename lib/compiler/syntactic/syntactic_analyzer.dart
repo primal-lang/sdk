@@ -148,21 +148,37 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
   @override
   State process(Token input) {
     if (input.type.isString) {
+      if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
+        throw SyntacticError.invalidToken(input);
+      }
+
       return FunctionBodyExpressionState(
         output,
         stack.push(StackLiteral(LiteralExpression.string(input))),
       );
     } else if (input.type.isNumber) {
+      if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
+        throw SyntacticError.invalidToken(input);
+      }
+
       return FunctionBodyExpressionState(
         output,
         stack.push(StackLiteral(LiteralExpression.number(input))),
       );
     } else if (input.type.isBoolean) {
+      if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
+        throw SyntacticError.invalidToken(input);
+      }
+
       return FunctionBodyExpressionState(
         output,
         stack.push(StackLiteral(LiteralExpression.boolean(input))),
       );
     } else if (input.type.isSymbol) {
+      if (topIsNot(StackOpenParenthesis) && topIsNot(StackComma)) {
+        throw SyntacticError.invalidToken(input);
+      }
+
       return FunctionBodyExpressionState(
         output,
         stack.push(StackSymbol(SymbolExpression.fromToken(input))),
@@ -186,7 +202,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
 
       final List<Expression> arguments = [firstParameter.expression];
 
-      while (stack.isNotEmpty && !(stack.peek is StackOpenParenthesis)) {
+      while (stack.isNotEmpty && topIsNot(StackOpenParenthesis)) {
         final StackElement commaElement = stack.pop();
 
         if (!(commaElement is StackComma)) {
@@ -236,6 +252,10 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
       throw SyntacticError.invalidToken(input);
     }
   }
+
+  bool topIs(Type type) => stack.peek.runtimeType == type;
+
+  bool topIsNot(Type type) => !topIs(type);
 }
 
 class ResultState extends State<void, FunctionDefinition> {
