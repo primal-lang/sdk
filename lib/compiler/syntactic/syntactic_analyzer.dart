@@ -238,15 +238,6 @@ class FunctionBodyState extends State<Token, FunctionDefinition> {
   }
 }
 
-class SymbolExpressionState extends State<Token, FunctionDefinition> {
-  const SymbolExpressionState(super.output);
-
-  @override
-  State process(Token input) {
-    throw SyntacticError.invalidToken(input);
-  }
-}
-
 class ResultState extends State<void, FunctionDefinition> {
   const ResultState(super.output);
 }
