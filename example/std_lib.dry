@@ -59,6 +59,8 @@ format(text: string, ...args): string
 length(list: [T]): num
 keys(list: [T]): [string]
 values(list: [T]): [T]
+containsKey(a: string, list: [T]): bool
+containsValye(a: T, list: [T]): bool
 concat(list1: [T], list2: [T]): [T]
 isEmpty(list: [T]): bool
 isNotEmpty(list: [T]): bool
@@ -102,10 +104,9 @@ try(exp1: T, exp2: T): T
 
 error(a: T)
 
-# Output
+# Debug
 
-print(a: T): T
-println(a: T): T
+debug(a: T): T
 
 # Functions
 
