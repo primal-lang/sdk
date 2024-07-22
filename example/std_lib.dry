@@ -54,18 +54,13 @@ match(text: string, pattern: string): bool
 split(text: string, delimiter: string): [string]
 format(text: string, ...args): string
 
-# Associative arrays
+# List
 
+list(value1: T, ...): [T]
 length(list: [T]): num
-keys(list: [T]): [string]
-values(list: [T]): [T]
-containsKey(a: string, list: [T]): bool
-containsValye(a: T, list: [T]): bool
 concat(list1: [T], list2: [T]): [T]
 isEmpty(list: [T]): bool
 isNotEmpty(list: [T]): bool
-get(index: num, list: [T]): T
-set(index: num, value: T, list: [T]): [T]
 contains(a: T, list: [T]): bool
 join(list: [T], delimiter: string): string
 first(list: [T]): T
@@ -81,6 +76,17 @@ remove(index: num, list: [T]): [T]
 removeFirst(list: [T]): [T]
 removeLast(list: [T]): [T]
 reverse(list: [T]): [T]
+
+# Object
+
+object(key1: string, value1: T, ...): {T}
+keys(object: {T}): [string]
+containsKey(a: string, object: {T}): bool
+isEmpty(object: {T}): bool
+isNotEmpty(object: {T}): bool
+get(field: string, object: {T}): T
+set(field: string, value: T, object: {T}): {T}
+remove(field: string, object: {T}): {T}
 
 # Casting
 
