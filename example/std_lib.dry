@@ -56,7 +56,7 @@ format(text: string, ...args): string
 
 # List
 
-list(value1: T, ...): [T]
+list(value1: T, ...): [T] -> list(index: num): T
 length(list: [T]): num
 concat(list1: [T], list2: [T]): [T]
 isEmpty(list: [T]): bool
@@ -85,8 +85,8 @@ keys(object: {T}): [string]
 containsKey(a: string, object: {T}): bool
 isEmpty(object: {T}): bool
 isNotEmpty(object: {T}): bool
-get(field: string, object: {T}): T
-set(field: string, value: T, object: {T}): {T}
+get(field: string, object: {T}): T -> object(field: string): {T}
+set(field: string, value: T, object: {T}): {T} -> object(field: string, value: T): {T}
 remove(field: string, object: {T}): {T}
 clear(object: {T}): {T}
 
