@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 import 'test_utils.dart';
 
 void main() {
-  test('Repeated parameter', () {
+  test('Duplicated parameter', () {
     try {
       getIntermediateCode('isBiggerThan10(x, x) = gt(x, 10)');
       fail('Should fail');
@@ -12,7 +12,7 @@ void main() {
     }
   });
 
-  test('Duplicated functions', () {
+  test('Duplicated function', () {
     try {
       getIntermediateCode(
           'function1(x, y) = gt(x, 10)\nfunction1(a, b) = gt(a, 10)');

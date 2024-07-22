@@ -5,8 +5,6 @@ import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 
-// invalid number of parameters
-// mismatch types
 class SemanticAnalyzer
     extends Analyzer<List<FunctionDefinition>, IntermediateCode> {
   const SemanticAnalyzer(super.input);
@@ -20,6 +18,8 @@ class SemanticAnalyzer
     checkRepeatedParameters(functions);
     checkExpressions(functions);
 
+    // TODO(momo): check mismatched types
+
     return const IntermediateCode(functions: {});
   }
 
@@ -31,7 +31,6 @@ class SemanticAnalyzer
         name: function.name,
         parameters: function.parameters,
         expression: function.expression,
-        isNative: false,
       ));
     }
 
@@ -43,7 +42,6 @@ class SemanticAnalyzer
       name: 'gt',
       parameters: ['x', 'y'],
       expression: EmptyExpression(),
-      isNative: true,
     ));
   }
 
