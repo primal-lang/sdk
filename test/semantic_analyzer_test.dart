@@ -40,14 +40,14 @@ void main() {
     }
   });
 
-  /*test('Unused parameter', () {
+  test('Unused parameter', () {
     try {
       getIntermediateCode('isBiggerThan10(x, y) = gt(x, 10)');
       fail('Should fail');
     } catch (e) {
       expect(e, isA<SemanticError>());
     }
-  });*/
+  });
 
   /*test('Invalid number of parameters', () {
     try {

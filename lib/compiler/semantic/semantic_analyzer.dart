@@ -68,13 +68,33 @@ class SemanticAnalyzer
 
   void checkExpressions(List<FunctionDefinition> functions) {
     for (final FunctionDefinition function in functions) {
-      checkExpression(function.expression, function.parameters);
+      final Set<String> usedParameters = {};
+      checkExpression(
+        expression: function.expression,
+        availableParameters: function.parameters,
+        usedParameters: usedParameters,
+      );
+
+      for (final String parameter in function.parameters) {
+        if (!usedParameters.contains(parameter)) {
+          throw SemanticError.unusedParameter(
+            function: function.name,
+            parameter: parameter,
+          );
+        }
+      }
     }
   }
 
-  void checkExpression(Expression expression, List<String> parameters) {
+  void checkExpression({
+    required Expression expression,
+    required List<String> availableParameters,
+    required Set<String> usedParameters,
+  }) {
     if (expression is SymbolExpression) {
-      if (!parameters.contains(expression.value)) {
+      if (availableParameters.contains(expression.value)) {
+        usedParameters.add(expression.value);
+      } else {
         throw SemanticError.undefinedSymbol(
           symbol: expression.value,
           location: expression.location,
@@ -82,7 +102,11 @@ class SemanticAnalyzer
       }
     } else if (expression is FunctionCallExpression) {
       for (final Expression expression in expression.arguments) {
-        checkExpression(expression, parameters);
+        checkExpression(
+          expression: expression,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+        );
       }
     }
   }

@@ -19,6 +19,12 @@ class SemanticError extends GenericError {
       SemanticError(
           'Duplicated parameter "$parameter" in function "$function"');
 
+  factory SemanticError.unusedParameter({
+    required String function,
+    required String parameter,
+  }) =>
+      SemanticError('Unused parameter "$parameter" in function "$function"');
+
   factory SemanticError.undefinedSymbol({
     required String symbol,
     required Location location,
