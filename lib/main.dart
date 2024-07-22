@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dry/compiler/compiler.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
@@ -6,7 +8,7 @@ import 'package:dry/utils/console.dart';
 void main(List<String> args) {
   if (args.isEmpty) {
     print('Usage: dry <file.dry>');
-    return;
+    exit(exitCode);
   }
 
   final Compiler compiler = Compiler.fromFile(args[0]);
