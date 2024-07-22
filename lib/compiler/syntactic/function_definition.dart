@@ -11,6 +11,9 @@ class FunctionDefinition {
     this.expression = const EmptyExpression(),
   });
 
+  bool equalSignature(FunctionDefinition function) =>
+      function.name == name && function.parameters.length == parameters.length;
+
   FunctionDefinition withParameter(String parameter) => FunctionDefinition(
         name: name,
         parameters: [...parameters, parameter],
