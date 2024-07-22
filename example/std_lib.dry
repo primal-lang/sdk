@@ -76,6 +76,7 @@ remove(index: num, list: [T]): [T]
 removeFirst(list: [T]): [T]
 removeLast(list: [T]): [T]
 reverse(list: [T]): [T]
+clear(object: [T]): [T]
 
 # Object
 
@@ -87,6 +88,7 @@ isNotEmpty(object: {T}): bool
 get(field: string, object: {T}): T
 set(field: string, value: T, object: {T}): {T}
 remove(field: string, object: {T}): {T}
+clear(object: {T}): {T}
 
 # Casting
 
