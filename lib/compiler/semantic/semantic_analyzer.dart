@@ -14,6 +14,7 @@ class SemanticAnalyzer
   @override
   IntermediateCode analyze() {
     final List<FunctionPrototype> functions = getPrototypes(input);
+    addNativeFunctions(functions);
 
     checkDuplicatedFunctions(functions);
     checkRepeatedParameters(functions);
@@ -30,10 +31,20 @@ class SemanticAnalyzer
         name: function.name,
         parameters: function.parameters,
         expression: function.expression,
+        isNative: false,
       ));
     }
 
     return result;
+  }
+
+  void addNativeFunctions(List<FunctionPrototype> functions) {
+    functions.add(const FunctionPrototype(
+      name: 'gt',
+      parameters: ['x', 'y'],
+      expression: EmptyExpression(),
+      isNative: true,
+    ));
   }
 
   void checkDuplicatedFunctions(List<FunctionPrototype> functions) {
@@ -119,16 +130,23 @@ class SemanticAnalyzer
         );
       }
     } else if (expression is FunctionCallExpression) {
-      try {
-        final FunctionPrototype function = functions.firstWhere(
-          (f) => f.name == expression.name,
-        );
-        print(function);
-      } catch (e) {
+      final FunctionPrototype? function = getFunctionByName(
+        name: expression.name,
+        functions: functions,
+      );
+
+      if (function == null) {
         throw SemanticError.undefinedFunction(
-          symbol: expression.name,
+          function: expression.name,
           location: expression.location,
         );
+      } else {
+        if (function.parameters.length != expression.arguments.length) {
+          throw SemanticError.invalidNumberOfArguments(
+            function: expression.name,
+            location: expression.location,
+          );
+        }
       }
 
       for (final Expression expression in expression.arguments) {
@@ -139,6 +157,17 @@ class SemanticAnalyzer
           functions: functions,
         );
       }
+    }
+  }
+
+  FunctionPrototype? getFunctionByName({
+    required String name,
+    required List<FunctionPrototype> functions,
+  }) {
+    try {
+      return functions.firstWhere((f) => f.name == name);
+    } catch (e) {
+      return null;
     }
   }
 }

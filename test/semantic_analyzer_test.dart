@@ -58,14 +58,15 @@ void main() {
     }
   });
 
-  /*test('Invalid number of parameters', () {
+  test('Invalid number of arguments', () {
     try {
-      getIntermediateCode('isBiggerThan10(x) = gt(x, 20)\nmain = isBiggerThan10(20, 5)');
+      getIntermediateCode(
+          'isBiggerThan10(x) = gt(x, 10)\nmain = isBiggerThan10(20, 5)');
       fail('Should fail');
     } catch (e) {
       expect(e, isA<SemanticError>());
     }
-  });*/
+  });
 
   /*test('Check result', () {
     final IntermediateCode code = getIntermediateCode('main = abs(-10)');

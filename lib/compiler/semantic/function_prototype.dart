@@ -4,11 +4,13 @@ class FunctionPrototype {
   final String name;
   final List<String> parameters;
   final Expression expression;
+  final bool isNative;
 
   const FunctionPrototype({
     required this.name,
-    this.parameters = const [],
-    this.expression = const EmptyExpression(),
+    required this.parameters,
+    required this.expression,
+    required this.isNative,
   });
 
   bool equalSignature(FunctionPrototype function) =>

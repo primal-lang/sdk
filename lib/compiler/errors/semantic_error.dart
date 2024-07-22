@@ -32,8 +32,14 @@ class SemanticError extends GenericError {
       SemanticError('Undefined symbol "$symbol" at $location');
 
   factory SemanticError.undefinedFunction({
-    required String symbol,
+    required String function,
     required Location location,
   }) =>
-      SemanticError('Undefined function "$symbol" at $location');
+      SemanticError('Undefined function "$function" at $location');
+
+  factory SemanticError.invalidNumberOfArguments({
+    required String function,
+    required Location location,
+  }) =>
+      SemanticError('Invalid number of arguments calling function "$function" at $location');
 }
