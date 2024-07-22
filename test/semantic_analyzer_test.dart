@@ -49,9 +49,18 @@ void main() {
     }
   });
 
+  test('Undefined function', () {
+    try {
+      getIntermediateCode('main = duplicate(20)');
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<SemanticError>());
+    }
+  });
+
   /*test('Invalid number of parameters', () {
     try {
-      getIntermediateCode('isBiggerThan10(x) = gt(x, 10, 20)');
+      getIntermediateCode('isBiggerThan10(x) = gt(x, 20)\nmain = isBiggerThan10(20, 5)');
       fail('Should fail');
     } catch (e) {
       expect(e, isA<SemanticError>());
