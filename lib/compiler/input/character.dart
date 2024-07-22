@@ -27,7 +27,7 @@ class Character extends Localized {
     } else if (value.isCloseParenthesis) {
       return CloseParenthesisToken(lexeme);
     } else {
-      throw LexicalError.invalidLexeme(lexeme);
+      throw InvalidLexemeError(lexeme);
     }
   }
 

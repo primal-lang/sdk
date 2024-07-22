@@ -108,7 +108,7 @@ class NegativeNumberState extends State<Character, Lexeme> {
     if (input.isDigit) {
       return IntegerState(output.add(input));
     } else {
-      throw LexicalError.invalidCharacter(input);
+      throw InvalidCharacterError(input);
     }
   }
 }
@@ -131,7 +131,7 @@ class IntegerState extends State<Character, Lexeme> {
 
       return ResultState(tokens);
     } else {
-      throw LexicalError.invalidCharacter(input);
+      throw InvalidCharacterError(input);
     }
   }
 }
@@ -152,7 +152,7 @@ class DecimalState extends State<Character, Lexeme> {
 
       return ResultState(tokens);
     } else {
-      throw LexicalError.invalidCharacter(input);
+      throw InvalidCharacterError(input);
     }
   }
 }
@@ -179,7 +179,7 @@ class SymbolState extends State<Character, Lexeme> {
 
       return ResultState(tokens);
     } else {
-      throw LexicalError.invalidCharacter(input);
+      throw InvalidCharacterError(input);
     }
   }
 }

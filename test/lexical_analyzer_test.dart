@@ -71,7 +71,7 @@ void main() {
       try {
         getTokens('42a');
       } catch (e) {
-        expect(e, isA<LexicalError>());
+        expect(e, isA<InvalidCharacterError>());
       }
     });
 
@@ -79,7 +79,7 @@ void main() {
       try {
         getTokens('1..2');
       } catch (e) {
-        expect(e, isA<LexicalError>());
+        expect(e, isA<InvalidCharacterError>());
       }
     });
 
@@ -139,7 +139,7 @@ void main() {
       try {
         getTokens('func#');
       } catch (e) {
-        expect(e, isA<LexicalError>());
+        expect(e, isA<InvalidCharacterError>());
       }
     });
 

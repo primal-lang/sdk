@@ -4,10 +4,13 @@ import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 
 class LexicalError extends GenericError {
   const LexicalError(super.message);
+}
 
-  factory LexicalError.invalidCharacter(Character character) =>
-      LexicalError('Invalid character $character');
+class InvalidCharacterError extends LexicalError {
+  const InvalidCharacterError(Character character)
+      : super('Invalid character $character');
+}
 
-  factory LexicalError.invalidLexeme(Lexeme lexeme) =>
-      LexicalError('Invalid character $lexeme');
+class InvalidLexemeError extends LexicalError {
+  const InvalidLexemeError(Lexeme lexeme) : super('Invalid character $lexeme');
 }
