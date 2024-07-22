@@ -202,5 +202,5 @@ class Lexeme extends Localized {
       );
 
   @override
-  String toString() => '$value at $location';
+  String toString() => '"$value" at $location';
 }

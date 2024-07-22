@@ -54,5 +54,5 @@ class Character extends Localized {
   bool get isDelimiter => value.isDelimiter;
 
   @override
-  String toString() => '$value at $location';
+  String toString() => '"$value" at $location';
 }
