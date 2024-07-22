@@ -6,6 +6,7 @@ import 'package:dry/utils/console.dart';
 void main(List<String> args) {
   if (args.isEmpty) {
     print('Usage: dry <file.dry>');
+    return;
   }
 
   final Compiler compiler = Compiler.fromFile(args[0]);
@@ -16,17 +17,17 @@ void main(List<String> args) {
     final String result = intermediateCode.executeMain();
     console.print(result);
   } else {
-    String? input = console.prompt();
-
-    while (input != null) {
+    while (true) {
       try {
-        final Expression expression = compiler.expression(input);
-        console.print(intermediateCode.evaluate(expression));
+        final String input = console.prompt();
+
+        if (input.isNotEmpty) {
+          final Expression expression = compiler.expression(input);
+          console.print(intermediateCode.evaluate(expression));
+        }
       } catch (e) {
         console.error(e);
       }
-
-      input = console.prompt();
     }
   }
 }

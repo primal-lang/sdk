@@ -1,10 +1,11 @@
 import 'dart:io';
 
 class Console {
-  String? prompt() {
+  String prompt() {
     stdout.write('> ');
+    final String? input = stdin.readLineSync();
 
-    return stdin.readLineSync();
+    return input != null ? input.trim() : '';
   }
 
   void print(String message) => stdout.writeln(message);
