@@ -4,42 +4,48 @@ import 'package:dry/compiler/semantic/function_prototype.dart';
 
 class SemanticError extends GenericError {
   const SemanticError(super.message);
+}
 
-  factory SemanticError.duplicatedFunction({
+class DuplicatedFunctionError extends SemanticError {
+  DuplicatedFunctionError({
     required FunctionPrototype function1,
     required FunctionPrototype function2,
-  }) =>
-      SemanticError(
-          'Duplicated function "${function1.name}" with paramters (${function1.parameters.join(', ')}) and (${function2.parameters.join(', ')})');
+  }) : super(
+            'Duplicated function "${function1.name}" with paramters (${function1.parameters.join(', ')}) and (${function2.parameters.join(', ')})');
+}
 
-  factory SemanticError.duplicatedParameter({
+class DuplicatedParameterError extends SemanticError {
+  const DuplicatedParameterError({
     required String function,
     required String parameter,
-  }) =>
-      SemanticError(
-          'Duplicated parameter "$parameter" in function "$function"');
+  }) : super('Duplicated parameter "$parameter" in function "$function"');
+}
 
-  factory SemanticError.unusedParameter({
+class UnusedParameterError extends SemanticError {
+  const UnusedParameterError({
     required String function,
     required String parameter,
-  }) =>
-      SemanticError('Unused parameter "$parameter" in function "$function"');
+  }) : super('Unused parameter "$parameter" in function "$function"');
+}
 
-  factory SemanticError.undefinedSymbol({
+class UndefinedSymbolError extends SemanticError {
+  const UndefinedSymbolError({
     required String symbol,
     required Location location,
-  }) =>
-      SemanticError('Undefined symbol "$symbol" at $location');
+  }) : super('Undefined symbol "$symbol" at $location');
+}
 
-  factory SemanticError.undefinedFunction({
+class UndefinedFunctionError extends GenericError {
+  const UndefinedFunctionError({
     required String function,
     required Location location,
-  }) =>
-      SemanticError('Undefined function "$function" at $location');
+  }) : super('Undefined function "$function" at $location');
+}
 
-  factory SemanticError.invalidNumberOfArguments({
+class InvalidNumberOfArgumentsError extends GenericError {
+  const InvalidNumberOfArgumentsError({
     required String function,
     required Location location,
-  }) =>
-      SemanticError('Invalid number of arguments calling function "$function" at $location');
+  }) : super(
+            'Invalid number of arguments calling function "$function" at $location');
 }

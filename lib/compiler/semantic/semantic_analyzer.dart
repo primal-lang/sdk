@@ -53,7 +53,7 @@ class SemanticAnalyzer
         final FunctionPrototype function2 = functions[j];
 
         if (function1.equalSignature(function2)) {
-          throw SemanticError.duplicatedFunction(
+          throw DuplicatedFunctionError(
             function1: function1,
             function2: function2,
           );
@@ -68,7 +68,7 @@ class SemanticAnalyzer
 
       for (final MapEntry<String, int> entry in parameters.entries) {
         if (entry.value > 1) {
-          throw SemanticError.duplicatedParameter(
+          throw DuplicatedParameterError(
             function: function.name,
             parameter: entry.key,
           );
@@ -103,7 +103,7 @@ class SemanticAnalyzer
 
       for (final String parameter in function.parameters) {
         if (!usedParameters.contains(parameter)) {
-          throw SemanticError.unusedParameter(
+          throw UnusedParameterError(
             function: function.name,
             parameter: parameter,
           );
@@ -122,7 +122,7 @@ class SemanticAnalyzer
       if (availableParameters.contains(expression.value)) {
         usedParameters.add(expression.value);
       } else {
-        throw SemanticError.undefinedSymbol(
+        throw UndefinedSymbolError(
           symbol: expression.value,
           location: expression.location,
         );
@@ -134,13 +134,13 @@ class SemanticAnalyzer
       );
 
       if (function == null) {
-        throw SemanticError.undefinedFunction(
+        throw UndefinedFunctionError(
           function: expression.name,
           location: expression.location,
         );
       } else {
         if (function.parameters.length != expression.arguments.length) {
-          throw SemanticError.invalidNumberOfArguments(
+          throw InvalidNumberOfArgumentsError(
             function: expression.name,
             location: expression.location,
           );

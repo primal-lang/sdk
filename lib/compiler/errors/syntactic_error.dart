@@ -6,15 +6,15 @@ class SyntacticError extends GenericError {
   const SyntacticError(super.message);
 }
 
-class InvalidTokenError extends GenericError {
+class InvalidTokenError extends SyntacticError {
   const InvalidTokenError(Token token) : super('Invalid token $token');
 }
 
-class InvalidStackElementError extends GenericError {
+class InvalidStackElementError extends SyntacticError {
   InvalidStackElementError(StackElement element)
       : super('Expression malfored at ${element.location}');
 }
 
-class UnexpectedEndOfFileError extends GenericError {
+class UnexpectedEndOfFileError extends SyntacticError {
   const UnexpectedEndOfFileError() : super('Unexpected end of file');
 }
