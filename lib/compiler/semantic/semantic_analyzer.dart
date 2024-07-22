@@ -5,7 +5,6 @@ import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 
 // unused parameter
-// undecleared symbol
 // invalid number of parameters
 // mismatch types
 class SemanticAnalyzer
@@ -69,9 +68,22 @@ class SemanticAnalyzer
 
   void checkExpressions(List<FunctionDefinition> functions) {
     for (final FunctionDefinition function in functions) {
-      checkExpression(function.expression);
+      checkExpression(function.expression, function.parameters);
     }
   }
 
-  void checkExpression(Expression expression) {}
+  void checkExpression(Expression expression, List<String> parameters) {
+    if (expression is SymbolExpression) {
+      if (!parameters.contains(expression.value)) {
+        throw SemanticError.undefinedSymbol(
+          symbol: expression.value,
+          location: expression.location,
+        );
+      }
+    } else if (expression is FunctionCallExpression) {
+      for (final Expression expression in expression.arguments) {
+        checkExpression(expression, parameters);
+      }
+    }
+  }
 }

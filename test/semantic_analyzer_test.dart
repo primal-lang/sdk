@@ -22,18 +22,27 @@ void main() {
     }
   });
 
-  /*test('Unused parameter', () {
+  test('Undecleared symbol 1', () {
     try {
-      getIntermediateCode('isBiggerThan10(x, y) = gt(x, 10)');
+      getIntermediateCode('isBiggerThan10 = gt(z, 10)');
       fail('Should fail');
     } catch (e) {
       expect(e, isA<SemanticError>());
     }
-  });*/
+  });
 
-  /*test('Undecleared symbol', () {
+  test('Undecleared symbol 2', () {
     try {
-      getIntermediateCode('isBiggerThan10 = gt(z, 10)');
+      getIntermediateCode('isBiggerThan10 = x');
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<SemanticError>());
+    }
+  });
+
+  /*test('Unused parameter', () {
+    try {
+      getIntermediateCode('isBiggerThan10(x, y) = gt(x, 10)');
       fail('Should fail');
     } catch (e) {
       expect(e, isA<SemanticError>());

@@ -1,4 +1,5 @@
 import 'package:dry/compiler/errors/generic_error.dart';
+import 'package:dry/compiler/models/location.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 
 class SemanticError extends GenericError {
@@ -17,4 +18,10 @@ class SemanticError extends GenericError {
   }) =>
       SemanticError(
           'Duplicated parameter "$parameter" in function "$function"');
+
+  factory SemanticError.undefinedSymbol({
+    required String symbol,
+    required Location location,
+  }) =>
+      SemanticError('Undefined symbol "$symbol" at $location');
 }
