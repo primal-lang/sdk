@@ -4,13 +4,17 @@ import 'package:dry/compiler/syntactic/syntactic_analyzer.dart';
 
 class SyntacticError extends GenericError {
   const SyntacticError(super.message);
+}
 
-  factory SyntacticError.invalidToken(Token token) =>
-      SyntacticError('Invalid token $token');
+class InvalidTokenError extends GenericError {
+  const InvalidTokenError(Token token) : super('Invalid token $token');
+}
 
-  factory SyntacticError.invalidStackElement(StackElement element) =>
-      SyntacticError('Expression malfored at ${element.location}');
+class InvalidStackElementError extends GenericError {
+  InvalidStackElementError(StackElement element)
+      : super('Expression malfored at ${element.location}');
+}
 
-  factory SyntacticError.unexpectedEndOfFile() =>
-      const SyntacticError('Unexpected end of file');
+class UnexpectedEndOfFileError extends GenericError {
+  const UnexpectedEndOfFileError() : super('Unexpected end of file');
 }

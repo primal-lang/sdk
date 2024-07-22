@@ -29,7 +29,7 @@ class SyntacticAnalyzer
     }
 
     if (!(state is InitState)) {
-      throw SyntacticError.unexpectedEndOfFile();
+      throw const UnexpectedEndOfFileError();
     }
 
     return result;
@@ -54,7 +54,7 @@ class SyntacticAnalyzer
     }
 
     if (!(state is InitState)) {
-      throw SyntacticError.unexpectedEndOfFile();
+      throw const UnexpectedEndOfFileError();
     }
 
     return result[0].expression;
@@ -69,7 +69,7 @@ class InitState extends State<Token, void> {
     if (input is SymbolToken) {
       return FunctionNameState(FunctionDefinition(name: input.value));
     } else {
-      throw SyntacticError.invalidToken(input);
+      throw InvalidTokenError(input);
     }
   }
 }
@@ -84,7 +84,7 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
     } else if (input is OpenParenthesisToken) {
       return FunctionWithParametersState(output);
     } else {
-      throw SyntacticError.invalidToken(input);
+      throw InvalidTokenError(input);
     }
   }
 }
@@ -98,12 +98,12 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
       return FunctionWithMoreParametersState(output.withParameter(input.value));
     } else if (input is CloseParenthesisToken) {
       if (output.parameters.isEmpty) {
-        throw SyntacticError.invalidToken(input);
+        throw InvalidTokenError(input);
       }
 
       return FunctionParametrizedState(output);
     } else {
-      throw SyntacticError.invalidToken(input);
+      throw InvalidTokenError(input);
     }
   }
 }
@@ -118,7 +118,7 @@ class FunctionWithMoreParametersState extends State<Token, FunctionDefinition> {
     } else if (input is CloseParenthesisToken) {
       return FunctionParametrizedState(output);
     } else {
-      throw SyntacticError.invalidToken(input);
+      throw InvalidTokenError(input);
     }
   }
 }
@@ -131,7 +131,7 @@ class FunctionParametrizedState extends State<Token, FunctionDefinition> {
     if (input is EqualsToken) {
       return FunctionBodyInitState(output, Stack());
     } else {
-      throw SyntacticError.invalidToken(input);
+      throw InvalidTokenError(input);
     }
   }
 }
@@ -159,7 +159,7 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
         return ResultState(output.withExpression(SymbolExpression(input)));
       }
     } else {
-      throw SyntacticError.invalidToken(input);
+      throw InvalidTokenError(input);
     }
   }
 }
@@ -173,7 +173,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
   State process(Token input, Token? next) {
     if (input is StringToken) {
       if (topIsNot([StackOpenParenthesis, StackComma])) {
-        throw SyntacticError.invalidToken(input);
+        throw InvalidTokenError(input);
       }
 
       return FunctionBodyExpressionState(
@@ -182,7 +182,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
       );
     } else if (input is NumberToken) {
       if (topIsNot([StackOpenParenthesis, StackComma])) {
-        throw SyntacticError.invalidToken(input);
+        throw InvalidTokenError(input);
       }
 
       return FunctionBodyExpressionState(
@@ -191,7 +191,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
       );
     } else if (input is BooleanToken) {
       if (topIsNot([StackOpenParenthesis, StackComma])) {
-        throw SyntacticError.invalidToken(input);
+        throw InvalidTokenError(input);
       }
 
       return FunctionBodyExpressionState(
@@ -200,7 +200,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
       );
     } else if (input is SymbolToken) {
       if (topIsNot([StackOpenParenthesis, StackComma])) {
-        throw SyntacticError.invalidToken(input);
+        throw InvalidTokenError(input);
       }
 
       return FunctionBodyExpressionState(
@@ -209,7 +209,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
       );
     } else if (input is OpenParenthesisToken) {
       if (topIsNot([StackSymbol])) {
-        throw SyntacticError.invalidToken(input);
+        throw InvalidTokenError(input);
       }
 
       return FunctionBodyExpressionState(
@@ -218,7 +218,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
       );
     } else if (input is CommaToken) {
       if (topIsNot([StackLiteral, StackSymbol, StackFunctionCall])) {
-        throw SyntacticError.invalidToken(input);
+        throw InvalidTokenError(input);
       }
 
       return FunctionBodyExpressionState(
@@ -229,7 +229,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
       final StackElement lastArgumentElement = stack.pop();
 
       if (!(lastArgumentElement is StackExpression)) {
-        throw SyntacticError.invalidStackElement(lastArgumentElement);
+        throw InvalidStackElementError(lastArgumentElement);
       }
 
       final List<Expression> arguments = [lastArgumentElement.expression];
@@ -238,32 +238,32 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         final StackElement commaElement = stack.pop();
 
         if (!(commaElement is StackComma)) {
-          throw SyntacticError.invalidStackElement(commaElement);
+          throw InvalidStackElementError(commaElement);
         }
 
         final StackElement expressionElement = stack.pop();
 
         if (!(expressionElement is StackExpression)) {
-          throw SyntacticError.invalidStackElement(expressionElement);
+          throw InvalidStackElementError(expressionElement);
         }
 
         arguments.insert(0, expressionElement.expression);
       }
 
       if (stack.isEmpty) {
-        throw SyntacticError.invalidToken(input);
+        throw InvalidTokenError(input);
       }
 
       final StackElement openParanthesisElement = stack.pop();
 
       if (!(openParanthesisElement is StackOpenParenthesis)) {
-        throw SyntacticError.invalidStackElement(openParanthesisElement);
+        throw InvalidStackElementError(openParanthesisElement);
       }
 
       final StackElement symbolElement = stack.pop();
 
       if (!(symbolElement is StackSymbol)) {
-        throw SyntacticError.invalidStackElement(symbolElement);
+        throw InvalidStackElementError(symbolElement);
       }
 
       final FunctionCallExpression functionCall = FunctionCallExpression(
@@ -281,7 +281,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         );
       }
     } else {
-      throw SyntacticError.invalidToken(input);
+      throw InvalidTokenError(input);
     }
   }
 

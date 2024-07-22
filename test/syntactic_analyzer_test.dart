@@ -12,7 +12,7 @@ void main() {
         getFunctions('123');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<SyntacticError>());
+        expect(e, isA<InvalidTokenError>());
       }
     });
 
@@ -21,7 +21,7 @@ void main() {
         getFunctions('isEven ,');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<SyntacticError>());
+        expect(e, isA<InvalidTokenError>());
       }
     });
 
@@ -30,7 +30,7 @@ void main() {
         getFunctions('isEven()');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<SyntacticError>());
+        expect(e, isA<InvalidTokenError>());
       }
     });
 
@@ -39,7 +39,7 @@ void main() {
         getFunctions('isEven(1');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<SyntacticError>());
+        expect(e, isA<InvalidTokenError>());
       }
     });
 
@@ -48,7 +48,7 @@ void main() {
         getFunctions('isEven(a(');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<SyntacticError>());
+        expect(e, isA<InvalidTokenError>());
       }
     });
 
@@ -57,7 +57,7 @@ void main() {
         getFunctions('isEvent(x),');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<SyntacticError>());
+        expect(e, isA<InvalidTokenError>());
       }
     });
 

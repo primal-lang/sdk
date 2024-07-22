@@ -20,7 +20,7 @@ class ListIterator<T> {
     if (hasNext) {
       return _list[_index++];
     } else {
-      throw SyntacticError.unexpectedEndOfFile();
+      throw const UnexpectedEndOfFileError();
     }
   }
 }
