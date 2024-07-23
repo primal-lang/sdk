@@ -1,12 +1,16 @@
-abstract class Value<T> {
+import 'package:dry/compiler/models/reducible.dart';
+import 'package:dry/compiler/models/scope.dart';
+
+abstract class Value<T> implements Reducible {
   final T value;
 
   const Value(this.value);
 
-  String get type;
-
   @override
   String toString() => value.toString();
+
+  @override
+  Reducible evaluate(List<Reducible> arguments, Scope scope) => this;
 }
 
 class StringValue extends Value<String> {

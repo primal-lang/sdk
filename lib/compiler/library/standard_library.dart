@@ -1,5 +1,6 @@
 import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/models/parameter.dart';
+import 'package:dry/compiler/models/reducible.dart';
 import 'package:dry/compiler/models/scope.dart';
 import 'package:dry/compiler/models/type.dart';
 import 'package:dry/compiler/models/value.dart';
@@ -16,7 +17,7 @@ class Gt extends NativeFunctionPrototype {
         );
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) {
+  Reducible evaluate(List<Reducible> arguments, Scope scope) {
     if (arguments.length != parameters.length) {
       throw InvalidArgumentLengthError(
         function: name,
@@ -24,8 +25,8 @@ class Gt extends NativeFunctionPrototype {
         actual: arguments.length,
       );
     } else {
-      final Value x = arguments[0];
-      final Value y = arguments[1];
+      final Reducible x = arguments[0];
+      final Reducible y = arguments[1];
 
       if ((x is NumberValue) && (y is NumberValue)) {
         return BooleanValue(x.value > y.value);

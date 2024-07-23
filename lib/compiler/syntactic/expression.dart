@@ -1,21 +1,20 @@
 import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/location.dart';
-import 'package:dry/compiler/models/scope.dart';
+import 'package:dry/compiler/models/reducible.dart';
 import 'package:dry/compiler/models/value.dart';
 
 abstract class Expression extends Localized {
   const Expression({required super.location});
 
-  Value evaluate(List<Value> arguments, Scope scope);
+  Reducible toReducible();
 }
 
 class EmptyExpression extends Expression {
   const EmptyExpression() : super(location: const Location(row: 1, column: 1));
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) =>
-      throw const EmptyExpressionEvaluationError();
+  Reducible toReducible() => throw const EmptyExpressionEvaluationError();
 }
 
 abstract class LiteralExpression<T> extends Expression {
@@ -41,7 +40,7 @@ class StringExpression extends LiteralExpression<String> {
   String toString() => '"$value"';
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) => StringValue(value);
+  Reducible toReducible() => StringValue(value);
 }
 
 class NumberExpression extends LiteralExpression<num> {
@@ -52,7 +51,7 @@ class NumberExpression extends LiteralExpression<num> {
         );
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) => NumberValue(value);
+  Reducible toReducible() => NumberValue(value);
 }
 
 class BooleanExpression extends LiteralExpression<bool> {
@@ -63,7 +62,7 @@ class BooleanExpression extends LiteralExpression<bool> {
         );
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) => BooleanValue(value);
+  Reducible toReducible() => BooleanValue(value);
 }
 
 class SymbolExpression extends Expression {
@@ -77,8 +76,10 @@ class SymbolExpression extends Expression {
   String toString() => value.toString();
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) =>
-      throw Error(); // TODO(momo): implement
+  Reducible toReducible() => SymbolReducible(
+        value: value,
+        location: location,
+      );
 }
 
 class FunctionCallExpression extends Expression {
@@ -95,6 +96,9 @@ class FunctionCallExpression extends Expression {
   String toString() => '$name(${arguments.join(', ')})';
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) =>
-      throw Error(); // TODO(momo): implement
+  Reducible toReducible() => FunctionCallReducible(
+        name: name,
+        arguments: arguments.map((e) => e.toReducible()).toList(),
+        location: location,
+      );
 }

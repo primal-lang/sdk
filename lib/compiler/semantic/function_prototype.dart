@@ -1,10 +1,9 @@
 import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/models/parameter.dart';
+import 'package:dry/compiler/models/reducible.dart';
 import 'package:dry/compiler/models/scope.dart';
-import 'package:dry/compiler/models/value.dart';
-import 'package:dry/compiler/syntactic/expression.dart';
 
-abstract class FunctionPrototype {
+abstract class FunctionPrototype implements Reducible {
   final String name;
   final List<Parameter> parameters;
 
@@ -13,23 +12,27 @@ abstract class FunctionPrototype {
     required this.parameters,
   });
 
-  Value evaluate(List<Value> arguments, Scope scope);
+  @override
+  Reducible evaluate(List<Reducible> arguments, Scope scope);
 
   bool equalSignature(FunctionPrototype function) =>
       function.name == name && function.parameters.length == parameters.length;
+
+  @override
+  String get type => '$name(${parameters.join(', ')})';
 }
 
 class CustomFunctionPrototype extends FunctionPrototype {
-  final Expression expression;
+  final Reducible reducible;
 
   const CustomFunctionPrototype({
     required super.name,
     required super.parameters,
-    required this.expression,
+    required this.reducible,
   });
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) {
+  Reducible evaluate(List<Reducible> arguments, Scope scope) {
     if (arguments.length != parameters.length) {
       throw InvalidArgumentLengthError(
         function: name,
@@ -37,14 +40,14 @@ class CustomFunctionPrototype extends FunctionPrototype {
         actual: arguments.length,
       );
     } else {
-      return expression.evaluate(arguments, scope);
+      return reducible.evaluate(arguments, scope);
     }
   }
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {
   const AnonymousFunctionPrototype({
-    required super.expression,
+    required super.reducible,
   }) : super(name: '', parameters: const []);
 }
 

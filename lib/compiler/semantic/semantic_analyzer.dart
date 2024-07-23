@@ -2,10 +2,10 @@ import 'package:dry/compiler/errors/semantic_error.dart';
 import 'package:dry/compiler/library/standard_library.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/parameter.dart';
+import 'package:dry/compiler/models/reducible.dart';
 import 'package:dry/compiler/models/type.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
-import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/compiler/warnings/generic_warning.dart';
 import 'package:dry/compiler/warnings/semantic_warning.dart';
@@ -25,7 +25,7 @@ class SemanticAnalyzer
 
     final List<CustomFunctionPrototype> customFunctions =
         functions.whereType<CustomFunctionPrototype>().toList();
-    checkExpressions(
+    checkReducibles(
       customFunctions: customFunctions,
       allFunctions: functions,
       warnings: warnings,
@@ -54,7 +54,7 @@ class SemanticAnalyzer
         parameters: function.parameters
             .map((e) => Parameter(name: e, type: const AnyType()))
             .toList(),
-        expression: function.expression,
+        reducible: function.expression.toReducible(),
       ));
     }
 
@@ -111,15 +111,15 @@ class SemanticAnalyzer
     return result;
   }
 
-  void checkExpressions({
+  void checkReducibles({
     required List<CustomFunctionPrototype> customFunctions,
     required List<FunctionPrototype> allFunctions,
     required List<GenericWarning> warnings,
   }) {
     for (final CustomFunctionPrototype function in customFunctions) {
       final Set<String> usedParameters = {};
-      checkExpression(
-        expression: function.expression,
+      checkReducible(
+        reducible: function.reducible,
         availableParameters: function.parameters.map((e) => e.name).toList(),
         usedParameters: usedParameters,
         allFunctions: allFunctions,
@@ -136,44 +136,44 @@ class SemanticAnalyzer
     }
   }
 
-  void checkExpression({
-    required Expression expression,
+  void checkReducible({
+    required Reducible reducible,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
   }) {
-    if (expression is SymbolExpression) {
-      if (availableParameters.contains(expression.value)) {
-        usedParameters.add(expression.value);
+    if (reducible is SymbolReducible) {
+      if (availableParameters.contains(reducible.value)) {
+        usedParameters.add(reducible.value);
       } else {
         throw UndefinedSymbolError(
-          symbol: expression.value,
-          location: expression.location,
+          symbol: reducible.value,
+          location: reducible.location,
         );
       }
-    } else if (expression is FunctionCallExpression) {
+    } else if (reducible is FunctionCallReducible) {
       final FunctionPrototype? function = getFunctionByName(
-        name: expression.name,
+        name: reducible.name,
         functions: allFunctions,
       );
 
       if (function == null) {
         throw UndefinedFunctionError(
-          function: expression.name,
-          location: expression.location,
+          function: reducible.name,
+          location: reducible.location,
         );
       } else {
-        if (function.parameters.length != expression.arguments.length) {
+        if (function.parameters.length != reducible.arguments.length) {
           throw InvalidNumberOfArgumentsError(
-            function: expression.name,
-            location: expression.location,
+            function: reducible.name,
+            location: reducible.location,
           );
         }
       }
 
-      for (final Expression expression in expression.arguments) {
-        checkExpression(
-          expression: expression,
+      for (final Reducible reducible in reducible.arguments) {
+        checkReducible(
+          reducible: reducible,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,
