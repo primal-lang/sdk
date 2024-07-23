@@ -23,9 +23,11 @@ class If extends NativeFunctionPrototype {
 
     if (a is BooleanReducibleValue) {
       if (a.value) {
-        return b.evaluate(scope);
+        return b.evaluate(
+            scope); // TODO(momo): should evaluate or return the reducible?
       } else {
-        return c.evaluate(scope);
+        return c.evaluate(
+            scope); // TODO(momo): should evaluate or return the reducible?
       }
     } else {
       throw InvalidArgumentTypesError(
