@@ -40,7 +40,9 @@ class FunctionCallReducible extends Reducible {
 
   @override
   Reducible evaluate(Scope scope) {
-    throw UnimplementedError(); // TODO(momo): implement
+    final Reducible reducible = scope.get(name);
+
+    return reducible.evaluate(scope);
   }
 
   @override

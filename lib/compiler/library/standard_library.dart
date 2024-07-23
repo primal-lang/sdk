@@ -18,8 +18,8 @@ class Gt extends NativeFunctionPrototype {
 
   @override
   Reducible evaluate(Scope scope) {
-    final Reducible x = scope.get(this, 'x');
-    final Reducible y = scope.get(this, 'y');
+    final Reducible x = scope.get('x');
+    final Reducible y = scope.get('y');
 
     if ((x is NumberValue) && (y is NumberValue)) {
       return BooleanValue(x.value > y.value);

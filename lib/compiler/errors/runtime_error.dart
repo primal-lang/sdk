@@ -5,10 +5,8 @@ class RuntimeError extends GenericError {
 }
 
 class UndefinedArgumentError extends RuntimeError {
-  const UndefinedArgumentError({
-    required String function,
-    required String argument,
-  }) : super('Undefined argument "$argument" evaluating function "$function"');
+  const UndefinedArgumentError(String argument)
+      : super('Undefined argument "$argument"');
 }
 
 class InvalidArgumentTypesError extends RuntimeError {
