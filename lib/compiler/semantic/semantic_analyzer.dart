@@ -1,6 +1,10 @@
 import 'package:dry/compiler/errors/semantic_error.dart';
+import 'package:dry/compiler/library/condition/if.dart';
+import 'package:dry/compiler/library/generic/eq.dart';
 import 'package:dry/compiler/library/numbers/add.dart';
 import 'package:dry/compiler/library/numbers/gt.dart';
+import 'package:dry/compiler/library/numbers/mul.dart';
+import 'package:dry/compiler/library/numbers/sub.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
@@ -60,8 +64,16 @@ class SemanticAnalyzer
   }
 
   void addNativeFunctions(List<FunctionPrototype> functions) {
+    // Generic
+    functions.add(Eq());
+
+    // Condition
+    functions.add(If());
+
     // Numbers
     functions.add(Add());
+    functions.add(Sub());
+    functions.add(Mul());
     functions.add(Gt());
   }
 
