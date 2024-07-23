@@ -18,16 +18,6 @@ abstract class FunctionPrototype {
       function.name == name && function.parameters.length == parameters.length;
 }
 
-class AnonymousFunctionPrototype extends CustomFunctionPrototype {
-  const AnonymousFunctionPrototype({
-    required super.expression,
-  }) : super(name: '', parameters: const []);
-
-  @override
-  Value evaluate(List<Value> arguments, Scope scope) =>
-      const NumberValue(0); // TODO(momo): implement
-}
-
 class CustomFunctionPrototype extends FunctionPrototype {
   final Expression expression;
 
@@ -40,6 +30,12 @@ class CustomFunctionPrototype extends FunctionPrototype {
   @override
   Value evaluate(List<Value> arguments, Scope scope) =>
       const NumberValue(0); // TODO(momo): implement
+}
+
+class AnonymousFunctionPrototype extends CustomFunctionPrototype {
+  const AnonymousFunctionPrototype({
+    required super.expression,
+  }) : super(name: '', parameters: const []);
 }
 
 abstract class NativeFunctionPrototype extends FunctionPrototype {
