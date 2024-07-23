@@ -95,7 +95,7 @@ class FunctionCallExpression extends Expression {
   String toString() => '$name(${arguments.join(', ')})';
 
   @override
-  Reducible toReducible() => FunctionCallReducible(
+  Reducible toReducible() => ExpressionReducible(
         name: name,
         arguments: arguments.map((e) => e.toReducible()).toList(),
         location: location,

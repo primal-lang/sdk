@@ -62,7 +62,7 @@ class SymbolReducible extends Reducible {
 
     if (reducible is FunctionPrototype) {
       return reducible.evaluate(scope);
-    } else if (reducible is FunctionCallReducible) {
+    } else if (reducible is ExpressionReducible) {
       return reducible.evaluate(scope);
     } else if (reducible is ReducibleValue) {
       return reducible;
@@ -78,12 +78,12 @@ class SymbolReducible extends Reducible {
   String toString() => value;
 }
 
-class FunctionCallReducible extends Reducible {
+class ExpressionReducible extends Reducible {
   final String name;
   final List<Reducible> arguments;
   final Location location;
 
-  const FunctionCallReducible({
+  const ExpressionReducible({
     required this.name,
     required this.arguments,
     required this.location,
