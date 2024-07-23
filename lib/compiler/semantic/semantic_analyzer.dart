@@ -3,7 +3,6 @@ import 'package:dry/compiler/library/standard_library.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
-import 'package:dry/compiler/models/type.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
@@ -51,9 +50,7 @@ class SemanticAnalyzer
     for (final FunctionDefinition function in functions) {
       result.add(CustomFunctionPrototype(
         name: function.name,
-        parameters: function.parameters
-            .map((e) => Parameter(name: e, type: const AnyType()))
-            .toList(),
+        parameters: function.parameters.map(Parameter.any).toList(),
         reducible: function.expression.toReducible(),
       ));
     }
@@ -62,7 +59,7 @@ class SemanticAnalyzer
   }
 
   void addNativeFunctions(List<FunctionPrototype> functions) {
-    functions.add(const Gt());
+    functions.add(Gt());
   }
 
   void checkDuplicatedFunctions(List<FunctionPrototype> functions) {

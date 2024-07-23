@@ -2,16 +2,15 @@ import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
 import 'package:dry/compiler/models/scope.dart';
-import 'package:dry/compiler/models/type.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
 
 class Gt extends NativeFunctionPrototype {
-  const Gt()
+  Gt()
       : super(
           name: 'gt',
-          parameters: const [
-            Parameter(name: 'x', type: NumberType()),
-            Parameter(name: 'y', type: NumberType()),
+          parameters: [
+            Parameter.number('x'),
+            Parameter.number('y'),
           ],
         );
 
