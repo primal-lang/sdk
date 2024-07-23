@@ -33,8 +33,14 @@ class SemanticAnalyzer
 
     // TODO(momo): check mismatched types
 
+    final Map<String, FunctionPrototype> prototypes = {};
+
+    for (final FunctionPrototype function in functions) {
+      prototypes[function.name] = function;
+    }
+
     return IntermediateCode(
-      functions: {},
+      functions: prototypes,
       warnings: warnings,
     );
   }

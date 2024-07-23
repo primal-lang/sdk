@@ -17,7 +17,7 @@ class Gt extends NativeFunctionPrototype {
 
   @override
   Value evaluate(List<Value> arguments, Scope scope) {
-    if (arguments.length != 2) {
+    if (arguments.length != parameters.length) {
       throw InvalidArgumentLengthError(
         function: name,
         expected: parameters.length,
