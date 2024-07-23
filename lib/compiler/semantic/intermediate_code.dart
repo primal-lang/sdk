@@ -26,4 +26,9 @@ class IntermediateCode {
   String evaluate(Expression expression) {
     return expression.toString();
   }
+
+  factory IntermediateCode.empty() => const IntermediateCode(
+        functions: {},
+        warnings: [],
+      );
 }
