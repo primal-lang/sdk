@@ -58,7 +58,13 @@ class SymbolReducible extends Reducible {
 
   @override
   Reducible evaluate(Scope scope) {
-    throw UnimplementedError(); // TODO(momo): implement
+    final Reducible reducible = scope.get(value);
+
+    if (reducible is FunctionPrototype) {
+      return reducible.evaluate(scope);
+    } else {
+      throw FunctionInvocationError(value);
+    }
   }
 
   @override

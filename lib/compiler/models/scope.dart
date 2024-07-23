@@ -3,16 +3,19 @@ import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
 
 class Scope {
-  final Map<String, Reducible> data;
+  final Map<String, Reducible> global;
+  final Map<String, Reducible> local;
 
-  const Scope(this.data);
+  const Scope(this.global, [this.local = const {}]);
+
+  Scope get asGlobal => Scope(global);
 
   Scope apply({
     required String functionName,
     required List<Parameter> parameters,
     required List<Reducible> arguments,
   }) {
-    final Map<String, Reducible> result = Map.from(data);
+    final Map<String, Reducible> result = {};
 
     if (parameters.length != arguments.length) {
       throw InvalidArgumentCountError(
@@ -26,16 +29,22 @@ class Scope {
       }
     }
 
-    return Scope(result);
+    return Scope(global, result);
   }
 
   Reducible get(String name) {
-    final Reducible? result = data[name];
+    final Reducible? resultLocal = local[name];
 
-    if (result == null) {
-      throw UndefinedArgumentError(name);
+    if (resultLocal == null) {
+      final Reducible? resultGlobal = global[name];
+
+      if (resultGlobal == null) {
+        throw UndefinedArgumentError(name);
+      } else {
+        return resultGlobal;
+      }
     } else {
-      return result;
+      return resultLocal;
     }
   }
 }
