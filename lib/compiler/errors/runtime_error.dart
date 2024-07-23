@@ -4,13 +4,11 @@ class RuntimeError extends GenericError {
   const RuntimeError(super.message);
 }
 
-class InvalidArgumentLengthError extends RuntimeError {
-  const InvalidArgumentLengthError({
+class UndefinedArgumentError extends RuntimeError {
+  const UndefinedArgumentError({
     required String function,
-    required int expected,
-    required int actual,
-  }) : super(
-            'Invalid argument length for function "$function". Expected: $expected. Actual: $actual');
+    required String argument,
+  }) : super('Undefined argument "$argument" evaluating function "$function"');
 }
 
 class InvalidArgumentTypesError extends RuntimeError {

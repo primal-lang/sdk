@@ -6,7 +6,7 @@ abstract class Reducible {
 
   String get type;
 
-  Reducible evaluate(List<Reducible> arguments, Scope scope);
+  Reducible evaluate(Scope scope);
 }
 
 class SymbolReducible extends Reducible {
@@ -19,7 +19,7 @@ class SymbolReducible extends Reducible {
   });
 
   @override
-  Reducible evaluate(List<Reducible> arguments, Scope scope) {
+  Reducible evaluate(Scope scope) {
     throw UnimplementedError(); // TODO(momo): implement
   }
 
@@ -39,7 +39,7 @@ class FunctionCallReducible extends Reducible {
   });
 
   @override
-  Reducible evaluate(List<Reducible> arguments, Scope scope) {
+  Reducible evaluate(Scope scope) {
     throw UnimplementedError(); // TODO(momo): implement
   }
 

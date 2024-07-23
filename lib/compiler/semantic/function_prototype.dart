@@ -1,4 +1,3 @@
-import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
 import 'package:dry/compiler/models/scope.dart';
@@ -13,7 +12,7 @@ abstract class FunctionPrototype implements Reducible {
   });
 
   @override
-  Reducible evaluate(List<Reducible> arguments, Scope scope);
+  Reducible evaluate(Scope scope);
 
   bool equalSignature(FunctionPrototype function) =>
       function.name == name && function.parameters.length == parameters.length;
@@ -32,17 +31,7 @@ class CustomFunctionPrototype extends FunctionPrototype {
   });
 
   @override
-  Reducible evaluate(List<Reducible> arguments, Scope scope) {
-    if (arguments.length != parameters.length) {
-      throw InvalidArgumentLengthError(
-        function: name,
-        expected: parameters.length,
-        actual: arguments.length,
-      );
-    } else {
-      return reducible.evaluate(arguments, scope);
-    }
-  }
+  Reducible evaluate(Scope scope) => reducible.evaluate(scope);
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {

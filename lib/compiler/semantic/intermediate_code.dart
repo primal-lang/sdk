@@ -22,7 +22,7 @@ class IntermediateCode {
   bool get hasMain => main != null;
 
   String executeMain() {
-    final Reducible result = main!.evaluate([], Scope(functions));
+    final Reducible result = main!.evaluate(Scope(functions));
 
     return result.toString();
   }
@@ -30,7 +30,7 @@ class IntermediateCode {
   String evaluate(Expression expression) {
     final FunctionPrototype function =
         AnonymousFunctionPrototype(reducible: expression.toReducible());
-    final Reducible result = function.evaluate([], Scope(functions));
+    final Reducible result = function.evaluate(Scope(functions));
 
     return result.toString();
   }

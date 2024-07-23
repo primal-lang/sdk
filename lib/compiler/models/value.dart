@@ -10,7 +10,7 @@ abstract class Value<T> implements Reducible {
   String toString() => value.toString();
 
   @override
-  Reducible evaluate(List<Reducible> arguments, Scope scope) => this;
+  Reducible evaluate(Scope scope) => this;
 }
 
 class StringValue extends Value<String> {
