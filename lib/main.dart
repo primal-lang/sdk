@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dry/compiler/compiler.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
+import 'package:dry/compiler/warnings/generic_warning.dart';
 import 'package:dry/utils/console.dart';
 
 void main(List<String> args) {
@@ -17,9 +18,13 @@ void main(List<String> args) {
     final Compiler compiler = Compiler.fromFile(args[0]);
     final IntermediateCode intermediateCode = compiler.compile();
 
+    for (final GenericWarning warning in intermediateCode.warnings) {
+      console.warning(warning);
+    }
+
     if (intermediateCode.hasMain) {
       final String result = intermediateCode.executeMain();
-      console.printMessage(result);
+      console.print(result);
     } else {
       while (true) {
         try {
@@ -27,18 +32,14 @@ void main(List<String> args) {
 
           if (input.isNotEmpty) {
             final Expression expression = compiler.expression(input);
-            console.printMessage(intermediateCode.evaluate(expression));
+            console.print(intermediateCode.evaluate(expression));
           }
-        } on Exception catch (e) {
-          console.exception(e);
         } catch (e) {
-          console.generic(e);
+          console.error(e);
         }
       }
     }
-  } on Exception catch (e) {
-    console.exception(e);
   } catch (e) {
-    console.generic(e);
+    console.error(e);
   }
 }
