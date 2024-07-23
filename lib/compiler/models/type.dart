@@ -1,7 +1,19 @@
-class Type {}
+class Type {
+  const Type();
+}
 
-class StringType extends Type {}
+class StringType extends Type {
+  const StringType();
+}
 
-class IntegerType extends Type {}
+class NumberType extends Type {
+  const NumberType();
+}
 
-class BooleanType extends Type {}
+class BooleanType extends Type {
+  const BooleanType();
+}
+
+class AnyType extends Type {
+  const AnyType();
+}

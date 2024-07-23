@@ -8,8 +8,8 @@ class StringValue extends Value<String> {
   const StringValue(super.value);
 }
 
-class IntegerValue extends Value<int> {
-  const IntegerValue(super.value);
+class NumberValue extends Value<int> {
+  const NumberValue(super.value);
 }
 
 class BooleanValue extends Value<bool> {

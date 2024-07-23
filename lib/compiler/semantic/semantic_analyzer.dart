@@ -1,5 +1,7 @@
 import 'package:dry/compiler/errors/semantic_error.dart';
 import 'package:dry/compiler/models/analyzer.dart';
+import 'package:dry/compiler/models/parameter.dart';
+import 'package:dry/compiler/models/type.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
@@ -18,7 +20,7 @@ class SemanticAnalyzer
     addNativeFunctions(functions);
 
     checkDuplicatedFunctions(functions);
-    checkRepeatedParameters(functions);
+    checkDuplicatedParameters(functions);
 
     final List<CustomFunctionPrototype> customFunctions =
         functions.whereType<CustomFunctionPrototype>().toList();
@@ -36,14 +38,15 @@ class SemanticAnalyzer
     );
   }
 
-  // TODO(momo): add types to parameters
   List<FunctionPrototype> getPrototypes(List<FunctionDefinition> functions) {
     final List<FunctionPrototype> result = [];
 
     for (final FunctionDefinition function in functions) {
       result.add(CustomFunctionPrototype(
         name: function.name,
-        parameters: function.parameters,
+        parameters: function.parameters
+            .map((e) => Parameter(name: e, type: const AnyType()))
+            .toList(),
         expression: function.expression,
       ));
     }
@@ -54,7 +57,10 @@ class SemanticAnalyzer
   void addNativeFunctions(List<FunctionPrototype> functions) {
     functions.add(const NativeFunctionPrototype(
       name: 'gt',
-      parameters: ['x', 'y'],
+      parameters: [
+        Parameter(name: 'x', type: NumberType()),
+        Parameter(name: 'y', type: NumberType()),
+      ],
     ));
   }
 
@@ -75,7 +81,7 @@ class SemanticAnalyzer
     }
   }
 
-  void checkRepeatedParameters(List<FunctionPrototype> functions) {
+  void checkDuplicatedParameters(List<FunctionPrototype> functions) {
     for (final FunctionPrototype function in functions) {
       final Map<String, int> parameters = parametersCount(function);
 
@@ -93,11 +99,11 @@ class SemanticAnalyzer
   Map<String, int> parametersCount(FunctionPrototype function) {
     final Map<String, int> result = {};
 
-    for (final String parameter in function.parameters) {
-      if (result.containsKey(parameter)) {
-        result[parameter] = result[parameter]! + 1;
+    for (final Parameter parameter in function.parameters) {
+      if (result.containsKey(parameter.name)) {
+        result[parameter.name] = result[parameter.name]! + 1;
       } else {
-        result[parameter] = 1;
+        result[parameter.name] = 1;
       }
     }
 
@@ -113,16 +119,16 @@ class SemanticAnalyzer
       final Set<String> usedParameters = {};
       checkExpression(
         expression: function.expression,
-        availableParameters: function.parameters,
+        availableParameters: function.parameters.map((e) => e.name).toList(),
         usedParameters: usedParameters,
         allFunctions: allFunctions,
       );
 
-      for (final String parameter in function.parameters) {
-        if (!usedParameters.contains(parameter)) {
+      for (final Parameter parameter in function.parameters) {
+        if (!usedParameters.contains(parameter.name)) {
           warnings.add(UnusedParameterWarning(
             function: function.name,
-            parameter: parameter,
+            parameter: parameter.name,
           ));
         }
       }

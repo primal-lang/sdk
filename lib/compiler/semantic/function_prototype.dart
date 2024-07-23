@@ -1,9 +1,10 @@
+import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/scope.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 
 abstract class FunctionPrototype {
   final String name;
-  final List<String> parameters;
+  final List<Parameter> parameters;
 
   const FunctionPrototype({
     required this.name,
