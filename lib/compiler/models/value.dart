@@ -1,17 +1,31 @@
-class Value<T> {
+abstract class Value<T> {
   final T value;
 
   const Value(this.value);
+
+  String get type;
+
+  @override
+  String toString() => value.toString();
 }
 
 class StringValue extends Value<String> {
   const StringValue(super.value);
+
+  @override
+  String get type => 'String';
 }
 
 class NumberValue extends Value<int> {
   const NumberValue(super.value);
+
+  @override
+  String get type => 'Number';
 }
 
 class BooleanValue extends Value<bool> {
   const BooleanValue(super.value);
+
+  @override
+  String get type => 'Boolean';
 }

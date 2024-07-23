@@ -1,4 +1,5 @@
 import 'package:dry/compiler/errors/semantic_error.dart';
+import 'package:dry/compiler/library/standard_library.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/type.dart';
@@ -55,13 +56,7 @@ class SemanticAnalyzer
   }
 
   void addNativeFunctions(List<FunctionPrototype> functions) {
-    functions.add(const NativeFunctionPrototype(
-      name: 'gt',
-      parameters: [
-        Parameter(name: 'x', type: NumberType()),
-        Parameter(name: 'y', type: NumberType()),
-      ],
-    ));
+    functions.add(const Gt());
   }
 
   void checkDuplicatedFunctions(List<FunctionPrototype> functions) {

@@ -1,5 +1,6 @@
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/scope.dart';
+import 'package:dry/compiler/models/value.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 
 abstract class FunctionPrototype {
@@ -11,7 +12,7 @@ abstract class FunctionPrototype {
     required this.parameters,
   });
 
-  String evaluate(Scope scope);
+  Value evaluate(List<Value> arguments, Scope scope);
 
   bool equalSignature(FunctionPrototype function) =>
       function.name == name && function.parameters.length == parameters.length;
@@ -23,7 +24,8 @@ class AnonymousFunctionPrototype extends CustomFunctionPrototype {
   }) : super(name: '', parameters: const []);
 
   @override
-  String evaluate(Scope scope) => '';
+  Value evaluate(List<Value> arguments, Scope scope) =>
+      const NumberValue(0); // TODO(momo): implement
 }
 
 class CustomFunctionPrototype extends FunctionPrototype {
@@ -36,15 +38,13 @@ class CustomFunctionPrototype extends FunctionPrototype {
   });
 
   @override
-  String evaluate(Scope scope) => '';
+  Value evaluate(List<Value> arguments, Scope scope) =>
+      const NumberValue(0); // TODO(momo): implement
 }
 
-class NativeFunctionPrototype extends FunctionPrototype {
+abstract class NativeFunctionPrototype extends FunctionPrototype {
   const NativeFunctionPrototype({
     required super.name,
     required super.parameters,
   });
-
-  @override
-  String evaluate(Scope scope) => '';
 }
