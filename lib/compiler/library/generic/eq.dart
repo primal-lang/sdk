@@ -16,8 +16,8 @@ class Eq extends NativeFunctionPrototype {
 
   @override
   Reducible evaluate(Scope scope) {
-    final Reducible x = scope.get('x').evaluate(scope.asGlobal);
-    final Reducible y = scope.get('y').evaluate(scope.asGlobal);
+    final Reducible x = scope.get('x').evaluate(scope);
+    final Reducible y = scope.get('y').evaluate(scope);
 
     if ((x is NumberReducibleValue) && (y is NumberReducibleValue)) {
       return BooleanReducibleValue(x.value == y.value);

@@ -62,6 +62,10 @@ class SymbolReducible extends Reducible {
 
     if (reducible is FunctionPrototype) {
       return reducible.evaluate(scope);
+    } else if (reducible is FunctionCallReducible) {
+      return reducible.evaluate(scope);
+    } else if (reducible is ReducibleValue) {
+      return reducible;
     } else {
       throw FunctionInvocationError(value);
     }

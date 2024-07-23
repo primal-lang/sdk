@@ -17,15 +17,15 @@ class If extends NativeFunctionPrototype {
 
   @override
   Reducible evaluate(Scope scope) {
-    final Reducible a = scope.get('a').evaluate(scope.asGlobal);
+    final Reducible a = scope.get('a').evaluate(scope);
     final Reducible b = scope.get('b');
     final Reducible c = scope.get('c');
 
     if (a is BooleanReducibleValue) {
       if (a.value) {
-        return b;
+        return b.evaluate(scope);
       } else {
-        return c;
+        return c.evaluate(scope);
       }
     } else {
       throw InvalidArgumentTypesError(
