@@ -1,5 +1,6 @@
 import 'package:dry/compiler/errors/semantic_error.dart';
-import 'package:dry/compiler/library/standard_library.dart';
+import 'package:dry/compiler/library/numbers/add.dart';
+import 'package:dry/compiler/library/numbers/gt.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
@@ -59,6 +60,8 @@ class SemanticAnalyzer
   }
 
   void addNativeFunctions(List<FunctionPrototype> functions) {
+    // Numbers
+    functions.add(Add());
     functions.add(Gt());
   }
 
