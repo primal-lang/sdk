@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dry/compiler/warnings/generic_warning.dart';
 
 class Console {
