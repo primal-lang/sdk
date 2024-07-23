@@ -9,13 +9,27 @@ class UndefinedArgumentError extends RuntimeError {
       : super('Undefined argument "$argument"');
 }
 
+class InvalidArgumentCountError extends RuntimeError {
+  InvalidArgumentCountError({
+    required String function,
+    required int expected,
+    required int actual,
+  }) : super(
+            'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
+}
+
 class InvalidArgumentTypesError extends RuntimeError {
   InvalidArgumentTypesError({
     required String function,
     required List<String> expected,
     required List<String> actual,
   }) : super(
-            'Invalid argument length for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
+            'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
+}
+
+class FunctionInvocationError extends RuntimeError {
+  FunctionInvocationError(String function)
+      : super('Canot invoke function "$function"');
 }
 
 class EmptyExpressionEvaluationError extends RuntimeError {

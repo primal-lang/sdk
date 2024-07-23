@@ -1,5 +1,7 @@
+import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/models/location.dart';
 import 'package:dry/compiler/models/scope.dart';
+import 'package:dry/compiler/semantic/function_prototype.dart';
 
 abstract class Reducible {
   const Reducible();
@@ -42,7 +44,15 @@ class FunctionCallReducible extends Reducible {
   Reducible evaluate(Scope scope) {
     final Reducible reducible = scope.get(name);
 
-    return reducible.evaluate(scope);
+    if (reducible is FunctionPrototype) {
+      return reducible.evaluate(scope.apply(
+        functionName: name,
+        parameters: reducible.parameters,
+        arguments: arguments,
+      ));
+    } else {
+      throw FunctionInvocationError(name);
+    }
   }
 
   @override
