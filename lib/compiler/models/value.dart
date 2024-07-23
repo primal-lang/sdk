@@ -14,6 +14,9 @@ class StringValue extends Value<String> {
 
   @override
   String get type => 'String';
+
+  @override
+  String toString() => '"$value"';
 }
 
 class NumberValue extends Value<num> {
