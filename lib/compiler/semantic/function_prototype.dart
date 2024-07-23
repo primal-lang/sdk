@@ -18,7 +18,7 @@ abstract class FunctionPrototype implements Reducible {
       function.name == name && function.parameters.length == parameters.length;
 
   @override
-  String get type => '$name(${parameters.join(', ')})';
+  String get type => '$name(${parameters.map((e) => e.type).join(', ')})';
 }
 
 class CustomFunctionPrototype extends FunctionPrototype {
