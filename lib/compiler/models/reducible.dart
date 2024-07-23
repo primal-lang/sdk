@@ -73,6 +73,9 @@ class SymbolReducible extends Reducible {
 
   @override
   String get type => 'Symbol';
+
+  @override
+  String toString() => value;
 }
 
 class FunctionCallReducible extends Reducible {
@@ -105,4 +108,7 @@ class FunctionCallReducible extends Reducible {
 
   @override
   String get type => '$name(${arguments.join(', ')})';
+
+  @override
+  String toString() => '$name(${arguments.join(', ')})';
 }
