@@ -19,7 +19,14 @@ class SemanticAnalyzer
 
     checkDuplicatedFunctions(functions);
     checkRepeatedParameters(functions);
-    checkExpressions(functions: functions, warnings: warnings);
+
+    final List<CustomFunctionPrototype> customFunctions =
+        functions.whereType<CustomFunctionPrototype>().toList();
+    checkExpressions(
+      customFunctions: customFunctions,
+      allFunctions: functions,
+      warnings: warnings,
+    );
 
     // TODO(momo): check mismatched types
 
@@ -34,7 +41,7 @@ class SemanticAnalyzer
     final List<FunctionPrototype> result = [];
 
     for (final FunctionDefinition function in functions) {
-      result.add(FunctionPrototype(
+      result.add(CustomFunctionPrototype(
         name: function.name,
         parameters: function.parameters,
         expression: function.expression,
@@ -45,10 +52,9 @@ class SemanticAnalyzer
   }
 
   void addNativeFunctions(List<FunctionPrototype> functions) {
-    functions.add(const FunctionPrototype(
+    functions.add(const NativeFunctionPrototype(
       name: 'gt',
       parameters: ['x', 'y'],
-      expression: EmptyExpression(),
     ));
   }
 
@@ -99,16 +105,17 @@ class SemanticAnalyzer
   }
 
   void checkExpressions({
-    required List<FunctionPrototype> functions,
+    required List<CustomFunctionPrototype> customFunctions,
+    required List<FunctionPrototype> allFunctions,
     required List<GenericWarning> warnings,
   }) {
-    for (final FunctionPrototype function in functions) {
+    for (final CustomFunctionPrototype function in customFunctions) {
       final Set<String> usedParameters = {};
       checkExpression(
         expression: function.expression,
         availableParameters: function.parameters,
         usedParameters: usedParameters,
-        functions: functions,
+        allFunctions: allFunctions,
       );
 
       for (final String parameter in function.parameters) {
@@ -126,7 +133,7 @@ class SemanticAnalyzer
     required Expression expression,
     required List<String> availableParameters,
     required Set<String> usedParameters,
-    required List<FunctionPrototype> functions,
+    required List<FunctionPrototype> allFunctions,
   }) {
     if (expression is SymbolExpression) {
       if (availableParameters.contains(expression.value)) {
@@ -140,7 +147,7 @@ class SemanticAnalyzer
     } else if (expression is FunctionCallExpression) {
       final FunctionPrototype? function = getFunctionByName(
         name: expression.name,
-        functions: functions,
+        functions: allFunctions,
       );
 
       if (function == null) {
@@ -162,7 +169,7 @@ class SemanticAnalyzer
           expression: expression,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
-          functions: functions,
+          allFunctions: allFunctions,
         );
       }
     }
