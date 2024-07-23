@@ -1,1 +1,3 @@
-main = gt(add(5, 1), 5)
+testNumber = 5
+
+main = gt(add(testNumber, 1), 5)

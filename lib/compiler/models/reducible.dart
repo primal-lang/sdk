@@ -62,7 +62,7 @@ class SymbolReducible extends Reducible {
   }
 
   @override
-  String get type => value;
+  String get type => 'Symbol';
 }
 
 class FunctionCallReducible extends Reducible {

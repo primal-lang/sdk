@@ -145,7 +145,7 @@ class SemanticAnalyzer
     if (reducible is SymbolReducible) {
       if (availableParameters.contains(reducible.value)) {
         usedParameters.add(reducible.value);
-      } else {
+      } else if (!allFunctions.any((f) => f.name == reducible.value)) {
         throw UndefinedSymbolError(
           symbol: reducible.value,
           location: reducible.location,
