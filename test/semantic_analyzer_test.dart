@@ -1,4 +1,5 @@
 import 'package:dry/compiler/errors/semantic_error.dart';
+import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
 
@@ -41,12 +42,9 @@ void main() {
   });
 
   test('Unused parameter', () {
-    try {
-      getIntermediateCode('isBiggerThan10(x, y) = gt(x, 10)');
-      fail('Should fail');
-    } catch (e) {
-      expect(e, isA<UnusedParameterError>());
-    }
+    final IntermediateCode code =
+        getIntermediateCode('isBiggerThan10(x, y) = gt(x, 10)');
+    expect(code.warnings.length, equals(1));
   });
 
   test('Undefined function', () {

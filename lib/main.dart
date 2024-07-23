@@ -17,7 +17,7 @@ void main(List<String> args) {
 
   if (intermediateCode.hasMain) {
     final String result = intermediateCode.executeMain();
-    console.print(result);
+    console.printMessage(result);
   } else {
     while (true) {
       try {
@@ -25,10 +25,12 @@ void main(List<String> args) {
 
         if (input.isNotEmpty) {
           final Expression expression = compiler.expression(input);
-          console.print(intermediateCode.evaluate(expression));
+          console.printMessage(intermediateCode.evaluate(expression));
         }
+      } on Exception catch (e) {
+        console.exception(e);
       } catch (e) {
-        console.error(e);
+        console.generic(e);
       }
     }
   }

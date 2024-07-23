@@ -4,5 +4,5 @@ class GenericError implements Exception {
   const GenericError(this.message);
 
   @override
-  String toString() => message;
+  String toString() => 'Error: $message';
 }

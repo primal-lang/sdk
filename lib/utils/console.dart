@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:dry/compiler/warnings/generic_warning.dart';
 
 class Console {
   static const String reset = '\x1B[0m';
   static const String red = '\x1B[31m';
+  static const yellow = '\x1B[33m';
 
   String prompt() {
     stdout.write('> ');
@@ -11,7 +13,20 @@ class Console {
     return input != null ? input.trim() : '';
   }
 
-  void print(String message) => stdout.writeln(message);
+  void printMessage(String message) => stdout.writeln(message);
 
-  void error(Object message) => stderr.writeln('${red}Error: $message$reset');
+  void printWarning(Object warning) =>
+      stderr.writeln('${yellow}Warning: $warning$reset');
+
+  void printError(Object error) => stderr.writeln('${red}Error: $error$reset');
+
+  void exception(Exception exception) {
+    if (exception is GenericWarning) {
+      printWarning(exception);
+    } else {
+      printError(exception);
+    }
+  }
+
+  void generic(Object error) => printError(error);
 }

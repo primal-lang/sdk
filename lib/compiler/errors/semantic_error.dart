@@ -21,13 +21,6 @@ class DuplicatedParameterError extends SemanticError {
   }) : super('Duplicated parameter "$parameter" in function "$function"');
 }
 
-class UnusedParameterError extends SemanticError {
-  const UnusedParameterError({
-    required String function,
-    required String parameter,
-  }) : super('Unused parameter "$parameter" in function "$function"');
-}
-
 class UndefinedSymbolError extends SemanticError {
   const UndefinedSymbolError({
     required String symbol,

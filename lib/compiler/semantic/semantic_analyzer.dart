@@ -4,6 +4,8 @@ import 'package:dry/compiler/semantic/function_prototype.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
+import 'package:dry/compiler/warnings/generic_warning.dart';
+import 'package:dry/compiler/warnings/semantic_warning.dart';
 
 class SemanticAnalyzer
     extends Analyzer<List<FunctionDefinition>, IntermediateCode> {
@@ -11,16 +13,20 @@ class SemanticAnalyzer
 
   @override
   IntermediateCode analyze() {
+    final List<GenericWarning> warnings = [];
     final List<FunctionPrototype> functions = getPrototypes(input);
     addNativeFunctions(functions);
 
     checkDuplicatedFunctions(functions);
     checkRepeatedParameters(functions);
-    checkExpressions(functions);
+    checkExpressions(functions: functions, warnings: warnings);
 
     // TODO(momo): check mismatched types
 
-    return const IntermediateCode(functions: {});
+    return IntermediateCode(
+      functions: {},
+      warnings: warnings,
+    );
   }
 
   // TODO(momo): add types to parameters
@@ -92,7 +98,10 @@ class SemanticAnalyzer
     return result;
   }
 
-  void checkExpressions(List<FunctionPrototype> functions) {
+  void checkExpressions({
+    required List<FunctionPrototype> functions,
+    required List<GenericWarning> warnings,
+  }) {
     for (final FunctionPrototype function in functions) {
       final Set<String> usedParameters = {};
       checkExpression(
@@ -104,10 +113,10 @@ class SemanticAnalyzer
 
       for (final String parameter in function.parameters) {
         if (!usedParameters.contains(parameter)) {
-          throw UnusedParameterError(
+          warnings.add(UnusedParameterWarning(
             function: function.name,
             parameter: parameter,
-          );
+          ));
         }
       }
     }
