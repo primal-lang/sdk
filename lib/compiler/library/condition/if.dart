@@ -16,10 +16,10 @@ class If extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible evaluate(Scope scope) {
-    final Reducible a = scope.get('a').evaluate(scope);
-    final Reducible b = scope.get('b');
-    final Reducible c = scope.get('c');
+  Reducible evaluate(Scope arguments, Scope scope) {
+    final Reducible a = arguments.get('a').evaluate(const Scope(), scope);
+    final Reducible b = arguments.get('b');
+    final Reducible c = arguments.get('c');
 
     if (a is BooleanReducibleValue) {
       if (a.value) {

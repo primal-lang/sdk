@@ -8,7 +8,7 @@ abstract class Reducible {
 
   String get type;
 
-  Reducible evaluate(Scope scope);
+  Reducible evaluate(Scope arguments, Scope scope);
 }
 
 abstract class ReducibleValue<T> implements Reducible {
@@ -20,7 +20,7 @@ abstract class ReducibleValue<T> implements Reducible {
   String toString() => value.toString();
 
   @override
-  Reducible evaluate(Scope scope) => this;
+  Reducible evaluate(Scope arguments, Scope scope) => this;
 }
 
 class StringReducibleValue extends ReducibleValue<String> {
@@ -57,13 +57,13 @@ class SymbolReducible extends Reducible {
   });
 
   @override
-  Reducible evaluate(Scope scope) {
+  Reducible evaluate(Scope arguments, Scope scope) {
     final Reducible reducible = scope.get(value);
 
     if (reducible is FunctionPrototype) {
-      return reducible.evaluate(scope);
+      return reducible.evaluate(arguments, scope);
     } else if (reducible is ExpressionReducible) {
-      return reducible.evaluate(scope);
+      return reducible.evaluate(arguments, scope);
     } else if (reducible is ReducibleValue) {
       return reducible;
     } else {
@@ -90,17 +90,25 @@ class ExpressionReducible extends Reducible {
   });
 
   @override
-  Reducible evaluate(Scope scope) {
+  Reducible evaluate(Scope arguments, Scope scope) {
     final Reducible reducible = scope.get(name);
 
-    if (reducible is FunctionPrototype) {
-      final Scope newScope = scope.apply(
+    if (reducible is CustomFunctionPrototype) {
+      final Scope newScope = Scope.from(
         functionName: name,
         parameters: reducible.parameters,
-        arguments: arguments,
+        arguments: this.arguments,
       );
 
-      return reducible.evaluate(newScope);
+      return reducible.evaluate(newScope, scope);
+    } else if (reducible is NativeFunctionPrototype) {
+      final Scope newScope = Scope.from(
+        functionName: name,
+        parameters: reducible.parameters,
+        arguments: this.arguments,
+      );
+
+      return reducible.evaluate(newScope, scope);
     } else {
       throw FunctionInvocationError(name);
     }

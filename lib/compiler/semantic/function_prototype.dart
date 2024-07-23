@@ -12,7 +12,7 @@ abstract class FunctionPrototype implements Reducible {
   });
 
   @override
-  Reducible evaluate(Scope scope);
+  Reducible evaluate(Scope arguments, Scope scope);
 
   bool equalSignature(FunctionPrototype function) =>
       function.name == name && function.parameters.length == parameters.length;
@@ -31,7 +31,7 @@ class CustomFunctionPrototype extends FunctionPrototype {
   });
 
   @override
-  Reducible evaluate(Scope scope) => reducible.evaluate(scope);
+  Reducible evaluate(Scope arguments, Scope scope) => reducible.evaluate(arguments, scope);
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {
