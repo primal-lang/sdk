@@ -11,6 +11,42 @@ abstract class Reducible {
   Reducible evaluate(Scope scope);
 }
 
+abstract class ReducibleValue<T> implements Reducible {
+  final T value;
+
+  const ReducibleValue(this.value);
+
+  @override
+  String toString() => value.toString();
+
+  @override
+  Reducible evaluate(Scope scope) => this;
+}
+
+class StringReducibleValue extends ReducibleValue<String> {
+  const StringReducibleValue(super.value);
+
+  @override
+  String get type => 'String';
+
+  @override
+  String toString() => '"$value"';
+}
+
+class NumberReducibleValue extends ReducibleValue<num> {
+  const NumberReducibleValue(super.value);
+
+  @override
+  String get type => 'Number';
+}
+
+class BooleanReducibleValue extends ReducibleValue<bool> {
+  const BooleanReducibleValue(super.value);
+
+  @override
+  String get type => 'Boolean';
+}
+
 class SymbolReducible extends Reducible {
   final String value;
   final Location location;

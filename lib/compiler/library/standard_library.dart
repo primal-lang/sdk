@@ -3,7 +3,6 @@ import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
 import 'package:dry/compiler/models/scope.dart';
 import 'package:dry/compiler/models/type.dart';
-import 'package:dry/compiler/models/value.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
 
 class Gt extends NativeFunctionPrototype {
@@ -21,8 +20,8 @@ class Gt extends NativeFunctionPrototype {
     final Reducible x = scope.get('x').evaluate(scope);
     final Reducible y = scope.get('y').evaluate(scope);
 
-    if ((x is NumberValue) && (y is NumberValue)) {
-      return BooleanValue(x.value > y.value);
+    if ((x is NumberReducibleValue) && (y is NumberReducibleValue)) {
+      return BooleanReducibleValue(x.value > y.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

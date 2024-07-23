@@ -2,7 +2,6 @@ import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/location.dart';
 import 'package:dry/compiler/models/reducible.dart';
-import 'package:dry/compiler/models/value.dart';
 
 abstract class Expression extends Localized {
   const Expression({required super.location});
@@ -40,7 +39,7 @@ class StringExpression extends LiteralExpression<String> {
   String toString() => '"$value"';
 
   @override
-  Reducible toReducible() => StringValue(value);
+  Reducible toReducible() => StringReducibleValue(value);
 }
 
 class NumberExpression extends LiteralExpression<num> {
@@ -51,7 +50,7 @@ class NumberExpression extends LiteralExpression<num> {
         );
 
   @override
-  Reducible toReducible() => NumberValue(value);
+  Reducible toReducible() => NumberReducibleValue(value);
 }
 
 class BooleanExpression extends LiteralExpression<bool> {
@@ -62,7 +61,7 @@ class BooleanExpression extends LiteralExpression<bool> {
         );
 
   @override
-  Reducible toReducible() => BooleanValue(value);
+  Reducible toReducible() => BooleanReducibleValue(value);
 }
 
 class SymbolExpression extends Expression {
