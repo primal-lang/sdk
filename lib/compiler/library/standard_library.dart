@@ -25,7 +25,7 @@ class Gt extends NativeFunctionPrototype {
     } else {
       throw InvalidArgumentTypesError(
         function: name,
-        expected: parameters.map((e) => e.type.runtimeType.toString()).toList(),
+        expected: parameters.map((e) => e.type.toString()).toList(),
         actual: [x.type, y.type],
       );
     }
