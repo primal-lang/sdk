@@ -94,10 +94,12 @@ class FunctionCallReducible extends Reducible {
     final Reducible reducible = scope.get(name);
 
     if (reducible is FunctionPrototype) {
+      final finalArguments = arguments.map((e) => e.evaluate(scope)).toList();
+
       final Scope newScope = scope.apply(
         functionName: name,
         parameters: reducible.parameters,
-        arguments: arguments,
+        arguments: finalArguments,
       );
 
       return reducible.evaluate(newScope);
