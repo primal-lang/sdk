@@ -1,3 +1,1 @@
-#main = gt(20, 5)
-
-#main = true
+main = gt(20, 5)
