@@ -11,27 +11,34 @@ void main(List<String> args) {
     exit(exitCode);
   }
 
-  final Compiler compiler = Compiler.fromFile(args[0]);
-  final IntermediateCode intermediateCode = compiler.compile();
   final Console console = Console();
 
-  if (intermediateCode.hasMain) {
-    final String result = intermediateCode.executeMain();
-    console.printMessage(result);
-  } else {
-    while (true) {
-      try {
-        final String input = console.prompt();
+  try {
+    final Compiler compiler = Compiler.fromFile(args[0]);
+    final IntermediateCode intermediateCode = compiler.compile();
 
-        if (input.isNotEmpty) {
-          final Expression expression = compiler.expression(input);
-          console.printMessage(intermediateCode.evaluate(expression));
+    if (intermediateCode.hasMain) {
+      final String result = intermediateCode.executeMain();
+      console.printMessage(result);
+    } else {
+      while (true) {
+        try {
+          final String input = console.prompt();
+
+          if (input.isNotEmpty) {
+            final Expression expression = compiler.expression(input);
+            console.printMessage(intermediateCode.evaluate(expression));
+          }
+        } on Exception catch (e) {
+          console.exception(e);
+        } catch (e) {
+          console.generic(e);
         }
-      } on Exception catch (e) {
-        console.exception(e);
-      } catch (e) {
-        console.generic(e);
       }
     }
+  } on Exception catch (e) {
+    console.exception(e);
+  } catch (e) {
+    console.generic(e);
   }
 }

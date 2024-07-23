@@ -15,10 +15,9 @@ class Console {
 
   void printMessage(String message) => stdout.writeln(message);
 
-  void printWarning(Object warning) =>
-      stderr.writeln('${yellow}Warning: $warning$reset');
+  void printWarning(Object warning) => stderr.writeln('$yellow$warning$reset');
 
-  void printError(Object error) => stderr.writeln('${red}Error: $error$reset');
+  void printError(Object error) => stderr.writeln('$red$error$reset');
 
   void exception(Exception exception) {
     if (exception is GenericWarning) {

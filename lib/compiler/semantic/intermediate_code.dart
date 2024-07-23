@@ -11,7 +11,13 @@ class IntermediateCode {
     required this.warnings,
   });
 
-  bool get hasMain => functions.containsKey('main');
+  FunctionPrototype? get main {
+    final FunctionPrototype? main = functions['main'];
+
+    return ((main != null) && main.parameters.isEmpty) ? main : null;
+  }
+
+  bool get hasMain => main != null;
 
   // TODO(momo): implement
   String executeMain() => evaluate(const EmptyExpression());
