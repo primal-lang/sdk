@@ -16,7 +16,7 @@ class StringValue extends Value<String> {
   String get type => 'String';
 }
 
-class NumberValue extends Value<int> {
+class NumberValue extends Value<num> {
   const NumberValue(super.value);
 
   @override

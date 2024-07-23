@@ -1,5 +1,3 @@
 #factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))
 
-isBiggerThan10(x, y) = gt(x, 10)
-
-main = isBiggerThan10(20, 5)
+main = gt(20, 5)

@@ -1,15 +1,24 @@
+import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/location.dart';
+import 'package:dry/compiler/models/scope.dart';
+import 'package:dry/compiler/models/value.dart';
 
-class Expression extends Localized {
+abstract class Expression extends Localized {
   const Expression({required super.location});
+
+  Value evaluate(List<Value> arguments, Scope scope);
 }
 
 class EmptyExpression extends Expression {
   const EmptyExpression() : super(location: const Location(row: 1, column: 1));
+
+  @override
+  Value evaluate(List<Value> arguments, Scope scope) =>
+      throw const EmptyExpressionEvaluationError();
 }
 
-class LiteralExpression<T> extends Expression {
+abstract class LiteralExpression<T> extends Expression {
   final T value;
 
   const LiteralExpression({
@@ -30,6 +39,9 @@ class StringExpression extends LiteralExpression<String> {
 
   @override
   String toString() => '"$value"';
+
+  @override
+  Value evaluate(List<Value> arguments, Scope scope) => StringValue(value);
 }
 
 class NumberExpression extends LiteralExpression<num> {
@@ -38,6 +50,9 @@ class NumberExpression extends LiteralExpression<num> {
           location: token.location,
           value: token.value,
         );
+
+  @override
+  Value evaluate(List<Value> arguments, Scope scope) => NumberValue(value);
 }
 
 class BooleanExpression extends LiteralExpression<bool> {
@@ -46,6 +61,9 @@ class BooleanExpression extends LiteralExpression<bool> {
           location: token.location,
           value: token.value,
         );
+
+  @override
+  Value evaluate(List<Value> arguments, Scope scope) => BooleanValue(value);
 }
 
 class SymbolExpression extends Expression {
@@ -57,6 +75,10 @@ class SymbolExpression extends Expression {
 
   @override
   String toString() => value.toString();
+
+  @override
+  Value evaluate(List<Value> arguments, Scope scope) =>
+      throw Error(); // TODO(momo): implement
 }
 
 class FunctionCallExpression extends Expression {
@@ -71,4 +93,8 @@ class FunctionCallExpression extends Expression {
 
   @override
   String toString() => '$name(${arguments.join(', ')})';
+
+  @override
+  Value evaluate(List<Value> arguments, Scope scope) =>
+      throw Error(); // TODO(momo): implement
 }

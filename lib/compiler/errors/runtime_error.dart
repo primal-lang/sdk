@@ -21,3 +21,8 @@ class InvalidArgumentTypesError extends RuntimeError {
   }) : super(
             'Invalid argument length for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
 }
+
+class EmptyExpressionEvaluationError extends RuntimeError {
+  const EmptyExpressionEvaluationError()
+      : super('Cannot evaluate empty expression');
+}

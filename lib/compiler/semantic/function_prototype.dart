@@ -1,3 +1,4 @@
+import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/scope.dart';
 import 'package:dry/compiler/models/value.dart';
@@ -28,8 +29,17 @@ class CustomFunctionPrototype extends FunctionPrototype {
   });
 
   @override
-  Value evaluate(List<Value> arguments, Scope scope) =>
-      const NumberValue(0); // TODO(momo): implement
+  Value evaluate(List<Value> arguments, Scope scope) {
+    if (arguments.length != 2) {
+      throw InvalidArgumentLengthError(
+        function: name,
+        expected: parameters.length,
+        actual: arguments.length,
+      );
+    } else {
+      return expression.evaluate(arguments, scope);
+    }
+  }
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {
