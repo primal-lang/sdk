@@ -12,8 +12,7 @@ class Scope {
     required List<Parameter> parameters,
     required List<Reducible> arguments,
   }) {
-    final Map<String, Reducible> result = {};
-    result.addAll(data);
+    final Map<String, Reducible> result = Map.from(data);
 
     if (parameters.length != arguments.length) {
       throw InvalidArgumentCountError(
