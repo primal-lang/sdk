@@ -23,6 +23,7 @@ class SemanticAnalyzer
     return const IntermediateCode(functions: {});
   }
 
+  // TODO(momo): add types to parameters
   List<FunctionPrototype> getPrototypes(List<FunctionDefinition> functions) {
     final List<FunctionPrototype> result = [];
 
