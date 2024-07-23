@@ -1,3 +1,4 @@
+import 'package:dry/compiler/models/scope.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/warnings/generic_warning.dart';
@@ -19,12 +20,13 @@ class IntermediateCode {
 
   bool get hasMain => main != null;
 
-  // TODO(momo): implement
-  String executeMain() => evaluate(const EmptyExpression());
+  String executeMain() => main!.evaluate(const Scope());
 
-  // TODO(momo): implement
   String evaluate(Expression expression) {
-    return expression.toString();
+    final FunctionPrototype function =
+        AnonymousFunctionPrototype(expression: expression);
+
+    return function.evaluate(const Scope());
   }
 
   factory IntermediateCode.empty() => const IntermediateCode(
