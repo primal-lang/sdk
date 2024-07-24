@@ -20,10 +20,10 @@ neq(a: T, b: T): bool
     round(a: num): num
     floor(a: num): num
     ceil(a: num): num
-sin(a: num): num
-cos(a: num): num
-tan(a: num): num
-log(a: num): num
+    sin(a: num): num
+    cos(a: num): num
+    tan(a: num): num
+    log(a: num): num
     gt(a: num, b: num): bool
 lt(a: num, b: num): bool
 ge(a: num, b: num): bool

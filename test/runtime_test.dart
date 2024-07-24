@@ -78,5 +78,25 @@ void main() {
       final Runtime runtime = getRuntime('main = ceil(4.2)');
       checkResult(runtime, 5);
     });
+
+    test('Numbers (sin)', () {
+      final Runtime runtime = getRuntime('main = sin(10)');
+      checkResult(runtime, -0.5440211108893698);
+    });
+
+    test('Numbers (cos)', () {
+      final Runtime runtime = getRuntime('main = cos(10)');
+      checkResult(runtime, -0.8390715290764524);
+    });
+
+    test('Numbers (tan)', () {
+      final Runtime runtime = getRuntime('main = tan(10)');
+      checkResult(runtime, 0.6483608274590866);
+    });
+
+    test('Numbers (log)', () {
+      final Runtime runtime = getRuntime('main = log(10)');
+      checkResult(runtime, 2.302585092994046);
+    });
   });
 }
