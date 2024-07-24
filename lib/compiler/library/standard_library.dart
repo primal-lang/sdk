@@ -6,9 +6,12 @@ import 'package:dry/compiler/library/numbers/cos.dart';
 import 'package:dry/compiler/library/numbers/dec.dart';
 import 'package:dry/compiler/library/numbers/div.dart';
 import 'package:dry/compiler/library/numbers/floor.dart';
+import 'package:dry/compiler/library/numbers/ge.dart';
 import 'package:dry/compiler/library/numbers/gt.dart';
 import 'package:dry/compiler/library/numbers/inc.dart';
+import 'package:dry/compiler/library/numbers/le.dart';
 import 'package:dry/compiler/library/numbers/log.dart';
+import 'package:dry/compiler/library/numbers/lt.dart';
 import 'package:dry/compiler/library/numbers/max.dart';
 import 'package:dry/compiler/library/numbers/min.dart';
 import 'package:dry/compiler/library/numbers/mod.dart';
@@ -51,5 +54,8 @@ class StandardLibrary {
         Tan(),
         Log(),
         Gt(),
+        Lt(),
+        Ge(),
+        Le(),
       ];
 }

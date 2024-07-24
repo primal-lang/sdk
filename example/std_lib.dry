@@ -25,9 +25,9 @@ neq(a: T, b: T): bool
     tan(a: num): num
     log(a: num): num
     gt(a: num, b: num): bool
-lt(a: num, b: num): bool
-ge(a: num, b: num): bool
-le(a: num, b: num): bool
+    lt(a: num, b: num): bool
+    ge(a: num, b: num): bool
+    le(a: num, b: num): bool
 isNegative(a: num): bool
 isPositive(a: num): bool
 isZero(a: num): bool

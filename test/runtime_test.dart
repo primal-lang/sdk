@@ -98,5 +98,25 @@ void main() {
       final Runtime runtime = getRuntime('main = log(10)');
       checkResult(runtime, 2.302585092994046);
     });
+
+    test('Numbers (gt)', () {
+      final Runtime runtime = getRuntime('main = gt(10, 4)');
+      checkResult(runtime, true);
+    });
+
+    test('Numbers (lt)', () {
+      final Runtime runtime = getRuntime('main = lt(10, 4)');
+      checkResult(runtime, false);
+    });
+
+    test('Numbers (ge)', () {
+      final Runtime runtime = getRuntime('main = ge(10, 4)');
+      checkResult(runtime, true);
+    });
+
+    test('Numbers (le)', () {
+      final Runtime runtime = getRuntime('main = le(10, 10)');
+      checkResult(runtime, true);
+    });
   });
 }
