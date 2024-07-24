@@ -10,6 +10,11 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('Numbers (neq)', () {
+      final Runtime runtime = getRuntime('main = neq(7, 8)');
+      checkResult(runtime, true);
+    });
+
     test('If (if1)', () {
       final Runtime runtime = getRuntime('main = if(true, "yes", "no")');
       checkResult(runtime, '"yes"');
@@ -45,11 +50,6 @@ void main() {
     test('Debug (debug)', () {
       final Runtime runtime = getRuntime('main = debug("Enter in function")');
       checkResult(runtime, '"Enter in function"');
-    });
-
-    test('Numbers (neq)', () {
-      final Runtime runtime = getRuntime('main = neq(7, 8)');
-      checkResult(runtime, true);
     });
 
     test('Numbers (abs)', () {
@@ -243,12 +243,12 @@ void main() {
     });
 
     test('Casting (isInteger)', () {
-      final Runtime runtime = getRuntime('main = isNumber(12)');
+      final Runtime runtime = getRuntime('main = isInteger(12)');
       checkResult(runtime, true);
     });
 
     test('Casting (isDecimal)', () {
-      final Runtime runtime = getRuntime('main = isNumber(12.5)');
+      final Runtime runtime = getRuntime('main = isDecimal(12.5)');
       checkResult(runtime, true);
     });
 

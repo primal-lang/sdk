@@ -6,7 +6,7 @@ import 'package:dry/compiler/semantic/function_prototype.dart';
 class IsInteger extends NativeFunctionPrototype {
   IsInteger()
       : super(
-          name: 'inInteger',
+          name: 'isInteger',
           parameters: [
             Parameter.any('x'),
           ],
