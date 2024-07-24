@@ -3,6 +3,7 @@ import 'package:dry/compiler/library/booleans/not.dart';
 import 'package:dry/compiler/library/booleans/or.dart';
 import 'package:dry/compiler/library/booleans/xor.dart';
 import 'package:dry/compiler/library/control/if.dart';
+import 'package:dry/compiler/library/debug/debug.dart';
 import 'package:dry/compiler/library/error/error.dart';
 import 'package:dry/compiler/library/generic/eq.dart';
 import 'package:dry/compiler/library/generic/neq.dart';
@@ -47,6 +48,9 @@ class StandardLibrary {
 
         // Error
         Error(),
+
+        // Debug
+        Debug(),
 
         // Numbers
         Abs(),
