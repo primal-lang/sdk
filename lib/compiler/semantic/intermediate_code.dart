@@ -8,10 +8,14 @@ class IntermediateCode {
   final Map<String, FunctionPrototype> functions;
   final List<GenericWarning> warnings;
 
-  const IntermediateCode({
+  static Scope SCOPE = const Scope();
+
+  IntermediateCode({
     required this.functions,
     required this.warnings,
-  });
+  }) {
+    SCOPE = Scope(functions);
+  }
 
   FunctionPrototype? get main {
     final FunctionPrototype? main = functions['main'];
@@ -22,7 +26,7 @@ class IntermediateCode {
   bool get hasMain => main != null;
 
   String executeMain() {
-    final Reducible result = main!.evaluate(const Scope(), Scope(functions));
+    final Reducible result = main!.bind(const Scope()).evaluate();
 
     return result.toString();
   }
@@ -30,12 +34,12 @@ class IntermediateCode {
   String evaluate(Expression expression) {
     final FunctionPrototype function =
         AnonymousFunctionPrototype(reducible: expression.toReducible());
-    final Reducible result = function.evaluate(const Scope(), Scope(functions));
+    final Reducible result = function.bind(const Scope()).evaluate();
 
     return result.toString();
   }
 
-  factory IntermediateCode.empty() => const IntermediateCode(
+  factory IntermediateCode.empty() => IntermediateCode(
         functions: {},
         warnings: [],
       );

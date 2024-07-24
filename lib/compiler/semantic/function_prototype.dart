@@ -2,7 +2,7 @@ import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
 import 'package:dry/compiler/models/scope.dart';
 
-abstract class FunctionPrototype implements Reducible {
+abstract class FunctionPrototype {
   final String name;
   final List<Parameter> parameters;
 
@@ -11,14 +11,10 @@ abstract class FunctionPrototype implements Reducible {
     required this.parameters,
   });
 
-  @override
-  Reducible evaluate(Scope arguments, Scope scope);
+  Reducible bind(Scope<Reducible> arguments);
 
   bool equalSignature(FunctionPrototype function) =>
       function.name == name && function.parameters.length == parameters.length;
-
-  @override
-  String get type => '$name(${parameters.map((e) => e.type).join(', ')})';
 }
 
 class CustomFunctionPrototype extends FunctionPrototype {
@@ -31,7 +27,7 @@ class CustomFunctionPrototype extends FunctionPrototype {
   });
 
   @override
-  Reducible evaluate(Scope arguments, Scope scope) => reducible.evaluate(arguments, scope);
+  Reducible bind(Scope<Reducible> arguments) => reducible.bind(arguments);
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {

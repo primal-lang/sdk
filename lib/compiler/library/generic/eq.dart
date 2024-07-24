@@ -15,9 +15,9 @@ class Eq extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible evaluate(Scope arguments,Scope scope) {
-    final Reducible x = arguments.get('x').evaluate(const Scope(), scope);
-    final Reducible y = arguments.get('y').evaluate(const Scope(), scope);
+  Reducible bind(Scope<Reducible> arguments) {
+    final Reducible x = arguments.get('x').evaluate();
+    final Reducible y = arguments.get('y').evaluate();
 
     if ((x is NumberReducibleValue) && (y is NumberReducibleValue)) {
       return BooleanReducibleValue(x.value == y.value);

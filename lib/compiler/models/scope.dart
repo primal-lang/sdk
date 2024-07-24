@@ -2,12 +2,12 @@ import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/models/reducible.dart';
 
-class Scope {
-  final Map<String, Reducible> data;
+class Scope<T> {
+  final Map<String, T> data;
 
   const Scope([this.data = const {}]);
 
-  factory Scope.from({
+  Scope<Reducible> from({
     required String functionName,
     required List<Parameter> parameters,
     required List<Reducible> arguments,
@@ -29,8 +29,8 @@ class Scope {
     return Scope(result);
   }
 
-  Reducible get(String name) {
-    final Reducible? result = data[name];
+  T get(String name) {
+    final T? result = data[name];
 
     if (result == null) {
       throw UndefinedArgumentError(name);

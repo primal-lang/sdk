@@ -1,14 +1,16 @@
-import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/models/location.dart';
 import 'package:dry/compiler/models/scope.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
+import 'package:dry/compiler/semantic/intermediate_code.dart';
 
 abstract class Reducible {
   const Reducible();
 
   String get type;
 
-  Reducible evaluate(Scope arguments, Scope scope);
+  Reducible bind(Scope<Reducible> arguments);
+
+  Reducible evaluate();
 }
 
 abstract class ReducibleValue<T> implements Reducible {
@@ -20,7 +22,10 @@ abstract class ReducibleValue<T> implements Reducible {
   String toString() => value.toString();
 
   @override
-  Reducible evaluate(Scope arguments, Scope scope) => this;
+  Reducible bind(Scope<Reducible> arguments) => this;
+
+  @override
+  Reducible evaluate() => this;
 }
 
 class StringReducibleValue extends ReducibleValue<String> {
@@ -57,8 +62,11 @@ class SymbolReducible extends Reducible {
   });
 
   @override
-  Reducible evaluate(Scope arguments, Scope scope) {
-    final Reducible reducible = scope.get(value);
+  Reducible bind(Scope<Reducible> arguments) => arguments.get(value);
+
+  @override
+  Reducible evaluate() {
+    /*final Reducible reducible = scope.get(value);
 
     if (reducible is FunctionPrototype) {
       return reducible.evaluate(arguments, scope);
@@ -68,7 +76,9 @@ class SymbolReducible extends Reducible {
       return reducible;
     } else {
       throw FunctionInvocationError(value);
-    }
+    }*/
+
+    return this;
   }
 
   @override
@@ -90,28 +100,22 @@ class ExpressionReducible extends Reducible {
   });
 
   @override
-  Reducible evaluate(Scope arguments, Scope scope) {
-    final Reducible reducible = scope.get(name);
-
-    if (reducible is CustomFunctionPrototype) {
-      final Scope newScope = Scope.from(
-        functionName: name,
-        parameters: reducible.parameters,
-        arguments: this.arguments,
+  Reducible bind(Scope<Reducible> arguments) => ExpressionReducible(
+        name: name,
+        arguments: this.arguments.map((e) => e.bind(arguments)).toList(),
+        location: location,
       );
 
-      return reducible.evaluate(newScope, scope);
-    } else if (reducible is NativeFunctionPrototype) {
-      final Scope newScope = Scope.from(
-        functionName: name,
-        parameters: reducible.parameters,
-        arguments: this.arguments,
-      );
+  @override
+  Reducible evaluate() {
+    final FunctionPrototype function = IntermediateCode.SCOPE.get(name);
+    final Scope<Reducible> newScope = IntermediateCode.SCOPE.from(
+      functionName: name,
+      parameters: function.parameters,
+      arguments: arguments,
+    );
 
-      return reducible.evaluate(newScope, scope);
-    } else {
-      throw FunctionInvocationError(name);
-    }
+    return function.bind(newScope).evaluate();
   }
 
   @override

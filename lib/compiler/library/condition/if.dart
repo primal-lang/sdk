@@ -16,8 +16,8 @@ class If extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible evaluate(Scope arguments, Scope scope) {
-    final Reducible a = arguments.get('a').evaluate(const Scope(), scope);
+  Reducible bind(Scope<Reducible> arguments) {
+    final Reducible a = arguments.get('a').evaluate();
     final Reducible b = arguments.get('b');
     final Reducible c = arguments.get('c');
 
