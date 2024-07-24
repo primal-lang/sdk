@@ -118,5 +118,30 @@ void main() {
       final Runtime runtime = getRuntime('main = le(10, 10)');
       checkResult(runtime, true);
     });
+
+    test('Numbers (isNegative)', () {
+      final Runtime runtime = getRuntime('main = isNegative(-5)');
+      checkResult(runtime, true);
+    });
+
+    test('Numbers (isPositive)', () {
+      final Runtime runtime = getRuntime('main = isPositive(-5)');
+      checkResult(runtime, false);
+    });
+
+    test('Numbers (isZero)', () {
+      final Runtime runtime = getRuntime('main = isZero(0)');
+      checkResult(runtime, true);
+    });
+
+    test('Numbers (isEven)', () {
+      final Runtime runtime = getRuntime('main = isEven(6)');
+      checkResult(runtime, true);
+    });
+
+    test('Numbers (isOdd)', () {
+      final Runtime runtime = getRuntime('main = isOdd(7)');
+      checkResult(runtime, true);
+    });
   });
 }

@@ -9,6 +9,11 @@ import 'package:dry/compiler/library/numbers/floor.dart';
 import 'package:dry/compiler/library/numbers/ge.dart';
 import 'package:dry/compiler/library/numbers/gt.dart';
 import 'package:dry/compiler/library/numbers/inc.dart';
+import 'package:dry/compiler/library/numbers/is_even.dart';
+import 'package:dry/compiler/library/numbers/is_negative.dart';
+import 'package:dry/compiler/library/numbers/is_odd.dart';
+import 'package:dry/compiler/library/numbers/is_positive.dart';
+import 'package:dry/compiler/library/numbers/is_zero.dart';
 import 'package:dry/compiler/library/numbers/le.dart';
 import 'package:dry/compiler/library/numbers/log.dart';
 import 'package:dry/compiler/library/numbers/lt.dart';
@@ -57,5 +62,10 @@ class StandardLibrary {
         Lt(),
         Ge(),
         Le(),
+        IsNegative(),
+        IsPositive(),
+        IsZero(),
+        IsEven(),
+        IsOdd(),
       ];
 }
