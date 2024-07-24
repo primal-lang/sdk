@@ -31,6 +31,6 @@ factorial(n) = if(
     mul(n, factorial(dec(n)))
 )
 
-fib(n) = if(eq(n, 0), 0, if(eq(n, 1), 1, add(fib(sub(n, 1)), fib(sub(n, 2)))))
+fib(n) = if(eq(n, 0), 0, if(eq(n, 1), 1, sum(fib(sub(n, 1)), fib(sub(n, 2)))))
 
 main = factorial(4)
