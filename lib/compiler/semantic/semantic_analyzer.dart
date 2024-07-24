@@ -7,7 +7,7 @@ import 'package:dry/compiler/library/numbers/mul.dart';
 import 'package:dry/compiler/library/numbers/sub.dart';
 import 'package:dry/compiler/models/analyzer.dart';
 import 'package:dry/compiler/models/parameter.dart';
-import 'package:dry/compiler/models/reducible.dart';
+import 'package:dry/compiler/runtime/reducible.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';

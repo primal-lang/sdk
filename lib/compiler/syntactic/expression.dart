@@ -1,7 +1,7 @@
 import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/location.dart';
-import 'package:dry/compiler/models/reducible.dart';
+import 'package:dry/compiler/runtime/reducible.dart';
 
 abstract class Expression extends Localized {
   const Expression({required super.location});

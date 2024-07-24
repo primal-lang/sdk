@@ -4,6 +4,7 @@ import 'package:dry/compiler/input/input_analyzer.dart';
 import 'package:dry/compiler/lexical/lexical_analyzer.dart';
 import 'package:dry/compiler/lexical/token.dart';
 import 'package:dry/compiler/models/location.dart';
+import 'package:dry/compiler/runtime/runtime.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/semantic/semantic_analyzer.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
@@ -98,8 +99,8 @@ void checkFunctions(
   }
 }
 
-void checkCode(IntermediateCode code, Object result) {
-  expect(code.executeMain(), result.toString());
+void checkCode(Runtime runtime, Object result) {
+  expect(runtime.executeMain(), result.toString());
 }
 
 StringToken stringToken(String value, int row, int column) =>

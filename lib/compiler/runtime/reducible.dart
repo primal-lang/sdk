@@ -1,7 +1,7 @@
 import 'package:dry/compiler/models/location.dart';
-import 'package:dry/compiler/models/scope.dart';
+import 'package:dry/compiler/runtime/runtime.dart';
+import 'package:dry/compiler/runtime/scope.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
-import 'package:dry/compiler/semantic/intermediate_code.dart';
 
 abstract class Reducible {
   const Reducible();
@@ -108,8 +108,8 @@ class ExpressionReducible extends Reducible {
 
   @override
   Reducible evaluate() {
-    final FunctionPrototype function = IntermediateCode.SCOPE.get(name);
-    final Scope<Reducible> newScope = IntermediateCode.SCOPE.from(
+    final FunctionPrototype function = Runtime.SCOPE.get(name);
+    final Scope<Reducible> newScope = Runtime.SCOPE.from(
       functionName: name,
       parameters: function.parameters,
       arguments: arguments,

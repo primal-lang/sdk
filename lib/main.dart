@@ -1,4 +1,5 @@
 import 'package:dry/compiler/compiler.dart';
+import 'package:dry/compiler/runtime/runtime.dart';
 import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/expression.dart';
 import 'package:dry/compiler/warnings/generic_warning.dart';
@@ -18,8 +19,10 @@ void main(List<String> args) {
       console.warning(warning);
     }
 
-    if (intermediateCode.hasMain) {
-      final String result = intermediateCode.executeMain();
+    final Runtime runtime = Runtime(intermediateCode);
+
+    if (runtime.hasMain) {
+      final String result = runtime.executeMain();
       console.print(result);
     } else {
       while (true) {
@@ -28,7 +31,7 @@ void main(List<String> args) {
 
           if (input.isNotEmpty) {
             final Expression expression = compiler.expression(input);
-            console.print(intermediateCode.evaluate(expression));
+            console.print(runtime.evaluate(expression));
           }
         } catch (e) {
           console.error(e);
