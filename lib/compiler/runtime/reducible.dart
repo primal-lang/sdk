@@ -95,7 +95,7 @@ class ExpressionReducible extends Reducible {
   @override
   Reducible evaluate() {
     final FunctionPrototype function = Runtime.SCOPE.get(name);
-    final Scope<Reducible> newScope = Runtime.SCOPE.from(
+    final Scope<Reducible> newScope = Scope.from(
       functionName: name,
       parameters: function.parameters,
       arguments: arguments,

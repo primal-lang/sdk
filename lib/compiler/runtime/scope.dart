@@ -7,7 +7,7 @@ class Scope<T> {
 
   const Scope([this.data = const {}]);
 
-  Scope<Reducible> from({
+  static Scope<Reducible> from({
     required String functionName,
     required List<Parameter> parameters,
     required List<Reducible> arguments,
