@@ -2,6 +2,11 @@ import 'package:dry/compiler/library/booleans/and.dart';
 import 'package:dry/compiler/library/booleans/not.dart';
 import 'package:dry/compiler/library/booleans/or.dart';
 import 'package:dry/compiler/library/booleans/xor.dart';
+import 'package:dry/compiler/library/casting/is_boolean.dart';
+import 'package:dry/compiler/library/casting/is_decimal.dart';
+import 'package:dry/compiler/library/casting/is_integer.dart';
+import 'package:dry/compiler/library/casting/is_number.dart';
+import 'package:dry/compiler/library/casting/is_string.dart';
 import 'package:dry/compiler/library/casting/to_boolean.dart';
 import 'package:dry/compiler/library/casting/to_decimal.dart';
 import 'package:dry/compiler/library/casting/to_integer.dart';
@@ -101,5 +106,10 @@ class StandardLibrary {
         ToDecimal(),
         ToString(),
         ToBoolean(),
+        IsNumber(),
+        IsInteger(),
+        IsDecimal(),
+        IsString(),
+        IsBoolean(),
       ];
 }

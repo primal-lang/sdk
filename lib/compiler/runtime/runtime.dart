@@ -7,6 +7,7 @@ import 'package:dry/compiler/syntactic/expression.dart';
 class Runtime {
   final IntermediateCode intermediateCode;
 
+  // TODO(momo): pass it as a parameter
   static Scope SCOPE = const Scope();
 
   Runtime(this.intermediateCode) {
