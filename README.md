@@ -12,6 +12,7 @@ The language must support anonymous functions (also known as lambda functions or
 lambda(x, y, x + 1)
 
 ## TODO
+* Lists and objects
 * Type inference
 * Higher order functions
 * Operators (= + - / * ! & |)

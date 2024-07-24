@@ -1,5 +1,6 @@
 import 'package:dry/compiler/library/condition/if.dart';
 import 'package:dry/compiler/library/generic/eq.dart';
+import 'package:dry/compiler/library/generic/neq.dart';
 import 'package:dry/compiler/library/numbers/abs.dart';
 import 'package:dry/compiler/library/numbers/ceil.dart';
 import 'package:dry/compiler/library/numbers/cos.dart';
@@ -34,6 +35,7 @@ class StandardLibrary {
   static List<FunctionPrototype> get() => [
         // Generic
         Eq(),
+        Neq(),
 
         // Condition
         If(),

@@ -4,6 +4,16 @@ import 'test_utils.dart';
 
 void main() {
   group('Runtime', () {
+    test('Generic (eq)', () {
+      final Runtime runtime = getRuntime('main = eq("hey", "hey")');
+      checkResult(runtime, true);
+    });
+
+    test('Numbers (neq)', () {
+      final Runtime runtime = getRuntime('main = neq(7, 8)');
+      checkResult(runtime, true);
+    });
+
     test('Numbers (abs)', () {
       final Runtime runtime = getRuntime('main = abs(-1)');
       checkResult(runtime, 1);
