@@ -1,4 +1,8 @@
-import 'package:dry/compiler/library/condition/if.dart';
+import 'package:dry/compiler/library/booleans/and.dart';
+import 'package:dry/compiler/library/booleans/not.dart';
+import 'package:dry/compiler/library/booleans/or.dart';
+import 'package:dry/compiler/library/booleans/xor.dart';
+import 'package:dry/compiler/library/control/if.dart';
 import 'package:dry/compiler/library/generic/eq.dart';
 import 'package:dry/compiler/library/generic/neq.dart';
 import 'package:dry/compiler/library/numbers/abs.dart';
@@ -37,9 +41,6 @@ class StandardLibrary {
         Eq(),
         Neq(),
 
-        // Condition
-        If(),
-
         // Numbers
         Abs(),
         Inc(),
@@ -69,5 +70,14 @@ class StandardLibrary {
         IsZero(),
         IsEven(),
         IsOdd(),
+
+        // Booleans
+        And(),
+        Or(),
+        Xor(),
+        Not(),
+
+        // Control
+        If(),
       ];
 }

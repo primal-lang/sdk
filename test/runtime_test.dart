@@ -153,5 +153,25 @@ void main() {
       final Runtime runtime = getRuntime('main = isOdd(7)');
       checkResult(runtime, true);
     });
+
+    test('Booleans (and)', () {
+      final Runtime runtime = getRuntime('main = and(true, true)');
+      checkResult(runtime, true);
+    });
+
+    test('Booleans (or)', () {
+      final Runtime runtime = getRuntime('main = or(false, true)');
+      checkResult(runtime, true);
+    });
+
+    test('Booleans (xor)', () {
+      final Runtime runtime = getRuntime('main = xor(false, true)');
+      checkResult(runtime, true);
+    });
+
+    test('Booleans (not)', () {
+      final Runtime runtime = getRuntime('main = not(false)');
+      checkResult(runtime, true);
+    });
   });
 }
