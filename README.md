@@ -21,3 +21,11 @@ lambda(x, y, x + 1)
 * Lambdas
 * Currying
 * x:xs
+
+## Names
+dry
+def
+fun
+
+.io
+.dev
