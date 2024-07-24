@@ -13,13 +13,13 @@ neq(a: T, b: T): bool
     mul(a: num, b: num): num
     div(a: num, b: num): num
     mod(a: num, b: num): num
-min(a: num, b: num, ...): num
-max(a: num, b: num, ...): num
-pow(a: num, b: num): num
-sqrt(a: num): num
-round(a: num): num
-floor(a: num): num
-ceil(a: num): num
+    min(a: num, b: num, ...): num
+    max(a: num, b: num, ...): num
+    pow(a: num, b: num): num
+    sqrt(a: num): num
+    round(a: num): num
+    floor(a: num): num
+    ceil(a: num): num
 sin(a: num): num
 cos(a: num): num
 tan(a: num): num

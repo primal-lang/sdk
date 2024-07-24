@@ -43,5 +43,40 @@ void main() {
       final Runtime runtime = getRuntime('main = mod(7, 5)');
       checkResult(runtime, 2);
     });
+
+    test('Numbers (min)', () {
+      final Runtime runtime = getRuntime('main = min(7, 5)');
+      checkResult(runtime, 5);
+    });
+
+    test('Numbers (max)', () {
+      final Runtime runtime = getRuntime('main = max(7, 5)');
+      checkResult(runtime, 7);
+    });
+
+    test('Numbers (pow)', () {
+      final Runtime runtime = getRuntime('main = pow(7, 5)');
+      checkResult(runtime, 16807);
+    });
+
+    test('Numbers (sqrt)', () {
+      final Runtime runtime = getRuntime('main = sqrt(16)');
+      checkResult(runtime, 4);
+    });
+
+    test('Numbers (round)', () {
+      final Runtime runtime = getRuntime('main = round(4.8)');
+      checkResult(runtime, 5);
+    });
+
+    test('Numbers (floor)', () {
+      final Runtime runtime = getRuntime('main = floor(4.8)');
+      checkResult(runtime, 4);
+    });
+
+    test('Numbers (ceil)', () {
+      final Runtime runtime = getRuntime('main = ceil(4.2)');
+      checkResult(runtime, 5);
+    });
   });
 }
