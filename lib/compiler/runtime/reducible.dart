@@ -65,21 +65,7 @@ class SymbolReducible extends Reducible {
   Reducible bind(Scope<Reducible> arguments) => arguments.get(value);
 
   @override
-  Reducible evaluate() {
-    /*final Reducible reducible = scope.get(value);
-
-    if (reducible is FunctionPrototype) {
-      return reducible.evaluate(arguments, scope);
-    } else if (reducible is ExpressionReducible) {
-      return reducible.evaluate(arguments, scope);
-    } else if (reducible is ReducibleValue) {
-      return reducible;
-    } else {
-      throw FunctionInvocationError(value);
-    }*/
-
-    return this;
-  }
+  Reducible evaluate() => this;
 
   @override
   String get type => 'Symbol';
@@ -119,7 +105,7 @@ class ExpressionReducible extends Reducible {
   }
 
   @override
-  String get type => '$name(${arguments.join(', ')})';
+  String get type => 'Function';
 
   @override
   String toString() => '$name(${arguments.join(', ')})';
