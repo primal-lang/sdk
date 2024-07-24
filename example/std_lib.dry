@@ -3,6 +3,19 @@
 eq(a: T, b: T): bool
 neq(a: T, b: T): bool
 
+# Control
+
+if(condition: bool, exp1: T, exp2: T): T
+try(exp1: T, exp2: T): T
+
+# Error
+
+error(a: T)
+
+# Debug
+
+debug(a: T): T
+
 # Numbers
 
 abs(a: num): num
@@ -102,19 +115,6 @@ isInteger(a: T): bool
 isDecimal(a: T): bool
 isString(a: T): bool
 isBoolean(a: T): bool
-
-# Control
-
-if(condition: bool, exp1: T, exp2: T): T
-try(exp1: T, exp2: T): T
-
-# Error
-
-error(a: T)
-
-# Debug
-
-debug(a: T): T
 
 # Functions
 

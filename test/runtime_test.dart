@@ -1,3 +1,4 @@
+import 'package:dry/compiler/errors/runtime_error.dart';
 import 'package:dry/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
@@ -7,6 +8,17 @@ void main() {
     test('Generic (eq)', () {
       final Runtime runtime = getRuntime('main = eq("hey", "hey")');
       checkResult(runtime, true);
+    });
+
+    test('Error (error)', () {
+      try {
+        final Runtime runtime =
+            getRuntime('main = error("Segmentation fault")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RuntimeError>());
+      }
     });
 
     test('Numbers (neq)', () {
