@@ -24,7 +24,7 @@ class Lt extends NativeFunctionPrototype {
     } else {
       throw InvalidArgumentTypesError(
         function: name,
-        expected: parameters.map((e) => e.type.toString()).toList(),
+        expected: parameterTypes,
         actual: [x.type, y.type],
       );
     }

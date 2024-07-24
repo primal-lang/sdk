@@ -211,5 +211,30 @@ void main() {
       final Runtime runtime = getRuntime('main = not(false)');
       checkResult(runtime, true);
     });
+
+    test('Casting (toNumber)', () {
+      final Runtime runtime = getRuntime('main = toNumber("12.5")');
+      checkResult(runtime, 12.5);
+    });
+
+    test('Casting (toInteger)', () {
+      final Runtime runtime = getRuntime('main = toInteger("12")');
+      checkResult(runtime, 12);
+    });
+
+    test('Casting (toDecimal)', () {
+      final Runtime runtime = getRuntime('main = toDecimal(12)');
+      checkResult(runtime, 12.0);
+    });
+
+    test('Casting (toString)', () {
+      final Runtime runtime = getRuntime('main = toString(12)');
+      checkResult(runtime, '"12"');
+    });
+
+    test('Casting (toBoolean)', () {
+      final Runtime runtime = getRuntime('main = toBoolean(12)');
+      checkResult(runtime, true);
+    });
   });
 }

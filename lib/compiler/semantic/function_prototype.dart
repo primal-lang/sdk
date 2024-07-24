@@ -13,6 +13,9 @@ abstract class FunctionPrototype {
 
   Reducible bind(Scope<Reducible> arguments);
 
+  List<String> get parameterTypes =>
+      parameters.map((e) => e.type.toString()).toList();
+
   bool equalSignature(FunctionPrototype function) =>
       function.name == name && function.parameters.length == parameters.length;
 }

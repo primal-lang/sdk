@@ -2,6 +2,11 @@ import 'package:dry/compiler/library/booleans/and.dart';
 import 'package:dry/compiler/library/booleans/not.dart';
 import 'package:dry/compiler/library/booleans/or.dart';
 import 'package:dry/compiler/library/booleans/xor.dart';
+import 'package:dry/compiler/library/casting/to_boolean.dart';
+import 'package:dry/compiler/library/casting/to_decimal.dart';
+import 'package:dry/compiler/library/casting/to_integer.dart';
+import 'package:dry/compiler/library/casting/to_number.dart';
+import 'package:dry/compiler/library/casting/to_string.dart';
 import 'package:dry/compiler/library/control/if.dart';
 import 'package:dry/compiler/library/control/try.dart';
 import 'package:dry/compiler/library/debug/debug.dart';
@@ -89,5 +94,12 @@ class StandardLibrary {
         Or(),
         Xor(),
         Not(),
+
+        // Casting
+        ToNumber(),
+        ToInteger(),
+        ToDecimal(),
+        ToString(),
+        ToBoolean(),
       ];
 }
