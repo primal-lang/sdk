@@ -1,5 +1,7 @@
+import 'package:dry/compiler/library/standard_library.dart';
 import 'package:dry/compiler/semantic/function_prototype.dart';
 import 'package:dry/compiler/warnings/generic_warning.dart';
+import 'package:dry/utils/mapper.dart';
 
 class IntermediateCode {
   final Map<String, FunctionPrototype> functions;
@@ -11,7 +13,7 @@ class IntermediateCode {
   });
 
   factory IntermediateCode.empty() => IntermediateCode(
-        functions: {},
+        functions: Mapper.toMap(StandardLibrary.get()),
         warnings: [],
       );
 }

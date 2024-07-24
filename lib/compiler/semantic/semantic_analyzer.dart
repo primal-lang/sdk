@@ -8,6 +8,7 @@ import 'package:dry/compiler/semantic/intermediate_code.dart';
 import 'package:dry/compiler/syntactic/function_definition.dart';
 import 'package:dry/compiler/warnings/generic_warning.dart';
 import 'package:dry/compiler/warnings/semantic_warning.dart';
+import 'package:dry/utils/mapper.dart';
 
 class SemanticAnalyzer
     extends Analyzer<List<FunctionDefinition>, IntermediateCode> {
@@ -32,14 +33,8 @@ class SemanticAnalyzer
 
     // TODO(momo): check mismatched types
 
-    final Map<String, FunctionPrototype> prototypes = {};
-
-    for (final FunctionPrototype function in functions) {
-      prototypes[function.name] = function;
-    }
-
     return IntermediateCode(
-      functions: prototypes,
+      functions: Mapper.toMap(functions),
       warnings: warnings,
     );
   }
