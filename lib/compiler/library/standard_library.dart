@@ -3,6 +3,7 @@ import 'package:dry/compiler/library/booleans/not.dart';
 import 'package:dry/compiler/library/booleans/or.dart';
 import 'package:dry/compiler/library/booleans/xor.dart';
 import 'package:dry/compiler/library/control/if.dart';
+import 'package:dry/compiler/library/control/try.dart';
 import 'package:dry/compiler/library/debug/debug.dart';
 import 'package:dry/compiler/library/error/error.dart';
 import 'package:dry/compiler/library/generic/eq.dart';
@@ -45,6 +46,7 @@ class StandardLibrary {
 
         // Control
         If(),
+        Try(),
 
         // Error
         Error(),

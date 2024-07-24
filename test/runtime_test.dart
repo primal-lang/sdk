@@ -10,6 +10,27 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('If (if1)', () {
+      final Runtime runtime = getRuntime('main = if(true, "yes", "no")');
+      checkResult(runtime, '"yes"');
+    });
+
+    test('If (if2)', () {
+      final Runtime runtime = getRuntime('main = if(false, "yes", "no")');
+      checkResult(runtime, '"no"');
+    });
+
+    test('Try (try1)', () {
+      final Runtime runtime = getRuntime('main = try(div(1, 2), 42)');
+      checkResult(runtime, 0.5);
+    });
+
+    test('Try (try2)', () {
+      final Runtime runtime =
+          getRuntime('main = try(error("Does not compute"), 42)');
+      checkResult(runtime, 42);
+    });
+
     test('Error (error)', () {
       try {
         final Runtime runtime =
