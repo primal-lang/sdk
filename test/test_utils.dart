@@ -28,12 +28,16 @@ List<FunctionDefinition> getFunctions(String source) {
 }
 
 IntermediateCode getIntermediateCode(String source) {
-  final List<Token> tokens = getTokens(source);
-  final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
-  final List<FunctionDefinition> functions = syntacticAnalyzer.analyze();
+  final List<FunctionDefinition> functions = getFunctions(source);
   final SemanticAnalyzer semanticAnalyzer = SemanticAnalyzer(functions);
 
   return semanticAnalyzer.analyze();
+}
+
+Runtime getRuntime(String source) {
+  final IntermediateCode intermediateCode = getIntermediateCode(source);
+
+  return Runtime(intermediateCode);
 }
 
 void checkLocations(Location actual, Location expected) {
@@ -99,7 +103,7 @@ void checkFunctions(
   }
 }
 
-void checkCode(Runtime runtime, Object result) {
+void checkResult(Runtime runtime, Object result) {
   expect(runtime.executeMain(), result.toString());
 }
 
