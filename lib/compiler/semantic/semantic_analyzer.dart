@@ -79,6 +79,7 @@ class SemanticAnalyzer
           throw DuplicatedParameterError(
             function: function.name,
             parameter: entry.key,
+            parameters: function.parameters.map((e) => e.name).toList(),
           );
         }
       }

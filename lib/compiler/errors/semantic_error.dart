@@ -15,10 +15,12 @@ class DuplicatedFunctionError extends SemanticError {
 }
 
 class DuplicatedParameterError extends SemanticError {
-  const DuplicatedParameterError({
+  DuplicatedParameterError({
     required String function,
     required String parameter,
-  }) : super('Duplicated parameter "$parameter" in function "$function"');
+    required List<String> parameters,
+  }) : super(
+            'Duplicated parameter "$parameter" in function "$function(${parameters.join(', ')})"');
 }
 
 class UndefinedSymbolError extends SemanticError {
