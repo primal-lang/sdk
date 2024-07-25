@@ -99,6 +99,7 @@ class ExpressionReducible extends Reducible {
       functionName: name,
       parameters: function.parameters,
       arguments: arguments,
+      location: location,
     );
 
     return function.substitute(newScope).evaluate();

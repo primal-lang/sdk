@@ -1,4 +1,5 @@
 import 'package:dry/compiler/errors/runtime_error.dart';
+import 'package:dry/compiler/models/location.dart';
 import 'package:dry/compiler/models/parameter.dart';
 import 'package:dry/compiler/runtime/reducible.dart';
 
@@ -11,6 +12,7 @@ class Scope<T> {
     required String functionName,
     required List<Parameter> parameters,
     required List<Reducible> arguments,
+    required Location location,
   }) {
     final Map<String, Reducible> result = {};
 
@@ -19,6 +21,7 @@ class Scope<T> {
         function: functionName,
         expected: parameters.length,
         actual: arguments.length,
+        location: location,
       );
     } else {
       for (int i = 0; i < parameters.length; i++) {
@@ -33,7 +36,7 @@ class Scope<T> {
     final T? result = data[name];
 
     if (result == null) {
-      throw UndefinedArgumentError(name);
+      throw NotFoundInScope(name);
     } else {
       return result;
     }
