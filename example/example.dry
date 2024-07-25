@@ -1,3 +1,9 @@
 factorial(n) = if(isZero(n), 1, mul(n, factorial(dec(n))))
 
-main = factorial(5)
+fibonacci(n) = if(isZero(n), 0, if(eq(n, 1), 1, sum(fibonacci(dec(n)), fibonacci(dec(dec(n))))))
+
+isPrime(n) = isPrimeHelper(n, dec(n))
+
+isPrimeHelper(n, d) = if(lt(d, 2), true, if(isZero(mod(n, d)), false, isPrimeHelper(n, dec(d))))
+
+#main = factorial(5)
