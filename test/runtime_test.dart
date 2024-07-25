@@ -261,5 +261,11 @@ void main() {
       final Runtime runtime = getRuntime('main = isBoolean(true)');
       checkResult(runtime, true);
     });
+
+    test('Complex script (factorial)', () {
+      final Runtime runtime = getRuntime(
+          'factorial(n) = if(isZero(n), 1, mul(n, factorial(dec(n))))\nmain = factorial(5)');
+      checkResult(runtime, 120);
+    });
   });
 }

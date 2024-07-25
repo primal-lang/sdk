@@ -27,11 +27,6 @@ class InvalidArgumentTypesError extends RuntimeError {
             'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
 }
 
-class FunctionInvocationError extends RuntimeError {
-  FunctionInvocationError(String function)
-      : super('Canot invoke function "$function"');
-}
-
 class EmptyExpressionEvaluationError extends RuntimeError {
   const EmptyExpressionEvaluationError()
       : super('Cannot evaluate empty expression');
