@@ -5,6 +5,15 @@ class RuntimeError extends GenericError {
   const RuntimeError(super.message);
 }
 
+class InvalidArgumentTypesError extends RuntimeError {
+  InvalidArgumentTypesError({
+    required String function,
+    required List<String> expected,
+    required List<String> actual,
+  }) : super(
+            'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
+}
+
 class InvalidArgumentCountError extends RuntimeError {
   InvalidArgumentCountError({
     required String function,
@@ -13,15 +22,6 @@ class InvalidArgumentCountError extends RuntimeError {
     required Location location,
   }) : super(
             'Invalid argument count for function "$function" at $location. Expected: $expected. Actual: $actual');
-}
-
-class InvalidArgumentTypesError extends RuntimeError {
-  InvalidArgumentTypesError({
-    required String function,
-    required List<String> expected,
-    required List<String> actual,
-  }) : super(
-            'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
 }
 
 class NotFoundInScope extends RuntimeError {
