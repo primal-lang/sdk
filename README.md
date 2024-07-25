@@ -9,24 +9,23 @@ Allow to overload functions
 ## TODO
 * Lists and objects
 * Higher order functions
-    Functions must be first-class citizens in the language, meaning they can be passed as arguments to other functions, returned as values from other functions, and assigned to variables.
+* Lambdas
+    - ((x, y) => x + y)    
+    - lambda(x, y, x + 1)
 * Compile to JS
     const add = (a, b) => a + b
 * Type inference
 * Operators (= + - / * ! & |)
 * Imports
 * Pattern matching
+    - x:xs
 * Type declaration (maybe, undefined)
-* Lambdas
-    - ((x, y) => x + y)    
-    - lambda(x, y, x + 1)
 * Currying
-* x:xs
 
 ## Names
-dry
-def
-fun
+* Dry
+* Def
+* Fun
 
 .io
 .dev
