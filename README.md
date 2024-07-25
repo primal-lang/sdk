@@ -1,11 +1,12 @@
 # Dry 🚱
 **Dry** is a declararive, purely functional, esoteric programming language. Although **Dry** is a general purpose language, it's mostly intended to be used as a tool for learning functional programming.
 
-Stop using scope as static
-Accept multiple parameters if, sum, etc
-Allow to overload functions
-
 ## TODO
+* Stop using scope as static
+* Accept multiple parameters if, sum, etc
+* Allow to overload functions
+
+## Backlog
 * Lists and objects
 * Higher order functions
 * Lambdas
@@ -26,6 +27,7 @@ Allow to overload functions
 * Def
 * Fun
 
+## Domains
 .io
 .dev
 
