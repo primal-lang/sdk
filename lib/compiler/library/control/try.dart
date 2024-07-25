@@ -14,7 +14,7 @@ class Try extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible bind(Scope<Reducible> arguments) {
+  Reducible substitute(Scope<Reducible> arguments) {
     final Reducible x = arguments.get('x');
     final Reducible y = arguments.get('y');
 

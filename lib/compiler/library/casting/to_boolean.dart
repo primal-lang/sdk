@@ -14,7 +14,7 @@ class ToBoolean extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible bind(Scope<Reducible> arguments) {
+  Reducible substitute(Scope<Reducible> arguments) {
     final Reducible x = arguments.get('x').evaluate();
 
     if (x is StringReducibleValue) {

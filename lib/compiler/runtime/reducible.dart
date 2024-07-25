@@ -8,7 +8,7 @@ abstract class Reducible {
 
   String get type;
 
-  Reducible bind(Scope<Reducible> arguments);
+  Reducible substitute(Scope<Reducible> arguments);
 
   Reducible evaluate();
 }
@@ -22,7 +22,7 @@ abstract class ReducibleValue<T> implements Reducible {
   String toString() => value.toString();
 
   @override
-  Reducible bind(Scope<Reducible> arguments) => this;
+  Reducible substitute(Scope<Reducible> arguments) => this;
 
   @override
   Reducible evaluate() => this;
@@ -62,7 +62,7 @@ class SymbolReducible extends Reducible {
   });
 
   @override
-  Reducible bind(Scope<Reducible> arguments) => arguments.get(value);
+  Reducible substitute(Scope<Reducible> arguments) => arguments.get(value);
 
   @override
   Reducible evaluate() => this;
@@ -86,9 +86,9 @@ class ExpressionReducible extends Reducible {
   });
 
   @override
-  Reducible bind(Scope<Reducible> arguments) => ExpressionReducible(
+  Reducible substitute(Scope<Reducible> arguments) => ExpressionReducible(
         name: name,
-        arguments: this.arguments.map((e) => e.bind(arguments)).toList(),
+        arguments: this.arguments.map((e) => e.substitute(arguments)).toList(),
         location: location,
       );
 
@@ -101,7 +101,7 @@ class ExpressionReducible extends Reducible {
       arguments: arguments,
     );
 
-    return function.bind(newScope).evaluate();
+    return function.substitute(newScope).evaluate();
   }
 
   @override

@@ -11,7 +11,7 @@ abstract class FunctionPrototype {
     required this.parameters,
   });
 
-  Reducible bind(Scope<Reducible> arguments);
+  Reducible substitute(Scope<Reducible> arguments);
 
   List<String> get parameterTypes =>
       parameters.map((e) => e.type.toString()).toList();
@@ -30,7 +30,8 @@ class CustomFunctionPrototype extends FunctionPrototype {
   });
 
   @override
-  Reducible bind(Scope<Reducible> arguments) => reducible.bind(arguments);
+  Reducible substitute(Scope<Reducible> arguments) =>
+      reducible.substitute(arguments);
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {

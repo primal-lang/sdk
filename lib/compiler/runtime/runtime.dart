@@ -33,7 +33,7 @@ class Runtime {
   }
 
   String evaluateFunction(FunctionPrototype function) {
-    final Reducible result = function.bind(const Scope()).evaluate();
+    final Reducible result = function.substitute(const Scope()).evaluate();
 
     return result.toString();
   }
