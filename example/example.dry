@@ -6,4 +6,4 @@ isPrime(n) = isPrimeHelper(n, dec(n))
 
 isPrimeHelper(n, d) = if(lt(d, 2), true, if(isZero(mod(n, d)), false, isPrimeHelper(n, dec(d))))
 
-#main = factorial(5)
+main = factorial(5)
