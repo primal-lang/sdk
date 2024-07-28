@@ -25,18 +25,10 @@ void main(List<String> args) {
       final String result = runtime.executeMain();
       console.print(result);
     } else {
-      while (true) {
-        try {
-          final String input = console.prompt();
-
-          if (input.isNotEmpty) {
-            final Expression expression = compiler.expression(input);
-            console.print(runtime.evaluate(expression));
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
+      console.prompt((input) {
+        final Expression expression = compiler.expression(input);
+        console.print(runtime.evaluate(expression));
+      });
     }
   } catch (e) {
     console.error(e);

@@ -6,11 +6,19 @@ class Console {
   static const String red = '\x1b[31m';
   static const yellow = '\x1b[93m';
 
-  String prompt() {
-    stdout.write('> ');
-    final String? input = stdin.readLineSync();
+  void prompt(Function(String) handler) {
+    while (true) {
+      try {
+        stdout.write('> ');
+        final String input = stdin.readLineSync()?.trim() ?? '';
 
-    return input != null ? input.trim() : '';
+        if (input.isNotEmpty) {
+          handler(input);
+        }
+      } catch (e) {
+        error(e);
+      }
+    }
   }
 
   void print(String message) => stdout.writeln(message);
