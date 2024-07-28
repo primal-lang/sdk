@@ -1,9 +1,15 @@
-factorial(n) = if(isZero(n), 1, mul(n, factorial(dec(n))))
+#factorial(n) = if(isZero(n), 1, mul(n, factorial(dec(n))))
 
-fibonacci(n) = if(isZero(n), 0, if(eq(n, 1), 1, sum(fibonacci(dec(n)), fibonacci(sub(n, 2)))))
+#fibonacci(n) = if(isZero(n), 0, if(eq(n, 1), 1, sum(fibonacci(dec(n)), fibonacci(sub(n, 2)))))
 
-isPrime(n) = isPrimeHelper(n, dec(n))
+#isPrime(n) = isPrimeHelper(n, dec(n))
 
-isPrimeHelper(n, d) = if(lt(d, 2), true, if(isZero(mod(n, d)), false, isPrimeHelper(n, dec(d))))
+#isPrimeHelper(n, d) = if(lt(d, 2), true, if(isZero(mod(n, d)), false, isPrimeHelper(n, dec(d))))
 
-main = factorial(5)
+bar(n) = mul(n, 2)
+
+foo(n) = bar(n)
+
+main = foo(5)
+
+#main = factorial(5)

@@ -15,7 +15,7 @@ class Runtime {
   }
 
   FunctionPrototype? get main {
-    final FunctionPrototype? main = intermediateCode.functions['main'];
+    final FunctionPrototype? main = intermediateCode.functions['main/0'];
 
     return ((main != null) && main.parameters.isEmpty) ? main : null;
   }
