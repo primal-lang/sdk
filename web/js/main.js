@@ -3309,10 +3309,11 @@
     NativeFunctionPrototype: function NativeFunctionPrototype() {
     },
     IntermediateCode___empty_tearOff() {
-      return new A.IntermediateCode(A.Mapper_toMap(A.StandardLibrary_get()));
+      return new A.IntermediateCode(A.Mapper_toMap(A.StandardLibrary_get()), A._setArrayType([], type$.JSArray_GenericWarning));
     },
-    IntermediateCode: function IntermediateCode(t0) {
+    IntermediateCode: function IntermediateCode(t0, t1) {
       this.functions = t0;
+      this.warnings = t1;
     },
     SemanticAnalyzer: function SemanticAnalyzer(t0) {
       this.input = t0;
@@ -3432,6 +3433,40 @@
     UnusedParameterWarning: function UnusedParameterWarning(t0) {
       this.message = t0;
     },
+    main(args) {
+      var t1 = type$.Function;
+      self.compileInput = A.allowInterop(B.C_Compiler.get$compile(), t1);
+      self.compileExpression = A.allowInterop(B.C_Compiler.get$expression(), t1);
+      self.runtimeWarnings = A.allowInterop(A.main_web__runtimeWarningsHelper$closure(), t1);
+      self.runtimeHasMain = A.allowInterop(A.main_web__runtimeHasMainHelper$closure(), t1);
+      self.runtimeExecuteMain = A.allowInterop(A.main_web__runtimeExecuteMainHelper$closure(), t1);
+      self.runtimeReduce = A.allowInterop(A.main_web__runtimeReduceHelper$closure(), t1);
+      self.intermediateCodeEmpty = A.allowInterop(A.intermediate_code_IntermediateCode___empty_tearOff$closure(), t1);
+    },
+    runtimeWarningsHelper(code) {
+      var t1 = type$.IntermediateCode._as(code).warnings,
+        t2 = A._arrayInstanceType(t1),
+        t3 = t2._eval$1("MappedListIterable<1,String>");
+      return A.List_List$of(new A.MappedListIterable(t1, t2._eval$1("String(1)")._as(new A.runtimeWarningsHelper_closure()), t3), true, t3._eval$1("ListIterable.E"));
+    },
+    runtimeHasMainHelper(code) {
+      type$.IntermediateCode._as(code);
+      $.Runtime_SCOPE = new A.Scope(code.functions, type$.Scope_dynamic);
+      return new A.Runtime(code).get$main() != null;
+    },
+    runtimeExecuteMainHelper(code) {
+      type$.IntermediateCode._as(code);
+      $.Runtime_SCOPE = new A.Scope(code.functions, type$.Scope_dynamic);
+      return new A.Runtime(code).get$main().substitute$1(B.Scope_Map_empty).reduce$0(0).toString$0(0);
+    },
+    runtimeReduceHelper(code, expression) {
+      type$.IntermediateCode._as(code);
+      type$.Expression._as(expression);
+      $.Runtime_SCOPE = new A.Scope(code.functions, type$.Scope_dynamic);
+      return new A.AnonymousFunctionPrototype(expression.toReducible$0(), "", B.List_empty).substitute$1(B.Scope_Map_empty).reduce$0(0).toString$0(0);
+    },
+    runtimeWarningsHelper_closure: function runtimeWarningsHelper_closure() {
+    },
     ListIterator0: function ListIterator0(t0, t1) {
       this._list_iterator$_index = 0;
       this._list_iterator$_list = t0;
@@ -3488,31 +3523,6 @@
       var _s1_ = "x", _s1_0 = "y",
         t1 = type$.JSArray_Parameter;
       return A._setArrayType([new A.Eq("eq", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType), new A.Parameter(_s1_0, B.C_AnyType)], t1)), new A.Neq("neq", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType), new A.Parameter(_s1_0, B.C_AnyType)], t1)), new A.If("if", A._setArrayType([new A.Parameter(_s1_, B.C_BooleanType), new A.Parameter(_s1_0, B.C_AnyType), new A.Parameter("z", B.C_AnyType)], t1)), new A.Try("try", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType), new A.Parameter(_s1_0, B.C_AnyType)], t1)), new A.Error("error", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.Debug("debug", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.Abs("abs", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Inc("inc", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Dec("dec", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Sum("sum", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Sub("sub", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Mul("mul", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Div("div", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Mod("mod", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Min("min", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Max("max", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Pow("pow", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Sqrt("sqrt", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Round("round", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Floor("floor", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Ceil("ceil", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Sin("sin", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Cos("cos", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Tan("tan", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Log("log", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.Gt("gt", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Lt("lt", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Ge("ge", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.Le("le", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType), new A.Parameter(_s1_0, B.C_NumberType)], t1)), new A.IsNegative("isNegative", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.IsPositive("isPositive", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.IsZero("isZero", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.IsEven("isEven", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.IsOdd("isOdd", A._setArrayType([new A.Parameter(_s1_, B.C_NumberType)], t1)), new A.And("and", A._setArrayType([new A.Parameter(_s1_, B.C_BooleanType), new A.Parameter(_s1_0, B.C_BooleanType)], t1)), new A.Or("or", A._setArrayType([new A.Parameter(_s1_, B.C_BooleanType), new A.Parameter(_s1_0, B.C_BooleanType)], t1)), new A.Xor("xor", A._setArrayType([new A.Parameter(_s1_, B.C_BooleanType), new A.Parameter(_s1_0, B.C_BooleanType)], t1)), new A.Not("not", A._setArrayType([new A.Parameter(_s1_, B.C_BooleanType)], t1)), new A.ToNumber("toNumber", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.ToInteger("toInteger", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.ToDecimal("toDecimal", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.ToString("toString", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.ToBoolean("toBoolean", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.IsNumber("isNumber", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.IsInteger("isInteger", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.IsDecimal("isDecimal", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.IsString("isString", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1)), new A.IsBoolean("isBoolean", A._setArrayType([new A.Parameter(_s1_, B.C_AnyType)], t1))], type$.JSArray_FunctionPrototype);
-    },
-    main(args) {
-      var t1 = type$.Function;
-      self.compileInput = A.allowInterop(B.C_Compiler.get$compile(), t1);
-      self.compileExpression = A.allowInterop(B.C_Compiler.get$expression(), t1);
-      self.runtimeHasMain = A.allowInterop(A.main_web__runtimeHasMainHelper$closure(), t1);
-      self.runtimeExecuteMain = A.allowInterop(A.main_web__runtimeExecuteMainHelper$closure(), t1);
-      self.runtimeReduce = A.allowInterop(A.main_web__runtimeReduceHelper$closure(), t1);
-      self.intermediateCodeEmpty = A.allowInterop(A.intermediate_code_IntermediateCode___empty_tearOff$closure(), t1);
-    },
-    runtimeHasMainHelper(code) {
-      type$.IntermediateCode._as(code);
-      $.Runtime_SCOPE = new A.Scope(code.functions, type$.Scope_dynamic);
-      return new A.Runtime(code).get$main() != null;
-    },
-    runtimeExecuteMainHelper(code) {
-      type$.IntermediateCode._as(code);
-      $.Runtime_SCOPE = new A.Scope(code.functions, type$.Scope_dynamic);
-      return new A.Runtime(code).get$main().substitute$1(B.Scope_Map_empty).reduce$0(0).toString$0(0);
-    },
-    runtimeReduceHelper(code, expression) {
-      type$.IntermediateCode._as(code);
-      type$.Expression._as(expression);
-      $.Runtime_SCOPE = new A.Scope(code.functions, type$.Scope_dynamic);
-      return new A.AnonymousFunctionPrototype(expression.toReducible$0(), "", B.List_empty).substitute$1(B.Scope_Map_empty).reduce$0(0).toString$0(0);
     },
     Mapper_toMap(functions) {
       var t1, _i, $function,
@@ -5051,7 +5061,7 @@
       semanticAnalyzer.checkDuplicatedParameters$1(functions);
       t1 = type$.WhereTypeIterable_CustomFunctionPrototype;
       semanticAnalyzer.checkReducibles$3$allFunctions$customFunctions$warnings(functions, A.List_List$of(new A.WhereTypeIterable(functions, t1), true, t1._eval$1("Iterable.E")), warnings);
-      return new A.IntermediateCode(A.Mapper_toMap(functions));
+      return new A.IntermediateCode(A.Mapper_toMap(functions), warnings);
     },
     expression$1(input) {
       return new A.SyntacticAnalyzer(new A.LexicalAnalyzer(new A.InputAnalyzer(A._asString(input)).analyze$0()).analyze$0()).get$expression();
@@ -6715,6 +6725,12 @@
   };
   A.SemanticWarning.prototype = {};
   A.UnusedParameterWarning.prototype = {};
+  A.runtimeWarningsHelper_closure.prototype = {
+    call$1(e) {
+      return type$.GenericWarning._as(e).message;
+    },
+    $signature: 10
+  };
   A.ListIterator0.prototype = {
     get$peek() {
       var t1 = this._list_iterator$_index,
@@ -6756,15 +6772,16 @@
       _instance_1_u = hunkHelpers._instance_1u,
       _static_0 = hunkHelpers._static_0,
       _static_2 = hunkHelpers._static_2;
-    _static_1(A, "core_String___fromCharCode_tearOff$closure", "String___fromCharCode_tearOff", 10);
+    _static_1(A, "core_String___fromCharCode_tearOff$closure", "String___fromCharCode_tearOff", 11);
     var _;
     _instance_1_u(_ = A.Compiler.prototype, "get$compile", "compile$1", 5);
     _instance_1_u(_, "get$expression", "expression$1", 6);
-    _static_1(A, "parameter_Parameter___any_tearOff$closure", "Parameter___any_tearOff", 11);
-    _static_0(A, "intermediate_code_IntermediateCode___empty_tearOff$closure", "IntermediateCode___empty_tearOff", 12);
-    _static_1(A, "main_web__runtimeHasMainHelper$closure", "runtimeHasMainHelper", 13);
-    _static_1(A, "main_web__runtimeExecuteMainHelper$closure", "runtimeExecuteMainHelper", 14);
-    _static_2(A, "main_web__runtimeReduceHelper$closure", "runtimeReduceHelper", 15);
+    _static_1(A, "parameter_Parameter___any_tearOff$closure", "Parameter___any_tearOff", 12);
+    _static_0(A, "intermediate_code_IntermediateCode___empty_tearOff$closure", "IntermediateCode___empty_tearOff", 13);
+    _static_1(A, "main_web__runtimeWarningsHelper$closure", "runtimeWarningsHelper", 14);
+    _static_1(A, "main_web__runtimeHasMainHelper$closure", "runtimeHasMainHelper", 15);
+    _static_1(A, "main_web__runtimeExecuteMainHelper$closure", "runtimeExecuteMainHelper", 16);
+    _static_2(A, "main_web__runtimeReduceHelper$closure", "runtimeReduceHelper", 17);
   })();
   (function inheritance() {
     var _mixin = hunkHelpers.mixin,
@@ -6786,7 +6803,7 @@
     _inherit(A.UnmodifiableMapView, A._UnmodifiableMapView_MapView__UnmodifiableMapMixin);
     _inherit(A.ConstantMapView, A.UnmodifiableMapView);
     _inherit(A.ConstantStringMap, A.ConstantMap);
-    _inheritMany(A.Closure, [A.Closure2Args, A.TearOffClosure, A.MapBase_entries_closure, A.ExpressionReducible_substitute_closure, A.FunctionPrototype_parameterTypes_closure, A.SemanticAnalyzer_checkDuplicatedParameters_closure, A.SemanticAnalyzer_checkReducibles_closure, A.SemanticAnalyzer_checkReducible_closure, A.SemanticAnalyzer_getFunctionByName_closure, A.FunctionCallExpression_toReducible_closure, A.FunctionBodyExpressionState_topIsNot_closure]);
+    _inheritMany(A.Closure, [A.Closure2Args, A.TearOffClosure, A.MapBase_entries_closure, A.ExpressionReducible_substitute_closure, A.FunctionPrototype_parameterTypes_closure, A.SemanticAnalyzer_checkDuplicatedParameters_closure, A.SemanticAnalyzer_checkReducibles_closure, A.SemanticAnalyzer_checkReducible_closure, A.SemanticAnalyzer_getFunctionByName_closure, A.FunctionCallExpression_toReducible_closure, A.FunctionBodyExpressionState_topIsNot_closure, A.runtimeWarningsHelper_closure]);
     _inheritMany(A.Closure2Args, [A.Primitives_functionNoSuchMethod_closure, A.MapBase_mapToString_closure, A.NoSuchMethodError_toString_closure]);
     _inheritMany(A.TearOffClosure, [A.StaticClosure, A.BoundClosure]);
     _inherit(A._AssertionError, A.AssertionError);
@@ -6822,7 +6839,7 @@
     typeUniverse: {eC: new Map(), tR: {}, eT: {}, tPV: {}, sEA: []},
     mangledGlobalNames: {int: "int", double: "double", num: "num", String: "String", bool: "bool", Null: "Null", List: "List"},
     mangledNames: {},
-    types: ["String(Parameter)", "bool(FunctionPrototype)", "~(String,@)", "~(Object?,Object?)", "~(Symbol0,@)", "IntermediateCode(String)", "Expression(String)", "Reducible(Reducible)", "Reducible(Expression)", "bool(Type)", "String(int)", "Parameter(String)", "IntermediateCode()", "bool(IntermediateCode)", "String(IntermediateCode)", "String(IntermediateCode,Expression)"],
+    types: ["String(Parameter)", "bool(FunctionPrototype)", "~(String,@)", "~(Object?,Object?)", "~(Symbol0,@)", "IntermediateCode(String)", "Expression(String)", "Reducible(Reducible)", "Reducible(Expression)", "bool(Type)", "String(GenericWarning)", "String(int)", "Parameter(String)", "IntermediateCode()", "List<String>(IntermediateCode)", "bool(IntermediateCode)", "String(IntermediateCode)", "String(IntermediateCode,Expression)"],
     interceptorsByTag: null,
     leafTags: null,
     arrayRti: Symbol("$ti")
@@ -6838,6 +6855,7 @@
       Expression: findType("Expression"),
       Function: findType("Function"),
       FunctionPrototype: findType("FunctionPrototype"),
+      GenericWarning: findType("GenericWarning"),
       IntermediateCode: findType("IntermediateCode"),
       Invocation: findType("Invocation"),
       Iterable_dynamic: findType("Iterable<@>"),

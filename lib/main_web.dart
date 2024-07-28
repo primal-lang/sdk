@@ -10,6 +10,9 @@ external set compileInput(Function v);
 @JS('compileExpression')
 external set compileExpression(Function v);
 
+@JS('runtimeWarnings')
+external set runtimeWarnings(Function v);
+
 @JS('runtimeHasMain')
 external set runtimeHasMain(Function v);
 
@@ -27,11 +30,16 @@ void main(List<String> args) {
   compileInput = allowInterop(compiler.compile);
   compileExpression = allowInterop(compiler.expression);
 
+  runtimeWarnings = allowInterop(runtimeWarningsHelper);
   runtimeHasMain = allowInterop(runtimeHasMainHelper);
   runtimeExecuteMain = allowInterop(runtimeExecuteMainHelper);
   runtimeReduce = allowInterop(runtimeReduceHelper);
 
   intermediateCodeEmpty = allowInterop(IntermediateCode.empty);
+}
+
+List<String> runtimeWarningsHelper(IntermediateCode code) {
+  return code.warnings.map((e) => e.message).toList();
 }
 
 bool runtimeHasMainHelper(IntermediateCode code) {
