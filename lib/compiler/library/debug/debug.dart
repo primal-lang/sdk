@@ -14,7 +14,7 @@ class Debug extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').evaluate();
+    final Reducible x = arguments.get('x').reduce();
     print(x.toString());
 
     return x;

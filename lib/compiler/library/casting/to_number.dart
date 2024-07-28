@@ -15,7 +15,7 @@ class ToNumber extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').evaluate();
+    final Reducible x = arguments.get('x').reduce();
 
     if (x is StringReducibleValue) {
       return NumberReducibleValue(num.parse(x.value));

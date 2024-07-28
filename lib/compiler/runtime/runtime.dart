@@ -22,18 +22,18 @@ class Runtime {
 
   bool get hasMain => main != null;
 
-  String executeMain() => evaluateFunction(main!);
+  String executeMain() => reduceFunction(main!);
 
-  String evaluate(Expression expression) {
+  String reduce(Expression expression) {
     final FunctionPrototype function = AnonymousFunctionPrototype(
       reducible: expression.toReducible(),
     );
 
-    return evaluateFunction(function);
+    return reduceFunction(function);
   }
 
-  String evaluateFunction(FunctionPrototype function) {
-    final Reducible result = function.substitute(const Scope()).evaluate();
+  String reduceFunction(FunctionPrototype function) {
+    final Reducible result = function.substitute(const Scope()).reduce();
 
     return result.toString();
   }

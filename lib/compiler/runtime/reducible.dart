@@ -10,7 +10,7 @@ abstract class Reducible {
 
   Reducible substitute(Scope<Reducible> arguments);
 
-  Reducible evaluate();
+  Reducible reduce();
 }
 
 abstract class ReducibleValue<T> implements Reducible {
@@ -25,7 +25,7 @@ abstract class ReducibleValue<T> implements Reducible {
   Reducible substitute(Scope<Reducible> arguments) => this;
 
   @override
-  Reducible evaluate() => this;
+  Reducible reduce() => this;
 }
 
 class StringReducibleValue extends ReducibleValue<String> {
@@ -65,7 +65,7 @@ class SymbolReducible extends Reducible {
   Reducible substitute(Scope<Reducible> arguments) => arguments.get(value);
 
   @override
-  Reducible evaluate() => this;
+  Reducible reduce() => this;
 
   @override
   String get type => 'Symbol';
@@ -93,7 +93,7 @@ class ExpressionReducible extends Reducible {
       );
 
   @override
-  Reducible evaluate() {
+  Reducible reduce() {
     final FunctionPrototype function = Runtime.SCOPE.get(name);
     final Scope<Reducible> newScope = Scope.from(
       functionName: name,
@@ -102,7 +102,7 @@ class ExpressionReducible extends Reducible {
       location: location,
     );
 
-    return function.substitute(newScope).evaluate();
+    return function.substitute(newScope).reduce();
   }
 
   @override

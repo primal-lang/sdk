@@ -16,8 +16,8 @@ class And extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').evaluate();
-    final Reducible y = arguments.get('y').evaluate();
+    final Reducible x = arguments.get('x').reduce();
+    final Reducible y = arguments.get('y').reduce();
 
     if ((x is BooleanReducibleValue) && (y is BooleanReducibleValue)) {
       return BooleanReducibleValue(x.value && y.value);

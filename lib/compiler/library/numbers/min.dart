@@ -17,8 +17,8 @@ class Min extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').evaluate();
-    final Reducible y = arguments.get('y').evaluate();
+    final Reducible x = arguments.get('x').reduce();
+    final Reducible y = arguments.get('y').reduce();
 
     if ((x is NumberReducibleValue) && (y is NumberReducibleValue)) {
       return NumberReducibleValue(min(x.value, y.value));

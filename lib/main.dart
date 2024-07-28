@@ -27,7 +27,7 @@ void main(List<String> args) {
     } else {
       console.prompt((input) {
         final Expression expression = compiler.expression(input);
-        console.print(runtime.evaluate(expression));
+        console.print(runtime.reduce(expression));
       });
     }
   } catch (e) {

@@ -3,7 +3,6 @@
 
 ## TODO
 * Easy implementation overload name/length
-* evaluate -> reduce
 
 * Stop using scope as static
 * Accept multiple parameters if, sum, etc

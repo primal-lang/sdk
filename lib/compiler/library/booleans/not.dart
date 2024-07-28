@@ -15,7 +15,7 @@ class Not extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').evaluate();
+    final Reducible x = arguments.get('x').reduce();
 
     if (x is BooleanReducibleValue) {
       return BooleanReducibleValue(!x.value);

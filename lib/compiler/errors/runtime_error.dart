@@ -31,5 +31,5 @@ class NotFoundInScope extends RuntimeError {
 
 class EmptyExpressionEvaluationError extends RuntimeError {
   const EmptyExpressionEvaluationError()
-      : super('Cannot evaluate empty expression');
+      : super('Cannot reduce empty expression');
 }

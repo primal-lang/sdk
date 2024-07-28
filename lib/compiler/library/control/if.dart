@@ -17,7 +17,7 @@ class If extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').evaluate();
+    final Reducible x = arguments.get('x').reduce();
     final Reducible y = arguments.get('y');
     final Reducible z = arguments.get('z');
 

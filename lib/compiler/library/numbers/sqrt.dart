@@ -16,7 +16,7 @@ class Sqrt extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').evaluate();
+    final Reducible x = arguments.get('x').reduce();
 
     if (x is NumberReducibleValue) {
       final num value = sqrt(x.value);
