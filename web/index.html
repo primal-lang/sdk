@@ -1,1 +1,62 @@
-test
+<html>
+
+<head>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript">
+        function compileCode(sourceCode) {
+            try {
+                const intermediateCode = sourceCode ? compileInput(sourceCode) : intermediateCodeEmpty()
+                const warnings = runtimeWarnings(intermediateCode)
+
+                for (const warning of warnings) {
+                    writeOutputWarning(warning)
+                }
+
+                if (runtimeHasMain(intermediateCode)) {
+                    const result = runtimeExecuteMain(intermediateCode)
+                    writeOutputSuccess(result)
+                }
+            } catch (e) {
+                writeOutputError(e)
+            }
+        }
+
+        function onInputChange() {
+            clearOutput()
+            const sourceCode = document.getElementById('sourceCode').value
+            compileCode(sourceCode.trim())
+        }
+
+        function clearOutput() {
+            writeOutput('', 'black')
+        }
+
+        function writeOutputSuccess(text) {
+            writeOutput(text, 'black')
+        }
+
+        function writeOutputWarning(text) {
+            writeOutput(text, 'yellow')
+        }
+
+        function writeOutputError(text) {
+            writeOutput(text, 'red')
+        }
+
+        function writeOutput(text, color) {
+            const output = document.getElementById('output')
+            output.style.color = color
+            output.innerHTML = text
+        }
+    </script>
+</head>
+
+<body onload="onInputChange()">
+    <textarea id="sourceCode" style="width:50%;height:100%;background-color:#fefefe" oninput="onInputChange()">foo(n) = mul(n, 2)
+
+main = foo(6)</textarea>
+    <div id="output" style="width:50%;height:100%;background-color:#f0f0f0;float:right">
+    </div>
+</body>
+
+</html>
