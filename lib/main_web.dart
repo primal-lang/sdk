@@ -10,14 +10,17 @@ external set compileInput(Function v);
 @JS('compileExpression')
 external set compileExpression(Function v);
 
-@JS('runtimeReduce')
+@JS('runtimeHasMain')
 external set runtimeHasMain(Function v);
 
-@JS('runtimeReduce')
+@JS('runtimeExecuteMain')
 external set runtimeExecuteMain(Function v);
 
 @JS('runtimeReduce')
 external set runtimeReduce(Function v);
+
+@JS('intermediateCodeEmpty')
+external set intermediateCodeEmpty(Function v);
 
 void main(List<String> args) {
   const Compiler compiler = Compiler();
@@ -27,6 +30,8 @@ void main(List<String> args) {
   runtimeHasMain = allowInterop(runtimeHasMainHelper);
   runtimeExecuteMain = allowInterop(runtimeExecuteMainHelper);
   runtimeReduce = allowInterop(runtimeReduceHelper);
+
+  intermediateCodeEmpty = allowInterop(IntermediateCode.empty);
 }
 
 bool runtimeHasMainHelper(IntermediateCode code) {
