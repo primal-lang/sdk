@@ -36,7 +36,7 @@ class Scope<T> {
     final T? result = data[name];
 
     if (result == null) {
-      throw NotFoundInScope(name);
+      throw NotFoundInScope(name.split('/')[0]);
     } else {
       return result;
     }
