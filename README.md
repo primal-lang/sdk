@@ -25,11 +25,10 @@
 ## Names
 * Dry
 * Def
-* Fun
 
 ## Domains
 .io
-.dev
+.org
 
 ## Lambda Calculus
 
