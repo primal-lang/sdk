@@ -23,6 +23,8 @@
 * Currying
 
 ## Names
+* Defined
+
 * Dry
 * Def
 
