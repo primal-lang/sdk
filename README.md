@@ -11,7 +11,7 @@
 * Higher order functions
 * Lambdas
     - ((x, y) => x + y)    
-    - lambda(x, y, x + 1)
+    - lambda(x, y, sum(x, 1))
 * Compile to JS
     const add = (a, b) => a + b
 * Type inference
