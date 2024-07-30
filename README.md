@@ -23,13 +23,15 @@
 * Currying
 
 ## Names
-* Defined
+reducer.dev
+declarity.org
 
 * Dry
 * Def
 
 ## Domains
 .io
+.dev
 .org
 
 ## Lambda Calculus
