@@ -2,6 +2,8 @@
 **Dry** is a declararive, purely functional, esoteric programming language. Although **Dry** is a general purpose language, it's mostly intended to be used as a tool for learning functional programming.
 
 ## TODO
+* Function isInfinite
+
 * Fix: foo(n,) = mul(n, 2)
 * Stop using scope as static
 * Accept multiple parameters if, sum, etc
@@ -28,6 +30,14 @@ declarity.org
 
 * Dry
 * Def
+
+Clarity
+Expressio
+abstra
+abstract
+compositum
+Recursus/recursum
+abstractum
 
 ## Domains
 .io
