@@ -31,14 +31,6 @@ declarity.org
 * Dry
 * Def
 
-Clarity
-Expressio
-abstra
-abstract
-compositum
-Recursus/recursum
-abstractum
-
 ## Domains
 .io
 .dev
