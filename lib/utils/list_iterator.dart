@@ -1,4 +1,4 @@
-import 'package:dry/compiler/errors/syntactic_error.dart';
+import 'package:purified/compiler/errors/syntactic_error.dart';
 
 class ListIterator<T> {
   int _index = 0;

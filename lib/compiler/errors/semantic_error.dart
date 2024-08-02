@@ -1,6 +1,6 @@
-import 'package:dry/compiler/errors/generic_error.dart';
-import 'package:dry/compiler/models/location.dart';
-import 'package:dry/compiler/semantic/function_prototype.dart';
+import 'package:purified/compiler/errors/generic_error.dart';
+import 'package:purified/compiler/models/location.dart';
+import 'package:purified/compiler/semantic/function_prototype.dart';
 
 class SemanticError extends GenericError {
   const SemanticError(super.message);

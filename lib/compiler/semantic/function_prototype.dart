@@ -1,6 +1,6 @@
-import 'package:dry/compiler/models/parameter.dart';
-import 'package:dry/compiler/runtime/reducible.dart';
-import 'package:dry/compiler/runtime/scope.dart';
+import 'package:purified/compiler/models/parameter.dart';
+import 'package:purified/compiler/runtime/reducible.dart';
+import 'package:purified/compiler/runtime/scope.dart';
 
 abstract class FunctionPrototype {
   final String name;

@@ -1,7 +1,7 @@
-import 'package:dry/compiler/models/location.dart';
-import 'package:dry/compiler/runtime/runtime.dart';
-import 'package:dry/compiler/runtime/scope.dart';
-import 'package:dry/compiler/semantic/function_prototype.dart';
+import 'package:purified/compiler/models/location.dart';
+import 'package:purified/compiler/runtime/runtime.dart';
+import 'package:purified/compiler/runtime/scope.dart';
+import 'package:purified/compiler/semantic/function_prototype.dart';
 
 abstract class Reducible {
   const Reducible();

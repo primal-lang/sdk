@@ -1,8 +1,8 @@
-import 'package:dry/compiler/errors/lexical_error.dart';
-import 'package:dry/compiler/lexical/lexical_analyzer.dart';
-import 'package:dry/compiler/lexical/token.dart';
-import 'package:dry/compiler/models/location.dart';
-import 'package:dry/extensions/string_extensions.dart';
+import 'package:purified/compiler/errors/lexical_error.dart';
+import 'package:purified/compiler/lexical/lexical_analyzer.dart';
+import 'package:purified/compiler/lexical/token.dart';
+import 'package:purified/compiler/models/location.dart';
+import 'package:purified/extensions/string_extensions.dart';
 
 class Character extends Localized {
   final String value;

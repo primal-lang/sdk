@@ -1,4 +1,4 @@
-import 'package:dry/compiler/warnings/generic_warning.dart';
+import 'package:purified/compiler/warnings/generic_warning.dart';
 
 class SemanticWarning extends GenericWarning {
   const SemanticWarning(super.message);

@@ -1,5 +1,5 @@
 # Purified 💧
-**Dry** is a declararive, purely functional, esoteric programming language. Although **Dry** is a general purpose language, it's mostly intended to be used as a tool for learning functional programming.
+**Purified** is a declararive, purely functional, esoteric programming language. Although **Purified** is a general purpose language, it's mostly intended to be used as a tool for learning functional programming.
 
 ## TODO
 * Function isInfinite
@@ -23,18 +23,6 @@
     - x:xs
 * Type declaration (maybe, undefined)
 * Currying
-
-## Names
-reducer.dev
-declarity.org
-
-* Dry
-* Def
-
-## Domains
-.io
-.dev
-.org
 
 ## Lambda Calculus
 

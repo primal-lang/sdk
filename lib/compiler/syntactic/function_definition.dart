@@ -1,4 +1,4 @@
-import 'package:dry/compiler/syntactic/expression.dart';
+import 'package:purified/compiler/syntactic/expression.dart';
 
 class FunctionDefinition {
   final String name;

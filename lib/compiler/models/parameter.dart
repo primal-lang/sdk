@@ -1,4 +1,4 @@
-import 'package:dry/compiler/models/type.dart';
+import 'package:purified/compiler/models/type.dart';
 
 class Parameter {
   final String name;

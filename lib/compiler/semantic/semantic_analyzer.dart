@@ -1,14 +1,14 @@
-import 'package:dry/compiler/errors/semantic_error.dart';
-import 'package:dry/compiler/library/standard_library.dart';
-import 'package:dry/compiler/models/analyzer.dart';
-import 'package:dry/compiler/models/parameter.dart';
-import 'package:dry/compiler/runtime/reducible.dart';
-import 'package:dry/compiler/semantic/function_prototype.dart';
-import 'package:dry/compiler/semantic/intermediate_code.dart';
-import 'package:dry/compiler/syntactic/function_definition.dart';
-import 'package:dry/compiler/warnings/generic_warning.dart';
-import 'package:dry/compiler/warnings/semantic_warning.dart';
-import 'package:dry/utils/mapper.dart';
+import 'package:purified/compiler/errors/semantic_error.dart';
+import 'package:purified/compiler/library/standard_library.dart';
+import 'package:purified/compiler/models/analyzer.dart';
+import 'package:purified/compiler/models/parameter.dart';
+import 'package:purified/compiler/runtime/reducible.dart';
+import 'package:purified/compiler/semantic/function_prototype.dart';
+import 'package:purified/compiler/semantic/intermediate_code.dart';
+import 'package:purified/compiler/syntactic/function_definition.dart';
+import 'package:purified/compiler/warnings/generic_warning.dart';
+import 'package:purified/compiler/warnings/semantic_warning.dart';
+import 'package:purified/utils/mapper.dart';
 
 class SemanticAnalyzer
     extends Analyzer<List<FunctionDefinition>, IntermediateCode> {

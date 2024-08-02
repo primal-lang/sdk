@@ -1,15 +1,15 @@
 import 'dart:io';
-import 'package:dry/compiler/input/character.dart';
-import 'package:dry/compiler/input/input_analyzer.dart';
-import 'package:dry/compiler/lexical/lexical_analyzer.dart';
-import 'package:dry/compiler/lexical/token.dart';
-import 'package:dry/compiler/models/location.dart';
-import 'package:dry/compiler/runtime/runtime.dart';
-import 'package:dry/compiler/semantic/intermediate_code.dart';
-import 'package:dry/compiler/semantic/semantic_analyzer.dart';
-import 'package:dry/compiler/syntactic/expression.dart';
-import 'package:dry/compiler/syntactic/function_definition.dart';
-import 'package:dry/compiler/syntactic/syntactic_analyzer.dart';
+import 'package:purified/compiler/input/character.dart';
+import 'package:purified/compiler/input/input_analyzer.dart';
+import 'package:purified/compiler/lexical/lexical_analyzer.dart';
+import 'package:purified/compiler/lexical/token.dart';
+import 'package:purified/compiler/models/location.dart';
+import 'package:purified/compiler/runtime/runtime.dart';
+import 'package:purified/compiler/semantic/intermediate_code.dart';
+import 'package:purified/compiler/semantic/semantic_analyzer.dart';
+import 'package:purified/compiler/syntactic/expression.dart';
+import 'package:purified/compiler/syntactic/function_definition.dart';
+import 'package:purified/compiler/syntactic/syntactic_analyzer.dart';
 import 'package:test/test.dart';
 
 List<Token> getTokens(String source) {

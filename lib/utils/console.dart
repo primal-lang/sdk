@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dry/compiler/warnings/generic_warning.dart';
+import 'package:purified/compiler/warnings/generic_warning.dart';
 
 class Console {
   static const String reset = '\x1b[0m';

@@ -1,5 +1,5 @@
-import 'package:dry/compiler/errors/semantic_error.dart';
-import 'package:dry/compiler/semantic/intermediate_code.dart';
+import 'package:purified/compiler/errors/semantic_error.dart';
+import 'package:purified/compiler/semantic/intermediate_code.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
 

@@ -1,5 +1,5 @@
-name: dry
-description: Do not apply water
+name: purified
+description: Purely functional language
 version: 0.0.1
 
 environment:

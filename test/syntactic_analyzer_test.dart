@@ -1,7 +1,7 @@
-import 'package:dry/compiler/errors/syntactic_error.dart';
-import 'package:dry/compiler/models/location.dart';
-import 'package:dry/compiler/syntactic/expression.dart';
-import 'package:dry/compiler/syntactic/function_definition.dart';
+import 'package:purified/compiler/errors/syntactic_error.dart';
+import 'package:purified/compiler/models/location.dart';
+import 'package:purified/compiler/syntactic/expression.dart';
+import 'package:purified/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
 
@@ -234,7 +234,7 @@ void main() {
     });
 
     test('Sample file', () {
-      final String source = loadFile('sample.dry');
+      final String source = loadFile('sample.pure');
       final List<FunctionDefinition> functions = getFunctions(source);
       expect(functions.length, equals(13));
     });

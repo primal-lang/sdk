@@ -1,12 +1,12 @@
-import 'package:dry/compiler/errors/syntactic_error.dart';
-import 'package:dry/compiler/lexical/token.dart';
-import 'package:dry/compiler/models/analyzer.dart';
-import 'package:dry/compiler/models/location.dart';
-import 'package:dry/compiler/models/state.dart';
-import 'package:dry/compiler/syntactic/expression.dart';
-import 'package:dry/compiler/syntactic/function_definition.dart';
-import 'package:dry/utils/list_iterator.dart';
-import 'package:dry/utils/stack.dart';
+import 'package:purified/compiler/errors/syntactic_error.dart';
+import 'package:purified/compiler/lexical/token.dart';
+import 'package:purified/compiler/models/analyzer.dart';
+import 'package:purified/compiler/models/location.dart';
+import 'package:purified/compiler/models/state.dart';
+import 'package:purified/compiler/syntactic/expression.dart';
+import 'package:purified/compiler/syntactic/function_definition.dart';
+import 'package:purified/utils/list_iterator.dart';
+import 'package:purified/utils/stack.dart';
 
 class SyntacticAnalyzer
     extends Analyzer<List<Token>, List<FunctionDefinition>> {

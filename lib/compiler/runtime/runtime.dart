@@ -1,8 +1,8 @@
-import 'package:dry/compiler/runtime/reducible.dart';
-import 'package:dry/compiler/runtime/scope.dart';
-import 'package:dry/compiler/semantic/function_prototype.dart';
-import 'package:dry/compiler/semantic/intermediate_code.dart';
-import 'package:dry/compiler/syntactic/expression.dart';
+import 'package:purified/compiler/runtime/reducible.dart';
+import 'package:purified/compiler/runtime/scope.dart';
+import 'package:purified/compiler/semantic/function_prototype.dart';
+import 'package:purified/compiler/semantic/intermediate_code.dart';
+import 'package:purified/compiler/syntactic/expression.dart';
 
 class Runtime {
   final IntermediateCode intermediateCode;
