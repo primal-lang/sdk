@@ -1,59 +1,3 @@
-# Generic
-
-eq(a: T, b: T): bool
-neq(a: T, b: T): bool
-
-# Control
-
-if(condition: bool, exp1: T, exp2: T): T
-try(exp1: T, exp2: T): T
-
-# Error
-
-error(a: T)
-
-# Debug
-
-debug(a: T): T
-
-# Numbers
-
-abs(a: num): num
-inc(a: num): num
-dec(a: num): num
-sum(a: num, b: num, ...): num
-sub(a: num, b: num): num
-mul(a: num, b: num): num
-div(a: num, b: num): num
-mod(a: num, b: num): num
-min(a: num, b: num, ...): num
-max(a: num, b: num, ...): num
-pow(a: num, b: num): num
-sqrt(a: num): num
-round(a: num): num
-floor(a: num): num
-ceil(a: num): num
-sin(a: num): num
-cos(a: num): num
-tan(a: num): num
-log(a: num): num
-gt(a: num, b: num): bool
-lt(a: num, b: num): bool
-ge(a: num, b: num): bool
-le(a: num, b: num): bool
-isNegative(a: num): bool
-isPositive(a: num): bool
-isZero(a: num): bool
-isEven(a: num): bool
-isOdd(a: num): bool
-
-# Booleans
-
-and(a: bool, b: bool): bool
-or(a: bool, b: bool): bool
-not(a: bool): bool
-xor(a: bool, b: bool): bool
-
 # String
 
 subString(text: string, start: num, length: num): string
@@ -112,16 +56,3 @@ sort(func: function, list: [T]): [T]
 all(func: function, list: [T]): bool
 any(func: function, list: [T]): bool
 zip(func: function, list1: [T], list2: [T]): [T]
-
-# Casting
-
-toNumber(a: T): number
-toInteger(a: T): number
-toDecimal(a: T): number
-toString(a: T): string
-toBoolean(a: T): bool
-isNumber(a: T): bool
-isInteger(a: T): bool
-isDecimal(a: T): bool
-isString(a: T): bool
-isBoolean(a: T): bool

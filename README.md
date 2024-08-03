@@ -1,5 +1,4 @@
 # Purified 💧
-**Purified** is a declararive, purely functional, esoteric programming language. Although **Purified** is a general purpose language, it's mostly intended to be used as a tool for learning functional programming.
 
 ## TODO
 * "add" as alias of "sum"
