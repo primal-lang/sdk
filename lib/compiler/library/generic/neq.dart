@@ -1,8 +1,8 @@
-import 'package:purified/compiler/errors/runtime_error.dart';
-import 'package:purified/compiler/models/parameter.dart';
-import 'package:purified/compiler/runtime/reducible.dart';
-import 'package:purified/compiler/runtime/scope.dart';
-import 'package:purified/compiler/semantic/function_prototype.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/scope.dart';
+import 'package:primal/compiler/semantic/function_prototype.dart';
 
 class Neq extends NativeFunctionPrototype {
   Neq()

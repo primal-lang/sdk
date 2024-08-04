@@ -1,7 +1,7 @@
-import 'package:purified/compiler/errors/lexical_error.dart';
-import 'package:purified/compiler/lexical/lexical_analyzer.dart';
-import 'package:purified/compiler/lexical/token.dart';
-import 'package:purified/compiler/models/location.dart';
+import 'package:primal/compiler/errors/lexical_error.dart';
+import 'package:primal/compiler/lexical/lexical_analyzer.dart';
+import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/models/location.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
 

@@ -1,5 +1,5 @@
-name: purified
-description: Purely functional language
+name: primal
+description: Functional language
 version: 0.0.1
 
 environment:

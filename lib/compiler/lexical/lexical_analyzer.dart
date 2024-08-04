@@ -1,11 +1,11 @@
-import 'package:purified/compiler/errors/lexical_error.dart';
-import 'package:purified/compiler/input/character.dart';
-import 'package:purified/compiler/lexical/token.dart';
-import 'package:purified/compiler/models/analyzer.dart';
-import 'package:purified/compiler/models/location.dart';
-import 'package:purified/compiler/models/state.dart';
-import 'package:purified/extensions/string_extensions.dart';
-import 'package:purified/utils/list_iterator.dart';
+import 'package:primal/compiler/errors/lexical_error.dart';
+import 'package:primal/compiler/input/character.dart';
+import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/models/analyzer.dart';
+import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/state.dart';
+import 'package:primal/extensions/string_extensions.dart';
+import 'package:primal/utils/list_iterator.dart';
 
 class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
   const LexicalAnalyzer(super.input);

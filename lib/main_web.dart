@@ -1,8 +1,8 @@
 import 'package:js/js.dart';
-import 'package:purified/compiler/compiler.dart';
-import 'package:purified/compiler/runtime/runtime.dart';
-import 'package:purified/compiler/semantic/intermediate_code.dart';
-import 'package:purified/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
 
 @JS('compileInput')
 external set compileInput(Function v);

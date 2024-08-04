@@ -1,5 +1,5 @@
-import 'package:purified/compiler/errors/generic_error.dart';
-import 'package:purified/compiler/models/location.dart';
+import 'package:primal/compiler/errors/generic_error.dart';
+import 'package:primal/compiler/models/location.dart';
 
 class RuntimeError extends GenericError {
   const RuntimeError(super.message);

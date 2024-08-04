@@ -1,7 +1,7 @@
-import 'package:purified/compiler/errors/runtime_error.dart';
-import 'package:purified/compiler/models/location.dart';
-import 'package:purified/compiler/models/parameter.dart';
-import 'package:purified/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/runtime/reducible.dart';
 
 class Scope<T> {
   final Map<String, T> data;

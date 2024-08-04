@@ -1,4 +1,4 @@
-# Purified 💧
+# Primal
 
 ## TODO
 * "add" as alias of "sum"

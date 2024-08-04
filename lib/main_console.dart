@@ -1,10 +1,10 @@
-import 'package:purified/compiler/compiler.dart';
-import 'package:purified/compiler/runtime/runtime.dart';
-import 'package:purified/compiler/semantic/intermediate_code.dart';
-import 'package:purified/compiler/syntactic/expression.dart';
-import 'package:purified/compiler/warnings/generic_warning.dart';
-import 'package:purified/utils/console.dart';
-import 'package:purified/utils/file_reader.dart';
+import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/warnings/generic_warning.dart';
+import 'package:primal/utils/console.dart';
+import 'package:primal/utils/file_reader.dart';
 
 void main(List<String> args) {
   final Console console = Console();

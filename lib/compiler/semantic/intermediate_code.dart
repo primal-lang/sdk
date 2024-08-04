@@ -1,7 +1,7 @@
-import 'package:purified/compiler/library/standard_library.dart';
-import 'package:purified/compiler/semantic/function_prototype.dart';
-import 'package:purified/compiler/warnings/generic_warning.dart';
-import 'package:purified/utils/mapper.dart';
+import 'package:primal/compiler/library/standard_library.dart';
+import 'package:primal/compiler/semantic/function_prototype.dart';
+import 'package:primal/compiler/warnings/generic_warning.dart';
+import 'package:primal/utils/mapper.dart';
 
 class IntermediateCode {
   final Map<String, FunctionPrototype> functions;

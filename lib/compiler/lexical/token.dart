@@ -1,5 +1,5 @@
-import 'package:purified/compiler/lexical/lexical_analyzer.dart';
-import 'package:purified/compiler/models/location.dart';
+import 'package:primal/compiler/lexical/lexical_analyzer.dart';
+import 'package:primal/compiler/models/location.dart';
 
 class Token<T> extends Localized {
   final T value;

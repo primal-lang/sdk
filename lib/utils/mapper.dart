@@ -1,4 +1,4 @@
-import 'package:purified/compiler/semantic/function_prototype.dart';
+import 'package:primal/compiler/semantic/function_prototype.dart';
 
 class Mapper {
   static Map<String, FunctionPrototype> toMap(

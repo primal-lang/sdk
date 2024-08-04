@@ -1,6 +1,6 @@
-import 'package:purified/compiler/errors/generic_error.dart';
-import 'package:purified/compiler/lexical/token.dart';
-import 'package:purified/compiler/syntactic/syntactic_analyzer.dart';
+import 'package:primal/compiler/errors/generic_error.dart';
+import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/syntactic/syntactic_analyzer.dart';
 
 class SyntacticError extends GenericError {
   const SyntacticError(super.message);

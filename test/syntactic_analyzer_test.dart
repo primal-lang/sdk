@@ -1,7 +1,7 @@
-import 'package:purified/compiler/errors/syntactic_error.dart';
-import 'package:purified/compiler/models/location.dart';
-import 'package:purified/compiler/syntactic/expression.dart';
-import 'package:purified/compiler/syntactic/function_definition.dart';
+import 'package:primal/compiler/errors/syntactic_error.dart';
+import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
 
