@@ -27,7 +27,7 @@ void main() {
 
     test('Invalid function definition 3', () {
       try {
-        getFunctions('isEven()');
+        getFunctions('isEven() = true');
         fail('Should fail');
       } catch (e) {
         expect(e, isA<InvalidTokenError>());
@@ -36,7 +36,7 @@ void main() {
 
     test('Invalid function definition 4', () {
       try {
-        getFunctions('isEven(1');
+        getFunctions('isEvent(,) = true');
         fail('Should fail');
       } catch (e) {
         expect(e, isA<InvalidTokenError>());
@@ -45,7 +45,7 @@ void main() {
 
     test('Invalid function definition 5', () {
       try {
-        getFunctions('isEven(a(');
+        getFunctions('isEvent(x,) = true');
         fail('Should fail');
       } catch (e) {
         expect(e, isA<InvalidTokenError>());
@@ -54,7 +54,25 @@ void main() {
 
     test('Invalid function definition 6', () {
       try {
-        getFunctions('isEvent(x),');
+        getFunctions('isEven(1 = true');
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidTokenError>());
+      }
+    });
+
+    test('Invalid function definition 7', () {
+      try {
+        getFunctions('isEven(a( = true');
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidTokenError>());
+      }
+    });
+
+    test('Invalid function definition 8', () {
+      try {
+        getFunctions('isEvent(x), = true');
         fail('Should fail');
       } catch (e) {
         expect(e, isA<InvalidTokenError>());

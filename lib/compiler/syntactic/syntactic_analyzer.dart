@@ -95,12 +95,21 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
   @override
   State process(Token input, Token? next) {
     if (input is SymbolToken) {
-      return FunctionWithMoreParametersState(output.withParameter(input.value));
-    } else if (input is CloseParenthesisToken) {
-      if (output.parameters.isEmpty) {
-        throw InvalidTokenError(input);
-      }
+      return FunctionWithNewParametersState(output.withParameter(input.value));
+    } else {
+      throw InvalidTokenError(input);
+    }
+  }
+}
 
+class FunctionWithNewParametersState extends State<Token, FunctionDefinition> {
+  const FunctionWithNewParametersState(super.output);
+
+  @override
+  State process(Token input, Token? next) {
+    if (input is CommaToken) {
+      return FunctionWithNextParametersState(output);
+    } else if (input is CloseParenthesisToken) {
       return FunctionParametrizedState(output);
     } else {
       throw InvalidTokenError(input);
@@ -108,15 +117,13 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionWithMoreParametersState extends State<Token, FunctionDefinition> {
-  const FunctionWithMoreParametersState(super.output);
+class FunctionWithNextParametersState extends State<Token, FunctionDefinition> {
+  const FunctionWithNextParametersState(super.output);
 
   @override
   State process(Token input, Token? next) {
-    if (input is CommaToken) {
-      return FunctionWithParametersState(output);
-    } else if (input is CloseParenthesisToken) {
-      return FunctionParametrizedState(output);
+    if (input is SymbolToken) {
+      return FunctionWithNewParametersState(output.withParameter(input.value));
     } else {
       throw InvalidTokenError(input);
     }
