@@ -257,6 +257,11 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('Casting (isInfinite)', () {
+      final Runtime runtime = getRuntime('main = isInfinite(12)');
+      checkResult(runtime, false);
+    });
+
     test('Casting (isString)', () {
       final Runtime runtime = getRuntime('main = isString("Hey")');
       checkResult(runtime, true);

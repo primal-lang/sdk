@@ -1,7 +1,6 @@
 # Primal
 
 ## TODO
-* Function isInfinite
 * Fix: foo(n,) = mul(n, 2)
 
 * Stop using scope as static

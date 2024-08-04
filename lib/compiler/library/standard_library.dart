@@ -4,6 +4,7 @@ import 'package:primal/compiler/library/booleans/or.dart';
 import 'package:primal/compiler/library/booleans/xor.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
+import 'package:primal/compiler/library/casting/is_infinite.dart';
 import 'package:primal/compiler/library/casting/is_integer.dart';
 import 'package:primal/compiler/library/casting/is_number.dart';
 import 'package:primal/compiler/library/casting/is_string.dart';
@@ -111,6 +112,7 @@ class StandardLibrary {
         IsNumber(),
         IsInteger(),
         IsDecimal(),
+        IsInfinite(),
         IsString(),
         IsBoolean(),
       ];
