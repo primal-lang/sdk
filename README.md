@@ -23,6 +23,8 @@
     - x:xs
 * Type declaration (maybe, undefined)
 * Currying
+* VSCode extension
+* Compile to JVM
 
 ## Lambda Calculus
 
