@@ -31,8 +31,6 @@ class SemanticAnalyzer
       warnings: warnings,
     );
 
-    // TODO(momo): check mismatched types
-
     return IntermediateCode(
       functions: Mapper.toMap(functions),
       warnings: warnings,

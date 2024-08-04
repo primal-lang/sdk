@@ -234,7 +234,7 @@ void main() {
     });
 
     test('Sample file', () {
-      final String source = loadFile('sample.pure');
+      final String source = loadFile('sample.prm');
       final List<FunctionDefinition> functions = getFunctions(source);
       expect(functions.length, equals(13));
     });

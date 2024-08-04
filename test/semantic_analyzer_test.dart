@@ -65,9 +65,4 @@ void main() {
       expect(e, isA<InvalidNumberOfArgumentsError>());
     }
   });
-
-  /*test('Check result', () {
-    final IntermediateCode code = getIntermediateCode('main = abs(-10)');
-    checkCode(code, 10);
-  });*/
 }

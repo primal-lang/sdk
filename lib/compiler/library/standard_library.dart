@@ -19,6 +19,7 @@ import 'package:primal/compiler/library/error/error.dart';
 import 'package:primal/compiler/library/generic/eq.dart';
 import 'package:primal/compiler/library/generic/neq.dart';
 import 'package:primal/compiler/library/numbers/abs.dart';
+import 'package:primal/compiler/library/numbers/add.dart';
 import 'package:primal/compiler/library/numbers/ceil.dart';
 import 'package:primal/compiler/library/numbers/cos.dart';
 import 'package:primal/compiler/library/numbers/dec.dart';
@@ -68,6 +69,7 @@ class StandardLibrary {
         Abs(),
         Inc(),
         Dec(),
+        Add(),
         Sum(),
         Sub(),
         Mul(),

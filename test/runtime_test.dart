@@ -72,6 +72,11 @@ void main() {
       checkResult(runtime, -2);
     });
 
+    test('Numbers (add)', () {
+      final Runtime runtime = getRuntime('main = add(5, -7)');
+      checkResult(runtime, -2);
+    });
+
     test('Numbers (sub)', () {
       final Runtime runtime = getRuntime('main = sub(5, -7)');
       checkResult(runtime, 12);
