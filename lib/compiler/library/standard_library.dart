@@ -49,9 +49,13 @@ import 'package:primal/compiler/library/numbers/sub.dart';
 import 'package:primal/compiler/library/numbers/sum.dart';
 import 'package:primal/compiler/library/numbers/tan.dart';
 import 'package:primal/compiler/library/strings/ends_with.dart';
+import 'package:primal/compiler/library/strings/lowercase.dart';
+import 'package:primal/compiler/library/strings/match.dart';
 import 'package:primal/compiler/library/strings/replace.dart';
 import 'package:primal/compiler/library/strings/starts_with.dart';
 import 'package:primal/compiler/library/strings/sub_string.dart';
+import 'package:primal/compiler/library/strings/trim.dart';
+import 'package:primal/compiler/library/strings/uppercase.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
 class StandardLibrary {
@@ -112,6 +116,10 @@ class StandardLibrary {
         StartsWith(),
         EndsWith(),
         Replace(),
+        Uppercase(),
+        Lowercase(),
+        Trim(),
+        Match(),
 
         // Casting
         ToNumber(),

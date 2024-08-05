@@ -242,6 +242,26 @@ void main() {
       checkResult(runtime, '"batoto"');
     });
 
+    test('Strings (uppercase)', () {
+      final Runtime runtime = getRuntime('main = uppercase("Primal")');
+      checkResult(runtime, '"PRIMAL"');
+    });
+
+    test('Strings (lowercase)', () {
+      final Runtime runtime = getRuntime('main = lowercase("Primal")');
+      checkResult(runtime, '"primal"');
+    });
+
+    test('Strings (trim)', () {
+      final Runtime runtime = getRuntime('main = trim(" Primal ")');
+      checkResult(runtime, '"Primal"');
+    });
+
+    test('Strings (match)', () {
+      final Runtime runtime = getRuntime('main = match("identifier42", "[a-zA-Z]+[0-9]+")');
+      checkResult(runtime, true);
+    });
+
     // -----------------------------------
 
     test('Casting (toNumber)', () {
