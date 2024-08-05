@@ -9,29 +9,29 @@ class If extends NativeFunctionPrototype {
       : super(
           name: 'if',
           parameters: [
-            Parameter.boolean('x'),
-            Parameter.any('y'),
-            Parameter.any('z'),
+            Parameter.boolean('a'),
+            Parameter.any('b'),
+            Parameter.any('c'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
-    final Reducible y = arguments.get('y');
-    final Reducible z = arguments.get('z');
+    final Reducible a = arguments.get('a').reduce();
+    final Reducible b = arguments.get('b');
+    final Reducible c = arguments.get('c');
 
-    if (x is BooleanReducibleValue) {
-      if (x.value) {
-        return y;
+    if (a is BooleanReducibleValue) {
+      if (a.value) {
+        return b;
       } else {
-        return z;
+        return c;
       }
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type, y.type, z.type],
+        actual: [a.type, b.type, c.type],
       );
     }
   }

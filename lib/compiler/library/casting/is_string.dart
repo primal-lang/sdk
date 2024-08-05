@@ -8,15 +8,15 @@ class IsString extends NativeFunctionPrototype {
       : super(
           name: 'isString',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is StringReducibleValue) {
+    if (a is StringReducibleValue) {
       return const BooleanReducibleValue(true);
     } else {
       return const BooleanReducibleValue(false);

@@ -9,21 +9,21 @@ class Ceil extends NativeFunctionPrototype {
       : super(
           name: 'ceil',
           parameters: [
-            Parameter.number('x'),
+            Parameter.number('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is NumberReducibleValue) {
-      return NumberReducibleValue(x.value.ceil());
+    if (a is NumberReducibleValue) {
+      return NumberReducibleValue(a.value.ceil());
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type],
+        actual: [a.type],
       );
     }
   }

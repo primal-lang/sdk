@@ -8,15 +8,15 @@ class IsNumber extends NativeFunctionPrototype {
       : super(
           name: 'isNumber',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is NumberReducibleValue) {
+    if (a is NumberReducibleValue) {
       return const BooleanReducibleValue(true);
     } else {
       return const BooleanReducibleValue(false);

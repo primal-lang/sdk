@@ -8,16 +8,16 @@ class IsInfinite extends NativeFunctionPrototype {
       : super(
           name: 'isInfinite',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is NumberReducibleValue) {
-      return BooleanReducibleValue(x.value.isInfinite);
+    if (a is NumberReducibleValue) {
+      return BooleanReducibleValue(a.value.isInfinite);
     } else {
       return const BooleanReducibleValue(false);
     }

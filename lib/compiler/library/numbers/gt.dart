@@ -9,23 +9,23 @@ class Gt extends NativeFunctionPrototype {
       : super(
           name: 'gt',
           parameters: [
-            Parameter.number('x'),
-            Parameter.number('y'),
+            Parameter.number('a'),
+            Parameter.number('b'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
-    final Reducible y = arguments.get('y').reduce();
+    final Reducible a = arguments.get('a').reduce();
+    final Reducible b = arguments.get('b').reduce();
 
-    if ((x is NumberReducibleValue) && (y is NumberReducibleValue)) {
-      return BooleanReducibleValue(x.value > y.value);
+    if ((a is NumberReducibleValue) && (b is NumberReducibleValue)) {
+      return BooleanReducibleValue(a.value > b.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type, y.type],
+        actual: [a.type, b.type],
       );
     }
   }

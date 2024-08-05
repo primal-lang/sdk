@@ -10,23 +10,23 @@ class Sqrt extends NativeFunctionPrototype {
       : super(
           name: 'sqrt',
           parameters: [
-            Parameter.number('x'),
+            Parameter.number('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is NumberReducibleValue) {
-      final num value = sqrt(x.value);
+    if (a is NumberReducibleValue) {
+      final num value = sqrt(a.value);
       final num result = (value == value.toInt()) ? value.toInt() : value;
       return NumberReducibleValue(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type],
+        actual: [a.type],
       );
     }
   }

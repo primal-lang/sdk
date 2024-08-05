@@ -8,20 +8,20 @@ class Try extends NativeFunctionPrototype {
       : super(
           name: 'try',
           parameters: [
-            Parameter.any('x'),
-            Parameter.any('y'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x');
-    final Reducible y = arguments.get('y');
+    final Reducible a = arguments.get('a');
+    final Reducible b = arguments.get('b');
 
     try {
-      return x.reduce();
+      return a.reduce();
     } catch (e) {
-      return y;
+      return b;
     }
   }
 }

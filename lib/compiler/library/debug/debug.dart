@@ -8,15 +8,15 @@ class Debug extends NativeFunctionPrototype {
       : super(
           name: 'debug',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
-    print(x.toString());
+    final Reducible a = arguments.get('a').reduce();
+    print(a.toString());
 
-    return x;
+    return a;
   }
 }

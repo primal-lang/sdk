@@ -9,27 +9,27 @@ class Neq extends NativeFunctionPrototype {
       : super(
           name: 'neq',
           parameters: [
-            Parameter.any('x'),
-            Parameter.any('y'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
-    final Reducible y = arguments.get('y').reduce();
+    final Reducible a = arguments.get('a').reduce();
+    final Reducible b = arguments.get('b').reduce();
 
-    if ((x is NumberReducibleValue) && (y is NumberReducibleValue)) {
-      return BooleanReducibleValue(x.value != y.value);
-    } else if ((x is StringReducibleValue) && (y is StringReducibleValue)) {
-      return BooleanReducibleValue(x.value != y.value);
-    } else if ((x is BooleanReducibleValue) && (y is BooleanReducibleValue)) {
-      return BooleanReducibleValue(x.value != y.value);
+    if ((a is NumberReducibleValue) && (b is NumberReducibleValue)) {
+      return BooleanReducibleValue(a.value != b.value);
+    } else if ((a is StringReducibleValue) && (b is StringReducibleValue)) {
+      return BooleanReducibleValue(a.value != b.value);
+    } else if ((a is BooleanReducibleValue) && (b is BooleanReducibleValue)) {
+      return BooleanReducibleValue(a.value != b.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type, y.type],
+        actual: [a.type, b.type],
       );
     }
   }

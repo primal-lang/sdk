@@ -9,25 +9,25 @@ class ToBoolean extends NativeFunctionPrototype {
       : super(
           name: 'toBoolean',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is StringReducibleValue) {
-      return BooleanReducibleValue(x.value.trim().isNotEmpty);
-    } else if (x is NumberReducibleValue) {
-      return BooleanReducibleValue(x.value != 0);
-    } else if (x is BooleanReducibleValue) {
-      return BooleanReducibleValue(x.value);
+    if (a is StringReducibleValue) {
+      return BooleanReducibleValue(a.value.trim().isNotEmpty);
+    } else if (a is NumberReducibleValue) {
+      return BooleanReducibleValue(a.value != 0);
+    } else if (a is BooleanReducibleValue) {
+      return BooleanReducibleValue(a.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type],
+        actual: [a.type],
       );
     }
   }

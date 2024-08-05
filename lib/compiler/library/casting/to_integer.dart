@@ -9,25 +9,25 @@ class ToInteger extends NativeFunctionPrototype {
       : super(
           name: 'toInteger',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is StringReducibleValue) {
-      return NumberReducibleValue(int.parse(x.value));
-    } else if (x is NumberReducibleValue) {
-      return NumberReducibleValue(x.value.toInt());
-    } else if (x is BooleanReducibleValue) {
-      return NumberReducibleValue(x.value ? 1 : 0);
+    if (a is StringReducibleValue) {
+      return NumberReducibleValue(int.parse(a.value));
+    } else if (a is NumberReducibleValue) {
+      return NumberReducibleValue(a.value.toInt());
+    } else if (a is BooleanReducibleValue) {
+      return NumberReducibleValue(a.value ? 1 : 0);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type],
+        actual: [a.type],
       );
     }
   }

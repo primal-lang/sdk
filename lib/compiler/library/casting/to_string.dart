@@ -8,14 +8,14 @@ class ToString extends NativeFunctionPrototype {
       : super(
           name: 'toString',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    return StringReducibleValue(x.toString());
+    return StringReducibleValue(a.toString());
   }
 }

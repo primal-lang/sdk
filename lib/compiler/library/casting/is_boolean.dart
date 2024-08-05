@@ -8,15 +8,15 @@ class IsBoolean extends NativeFunctionPrototype {
       : super(
           name: 'isBoolean',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is BooleanReducibleValue) {
+    if (a is BooleanReducibleValue) {
       return const BooleanReducibleValue(true);
     } else {
       return const BooleanReducibleValue(false);

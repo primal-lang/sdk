@@ -9,14 +9,14 @@ class Error extends NativeFunctionPrototype {
       : super(
           name: 'error',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    throw RuntimeError(x.toString());
+    throw RuntimeError(a.toString());
   }
 }

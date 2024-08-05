@@ -25,6 +25,11 @@ void main() {
       checkResult(runtime, '"no"');
     });
 
+    test('If (if3)', () {
+      final Runtime runtime = getRuntime('main = if(true, sum(1, 2), 42)');
+      checkResult(runtime, 3);
+    });
+
     test('Try (try1)', () {
       final Runtime runtime = getRuntime('main = try(div(1, 2), 42)');
       checkResult(runtime, 0.5);

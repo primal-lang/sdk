@@ -9,21 +9,21 @@ class IsEven extends NativeFunctionPrototype {
       : super(
           name: 'isEven',
           parameters: [
-            Parameter.number('x'),
+            Parameter.number('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is NumberReducibleValue) {
-      return BooleanReducibleValue((x.value % 2) == 0);
+    if (a is NumberReducibleValue) {
+      return BooleanReducibleValue((a.value % 2) == 0);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type],
+        actual: [a.type],
       );
     }
   }

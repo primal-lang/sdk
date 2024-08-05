@@ -9,21 +9,21 @@ class Abs extends NativeFunctionPrototype {
       : super(
           name: 'abs',
           parameters: [
-            Parameter.number('x'),
+            Parameter.number('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is NumberReducibleValue) {
-      return NumberReducibleValue(x.value.abs());
+    if (a is NumberReducibleValue) {
+      return NumberReducibleValue(a.value.abs());
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type],
+        actual: [a.type],
       );
     }
   }

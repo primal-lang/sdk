@@ -9,21 +9,21 @@ class Not extends NativeFunctionPrototype {
       : super(
           name: 'not',
           parameters: [
-            Parameter.boolean('x'),
+            Parameter.boolean('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is BooleanReducibleValue) {
-      return BooleanReducibleValue(!x.value);
+    if (a is BooleanReducibleValue) {
+      return BooleanReducibleValue(!a.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [x.type],
+        actual: [a.type],
       );
     }
   }

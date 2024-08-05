@@ -8,16 +8,16 @@ class IsDecimal extends NativeFunctionPrototype {
       : super(
           name: 'isDecimal',
           parameters: [
-            Parameter.any('x'),
+            Parameter.any('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible x = arguments.get('x').reduce();
+    final Reducible a = arguments.get('a').reduce();
 
-    if (x is NumberReducibleValue) {
-      return BooleanReducibleValue(x.value != x.value.toInt());
+    if (a is NumberReducibleValue) {
+      return BooleanReducibleValue(a.value != a.value.toInt());
     } else {
       return const BooleanReducibleValue(false);
     }
