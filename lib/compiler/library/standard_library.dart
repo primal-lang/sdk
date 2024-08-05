@@ -13,12 +13,14 @@ import 'package:primal/compiler/library/casting/to_decimal.dart';
 import 'package:primal/compiler/library/casting/to_integer.dart';
 import 'package:primal/compiler/library/casting/to_number.dart';
 import 'package:primal/compiler/library/casting/to_string.dart';
+import 'package:primal/compiler/library/comparison/eq.dart';
+import 'package:primal/compiler/library/comparison/neq.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/error.dart';
-import 'package:primal/compiler/library/generic/eq.dart';
-import 'package:primal/compiler/library/generic/neq.dart';
+import 'package:primal/compiler/library/generic/concat.dart';
+import 'package:primal/compiler/library/generic/length.dart';
 import 'package:primal/compiler/library/numbers/abs.dart';
 import 'package:primal/compiler/library/numbers/add.dart';
 import 'package:primal/compiler/library/numbers/ceil.dart';
@@ -122,6 +124,10 @@ class StandardLibrary {
         Lowercase(),
         Trim(),
         Match(),
+
+        // Generic
+        Length(),
+        Concat(),
 
         // Casting
         ToNumber(),

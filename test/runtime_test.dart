@@ -267,7 +267,15 @@ void main() {
       checkResult(runtime, true);
     });
 
-    // -----------------------------------
+    test('Generic:String (length)', () {
+      final Runtime runtime = getRuntime('main = length("primal")');
+      checkResult(runtime, 6);
+    });
+
+    test('Generic:String (concat)', () {
+      final Runtime runtime = getRuntime('main = concat("Hello", ", world!")');
+      checkResult(runtime, '"Hello, world!"');
+    });
 
     test('Casting (toNumber)', () {
       final Runtime runtime = getRuntime('main = toNumber("12.5")');
