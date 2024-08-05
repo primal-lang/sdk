@@ -97,6 +97,11 @@ void main() {
       checkResult(runtime, -0.625);
     });
 
+    test('Numbers (divInt)', () {
+      final Runtime runtime = getRuntime('main = divInt(7, 3)');
+      checkResult(runtime, 2);
+    });
+
     test('Numbers (mod)', () {
       final Runtime runtime = getRuntime('main = mod(7, 5)');
       checkResult(runtime, 2);

@@ -2,6 +2,7 @@
 
 length(a: [T]): num
 concat(a: [T], b: [T]): [T]
+
 isEmpty(a: [T]): bool
 isNotEmpty(a: [T]): bool
 contains(a: [T], b: T): bool
