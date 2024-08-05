@@ -277,6 +277,16 @@ void main() {
       checkResult(runtime, '"Hello, world!"');
     });
 
+    test('Generic:String (first)', () {
+      final Runtime runtime = getRuntime('main = first("Hello")');
+      checkResult(runtime, '"H"');
+    });
+
+    test('Generic:String (last)', () {
+      final Runtime runtime = getRuntime('main = last("Hello")');
+      checkResult(runtime, '"o"');
+    });
+
     test('Casting (toNumber)', () {
       final Runtime runtime = getRuntime('main = toNumber("12.5")');
       checkResult(runtime, 12.5);
