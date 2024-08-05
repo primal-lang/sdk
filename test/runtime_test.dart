@@ -222,6 +222,28 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('Strings (subString)', () {
+      final Runtime runtime = getRuntime('main = subString("hola", 1, 3)');
+      checkResult(runtime, '"ol"');
+    });
+
+    test('Strings (startsWith)', () {
+      final Runtime runtime = getRuntime('main = startsWith("hola", "ho")');
+      checkResult(runtime, true);
+    });
+
+    test('Strings (endsWith)', () {
+      final Runtime runtime = getRuntime('main = endsWith("hola", "la")');
+      checkResult(runtime, true);
+    });
+
+    test('Strings (replace)', () {
+      final Runtime runtime = getRuntime('main = replace("banana", "na", "to")');
+      checkResult(runtime, '"batoto"');
+    });
+
+    // -----------------------------------
+
     test('Casting (toNumber)', () {
       final Runtime runtime = getRuntime('main = toNumber("12.5")');
       checkResult(runtime, 12.5);

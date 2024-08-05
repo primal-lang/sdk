@@ -4,14 +4,14 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class SubString extends NativeFunctionPrototype {
-  SubString()
+class Replace extends NativeFunctionPrototype {
+  Replace()
       : super(
-          name: 'subString',
+          name: 'replace',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
-            Parameter.number('c'),
+            Parameter.string('a'),
+            Parameter.string('b'),
+            Parameter.string('c'),
           ],
         );
 
@@ -22,10 +22,9 @@ class SubString extends NativeFunctionPrototype {
     final Reducible c = arguments.get('c').reduce();
 
     if ((a is StringReducibleValue) &&
-        (b is NumberReducibleValue) &&
-        (c is NumberReducibleValue)) {
-      return StringReducibleValue(
-          a.value.substring(b.value.toInt(), c.value.toInt()));
+        (b is StringReducibleValue) &&
+        (c is StringReducibleValue)) {
+      return StringReducibleValue(a.value.replaceAll(b.value, c.value));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

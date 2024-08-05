@@ -1,8 +1,8 @@
 # String
 
-subString(text: string, start: num, length: num): string
-startsWith(text: string, pattern: string): bool
-endsWith(text: string, pattern: string): bool
+    subString(text: string, start: num, length: num): string
+    startsWith(text: string, pattern: string): bool
+    endsWith(text: string, pattern: string): bool
 replace(text: string, old: string, new: string): string
 uppercase(text: string): string
 lowercase(text: string): string
