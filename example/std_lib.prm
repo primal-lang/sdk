@@ -3,12 +3,9 @@
 isEmpty(a: [T]): bool
 isNotEmpty(a: [T]): bool
 contains(a: [T], b: T): bool
-first(a: [T]): T
-last(a: [T]): T
 tail(a: [T]): [T]
 take(a: [T], b: num): [T]
 drop(a: [T], b: num): [T]
-at(a: [T], b: num): T
 addFirst(a: [T], b: T): [T]
 addLast(a: [T], b: T): [T]
 remove(a: [T], b: num): [T]

@@ -287,6 +287,11 @@ void main() {
       checkResult(runtime, '"o"');
     });
 
+    test('Generic:String (at)', () {
+      final Runtime runtime = getRuntime('main = at("Hello", 1)');
+      checkResult(runtime, '"e"');
+    });
+
     test('Casting (toNumber)', () {
       final Runtime runtime = getRuntime('main = toNumber("12.5")');
       checkResult(runtime, 12.5);

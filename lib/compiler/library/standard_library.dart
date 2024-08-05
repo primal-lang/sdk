@@ -19,6 +19,7 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/error.dart';
+import 'package:primal/compiler/library/generic/at.dart';
 import 'package:primal/compiler/library/generic/concat.dart';
 import 'package:primal/compiler/library/generic/first.dart';
 import 'package:primal/compiler/library/generic/last.dart';
@@ -132,6 +133,7 @@ class StandardLibrary {
         Concat(),
         First(),
         Last(),
+        At(),
 
         // Casting
         ToNumber(),
