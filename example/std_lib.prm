@@ -1,31 +1,48 @@
 # String
 
+length(a: [T]): num
+concat(a: [T], b: [T]): [T]
+isEmpty(a: [T]): bool
+isNotEmpty(a: [T]): bool
+contains(a: [T], b: T): bool
+first(a: [T]): T
+last(a: [T]): T
+tail(a: [T]): [T]
+take(a: [T], b: num): [T]
+drop(a: [T], b: num): [T]
+at(a: [T], b: num): T
+addFirst(a: [T], b: T): [T]
+addLast(a: [T], b: T): [T]
+remove(a: [T], b: num): [T]
+removeFirst(a: [T]): [T]
+removeLast(a: [T]): [T]
+reverse(a: [T]): [T]
+
 split(text: string, delimiter: string): [string]
 format(text: string, ...args): string
 
 # List
 
-list(value1: T, ...): [T] -> list(index: num): T
-length(list: [T]): num
-concat(list1: [T], list2: [T]): [T]
-isEmpty(list: [T]): bool
-isNotEmpty(list: [T]): bool
-contains(a: T, list: [T]): bool
-join(list: [T], delimiter: string): string
-first(list: [T]): T
-last(list: [T]): T
-tail(list: [T]): [T]
-take(a: num, list: [T]): [T]
-drop(a: num, list: [T]): [T]
-addFirst(a: T, list: [T]): [T]
-addLast(a: T, list: [T]): [T]
-push(a: T, list[T]): [T]
-pop(list: [T]): [T]
-remove(index: num, list: [T]): [T]
-removeFirst(list: [T]): [T]
-removeLast(list: [T]): [T]
-reverse(list: [T]): [T]
-clear(object: [T]): [T]
+list(a: T, ...): [T] -> list(index: num): T
+join(a: [T], b: string): string
+
+length(a: [T]): num
+concat(a: [T], b: [T]): [T]
+isEmpty(a: [T]): bool
+isNotEmpty(a: [T]): bool
+contains(a: [T], b: T): bool
+first(a: [T]): T
+last(a: [T]): T
+tail(a: [T]): [T]
+take(a: [T], b: num): [T]
+drop(a: [T], b: num): [T]
+at(a: [T], b: num): T
+addFirst(a: [T], b: T): [T]
+addLast(a: [T], b: T): [T]
+remove(a: [T], b: num): [T]
+removeFirst(a: [T]): [T]
+removeLast(a: [T]): [T]
+reverse(a: [T]): [T]
 
 # Object
 
