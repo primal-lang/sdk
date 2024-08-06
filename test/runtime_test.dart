@@ -287,6 +287,11 @@ void main() {
       checkResult(runtime, '"o"');
     });
 
+    test('Generic:String (init)', () {
+      final Runtime runtime = getRuntime('main = init("Hello")');
+      checkResult(runtime, '"Hell"');
+    });
+
     test('Generic:String (tail)', () {
       final Runtime runtime = getRuntime('main = tail("Hello")');
       checkResult(runtime, '"ello"');

@@ -1,16 +1,13 @@
 # String
 
+    init(a: [T]): [T]
+    tail(a: [T]): [T]
     isEmpty(a: [T]): bool
     isNotEmpty(a: [T]): bool
     contains(a: [T], b: T): bool
-    tail(a: [T]): [T]
-take(a: [T], b: num): [T]
-drop(a: [T], b: num): [T]
-addFirst(a: [T], b: T): [T]
-addLast(a: [T], b: T): [T]
+    take(a: [T], b: num): [T]
+    drop(a: [T], b: num): [T]
 remove(a: [T], b: num): [T]
-removeFirst(a: [T]): [T]
-removeLast(a: [T]): [T]
 reverse(a: [T]): [T]
 
 split(text: string, delimiter: string): [string]
@@ -28,15 +25,14 @@ isNotEmpty(a: [T]): bool
 contains(a: [T], b: T): bool
 first(a: [T]): T
 last(a: [T]): T
+init(a: [T]): [T]
 tail(a: [T]): [T]
 take(a: [T], b: num): [T]
 drop(a: [T], b: num): [T]
 at(a: [T], b: num): T
-addFirst(a: [T], b: T): [T]
-addLast(a: [T], b: T): [T]
+addStart(a: [T], b: T): [T]
+addEnd(a: [T], b: T): [T]
 remove(a: [T], b: num): [T]
-removeFirst(a: [T]): [T]
-removeLast(a: [T]): [T]
 reverse(a: [T]): [T]
 
 # Object

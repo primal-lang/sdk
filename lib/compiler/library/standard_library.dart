@@ -24,6 +24,7 @@ import 'package:primal/compiler/library/generic/concat.dart';
 import 'package:primal/compiler/library/generic/contains.dart';
 import 'package:primal/compiler/library/generic/drop.dart';
 import 'package:primal/compiler/library/generic/first.dart';
+import 'package:primal/compiler/library/generic/init.dart';
 import 'package:primal/compiler/library/generic/is_empty.dart';
 import 'package:primal/compiler/library/generic/is_not_empty.dart';
 import 'package:primal/compiler/library/generic/last.dart';
@@ -139,6 +140,7 @@ class StandardLibrary {
         Concat(),
         First(),
         Last(),
+        Init(),
         Tail(),
         At(),
         IsEmpty(),
