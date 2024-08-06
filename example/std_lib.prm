@@ -7,8 +7,8 @@
     contains(a: [T], b: T): bool
     take(a: [T], b: num): [T]
     drop(a: [T], b: num): [T]
-remove(a: [T], b: num): [T]
-reverse(a: [T]): [T]
+    remove(a: [T], b: num): [T]
+    reverse(a: [T]): [T]
 
 split(text: string, delimiter: string): [string]
 format(text: string, ...args): string

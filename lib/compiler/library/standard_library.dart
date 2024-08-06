@@ -29,6 +29,8 @@ import 'package:primal/compiler/library/generic/is_empty.dart';
 import 'package:primal/compiler/library/generic/is_not_empty.dart';
 import 'package:primal/compiler/library/generic/last.dart';
 import 'package:primal/compiler/library/generic/length.dart';
+import 'package:primal/compiler/library/generic/remove.dart';
+import 'package:primal/compiler/library/generic/reverse.dart';
 import 'package:primal/compiler/library/generic/tail.dart';
 import 'package:primal/compiler/library/generic/take.dart';
 import 'package:primal/compiler/library/numbers/abs.dart';
@@ -148,6 +150,8 @@ class StandardLibrary {
         Contains(),
         Take(),
         Drop(),
+        Remove(),
+        Reverse(),
 
         // Casting
         ToNumber(),

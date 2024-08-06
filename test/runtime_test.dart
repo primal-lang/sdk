@@ -327,6 +327,16 @@ void main() {
       checkResult(runtime, '"llo"');
     });
 
+    test('Generic:String (remove)', () {
+      final Runtime runtime = getRuntime('main = remove("Hello", 4)');
+      checkResult(runtime, '"Hell"');
+    });
+
+    test('Generic:String (reverse)', () {
+      final Runtime runtime = getRuntime('main = reverse("Hello")');
+      checkResult(runtime, '"olleH"');
+    });
+
     test('Casting (toNumber)', () {
       final Runtime runtime = getRuntime('main = toNumber("12.5")');
       checkResult(runtime, 12.5);
