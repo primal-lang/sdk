@@ -1,8 +1,8 @@
 # String
 
-isEmpty(a: [T]): bool
-isNotEmpty(a: [T]): bool
-contains(a: [T], b: T): bool
+    isEmpty(a: [T]): bool
+    isNotEmpty(a: [T]): bool
+    contains(a: [T], b: T): bool
 tail(a: [T]): [T]
 take(a: [T], b: num): [T]
 drop(a: [T], b: num): [T]

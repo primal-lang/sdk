@@ -292,6 +292,21 @@ void main() {
       checkResult(runtime, '"e"');
     });
 
+    test('Generic:String (isEmpty)', () {
+      final Runtime runtime = getRuntime('main = isEmpty("Hello")');
+      checkResult(runtime, false);
+    });
+
+    test('Generic:String (isNotEmpty)', () {
+      final Runtime runtime = getRuntime('main = isEmpty("Hello")');
+      checkResult(runtime, true);
+    });
+
+    test('Generic:String (contains)', () {
+      final Runtime runtime = getRuntime('main = contains("Hello", "ell")');
+      checkResult(runtime, true);
+    });
+
     test('Casting (toNumber)', () {
       final Runtime runtime = getRuntime('main = toNumber("12.5")');
       checkResult(runtime, 12.5);

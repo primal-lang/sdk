@@ -21,7 +21,10 @@ import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/error.dart';
 import 'package:primal/compiler/library/generic/at.dart';
 import 'package:primal/compiler/library/generic/concat.dart';
+import 'package:primal/compiler/library/generic/contains.dart';
 import 'package:primal/compiler/library/generic/first.dart';
+import 'package:primal/compiler/library/generic/is_empty.dart';
+import 'package:primal/compiler/library/generic/is_not_empty.dart';
 import 'package:primal/compiler/library/generic/last.dart';
 import 'package:primal/compiler/library/generic/length.dart';
 import 'package:primal/compiler/library/numbers/abs.dart';
@@ -134,6 +137,9 @@ class StandardLibrary {
         First(),
         Last(),
         At(),
+        IsEmpty(),
+        IsNotEmpty(),
+        Contains(),
 
         // Casting
         ToNumber(),
