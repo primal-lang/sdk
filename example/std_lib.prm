@@ -1,15 +1,5 @@
 # String
 
-    init(a: [T]): [T]
-    tail(a: [T]): [T]
-    isEmpty(a: [T]): bool
-    isNotEmpty(a: [T]): bool
-    contains(a: [T], b: T): bool
-    take(a: [T], b: num): [T]
-    drop(a: [T], b: num): [T]
-    remove(a: [T], b: num): [T]
-    reverse(a: [T]): [T]
-
 split(text: string, delimiter: string): [string]
 format(text: string, ...args): string
 
@@ -17,7 +7,6 @@ format(text: string, ...args): string
 
 list(a: T, ...): [T] -> list(index: num): T
 join(a: [T], b: string): string
-
 length(a: [T]): num
 concat(a: [T], b: [T]): [T]
 isEmpty(a: [T]): bool
