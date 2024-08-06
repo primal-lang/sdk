@@ -287,6 +287,11 @@ void main() {
       checkResult(runtime, '"o"');
     });
 
+    test('Generic:String (tail)', () {
+      final Runtime runtime = getRuntime('main = tail("Hello")');
+      checkResult(runtime, '"ello"');
+    });
+
     test('Generic:String (at)', () {
       final Runtime runtime = getRuntime('main = at("Hello", 1)');
       checkResult(runtime, '"e"');
@@ -298,13 +303,23 @@ void main() {
     });
 
     test('Generic:String (isNotEmpty)', () {
-      final Runtime runtime = getRuntime('main = isEmpty("Hello")');
+      final Runtime runtime = getRuntime('main = isNotEmpty("Hello")');
       checkResult(runtime, true);
     });
 
     test('Generic:String (contains)', () {
       final Runtime runtime = getRuntime('main = contains("Hello", "ell")');
       checkResult(runtime, true);
+    });
+
+    test('Generic:String (take)', () {
+      final Runtime runtime = getRuntime('main = take("Hello", 4)');
+      checkResult(runtime, '"Hell"');
+    });
+
+    test('Generic:String (drop)', () {
+      final Runtime runtime = getRuntime('main = drop("Hello", 2)');
+      checkResult(runtime, '"llo"');
     });
 
     test('Casting (toNumber)', () {

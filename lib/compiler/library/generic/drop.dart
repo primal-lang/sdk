@@ -4,13 +4,13 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class Contains extends NativeFunctionPrototype {
-  Contains()
+class Drop extends NativeFunctionPrototype {
+  Drop()
       : super(
-          name: 'contains',
+          name: 'drop',
           parameters: [
             Parameter.any('a'),
-            Parameter.any('b'),
+            Parameter.number('b'),
           ],
         );
 
@@ -19,8 +19,9 @@ class Contains extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
 
-    if ((a is StringReducibleValue) && (b is StringReducibleValue)) {
-      return BooleanReducibleValue(a.value.contains(b.value));
+    if ((a is StringReducibleValue) && (b is NumberReducibleValue)) {
+      return StringReducibleValue(
+          a.value.substring(b.value.toInt(), a.value.length));
     } else {
       throw InvalidArgumentTypesError(
         function: name,
