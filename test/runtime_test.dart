@@ -227,8 +227,8 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('Strings (subString)', () {
-      final Runtime runtime = getRuntime('main = subString("hola", 1, 3)');
+    test('Strings (substring)', () {
+      final Runtime runtime = getRuntime('main = substring("hola", 1, 3)');
       checkResult(runtime, '"ol"');
     });
 

@@ -68,7 +68,7 @@ import 'package:primal/compiler/library/strings/lowercase.dart';
 import 'package:primal/compiler/library/strings/match.dart';
 import 'package:primal/compiler/library/strings/replace.dart';
 import 'package:primal/compiler/library/strings/starts_with.dart';
-import 'package:primal/compiler/library/strings/sub_string.dart';
+import 'package:primal/compiler/library/strings/substring.dart';
 import 'package:primal/compiler/library/strings/trim.dart';
 import 'package:primal/compiler/library/strings/uppercase.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
@@ -128,7 +128,7 @@ class StandardLibrary {
         Not(),
 
         // Strings
-        SubString(),
+        Substring(),
         StartsWith(),
         EndsWith(),
         Replace(),
