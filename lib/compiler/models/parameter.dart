@@ -28,4 +28,7 @@ class Parameter {
         name: name,
         type: const AnyType(),
       );
+
+  @override
+  String toString() => name;
 }
