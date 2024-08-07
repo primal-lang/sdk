@@ -6,7 +6,7 @@ class Mapper {
     final Map<String, FunctionPrototype> result = {};
 
     for (final FunctionPrototype function in functions) {
-      result['${function.name}/${function.parameters.length}'] = function;
+      result[function.name] = function;
     }
 
     return result;

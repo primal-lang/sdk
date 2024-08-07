@@ -14,11 +14,7 @@ class Runtime {
     SCOPE = Scope(intermediateCode.functions);
   }
 
-  FunctionPrototype? get main {
-    final FunctionPrototype? main = intermediateCode.functions['main/0'];
-
-    return ((main != null) && main.parameters.isEmpty) ? main : null;
-  }
+  FunctionPrototype? get main => intermediateCode.functions['main'];
 
   bool get hasMain => main != null;
 

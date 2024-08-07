@@ -16,9 +16,7 @@ abstract class FunctionPrototype {
   List<String> get parameterTypes =>
       parameters.map((e) => e.type.toString()).toList();
 
-  bool equalSignature(FunctionPrototype function) =>
-      (function.name == name) &&
-      (function.parameters.length == parameters.length);
+  bool equalSignature(FunctionPrototype function) => function.name == name;
 }
 
 class CustomFunctionPrototype extends FunctionPrototype {
