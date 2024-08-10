@@ -223,6 +223,40 @@ void main() {
       ]);
     });
 
+    test('Multi line comments', () {
+      final List<Token> tokens = getTokens('''/*
+  This is a
+  multiline comment
+  * almost closing!
+  but not yet
+*/
+pi = 3.14
+''');
+      checkTokens(tokens, [
+        SymbolToken(const Lexeme(
+          value: 'pi',
+          location: Location(
+            row: 7,
+            column: 1,
+          ),
+        )),
+        EqualsToken(const Lexeme(
+          value: '=',
+          location: Location(
+            row: 7,
+            column: 4,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '3.14',
+          location: Location(
+            row: 7,
+            column: 6,
+          ),
+        )),
+      ]);
+    });
+
     test('Constant declaration', () {
       final List<Token> tokens = getTokens('pi = 3.14');
       checkTokens(tokens, [

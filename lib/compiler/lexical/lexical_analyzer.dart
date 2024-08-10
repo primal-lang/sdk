@@ -51,8 +51,8 @@ class InitState extends State<Character, void> {
       return IntegerState(input.lexeme);
     } else if (input.isLetter) {
       return SymbolState(input.lexeme);
-    } else if (input.isSlash) {
-      return SlashState(input.lexeme);
+    } else if (input.isForewardSlash) {
+      return ForwardSlashState(input.lexeme);
     } else if (input.isSeparator) {
       return ResultState([input.separator]);
     } else {
@@ -61,26 +61,54 @@ class InitState extends State<Character, void> {
   }
 }
 
-class SlashState extends State<Character, Lexeme> {
-  const SlashState(super.output);
+class ForwardSlashState extends State<Character, Lexeme> {
+  const ForwardSlashState(super.output);
 
   @override
   State process(Character input, Character? next) {
-    if (input.isSlash) {
-      return const CommentState();
+    if (input.isForewardSlash) {
+      return const SingleLineCommentState();
+    } else if (input.isAsterisk) {
+      return const StartMultiLineCommentState();
     } else {
       return ResultState([SlashToken(output)]);
     }
   }
 }
 
-class CommentState extends State<Character, void> {
-  const CommentState([super.output]);
+class SingleLineCommentState extends State<Character, void> {
+  const SingleLineCommentState([super.output]);
 
   @override
   State process(Character input, Character? next) {
     if (!input.isNewLine) {
-      return const CommentState();
+      return const SingleLineCommentState();
+    } else {
+      return const InitState();
+    }
+  }
+}
+
+class StartMultiLineCommentState extends State<Character, void> {
+  const StartMultiLineCommentState([super.output]);
+
+  @override
+  State process(Character input, Character? next) {
+    if (!input.isAsterisk) {
+      return const StartMultiLineCommentState();
+    } else {
+      return const ClosingMultiLineCommentState();
+    }
+  }
+}
+
+class ClosingMultiLineCommentState extends State<Character, void> {
+  const ClosingMultiLineCommentState([super.output]);
+
+  @override
+  State process(Character input, Character? next) {
+    if (!input.isForewardSlash) {
+      return const ClosingMultiLineCommentState();
     } else {
       return const InitState();
     }

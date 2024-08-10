@@ -73,7 +73,7 @@ void main() {
       expect(true, equals('='.isEquals));
       expect(true, equals('('.isOpenParenthesis));
       expect(true, equals(')'.isCloseParenthesis));
-      expect(true, equals('/'.isSlash));
+      expect(true, equals('/'.isForewardSlash));
       expect(true, equals('\n'.isNewLine));
     });
 

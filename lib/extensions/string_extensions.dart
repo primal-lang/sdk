@@ -25,7 +25,11 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_CLOSE_PARENTHESIS = RegExp(r'\)');
 
-  static final RegExp REGEX_SLASH = RegExp(r'/');
+  static final RegExp REGEX_FORWARD_SLASH = RegExp(r'/');
+
+  static final RegExp REGEX_BACKWARD_SLASH = RegExp(r'\\');
+
+  static final RegExp REGEX_ASTERISK = RegExp(r'\*');
 
   static final RegExp REGEX_BOOLEAN = RegExp(r'true|false');
 
@@ -53,7 +57,11 @@ extension StringExtensions on String {
 
   bool get isCloseParenthesis => REGEX_CLOSE_PARENTHESIS.hasMatch(this);
 
-  bool get isSlash => REGEX_SLASH.hasMatch(this);
+  bool get isForewardSlash => REGEX_FORWARD_SLASH.hasMatch(this);
+
+  bool get isBackwardSlash => REGEX_BACKWARD_SLASH.hasMatch(this);
+
+  bool get isAsterisk => REGEX_ASTERISK.hasMatch(this);
 
   bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
 
