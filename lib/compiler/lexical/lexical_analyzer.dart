@@ -55,9 +55,14 @@ class InitState extends State<Character, void> {
       return ForwardSlashState(input.lexeme);
     } else if (input.isSeparator) {
       return ResultState([input.separator]);
+    } else if (input.isUnderscore) {
+      throw InvalidCharacterError(input);
     } else {
       return this;
     }
+
+    // TOOD(momo): need to handle all the cases
+    // Make Character a class with subclasses
   }
 }
 
