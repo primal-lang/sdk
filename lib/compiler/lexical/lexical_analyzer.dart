@@ -108,7 +108,7 @@ class ClosingMultiLineCommentState extends State<Character, void> {
   @override
   State process(Character input, Character? next) {
     if (!input.isForewardSlash) {
-      return const ClosingMultiLineCommentState();
+      return const StartMultiLineCommentState();
     } else {
       return const InitState();
     }
