@@ -61,6 +61,14 @@ class EqualsToken extends Token<String> {
         );
 }
 
+class SlashToken extends Token<String> {
+  SlashToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
+
 class OpenParenthesisToken extends Token<String> {
   OpenParenthesisToken(Lexeme lexeme)
       : super(

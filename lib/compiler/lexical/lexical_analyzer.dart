@@ -51,12 +51,25 @@ class InitState extends State<Character, void> {
       return IntegerState(input.lexeme);
     } else if (input.isLetter) {
       return SymbolState(input.lexeme);
-    } else if (input.isHashtag) {
-      return const CommentState();
+    } else if (input.isSlash) {
+      return SlashState(input.lexeme);
     } else if (input.isSeparator) {
       return ResultState([input.separator]);
     } else {
       return this;
+    }
+  }
+}
+
+class SlashState extends State<Character, Lexeme> {
+  const SlashState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.isSlash) {
+      return const CommentState();
+    } else {
+      return ResultState([SlashToken(output)]);
     }
   }
 }

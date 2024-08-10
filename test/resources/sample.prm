@@ -8,19 +8,19 @@ rationalNumnber = pi
 
 isToday = true
 
-# Returns true if x is equal to zero
+// Returns true if x is equal to zero
 isZero(x) = eq(x, 0)
 
-# Returns true if x is an even number
+// Returns true if x is an even number
 isEven(x) = isZero(mod(x, 2))
 
-# Returns true if x is an odd number
+// Returns true if x is an odd number
 isOdd(x) = not(isEven(x))
 
 isBiggerThan10(x) = if(
-    # if x is greater than 10, return true
+    // if x is greater than 10, return true
     gt(x, 10), true,
-    false # otherwise, return false
+    false // otherwise, return false
 )
 
 factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))

@@ -137,7 +137,7 @@ void main() {
 
     test('Invalid symbol', () {
       try {
-        getTokens('func#');
+        getTokens('func&');
       } catch (e) {
         expect(e, isA<InvalidCharacterError>());
       }
@@ -190,6 +190,34 @@ void main() {
           location: Location(
             row: 1,
             column: 1,
+          ),
+        )),
+      ]);
+    });
+
+    test('Single line comments', () {
+      final List<Token> tokens =
+          getTokens('// Comment 1\npi = 3.14 // Comment 2\n// Comment 3');
+      checkTokens(tokens, [
+        SymbolToken(const Lexeme(
+          value: 'pi',
+          location: Location(
+            row: 2,
+            column: 1,
+          ),
+        )),
+        EqualsToken(const Lexeme(
+          value: '=',
+          location: Location(
+            row: 2,
+            column: 4,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '3.14',
+          location: Location(
+            row: 2,
+            column: 6,
           ),
         )),
       ]);

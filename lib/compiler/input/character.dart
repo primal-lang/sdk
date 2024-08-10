@@ -45,7 +45,7 @@ class Character extends Localized {
 
   bool get isDot => value.isDot;
 
-  bool get isHashtag => value.isHashtag;
+  bool get isSlash => value.isSlash;
 
   bool get isNewLine => value.isNewLine;
 
