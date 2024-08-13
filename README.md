@@ -11,6 +11,3 @@ main = pi
 * Bug
 _test(s) = s
 main = test(2)
-
-* Stop using scope as static
-* Accept multiple parameters if, sum, etc
