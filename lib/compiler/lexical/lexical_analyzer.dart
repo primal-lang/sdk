@@ -53,16 +53,11 @@ class InitState extends State<Character, void> {
       return SymbolState(input.lexeme);
     } else if (input.isForewardSlash) {
       return ForwardSlashState(input.lexeme);
-    } else if (input.isSeparator) {
-      return ResultState([input.separator]);
-    } else if (input.isUnderscore) {
-      throw InvalidCharacterError(input);
-    } else {
+    } else if (input.isWhitespace) {
       return this;
+    } else {
+      return ResultState([input.token]);
     }
-
-    // TOOD(momo): need to handle all the cases
-    // Make Character a class with subclasses
   }
 }
 
@@ -172,7 +167,7 @@ class IntegerState extends State<Character, Lexeme> {
       final List<Token> tokens = [NumberToken(output)];
 
       if (input.isSeparator) {
-        tokens.add(input.separator);
+        tokens.add(input.token);
       }
 
       return ResultState(tokens);
@@ -193,7 +188,7 @@ class DecimalState extends State<Character, Lexeme> {
       final List<Token> tokens = [NumberToken(output)];
 
       if (input.isSeparator) {
-        tokens.add(input.separator);
+        tokens.add(input.token);
       }
 
       return ResultState(tokens);
@@ -220,7 +215,7 @@ class SymbolState extends State<Character, Lexeme> {
       }
 
       if (input.isSeparator) {
-        tokens.add(input.separator);
+        tokens.add(input.token);
       }
 
       return ResultState(tokens);

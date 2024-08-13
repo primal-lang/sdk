@@ -1,3 +1,4 @@
+import 'package:primal/compiler/errors/lexical_error.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
@@ -39,7 +40,7 @@ void main() {
         getFunctions('_isEven = true');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<InvalidTokenError>());
+        expect(e, isA<InvalidLexemeError>());
       }
     });
 
@@ -48,7 +49,7 @@ void main() {
         getFunctions('_isEven(n) = n');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<InvalidTokenError>());
+        expect(e, isA<InvalidLexemeError>());
       }
     });
 
@@ -88,7 +89,7 @@ void main() {
       }
     });
 
-    test('Invalid function definition 10', () {
+    test('Invalid function definition 1', () {
       try {
         getFunctions('isEvent(x), = true');
         fail('Should fail');
@@ -111,7 +112,7 @@ void main() {
 
     test('Literal single quoted string definition', () {
       final List<FunctionDefinition> functions =
-          getFunctions("greeting = 'Goodbye, world!';");
+          getFunctions("greeting = 'Goodbye, world!'");
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'greeting',

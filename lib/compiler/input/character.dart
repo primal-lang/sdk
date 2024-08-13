@@ -17,7 +17,7 @@ class Character extends Localized {
         location: location,
       );
 
-  Token get separator {
+  Token get token {
     if (value.isComma) {
       return CommaToken(lexeme);
     } else if (value.isEquals) {
@@ -56,6 +56,8 @@ class Character extends Localized {
   bool get isSeparator => value.isSeparator;
 
   bool get isDelimiter => value.isDelimiter;
+
+  bool get isWhitespace => value.isWhitespace;
 
   @override
   String toString() => '"$value" at $location';

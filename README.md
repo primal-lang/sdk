@@ -7,7 +7,3 @@
 * Bug
 pi = 3.14
 main = pi
-
-* Bug
-_test(s) = s
-main = test(2)
