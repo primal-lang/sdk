@@ -1,3 +1,5 @@
 foo(n) = mul(n, 2)
 
-main = foo(5)
+bar(n) = foo(n)
+
+main = bar(3)
