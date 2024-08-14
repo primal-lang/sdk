@@ -1,4 +1,7 @@
-# Primal
+<p align="center">
+  <a href="https://primal-lang.org"><img src="https://primal-lang.org/img/logo.png" alt="Primal" height=170 style="border-radius: 50%"></a>
+</p>
+<h1 align="center">Primal</h1>
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/primal-lang/sdk/blob/main/LICENSE)
 [![Latest](https://img.shields.io/badge/Latest-0.0.1-blue)](https://github.com/primal-lang/sdk/releases/tag/v0.0.1)
