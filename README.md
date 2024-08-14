@@ -46,13 +46,13 @@ A function definition is composed of:
 
 Here is an example of a function with parameters:
 
-```primal
+```javascript
 cube(n) = pow(n, 3)
 ```
 
 And here is an example of a function without parameters:
 
-```primal
+```javascript
 pi = 3.14159
 ```
 
