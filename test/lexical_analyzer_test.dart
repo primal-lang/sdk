@@ -83,6 +83,32 @@ void main() {
       }
     });
 
+    test('Valid boolean true', () {
+      final List<Token> tokens = getTokens('true');
+      checkTokens(tokens, [
+        BooleanToken(const Lexeme(
+          value: 'true',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+      ]);
+    });
+
+    test('Valid boolean false', () {
+      final List<Token> tokens = getTokens('false');
+      checkTokens(tokens, [
+        BooleanToken(const Lexeme(
+          value: 'false',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+      ]);
+    });
+
     test('Symbol', () {
       final List<Token> tokens = getTokens('isEven');
       checkTokens(tokens, [
@@ -122,11 +148,11 @@ void main() {
       ]);
     });
 
-    test('Symbol complex', () {
-      final List<Token> tokens = getTokens('isToday_butNot31st');
+    test('Symbol with dot', () {
+      final List<Token> tokens = getTokens('is.even');
       checkTokens(tokens, [
         SymbolToken(const Lexeme(
-          value: 'isToday_butNot31st',
+          value: 'is.even',
           location: Location(
             row: 1,
             column: 1,
@@ -135,22 +161,144 @@ void main() {
       ]);
     });
 
-    test('Invalid symbol', () {
-      try {
-        getTokens('func&');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
-    });
-
-    test('Comma', () {
-      final List<Token> tokens = getTokens(',');
+    test('Symbol complex', () {
+      final List<Token> tokens = getTokens('isToday_butNot.31st');
       checkTokens(tokens, [
-        CommaToken(const Lexeme(
-          value: ',',
+        SymbolToken(const Lexeme(
+          value: 'isToday_butNot.31st',
           location: Location(
             row: 1,
             column: 1,
+          ),
+        )),
+      ]);
+    });
+
+    test('Arithmetic operators', () {
+      final List<Token> tokens = getTokens('- + / \\ * % ^');
+      checkTokens(tokens, [
+        MinusToken(const Lexeme(
+          value: '-',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        PlusToken(const Lexeme(
+          value: '+',
+          location: Location(
+            row: 1,
+            column: 3,
+          ),
+        )),
+        ForwardSlashToken(const Lexeme(
+          value: '/',
+          location: Location(
+            row: 1,
+            column: 5,
+          ),
+        )),
+        BackwardSlashToken(const Lexeme(
+          value: '\\',
+          location: Location(
+            row: 1,
+            column: 7,
+          ),
+        )),
+        AsteriskToken(const Lexeme(
+          value: '*',
+          location: Location(
+            row: 1,
+            column: 10,
+          ),
+        )),
+        PercentToken(const Lexeme(
+          value: '%',
+          location: Location(
+            row: 1,
+            column: 12,
+          ),
+        )),
+        CaretToken(const Lexeme(
+          value: '^',
+          location: Location(
+            row: 1,
+            column: 14,
+          ),
+        )),
+      ]);
+    });
+
+    test('Logical operators', () {
+      final List<Token> tokens = getTokens('| & !');
+      checkTokens(tokens, [
+        PipeToken(const Lexeme(
+          value: '|',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        AmpersandToken(const Lexeme(
+          value: '&',
+          location: Location(
+            row: 1,
+            column: 3,
+          ),
+        )),
+        BangToken(const Lexeme(
+          value: '!',
+          location: Location(
+            row: 1,
+            column: 5,
+          ),
+        )),
+      ]);
+    });
+
+    test('Comparison operators', () {
+      final List<Token> tokens = getTokens('== != > >= < <=');
+      checkTokens(tokens, [
+        EqualToken(const Lexeme(
+          value: '=',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        NotEqualToken(const Lexeme(
+          value: '!=',
+          location: Location(
+            row: 1,
+            column: 4,
+          ),
+        )),
+        GreaterThanToken(const Lexeme(
+          value: '>',
+          location: Location(
+            row: 1,
+            column: 7,
+          ),
+        )),
+        GreaterEqualThanToken(const Lexeme(
+          value: '>=',
+          location: Location(
+            row: 1,
+            column: 10,
+          ),
+        )),
+        LessThanToken(const Lexeme(
+          value: '<',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        LessEqualThanToken(const Lexeme(
+          value: '<=',
+          location: Location(
+            row: 1,
+            column: 4,
           ),
         )),
       ]);
@@ -159,8 +307,21 @@ void main() {
     test('Equals', () {
       final List<Token> tokens = getTokens('=');
       checkTokens(tokens, [
-        EqualsToken(const Lexeme(
+        AssignToken(const Lexeme(
           value: '=',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+      ]);
+    });
+
+    test('Comma', () {
+      final List<Token> tokens = getTokens(',');
+      checkTokens(tokens, [
+        CommaToken(const Lexeme(
+          value: ',',
           location: Location(
             row: 1,
             column: 1,
@@ -206,7 +367,7 @@ void main() {
             column: 1,
           ),
         )),
-        EqualsToken(const Lexeme(
+        AssignToken(const Lexeme(
           value: '=',
           location: Location(
             row: 2,
@@ -240,7 +401,7 @@ pi = 3.14
             column: 1,
           ),
         )),
-        EqualsToken(const Lexeme(
+        AssignToken(const Lexeme(
           value: '=',
           location: Location(
             row: 7,
@@ -267,7 +428,7 @@ pi = 3.14
             column: 1,
           ),
         )),
-        EqualsToken(const Lexeme(
+        AssignToken(const Lexeme(
           value: '=',
           location: Location(
             row: 1,
@@ -294,7 +455,7 @@ pi = 3.14
             column: 1,
           ),
         )),
-        EqualsToken(const Lexeme(
+        AssignToken(const Lexeme(
           value: '=',
           location: Location(
             row: 1,
@@ -363,7 +524,7 @@ pi = 3.14
             column: 9,
           ),
         )),
-        EqualsToken(const Lexeme(
+        AssignToken(const Lexeme(
           value: '=',
           location: Location(
             row: 1,

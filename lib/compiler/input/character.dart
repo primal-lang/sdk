@@ -21,7 +21,7 @@ class Character extends Localized {
     if (value.isComma) {
       return CommaToken(lexeme);
     } else if (value.isEquals) {
-      return EqualsToken(lexeme);
+      return AssignToken(lexeme);
     } else if (value.isOpenParenthesis) {
       return OpenParenthesisToken(lexeme);
     } else if (value.isCloseParenthesis) {

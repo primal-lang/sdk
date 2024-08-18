@@ -79,7 +79,7 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input, Token? next) {
-    if (input is EqualsToken) {
+    if (input is AssignToken) {
       return FunctionBodyInitState(output, Stack());
     } else if (input is OpenParenthesisToken) {
       return FunctionWithParametersState(output);
@@ -135,7 +135,7 @@ class FunctionParametrizedState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input, Token? next) {
-    if (input is EqualsToken) {
+    if (input is AssignToken) {
       return FunctionBodyInitState(output, Stack());
     } else {
       throw InvalidTokenError(input);

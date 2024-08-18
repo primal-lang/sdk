@@ -136,7 +136,7 @@ enum Operator {
   non_equality;
 
   static Operator fromToken(Token token) {
-    if (token is EqualsToken) {
+    if (token is AssignToken) {
       return equality;
     }
 

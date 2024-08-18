@@ -71,7 +71,7 @@ class ForwardSlashState extends State<Character, Lexeme> {
     } else if (input.value.isAsterisk) {
       return const StartMultiLineCommentState();
     } else {
-      return ResultState([SlashToken(output)]);
+      return ResultState([ForwardSlashToken(output)]);
     }
   }
 }
@@ -203,7 +203,10 @@ class SymbolState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.value.isLetter || input.value.isDigit || input.value.isUnderscore) {
+    if (input.value.isLetter ||
+        input.value.isDigit ||
+        input.value.isDot ||
+        input.value.isUnderscore) {
       return SymbolState(output.add(input));
     } else if (input.value.isDelimiter) {
       final List<Token> tokens = [];
