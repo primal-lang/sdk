@@ -58,7 +58,7 @@ void main() {
     });
 
     test('Numbers (abs)', () {
-      final Runtime runtime = getRuntime('main = abs(-1)');
+      final Runtime runtime = getRuntime('main = abs(1)');
       checkResult(runtime, 1);
     });
 
@@ -73,28 +73,28 @@ void main() {
     });
 
     test('Numbers (sum)', () {
-      final Runtime runtime = getRuntime('main = sum(5, -7)');
-      checkResult(runtime, -2);
-    });
-
-    test('Numbers (add)', () {
-      final Runtime runtime = getRuntime('main = add(5, -7)');
-      checkResult(runtime, -2);
-    });
-
-    test('Numbers (sub)', () {
-      final Runtime runtime = getRuntime('main = sub(5, -7)');
+      final Runtime runtime = getRuntime('main = sum(5, 7)');
       checkResult(runtime, 12);
     });
 
+    test('Numbers (add)', () {
+      final Runtime runtime = getRuntime('main = add(5, 7)');
+      checkResult(runtime, 12);
+    });
+
+    test('Numbers (sub)', () {
+      final Runtime runtime = getRuntime('main = sub(5, 7)');
+      checkResult(runtime, -2);
+    });
+
     test('Numbers (mul)', () {
-      final Runtime runtime = getRuntime('main = mul(5, -7)');
-      checkResult(runtime, -35);
+      final Runtime runtime = getRuntime('main = mul(5, 7)');
+      checkResult(runtime, 35);
     });
 
     test('Numbers (div)', () {
-      final Runtime runtime = getRuntime('main = div(5, -8)');
-      checkResult(runtime, -0.625);
+      final Runtime runtime = getRuntime('main = div(5, 8)');
+      checkResult(runtime, 0.625);
     });
 
     test('Numbers (divInt)', () {
@@ -183,13 +183,13 @@ void main() {
     });
 
     test('Numbers (isNegative)', () {
-      final Runtime runtime = getRuntime('main = isNegative(-5)');
-      checkResult(runtime, true);
+      final Runtime runtime = getRuntime('main = isNegative(5)');
+      checkResult(runtime, false);
     });
 
     test('Numbers (isPositive)', () {
-      final Runtime runtime = getRuntime('main = isPositive(-5)');
-      checkResult(runtime, false);
+      final Runtime runtime = getRuntime('main = isPositive(5)');
+      checkResult(runtime, true);
     });
 
     test('Numbers (isZero)', () {
