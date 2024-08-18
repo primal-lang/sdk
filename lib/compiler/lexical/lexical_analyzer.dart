@@ -21,6 +21,10 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       state = state.process(input, iterator.peek);
 
       if (state is ResultState) {
+        if (state.goBack) {
+          iterator.back();
+        }
+
         result.addAll(state.output);
         state = const InitState();
       }
@@ -35,7 +39,9 @@ class InitState extends State<Character, void> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.value.isDoubleQuote) {
+    if (input.value.isWhitespace) {
+      return this;
+    } else if (input.value.isDoubleQuote) {
       return StringDoubleQuoteState(Lexeme(
         value: '',
         location: input.location,
@@ -45,33 +51,22 @@ class InitState extends State<Character, void> {
         value: '',
         location: input.location,
       ));
-    } else if (input.value.isMinus) {
-      return NegativeNumberState(input.lexeme);
     } else if (input.value.isDigit) {
       return IntegerState(input.lexeme);
     } else if (input.value.isLetter) {
       return SymbolState(input.lexeme);
+    } else if (input.value.isEquals) {
+      return EqualsState(input.lexeme);
     } else if (input.value.isForewardSlash) {
       return ForwardSlashState(input.lexeme);
-    } else if (input.value.isWhitespace) {
-      return this;
+    } else if (input.value.isComma) {
+      return CommaState(input.lexeme);
+    } else if (input.value.isComma) {
+      return OpenParenthesisState(input.lexeme);
+    } else if (input.value.isComma) {
+      return CloseParenthesisState(input.lexeme);
     } else {
-      return ResultState([input.token]);
-    }
-  }
-}
-
-class ForwardSlashState extends State<Character, Lexeme> {
-  const ForwardSlashState(super.output);
-
-  @override
-  State process(Character input, Character? next) {
-    if (input.value.isForewardSlash) {
-      return const SingleLineCommentState();
-    } else if (input.value.isAsterisk) {
-      return const StartMultiLineCommentState();
-    } else {
-      return ResultState([ForwardSlashToken(output)]);
+      throw InvalidCharacterError(input);
     }
   }
 }
@@ -141,19 +136,6 @@ class StringSingleQuoteState extends State<Character, Lexeme> {
   }
 }
 
-class NegativeNumberState extends State<Character, Lexeme> {
-  const NegativeNumberState(super.output);
-
-  @override
-  State process(Character input, Character? next) {
-    if (input.value.isDigit) {
-      return IntegerState(output.add(input));
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
 class IntegerState extends State<Character, Lexeme> {
   const IntegerState(super.output);
 
@@ -163,14 +145,8 @@ class IntegerState extends State<Character, Lexeme> {
       return IntegerState(output.add(input));
     } else if (input.value.isDot) {
       return DecimalState(output.add(input));
-    } else if (input.value.isDelimiter) {
-      final List<Token> tokens = [NumberToken(output)];
-
-      if (input.value.isSeparator) {
-        tokens.add(input.token);
-      }
-
-      return ResultState(tokens);
+    } else if (input.value.isOperandDelimiter) {
+      return ResultState([NumberToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -184,14 +160,8 @@ class DecimalState extends State<Character, Lexeme> {
   State process(Character input, Character? next) {
     if (input.value.isDigit) {
       return DecimalState(output.add(input));
-    } else if (input.value.isDelimiter) {
-      final List<Token> tokens = [NumberToken(output)];
-
-      if (input.value.isSeparator) {
-        tokens.add(input.token);
-      }
-
-      return ResultState(tokens);
+    } else if (input.value.isOperandDelimiter) {
+      return ResultState([NumberToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -208,20 +178,84 @@ class SymbolState extends State<Character, Lexeme> {
         input.value.isDot ||
         input.value.isUnderscore) {
       return SymbolState(output.add(input));
-    } else if (input.value.isDelimiter) {
-      final List<Token> tokens = [];
+    } else if (input.value.isOperandDelimiter) {
+      final List<Token> tokens = [
+        if (output.value.isBoolean)
+          BooleanToken(output)
+        else
+          SymbolToken(output)
+      ];
 
-      if (output.value.isBoolean) {
-        tokens.add(BooleanToken(output));
-      } else {
-        tokens.add(SymbolToken(output));
-      }
+      return ResultState(tokens, true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
 
-      if (input.value.isSeparator) {
-        tokens.add(input.token);
-      }
+class EqualsState extends State<Character, Lexeme> {
+  const EqualsState(super.output);
 
-      return ResultState(tokens);
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isEquals) {
+      return ResultState([EqualToken(output)]);
+    } else if (input.value.isOperatorDelimiter) {
+      return ResultState([AssignToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class ForwardSlashState extends State<Character, Lexeme> {
+  const ForwardSlashState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isForewardSlash) {
+      return const SingleLineCommentState();
+    } else if (input.value.isAsterisk) {
+      return const StartMultiLineCommentState();
+    } else {
+      return ResultState([ForwardSlashToken(output)]);
+    }
+  }
+}
+
+class CommaState extends State<Character, Lexeme> {
+  const CommaState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isOperatorDelimiter) {
+      return ResultState([CommaToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class OpenParenthesisState extends State<Character, Lexeme> {
+  const OpenParenthesisState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isOperatorDelimiter) {
+      return ResultState([OpenParethesisToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class CloseParenthesisState extends State<Character, Lexeme> {
+  const CloseParenthesisState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isOperatorDelimiter) {
+      return ResultState([CloseParethesisToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -229,7 +263,9 @@ class SymbolState extends State<Character, Lexeme> {
 }
 
 class ResultState extends State<void, List<Token>> {
-  const ResultState(super.output);
+  final bool goBack;
+
+  const ResultState(super.output, [this.goBack = false]);
 }
 
 class Lexeme extends Localized {

@@ -49,8 +49,34 @@ extension StringExtensions on String {
 
   bool get isBoolean => RegExp(r'true|false').hasMatch(this);
 
-  bool get isSeparator =>
-      isComma || isEquals || isOpenParenthesis || isCloseParenthesis;
+  bool get isOperator =>
+      isMinus ||
+      isPlus ||
+      isEquals ||
+      isGreater ||
+      isLess ||
+      isPipe ||
+      isAmpersand ||
+      isBang ||
+      isForewardSlash ||
+      isBackwardSlash ||
+      isAsterisk ||
+      isPercent ||
+      isCaret;
 
-  bool get isDelimiter => isWhitespace || isSeparator;
+  bool get isOperandDelimiter =>
+      isWhitespace ||
+      isOperator ||
+      isComma ||
+      isOpenParenthesis ||
+      isCloseParenthesis;
+
+  bool get isOperatorDelimiter =>
+      isWhitespace ||
+      isDigit ||
+      isLetter ||
+      isDoubleQuote ||
+      isSingleQuote ||
+      isOpenParenthesis ||
+      isCloseParenthesis;
 }

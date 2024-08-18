@@ -43,11 +43,18 @@ void main() {
             column: 1,
           ),
         )),
-        NumberToken(const Lexeme(
-          value: '-9',
+        MinusToken(const Lexeme(
+          value: '-',
           location: Location(
             row: 1,
             column: 4,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '9',
+          location: Location(
+            row: 1,
+            column: 5,
           ),
         )),
         NumberToken(const Lexeme(
@@ -57,11 +64,18 @@ void main() {
             column: 7,
           ),
         )),
-        NumberToken(const Lexeme(
-          value: '-0.5',
+        MinusToken(const Lexeme(
+          value: '-',
           location: Location(
             row: 1,
             column: 12,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '0.5',
+          location: Location(
+            row: 1,
+            column: 13,
           ),
         )),
       ]);

@@ -93,19 +93,12 @@ void main() {
       expect(true, equals('\n'.isNewLine));
     });
 
-    test('isSeparator', () {
-      expect(true, equals(','.isSeparator));
-      expect(true, equals('='.isSeparator));
-      expect(true, equals('('.isSeparator));
-      expect(true, equals(')'.isSeparator));
-    });
-
     test('isDelimiter', () {
-      expect(true, equals(' '.isDelimiter));
-      expect(true, equals(','.isDelimiter));
-      expect(true, equals('='.isDelimiter));
-      expect(true, equals('('.isDelimiter));
-      expect(true, equals(')'.isDelimiter));
+      expect(true, equals(' '.isOperandDelimiter));
+      expect(true, equals(','.isOperandDelimiter));
+      expect(true, equals('='.isOperandDelimiter));
+      expect(true, equals('('.isOperandDelimiter));
+      expect(true, equals(')'.isOperandDelimiter));
     });
 
     test('isBoolean', () {
