@@ -39,7 +39,7 @@ class Character extends Localized {
 
   bool get isSingleQuote => value.isSingleQuote;
 
-  bool get isDash => value.isDash;
+  bool get isMinus => value.isMinus;
 
   bool get isUnderscore => value.isUnderscore;
 

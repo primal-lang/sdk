@@ -66,14 +66,30 @@ void main() {
       }
     });
 
+    test('isOperator', () {
+      expect(true, equals('-'.isMinus));
+      expect(true, equals('+'.isPlus));
+      expect(true, equals('='.isEquals));
+      expect(true, equals('>'.isGreater));
+      expect(true, equals('<'.isLess));
+      expect(true, equals('|'.isPipe));
+      expect(true, equals('&'.isAmpersand));
+      expect(true, equals('!'.isBang));
+      expect(true, equals('/'.isForewardSlash));
+      expect(true, equals('\\'.isBackwardSlash));
+      expect(true, equals('*'.isAsterisk));
+      expect(true, equals('%'.isPercent));
+      expect(true, equals('^'.isCaret));
+    });
+
     test('isOther', () {
       expect(true, equals('"'.isDoubleQuote));
+      expect(true, equals("'".isSingleQuote));
       expect(true, equals('.'.isDot));
       expect(true, equals(','.isComma));
-      expect(true, equals('='.isEquals));
       expect(true, equals('('.isOpenParenthesis));
       expect(true, equals(')'.isCloseParenthesis));
-      expect(true, equals('/'.isForewardSlash));
+      expect(true, equals('_'.isUnderscore));
       expect(true, equals('\n'.isNewLine));
     });
 
@@ -82,6 +98,14 @@ void main() {
       expect(true, equals('='.isSeparator));
       expect(true, equals('('.isSeparator));
       expect(true, equals(')'.isSeparator));
+    });
+
+    test('isDelimiter', () {
+      expect(true, equals(' '.isDelimiter));
+      expect(true, equals(','.isDelimiter));
+      expect(true, equals('='.isDelimiter));
+      expect(true, equals('('.isDelimiter));
+      expect(true, equals(')'.isDelimiter));
     });
 
     test('isBoolean', () {

@@ -11,7 +11,31 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_SINGLE_QUOTE = RegExp(r"'");
 
-  static final RegExp REGEX_DASH = RegExp(r'-');
+  static final RegExp REGEX_MINUS = RegExp(r'-');
+
+  static final RegExp REGEX_PLUS = RegExp(r'\+');
+
+  static final RegExp REGEX_EQUALS = RegExp(r'=');
+
+  static final RegExp REGEX_GREATER = RegExp(r'>');
+
+  static final RegExp REGEX_LESS = RegExp(r'<');
+
+  static final RegExp REGEX_PIPE = RegExp(r'|');
+
+  static final RegExp REGEX_AMPERSAND = RegExp(r'&');
+
+  static final RegExp REGEX_BANG = RegExp(r'!');
+
+  static final RegExp REGEX_FORWARD_SLASH = RegExp(r'/');
+
+  static final RegExp REGEX_BACKWARD_SLASH = RegExp(r'\\');
+
+  static final RegExp REGEX_ASTERISK = RegExp(r'\*');
+
+  static final RegExp REGEX_PERCENT = RegExp(r'%');
+
+  static final RegExp REGEX_CARET = RegExp(r'^');
 
   static final RegExp REGEX_UNDERSCORE = RegExp(r'_');
 
@@ -19,17 +43,9 @@ extension StringExtensions on String {
 
   static final RegExp REGEX_COMMA = RegExp(r',');
 
-  static final RegExp REGEX_EQUALS = RegExp(r'=');
-
   static final RegExp REGEX_OPEN_PARENTHESIS = RegExp(r'\(');
 
   static final RegExp REGEX_CLOSE_PARENTHESIS = RegExp(r'\)');
-
-  static final RegExp REGEX_FORWARD_SLASH = RegExp(r'/');
-
-  static final RegExp REGEX_BACKWARD_SLASH = RegExp(r'\\');
-
-  static final RegExp REGEX_ASTERISK = RegExp(r'\*');
 
   static final RegExp REGEX_BOOLEAN = RegExp(r'true|false');
 
@@ -39,23 +55,27 @@ extension StringExtensions on String {
 
   bool get isWhitespace => REGEX_WHITESPACE.hasMatch(this);
 
+  bool get isNewLine => REGEX_NEW_LINE.hasMatch(this);
+
   bool get isDoubleQuote => REGEX_DOUBLE_QUOTE.hasMatch(this);
 
   bool get isSingleQuote => REGEX_SINGLE_QUOTE.hasMatch(this);
 
-  bool get isDash => REGEX_DASH.hasMatch(this);
+  bool get isMinus => REGEX_MINUS.hasMatch(this);
 
-  bool get isUnderscore => REGEX_UNDERSCORE.hasMatch(this);
-
-  bool get isDot => REGEX_DOT.hasMatch(this);
-
-  bool get isComma => REGEX_COMMA.hasMatch(this);
+  bool get isPlus => REGEX_PLUS.hasMatch(this);
 
   bool get isEquals => REGEX_EQUALS.hasMatch(this);
 
-  bool get isOpenParenthesis => REGEX_OPEN_PARENTHESIS.hasMatch(this);
+  bool get isGreater => REGEX_GREATER.hasMatch(this);
 
-  bool get isCloseParenthesis => REGEX_CLOSE_PARENTHESIS.hasMatch(this);
+  bool get isLess => REGEX_LESS.hasMatch(this);
+
+  bool get isPipe => REGEX_PIPE.hasMatch(this);
+
+  bool get isAmpersand => REGEX_AMPERSAND.hasMatch(this);
+
+  bool get isBang => REGEX_BANG.hasMatch(this);
 
   bool get isForewardSlash => REGEX_FORWARD_SLASH.hasMatch(this);
 
@@ -63,9 +83,21 @@ extension StringExtensions on String {
 
   bool get isAsterisk => REGEX_ASTERISK.hasMatch(this);
 
-  bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
+  bool get isPercent => REGEX_PERCENT.hasMatch(this);
 
-  bool get isNewLine => REGEX_NEW_LINE.hasMatch(this);
+  bool get isCaret => REGEX_CARET.hasMatch(this);
+
+  bool get isUnderscore => REGEX_UNDERSCORE.hasMatch(this);
+
+  bool get isDot => REGEX_DOT.hasMatch(this);
+
+  bool get isComma => REGEX_COMMA.hasMatch(this);
+
+  bool get isOpenParenthesis => REGEX_OPEN_PARENTHESIS.hasMatch(this);
+
+  bool get isCloseParenthesis => REGEX_CLOSE_PARENTHESIS.hasMatch(this);
+
+  bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
 
   bool get isSeparator =>
       isComma || isEquals || isOpenParenthesis || isCloseParenthesis;

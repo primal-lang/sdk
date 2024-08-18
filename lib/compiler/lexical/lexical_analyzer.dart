@@ -45,7 +45,7 @@ class InitState extends State<Character, void> {
         value: '',
         location: input.location,
       ));
-    } else if (input.isDash) {
+    } else if (input.isMinus) {
       return NegativeNumberState(input.lexeme);
     } else if (input.isDigit) {
       return IntegerState(input.lexeme);
