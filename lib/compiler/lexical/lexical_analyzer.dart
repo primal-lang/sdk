@@ -57,8 +57,16 @@ class InitState extends State<Character, void> {
       return SymbolState(input.lexeme);
     } else if (input.value.isMinus) {
       return MinusState(input.lexeme);
+    } else if (input.value.isPlus) {
+      return PlusState(input.lexeme);
     } else if (input.value.isEquals) {
       return EqualsState(input.lexeme);
+    } else if (input.value.isGreater) {
+      return GreaterState(input.lexeme);
+    } else if (input.value.isLess) {
+      return LessState(input.lexeme);
+    } else if (input.value.isBang) {
+      return BangState(input.lexeme);
     } else if (input.value.isForewardSlash) {
       return ForwardSlashState(input.lexeme);
     } else if (input.value.isComma) {
@@ -69,45 +77,6 @@ class InitState extends State<Character, void> {
       return CloseParenthesisState(input.lexeme);
     } else {
       throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class SingleLineCommentState extends State<Character, void> {
-  const SingleLineCommentState([super.output]);
-
-  @override
-  State process(Character input, Character? next) {
-    if (!input.value.isNewLine) {
-      return const SingleLineCommentState();
-    } else {
-      return const InitState();
-    }
-  }
-}
-
-class StartMultiLineCommentState extends State<Character, void> {
-  const StartMultiLineCommentState([super.output]);
-
-  @override
-  State process(Character input, Character? next) {
-    if (!input.value.isAsterisk) {
-      return const StartMultiLineCommentState();
-    } else {
-      return const ClosingMultiLineCommentState();
-    }
-  }
-}
-
-class ClosingMultiLineCommentState extends State<Character, void> {
-  const ClosingMultiLineCommentState([super.output]);
-
-  @override
-  State process(Character input, Character? next) {
-    if (!input.value.isForewardSlash) {
-      return const StartMultiLineCommentState();
-    } else {
-      return const InitState();
     }
   }
 }
@@ -208,6 +177,19 @@ class MinusState extends State<Character, Lexeme> {
   }
 }
 
+class PlusState extends State<Character, Lexeme> {
+  const PlusState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isOperatorDelimiter) {
+      return ResultState([PlusToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
 class EqualsState extends State<Character, Lexeme> {
   const EqualsState(super.output);
 
@@ -217,6 +199,51 @@ class EqualsState extends State<Character, Lexeme> {
       return ResultState([EqualToken(output)]);
     } else if (input.value.isOperatorDelimiter) {
       return ResultState([AssignToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class GreaterState extends State<Character, Lexeme> {
+  const GreaterState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isEquals) {
+      return ResultState([GreaterEqualThanToken(output)]);
+    } else if (input.value.isOperatorDelimiter) {
+      return ResultState([GreaterThanToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class LessState extends State<Character, Lexeme> {
+  const LessState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isEquals) {
+      return ResultState([LessEqualThanToken(output)]);
+    } else if (input.value.isOperatorDelimiter) {
+      return ResultState([LessThanToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class BangState extends State<Character, Lexeme> {
+  const BangState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isEquals) {
+      return ResultState([NotEqualToken(output)]);
+    } else if (input.value.isOperatorDelimiter) {
+      return ResultState([NotToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -234,6 +261,45 @@ class ForwardSlashState extends State<Character, Lexeme> {
       return const StartMultiLineCommentState();
     } else {
       return ResultState([ForwardSlashToken(output)]);
+    }
+  }
+}
+
+class SingleLineCommentState extends State<Character, void> {
+  const SingleLineCommentState([super.output]);
+
+  @override
+  State process(Character input, Character? next) {
+    if (!input.value.isNewLine) {
+      return const SingleLineCommentState();
+    } else {
+      return const InitState();
+    }
+  }
+}
+
+class StartMultiLineCommentState extends State<Character, void> {
+  const StartMultiLineCommentState([super.output]);
+
+  @override
+  State process(Character input, Character? next) {
+    if (!input.value.isAsterisk) {
+      return const StartMultiLineCommentState();
+    } else {
+      return const ClosingMultiLineCommentState();
+    }
+  }
+}
+
+class ClosingMultiLineCommentState extends State<Character, void> {
+  const ClosingMultiLineCommentState([super.output]);
+
+  @override
+  State process(Character input, Character? next) {
+    if (!input.value.isForewardSlash) {
+      return const StartMultiLineCommentState();
+    } else {
+      return const InitState();
     }
   }
 }
