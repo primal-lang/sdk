@@ -223,21 +223,21 @@ void main() {
           value: '*',
           location: Location(
             row: 1,
-            column: 10,
+            column: 9,
           ),
         )),
         PercentToken(const Lexeme(
           value: '%',
           location: Location(
             row: 1,
-            column: 12,
+            column: 11,
           ),
         )),
         CaretToken(const Lexeme(
           value: '^',
           location: Location(
             row: 1,
-            column: 14,
+            column: 13,
           ),
         )),
       ]);

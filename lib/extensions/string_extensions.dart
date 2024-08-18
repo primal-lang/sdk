@@ -21,7 +21,7 @@ extension StringExtensions on String {
 
   bool get isLess => RegExp(r'<').hasMatch(this);
 
-  bool get isPipe => RegExp(r'|').hasMatch(this);
+  bool get isPipe => RegExp(r'\|').hasMatch(this);
 
   bool get isAmpersand => RegExp(r'&').hasMatch(this);
 
@@ -35,7 +35,7 @@ extension StringExtensions on String {
 
   bool get isPercent => RegExp(r'%').hasMatch(this);
 
-  bool get isCaret => RegExp(r'^').hasMatch(this);
+  bool get isCaret => RegExp(r'\^').hasMatch(this);
 
   bool get isUnderscore => RegExp(r'_').hasMatch(this);
 
