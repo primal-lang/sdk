@@ -1,103 +1,53 @@
 extension StringExtensions on String {
-  static final RegExp REGEX_DIGIT = RegExp(r'\d');
+  bool get isDigit => RegExp(r'\d').hasMatch(this);
 
-  static final RegExp REGEX_LETTER = RegExp(r'[a-zA-Z]');
+  bool get isLetter => RegExp(r'[a-zA-Z]').hasMatch(this);
 
-  static final RegExp REGEX_WHITESPACE = RegExp(r'\s');
+  bool get isWhitespace => RegExp(r'\s').hasMatch(this);
 
-  static final RegExp REGEX_NEW_LINE = RegExp(r'\n');
+  bool get isNewLine => RegExp(r'\n').hasMatch(this);
 
-  static final RegExp REGEX_DOUBLE_QUOTE = RegExp(r'"');
+  bool get isDoubleQuote => RegExp(r'"').hasMatch(this);
 
-  static final RegExp REGEX_SINGLE_QUOTE = RegExp(r"'");
+  bool get isSingleQuote => RegExp(r"'").hasMatch(this);
 
-  static final RegExp REGEX_MINUS = RegExp(r'-');
+  bool get isMinus => RegExp(r'-').hasMatch(this);
 
-  static final RegExp REGEX_PLUS = RegExp(r'\+');
+  bool get isPlus => RegExp(r'\+').hasMatch(this);
 
-  static final RegExp REGEX_EQUALS = RegExp(r'=');
+  bool get isEquals => RegExp(r'=').hasMatch(this);
 
-  static final RegExp REGEX_GREATER = RegExp(r'>');
+  bool get isGreater => RegExp(r'>').hasMatch(this);
 
-  static final RegExp REGEX_LESS = RegExp(r'<');
+  bool get isLess => RegExp(r'<').hasMatch(this);
 
-  static final RegExp REGEX_PIPE = RegExp(r'|');
+  bool get isPipe => RegExp(r'|').hasMatch(this);
 
-  static final RegExp REGEX_AMPERSAND = RegExp(r'&');
+  bool get isAmpersand => RegExp(r'&').hasMatch(this);
 
-  static final RegExp REGEX_BANG = RegExp(r'!');
+  bool get isBang => RegExp(r'!').hasMatch(this);
 
-  static final RegExp REGEX_FORWARD_SLASH = RegExp(r'/');
+  bool get isForewardSlash => RegExp(r'/').hasMatch(this);
 
-  static final RegExp REGEX_BACKWARD_SLASH = RegExp(r'\\');
+  bool get isBackwardSlash => RegExp(r'\\').hasMatch(this);
 
-  static final RegExp REGEX_ASTERISK = RegExp(r'\*');
+  bool get isAsterisk => RegExp(r'\*').hasMatch(this);
 
-  static final RegExp REGEX_PERCENT = RegExp(r'%');
+  bool get isPercent => RegExp(r'%').hasMatch(this);
 
-  static final RegExp REGEX_CARET = RegExp(r'^');
+  bool get isCaret => RegExp(r'^').hasMatch(this);
 
-  static final RegExp REGEX_UNDERSCORE = RegExp(r'_');
+  bool get isUnderscore => RegExp(r'_').hasMatch(this);
 
-  static final RegExp REGEX_DOT = RegExp(r'\.');
+  bool get isDot => RegExp(r'\.').hasMatch(this);
 
-  static final RegExp REGEX_COMMA = RegExp(r',');
+  bool get isComma => RegExp(r',').hasMatch(this);
 
-  static final RegExp REGEX_OPEN_PARENTHESIS = RegExp(r'\(');
+  bool get isOpenParenthesis => RegExp(r'\(').hasMatch(this);
 
-  static final RegExp REGEX_CLOSE_PARENTHESIS = RegExp(r'\)');
+  bool get isCloseParenthesis => RegExp(r'\)').hasMatch(this);
 
-  static final RegExp REGEX_BOOLEAN = RegExp(r'true|false');
-
-  bool get isDigit => REGEX_DIGIT.hasMatch(this);
-
-  bool get isLetter => REGEX_LETTER.hasMatch(this);
-
-  bool get isWhitespace => REGEX_WHITESPACE.hasMatch(this);
-
-  bool get isNewLine => REGEX_NEW_LINE.hasMatch(this);
-
-  bool get isDoubleQuote => REGEX_DOUBLE_QUOTE.hasMatch(this);
-
-  bool get isSingleQuote => REGEX_SINGLE_QUOTE.hasMatch(this);
-
-  bool get isMinus => REGEX_MINUS.hasMatch(this);
-
-  bool get isPlus => REGEX_PLUS.hasMatch(this);
-
-  bool get isEquals => REGEX_EQUALS.hasMatch(this);
-
-  bool get isGreater => REGEX_GREATER.hasMatch(this);
-
-  bool get isLess => REGEX_LESS.hasMatch(this);
-
-  bool get isPipe => REGEX_PIPE.hasMatch(this);
-
-  bool get isAmpersand => REGEX_AMPERSAND.hasMatch(this);
-
-  bool get isBang => REGEX_BANG.hasMatch(this);
-
-  bool get isForewardSlash => REGEX_FORWARD_SLASH.hasMatch(this);
-
-  bool get isBackwardSlash => REGEX_BACKWARD_SLASH.hasMatch(this);
-
-  bool get isAsterisk => REGEX_ASTERISK.hasMatch(this);
-
-  bool get isPercent => REGEX_PERCENT.hasMatch(this);
-
-  bool get isCaret => REGEX_CARET.hasMatch(this);
-
-  bool get isUnderscore => REGEX_UNDERSCORE.hasMatch(this);
-
-  bool get isDot => REGEX_DOT.hasMatch(this);
-
-  bool get isComma => REGEX_COMMA.hasMatch(this);
-
-  bool get isOpenParenthesis => REGEX_OPEN_PARENTHESIS.hasMatch(this);
-
-  bool get isCloseParenthesis => REGEX_CLOSE_PARENTHESIS.hasMatch(this);
-
-  bool get isBoolean => REGEX_BOOLEAN.hasMatch(this);
+  bool get isBoolean => RegExp(r'true|false').hasMatch(this);
 
   bool get isSeparator =>
       isComma || isEquals || isOpenParenthesis || isCloseParenthesis;
