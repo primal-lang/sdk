@@ -55,15 +55,17 @@ class InitState extends State<Character, void> {
       return IntegerState(input.lexeme);
     } else if (input.value.isLetter) {
       return SymbolState(input.lexeme);
+    } else if (input.value.isMinus) {
+      return MinusState(input.lexeme);
     } else if (input.value.isEquals) {
       return EqualsState(input.lexeme);
     } else if (input.value.isForewardSlash) {
       return ForwardSlashState(input.lexeme);
     } else if (input.value.isComma) {
       return CommaState(input.lexeme);
-    } else if (input.value.isComma) {
+    } else if (input.value.isOpenParenthesis) {
       return OpenParenthesisState(input.lexeme);
-    } else if (input.value.isComma) {
+    } else if (input.value.isCloseParenthesis) {
       return CloseParenthesisState(input.lexeme);
     } else {
       throw InvalidCharacterError(input);
@@ -193,6 +195,19 @@ class SymbolState extends State<Character, Lexeme> {
   }
 }
 
+class MinusState extends State<Character, Lexeme> {
+  const MinusState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isOperatorDelimiter) {
+      return ResultState([MinusToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
 class EqualsState extends State<Character, Lexeme> {
   const EqualsState(super.output);
 
@@ -242,7 +257,7 @@ class OpenParenthesisState extends State<Character, Lexeme> {
   @override
   State process(Character input, Character? next) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([OpenParethesisToken(output)], true);
+      return ResultState([OpenParenthesisToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -254,8 +269,8 @@ class CloseParenthesisState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.value.isOperatorDelimiter) {
-      return ResultState([CloseParethesisToken(output)], true);
+    if (input.value.isSeparatorDelimiter) {
+      return ResultState([CloseParenthesisToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }

@@ -64,6 +64,8 @@ extension StringExtensions on String {
       isPercent ||
       isCaret;
 
+  bool get isUnaryOperator => isMinus || isBang;
+
   bool get isOperandDelimiter =>
       isWhitespace ||
       isOperator ||
@@ -79,4 +81,7 @@ extension StringExtensions on String {
       isSingleQuote ||
       isOpenParenthesis ||
       isCloseParenthesis;
+
+  bool get isSeparatorDelimiter =>
+      isOperatorDelimiter || isComma || isUnaryOperator;
 }
