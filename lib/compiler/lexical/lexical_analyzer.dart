@@ -65,6 +65,10 @@ class InitState extends State<Character, void> {
       return GreaterState(input.lexeme);
     } else if (input.value.isLess) {
       return LessState(input.lexeme);
+    } else if (input.value.isPipe) {
+      return PipeState(input.lexeme);
+    } else if (input.value.isAmpersand) {
+      return AmpersandState(input.lexeme);
     } else if (input.value.isBang) {
       return BangState(input.lexeme);
     } else if (input.value.isForewardSlash) {
@@ -229,6 +233,32 @@ class LessState extends State<Character, Lexeme> {
       return ResultState([LessEqualThanToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
       return ResultState([LessThanToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class PipeState extends State<Character, Lexeme> {
+  const PipeState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isOperatorDelimiter) {
+      return ResultState([PipeToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class AmpersandState extends State<Character, Lexeme> {
+  const AmpersandState(super.output);
+
+  @override
+  State process(Character input, Character? next) {
+    if (input.value.isOperatorDelimiter) {
+      return ResultState([AmpersandToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
