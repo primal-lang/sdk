@@ -293,14 +293,14 @@ class ForwardSlashState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.value.isOperator) {
+    if (input.value.isOperatorDelimiter) {
       return ResultState([ForwardSlashToken(output)]);
     } else if (input.value.isForewardSlash) {
       return const SingleLineCommentState();
     } else if (input.value.isAsterisk) {
       return const StartMultiLineCommentState();
     } else {
-      return ResultState([ForwardSlashToken(output)]);
+      throw InvalidCharacterError(input);
     }
   }
 }
@@ -350,7 +350,7 @@ class CaretState extends State<Character, Lexeme> {
   @override
   State process(Character input, Character? next) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([AsteriskToken(output)], true);
+      return ResultState([CaretToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
