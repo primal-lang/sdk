@@ -40,7 +40,7 @@ void main() {
         getFunctions('_isEven = true');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<InvalidLexemeError>());
+        expect(e, isA<InvalidCharacterError>());
       }
     });
 
@@ -49,7 +49,7 @@ void main() {
         getFunctions('_isEven(n) = n');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<InvalidLexemeError>());
+        expect(e, isA<InvalidCharacterError>());
       }
     });
 
@@ -58,7 +58,7 @@ void main() {
         getFunctions('isEvent(,) = true');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<InvalidTokenError>());
+        expect(e, isA<InvalidCharacterError>());
       }
     });
 
