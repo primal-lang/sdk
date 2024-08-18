@@ -196,7 +196,7 @@ class EqualsState extends State<Character, Lexeme> {
   @override
   State process(Character input, Character? next) {
     if (input.value.isEquals) {
-      return ResultState([EqualToken(output)]);
+      return ResultState([EqualToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
       return ResultState([AssignToken(output)], true);
     } else {
@@ -211,7 +211,7 @@ class GreaterState extends State<Character, Lexeme> {
   @override
   State process(Character input, Character? next) {
     if (input.value.isEquals) {
-      return ResultState([GreaterEqualThanToken(output)]);
+      return ResultState([GreaterEqualThanToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
       return ResultState([GreaterThanToken(output)], true);
     } else {
@@ -226,7 +226,7 @@ class LessState extends State<Character, Lexeme> {
   @override
   State process(Character input, Character? next) {
     if (input.value.isEquals) {
-      return ResultState([LessEqualThanToken(output)]);
+      return ResultState([LessEqualThanToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
       return ResultState([LessThanToken(output)], true);
     } else {
@@ -241,9 +241,9 @@ class BangState extends State<Character, Lexeme> {
   @override
   State process(Character input, Character? next) {
     if (input.value.isEquals) {
-      return ResultState([NotEqualToken(output)]);
+      return ResultState([NotEqualToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState([NotToken(output)], true);
+      return ResultState([BangToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }

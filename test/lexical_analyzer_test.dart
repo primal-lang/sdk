@@ -274,7 +274,7 @@ void main() {
       final List<Token> tokens = getTokens('== != > >= < <=');
       checkTokens(tokens, [
         EqualToken(const Lexeme(
-          value: '=',
+          value: '==',
           location: Location(
             row: 1,
             column: 1,
@@ -298,21 +298,21 @@ void main() {
           value: '>=',
           location: Location(
             row: 1,
-            column: 10,
+            column: 9,
           ),
         )),
         LessThanToken(const Lexeme(
           value: '<',
           location: Location(
             row: 1,
-            column: 1,
+            column: 12,
           ),
         )),
         LessEqualThanToken(const Lexeme(
           value: '<=',
           location: Location(
             row: 1,
-            column: 4,
+            column: 14,
           ),
         )),
       ]);
