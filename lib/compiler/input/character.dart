@@ -31,34 +31,6 @@ class Character extends Localized {
     }
   }
 
-  bool get isDigit => value.isDigit;
-
-  bool get isLetter => value.isLetter;
-
-  bool get isDoubleQuote => value.isDoubleQuote;
-
-  bool get isSingleQuote => value.isSingleQuote;
-
-  bool get isMinus => value.isMinus;
-
-  bool get isUnderscore => value.isUnderscore;
-
-  bool get isDot => value.isDot;
-
-  bool get isForewardSlash => value.isForewardSlash;
-
-  bool get isBackwardSlash => value.isBackwardSlash;
-
-  bool get isAsterisk => value.isAsterisk;
-
-  bool get isNewLine => value.isNewLine;
-
-  bool get isSeparator => value.isSeparator;
-
-  bool get isDelimiter => value.isDelimiter;
-
-  bool get isWhitespace => value.isWhitespace;
-
   @override
   String toString() => '"$value" at $location';
 }

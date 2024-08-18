@@ -35,25 +35,25 @@ class InitState extends State<Character, void> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.isDoubleQuote) {
+    if (input.value.isDoubleQuote) {
       return StringDoubleQuoteState(Lexeme(
         value: '',
         location: input.location,
       ));
-    } else if (input.isSingleQuote) {
+    } else if (input.value.isSingleQuote) {
       return StringSingleQuoteState(Lexeme(
         value: '',
         location: input.location,
       ));
-    } else if (input.isMinus) {
+    } else if (input.value.isMinus) {
       return NegativeNumberState(input.lexeme);
-    } else if (input.isDigit) {
+    } else if (input.value.isDigit) {
       return IntegerState(input.lexeme);
-    } else if (input.isLetter) {
+    } else if (input.value.isLetter) {
       return SymbolState(input.lexeme);
-    } else if (input.isForewardSlash) {
+    } else if (input.value.isForewardSlash) {
       return ForwardSlashState(input.lexeme);
-    } else if (input.isWhitespace) {
+    } else if (input.value.isWhitespace) {
       return this;
     } else {
       return ResultState([input.token]);
@@ -66,9 +66,9 @@ class ForwardSlashState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.isForewardSlash) {
+    if (input.value.isForewardSlash) {
       return const SingleLineCommentState();
-    } else if (input.isAsterisk) {
+    } else if (input.value.isAsterisk) {
       return const StartMultiLineCommentState();
     } else {
       return ResultState([SlashToken(output)]);
@@ -81,7 +81,7 @@ class SingleLineCommentState extends State<Character, void> {
 
   @override
   State process(Character input, Character? next) {
-    if (!input.isNewLine) {
+    if (!input.value.isNewLine) {
       return const SingleLineCommentState();
     } else {
       return const InitState();
@@ -94,7 +94,7 @@ class StartMultiLineCommentState extends State<Character, void> {
 
   @override
   State process(Character input, Character? next) {
-    if (!input.isAsterisk) {
+    if (!input.value.isAsterisk) {
       return const StartMultiLineCommentState();
     } else {
       return const ClosingMultiLineCommentState();
@@ -107,7 +107,7 @@ class ClosingMultiLineCommentState extends State<Character, void> {
 
   @override
   State process(Character input, Character? next) {
-    if (!input.isForewardSlash) {
+    if (!input.value.isForewardSlash) {
       return const StartMultiLineCommentState();
     } else {
       return const InitState();
@@ -120,7 +120,7 @@ class StringDoubleQuoteState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.isDoubleQuote) {
+    if (input.value.isDoubleQuote) {
       return ResultState([StringToken(output)]);
     } else {
       return StringDoubleQuoteState(output.add(input));
@@ -133,7 +133,7 @@ class StringSingleQuoteState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.isSingleQuote) {
+    if (input.value.isSingleQuote) {
       return ResultState([StringToken(output)]);
     } else {
       return StringSingleQuoteState(output.add(input));
@@ -146,7 +146,7 @@ class NegativeNumberState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.isDigit) {
+    if (input.value.isDigit) {
       return IntegerState(output.add(input));
     } else {
       throw InvalidCharacterError(input);
@@ -159,14 +159,14 @@ class IntegerState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.isDigit) {
+    if (input.value.isDigit) {
       return IntegerState(output.add(input));
-    } else if (input.isDot) {
+    } else if (input.value.isDot) {
       return DecimalState(output.add(input));
-    } else if (input.isDelimiter) {
+    } else if (input.value.isDelimiter) {
       final List<Token> tokens = [NumberToken(output)];
 
-      if (input.isSeparator) {
+      if (input.value.isSeparator) {
         tokens.add(input.token);
       }
 
@@ -182,12 +182,12 @@ class DecimalState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.isDigit) {
+    if (input.value.isDigit) {
       return DecimalState(output.add(input));
-    } else if (input.isDelimiter) {
+    } else if (input.value.isDelimiter) {
       final List<Token> tokens = [NumberToken(output)];
 
-      if (input.isSeparator) {
+      if (input.value.isSeparator) {
         tokens.add(input.token);
       }
 
@@ -203,9 +203,9 @@ class SymbolState extends State<Character, Lexeme> {
 
   @override
   State process(Character input, Character? next) {
-    if (input.isLetter || input.isDigit || input.isUnderscore) {
+    if (input.value.isLetter || input.value.isDigit || input.value.isUnderscore) {
       return SymbolState(output.add(input));
-    } else if (input.isDelimiter) {
+    } else if (input.value.isDelimiter) {
       final List<Token> tokens = [];
 
       if (output.value.isBoolean) {
@@ -214,7 +214,7 @@ class SymbolState extends State<Character, Lexeme> {
         tokens.add(SymbolToken(output));
       }
 
-      if (input.isSeparator) {
+      if (input.value.isSeparator) {
         tokens.add(input.token);
       }
 
