@@ -71,14 +71,6 @@ class ForwardSlashToken extends Token<String> {
         );
 }
 
-class BackwardSlashToken extends Token<String> {
-  BackwardSlashToken(Lexeme lexeme)
-      : super(
-          value: lexeme.value,
-          location: lexeme.location,
-        );
-}
-
 class AsteriskToken extends Token<String> {
   AsteriskToken(Lexeme lexeme)
       : super(
@@ -89,14 +81,6 @@ class AsteriskToken extends Token<String> {
 
 class PercentToken extends Token<String> {
   PercentToken(Lexeme lexeme)
-      : super(
-          value: lexeme.value,
-          location: lexeme.location,
-        );
-}
-
-class CaretToken extends Token<String> {
-  CaretToken(Lexeme lexeme)
       : super(
           value: lexeme.value,
           location: lexeme.location,

@@ -189,7 +189,7 @@ void main() {
     });
 
     test('Arithmetic operators', () {
-      final List<Token> tokens = getTokens('- + / \\ * % ^');
+      final List<Token> tokens = getTokens('- + / * %');
       checkTokens(tokens, [
         MinusToken(const Lexeme(
           value: '-',
@@ -212,32 +212,18 @@ void main() {
             column: 5,
           ),
         )),
-        BackwardSlashToken(const Lexeme(
-          value: '\\',
-          location: Location(
-            row: 1,
-            column: 7,
-          ),
-        )),
         AsteriskToken(const Lexeme(
           value: '*',
           location: Location(
             row: 1,
-            column: 9,
+            column: 7,
           ),
         )),
         PercentToken(const Lexeme(
           value: '%',
           location: Location(
             row: 1,
-            column: 11,
-          ),
-        )),
-        CaretToken(const Lexeme(
-          value: '^',
-          location: Location(
-            row: 1,
-            column: 13,
+            column: 9,
           ),
         )),
       ]);

@@ -29,13 +29,9 @@ extension StringExtensions on String {
 
   bool get isForewardSlash => RegExp(r'/').hasMatch(this);
 
-  bool get isBackwardSlash => RegExp(r'\\').hasMatch(this);
-
   bool get isAsterisk => RegExp(r'\*').hasMatch(this);
 
   bool get isPercent => RegExp(r'%').hasMatch(this);
-
-  bool get isCaret => RegExp(r'\^').hasMatch(this);
 
   bool get isUnderscore => RegExp(r'_').hasMatch(this);
 
@@ -59,10 +55,8 @@ extension StringExtensions on String {
       isAmpersand ||
       isBang ||
       isForewardSlash ||
-      isBackwardSlash ||
       isAsterisk ||
-      isPercent ||
-      isCaret;
+      isPercent;
 
   bool get isUnaryOperator => isMinus || isBang;
 

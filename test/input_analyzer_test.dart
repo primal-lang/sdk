@@ -76,10 +76,8 @@ void main() {
       expect(true, equals('&'.isAmpersand));
       expect(true, equals('!'.isBang));
       expect(true, equals('/'.isForewardSlash));
-      expect(true, equals('\\'.isBackwardSlash));
       expect(true, equals('*'.isAsterisk));
       expect(true, equals('%'.isPercent));
-      expect(true, equals('^'.isCaret));
     });
 
     test('isOther', () {

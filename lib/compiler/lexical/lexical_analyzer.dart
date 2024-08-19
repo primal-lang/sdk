@@ -73,14 +73,10 @@ class InitState extends State<Character, void> {
       return BangState(input.lexeme);
     } else if (input.value.isForewardSlash) {
       return ForwardSlashState(input.lexeme);
-    } else if (input.value.isBackwardSlash) {
-      return BackwardSlashState(input.lexeme);
     } else if (input.value.isAsterisk) {
       return AsteriskState(input.lexeme);
     } else if (input.value.isPercent) {
       return PercentState(input.lexeme);
-    } else if (input.value.isCaret) {
-      return CaretState(input.lexeme);
     } else if (input.value.isComma) {
       return CommaState(input.lexeme);
     } else if (input.value.isOpenParenthesis) {
@@ -305,19 +301,6 @@ class ForwardSlashState extends State<Character, Lexeme> {
   }
 }
 
-class BackwardSlashState extends State<Character, Lexeme> {
-  const BackwardSlashState(super.output);
-
-  @override
-  State process(Character input, Character? next) {
-    if (input.value.isOperatorDelimiter) {
-      return ResultState([BackwardSlashToken(output)], true);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
 class AsteriskState extends State<Character, Lexeme> {
   const AsteriskState(super.output);
 
@@ -338,19 +321,6 @@ class PercentState extends State<Character, Lexeme> {
   State process(Character input, Character? next) {
     if (input.value.isOperatorDelimiter) {
       return ResultState([PercentToken(output)], true);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class CaretState extends State<Character, Lexeme> {
-  const CaretState(super.output);
-
-  @override
-  State process(Character input, Character? next) {
-    if (input.value.isOperatorDelimiter) {
-      return ResultState([CaretToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
