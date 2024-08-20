@@ -1,9 +1,9 @@
 import 'package:primal/compiler/errors/lexical_error.dart';
-import 'package:primal/compiler/input/character.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/state.dart';
+import 'package:primal/compiler/scanner/character.dart';
 import 'package:primal/extensions/string_extensions.dart';
 import 'package:primal/utils/list_iterator.dart';
 

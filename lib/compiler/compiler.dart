@@ -1,7 +1,7 @@
-import 'package:primal/compiler/input/character.dart';
-import 'package:primal/compiler/input/input_analyzer.dart';
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/scanner/character.dart';
+import 'package:primal/compiler/scanner/scanner.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
@@ -12,8 +12,8 @@ class Compiler {
   const Compiler();
 
   IntermediateCode compile(String input) {
-    final InputAnalyzer inputAnalyzer = InputAnalyzer(input);
-    final List<Character> characters = inputAnalyzer.analyze();
+    final Scanner scanner = Scanner(input);
+    final List<Character> characters = scanner.analyze();
 
     final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();
@@ -27,8 +27,8 @@ class Compiler {
   }
 
   Expression expression(String input) {
-    final InputAnalyzer inputAnalyzer = InputAnalyzer(input);
-    final List<Character> characters = inputAnalyzer.analyze();
+    final Scanner scanner = Scanner(input);
+    final List<Character> characters = scanner.analyze();
 
     final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();

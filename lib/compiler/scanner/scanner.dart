@@ -1,9 +1,9 @@
-import 'package:primal/compiler/input/character.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/scanner/character.dart';
 
-class InputAnalyzer extends Analyzer<String, List<Character>> {
-  const InputAnalyzer(super.input);
+class Scanner extends Analyzer<String, List<Character>> {
+  const Scanner(super.input);
 
   @override
   List<Character> analyze() {
