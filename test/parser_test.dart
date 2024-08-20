@@ -1,12 +1,13 @@
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/syntactic/parser.dart';
+import 'package:primal/utils/list_iterator.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
 
 void main() {
   ParseExpression getExpression(String input) {
     final List<Token> tokens = getTokens(input);
-    final Parser parser = Parser(tokens);
+    final Parser parser = Parser(ListIterator(tokens));
 
     return parser.expression();
   }

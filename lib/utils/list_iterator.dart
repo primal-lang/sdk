@@ -8,12 +8,26 @@ class ListIterator<T> {
 
   bool get hasNext => _index < _list.length;
 
+  bool get isAtEnd => _index == _list.length;
+
   T? get peek {
     if (hasNext) {
       return _list[_index];
     } else {
       return null;
     }
+  }
+
+  T? get previous {
+    if (_index > 0) {
+      return _list[_index - 1];
+    } else {
+      return null;
+    }
+  }
+
+  void advance() {
+    _index++;
   }
 
   void back() {

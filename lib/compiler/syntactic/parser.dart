@@ -1,12 +1,12 @@
 import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
+import 'package:primal/utils/list_iterator.dart';
 
 class Parser {
-  final List<Token> tokens;
-  int current = 0;
+  final ListIterator<Token> iterator;
 
-  Parser(this.tokens);
+  Parser(this.iterator);
 
   ParseExpression expression() => equality();
 
@@ -14,7 +14,7 @@ class Parser {
     ParseExpression expression = comparison();
 
     while (match([NotEqualToken, EqualToken])) {
-      final Token operator = previous();
+      final Token operator = previous;
       final ParseExpression right = comparison();
       expression = BinaryExpression(expression, operator, right);
     }
@@ -31,7 +31,7 @@ class Parser {
       LessThanToken,
       LessEqualThanToken,
     ])) {
-      final Token operator = previous();
+      final Token operator = previous;
       final ParseExpression right = logic();
       expression = BinaryExpression(expression, operator, right);
     }
@@ -43,7 +43,7 @@ class Parser {
     ParseExpression expression = term();
 
     while (match([PipeToken, AmpersandToken])) {
-      final Token operator = previous();
+      final Token operator = previous;
       final ParseExpression right = term();
       expression = BinaryExpression(expression, operator, right);
     }
@@ -55,7 +55,7 @@ class Parser {
     ParseExpression expression = factor();
 
     while (match([MinusToken, PlusToken])) {
-      final Token operator = previous();
+      final Token operator = previous;
       final ParseExpression right = factor();
       expression = BinaryExpression(expression, operator, right);
     }
@@ -67,7 +67,7 @@ class Parser {
     ParseExpression expression = unary();
 
     while (match([ForwardSlashToken, AsteriskToken, PercentToken])) {
-      final Token operator = previous();
+      final Token operator = previous;
       final ParseExpression right = unary();
       expression = BinaryExpression(expression, operator, right);
     }
@@ -77,7 +77,7 @@ class Parser {
 
   ParseExpression unary() {
     if (match([BangToken, MinusToken])) {
-      final Token operator = previous();
+      final Token operator = previous;
       final ParseExpression right = unary();
       return UnaryExpression(operator, right);
     }
@@ -115,13 +115,13 @@ class Parser {
 
   ParseExpression primary() {
     if (match([BooleanToken])) {
-      return BooleanLiteralExpression(previous());
+      return BooleanLiteralExpression(previous);
     } else if (match([NumberToken])) {
-      return NumberLiteralExpression(previous());
+      return NumberLiteralExpression(previous);
     } else if (match([StringToken])) {
-      return StringLiteralExpression(previous());
+      return StringLiteralExpression(previous);
     } else if (match([IdentifierToken])) {
-      return IdentifierExpression(previous());
+      return IdentifierExpression(previous);
     }
 
     if (match([OpenParenthesisToken])) {
@@ -130,7 +130,7 @@ class Parser {
       return expr;
     }
 
-    throw InvalidTokenError(peek());
+    throw InvalidTokenError(peek);
   }
 
   bool match(List<Type> types) {
@@ -145,10 +145,10 @@ class Parser {
   }
 
   bool check(Type type) {
-    if (isAtEnd()) {
+    if (iterator.isAtEnd) {
       return false;
     } else {
-      return peek().runtimeType == type;
+      return peek.runtimeType == type;
     }
   }
 
@@ -157,22 +157,20 @@ class Parser {
       return advance();
     }
 
-    throw InvalidTokenError(peek());
+    throw InvalidTokenError(peek);
   }
 
   Token advance() {
-    if (!isAtEnd()) {
-      current++;
+    if (!iterator.isAtEnd) {
+      iterator.advance();
     }
 
-    return previous();
+    return previous;
   }
 
-  bool isAtEnd() => current == tokens.length;
+  Token get peek => iterator.peek!;
 
-  Token peek() => tokens[current];
-
-  Token previous() => tokens[current - 1];
+  Token get previous => iterator.previous!;
 }
 
 abstract class ParseExpression extends Localized {
