@@ -26,21 +26,19 @@ class ListIterator<T> {
     }
   }
 
-  void advance() {
-    _index++;
-  }
-
-  void back() {
-    if (_index > 0) {
-      _index--;
-    }
-  }
-
   T get next {
     if (hasNext) {
       return _list[_index++];
     } else {
       throw const UnexpectedEndOfFileError();
     }
+  }
+
+  void advance() {
+    _index++;
+  }
+
+  void back() {
+    _index--;
   }
 }
