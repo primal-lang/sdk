@@ -21,7 +21,7 @@ class Parser {
   }
 
   ParseExpression comparison() {
-    ParseExpression expr = term();
+    ParseExpression expr = logic();
 
     while (match([
       GreaterThanToken,
@@ -29,6 +29,18 @@ class Parser {
       LessThanToken,
       LessEqualThanToken,
     ])) {
+      final Token operator = previous();
+      final ParseExpression right = logic();
+      expr = BinaryExpression(expr, operator, right);
+    }
+
+    return expr;
+  }
+
+  ParseExpression logic() {
+    ParseExpression expr = term();
+
+    while (match([PipeToken, AmpersandToken])) {
       final Token operator = previous();
       final ParseExpression right = term();
       expr = BinaryExpression(expr, operator, right);
@@ -72,8 +84,12 @@ class Parser {
   }
 
   ParseExpression primary() {
-    if (match([BooleanToken, NumberToken, StringToken])) {
-      return LiteralExpression(previous().value.toString());
+    if (match([BooleanToken,])) {
+      return BooleanLiteralExpression(previous().value);
+    } else if (match([NumberToken])) {
+      return NumberLiteralExpression(previous().value);
+    } else if (match([StringToken])) {
+      return StringLiteralExpression(previous().value);
     }
 
     if (match([OpenParenthesisToken])) {
@@ -133,13 +149,31 @@ abstract class ParseExpression {
   String get text;
 }
 
-class LiteralExpression extends ParseExpression {
-  final String value;
+class BooleanLiteralExpression extends ParseExpression {
+  final bool value;
 
-  const LiteralExpression(this.value);
+  const BooleanLiteralExpression(this.value);
 
   @override
-  String get text => value;
+  String get text => value.toString();
+}
+
+class NumberLiteralExpression extends ParseExpression {
+  final num value;
+
+  const NumberLiteralExpression(this.value);
+
+  @override
+  String get text => value.toString();
+}
+
+class StringLiteralExpression extends ParseExpression {
+  final String value;
+
+  const StringLiteralExpression(this.value);
+
+  @override
+  String get text => '"$value"';
 }
 
 class GroupExpression extends ParseExpression {

@@ -55,17 +55,24 @@ void main() {
     });
 
     test('Expression 8', () {
-      final List<Token> tokens = getTokens('2 + -5 > -7 * 3');
+      final List<Token> tokens = getTokens('2 + -5 < -7 * 3');
       final Parser parser = Parser(tokens);
       final ParseExpression expression = parser.expression();
-      expect(expression.text, '((2 + (-5)) > ((-7) * 3))');
+      expect(expression.text, '((2 + (-5)) < ((-7) * 3))');
     });
 
     test('Expression 9', () {
-      final List<Token> tokens = getTokens('-2 + 5 >= 7 * -3');
+      final List<Token> tokens = getTokens('-2 + 5 <= 7 * -3');
       final Parser parser = Parser(tokens);
       final ParseExpression expression = parser.expression();
-      expect(expression.text, '(((-2) + 5) >= (7 * (-3)))');
+      expect(expression.text, '(((-2) + 5) <= (7 * (-3)))');
+    });
+
+    test('Expression 10', () {
+      final List<Token> tokens = getTokens('true | 4 < false & "test"');
+      final Parser parser = Parser(tokens);
+      final ParseExpression expression = parser.expression();
+      expect(expression.text, '((true | 4) < (false & "test"))');
     });
   });
 }
