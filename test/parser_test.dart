@@ -74,5 +74,12 @@ void main() {
       final ParseExpression expression = parser.expression();
       expect(expression.text, '((true | 4) < (false & "test"))');
     });
+
+    test('Expression 11', () {
+      final List<Token> tokens = getTokens('foo(4 + 1)');
+      final Parser parser = Parser(tokens);
+      final ParseExpression expression = parser.expression();
+      expect(expression.text, 'foo((4 + 1))');
+    });
   });
 }

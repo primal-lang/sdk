@@ -80,16 +80,48 @@ class Parser {
       return UnaryExpression(operator, right);
     }
 
-    return primary();
+    return call();
+  }
+
+  ParseExpression call() {
+    ParseExpression expr = primary();
+
+    while (true) {
+      if (match([OpenParenthesisToken])) {
+        expr = finishCall(expr);
+      } else {
+        break;
+      }
+    }
+
+    return expr;
+  }
+
+  ParseExpression finishCall(ParseExpression callee) {
+    final List<ParseExpression> arguments = [];
+
+    if (!check(CloseParenthesisToken)) {
+      do {
+        arguments.add(expression());
+      } while (match([CommaToken]));
+    }
+
+    consume(CloseParenthesisToken);
+
+    return CallExpression(callee, arguments);
   }
 
   ParseExpression primary() {
-    if (match([BooleanToken,])) {
+    if (match([
+      BooleanToken,
+    ])) {
       return BooleanLiteralExpression(previous().value);
     } else if (match([NumberToken])) {
       return NumberLiteralExpression(previous().value);
     } else if (match([StringToken])) {
       return StringLiteralExpression(previous().value);
+    } else if (match([SymbolToken])) {
+      return IdentifierExpression(previous().value);
     }
 
     if (match([OpenParenthesisToken])) {
@@ -176,6 +208,15 @@ class StringLiteralExpression extends ParseExpression {
   String get text => '"$value"';
 }
 
+class IdentifierExpression extends ParseExpression {
+  final String value;
+
+  const IdentifierExpression(this.value);
+
+  @override
+  String get text => value;
+}
+
 class GroupExpression extends ParseExpression {
   final ParseExpression expression;
 
@@ -204,4 +245,14 @@ class BinaryExpression extends ParseExpression {
 
   @override
   String get text => '(${left.text} ${operator.value} ${right.text})';
+}
+
+class CallExpression extends ParseExpression {
+  final ParseExpression calle;
+  final List<ParseExpression> arguments;
+
+  const CallExpression(this.calle, this.arguments);
+
+  @override
+  String get text => '${calle.text}(${arguments.map((e) => e.text).join(', ')})';
 }
