@@ -100,7 +100,7 @@ class Parser {
     if (isAtEnd()) {
       return false;
     } else {
-      return peek().runtimeType == type.runtimeType;
+      return peek().runtimeType == type;
     }
   }
 
