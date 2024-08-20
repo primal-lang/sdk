@@ -2,17 +2,18 @@ import 'package:primal/compiler/lexical/token.dart';
 
 class Parser {
   final List<Token> tokens;
+  int current = 0;
 
-  const Parser(this.tokens);
+  Parser(this.tokens);
 
-  /*ParseExpression analyze() => equality();
+  ParseExpression expression() => equality();
 
   ParseExpression equality() {
     ParseExpression expr = comparison();
 
-    while (match(BANG_EQUAL, EQUAL_EQUAL)) {
-      Token operator = previous();
-      ParseExpression right = comparison();
+    while (match([NotEqualToken, EqualToken])) {
+      final Token operator = previous();
+      final ParseExpression right = comparison();
       expr = BinaryExpression(expr, operator, right);
     }
 
@@ -22,10 +23,15 @@ class Parser {
   ParseExpression comparison() {
     ParseExpression expr = term();
 
-    while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
-      Token operator = previous();
-      Expr right = term();
-      expr = new Expr.Binary(expr, operator, right);
+    while (match([
+      GreaterThanToken,
+      GreaterEqualThanToken,
+      LessThanToken,
+      LessEqualThanToken,
+    ])) {
+      final Token operator = previous();
+      final ParseExpression right = term();
+      expr = BinaryExpression(expr, operator, right);
     }
 
     return expr;
@@ -34,10 +40,10 @@ class Parser {
   ParseExpression term() {
     ParseExpression expr = factor();
 
-    while (match(MINUS, PLUS)) {
-      Token operator = previous();
-      Expr right = factor();
-      expr = new Expr.Binary(expr, operator, right);
+    while (match([MinusToken, PlusToken])) {
+      final Token operator = previous();
+      final ParseExpression right = factor();
+      expr = BinaryExpression(expr, operator, right);
     }
 
     return expr;
@@ -46,43 +52,41 @@ class Parser {
   ParseExpression factor() {
     ParseExpression expr = unary();
 
-    while (match(SLASH, STAR)) {
-      Token operator = previous();
-      Expr right = unary();
-      expr = new Expr.Binary(expr, operator, right);
+    while (match([ForwardSlashToken, AsteriskToken])) {
+      final Token operator = previous();
+      final ParseExpression right = unary();
+      expr = BinaryExpression(expr, operator, right);
     }
 
     return expr;
   }
 
   ParseExpression unary() {
-    if (match(BANG, MINUS)) {
-      Token operator = previous();
-      Expr right = unary();
-      return new Expr.Unary(operator, right);
+    if (match([BangToken, MinusToken])) {
+      final Token operator = previous();
+      final ParseExpression right = unary();
+      return UnaryExpression(operator, right);
     }
 
     return primary();
   }
 
   ParseExpression primary() {
-    if (match(FALSE)) return new Expr.Literal(false);
-    if (match(TRUE)) return new Expr.Literal(true);
-    if (match(NIL)) return new Expr.Literal(null);
-
-    if (match(NUMBER, STRING)) {
-      return new Expr.Literal(previous().literal);
+    if (match([BooleanToken, NumberToken, StringToken])) {
+      return LiteralExpression(previous().value);
     }
 
-    if (match(LEFT_PAREN)) {
-      Expr expr = expression();
-      consume(RIGHT_PAREN, "Expect ')' after expression.");
-      return new Expr.Grouping(expr);
+    if (match([OpenParenthesisToken])) {
+      final ParseExpression expr = expression();
+      consume(CloseParenthesisToken);
+      return GroupExpression(expr);
     }
+
+    throw Exception();
   }
 
-  bool match(List<TokenType> types) {
-    for (TokenType type in types) {
+  bool match(List<Type> types) {
+    for (final Type type in types) {
       if (check(type)) {
         advance();
         return true;
@@ -92,36 +96,63 @@ class Parser {
     return false;
   }
 
-  bool check(TokenType type) {
+  bool check(Type type) {
     if (isAtEnd()) {
       return false;
     } else {
-      return peek().type == type;
+      return peek().runtimeType == type.runtimeType;
     }
   }
 
   Token advance() {
     if (!isAtEnd()) {
       current++;
-    } else {
-      return previous();
     }
+
+    return previous();
   }
 
-  bool isAtEnd() => peek().type == EOF;
+  Token consume(Type type) {
+    if (check(type)) {
+      return advance();
+    }
 
-  Token peek() => tokens.get(current);
+    throw Exception();
+  }
 
-  Token previous() => tokens.get(current - 1);*/
+  bool isAtEnd() => current == tokens.length - 1;
+
+  Token peek() => tokens[current];
+
+  Token previous() => tokens[current - 1];
 }
 
 class ParseExpression {
   const ParseExpression();
 }
 
+class LiteralExpression extends ParseExpression {
+  final String value;
+
+  const LiteralExpression(this.value);
+}
+
+class GroupExpression extends ParseExpression {
+  final ParseExpression expression;
+
+  const GroupExpression(this.expression);
+}
+
+class UnaryExpression extends ParseExpression {
+  final Token operator;
+  final ParseExpression expression;
+
+  const UnaryExpression(this.operator, this.expression);
+}
+
 class BinaryExpression extends ParseExpression {
   final ParseExpression left;
-  final Operator operator;
+  final Token operator;
   final ParseExpression right;
 
   const BinaryExpression(this.left, this.operator, this.right);
