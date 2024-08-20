@@ -148,7 +148,7 @@ class GroupExpression extends ParseExpression {
   const GroupExpression(this.expression);
 
   @override
-  String get text => '(${expression.text})';
+  String get text => expression.text;
 }
 
 class UnaryExpression extends ParseExpression {
@@ -158,7 +158,7 @@ class UnaryExpression extends ParseExpression {
   const UnaryExpression(this.operator, this.expression);
 
   @override
-  String get text => '${operator.value} ${expression.text}';
+  String get text => '(${operator.value} ${expression.text})';
 }
 
 class BinaryExpression extends ParseExpression {
@@ -169,5 +169,5 @@ class BinaryExpression extends ParseExpression {
   const BinaryExpression(this.left, this.operator, this.right);
 
   @override
-  String get text => '${left.text} ${operator.value} ${right.text}';
+  String get text => '(${left.text} ${operator.value} ${right.text})';
 }

@@ -45,8 +45,6 @@ class SymbolToken extends Token<String> {
         );
 }
 
-//--------
-
 class MinusToken extends Token<String> {
   MinusToken(Lexeme lexeme)
       : super(
