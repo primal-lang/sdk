@@ -9,7 +9,7 @@ void main() {
       final List<Token> tokens = getTokens('(2 - 1) * 3');
       final Parser parser = Parser(tokens);
       final ParseExpression expression = parser.expression();
-      print(expression);
+      print(expression.text);
     });
   });
 }

@@ -127,20 +127,28 @@ class Parser {
   Token previous() => tokens[current - 1];
 }
 
-class ParseExpression {
+abstract class ParseExpression {
   const ParseExpression();
+
+  String get text;
 }
 
 class LiteralExpression extends ParseExpression {
   final String value;
 
   const LiteralExpression(this.value);
+
+  @override
+  String get text => value;
 }
 
 class GroupExpression extends ParseExpression {
   final ParseExpression expression;
 
   const GroupExpression(this.expression);
+
+  @override
+  String get text => '(${expression.text})';
 }
 
 class UnaryExpression extends ParseExpression {
@@ -148,6 +156,9 @@ class UnaryExpression extends ParseExpression {
   final ParseExpression expression;
 
   const UnaryExpression(this.operator, this.expression);
+
+  @override
+  String get text => '${operator.value} ${expression.text}';
 }
 
 class BinaryExpression extends ParseExpression {
@@ -156,4 +167,7 @@ class BinaryExpression extends ParseExpression {
   final ParseExpression right;
 
   const BinaryExpression(this.left, this.operator, this.right);
+
+  @override
+  String get text => '${left.text} ${operator.value} ${right.text}';
 }
