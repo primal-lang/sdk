@@ -157,20 +157,3 @@ class BinaryExpression extends ParseExpression {
 
   const BinaryExpression(this.left, this.operator, this.right);
 }
-
-enum Operator {
-  addition,
-  substraction,
-  division,
-  multiplication,
-  equality,
-  non_equality;
-
-  static Operator fromToken(Token token) {
-    if (token is AssignToken) {
-      return equality;
-    }
-
-    throw Exception('Invalid operator');
-  }
-}
