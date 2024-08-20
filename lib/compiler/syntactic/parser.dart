@@ -1,4 +1,5 @@
 import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/models/location.dart';
 
 class Parser {
   final List<Token> tokens;
@@ -115,19 +116,19 @@ class Parser {
     if (match([
       BooleanToken,
     ])) {
-      return BooleanLiteralExpression(previous().value);
+      return BooleanLiteralExpression(previous());
     } else if (match([NumberToken])) {
-      return NumberLiteralExpression(previous().value);
+      return NumberLiteralExpression(previous());
     } else if (match([StringToken])) {
-      return StringLiteralExpression(previous().value);
+      return StringLiteralExpression(previous());
     } else if (match([IdentifierToken])) {
-      return IdentifierExpression(previous().value);
+      return IdentifierExpression(previous());
     }
 
     if (match([OpenParenthesisToken])) {
       final ParseExpression expr = expression();
       consume(CloseParenthesisToken);
-      return GroupExpression(expr);
+      return expr;
     }
 
     throw Exception();
@@ -175,34 +176,46 @@ class Parser {
   Token previous() => tokens[current - 1];
 }
 
-abstract class ParseExpression {
-  const ParseExpression();
+abstract class ParseExpression extends Localized {
+  const ParseExpression({required super.location});
 
   String get text;
 }
 
-class BooleanLiteralExpression extends ParseExpression {
-  final bool value;
+abstract class LiteralExpression<T> extends ParseExpression {
+  final T value;
 
-  const BooleanLiteralExpression(this.value);
-
-  @override
-  String get text => value.toString();
-}
-
-class NumberLiteralExpression extends ParseExpression {
-  final num value;
-
-  const NumberLiteralExpression(this.value);
+  const LiteralExpression({
+    required super.location,
+    required this.value,
+  });
 
   @override
   String get text => value.toString();
 }
 
-class StringLiteralExpression extends ParseExpression {
-  final String value;
+class BooleanLiteralExpression extends LiteralExpression<bool> {
+  BooleanLiteralExpression(Token token)
+      : super(
+          location: token.location,
+          value: token.value,
+        );
+}
 
-  const StringLiteralExpression(this.value);
+class NumberLiteralExpression extends LiteralExpression<num> {
+  NumberLiteralExpression(Token token)
+      : super(
+          location: token.location,
+          value: token.value,
+        );
+}
+
+class StringLiteralExpression extends LiteralExpression<String> {
+  StringLiteralExpression(Token token)
+      : super(
+          location: token.location,
+          value: token.value,
+        );
 
   @override
   String get text => '"$value"';
@@ -211,26 +224,20 @@ class StringLiteralExpression extends ParseExpression {
 class IdentifierExpression extends ParseExpression {
   final String value;
 
-  const IdentifierExpression(this.value);
+  IdentifierExpression(Token token)
+      : value = token.value,
+        super(location: token.location);
 
   @override
   String get text => value;
-}
-
-class GroupExpression extends ParseExpression {
-  final ParseExpression expression;
-
-  const GroupExpression(this.expression);
-
-  @override
-  String get text => expression.text;
 }
 
 class UnaryExpression extends ParseExpression {
   final Token operator;
   final ParseExpression expression;
 
-  const UnaryExpression(this.operator, this.expression);
+  UnaryExpression(this.operator, this.expression)
+      : super(location: operator.location);
 
   @override
   String get text => '(${operator.value}${expression.text})';
@@ -241,7 +248,8 @@ class BinaryExpression extends ParseExpression {
   final Token operator;
   final ParseExpression right;
 
-  const BinaryExpression(this.left, this.operator, this.right);
+  BinaryExpression(this.left, this.operator, this.right)
+      : super(location: operator.location);
 
   @override
   String get text => '(${left.text} ${operator.value} ${right.text})';
@@ -251,7 +259,7 @@ class CallExpression extends ParseExpression {
   final ParseExpression calle;
   final List<ParseExpression> arguments;
 
-  const CallExpression(this.calle, this.arguments);
+  CallExpression(this.calle, this.arguments) : super(location: calle.location);
 
   @override
   String get text =>
