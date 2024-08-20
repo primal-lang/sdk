@@ -25,5 +25,19 @@ void main() {
       final ParseExpression expression = parser.expression();
       expect(expression.text, '((2 - 1) * 3)');
     });
+
+    test('Expression 4', () {
+      final List<Token> tokens = getTokens('(2 - 1) != 3 * 4');
+      final Parser parser = Parser(tokens);
+      final ParseExpression expression = parser.expression();
+      expect(expression.text, '((2 - 1) != (3 * 4))');
+    });
+
+    test('Expression 5', () {
+      final List<Token> tokens = getTokens('2 * 4 % 3 == 1 + 3 / 4');
+      final Parser parser = Parser(tokens);
+      final ParseExpression expression = parser.expression();
+      expect(expression.text, '(((2 * 4) % 3) == (1 + (3 / 4)))');
+    });
   });
 }

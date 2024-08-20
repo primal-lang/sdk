@@ -52,7 +52,7 @@ class Parser {
   ParseExpression factor() {
     ParseExpression expr = unary();
 
-    while (match([ForwardSlashToken, AsteriskToken])) {
+    while (match([ForwardSlashToken, AsteriskToken, PercentToken])) {
       final Token operator = previous();
       final ParseExpression right = unary();
       expr = BinaryExpression(expr, operator, right);
