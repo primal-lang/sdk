@@ -81,5 +81,26 @@ void main() {
       final ParseExpression expression = parser.expression();
       expect(expression.text, 'foo((4 + 1))');
     });
+
+    test('Expression 12', () {
+      final List<Token> tokens = getTokens('foo(bar + 1)');
+      final Parser parser = Parser(tokens);
+      final ParseExpression expression = parser.expression();
+      expect(expression.text, 'foo((bar + 1))');
+    });
+
+    test('Expression 13', () {
+      final List<Token> tokens = getTokens('foo(bar() + 1)');
+      final Parser parser = Parser(tokens);
+      final ParseExpression expression = parser.expression();
+      expect(expression.text, 'foo((bar() + 1))');
+    });
+
+    test('Expression 14', () {
+      final List<Token> tokens = getTokens('foo(bar()() + 1)()');
+      final Parser parser = Parser(tokens);
+      final ParseExpression expression = parser.expression();
+      expect(expression.text, 'foo((bar()() + 1))()');
+    });
   });
 }
