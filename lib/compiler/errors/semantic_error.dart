@@ -23,11 +23,11 @@ class DuplicatedParameterError extends SemanticError {
             'Duplicated parameter "$parameter" in function "$function(${parameters.join(', ')})"');
 }
 
-class UndefinedSymbolError extends SemanticError {
-  const UndefinedSymbolError({
-    required String symbol,
+class UndefinedIdentifiersError extends SemanticError {
+  const UndefinedIdentifiersError({
+    required String identifier,
     required Location location,
-  }) : super('Undefined symbol "$symbol" at $location');
+  }) : super('Undefined identifier "$identifier" at $location');
 }
 
 class UndefinedFunctionError extends GenericError {

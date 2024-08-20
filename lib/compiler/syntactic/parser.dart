@@ -120,7 +120,7 @@ class Parser {
       return NumberLiteralExpression(previous().value);
     } else if (match([StringToken])) {
       return StringLiteralExpression(previous().value);
-    } else if (match([SymbolToken])) {
+    } else if (match([IdentifierToken])) {
       return IdentifierExpression(previous().value);
     }
 
@@ -254,5 +254,6 @@ class CallExpression extends ParseExpression {
   const CallExpression(this.calle, this.arguments);
 
   @override
-  String get text => '${calle.text}(${arguments.map((e) => e.text).join(', ')})';
+  String get text =>
+      '${calle.text}(${arguments.map((e) => e.text).join(', ')})';
 }

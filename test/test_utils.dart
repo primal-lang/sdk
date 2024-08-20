@@ -63,11 +63,14 @@ void checkExpressions(Expression actual, Expression expected) {
 
   if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
     expect(actual.value, equals(expected.value));
-  } else if ((actual is SymbolExpression) && (expected is SymbolExpression)) {
+  } else if ((actual is IdentifierExpression) &&
+      (expected is IdentifierExpression)) {
     expect(actual.value, equals(expected.value));
-  } else if ((actual is SymbolExpression) && (expected is LiteralExpression)) {
+  } else if ((actual is IdentifierExpression) &&
+      (expected is LiteralExpression)) {
     expect(actual.value, equals(expected.value));
-  } else if ((actual is LiteralExpression) && (expected is SymbolExpression)) {
+  } else if ((actual is LiteralExpression) &&
+      (expected is IdentifierExpression)) {
     expect(actual.value, equals(expected.value));
   } else if ((actual is FunctionCallExpression) &&
       (expected is FunctionCallExpression)) {
@@ -125,8 +128,8 @@ BooleanToken booleanToken(bool value, int row, int column) =>
       location: Location(row: row, column: column),
     ));
 
-SymbolToken symbolToken(String value, int row, int column) =>
-    SymbolToken(Lexeme(
+IdentifierToken identifierToken(String value, int row, int column) =>
+    IdentifierToken(Lexeme(
       value: value,
       location: Location(row: row, column: column),
     ));

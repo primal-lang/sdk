@@ -64,10 +64,10 @@ class BooleanExpression extends LiteralExpression<bool> {
   Reducible toReducible() => BooleanReducibleValue(value);
 }
 
-class SymbolExpression extends Expression {
+class IdentifierExpression extends Expression {
   final String value;
 
-  SymbolExpression(Token token)
+  IdentifierExpression(Token token)
       : value = token.value,
         super(location: token.location);
 
@@ -75,7 +75,7 @@ class SymbolExpression extends Expression {
   String toString() => value.toString();
 
   @override
-  Reducible toReducible() => SymbolReducible(
+  Reducible toReducible() => IdentifierReducible(
         value: value,
         location: location,
       );

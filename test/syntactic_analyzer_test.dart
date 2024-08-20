@@ -180,7 +180,7 @@ void main() {
               FunctionCallExpression(
                 name: 'mod',
                 arguments: [
-                  SymbolExpression(symbolToken('x', 1, 20)),
+                  IdentifierExpression(identifierToken('x', 1, 20)),
                   NumberExpression(numberToken(2, 1, 23)),
                 ],
                 location: const Location(row: 1, column: 16),
@@ -209,7 +209,7 @@ void main() {
                   FunctionCallExpression(
                     name: 'positive',
                     arguments: [
-                      SymbolExpression(symbolToken('x', 1, 32)),
+                      IdentifierExpression(identifierToken('x', 1, 32)),
                     ],
                     location: const Location(row: 1, column: 23),
                   ),
@@ -236,7 +236,7 @@ void main() {
               FunctionCallExpression(
                 name: 'eq',
                 arguments: [
-                  SymbolExpression(symbolToken('n', 1, 22)),
+                  IdentifierExpression(identifierToken('n', 1, 22)),
                   NumberExpression(numberToken(0, 1, 25)),
                 ],
                 location: const Location(row: 1, column: 19),
@@ -245,14 +245,14 @@ void main() {
               FunctionCallExpression(
                 name: 'mul',
                 arguments: [
-                  SymbolExpression(symbolToken('n', 1, 36)),
+                  IdentifierExpression(identifierToken('n', 1, 36)),
                   FunctionCallExpression(
                     name: 'factorial',
                     arguments: [
                       FunctionCallExpression(
                         name: 'sub',
                         arguments: [
-                          SymbolExpression(symbolToken('n', 1, 53)),
+                          IdentifierExpression(identifierToken('n', 1, 53)),
                           NumberExpression(numberToken(1, 1, 56)),
                         ],
                         location: const Location(row: 1, column: 49),

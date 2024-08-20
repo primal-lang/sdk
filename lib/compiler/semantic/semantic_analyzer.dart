@@ -129,12 +129,12 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
   }) {
-    if (reducible is SymbolReducible) {
+    if (reducible is IdentifierReducible) {
       if (availableParameters.contains(reducible.value)) {
         usedParameters.add(reducible.value);
       } else if (!allFunctions.any((f) => f.name == reducible.value)) {
-        throw UndefinedSymbolError(
-          symbol: reducible.value,
+        throw UndefinedIdentifiersError(
+          identifier: reducible.value,
           location: reducible.location,
         );
       }

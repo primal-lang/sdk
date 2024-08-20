@@ -54,7 +54,7 @@ class InitState extends State<Character, void> {
     } else if (input.value.isDigit) {
       return IntegerState(input.lexeme);
     } else if (input.value.isLetter) {
-      return SymbolState(input.lexeme);
+      return IdentifierState(input.lexeme);
     } else if (input.value.isMinus) {
       return MinusState(input.lexeme);
     } else if (input.value.isPlus) {
@@ -147,8 +147,8 @@ class DecimalState extends State<Character, Lexeme> {
   }
 }
 
-class SymbolState extends State<Character, Lexeme> {
-  const SymbolState(super.output);
+class IdentifierState extends State<Character, Lexeme> {
+  const IdentifierState(super.output);
 
   @override
   State process(Character input, Character? next) {
@@ -156,13 +156,13 @@ class SymbolState extends State<Character, Lexeme> {
         input.value.isDigit ||
         input.value.isDot ||
         input.value.isUnderscore) {
-      return SymbolState(output.add(input));
+      return IdentifierState(output.add(input));
     } else if (input.value.isOperandDelimiter) {
       final List<Token> tokens = [
         if (output.value.isBoolean)
           BooleanToken(output)
         else
-          SymbolToken(output)
+          IdentifierToken(output)
       ];
 
       return ResultState(tokens, true);

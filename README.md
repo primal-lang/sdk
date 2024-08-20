@@ -55,7 +55,7 @@ The syntax is designed to be simple and easy to read and consists of function de
 A function definition is composed of:
 
 *   **Function name:** which must match the regular expression `[a-zA-Z]+[\w]*`
-*   **Function parameters (optional):** a list of symbols, each of them matching the regular expression `[a-zA-Z]+[\w]*`
+*   **Function parameters (optional):** a list of expressions, each of them matching the regular expression `[a-zA-Z]+[\w]*`
 *   **Function body:** an expression which consist of either a constant value or a function call
 
 Here is an example of a function with parameters:

@@ -23,21 +23,21 @@ void main() {
     }
   });
 
-  test('Undefined symbol 1', () {
+  test('Undefined identifier 1', () {
     try {
       getIntermediateCode('isBiggerThan10 = gt(z, 10)');
       fail('Should fail');
     } catch (e) {
-      expect(e, isA<UndefinedSymbolError>());
+      expect(e, isA<UndefinedIdentifiersError>());
     }
   });
 
-  test('Undefined symbol 2', () {
+  test('Undefined identifier 2', () {
     try {
       getIntermediateCode('isBiggerThan10 = x');
       fail('Should fail');
     } catch (e) {
-      expect(e, isA<UndefinedSymbolError>());
+      expect(e, isA<UndefinedIdentifiersError>());
     }
   });
 

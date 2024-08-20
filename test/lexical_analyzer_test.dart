@@ -123,10 +123,10 @@ void main() {
       ]);
     });
 
-    test('Symbol', () {
+    test('Identifier', () {
       final List<Token> tokens = getTokens('isEven');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'isEven',
           location: Location(
             row: 1,
@@ -136,10 +136,10 @@ void main() {
       ]);
     });
 
-    test('Symbol with numbers', () {
+    test('Identifier with numbers', () {
       final List<Token> tokens = getTokens('isBiggerThan10');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'isBiggerThan10',
           location: Location(
             row: 1,
@@ -149,10 +149,10 @@ void main() {
       ]);
     });
 
-    test('Symbol with underscore', () {
+    test('Identifier with underscore', () {
       final List<Token> tokens = getTokens('is_even');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'is_even',
           location: Location(
             row: 1,
@@ -162,10 +162,10 @@ void main() {
       ]);
     });
 
-    test('Symbol with dot', () {
+    test('Identifier with dot', () {
       final List<Token> tokens = getTokens('is.even');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'is.even',
           location: Location(
             row: 1,
@@ -175,10 +175,10 @@ void main() {
       ]);
     });
 
-    test('Symbol complex', () {
+    test('Identifier complex', () {
       final List<Token> tokens = getTokens('isToday_butNot.31st');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'isToday_butNot.31st',
           location: Location(
             row: 1,
@@ -360,7 +360,7 @@ void main() {
       final List<Token> tokens =
           getTokens('// Comment 1\npi = 3.14 // Comment 2\n// Comment 3');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'pi',
           location: Location(
             row: 2,
@@ -394,7 +394,7 @@ void main() {
 pi = 3.14
 ''');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'pi',
           location: Location(
             row: 7,
@@ -421,7 +421,7 @@ pi = 3.14
     test('Constant declaration', () {
       final List<Token> tokens = getTokens('pi = 3.14');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'pi',
           location: Location(
             row: 1,
@@ -448,7 +448,7 @@ pi = 3.14
     test('Main function definition', () {
       final List<Token> tokens = getTokens('main = isEven(4)');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'main',
           location: Location(
             row: 1,
@@ -462,7 +462,7 @@ pi = 3.14
             column: 6,
           ),
         )),
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'isEven',
           location: Location(
             row: 1,
@@ -496,7 +496,7 @@ pi = 3.14
     test('Function definition', () {
       final List<Token> tokens = getTokens('isZero(x) = eq(x, 0)');
       checkTokens(tokens, [
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'isZero',
           location: Location(
             row: 1,
@@ -510,7 +510,7 @@ pi = 3.14
             column: 7,
           ),
         )),
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'x',
           location: Location(
             row: 1,
@@ -531,7 +531,7 @@ pi = 3.14
             column: 11,
           ),
         )),
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'eq',
           location: Location(
             row: 1,
@@ -545,7 +545,7 @@ pi = 3.14
             column: 15,
           ),
         )),
-        SymbolToken(const Lexeme(
+        IdentifierToken(const Lexeme(
           value: 'x',
           location: Location(
             row: 1,

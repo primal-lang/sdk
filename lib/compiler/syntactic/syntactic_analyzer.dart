@@ -66,7 +66,7 @@ class InitState extends State<Token, void> {
 
   @override
   State process(Token input, Token? next) {
-    if (input is SymbolToken) {
+    if (input is IdentifierToken) {
       return FunctionNameState(FunctionDefinition(name: input.value));
     } else {
       throw InvalidTokenError(input);
@@ -94,7 +94,7 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input, Token? next) {
-    if (input is SymbolToken) {
+    if (input is IdentifierToken) {
       return FunctionWithNewParametersState(output.withParameter(input.value));
     } else {
       throw InvalidTokenError(input);
@@ -122,7 +122,7 @@ class FunctionWithNextParametersState extends State<Token, FunctionDefinition> {
 
   @override
   State process(Token input, Token? next) {
-    if (input is SymbolToken) {
+    if (input is IdentifierToken) {
       return FunctionWithNewParametersState(output.withParameter(input.value));
     } else {
       throw InvalidTokenError(input);
@@ -156,14 +156,14 @@ class FunctionBodyInitState extends State<Token, FunctionDefinition> {
       return ResultState(output.withExpression(NumberExpression(input)));
     } else if (input is BooleanToken) {
       return ResultState(output.withExpression(BooleanExpression(input)));
-    } else if (input is SymbolToken) {
+    } else if (input is IdentifierToken) {
       if (next is OpenParenthesisToken) {
         return FunctionBodyExpressionState(
           output,
-          stack.push(StackSymbol(SymbolExpression(input))),
+          stack.push(StackIdentifier(IdentifierExpression(input))),
         );
       } else {
-        return ResultState(output.withExpression(SymbolExpression(input)));
+        return ResultState(output.withExpression(IdentifierExpression(input)));
       }
     } else {
       throw InvalidTokenError(input);
@@ -205,17 +205,17 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         output,
         stack.push(StackLiteral(BooleanExpression(input))),
       );
-    } else if (input is SymbolToken) {
+    } else if (input is IdentifierToken) {
       if (topIsNot([StackOpenParenthesis, StackComma])) {
         throw InvalidTokenError(input);
       }
 
       return FunctionBodyExpressionState(
         output,
-        stack.push(StackSymbol(SymbolExpression(input))),
+        stack.push(StackIdentifier(IdentifierExpression(input))),
       );
     } else if (input is OpenParenthesisToken) {
-      if (topIsNot([StackSymbol])) {
+      if (topIsNot([StackIdentifier])) {
         throw InvalidTokenError(input);
       }
 
@@ -224,7 +224,7 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         stack.push(StackOpenParenthesis(input)),
       );
     } else if (input is CommaToken) {
-      if (topIsNot([StackLiteral, StackSymbol, StackFunctionCall])) {
+      if (topIsNot([StackLiteral, StackIdentifier, StackFunctionCall])) {
         throw InvalidTokenError(input);
       }
 
@@ -267,15 +267,15 @@ class FunctionBodyExpressionState extends State<Token, FunctionDefinition> {
         throw InvalidStackElementError(openParanthesisElement);
       }
 
-      final StackElement symbolElement = stack.pop();
+      final StackElement identifierElement = stack.pop();
 
-      if (!(symbolElement is StackSymbol)) {
-        throw InvalidStackElementError(symbolElement);
+      if (!(identifierElement is StackIdentifier)) {
+        throw InvalidStackElementError(identifierElement);
       }
 
       final FunctionCallExpression functionCall = FunctionCallExpression(
-        location: symbolElement.expression.location,
-        name: symbolElement.expression.value,
+        location: identifierElement.expression.location,
+        name: identifierElement.expression.value,
         arguments: arguments,
       );
 
@@ -315,8 +315,8 @@ class StackLiteral extends StackExpression<LiteralExpression> {
   StackLiteral(super.expression);
 }
 
-class StackSymbol extends StackExpression<SymbolExpression> {
-  StackSymbol(super.expression);
+class StackIdentifier extends StackExpression<IdentifierExpression> {
+  StackIdentifier(super.expression);
 }
 
 class StackFunctionCall extends StackExpression<FunctionCallExpression> {

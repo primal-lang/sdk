@@ -52,11 +52,11 @@ class BooleanReducibleValue extends ReducibleValue<bool> {
   String get type => 'Boolean';
 }
 
-class SymbolReducible extends Reducible {
+class IdentifierReducible extends Reducible {
   final String value;
   final Location location;
 
-  const SymbolReducible({
+  const IdentifierReducible({
     required this.value,
     required this.location,
   });
@@ -68,7 +68,7 @@ class SymbolReducible extends Reducible {
   Reducible reduce() => this;
 
   @override
-  String get type => 'Symbol';
+  String get type => 'Identifier';
 
   @override
   String toString() => value;

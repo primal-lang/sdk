@@ -37,8 +37,8 @@ class BooleanToken extends Token<bool> {
         );
 }
 
-class SymbolToken extends Token<String> {
-  SymbolToken(Lexeme lexeme)
+class IdentifierToken extends Token<String> {
+  IdentifierToken(Lexeme lexeme)
       : super(
           value: lexeme.value,
           location: lexeme.location,
