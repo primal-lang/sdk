@@ -178,8 +178,6 @@ class Parser {
 
 abstract class ParseExpression extends Localized {
   const ParseExpression({required super.location});
-
-  String get text;
 }
 
 abstract class LiteralExpression<T> extends ParseExpression {
@@ -191,7 +189,7 @@ abstract class LiteralExpression<T> extends ParseExpression {
   });
 
   @override
-  String get text => value.toString();
+  String toString() => value.toString();
 }
 
 class BooleanLiteralExpression extends LiteralExpression<bool> {
@@ -218,7 +216,7 @@ class StringLiteralExpression extends LiteralExpression<String> {
         );
 
   @override
-  String get text => '"$value"';
+  String toString() => '"$value"';
 }
 
 class IdentifierExpression extends ParseExpression {
@@ -229,7 +227,7 @@ class IdentifierExpression extends ParseExpression {
         super(location: token.location);
 
   @override
-  String get text => value;
+  String toString() => value;
 }
 
 class UnaryExpression extends ParseExpression {
@@ -240,7 +238,7 @@ class UnaryExpression extends ParseExpression {
       : super(location: operator.location);
 
   @override
-  String get text => '(${operator.value}${expression.text})';
+  String toString() => '(${operator.value}$expression)';
 }
 
 class BinaryExpression extends ParseExpression {
@@ -252,7 +250,7 @@ class BinaryExpression extends ParseExpression {
       : super(location: operator.location);
 
   @override
-  String get text => '(${left.text} ${operator.value} ${right.text})';
+  String toString() => '($left ${operator.value} $right)';
 }
 
 class CallExpression extends ParseExpression {
@@ -262,6 +260,5 @@ class CallExpression extends ParseExpression {
   CallExpression(this.calle, this.arguments) : super(location: calle.location);
 
   @override
-  String get text =>
-      '${calle.text}(${arguments.map((e) => e.text).join(', ')})';
+  String toString() => '$calle(${arguments.map((e) => e).join(', ')})';
 }
