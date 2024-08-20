@@ -90,7 +90,12 @@ class Parser {
 
     while (true) {
       if (match([OpenParenthesisToken])) {
-        expression = finishCall(expression);
+        if ((expression is IdentifierExpression) ||
+            (expression is CallExpression)) {
+          expression = finishCall(expression);
+        } else {
+          throw InvalidTokenError(peek);
+        }
       } else {
         break;
       }
