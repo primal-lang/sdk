@@ -37,14 +37,14 @@ void main() {
 
     test('Try (try2)', () {
       final Runtime runtime =
-          getRuntime('main = try(error("Does not compute"), 42)');
+          getRuntime('main = try(throw("Does not compute"), 42)');
       checkResult(runtime, 42);
     });
 
     test('Error (error)', () {
       try {
         final Runtime runtime =
-            getRuntime('main = error("Segmentation fault")');
+            getRuntime('main = throw("Segmentation fault")');
         runtime.executeMain();
         fail('Should fail');
       } catch (e) {

@@ -4,10 +4,10 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class Error extends NativeFunctionPrototype {
-  Error()
+class Throw extends NativeFunctionPrototype {
+  Throw()
       : super(
-          name: 'error',
+          name: 'throw',
           parameters: [
             Parameter.any('a'),
           ],

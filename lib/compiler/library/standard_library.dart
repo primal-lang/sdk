@@ -18,7 +18,7 @@ import 'package:primal/compiler/library/comparison/neq.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
-import 'package:primal/compiler/library/error/error.dart';
+import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/generic/at.dart';
 import 'package:primal/compiler/library/generic/concat.dart';
 import 'package:primal/compiler/library/generic/contains.dart';
@@ -84,7 +84,7 @@ class StandardLibrary {
         Try(),
 
         // Error
-        Error(),
+        Throw(),
 
         // Debug
         Debug(),
