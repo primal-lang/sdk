@@ -158,7 +158,7 @@ class UnaryExpression extends ParseExpression {
   const UnaryExpression(this.operator, this.expression);
 
   @override
-  String get text => '(${operator.value} ${expression.text})';
+  String get text => '(${operator.value}${expression.text})';
 }
 
 class BinaryExpression extends ParseExpression {
