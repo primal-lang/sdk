@@ -260,5 +260,5 @@ class CallExpression extends ParseExpression {
   CallExpression(this.calle, this.arguments) : super(location: calle.location);
 
   @override
-  String toString() => '$calle(${arguments.map((e) => e).join(', ')})';
+  String toString() => '$calle(${arguments.join(', ')})';
 }
