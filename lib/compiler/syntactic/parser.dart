@@ -73,7 +73,7 @@ class Parser {
 
   ParseExpression primary() {
     if (match([BooleanToken, NumberToken, StringToken])) {
-      return LiteralExpression(previous().value);
+      return LiteralExpression(previous().value.toString());
     }
 
     if (match([OpenParenthesisToken])) {
@@ -120,7 +120,7 @@ class Parser {
     throw Exception();
   }
 
-  bool isAtEnd() => current == tokens.length - 1;
+  bool isAtEnd() => current == tokens.length;
 
   Token peek() => tokens[current];
 
