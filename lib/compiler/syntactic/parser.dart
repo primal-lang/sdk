@@ -16,7 +16,11 @@ class Parser {
     while (match([NotEqualToken, EqualToken])) {
       final Token operator = previous;
       final ParseExpression right = comparison();
-      expression = BinaryExpression(expression, operator, right);
+      expression = CallExpression.fromBinaryOperation(
+        operator: operator,
+        left: expression,
+        right: right,
+      );
     }
 
     return expression;
@@ -33,7 +37,11 @@ class Parser {
     ])) {
       final Token operator = previous;
       final ParseExpression right = logic();
-      expression = BinaryExpression(expression, operator, right);
+      expression = CallExpression.fromBinaryOperation(
+        operator: operator,
+        left: expression,
+        right: right,
+      );
     }
 
     return expression;
@@ -45,7 +53,11 @@ class Parser {
     while (match([PipeToken, AmpersandToken])) {
       final Token operator = previous;
       final ParseExpression right = term();
-      expression = BinaryExpression(expression, operator, right);
+      expression = CallExpression.fromBinaryOperation(
+        operator: operator,
+        left: expression,
+        right: right,
+      );
     }
 
     return expression;
@@ -57,7 +69,11 @@ class Parser {
     while (match([MinusToken, PlusToken])) {
       final Token operator = previous;
       final ParseExpression right = factor();
-      expression = BinaryExpression(expression, operator, right);
+      expression = CallExpression.fromBinaryOperation(
+        operator: operator,
+        left: expression,
+        right: right,
+      );
     }
 
     return expression;
@@ -69,7 +85,11 @@ class Parser {
     while (match([ForwardSlashToken, AsteriskToken, PercentToken])) {
       final Token operator = previous;
       final ParseExpression right = unary();
-      expression = BinaryExpression(expression, operator, right);
+      expression = CallExpression.fromBinaryOperation(
+        operator: operator,
+        left: expression,
+        right: right,
+      );
     }
 
     return expression;
@@ -79,7 +99,10 @@ class Parser {
     if (match([BangToken, MinusToken])) {
       final Token operator = previous;
       final ParseExpression right = unary();
-      return UnaryExpression(operator, right);
+      return CallExpression.fromUnaryOperation(
+        operator: operator,
+        expression: right,
+      );
     }
 
     return call();
@@ -232,34 +255,24 @@ class IdentifierExpression extends ParseExpression {
   String toString() => value;
 }
 
-class UnaryExpression extends ParseExpression {
-  final Token operator;
-  final ParseExpression expression;
-
-  UnaryExpression(this.operator, this.expression)
-      : super(location: operator.location);
-
-  @override
-  String toString() => '(${operator.value}$expression)';
-}
-
-class BinaryExpression extends ParseExpression {
-  final ParseExpression left;
-  final Token operator;
-  final ParseExpression right;
-
-  BinaryExpression(this.left, this.operator, this.right)
-      : super(location: operator.location);
-
-  @override
-  String toString() => '($left ${operator.value} $right)';
-}
-
 class CallExpression extends ParseExpression {
   final ParseExpression calle;
   final List<ParseExpression> arguments;
 
   CallExpression(this.calle, this.arguments) : super(location: calle.location);
+
+  factory CallExpression.fromUnaryOperation({
+    required Token operator,
+    required ParseExpression expression,
+  }) =>
+      CallExpression(IdentifierExpression(operator), [expression]);
+
+  factory CallExpression.fromBinaryOperation({
+    required Token operator,
+    required ParseExpression left,
+    required ParseExpression right,
+  }) =>
+      CallExpression(IdentifierExpression(operator), [left, right]);
 
   @override
   String toString() => '$calle(${arguments.join(', ')})';
