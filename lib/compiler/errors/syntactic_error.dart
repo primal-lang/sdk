@@ -10,6 +10,11 @@ class InvalidTokenError extends SyntacticError {
   const InvalidTokenError(Token token) : super('Invalid token $token');
 }
 
+class ExpectedTokenError extends SyntacticError {
+  const ExpectedTokenError(Token token, String expected)
+      : super('Invalid token $token. Expected: $expected');
+}
+
 class InvalidStackElementError extends SyntacticError {
   InvalidStackElementError(StackElement element)
       : super('Expression malfored at ${element.location}');

@@ -136,7 +136,7 @@ class Parser {
       } while (match([CommaToken]));
     }
 
-    consume(CloseParenthesisToken);
+    consume(CloseParenthesisToken, ')');
 
     return CallExpression(callee, arguments);
   }
@@ -154,7 +154,7 @@ class Parser {
 
     if (match([OpenParenthesisToken])) {
       final ParseExpression expr = expression();
-      consume(CloseParenthesisToken);
+      consume(CloseParenthesisToken, ')');
       return expr;
     }
 
@@ -180,12 +180,12 @@ class Parser {
     }
   }
 
-  Token consume(Type type) {
+  Token consume(Type type, String expected) {
     if (check(type)) {
       return advance();
     }
 
-    throw InvalidTokenError(peek);
+    throw ExpectedTokenError(peek, expected);
   }
 
   Token advance() {
