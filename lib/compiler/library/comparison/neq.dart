@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Neq extends NativeFunctionPrototype {
   Neq()
       : super(
-          name: 'neq',
+          name: '!=',
           parameters: [
             Parameter.any('a'),
             Parameter.any('b'),

@@ -72,8 +72,7 @@ void checkExpressions(Expression actual, Expression expected) {
   } else if ((actual is LiteralExpression) &&
       (expected is IdentifierExpression)) {
     expect(actual.value, equals(expected.value));
-  } else if ((actual is FunctionCallExpression) &&
-      (expected is FunctionCallExpression)) {
+  } else if ((actual is CallExpression) && (expected is CallExpression)) {
     expect(actual.name, equals(expected.name));
     expect(actual.arguments.length, equals(expected.arguments.length));
 

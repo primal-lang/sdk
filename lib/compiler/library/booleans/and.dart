@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class And extends NativeFunctionPrototype {
   And()
       : super(
-          name: 'and',
+          name: '&',
           parameters: [
             Parameter.boolean('a'),
             Parameter.boolean('b'),

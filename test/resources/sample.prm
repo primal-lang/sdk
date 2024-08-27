@@ -9,28 +9,28 @@ rationalNumnber = pi
 isToday = true
 
 // Returns true if x is equal to zero
-isZero(x) = eq(x, 0)
+isZero(x) = x == 0
 
 // Returns true if x is an even number
-isEven(x) = isZero(mod(x, 2))
+isEven(x) = (x % 2) == 0
 
 // Returns true if x is an odd number
-isOdd(x) = not(isEven(x))
+isOdd(x) = !isEven(x)
 
 isBiggerThan10(x) = if(
     // if x is greater than 10, return true
-    gt(x, 10), true,
+    x > 10, true,
     false // otherwise, return false
 )
 
-factorial(n) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))
+factorial(n) = if(n == 0, 1, n * factorial(n - 1))
 
 factorial(n) = if(
     isNegative(n), error('Negative number'),
-    isZero(n), 1,
-    mul(n, factorial(dec(n)))
+    n == 0, 1,
+    n * factorial(n - 1)
 )
 
-fib(n) = if(eq(n, 0), 0, if(eq(n, 1), 1, sum(fib(sub(n, 1)), fib(sub(n, 2)))))
+fib(n) = if(n == 0, 0, if(n == 1, 1, fib(n - 1) + fib(n - 2)))
 
 main = factorial(4)

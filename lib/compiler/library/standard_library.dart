@@ -34,12 +34,10 @@ import 'package:primal/compiler/library/generic/reverse.dart';
 import 'package:primal/compiler/library/generic/tail.dart';
 import 'package:primal/compiler/library/generic/take.dart';
 import 'package:primal/compiler/library/numbers/abs.dart';
-import 'package:primal/compiler/library/numbers/add.dart';
 import 'package:primal/compiler/library/numbers/ceil.dart';
 import 'package:primal/compiler/library/numbers/cos.dart';
 import 'package:primal/compiler/library/numbers/dec.dart';
 import 'package:primal/compiler/library/numbers/div.dart';
-import 'package:primal/compiler/library/numbers/div_int.dart';
 import 'package:primal/compiler/library/numbers/floor.dart';
 import 'package:primal/compiler/library/numbers/ge.dart';
 import 'package:primal/compiler/library/numbers/gt.dart';
@@ -93,12 +91,10 @@ class StandardLibrary {
         Abs(),
         Inc(),
         Dec(),
-        Add(),
         Sum(),
         Sub(),
         Mul(),
         Div(),
-        DivInt(),
         Mod(),
         Min(),
         Max(),

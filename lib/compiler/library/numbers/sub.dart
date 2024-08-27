@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Sub extends NativeFunctionPrototype {
   Sub()
       : super(
-          name: 'sub',
+          name: '-',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

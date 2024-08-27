@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Ge extends NativeFunctionPrototype {
   Ge()
       : super(
-          name: 'ge',
+          name: '>=',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

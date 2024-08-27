@@ -1,6 +1,5 @@
 import 'package:primal/compiler/errors/lexical_error.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
-import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
@@ -105,7 +104,8 @@ void main() {
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression: StringExpression(stringToken('Hello, world!', 1, 12)),
+          expression:
+              StringLiteralExpression(stringToken('Hello, world!', 1, 12)),
         ),
       ]);
     });
@@ -117,7 +117,8 @@ void main() {
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression: StringExpression(stringToken('Goodbye, world!', 1, 12)),
+          expression:
+              StringLiteralExpression(stringToken('Goodbye, world!', 1, 12)),
         ),
       ]);
     });
@@ -128,7 +129,7 @@ void main() {
         FunctionDefinition(
           name: 'pi',
           parameters: [],
-          expression: NumberExpression(numberToken(3.14, 1, 6)),
+          expression: NumberLiteralExpression(numberToken(3.14, 1, 6)),
         ),
       ]);
     });
@@ -139,7 +140,7 @@ void main() {
         FunctionDefinition(
           name: 'enabled',
           parameters: [],
-          expression: BooleanExpression(booleanToken(true, 1, 11)),
+          expression: BooleanLiteralExpression(booleanToken(true, 1, 11)),
         ),
       ]);
     });
@@ -150,7 +151,7 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: ['a'],
-          expression: BooleanExpression(booleanToken(true, 1, 11)),
+          expression: BooleanLiteralExpression(booleanToken(true, 1, 11)),
         ),
       ]);
     });
@@ -162,32 +163,30 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: ['a', 'b', 'c'],
-          expression: BooleanExpression(booleanToken(true, 1, 17)),
+          expression: BooleanLiteralExpression(booleanToken(true, 1, 17)),
         ),
       ]);
     });
 
     test('Complex function 1', () {
       final List<FunctionDefinition> functions =
-          getFunctions('isEven(x) = eq(mod(x, 2), 0)');
+          getFunctions('isEven(x) = (x % 2) == 0');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'isEven',
           parameters: ['x'],
-          expression: FunctionCallExpression(
-            name: 'eq',
+          expression: CallExpression(
+            callee: IdentifierExpression(identifierToken('==', 1, 21)),
             arguments: [
-              FunctionCallExpression(
-                name: 'mod',
+              CallExpression(
+                callee: IdentifierExpression(identifierToken('%', 1, 16)),
                 arguments: [
-                  IdentifierExpression(identifierToken('x', 1, 20)),
-                  NumberExpression(numberToken(2, 1, 23)),
+                  IdentifierExpression(identifierToken('x', 1, 14)),
+                  NumberLiteralExpression(numberToken(2, 1, 18)),
                 ],
-                location: const Location(row: 1, column: 16),
               ),
-              NumberExpression(numberToken(0, 1, 27)),
+              NumberLiteralExpression(numberToken(0, 1, 24)),
             ],
-            location: const Location(row: 1, column: 13),
           ),
         ),
       ]);
@@ -195,76 +194,65 @@ void main() {
 
     test('Complex function 2', () {
       final List<FunctionDefinition> functions =
-          getFunctions('isOdd(x) = not(isEven(positive(x)))');
+          getFunctions('isOdd(x) = !isEven(x)');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'isOdd',
           parameters: ['x'],
-          expression: FunctionCallExpression(
-            name: 'not',
+          expression: CallExpression(
+            callee: IdentifierExpression(identifierToken('!', 1, 12)),
             arguments: [
-              FunctionCallExpression(
-                name: 'isEven',
+              CallExpression(
+                callee: IdentifierExpression(identifierToken('isEven', 1, 13)),
                 arguments: [
-                  FunctionCallExpression(
-                    name: 'positive',
-                    arguments: [
-                      IdentifierExpression(identifierToken('x', 1, 32)),
-                    ],
-                    location: const Location(row: 1, column: 23),
-                  ),
+                  IdentifierExpression(identifierToken('x', 1, 20)),
                 ],
-                location: const Location(row: 1, column: 16),
               ),
             ],
-            location: const Location(row: 1, column: 12),
           ),
         ),
       ]);
     });
 
     test('Complex function 3', () {
-      final List<FunctionDefinition> functions = getFunctions(
-          'factorial(x) = if(eq(n, 0), 1, mul(n, factorial(sub(n, 1))))');
+      final List<FunctionDefinition> functions =
+          getFunctions('factorial(x) = if(n == 0, 1, n * factorial(n - 1))');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'factorial',
           parameters: ['x'],
-          expression: FunctionCallExpression(
-            name: 'if',
+          expression: CallExpression(
+            callee: IdentifierExpression(identifierToken('if', 1, 16)),
             arguments: [
-              FunctionCallExpression(
-                name: 'eq',
+              CallExpression(
+                callee: IdentifierExpression(identifierToken('==', 1, 21)),
                 arguments: [
-                  IdentifierExpression(identifierToken('n', 1, 22)),
-                  NumberExpression(numberToken(0, 1, 25)),
+                  IdentifierExpression(identifierToken('n', 1, 19)),
+                  NumberLiteralExpression(numberToken(0, 1, 24)),
                 ],
-                location: const Location(row: 1, column: 19),
               ),
-              NumberExpression(numberToken(1, 1, 29)),
-              FunctionCallExpression(
-                name: 'mul',
+              NumberLiteralExpression(numberToken(1, 1, 27)),
+              CallExpression(
+                callee: IdentifierExpression(identifierToken('*', 1, 32)),
                 arguments: [
-                  IdentifierExpression(identifierToken('n', 1, 36)),
-                  FunctionCallExpression(
-                    name: 'factorial',
+                  IdentifierExpression(identifierToken('n', 1, 30)),
+                  CallExpression(
+                    callee: IdentifierExpression(
+                        identifierToken('factorial', 1, 34)),
                     arguments: [
-                      FunctionCallExpression(
-                        name: 'sub',
+                      CallExpression(
+                        callee:
+                            IdentifierExpression(identifierToken('-', 1, 46)),
                         arguments: [
-                          IdentifierExpression(identifierToken('n', 1, 53)),
-                          NumberExpression(numberToken(1, 1, 56)),
+                          IdentifierExpression(identifierToken('n', 1, 44)),
+                          NumberLiteralExpression(numberToken(1, 1, 48)),
                         ],
-                        location: const Location(row: 1, column: 49),
                       ),
                     ],
-                    location: const Location(row: 1, column: 39),
                   ),
                 ],
-                location: const Location(row: 1, column: 32),
               ),
             ],
-            location: const Location(row: 1, column: 16),
           ),
         ),
       ]);

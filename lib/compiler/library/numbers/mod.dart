@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Mod extends NativeFunctionPrototype {
   Mod()
       : super(
-          name: 'mod',
+          name: '%',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

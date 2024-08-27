@@ -5,13 +5,13 @@ import 'test_utils.dart';
 
 void main() {
   group('Runtime', () {
-    test('Generic (eq)', () {
-      final Runtime runtime = getRuntime('main = eq("hey", "hey")');
+    test('Generic (==)', () {
+      final Runtime runtime = getRuntime('main = "hey" == "hey"');
       checkResult(runtime, true);
     });
 
-    test('Numbers (neq)', () {
-      final Runtime runtime = getRuntime('main = neq(7, 8)');
+    test('Numbers (!=)', () {
+      final Runtime runtime = getRuntime('main = 7 != 8');
       checkResult(runtime, true);
     });
 
@@ -26,12 +26,12 @@ void main() {
     });
 
     test('If (if3)', () {
-      final Runtime runtime = getRuntime('main = if(true, sum(1, 2), 42)');
+      final Runtime runtime = getRuntime('main = if(true, 1 + 2, 42)');
       checkResult(runtime, 3);
     });
 
     test('Try (try1)', () {
-      final Runtime runtime = getRuntime('main = try(div(1, 2), 42)');
+      final Runtime runtime = getRuntime('main = try(1 / 2, 42)');
       checkResult(runtime, 0.5);
     });
 
@@ -72,38 +72,28 @@ void main() {
       checkResult(runtime, -1);
     });
 
-    test('Numbers (sum)', () {
-      final Runtime runtime = getRuntime('main = sum(5, 7)');
+    test('Numbers (+)', () {
+      final Runtime runtime = getRuntime('main = 5 + 7');
       checkResult(runtime, 12);
     });
 
-    test('Numbers (add)', () {
-      final Runtime runtime = getRuntime('main = add(5, 7)');
-      checkResult(runtime, 12);
-    });
-
-    test('Numbers (sub)', () {
-      final Runtime runtime = getRuntime('main = sub(5, 7)');
+    test('Numbers (-)', () {
+      final Runtime runtime = getRuntime('main = 5 - 7');
       checkResult(runtime, -2);
     });
 
-    test('Numbers (mul)', () {
-      final Runtime runtime = getRuntime('main = mul(5, 7)');
+    test('Numbers (*)', () {
+      final Runtime runtime = getRuntime('main = 5 * 7');
       checkResult(runtime, 35);
     });
 
-    test('Numbers (div)', () {
-      final Runtime runtime = getRuntime('main = div(5, 8)');
+    test('Numbers (/)', () {
+      final Runtime runtime = getRuntime('main = 5 / 8');
       checkResult(runtime, 0.625);
     });
 
-    test('Numbers (divInt)', () {
-      final Runtime runtime = getRuntime('main = divInt(7, 3)');
-      checkResult(runtime, 2);
-    });
-
-    test('Numbers (mod)', () {
-      final Runtime runtime = getRuntime('main = mod(7, 5)');
+    test('Numbers (%)', () {
+      final Runtime runtime = getRuntime('main = 7 % 5');
       checkResult(runtime, 2);
     });
 
@@ -162,23 +152,23 @@ void main() {
       checkResult(runtime, 2.302585092994046);
     });
 
-    test('Numbers (gt)', () {
-      final Runtime runtime = getRuntime('main = gt(10, 4)');
+    test('Numbers (>)', () {
+      final Runtime runtime = getRuntime('main = 10 > 4');
       checkResult(runtime, true);
     });
 
-    test('Numbers (lt)', () {
-      final Runtime runtime = getRuntime('main = lt(10, 4)');
+    test('Numbers (<)', () {
+      final Runtime runtime = getRuntime('main = 10 < 4');
       checkResult(runtime, false);
     });
 
-    test('Numbers (ge)', () {
-      final Runtime runtime = getRuntime('main = ge(10, 4)');
+    test('Numbers (>=)', () {
+      final Runtime runtime = getRuntime('main = 10 >= 10');
       checkResult(runtime, true);
     });
 
-    test('Numbers (le)', () {
-      final Runtime runtime = getRuntime('main = le(10, 10)');
+    test('Numbers (<=)', () {
+      final Runtime runtime = getRuntime('main = 10 <= 10');
       checkResult(runtime, true);
     });
 
@@ -207,13 +197,13 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('Booleans (and)', () {
-      final Runtime runtime = getRuntime('main = and(true, true)');
+    test('Booleans (&)', () {
+      final Runtime runtime = getRuntime('main = true & true');
       checkResult(runtime, true);
     });
 
-    test('Booleans (or)', () {
-      final Runtime runtime = getRuntime('main = or(false, true)');
+    test('Booleans (|)', () {
+      final Runtime runtime = getRuntime('main = false | true');
       checkResult(runtime, true);
     });
 
@@ -222,8 +212,8 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('Booleans (not)', () {
-      final Runtime runtime = getRuntime('main = not(false)');
+    test('Booleans (!)', () {
+      final Runtime runtime = getRuntime('main = !false');
       checkResult(runtime, true);
     });
 
@@ -243,7 +233,8 @@ void main() {
     });
 
     test('Strings (replace)', () {
-      final Runtime runtime = getRuntime('main = replace("banana", "na", "to")');
+      final Runtime runtime =
+          getRuntime('main = replace("banana", "na", "to")');
       checkResult(runtime, '"batoto"');
     });
 
@@ -263,7 +254,8 @@ void main() {
     });
 
     test('Strings (match)', () {
-      final Runtime runtime = getRuntime('main = match("identifier42", "[a-zA-Z]+[0-9]+")');
+      final Runtime runtime =
+          getRuntime('main = match("identifier42", "[a-zA-Z]+[0-9]+")');
       checkResult(runtime, true);
     });
 
@@ -394,7 +386,7 @@ void main() {
 
     test('Complex script (factorial)', () {
       final Runtime runtime = getRuntime(
-          'factorial(n) = if(isZero(n), 1, mul(n, factorial(dec(n))))\nmain = factorial(5)');
+          'factorial(n) = if(n == 0, 1, n * factorial(n - 1))\nmain = factorial(5)');
       checkResult(runtime, 120);
     });
   });

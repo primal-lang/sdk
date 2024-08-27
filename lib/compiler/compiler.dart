@@ -5,8 +5,10 @@ import 'package:primal/compiler/scanner/scanner.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/syntactic/expression_parser.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/syntactic/syntactic_analyzer.dart';
+import 'package:primal/utils/list_iterator.dart';
 
 class Compiler {
   const Compiler();
@@ -33,8 +35,9 @@ class Compiler {
     final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();
 
-    final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
+    final ExpressionParser expressionParser =
+        ExpressionParser(ListIterator(tokens));
 
-    return syntacticAnalyzer.expression;
+    return expressionParser.expression();
   }
 }

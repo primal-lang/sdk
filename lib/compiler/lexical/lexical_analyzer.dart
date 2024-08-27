@@ -14,11 +14,10 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
   List<Token> analyze() {
     final List<Token> result = [];
     final ListIterator<Character> iterator = ListIterator(input);
-    State state = const InitState();
+    State state = InitState(iterator);
 
     while (iterator.hasNext) {
-      final Character input = iterator.next;
-      state = state.process(input, iterator.peek);
+      state = state.process(iterator.next);
 
       if (state is ResultState) {
         if (state.goBack) {
@@ -26,7 +25,7 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
         }
 
         result.addAll(state.output);
-        state = const InitState();
+        state = InitState(iterator);
       }
     }
 
@@ -35,54 +34,58 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
 }
 
 class InitState extends State<Character, void> {
-  const InitState([super.output]);
+  const InitState(super.iterator, [super.output]);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isWhitespace) {
       return this;
     } else if (input.value.isDoubleQuote) {
-      return StringDoubleQuoteState(Lexeme(
-        value: '',
-        location: input.location,
-      ));
+      return StringDoubleQuoteState(
+          iterator,
+          Lexeme(
+            value: '',
+            location: input.location,
+          ));
     } else if (input.value.isSingleQuote) {
-      return StringSingleQuoteState(Lexeme(
-        value: '',
-        location: input.location,
-      ));
+      return StringSingleQuoteState(
+          iterator,
+          Lexeme(
+            value: '',
+            location: input.location,
+          ));
     } else if (input.value.isDigit) {
-      return IntegerState(input.lexeme);
+      return IntegerState(iterator, input.lexeme);
     } else if (input.value.isLetter) {
-      return IdentifierState(input.lexeme);
+      return IdentifierState(iterator, input.lexeme);
     } else if (input.value.isMinus) {
-      return MinusState(input.lexeme);
+      return MinusState(iterator, input.lexeme);
     } else if (input.value.isPlus) {
-      return PlusState(input.lexeme);
+      return PlusState(iterator, input.lexeme);
     } else if (input.value.isEquals) {
-      return EqualsState(input.lexeme);
+      return EqualsState(iterator, input.lexeme);
     } else if (input.value.isGreater) {
-      return GreaterState(input.lexeme);
+      return GreaterState(iterator, input.lexeme);
     } else if (input.value.isLess) {
-      return LessState(input.lexeme);
+      return LessState(iterator, input.lexeme);
     } else if (input.value.isPipe) {
-      return PipeState(input.lexeme);
+      return PipeState(iterator, input.lexeme);
     } else if (input.value.isAmpersand) {
-      return AmpersandState(input.lexeme);
+      return AmpersandState(iterator, input.lexeme);
     } else if (input.value.isBang) {
-      return BangState(input.lexeme);
+      return BangState(iterator, input.lexeme);
     } else if (input.value.isForewardSlash) {
-      return ForwardSlashState(input.lexeme);
+      return ForwardSlashState(iterator, input.lexeme);
     } else if (input.value.isAsterisk) {
-      return AsteriskState(input.lexeme);
+      return AsteriskState(iterator, input.lexeme);
     } else if (input.value.isPercent) {
-      return PercentState(input.lexeme);
+      return PercentState(iterator, input.lexeme);
     } else if (input.value.isComma) {
-      return CommaState(input.lexeme);
+      return CommaState(iterator, input.lexeme);
     } else if (input.value.isOpenParenthesis) {
-      return OpenParenthesisState(input.lexeme);
+      return OpenParenthesisState(iterator, input.lexeme);
     } else if (input.value.isCloseParenthesis) {
-      return CloseParenthesisState(input.lexeme);
+      return CloseParenthesisState(iterator, input.lexeme);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -90,42 +93,55 @@ class InitState extends State<Character, void> {
 }
 
 class StringDoubleQuoteState extends State<Character, Lexeme> {
-  const StringDoubleQuoteState(super.output);
+  const StringDoubleQuoteState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isDoubleQuote) {
-      return ResultState([StringToken(output)]);
+      return ResultState(iterator, [StringToken(output)]);
     } else {
-      return StringDoubleQuoteState(output.add(input));
+      return StringDoubleQuoteState(iterator, output.add(input));
     }
   }
 }
 
 class StringSingleQuoteState extends State<Character, Lexeme> {
-  const StringSingleQuoteState(super.output);
+  const StringSingleQuoteState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isSingleQuote) {
-      return ResultState([StringToken(output)]);
+      return ResultState(iterator, [StringToken(output)]);
     } else {
-      return StringSingleQuoteState(output.add(input));
+      return StringSingleQuoteState(iterator, output.add(input));
     }
   }
 }
 
 class IntegerState extends State<Character, Lexeme> {
-  const IntegerState(super.output);
+  const IntegerState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isDigit) {
-      return IntegerState(output.add(input));
+      return IntegerState(iterator, output.add(input));
     } else if (input.value.isDot) {
-      return DecimalState(output.add(input));
+      return DecimalInitState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
-      return ResultState([NumberToken(output)], true);
+      return ResultState(iterator, [NumberToken(output)], true);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class DecimalInitState extends State<Character, Lexeme> {
+  const DecimalInitState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value.isDigit) {
+      return DecimalState(iterator, output.add(input));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -133,14 +149,14 @@ class IntegerState extends State<Character, Lexeme> {
 }
 
 class DecimalState extends State<Character, Lexeme> {
-  const DecimalState(super.output);
+  const DecimalState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isDigit) {
-      return DecimalState(output.add(input));
+      return DecimalState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
-      return ResultState([NumberToken(output)], true);
+      return ResultState(iterator, [NumberToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -148,15 +164,15 @@ class DecimalState extends State<Character, Lexeme> {
 }
 
 class IdentifierState extends State<Character, Lexeme> {
-  const IdentifierState(super.output);
+  const IdentifierState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isLetter ||
         input.value.isDigit ||
         input.value.isDot ||
         input.value.isUnderscore) {
-      return IdentifierState(output.add(input));
+      return IdentifierState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
       final List<Token> tokens = [
         if (output.value.isBoolean)
@@ -165,7 +181,7 @@ class IdentifierState extends State<Character, Lexeme> {
           IdentifierToken(output)
       ];
 
-      return ResultState(tokens, true);
+      return ResultState(iterator, tokens, true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -173,12 +189,12 @@ class IdentifierState extends State<Character, Lexeme> {
 }
 
 class MinusState extends State<Character, Lexeme> {
-  const MinusState(super.output);
+  const MinusState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([MinusToken(output)], true);
+      return ResultState(iterator, [MinusToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -186,12 +202,12 @@ class MinusState extends State<Character, Lexeme> {
 }
 
 class PlusState extends State<Character, Lexeme> {
-  const PlusState(super.output);
+  const PlusState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([PlusToken(output)], true);
+      return ResultState(iterator, [PlusToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -199,14 +215,14 @@ class PlusState extends State<Character, Lexeme> {
 }
 
 class EqualsState extends State<Character, Lexeme> {
-  const EqualsState(super.output);
+  const EqualsState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState([EqualToken(output.add(input))]);
+      return ResultState(iterator, [EqualToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState([AssignToken(output)], true);
+      return ResultState(iterator, [AssignToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -214,14 +230,14 @@ class EqualsState extends State<Character, Lexeme> {
 }
 
 class GreaterState extends State<Character, Lexeme> {
-  const GreaterState(super.output);
+  const GreaterState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState([GreaterEqualThanToken(output.add(input))]);
+      return ResultState(iterator, [GreaterEqualThanToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState([GreaterThanToken(output)], true);
+      return ResultState(iterator, [GreaterThanToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -229,14 +245,14 @@ class GreaterState extends State<Character, Lexeme> {
 }
 
 class LessState extends State<Character, Lexeme> {
-  const LessState(super.output);
+  const LessState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState([LessEqualThanToken(output.add(input))]);
+      return ResultState(iterator, [LessEqualThanToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState([LessThanToken(output)], true);
+      return ResultState(iterator, [LessThanToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -244,12 +260,12 @@ class LessState extends State<Character, Lexeme> {
 }
 
 class PipeState extends State<Character, Lexeme> {
-  const PipeState(super.output);
+  const PipeState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([PipeToken(output)], true);
+      return ResultState(iterator, [PipeToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -257,12 +273,12 @@ class PipeState extends State<Character, Lexeme> {
 }
 
 class AmpersandState extends State<Character, Lexeme> {
-  const AmpersandState(super.output);
+  const AmpersandState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([AmpersandToken(output)], true);
+      return ResultState(iterator, [AmpersandToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -270,14 +286,14 @@ class AmpersandState extends State<Character, Lexeme> {
 }
 
 class BangState extends State<Character, Lexeme> {
-  const BangState(super.output);
+  const BangState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState([NotEqualToken(output.add(input))]);
+      return ResultState(iterator, [NotEqualToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState([BangToken(output)], true);
+      return ResultState(iterator, [BangToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -285,16 +301,16 @@ class BangState extends State<Character, Lexeme> {
 }
 
 class ForwardSlashState extends State<Character, Lexeme> {
-  const ForwardSlashState(super.output);
+  const ForwardSlashState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([ForwardSlashToken(output)]);
+      return ResultState(iterator, [ForwardSlashToken(output)]);
     } else if (input.value.isForewardSlash) {
-      return const SingleLineCommentState();
+      return SingleLineCommentState(iterator);
     } else if (input.value.isAsterisk) {
-      return const StartMultiLineCommentState();
+      return StartMultiLineCommentState(iterator);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -302,12 +318,12 @@ class ForwardSlashState extends State<Character, Lexeme> {
 }
 
 class AsteriskState extends State<Character, Lexeme> {
-  const AsteriskState(super.output);
+  const AsteriskState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([AsteriskToken(output)], true);
+      return ResultState(iterator, [AsteriskToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -315,12 +331,12 @@ class AsteriskState extends State<Character, Lexeme> {
 }
 
 class PercentState extends State<Character, Lexeme> {
-  const PercentState(super.output);
+  const PercentState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([PercentToken(output)], true);
+      return ResultState(iterator, [PercentToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -328,51 +344,51 @@ class PercentState extends State<Character, Lexeme> {
 }
 
 class SingleLineCommentState extends State<Character, void> {
-  const SingleLineCommentState([super.output]);
+  const SingleLineCommentState(super.iterator, [super.output]);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (!input.value.isNewLine) {
-      return const SingleLineCommentState();
+      return SingleLineCommentState(iterator);
     } else {
-      return const InitState();
+      return InitState(iterator);
     }
   }
 }
 
 class StartMultiLineCommentState extends State<Character, void> {
-  const StartMultiLineCommentState([super.output]);
+  const StartMultiLineCommentState(super.iterator, [super.output]);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (!input.value.isAsterisk) {
-      return const StartMultiLineCommentState();
+      return StartMultiLineCommentState(iterator);
     } else {
-      return const ClosingMultiLineCommentState();
+      return ClosingMultiLineCommentState(iterator);
     }
   }
 }
 
 class ClosingMultiLineCommentState extends State<Character, void> {
-  const ClosingMultiLineCommentState([super.output]);
+  const ClosingMultiLineCommentState(super.iterator, [super.output]);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (!input.value.isForewardSlash) {
-      return const StartMultiLineCommentState();
+      return StartMultiLineCommentState(iterator);
     } else {
-      return const InitState();
+      return InitState(iterator);
     }
   }
 }
 
 class CommaState extends State<Character, Lexeme> {
-  const CommaState(super.output);
+  const CommaState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([CommaToken(output)], true);
+      return ResultState(iterator, [CommaToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -380,12 +396,12 @@ class CommaState extends State<Character, Lexeme> {
 }
 
 class OpenParenthesisState extends State<Character, Lexeme> {
-  const OpenParenthesisState(super.output);
+  const OpenParenthesisState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState([OpenParenthesisToken(output)], true);
+      return ResultState(iterator, [OpenParenthesisToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -393,12 +409,12 @@ class OpenParenthesisState extends State<Character, Lexeme> {
 }
 
 class CloseParenthesisState extends State<Character, Lexeme> {
-  const CloseParenthesisState(super.output);
+  const CloseParenthesisState(super.iterator, super.output);
 
   @override
-  State process(Character input, Character? next) {
+  State process(Character input) {
     if (input.value.isSeparatorDelimiter) {
-      return ResultState([CloseParenthesisToken(output)], true);
+      return ResultState(iterator, [CloseParenthesisToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -408,7 +424,7 @@ class CloseParenthesisState extends State<Character, Lexeme> {
 class ResultState extends State<void, List<Token>> {
   final bool goBack;
 
-  const ResultState(super.output, [this.goBack = false]);
+  const ResultState(super.iterator, super.output, [this.goBack = false]);
 }
 
 class Lexeme extends Localized {

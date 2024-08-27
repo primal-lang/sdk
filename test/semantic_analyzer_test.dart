@@ -25,7 +25,7 @@ void main() {
 
   test('Undefined identifier 1', () {
     try {
-      getIntermediateCode('isBiggerThan10 = gt(z, 10)');
+      getIntermediateCode('isBiggerThan10 = z > 10');
       fail('Should fail');
     } catch (e) {
       expect(e, isA<UndefinedIdentifiersError>());
@@ -43,7 +43,7 @@ void main() {
 
   test('Unused parameter', () {
     final IntermediateCode code =
-        getIntermediateCode('isBiggerThan10(x, y) = gt(x, 10)');
+        getIntermediateCode('isBiggerThan10(x, y) = x > 10');
     expect(code.warnings.length, equals(1));
   });
 
@@ -59,7 +59,7 @@ void main() {
   test('Invalid number of arguments', () {
     try {
       getIntermediateCode(
-          'isBiggerThan10(x) = gt(x, 10)\nmain = isBiggerThan10(20, 5)');
+          'isBiggerThan10(x) = x > 10\nmain = isBiggerThan10(20, 5)');
       fail('Should fail');
     } catch (e) {
       expect(e, isA<InvalidNumberOfArgumentsError>());

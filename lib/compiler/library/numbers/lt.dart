@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Lt extends NativeFunctionPrototype {
   Lt()
       : super(
-          name: 'lt',
+          name: '<',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

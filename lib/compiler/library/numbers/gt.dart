@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Gt extends NativeFunctionPrototype {
   Gt()
       : super(
-          name: 'gt',
+          name: '>',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

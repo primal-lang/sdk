@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Or extends NativeFunctionPrototype {
   Or()
       : super(
-          name: 'or',
+          name: '|',
           parameters: [
             Parameter.boolean('a'),
             Parameter.boolean('b'),

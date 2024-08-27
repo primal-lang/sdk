@@ -1,6 +1,5 @@
 import 'package:primal/compiler/errors/generic_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
-import 'package:primal/compiler/syntactic/syntactic_analyzer.dart';
 
 class SyntacticError extends GenericError {
   const SyntacticError(super.message);
@@ -13,11 +12,6 @@ class InvalidTokenError extends SyntacticError {
 class ExpectedTokenError extends SyntacticError {
   const ExpectedTokenError(Token token, String expected)
       : super('Invalid token $token. Expected: $expected');
-}
-
-class InvalidStackElementError extends SyntacticError {
-  InvalidStackElementError(StackElement element)
-      : super('Expression malfored at ${element.location}');
 }
 
 class UnexpectedEndOfFileError extends SyntacticError {

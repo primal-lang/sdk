@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Mul extends NativeFunctionPrototype {
   Mul()
       : super(
-          name: 'mul',
+          name: '*',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

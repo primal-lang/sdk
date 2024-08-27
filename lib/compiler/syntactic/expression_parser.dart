@@ -1,21 +1,21 @@
 import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
-import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/utils/list_iterator.dart';
 
-class Parser {
+class ExpressionParser {
   final ListIterator<Token> iterator;
 
-  Parser(this.iterator);
+  const ExpressionParser(this.iterator);
 
-  ParseExpression expression() => equality();
+  Expression expression() => equality();
 
-  ParseExpression equality() {
-    ParseExpression expression = comparison();
+  Expression equality() {
+    Expression expression = comparison();
 
     while (match([NotEqualToken, EqualToken])) {
       final Token operator = previous;
-      final ParseExpression right = comparison();
+      final Expression right = comparison();
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -26,8 +26,8 @@ class Parser {
     return expression;
   }
 
-  ParseExpression comparison() {
-    ParseExpression expression = logic();
+  Expression comparison() {
+    Expression expression = logic();
 
     while (match([
       GreaterThanToken,
@@ -36,7 +36,7 @@ class Parser {
       LessEqualThanToken,
     ])) {
       final Token operator = previous;
-      final ParseExpression right = logic();
+      final Expression right = logic();
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -47,12 +47,12 @@ class Parser {
     return expression;
   }
 
-  ParseExpression logic() {
-    ParseExpression expression = term();
+  Expression logic() {
+    Expression expression = term();
 
     while (match([PipeToken, AmpersandToken])) {
       final Token operator = previous;
-      final ParseExpression right = term();
+      final Expression right = term();
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -63,12 +63,12 @@ class Parser {
     return expression;
   }
 
-  ParseExpression term() {
-    ParseExpression expression = factor();
+  Expression term() {
+    Expression expression = factor();
 
     while (match([MinusToken, PlusToken])) {
       final Token operator = previous;
-      final ParseExpression right = factor();
+      final Expression right = factor();
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -79,12 +79,12 @@ class Parser {
     return expression;
   }
 
-  ParseExpression factor() {
-    ParseExpression expression = unary();
+  Expression factor() {
+    Expression expression = unary();
 
     while (match([ForwardSlashToken, AsteriskToken, PercentToken])) {
       final Token operator = previous;
-      final ParseExpression right = unary();
+      final Expression right = unary();
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -95,10 +95,10 @@ class Parser {
     return expression;
   }
 
-  ParseExpression unary() {
+  Expression unary() {
     if (match([BangToken, MinusToken])) {
       final Token operator = previous;
-      final ParseExpression right = unary();
+      final Expression right = unary();
       return CallExpression.fromUnaryOperation(
         operator: operator,
         expression: right,
@@ -108,8 +108,8 @@ class Parser {
     return call();
   }
 
-  ParseExpression call() {
-    ParseExpression expression = primary();
+  Expression call() {
+    Expression expression = primary();
 
     while (true) {
       if (match([OpenParenthesisToken])) {
@@ -127,8 +127,8 @@ class Parser {
     return expression;
   }
 
-  ParseExpression finishCall(ParseExpression callee) {
-    final List<ParseExpression> arguments = [];
+  Expression finishCall(Expression callee) {
+    final List<Expression> arguments = [];
 
     if (!check(CloseParenthesisToken)) {
       do {
@@ -138,10 +138,10 @@ class Parser {
 
     consume(CloseParenthesisToken, ')');
 
-    return CallExpression(callee, arguments);
+    return CallExpression(callee: callee, arguments: arguments);
   }
 
-  ParseExpression primary() {
+  Expression primary() {
     if (match([BooleanToken])) {
       return BooleanLiteralExpression(previous);
     } else if (match([NumberToken])) {
@@ -153,7 +153,7 @@ class Parser {
     }
 
     if (match([OpenParenthesisToken])) {
-      final ParseExpression expr = expression();
+      final Expression expr = expression();
       consume(CloseParenthesisToken, ')');
       return expr;
     }
@@ -199,81 +199,4 @@ class Parser {
   Token get peek => iterator.peek!;
 
   Token get previous => iterator.previous!;
-}
-
-abstract class ParseExpression extends Localized {
-  const ParseExpression({required super.location});
-}
-
-abstract class LiteralExpression<T> extends ParseExpression {
-  final T value;
-
-  const LiteralExpression({
-    required super.location,
-    required this.value,
-  });
-
-  @override
-  String toString() => value.toString();
-}
-
-class BooleanLiteralExpression extends LiteralExpression<bool> {
-  BooleanLiteralExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
-}
-
-class NumberLiteralExpression extends LiteralExpression<num> {
-  NumberLiteralExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
-}
-
-class StringLiteralExpression extends LiteralExpression<String> {
-  StringLiteralExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
-
-  @override
-  String toString() => '"$value"';
-}
-
-class IdentifierExpression extends ParseExpression {
-  final String value;
-
-  IdentifierExpression(Token token)
-      : value = token.value,
-        super(location: token.location);
-
-  @override
-  String toString() => value;
-}
-
-class CallExpression extends ParseExpression {
-  final ParseExpression calle;
-  final List<ParseExpression> arguments;
-
-  CallExpression(this.calle, this.arguments) : super(location: calle.location);
-
-  factory CallExpression.fromUnaryOperation({
-    required Token operator,
-    required ParseExpression expression,
-  }) =>
-      CallExpression(IdentifierExpression(operator), [expression]);
-
-  factory CallExpression.fromBinaryOperation({
-    required Token operator,
-    required ParseExpression left,
-    required ParseExpression right,
-  }) =>
-      CallExpression(IdentifierExpression(operator), [left, right]);
-
-  @override
-  String toString() => '$calle(${arguments.join(', ')})';
 }

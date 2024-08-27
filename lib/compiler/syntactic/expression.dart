@@ -10,7 +10,7 @@ abstract class Expression extends Localized {
 }
 
 class EmptyExpression extends Expression {
-  const EmptyExpression() : super(location: const Location(row: 1, column: 1));
+  const EmptyExpression() : super(location: const Location(row: 0, column: 0));
 
   @override
   Reducible toReducible() => throw const EmptyExpressionEvaluationError();
@@ -28,8 +28,30 @@ abstract class LiteralExpression<T> extends Expression {
   String toString() => value.toString();
 }
 
-class StringExpression extends LiteralExpression<String> {
-  StringExpression(Token token)
+class BooleanLiteralExpression extends LiteralExpression<bool> {
+  BooleanLiteralExpression(Token token)
+      : super(
+          location: token.location,
+          value: token.value,
+        );
+
+  @override
+  Reducible toReducible() => BooleanReducibleValue(value);
+}
+
+class NumberLiteralExpression extends LiteralExpression<num> {
+  NumberLiteralExpression(Token token)
+      : super(
+          location: token.location,
+          value: token.value,
+        );
+
+  @override
+  Reducible toReducible() => NumberReducibleValue(value);
+}
+
+class StringLiteralExpression extends LiteralExpression<String> {
+  StringLiteralExpression(Token token)
       : super(
           location: token.location,
           value: token.value,
@@ -42,28 +64,6 @@ class StringExpression extends LiteralExpression<String> {
   Reducible toReducible() => StringReducibleValue(value);
 }
 
-class NumberExpression extends LiteralExpression<num> {
-  NumberExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
-
-  @override
-  Reducible toReducible() => NumberReducibleValue(value);
-}
-
-class BooleanExpression extends LiteralExpression<bool> {
-  BooleanExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
-
-  @override
-  Reducible toReducible() => BooleanReducibleValue(value);
-}
-
 class IdentifierExpression extends Expression {
   final String value;
 
@@ -72,7 +72,7 @@ class IdentifierExpression extends Expression {
         super(location: token.location);
 
   @override
-  String toString() => value.toString();
+  String toString() => value;
 
   @override
   Reducible toReducible() => IdentifierReducible(
@@ -81,15 +81,35 @@ class IdentifierExpression extends Expression {
       );
 }
 
-class FunctionCallExpression extends Expression {
-  final String name;
+class CallExpression extends Expression {
+  final Expression callee;
   final List<Expression> arguments;
 
-  const FunctionCallExpression({
-    required super.location,
-    required this.name,
+  CallExpression({
+    required this.callee,
     required this.arguments,
-  });
+  }) : super(location: callee.location);
+
+  factory CallExpression.fromUnaryOperation({
+    required Token operator,
+    required Expression expression,
+  }) =>
+      CallExpression(
+        callee: IdentifierExpression(operator),
+        arguments: [expression],
+      );
+
+  factory CallExpression.fromBinaryOperation({
+    required Token operator,
+    required Expression left,
+    required Expression right,
+  }) =>
+      CallExpression(
+        callee: IdentifierExpression(operator),
+        arguments: [left, right],
+      );
+
+  String get name => callee.toString();
 
   @override
   String toString() => '$name(${arguments.join(', ')})';
