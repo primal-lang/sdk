@@ -13,6 +13,12 @@ import 'package:primal/compiler/library/casting/to_decimal.dart';
 import 'package:primal/compiler/library/casting/to_integer.dart';
 import 'package:primal/compiler/library/casting/to_number.dart';
 import 'package:primal/compiler/library/casting/to_string.dart';
+import 'package:primal/compiler/library/comparison/eq.dart';
+import 'package:primal/compiler/library/comparison/ge.dart';
+import 'package:primal/compiler/library/comparison/gt.dart';
+import 'package:primal/compiler/library/comparison/le.dart';
+import 'package:primal/compiler/library/comparison/lt.dart';
+import 'package:primal/compiler/library/comparison/neq.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
@@ -103,6 +109,12 @@ class StandardLibrary {
         Debug(),
 
         // Comparison
+        Eq(),
+        Neq(),
+        Gt(),
+        Ge(),
+        Lt(),
+        Le(),
 
         // Numbers
         Abs(),

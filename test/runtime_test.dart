@@ -5,16 +5,6 @@ import 'test_utils.dart';
 
 void main() {
   group('Runtime', () {
-    test('Generic (==)', () {
-      final Runtime runtime = getRuntime('main = "hey" == "hey"');
-      checkResult(runtime, true);
-    });
-
-    test('Numbers (!=)', () {
-      final Runtime runtime = getRuntime('main = 7 != 8');
-      checkResult(runtime, true);
-    });
-
     test('If (if1)', () {
       final Runtime runtime = getRuntime('main = if(true, "yes", "no")');
       checkResult(runtime, '"yes"');
@@ -57,6 +47,36 @@ void main() {
       checkResult(runtime, '"Enter in function"');
     });
 
+    test('Operators (==)', () {
+      final Runtime runtime = getRuntime('main = "hey" == "hey"');
+      checkResult(runtime, true);
+    });
+
+    test('Operators (!=)', () {
+      final Runtime runtime = getRuntime('main = 7 != 8');
+      checkResult(runtime, true);
+    });
+
+    test('Operators (>)', () {
+      final Runtime runtime = getRuntime('main = 10 > 4');
+      checkResult(runtime, true);
+    });
+
+    test('Operators (<)', () {
+      final Runtime runtime = getRuntime('main = 10 < 4');
+      checkResult(runtime, false);
+    });
+
+    test('Operators (>=)', () {
+      final Runtime runtime = getRuntime('main = 10 >= 10');
+      checkResult(runtime, true);
+    });
+
+    test('Operators (<=)', () {
+      final Runtime runtime = getRuntime('main = 10 <= 10');
+      checkResult(runtime, true);
+    });
+
     test('Operators (&)', () {
       final Runtime runtime = getRuntime('main = true & true');
       checkResult(runtime, true);
@@ -69,6 +89,36 @@ void main() {
 
     test('Operators (!)', () {
       final Runtime runtime = getRuntime('main = !false');
+      checkResult(runtime, true);
+    });
+
+    test('Comparison (eq)', () {
+      final Runtime runtime = getRuntime('main = eq("hey", "hey")');
+      checkResult(runtime, true);
+    });
+
+    test('Comparison (neq)', () {
+      final Runtime runtime = getRuntime('main = neq(7, 8)');
+      checkResult(runtime, true);
+    });
+
+    test('Comparison (gt)', () {
+      final Runtime runtime = getRuntime('main = gt(10, 4)');
+      checkResult(runtime, true);
+    });
+
+    test('Comparison (lt)', () {
+      final Runtime runtime = getRuntime('main = lt(10, 4)');
+      checkResult(runtime, false);
+    });
+
+    test('Comparison (ge)', () {
+      final Runtime runtime = getRuntime('main = ge(10, 10)');
+      checkResult(runtime, true);
+    });
+
+    test('Comparison (le)', () {
+      final Runtime runtime = getRuntime('main = le(10, 10)');
       checkResult(runtime, true);
     });
 
@@ -165,26 +215,6 @@ void main() {
     test('Numbers (log)', () {
       final Runtime runtime = getRuntime('main = log(10)');
       checkResult(runtime, 2.302585092994046);
-    });
-
-    test('Numbers (>)', () {
-      final Runtime runtime = getRuntime('main = 10 > 4');
-      checkResult(runtime, true);
-    });
-
-    test('Numbers (<)', () {
-      final Runtime runtime = getRuntime('main = 10 < 4');
-      checkResult(runtime, false);
-    });
-
-    test('Numbers (>=)', () {
-      final Runtime runtime = getRuntime('main = 10 >= 10');
-      checkResult(runtime, true);
-    });
-
-    test('Numbers (<=)', () {
-      final Runtime runtime = getRuntime('main = 10 <= 10');
-      checkResult(runtime, true);
     });
 
     test('Numbers (isNegative)', () {
