@@ -6,7 +6,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class ToString extends NativeFunctionPrototype {
   ToString()
       : super(
-          name: 'toString',
+          name: 'to.string',
           parameters: [
             Parameter.any('a'),
           ],

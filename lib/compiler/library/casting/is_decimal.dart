@@ -6,7 +6,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class IsDecimal extends NativeFunctionPrototype {
   IsDecimal()
       : super(
-          name: 'isDecimal',
+          name: 'is.decimal',
           parameters: [
             Parameter.any('a'),
           ],

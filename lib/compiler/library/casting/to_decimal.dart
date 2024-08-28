@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class ToDecimal extends NativeFunctionPrototype {
   ToDecimal()
       : super(
-          name: 'toDecimal',
+          name: 'to.decimal',
           parameters: [
             Parameter.any('a'),
           ],

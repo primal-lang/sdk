@@ -6,7 +6,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class IsBoolean extends NativeFunctionPrototype {
   IsBoolean()
       : super(
-          name: 'isBoolean',
+          name: 'is.boolean',
           parameters: [
             Parameter.any('a'),
           ],

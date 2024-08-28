@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class ToNumber extends NativeFunctionPrototype {
   ToNumber()
       : super(
-          name: 'toNumber',
+          name: 'to.number',
           parameters: [
             Parameter.any('a'),
           ],

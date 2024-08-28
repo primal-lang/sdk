@@ -6,7 +6,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class IsInfinite extends NativeFunctionPrototype {
   IsInfinite()
       : super(
-          name: 'isInfinite',
+          name: 'is.infinite',
           parameters: [
             Parameter.any('a'),
           ],

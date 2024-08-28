@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Xor extends NativeFunctionPrototype {
   Xor()
       : super(
-          name: 'xor',
+          name: 'bool.xor',
           parameters: [
             Parameter.boolean('a'),
             Parameter.boolean('b'),

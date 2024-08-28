@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class ToBoolean extends NativeFunctionPrototype {
   ToBoolean()
       : super(
-          name: 'toBoolean',
+          name: 'to.boolean',
           parameters: [
             Parameter.any('a'),
           ],

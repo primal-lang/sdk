@@ -6,7 +6,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class IsString extends NativeFunctionPrototype {
   IsString()
       : super(
-          name: 'isString',
+          name: 'is.string',
           parameters: [
             Parameter.any('a'),
           ],
