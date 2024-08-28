@@ -13,7 +13,7 @@ void main() {
     return parser.expression();
   }
 
-  group('Parser', () {
+  group('Expression parser', () {
     test('Expression 1', () {
       final Expression expression = getExpression('2 - 1 * 3');
       expect(expression.toString(), '-(2, *(1, 3))');
@@ -51,12 +51,12 @@ void main() {
 
     test('Expression 8', () {
       final Expression expression = getExpression('2 + -5 < -7 * 3');
-      expect(expression.toString(), '<(+(2, -(5)), *(-(7), 3))');
+      expect(expression.toString(), '<(+(2, -(0, 5)), *(-(0, 7), 3))');
     });
 
     test('Expression 9', () {
       final Expression expression = getExpression('-2 + 5 <= 7 * -3');
-      expect(expression.toString(), '<=(+(-(2), 5), *(7, -(3)))');
+      expect(expression.toString(), '<=(+(-(0, 2), 5), *(7, -(0, 3)))');
     });
 
     test('Expression 10', () {

@@ -1,4 +1,5 @@
 import 'package:primal/compiler/errors/syntactic_error.dart';
+import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/utils/list_iterator.dart';
@@ -99,10 +100,21 @@ class ExpressionParser {
     if (match([BangToken, MinusToken])) {
       final Token operator = previous;
       final Expression right = unary();
-      return CallExpression.fromUnaryOperation(
-        operator: operator,
-        expression: right,
-      );
+
+      if (operator.value == '-') {
+        return CallExpression.fromBinaryOperation(
+          operator: operator,
+          left: NumberLiteralExpression(
+            NumberToken(Lexeme(value: '0', location: operator.location)),
+          ),
+          right: right,
+        );
+      } else {
+        return CallExpression.fromUnaryOperation(
+          operator: operator,
+          expression: right,
+        );
+      }
     }
 
     return call();

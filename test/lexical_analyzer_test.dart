@@ -93,7 +93,7 @@ void main() {
       try {
         getTokens('1..2');
       } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
+        expect(e, isA<MalformedNumberError>());
       }
     });
 
