@@ -164,133 +164,133 @@ void main() {
   });
 
   group('Arithmetic', () {
-    test('abs', () {
-      final Runtime runtime = getRuntime('main = abs(1)');
+    test('num.abs', () {
+      final Runtime runtime = getRuntime('main = num.abs(1)');
       checkResult(runtime, 1);
     });
 
-    test('negative', () {
-      final Runtime runtime = getRuntime('main = negative(5)');
+    test('num.negative', () {
+      final Runtime runtime = getRuntime('main = num.negative(5)');
       checkResult(runtime, -5);
     });
 
-    test('inc', () {
-      final Runtime runtime = getRuntime('main = inc(2)');
+    test('num.inc', () {
+      final Runtime runtime = getRuntime('main = num.inc(2)');
       checkResult(runtime, 3);
     });
 
-    test('dec', () {
-      final Runtime runtime = getRuntime('main = dec(0)');
+    test('num.dec', () {
+      final Runtime runtime = getRuntime('main = num.dec(0)');
       checkResult(runtime, -1);
     });
 
-    test('add', () {
-      final Runtime runtime = getRuntime('main = add(5, 7)');
+    test('num.add', () {
+      final Runtime runtime = getRuntime('main = num.add(5, 7)');
       checkResult(runtime, 12);
     });
 
-    test('sum', () {
-      final Runtime runtime = getRuntime('main = sum(5, 7)');
+    test('num.sum', () {
+      final Runtime runtime = getRuntime('main = num.sum(5, 7)');
       checkResult(runtime, 12);
     });
 
-    test('sub', () {
-      final Runtime runtime = getRuntime('main = sub(5, 7)');
+    test('num.sub', () {
+      final Runtime runtime = getRuntime('main = num.sub(5, 7)');
       checkResult(runtime, -2);
     });
 
-    test('mul', () {
-      final Runtime runtime = getRuntime('main = mul(5, 7)');
+    test('num.mul', () {
+      final Runtime runtime = getRuntime('main = num.mul(5, 7)');
       checkResult(runtime, 35);
     });
 
-    test('div', () {
-      final Runtime runtime = getRuntime('main = div(5, 8)');
+    test('num.div', () {
+      final Runtime runtime = getRuntime('main = num.div(5, 8)');
       checkResult(runtime, 0.625);
     });
 
-    test('mod', () {
-      final Runtime runtime = getRuntime('main = mod(7, 5)');
+    test('num.mod', () {
+      final Runtime runtime = getRuntime('main = num.mod(7, 5)');
       checkResult(runtime, 2);
     });
 
-    test('min', () {
-      final Runtime runtime = getRuntime('main = min(7, 5)');
+    test('num.min', () {
+      final Runtime runtime = getRuntime('main = num.min(7, 5)');
       checkResult(runtime, 5);
     });
 
-    test('max', () {
-      final Runtime runtime = getRuntime('main = max(7, 5)');
+    test('num.max', () {
+      final Runtime runtime = getRuntime('main = num.max(7, 5)');
       checkResult(runtime, 7);
     });
 
-    test('pow', () {
-      final Runtime runtime = getRuntime('main = pow(7, 5)');
+    test('num.pow', () {
+      final Runtime runtime = getRuntime('main = num.pow(7, 5)');
       checkResult(runtime, 16807);
     });
 
-    test('sqrt', () {
-      final Runtime runtime = getRuntime('main = sqrt(16)');
+    test('num.sqrt', () {
+      final Runtime runtime = getRuntime('main = num.sqrt(16)');
       checkResult(runtime, 4);
     });
 
-    test('round', () {
-      final Runtime runtime = getRuntime('main = round(4.8)');
+    test('num.round', () {
+      final Runtime runtime = getRuntime('main = num.round(4.8)');
       checkResult(runtime, 5);
     });
 
-    test('floor', () {
-      final Runtime runtime = getRuntime('main = floor(4.8)');
+    test('num.floor', () {
+      final Runtime runtime = getRuntime('main = num.floor(4.8)');
       checkResult(runtime, 4);
     });
 
-    test('ceil', () {
-      final Runtime runtime = getRuntime('main = ceil(4.2)');
+    test('num.ceil', () {
+      final Runtime runtime = getRuntime('main = num.ceil(4.2)');
       checkResult(runtime, 5);
     });
 
-    test('sin', () {
-      final Runtime runtime = getRuntime('main = sin(10)');
+    test('num.sin', () {
+      final Runtime runtime = getRuntime('main = num.sin(10)');
       checkResult(runtime, -0.5440211108893698);
     });
 
-    test('cos', () {
-      final Runtime runtime = getRuntime('main = cos(10)');
+    test('num.cos', () {
+      final Runtime runtime = getRuntime('main = num.cos(10)');
       checkResult(runtime, -0.8390715290764524);
     });
 
-    test('tan', () {
-      final Runtime runtime = getRuntime('main = tan(10)');
+    test('num.tan', () {
+      final Runtime runtime = getRuntime('main = num.tan(10)');
       checkResult(runtime, 0.6483608274590866);
     });
 
-    test('log', () {
-      final Runtime runtime = getRuntime('main = log(10)');
+    test('num.log', () {
+      final Runtime runtime = getRuntime('main = num.log(10)');
       checkResult(runtime, 2.302585092994046);
     });
 
-    test('isNegative', () {
-      final Runtime runtime = getRuntime('main = isNegative(5)');
+    test('num.isNegative', () {
+      final Runtime runtime = getRuntime('main = num.isNegative(5)');
       checkResult(runtime, false);
     });
 
-    test('isPositive', () {
-      final Runtime runtime = getRuntime('main = isPositive(5)');
+    test('num.isPositive', () {
+      final Runtime runtime = getRuntime('main = num.isPositive(5)');
       checkResult(runtime, true);
     });
 
-    test('isZero', () {
-      final Runtime runtime = getRuntime('main = isZero(0)');
+    test('num.isZero', () {
+      final Runtime runtime = getRuntime('main = num.isZero(0)');
       checkResult(runtime, true);
     });
 
-    test('isEven', () {
-      final Runtime runtime = getRuntime('main = isEven(6)');
+    test('num.isEven', () {
+      final Runtime runtime = getRuntime('main = num.isEven(6)');
       checkResult(runtime, true);
     });
 
-    test('isOdd', () {
-      final Runtime runtime = getRuntime('main = isOdd(7)');
+    test('num.isOdd', () {
+      final Runtime runtime = getRuntime('main = num.isOdd(7)');
       checkResult(runtime, true);
     });
   });

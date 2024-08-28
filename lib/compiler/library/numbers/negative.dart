@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Negative extends NativeFunctionPrototype {
   Negative()
       : super(
-          name: 'negative',
+          name: 'num.negative',
           parameters: [
             Parameter.number('a'),
           ],

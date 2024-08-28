@@ -8,7 +8,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Log extends NativeFunctionPrototype {
   Log()
       : super(
-          name: 'log',
+          name: 'num.log',
           parameters: [
             Parameter.number('a'),
           ],

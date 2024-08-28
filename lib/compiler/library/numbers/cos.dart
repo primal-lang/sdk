@@ -8,7 +8,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Cos extends NativeFunctionPrototype {
   Cos()
       : super(
-          name: 'cos',
+          name: 'num.cos',
           parameters: [
             Parameter.number('a'),
           ],

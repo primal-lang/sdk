@@ -8,7 +8,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Tan extends NativeFunctionPrototype {
   Tan()
       : super(
-          name: 'tan',
+          name: 'num.tan',
           parameters: [
             Parameter.number('a'),
           ],

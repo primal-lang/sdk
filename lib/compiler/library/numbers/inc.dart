@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Inc extends NativeFunctionPrototype {
   Inc()
       : super(
-          name: 'inc',
+          name: 'num.inc',
           parameters: [
             Parameter.number('a'),
           ],

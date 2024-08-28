@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Round extends NativeFunctionPrototype {
   Round()
       : super(
-          name: 'round',
+          name: 'num.round',
           parameters: [
             Parameter.number('a'),
           ],

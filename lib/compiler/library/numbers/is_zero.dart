@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class IsZero extends NativeFunctionPrototype {
   IsZero()
       : super(
-          name: 'isZero',
+          name: 'num.isZero',
           parameters: [
             Parameter.number('a'),
           ],

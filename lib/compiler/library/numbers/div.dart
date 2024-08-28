@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Div extends NativeFunctionPrototype {
   Div()
       : super(
-          name: 'div',
+          name: 'num.div',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

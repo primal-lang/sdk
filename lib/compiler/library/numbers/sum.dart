@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Sum extends NativeFunctionPrototype {
   Sum()
       : super(
-          name: 'sum',
+          name: 'num.sum',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

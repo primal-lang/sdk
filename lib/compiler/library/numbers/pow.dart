@@ -8,7 +8,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Pow extends NativeFunctionPrototype {
   Pow()
       : super(
-          name: 'pow',
+          name: 'num.pow',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

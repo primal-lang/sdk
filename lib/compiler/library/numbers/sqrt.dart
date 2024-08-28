@@ -8,7 +8,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Sqrt extends NativeFunctionPrototype {
   Sqrt()
       : super(
-          name: 'sqrt',
+          name: 'num.sqrt',
           parameters: [
             Parameter.number('a'),
           ],

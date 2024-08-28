@@ -8,7 +8,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Sin extends NativeFunctionPrototype {
   Sin()
       : super(
-          name: 'sin',
+          name: 'num.sin',
           parameters: [
             Parameter.number('a'),
           ],

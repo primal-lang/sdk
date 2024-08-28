@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Add extends NativeFunctionPrototype {
   Add()
       : super(
-          name: 'add',
+          name: 'num.add',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

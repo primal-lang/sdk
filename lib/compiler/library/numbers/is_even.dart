@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class IsEven extends NativeFunctionPrototype {
   IsEven()
       : super(
-          name: 'isEven',
+          name: 'num.isEven',
           parameters: [
             Parameter.number('a'),
           ],

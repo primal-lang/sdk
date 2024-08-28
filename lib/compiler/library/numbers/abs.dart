@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Abs extends NativeFunctionPrototype {
   Abs()
       : super(
-          name: 'abs',
+          name: 'num.abs',
           parameters: [
             Parameter.number('a'),
           ],

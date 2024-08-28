@@ -8,7 +8,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Min extends NativeFunctionPrototype {
   Min()
       : super(
-          name: 'min',
+          name: 'num.min',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

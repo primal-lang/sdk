@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Ceil extends NativeFunctionPrototype {
   Ceil()
       : super(
-          name: 'ceil',
+          name: 'num.ceil',
           parameters: [
             Parameter.number('a'),
           ],

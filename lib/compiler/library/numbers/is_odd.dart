@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class IsOdd extends NativeFunctionPrototype {
   IsOdd()
       : super(
-          name: 'isOdd',
+          name: 'num.isOdd',
           parameters: [
             Parameter.number('a'),
           ],

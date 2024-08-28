@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Dec extends NativeFunctionPrototype {
   Dec()
       : super(
-          name: 'dec',
+          name: 'num.dec',
           parameters: [
             Parameter.number('a'),
           ],

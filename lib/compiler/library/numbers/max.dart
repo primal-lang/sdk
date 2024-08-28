@@ -8,7 +8,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Max extends NativeFunctionPrototype {
   Max()
       : super(
-          name: 'max',
+          name: 'num.max',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),

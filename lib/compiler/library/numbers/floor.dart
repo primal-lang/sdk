@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Floor extends NativeFunctionPrototype {
   Floor()
       : super(
-          name: 'floor',
+          name: 'num.floor',
           parameters: [
             Parameter.number('a'),
           ],
