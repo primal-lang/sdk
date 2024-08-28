@@ -132,33 +132,33 @@ void main() {
   });
 
   group('Comparison', () {
-    test('eq', () {
-      final Runtime runtime = getRuntime('main = eq("hey", "hey")');
+    test('comp.eq', () {
+      final Runtime runtime = getRuntime('main = comp.eq("hey", "hey")');
       checkResult(runtime, true);
     });
 
-    test('neq', () {
-      final Runtime runtime = getRuntime('main = neq(7, 8)');
+    test('comp.neq', () {
+      final Runtime runtime = getRuntime('main = comp.neq(7, 8)');
       checkResult(runtime, true);
     });
 
-    test('gt', () {
-      final Runtime runtime = getRuntime('main = gt(10, 4)');
+    test('comp.gt', () {
+      final Runtime runtime = getRuntime('main = comp.gt(10, 4)');
       checkResult(runtime, true);
     });
 
-    test('lt', () {
-      final Runtime runtime = getRuntime('main = lt(10, 4)');
+    test('comp.lt', () {
+      final Runtime runtime = getRuntime('main = comp.lt(10, 4)');
       checkResult(runtime, false);
     });
 
-    test('ge', () {
-      final Runtime runtime = getRuntime('main = ge(10, 10)');
+    test('comp.ge', () {
+      final Runtime runtime = getRuntime('main = comp.ge(10, 10)');
       checkResult(runtime, true);
     });
 
-    test('le', () {
-      final Runtime runtime = getRuntime('main = le(10, 10)');
+    test('comp.le', () {
+      final Runtime runtime = getRuntime('main = comp.le(10, 10)');
       checkResult(runtime, true);
     });
   });
@@ -296,22 +296,22 @@ void main() {
   });
 
   group('Logic', () {
-    test('and', () {
+    test('bool.and', () {
       final Runtime runtime = getRuntime('main = bool.and(true, true)');
       checkResult(runtime, true);
     });
 
-    test('or', () {
+    test('bool.or', () {
       final Runtime runtime = getRuntime('main = bool.or(false, true)');
       checkResult(runtime, true);
     });
 
-    test('xor', () {
+    test('bool.xor', () {
       final Runtime runtime = getRuntime('main = bool.xor(false, true)');
       checkResult(runtime, true);
     });
 
-    test('not', () {
+    test('bool.not', () {
       final Runtime runtime = getRuntime('main = bool.not(false)');
       checkResult(runtime, true);
     });

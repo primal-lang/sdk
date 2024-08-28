@@ -23,20 +23,6 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/throw.dart';
-import 'package:primal/compiler/library/generic/at.dart';
-import 'package:primal/compiler/library/generic/concat.dart';
-import 'package:primal/compiler/library/generic/contains.dart';
-import 'package:primal/compiler/library/generic/drop.dart';
-import 'package:primal/compiler/library/generic/first.dart';
-import 'package:primal/compiler/library/generic/init.dart';
-import 'package:primal/compiler/library/generic/is_empty.dart';
-import 'package:primal/compiler/library/generic/is_not_empty.dart';
-import 'package:primal/compiler/library/generic/last.dart';
-import 'package:primal/compiler/library/generic/length.dart';
-import 'package:primal/compiler/library/generic/remove.dart';
-import 'package:primal/compiler/library/generic/reverse.dart';
-import 'package:primal/compiler/library/generic/tail.dart';
-import 'package:primal/compiler/library/generic/take.dart';
 import 'package:primal/compiler/library/numbers/abs.dart';
 import 'package:primal/compiler/library/numbers/add.dart';
 import 'package:primal/compiler/library/numbers/ceil.dart';
@@ -77,12 +63,26 @@ import 'package:primal/compiler/library/operators/operator_not.dart';
 import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
 import 'package:primal/compiler/library/operators/operator_sum.dart';
+import 'package:primal/compiler/library/strings/at.dart';
+import 'package:primal/compiler/library/strings/concat.dart';
+import 'package:primal/compiler/library/strings/contains.dart';
+import 'package:primal/compiler/library/strings/drop.dart';
 import 'package:primal/compiler/library/strings/ends_with.dart';
+import 'package:primal/compiler/library/strings/first.dart';
+import 'package:primal/compiler/library/strings/init.dart';
+import 'package:primal/compiler/library/strings/is_empty.dart';
+import 'package:primal/compiler/library/strings/is_not_empty.dart';
+import 'package:primal/compiler/library/strings/last.dart';
+import 'package:primal/compiler/library/strings/length.dart';
 import 'package:primal/compiler/library/strings/lowercase.dart';
 import 'package:primal/compiler/library/strings/match.dart';
+import 'package:primal/compiler/library/strings/remove.dart';
 import 'package:primal/compiler/library/strings/replace.dart';
+import 'package:primal/compiler/library/strings/reverse.dart';
 import 'package:primal/compiler/library/strings/starts_with.dart';
 import 'package:primal/compiler/library/strings/substring.dart';
+import 'package:primal/compiler/library/strings/tail.dart';
+import 'package:primal/compiler/library/strings/take.dart';
 import 'package:primal/compiler/library/strings/trim.dart';
 import 'package:primal/compiler/library/strings/uppercase.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
@@ -123,7 +123,7 @@ class StandardLibrary {
         Lt(),
         Le(),
 
-        // Numbers
+        // Arithmetic
         Add(),
         Sum(),
         Sub(),
@@ -151,7 +151,7 @@ class StandardLibrary {
         IsEven(),
         IsOdd(),
 
-        // Booleans
+        // Logic
         And(),
         Or(),
         Xor(),
@@ -166,8 +166,6 @@ class StandardLibrary {
         Lowercase(),
         Trim(),
         Match(),
-
-        // Generic
         Length(),
         Concat(),
         First(),

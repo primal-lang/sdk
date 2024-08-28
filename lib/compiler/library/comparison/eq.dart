@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Eq extends NativeFunctionPrototype {
   Eq()
       : super(
-          name: 'eq',
+          name: 'comp.eq',
           parameters: [
             Parameter.any('a'),
             Parameter.any('b'),
