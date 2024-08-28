@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Init extends NativeFunctionPrototype {
   Init()
       : super(
-          name: 'init',
+          name: 'str.init',
           parameters: [
             Parameter.any('a'),
           ],

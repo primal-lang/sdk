@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Tail extends NativeFunctionPrototype {
   Tail()
       : super(
-          name: 'tail',
+          name: 'str.tail',
           parameters: [
             Parameter.any('a'),
           ],

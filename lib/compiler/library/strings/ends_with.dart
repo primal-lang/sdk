@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class EndsWith extends NativeFunctionPrototype {
   EndsWith()
       : super(
-          name: 'endsWith',
+          name: 'str.endsWith',
           parameters: [
             Parameter.string('a'),
             Parameter.string('b'),

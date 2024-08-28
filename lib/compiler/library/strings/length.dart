@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Length extends NativeFunctionPrototype {
   Length()
       : super(
-          name: 'length',
+          name: 'str.length',
           parameters: [
             Parameter.any('a'),
           ],

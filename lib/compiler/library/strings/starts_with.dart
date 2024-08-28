@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class StartsWith extends NativeFunctionPrototype {
   StartsWith()
       : super(
-          name: 'startsWith',
+          name: 'str.startsWith',
           parameters: [
             Parameter.string('a'),
             Parameter.string('b'),

@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Concat extends NativeFunctionPrototype {
   Concat()
       : super(
-          name: 'concat',
+          name: 'str.concat',
           parameters: [
             Parameter.any('a'),
             Parameter.any('b'),

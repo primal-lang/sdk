@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Uppercase extends NativeFunctionPrototype {
   Uppercase()
       : super(
-          name: 'uppercase',
+          name: 'str.uppercase',
           parameters: [
             Parameter.string('a'),
           ],

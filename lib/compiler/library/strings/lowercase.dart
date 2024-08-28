@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Lowercase extends NativeFunctionPrototype {
   Lowercase()
       : super(
-          name: 'lowercase',
+          name: 'str.lowercase',
           parameters: [
             Parameter.string('a'),
           ],

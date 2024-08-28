@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Replace extends NativeFunctionPrototype {
   Replace()
       : super(
-          name: 'replace',
+          name: 'str.replace',
           parameters: [
             Parameter.string('a'),
             Parameter.string('b'),

@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Remove extends NativeFunctionPrototype {
   Remove()
       : super(
-          name: 'remove',
+          name: 'str.remove',
           parameters: [
             Parameter.any('a'),
             Parameter.number('b'),

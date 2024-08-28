@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Substring extends NativeFunctionPrototype {
   Substring()
       : super(
-          name: 'substring',
+          name: 'str.substring',
           parameters: [
             Parameter.string('a'),
             Parameter.number('b'),

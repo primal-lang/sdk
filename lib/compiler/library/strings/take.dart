@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Take extends NativeFunctionPrototype {
   Take()
       : super(
-          name: 'take',
+          name: 'str.take',
           parameters: [
             Parameter.any('a'),
             Parameter.number('b'),

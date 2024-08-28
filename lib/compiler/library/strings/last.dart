@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Last extends NativeFunctionPrototype {
   Last()
       : super(
-          name: 'last',
+          name: 'str.last',
           parameters: [
             Parameter.any('a'),
           ],

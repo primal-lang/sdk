@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Contains extends NativeFunctionPrototype {
   Contains()
       : super(
-          name: 'contains',
+          name: 'str.contains',
           parameters: [
             Parameter.any('a'),
             Parameter.any('b'),

@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Reverse extends NativeFunctionPrototype {
   Reverse()
       : super(
-          name: 'reverse',
+          name: 'str.reverse',
           parameters: [
             Parameter.any('a'),
           ],

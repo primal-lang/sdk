@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class At extends NativeFunctionPrototype {
   At()
       : super(
-          name: 'at',
+          name: 'str.at',
           parameters: [
             Parameter.any('a'),
             Parameter.number('b'),

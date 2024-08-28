@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Match extends NativeFunctionPrototype {
   Match()
       : super(
-          name: 'match',
+          name: 'str.match',
           parameters: [
             Parameter.string('a'),
             Parameter.string('b'),

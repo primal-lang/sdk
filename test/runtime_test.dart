@@ -318,115 +318,116 @@ void main() {
   });
 
   group('Strings', () {
-    test('substring', () {
-      final Runtime runtime = getRuntime('main = substring("hola", 1, 3)');
+    test('str.substring', () {
+      final Runtime runtime = getRuntime('main = str.substring("hola", 1, 3)');
       checkResult(runtime, '"ol"');
     });
 
-    test('startsWith', () {
-      final Runtime runtime = getRuntime('main = startsWith("hola", "ho")');
+    test('str.startsWith', () {
+      final Runtime runtime = getRuntime('main = str.startsWith("hola", "ho")');
       checkResult(runtime, true);
     });
 
-    test('endsWith', () {
-      final Runtime runtime = getRuntime('main = endsWith("hola", "la")');
+    test('str.endsWith', () {
+      final Runtime runtime = getRuntime('main = str.endsWith("hola", "la")');
       checkResult(runtime, true);
     });
 
-    test('replace', () {
+    test('str.replace', () {
       final Runtime runtime =
-          getRuntime('main = replace("banana", "na", "to")');
+          getRuntime('main = str.replace("banana", "na", "to")');
       checkResult(runtime, '"batoto"');
     });
 
-    test('uppercase', () {
-      final Runtime runtime = getRuntime('main = uppercase("Primal")');
+    test('str.uppercase', () {
+      final Runtime runtime = getRuntime('main = str.uppercase("Primal")');
       checkResult(runtime, '"PRIMAL"');
     });
 
-    test('lowercase', () {
-      final Runtime runtime = getRuntime('main = lowercase("Primal")');
+    test('str.lowercase', () {
+      final Runtime runtime = getRuntime('main = str.lowercase("Primal")');
       checkResult(runtime, '"primal"');
     });
 
-    test('trim', () {
-      final Runtime runtime = getRuntime('main = trim(" Primal ")');
+    test('str.trim', () {
+      final Runtime runtime = getRuntime('main = str.trim(" Primal ")');
       checkResult(runtime, '"Primal"');
     });
 
-    test('match', () {
+    test('str.match', () {
       final Runtime runtime =
-          getRuntime('main = match("identifier42", "[a-zA-Z]+[0-9]+")');
+          getRuntime('main = str.match("identifier42", "[a-zA-Z]+[0-9]+")');
       checkResult(runtime, true);
     });
 
-    test('length', () {
-      final Runtime runtime = getRuntime('main = length("primal")');
+    test('str.length', () {
+      final Runtime runtime = getRuntime('main = str.length("primal")');
       checkResult(runtime, 6);
     });
 
-    test('concat', () {
-      final Runtime runtime = getRuntime('main = concat("Hello", ", world!")');
+    test('str.concat', () {
+      final Runtime runtime =
+          getRuntime('main = str.concat("Hello", ", world!")');
       checkResult(runtime, '"Hello, world!"');
     });
 
-    test('first', () {
-      final Runtime runtime = getRuntime('main = first("Hello")');
+    test('str.first', () {
+      final Runtime runtime = getRuntime('main = str.first("Hello")');
       checkResult(runtime, '"H"');
     });
 
-    test('last', () {
-      final Runtime runtime = getRuntime('main = last("Hello")');
+    test('str.last', () {
+      final Runtime runtime = getRuntime('main = str.last("Hello")');
       checkResult(runtime, '"o"');
     });
 
-    test('init', () {
-      final Runtime runtime = getRuntime('main = init("Hello")');
+    test('str.init', () {
+      final Runtime runtime = getRuntime('main = str.init("Hello")');
       checkResult(runtime, '"Hell"');
     });
 
-    test('tail', () {
-      final Runtime runtime = getRuntime('main = tail("Hello")');
+    test('str.tail', () {
+      final Runtime runtime = getRuntime('main = str.tail("Hello")');
       checkResult(runtime, '"ello"');
     });
 
-    test('at', () {
-      final Runtime runtime = getRuntime('main = at("Hello", 1)');
+    test('str.at', () {
+      final Runtime runtime = getRuntime('main = str.at("Hello", 1)');
       checkResult(runtime, '"e"');
     });
 
-    test('isEmpty', () {
-      final Runtime runtime = getRuntime('main = isEmpty("Hello")');
+    test('str.isEmpty', () {
+      final Runtime runtime = getRuntime('main = str.isEmpty("Hello")');
       checkResult(runtime, false);
     });
 
-    test('isNotEmpty', () {
-      final Runtime runtime = getRuntime('main = isNotEmpty("Hello")');
+    test('str.isNotEmpty', () {
+      final Runtime runtime = getRuntime('main = str.isNotEmpty("Hello")');
       checkResult(runtime, true);
     });
 
-    test('contains', () {
-      final Runtime runtime = getRuntime('main = contains("Hello", "ell")');
+    test('str.contains', () {
+      final Runtime runtime = getRuntime('main = str.contains("Hello", "ell")');
       checkResult(runtime, true);
     });
 
-    test('take', () {
-      final Runtime runtime = getRuntime('main = take("Hello", 4)');
+    test('str.take', () {
+      final Runtime runtime = getRuntime('main = str.take("Hello", 4)');
       checkResult(runtime, '"Hell"');
     });
 
-    test('drop', () {
-      final Runtime runtime = getRuntime('main = drop("Hello", 2)');
+    test('str.drop', () {
+      final Runtime runtime = getRuntime('main = str.drop("Hello", 2)');
       checkResult(runtime, '"llo"');
     });
 
-    test('remove', () {
-      final Runtime runtime = getRuntime('main = remove("Hello", 4)');
+    test('str.remove', () {
+      final Runtime runtime = getRuntime('main = str.remove("Hello", 4)');
       checkResult(runtime, '"Hell"');
     });
 
-    test('reverse', () {
-      final Runtime runtime = getRuntime('main = reverse("Hello")');
+    test('str.reverse', () {
+      final Runtime runtime = getRuntime('main = str.reverse("Hello")');
       checkResult(runtime, '"olleH"');
     });
   });

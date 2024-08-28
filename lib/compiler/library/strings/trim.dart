@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Trim extends NativeFunctionPrototype {
   Trim()
       : super(
-          name: 'trim',
+          name: 'str.trim',
           parameters: [
             Parameter.string('a'),
           ],

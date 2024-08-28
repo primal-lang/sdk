@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class IsNotEmpty extends NativeFunctionPrototype {
   IsNotEmpty()
       : super(
-          name: 'isNotEmpty',
+          name: 'str.isNotEmpty',
           parameters: [
             Parameter.any('a'),
           ],

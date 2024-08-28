@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Drop extends NativeFunctionPrototype {
   Drop()
       : super(
-          name: 'drop',
+          name: 'str.drop',
           parameters: [
             Parameter.any('a'),
             Parameter.number('b'),
