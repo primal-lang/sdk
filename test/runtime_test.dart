@@ -77,6 +77,36 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('Operators (+)', () {
+      final Runtime runtime = getRuntime('main = 5 + 7');
+      checkResult(runtime, 12);
+    });
+
+    test('Operators (-)', () {
+      final Runtime runtime = getRuntime('main = 5 - 7');
+      checkResult(runtime, -2);
+    });
+
+    test('Operators (-)', () {
+      final Runtime runtime = getRuntime('main = -5');
+      checkResult(runtime, -5);
+    });
+
+    test('Operators (*)', () {
+      final Runtime runtime = getRuntime('main = 5 * 7');
+      checkResult(runtime, 35);
+    });
+
+    test('Operators (/)', () {
+      final Runtime runtime = getRuntime('main = 5 / 8');
+      checkResult(runtime, 0.625);
+    });
+
+    test('Operators (%)', () {
+      final Runtime runtime = getRuntime('main = 7 % 5');
+      checkResult(runtime, 2);
+    });
+
     test('Operators (&)', () {
       final Runtime runtime = getRuntime('main = true & true');
       checkResult(runtime, true);
@@ -127,6 +157,11 @@ void main() {
       checkResult(runtime, 1);
     });
 
+    test('Numbers (negative)', () {
+      final Runtime runtime = getRuntime('main = negative(5)');
+      checkResult(runtime, -5);
+    });
+
     test('Numbers (inc)', () {
       final Runtime runtime = getRuntime('main = inc(2)');
       checkResult(runtime, 3);
@@ -137,28 +172,33 @@ void main() {
       checkResult(runtime, -1);
     });
 
-    test('Numbers (+)', () {
-      final Runtime runtime = getRuntime('main = 5 + 7');
+    test('Numbers (add)', () {
+      final Runtime runtime = getRuntime('main = add(5, 7)');
       checkResult(runtime, 12);
     });
 
-    test('Numbers (-)', () {
-      final Runtime runtime = getRuntime('main = 5 - 7');
+    test('Numbers (sum)', () {
+      final Runtime runtime = getRuntime('main = sum(5, 7)');
+      checkResult(runtime, 12);
+    });
+
+    test('Numbers (sub)', () {
+      final Runtime runtime = getRuntime('main = sub(5, 7)');
       checkResult(runtime, -2);
     });
 
-    test('Numbers (*)', () {
-      final Runtime runtime = getRuntime('main = 5 * 7');
+    test('Numbers (mul)', () {
+      final Runtime runtime = getRuntime('main = mul(5, 7)');
       checkResult(runtime, 35);
     });
 
-    test('Numbers (/)', () {
-      final Runtime runtime = getRuntime('main = 5 / 8');
+    test('Numbers (div)', () {
+      final Runtime runtime = getRuntime('main = div(5, 8)');
       checkResult(runtime, 0.625);
     });
 
-    test('Numbers (%)', () {
-      final Runtime runtime = getRuntime('main = 7 % 5');
+    test('Numbers (mod)', () {
+      final Runtime runtime = getRuntime('main = mod(7, 5)');
       checkResult(runtime, 2);
     });
 
