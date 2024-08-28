@@ -13,7 +13,7 @@
 
 ### Standard library
 
-* Added standard operators
+* Added standard operators:
     - Arithmetic: `+`, `-`, `*`, `/`, `%`
     - Comparison: `==`, `!=`, `>`, `<`, `>=`, `<=`
     - Logical: `&`, `|`, `!`
