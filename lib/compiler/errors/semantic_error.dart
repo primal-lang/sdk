@@ -11,7 +11,7 @@ class DuplicatedFunctionError extends SemanticError {
     required FunctionPrototype function1,
     required FunctionPrototype function2,
   }) : super(
-            'Duplicated function "${function1.name}" with paramters (${function1.parameters.join(', ')}) and (${function2.parameters.join(', ')})');
+            'Duplicated function "${function1.name}" with parameters (${function1.parameters.join(', ')}) and (${function2.parameters.join(', ')})');
 }
 
 class DuplicatedParameterError extends SemanticError {

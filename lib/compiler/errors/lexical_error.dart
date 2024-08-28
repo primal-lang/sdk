@@ -9,3 +9,8 @@ class InvalidCharacterError extends LexicalError {
   const InvalidCharacterError(Character character)
       : super('Invalid character $character');
 }
+
+class MalformedNumberError extends LexicalError {
+  MalformedNumberError(Character character)
+      : super('Malformed number at ${character.location}');
+}

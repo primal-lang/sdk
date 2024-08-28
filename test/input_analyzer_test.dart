@@ -75,7 +75,7 @@ void main() {
       expect(true, equals('|'.isPipe));
       expect(true, equals('&'.isAmpersand));
       expect(true, equals('!'.isBang));
-      expect(true, equals('/'.isForewardSlash));
+      expect(true, equals('/'.isForwardSlash));
       expect(true, equals('*'.isAsterisk));
       expect(true, equals('%'.isPercent));
     });

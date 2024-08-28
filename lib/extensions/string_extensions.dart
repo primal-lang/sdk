@@ -27,7 +27,7 @@ extension StringExtensions on String {
 
   bool get isBang => RegExp(r'!').hasMatch(this);
 
-  bool get isForewardSlash => RegExp(r'/').hasMatch(this);
+  bool get isForwardSlash => RegExp(r'/').hasMatch(this);
 
   bool get isAsterisk => RegExp(r'\*').hasMatch(this);
 
@@ -54,7 +54,7 @@ extension StringExtensions on String {
       isPipe ||
       isAmpersand ||
       isBang ||
-      isForewardSlash ||
+      isForwardSlash ||
       isAsterisk ||
       isPercent;
 

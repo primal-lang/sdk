@@ -74,7 +74,7 @@ class InitState extends State<Character, void> {
       return AmpersandState(iterator, input.lexeme);
     } else if (input.value.isBang) {
       return BangState(iterator, input.lexeme);
-    } else if (input.value.isForewardSlash) {
+    } else if (input.value.isForwardSlash) {
       return ForwardSlashState(iterator, input.lexeme);
     } else if (input.value.isAsterisk) {
       return AsteriskState(iterator, input.lexeme);
@@ -143,7 +143,7 @@ class DecimalInitState extends State<Character, Lexeme> {
     if (input.value.isDigit) {
       return DecimalState(iterator, output.add(input));
     } else {
-      throw InvalidCharacterError(input);
+      throw MalformedNumberError(input);
     }
   }
 }
@@ -307,7 +307,7 @@ class ForwardSlashState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
       return ResultState(iterator, [ForwardSlashToken(output)]);
-    } else if (input.value.isForewardSlash) {
+    } else if (input.value.isForwardSlash) {
       return SingleLineCommentState(iterator);
     } else if (input.value.isAsterisk) {
       return StartMultiLineCommentState(iterator);
@@ -374,7 +374,7 @@ class ClosingMultiLineCommentState extends State<Character, void> {
 
   @override
   State process(Character input) {
-    if (!input.value.isForewardSlash) {
+    if (!input.value.isForwardSlash) {
       return StartMultiLineCommentState(iterator);
     } else {
       return InitState(iterator);
