@@ -4,13 +4,13 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class Div extends NativeFunctionPrototype {
-  Div()
+class OperatorAnd extends NativeFunctionPrototype {
+  OperatorAnd()
       : super(
-          name: '/',
+          name: '&',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.boolean('a'),
+            Parameter.boolean('b'),
           ],
         );
 
@@ -19,8 +19,8 @@ class Div extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
 
-    if ((a is NumberReducibleValue) && (b is NumberReducibleValue)) {
-      return NumberReducibleValue(a.value / b.value);
+    if ((a is BooleanReducibleValue) && (b is BooleanReducibleValue)) {
+      return BooleanReducibleValue(a.value && b.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

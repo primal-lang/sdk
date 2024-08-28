@@ -4,8 +4,8 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class Sub extends NativeFunctionPrototype {
-  Sub()
+class OperatorSub extends NativeFunctionPrototype {
+  OperatorSub()
       : super(
           name: '-',
           parameters: [

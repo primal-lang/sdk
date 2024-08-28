@@ -4,13 +4,13 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class Eq extends NativeFunctionPrototype {
-  Eq()
+class OperatorDiv extends NativeFunctionPrototype {
+  OperatorDiv()
       : super(
-          name: '==',
+          name: '/',
           parameters: [
-            Parameter.any('a'),
-            Parameter.any('b'),
+            Parameter.number('a'),
+            Parameter.number('b'),
           ],
         );
 
@@ -20,11 +20,7 @@ class Eq extends NativeFunctionPrototype {
     final Reducible b = arguments.get('b').reduce();
 
     if ((a is NumberReducibleValue) && (b is NumberReducibleValue)) {
-      return BooleanReducibleValue(a.value == b.value);
-    } else if ((a is StringReducibleValue) && (b is StringReducibleValue)) {
-      return BooleanReducibleValue(a.value == b.value);
-    } else if ((a is BooleanReducibleValue) && (b is BooleanReducibleValue)) {
-      return BooleanReducibleValue(a.value == b.value);
+      return NumberReducibleValue(a.value / b.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

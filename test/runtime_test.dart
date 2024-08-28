@@ -57,6 +57,21 @@ void main() {
       checkResult(runtime, '"Enter in function"');
     });
 
+    test('Operators (&)', () {
+      final Runtime runtime = getRuntime('main = true & true');
+      checkResult(runtime, true);
+    });
+
+    test('Operators (|)', () {
+      final Runtime runtime = getRuntime('main = false | true');
+      checkResult(runtime, true);
+    });
+
+    test('Operators (!)', () {
+      final Runtime runtime = getRuntime('main = !false');
+      checkResult(runtime, true);
+    });
+
     test('Numbers (abs)', () {
       final Runtime runtime = getRuntime('main = abs(1)');
       checkResult(runtime, 1);
@@ -197,13 +212,13 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('Booleans (&)', () {
-      final Runtime runtime = getRuntime('main = true & true');
+    test('Booleans (and)', () {
+      final Runtime runtime = getRuntime('main = and(true, true)');
       checkResult(runtime, true);
     });
 
-    test('Booleans (|)', () {
-      final Runtime runtime = getRuntime('main = false | true');
+    test('Booleans (or)', () {
+      final Runtime runtime = getRuntime('main = or(false, true)');
       checkResult(runtime, true);
     });
 
@@ -212,8 +227,8 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('Booleans (!)', () {
-      final Runtime runtime = getRuntime('main = !false');
+    test('Booleans (not)', () {
+      final Runtime runtime = getRuntime('main = not(false)');
       checkResult(runtime, true);
     });
 

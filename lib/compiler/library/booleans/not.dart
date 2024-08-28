@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Not extends NativeFunctionPrototype {
   Not()
       : super(
-          name: '!',
+          name: 'not',
           parameters: [
             Parameter.boolean('a'),
           ],

@@ -4,13 +4,13 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class Mod extends NativeFunctionPrototype {
-  Mod()
+class OperatorOr extends NativeFunctionPrototype {
+  OperatorOr()
       : super(
-          name: '%',
+          name: '|',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.boolean('a'),
+            Parameter.boolean('b'),
           ],
         );
 
@@ -19,8 +19,8 @@ class Mod extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
 
-    if ((a is NumberReducibleValue) && (b is NumberReducibleValue)) {
-      return NumberReducibleValue(a.value % b.value);
+    if ((a is BooleanReducibleValue) && (b is BooleanReducibleValue)) {
+      return BooleanReducibleValue(a.value || b.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

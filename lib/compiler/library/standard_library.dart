@@ -13,8 +13,6 @@ import 'package:primal/compiler/library/casting/to_decimal.dart';
 import 'package:primal/compiler/library/casting/to_integer.dart';
 import 'package:primal/compiler/library/casting/to_number.dart';
 import 'package:primal/compiler/library/casting/to_string.dart';
-import 'package:primal/compiler/library/comparison/eq.dart';
-import 'package:primal/compiler/library/comparison/neq.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
@@ -37,30 +35,35 @@ import 'package:primal/compiler/library/numbers/abs.dart';
 import 'package:primal/compiler/library/numbers/ceil.dart';
 import 'package:primal/compiler/library/numbers/cos.dart';
 import 'package:primal/compiler/library/numbers/dec.dart';
-import 'package:primal/compiler/library/numbers/div.dart';
 import 'package:primal/compiler/library/numbers/floor.dart';
-import 'package:primal/compiler/library/numbers/ge.dart';
-import 'package:primal/compiler/library/numbers/gt.dart';
 import 'package:primal/compiler/library/numbers/inc.dart';
 import 'package:primal/compiler/library/numbers/is_even.dart';
 import 'package:primal/compiler/library/numbers/is_negative.dart';
 import 'package:primal/compiler/library/numbers/is_odd.dart';
 import 'package:primal/compiler/library/numbers/is_positive.dart';
 import 'package:primal/compiler/library/numbers/is_zero.dart';
-import 'package:primal/compiler/library/numbers/le.dart';
 import 'package:primal/compiler/library/numbers/log.dart';
-import 'package:primal/compiler/library/numbers/lt.dart';
 import 'package:primal/compiler/library/numbers/max.dart';
 import 'package:primal/compiler/library/numbers/min.dart';
-import 'package:primal/compiler/library/numbers/mod.dart';
-import 'package:primal/compiler/library/numbers/mul.dart';
 import 'package:primal/compiler/library/numbers/pow.dart';
 import 'package:primal/compiler/library/numbers/round.dart';
 import 'package:primal/compiler/library/numbers/sin.dart';
 import 'package:primal/compiler/library/numbers/sqrt.dart';
-import 'package:primal/compiler/library/numbers/sub.dart';
-import 'package:primal/compiler/library/numbers/sum.dart';
 import 'package:primal/compiler/library/numbers/tan.dart';
+import 'package:primal/compiler/library/operators/operator_and.dart';
+import 'package:primal/compiler/library/operators/operator_div.dart';
+import 'package:primal/compiler/library/operators/operator_eq.dart';
+import 'package:primal/compiler/library/operators/operator_ge.dart';
+import 'package:primal/compiler/library/operators/operator_gt.dart';
+import 'package:primal/compiler/library/operators/operator_le.dart';
+import 'package:primal/compiler/library/operators/operator_lt.dart';
+import 'package:primal/compiler/library/operators/operator_mod.dart';
+import 'package:primal/compiler/library/operators/operator_mul.dart';
+import 'package:primal/compiler/library/operators/operator_neq.dart';
+import 'package:primal/compiler/library/operators/operator_not.dart';
+import 'package:primal/compiler/library/operators/operator_or.dart';
+import 'package:primal/compiler/library/operators/operator_sub.dart';
+import 'package:primal/compiler/library/operators/operator_sum.dart';
 import 'package:primal/compiler/library/strings/ends_with.dart';
 import 'package:primal/compiler/library/strings/lowercase.dart';
 import 'package:primal/compiler/library/strings/match.dart';
@@ -73,9 +76,21 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 
 class StandardLibrary {
   static List<FunctionPrototype> get() => [
-        // Generic
-        Eq(),
-        Neq(),
+        // Operators
+        OperatorEq(),
+        OperatorNeq(),
+        OperatorGt(),
+        OperatorLt(),
+        OperatorGe(),
+        OperatorLe(),
+        OperatorSum(),
+        OperatorSub(),
+        OperatorMul(),
+        OperatorDiv(),
+        OperatorMod(),
+        OperatorAnd(),
+        OperatorOr(),
+        OperatorNot(),
 
         // Control
         If(),
@@ -87,15 +102,12 @@ class StandardLibrary {
         // Debug
         Debug(),
 
+        // Comparison
+
         // Numbers
         Abs(),
         Inc(),
         Dec(),
-        Sum(),
-        Sub(),
-        Mul(),
-        Div(),
-        Mod(),
         Min(),
         Max(),
         Pow(),
@@ -107,10 +119,6 @@ class StandardLibrary {
         Cos(),
         Tan(),
         Log(),
-        Gt(),
-        Lt(),
-        Ge(),
-        Le(),
         IsNegative(),
         IsPositive(),
         IsZero(),

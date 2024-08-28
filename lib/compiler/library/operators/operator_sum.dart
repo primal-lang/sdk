@@ -4,10 +4,10 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class Lt extends NativeFunctionPrototype {
-  Lt()
+class OperatorSum extends NativeFunctionPrototype {
+  OperatorSum()
       : super(
-          name: '<',
+          name: '+',
           parameters: [
             Parameter.number('a'),
             Parameter.number('b'),
@@ -20,7 +20,7 @@ class Lt extends NativeFunctionPrototype {
     final Reducible b = arguments.get('b').reduce();
 
     if ((a is NumberReducibleValue) && (b is NumberReducibleValue)) {
-      return BooleanReducibleValue(a.value < b.value);
+      return NumberReducibleValue(a.value + b.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
