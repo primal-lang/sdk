@@ -1,5 +1,6 @@
 name: primal
-description: Functional language
+description: A declarative, functional, open source programming language focused on simplicity and minimalism.
+publish_to: none
 version: 0.0.1
 
 environment:
