@@ -45,6 +45,22 @@ class IdentifierToken extends Token<String> {
         );
 }
 
+class IfToken extends Token<String> {
+  IfToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
+
+class ElseToken extends Token<String> {
+  ElseToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
+
 class MinusToken extends Token<String> {
   MinusToken(Lexeme lexeme)
       : super(

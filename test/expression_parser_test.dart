@@ -83,5 +83,10 @@ void main() {
       final Expression expression = getExpression('foo(bar()() + 1)()');
       expect(expression.toString(), 'foo(+(bar()(), 1))()');
     });
+
+    test('Expression 15', () {
+      final Expression expression = getExpression('if (true) 1 else 2');
+      expect(expression.toString(), 'if(true, 1, 2)');
+    });
   });
 }

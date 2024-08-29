@@ -45,6 +45,10 @@ extension StringExtensions on String {
 
   bool get isBoolean => RegExp(r'true|false').hasMatch(this);
 
+  bool get isIf => RegExp(r'if').hasMatch(this);
+
+  bool get isElse => RegExp(r'else').hasMatch(this);
+
   bool get isOperator =>
       isMinus ||
       isPlus ||

@@ -9,7 +9,26 @@ class ExpressionParser {
 
   const ExpressionParser(this.iterator);
 
-  Expression expression() => equality();
+  Expression expression() => ifExpression();
+
+  Expression ifExpression() {
+    if (match([IfToken])) {
+      consume(OpenParenthesisToken, '(');
+      final Expression condition = expression();
+      consume(CloseParenthesisToken, ')');
+      final Expression ifTrue = expression();
+      consume(ElseToken, 'else');
+      final Expression ifFalse = expression();
+
+      return CallExpression.fromIf(
+        condition: condition,
+        ifTrue: ifTrue,
+        ifFalse: ifFalse,
+      );
+    } else {
+      return equality();
+    }
+  }
 
   Expression equality() {
     Expression expression = comparison();

@@ -177,6 +177,10 @@ class IdentifierState extends State<Character, Lexeme> {
       final List<Token> tokens = [
         if (output.value.isBoolean)
           BooleanToken(output)
+        else if (output.value.isIf)
+          IfToken(output)
+        else if (output.value.isElse)
+          ElseToken(output)
         else
           IdentifierToken(output)
       ];
