@@ -13,9 +13,7 @@ class ExpressionParser {
 
   Expression ifExpression() {
     if (match([IfToken])) {
-      //consume(OpenParenthesisToken, '(');
       final Expression condition = expression();
-      //consume(CloseParenthesisToken, ')');
       final Expression ifTrue = expression();
       consume(ElseToken, 'else');
       final Expression ifFalse = expression();
