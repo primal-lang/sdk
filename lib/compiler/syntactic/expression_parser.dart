@@ -17,6 +17,7 @@ class ExpressionParser {
     while (match([NotEqualToken, EqualToken])) {
       final Token operator = previous;
       final Expression right = comparison();
+
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -38,6 +39,7 @@ class ExpressionParser {
     ])) {
       final Token operator = previous;
       final Expression right = logic();
+
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -54,6 +56,7 @@ class ExpressionParser {
     while (match([PipeToken, AmpersandToken])) {
       final Token operator = previous;
       final Expression right = term();
+
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -70,6 +73,7 @@ class ExpressionParser {
     while (match([MinusToken, PlusToken])) {
       final Token operator = previous;
       final Expression right = factor();
+
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -86,6 +90,7 @@ class ExpressionParser {
     while (match([ForwardSlashToken, AsteriskToken, PercentToken])) {
       final Token operator = previous;
       final Expression right = unary();
+
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
         left: expression,
@@ -115,9 +120,9 @@ class ExpressionParser {
           expression: right,
         );
       }
+    } else {
+      return call();
     }
-
-    return call();
   }
 
   Expression call() {

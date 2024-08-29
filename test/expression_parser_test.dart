@@ -83,5 +83,11 @@ void main() {
       final Expression expression = getExpression('foo(bar()() + 1)()');
       expect(expression.toString(), 'foo(+(bar()(), 1))()');
     });
+
+    /*test('Expression 15', () {
+      final Expression expression =
+          getExpression('(0 > 1) & true\n\nmain = test()');
+      expect(expression.toString(), 'foo(+(bar()(), 1))()');
+    });*/
   });
 }
