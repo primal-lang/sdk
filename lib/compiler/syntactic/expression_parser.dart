@@ -128,16 +128,12 @@ class ExpressionParser {
   Expression call() {
     Expression expression = primary();
 
-    while (true) {
-      if (match([OpenParenthesisToken])) {
-        if ((expression is IdentifierExpression) ||
-            (expression is CallExpression)) {
-          expression = finishCall(expression);
-        } else {
-          throw InvalidTokenError(peek);
-        }
+    while (match([OpenParenthesisToken])) {
+      if ((expression is IdentifierExpression) ||
+          (expression is CallExpression)) {
+        expression = finishCall(expression);
       } else {
-        break;
+        throw InvalidTokenError(peek);
       }
     }
 
@@ -167,9 +163,7 @@ class ExpressionParser {
       return StringLiteralExpression(previous);
     } else if (match([IdentifierToken])) {
       return IdentifierExpression(previous);
-    }
-
-    if (match([OpenParenthesisToken])) {
+    } else if (match([OpenParenthesisToken])) {
       final Expression expr = expression();
       consume(CloseParenthesisToken, ')');
       return expr;
