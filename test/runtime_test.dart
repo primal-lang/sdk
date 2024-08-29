@@ -90,6 +90,11 @@ void main() {
       checkResult(runtime, 12);
     });
 
+    test('+', () {
+      final Runtime runtime = getRuntime('main = "He" + "llo"');
+      checkResult(runtime, '"Hello"');
+    });
+
     test('-', () {
       final Runtime runtime = getRuntime('main = 5 - 7');
       checkResult(runtime, -2);

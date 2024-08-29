@@ -49,6 +49,7 @@ import 'package:primal/compiler/library/numbers/sqrt.dart';
 import 'package:primal/compiler/library/numbers/sub.dart';
 import 'package:primal/compiler/library/numbers/sum.dart';
 import 'package:primal/compiler/library/numbers/tan.dart';
+import 'package:primal/compiler/library/operators/operator_add.dart';
 import 'package:primal/compiler/library/operators/operator_and.dart';
 import 'package:primal/compiler/library/operators/operator_div.dart';
 import 'package:primal/compiler/library/operators/operator_eq.dart';
@@ -62,7 +63,6 @@ import 'package:primal/compiler/library/operators/operator_neq.dart';
 import 'package:primal/compiler/library/operators/operator_not.dart';
 import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
-import 'package:primal/compiler/library/operators/operator_sum.dart';
 import 'package:primal/compiler/library/strings/at.dart';
 import 'package:primal/compiler/library/strings/concat.dart';
 import 'package:primal/compiler/library/strings/contains.dart';
@@ -96,7 +96,7 @@ class StandardLibrary {
         OperatorLt(),
         OperatorGe(),
         OperatorLe(),
-        OperatorSum(),
+        OperatorAdd(),
         OperatorSub(),
         OperatorMul(),
         OperatorDiv(),
