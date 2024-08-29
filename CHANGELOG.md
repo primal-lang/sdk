@@ -1,4 +1,4 @@
-## 0.0.1
+## 0.1.0
 
 ### Language
 
@@ -10,6 +10,7 @@
     - Numbers
     - Strings
 * Added main function entry point
+* Added syntactic sugar for `if` conditions
 
 ### Standard library
 
