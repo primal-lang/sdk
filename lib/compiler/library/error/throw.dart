@@ -7,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 class Throw extends NativeFunctionPrototype {
   Throw()
       : super(
-          name: 'throw',
+          name: 'error.throw',
           parameters: [
             Parameter.any('a'),
           ],
