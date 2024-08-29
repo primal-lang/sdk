@@ -215,37 +215,37 @@ void main() {
     });
 
     test('Complex function 3', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('factorial(x) = if(n == 0, 1, n * factorial(n - 1))');
+      final List<FunctionDefinition> functions = getFunctions(
+          'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'factorial',
-          parameters: ['x'],
+          parameters: ['n'],
           expression: CallExpression(
             callee: IdentifierExpression(identifierToken('if', 1, 16)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('==', 1, 21)),
+                callee: IdentifierExpression(identifierToken('==', 1, 22)),
                 arguments: [
-                  IdentifierExpression(identifierToken('n', 1, 19)),
-                  NumberLiteralExpression(numberToken(0, 1, 24)),
+                  IdentifierExpression(identifierToken('n', 1, 20)),
+                  NumberLiteralExpression(numberToken(0, 1, 25)),
                 ],
               ),
-              NumberLiteralExpression(numberToken(1, 1, 27)),
+              NumberLiteralExpression(numberToken(1, 1, 28)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('*', 1, 32)),
+                callee: IdentifierExpression(identifierToken('*', 1, 37)),
                 arguments: [
-                  IdentifierExpression(identifierToken('n', 1, 30)),
+                  IdentifierExpression(identifierToken('n', 1, 35)),
                   CallExpression(
                     callee: IdentifierExpression(
-                        identifierToken('factorial', 1, 34)),
+                        identifierToken('factorial', 1, 39)),
                     arguments: [
                       CallExpression(
                         callee:
-                            IdentifierExpression(identifierToken('-', 1, 46)),
+                            IdentifierExpression(identifierToken('-', 1, 51)),
                         arguments: [
-                          IdentifierExpression(identifierToken('n', 1, 44)),
-                          NumberLiteralExpression(numberToken(1, 1, 48)),
+                          IdentifierExpression(identifierToken('n', 1, 49)),
+                          NumberLiteralExpression(numberToken(1, 1, 53)),
                         ],
                       ),
                     ],
@@ -261,7 +261,7 @@ void main() {
     test('Sample file', () {
       final String source = loadFile('sample.prm');
       final List<FunctionDefinition> functions = getFunctions(source);
-      expect(functions.length, equals(13));
+      expect(functions.length, equals(11));
     });
   });
 }

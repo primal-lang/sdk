@@ -13,12 +13,14 @@ class ExpressionParser {
 
   Expression ifExpression() {
     if (match([IfToken])) {
+      final Token operator = previous;
       final Expression condition = expression();
       final Expression ifTrue = expression();
       consume(ElseToken, 'else');
       final Expression ifFalse = expression();
 
       return CallExpression.fromIf(
+        operator: operator,
         condition: condition,
         ifTrue: ifTrue,
         ifFalse: ifFalse,

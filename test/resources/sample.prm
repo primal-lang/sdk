@@ -4,7 +4,7 @@ farewell = 'Goodbye, world!'
 
 pi = 3.14
 
-rationalNumnber = pi
+rationalNumber = pi
 
 isToday = true
 
@@ -17,20 +17,16 @@ isEven(x) = (x % 2) == 0
 // Returns true if x is an odd number
 isOdd(x) = !isEven(x)
 
-isBiggerThan10(x) = if(
-    // if x is greater than 10, return true
-    x > 10, true,
-    false // otherwise, return false
-)
+isBiggerThan10(x) = if x > 10   // if x is greater than 10, return true
+                        true
+                    else        // otherwise, return false
+                        false
 
-factorial(n) = if(n == 0, 1, n * factorial(n - 1))
-
-factorial(n) = if(
-    isNegative(n), error('Negative number'),
-    n == 0, 1,
-    n * factorial(n - 1)
-)
-
-fib(n) = if(n == 0, 0, if(n == 1, 1, fib(n - 1) + fib(n - 2)))
+factorial(n) = if (n < 0)
+			       error.throw(0, 'Cannot calculate factorial of a negative number')
+			   else if (n == 0)
+				   1
+			   else
+                   n * factorial(n - 1)
 
 main = factorial(4)

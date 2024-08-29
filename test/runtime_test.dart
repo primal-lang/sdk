@@ -6,17 +6,17 @@ import 'test_utils.dart';
 void main() {
   group('Control', () {
     test('if1', () {
-      final Runtime runtime = getRuntime('main = if(true, "yes", "no")');
+      final Runtime runtime = getRuntime('main = if (true) "yes" else "no"');
       checkResult(runtime, '"yes"');
     });
 
     test('if2', () {
-      final Runtime runtime = getRuntime('main = if(false, "yes", "no")');
+      final Runtime runtime = getRuntime('main = if (false) "yes" else "no"');
       checkResult(runtime, '"no"');
     });
 
     test('if3', () {
-      final Runtime runtime = getRuntime('main = if(true, 1 + 2, 42)');
+      final Runtime runtime = getRuntime('main = if (true) 1 + 2 else 42');
       checkResult(runtime, 3);
     });
   });
@@ -494,7 +494,7 @@ void main() {
   group('Complex', () {
     test('factorial', () {
       final Runtime runtime = getRuntime(
-          'factorial(n) = if(n == 0, 1, n * factorial(n - 1))\nmain = factorial(5)');
+          'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)\n\nmain = factorial(5)');
       checkResult(runtime, 120);
     });
   });

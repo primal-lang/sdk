@@ -1,5 +1,4 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
@@ -92,19 +91,13 @@ class CallExpression extends Expression {
   }) : super(location: callee.location);
 
   factory CallExpression.fromIf({
+    required Token operator,
     required Expression condition,
     required Expression ifTrue,
     required Expression ifFalse,
   }) =>
       CallExpression(
-        callee: IdentifierExpression(
-          IdentifierToken(
-            Lexeme(
-              value: 'if',
-              location: condition.location,
-            ),
-          ),
-        ),
+        callee: IdentifierExpression(operator),
         arguments: [condition, ifTrue, ifFalse],
       );
 
