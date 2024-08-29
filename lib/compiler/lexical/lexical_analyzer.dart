@@ -400,7 +400,7 @@ class OpenParenthesisState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isOperatorDelimiter) {
+    if (input.value.isOpenParenthesisDelimiter) {
       return ResultState(iterator, [OpenParenthesisToken(output)], true);
     } else {
       throw InvalidCharacterError(input);
@@ -413,7 +413,7 @@ class CloseParenthesisState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isSeparatorDelimiter) {
+    if (input.value.isCloseParenthesisDelimiter) {
       return ResultState(iterator, [CloseParenthesisToken(output)], true);
     } else {
       throw InvalidCharacterError(input);

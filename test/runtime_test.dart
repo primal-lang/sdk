@@ -1,4 +1,4 @@
-import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
 import 'test_utils.dart';
@@ -29,7 +29,7 @@ void main() {
 
     test('try2', () {
       final Runtime runtime =
-          getRuntime('main = try(error.throw("Does not compute"), 42)');
+          getRuntime('main = try(error.throw(0, "Does not compute"), 42)');
       checkResult(runtime, 42);
     });
   });
@@ -38,11 +38,11 @@ void main() {
     test('throw', () {
       try {
         final Runtime runtime =
-            getRuntime('main = error.throw("Segmentation fault")');
+            getRuntime('main = error.throw(-1, "Segmentation fault")');
         runtime.executeMain();
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<RuntimeError>());
+        expect(e, isA<CustomError>());
       }
     });
   });

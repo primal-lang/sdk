@@ -76,6 +76,8 @@ extension StringExtensions on String {
       isOpenParenthesis ||
       isCloseParenthesis;
 
-  bool get isSeparatorDelimiter =>
+  bool get isOpenParenthesisDelimiter => isOperatorDelimiter || isUnaryOperator;
+
+  bool get isCloseParenthesisDelimiter =>
       isOperatorDelimiter || isComma || isUnaryOperator;
 }
