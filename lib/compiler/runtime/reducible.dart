@@ -52,6 +52,13 @@ class BooleanReducibleValue extends ReducibleValue<bool> {
   String get type => 'Boolean';
 }
 
+class ListReducibleValue extends ReducibleValue<List> {
+  const ListReducibleValue(super.value);
+
+  @override
+  String get type => 'List';
+}
+
 class IdentifierReducible extends Reducible {
   final String value;
   final Location location;

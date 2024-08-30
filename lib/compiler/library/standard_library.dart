@@ -45,6 +45,7 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/throw.dart';
+import 'package:primal/compiler/library/list/list_new.dart';
 import 'package:primal/compiler/library/logic/bool_and.dart';
 import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/library/logic/bool_or.dart';
@@ -63,28 +64,28 @@ import 'package:primal/compiler/library/operators/operator_neq.dart';
 import 'package:primal/compiler/library/operators/operator_not.dart';
 import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
-import 'package:primal/compiler/library/strings/str_at.dart';
-import 'package:primal/compiler/library/strings/str_concat.dart';
-import 'package:primal/compiler/library/strings/str_contains.dart';
-import 'package:primal/compiler/library/strings/str_drop.dart';
-import 'package:primal/compiler/library/strings/str_ends_with.dart';
-import 'package:primal/compiler/library/strings/str_first.dart';
-import 'package:primal/compiler/library/strings/str_init.dart';
-import 'package:primal/compiler/library/strings/str_is_empty.dart';
-import 'package:primal/compiler/library/strings/str_is_not_empty.dart';
-import 'package:primal/compiler/library/strings/str_last.dart';
-import 'package:primal/compiler/library/strings/str_length.dart';
-import 'package:primal/compiler/library/strings/str_lowercase.dart';
-import 'package:primal/compiler/library/strings/str_match.dart';
-import 'package:primal/compiler/library/strings/str_remove.dart';
-import 'package:primal/compiler/library/strings/str_replace.dart';
-import 'package:primal/compiler/library/strings/str_reverse.dart';
-import 'package:primal/compiler/library/strings/str_starts_with.dart';
-import 'package:primal/compiler/library/strings/str_substring.dart';
-import 'package:primal/compiler/library/strings/str_tail.dart';
-import 'package:primal/compiler/library/strings/str_take.dart';
-import 'package:primal/compiler/library/strings/str_trim.dart';
-import 'package:primal/compiler/library/strings/str_uppercase.dart';
+import 'package:primal/compiler/library/string/str_at.dart';
+import 'package:primal/compiler/library/string/str_concat.dart';
+import 'package:primal/compiler/library/string/str_contains.dart';
+import 'package:primal/compiler/library/string/str_drop.dart';
+import 'package:primal/compiler/library/string/str_ends_with.dart';
+import 'package:primal/compiler/library/string/str_first.dart';
+import 'package:primal/compiler/library/string/str_init.dart';
+import 'package:primal/compiler/library/string/str_is_empty.dart';
+import 'package:primal/compiler/library/string/str_is_not_empty.dart';
+import 'package:primal/compiler/library/string/str_last.dart';
+import 'package:primal/compiler/library/string/str_length.dart';
+import 'package:primal/compiler/library/string/str_lowercase.dart';
+import 'package:primal/compiler/library/string/str_match.dart';
+import 'package:primal/compiler/library/string/str_remove.dart';
+import 'package:primal/compiler/library/string/str_replace.dart';
+import 'package:primal/compiler/library/string/str_reverse.dart';
+import 'package:primal/compiler/library/string/str_starts_with.dart';
+import 'package:primal/compiler/library/string/str_substring.dart';
+import 'package:primal/compiler/library/string/str_tail.dart';
+import 'package:primal/compiler/library/string/str_take.dart';
+import 'package:primal/compiler/library/string/str_trim.dart';
+import 'package:primal/compiler/library/string/str_uppercase.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
 class StandardLibrary {
@@ -157,7 +158,7 @@ class StandardLibrary {
         BoolXor(),
         BoolNot(),
 
-        // Strings
+        // String
         StrSubstring(),
         StrStartsWith(),
         StrEndsWith(),
@@ -180,6 +181,9 @@ class StandardLibrary {
         StrDrop(),
         StrRemove(),
         StrReverse(),
+
+        // List
+        ListNew(),
 
         // Casting
         IsNumber(),

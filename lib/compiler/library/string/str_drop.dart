@@ -4,13 +4,13 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class StrConcat extends NativeFunctionPrototype {
-  StrConcat()
+class StrDrop extends NativeFunctionPrototype {
+  StrDrop()
       : super(
-          name: 'str.concat',
+          name: 'str.drop',
           parameters: [
-            Parameter.any('a'),
-            Parameter.any('b'),
+            Parameter.string('a'),
+            Parameter.number('b'),
           ],
         );
 
@@ -19,8 +19,9 @@ class StrConcat extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
 
-    if ((a is StringReducibleValue) && (b is StringReducibleValue)) {
-      return StringReducibleValue(a.value + b.value);
+    if ((a is StringReducibleValue) && (b is NumberReducibleValue)) {
+      return StringReducibleValue(
+          a.value.substring(b.value.toInt(), a.value.length));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

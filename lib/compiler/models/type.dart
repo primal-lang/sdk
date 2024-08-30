@@ -23,6 +23,13 @@ class BooleanType extends Type {
   String toString() => 'Boolean';
 }
 
+class ListType extends Type {
+  const ListType();
+
+  @override
+  String toString() => 'List';
+}
+
 class AnyType extends Type {
   const AnyType();
 

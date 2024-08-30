@@ -4,29 +4,27 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class StrDrop extends NativeFunctionPrototype {
-  StrDrop()
+class StrTail extends NativeFunctionPrototype {
+  StrTail()
       : super(
-          name: 'str.drop',
+          name: 'str.tail',
           parameters: [
-            Parameter.any('a'),
-            Parameter.number('b'),
+            Parameter.string('a'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
     final Reducible a = arguments.get('a').reduce();
-    final Reducible b = arguments.get('b').reduce();
 
-    if ((a is StringReducibleValue) && (b is NumberReducibleValue)) {
+    if (a is StringReducibleValue) {
       return StringReducibleValue(
-          a.value.substring(b.value.toInt(), a.value.length));
+          a.value.isNotEmpty ? a.value.substring(1) : '');
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [a.type, b.type],
+        actual: [a.type],
       );
     }
   }

@@ -24,6 +24,11 @@ class Parameter {
         type: const BooleanType(),
       );
 
+  factory Parameter.list(String name) => Parameter._(
+        name: name,
+        type: const ListType(),
+      );
+
   factory Parameter.any(String name) => Parameter._(
         name: name,
         type: const AnyType(),

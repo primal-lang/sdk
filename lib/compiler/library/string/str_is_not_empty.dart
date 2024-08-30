@@ -4,12 +4,12 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class StrLength extends NativeFunctionPrototype {
-  StrLength()
+class StrIsNotEmpty extends NativeFunctionPrototype {
+  StrIsNotEmpty()
       : super(
-          name: 'str.length',
+          name: 'str.isNotEmpty',
           parameters: [
-            Parameter.any('a'),
+            Parameter.string('a'),
           ],
         );
 
@@ -18,7 +18,7 @@ class StrLength extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
 
     if (a is StringReducibleValue) {
-      return NumberReducibleValue(a.value.length);
+      return BooleanReducibleValue(a.value.isNotEmpty);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

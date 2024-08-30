@@ -9,7 +9,7 @@ class StrInit extends NativeFunctionPrototype {
       : super(
           name: 'str.init',
           parameters: [
-            Parameter.any('a'),
+            Parameter.string('a'),
           ],
         );
 
