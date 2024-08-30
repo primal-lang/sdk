@@ -498,37 +498,39 @@ void main() {
 
   group('Samples', () {
     test('factorial', () {
-      final Runtime runtime = getRuntime(loadFile('factorial.prm'));
+      final Runtime runtime = getRuntime(loadFile('web_samples/factorial.prm'));
       checkResult(runtime, 120);
     });
 
     test('fibonacci', () {
-      final Runtime runtime = getRuntime(loadFile('fibonacci.prm'));
+      final Runtime runtime = getRuntime(loadFile('web_samples/fibonacci.prm'));
       checkResult(runtime, 55);
     });
 
     test('is_palindrome', () {
-      final Runtime runtime = getRuntime(loadFile('is_palindrome.prm'));
+      final Runtime runtime =
+          getRuntime(loadFile('web_samples/is_palindrome.prm'));
       checkResult(runtime, true);
     });
 
     test('is_prime', () {
-      final Runtime runtime = getRuntime(loadFile('is_prime.prm'));
+      final Runtime runtime = getRuntime(loadFile('web_samples/is_prime.prm'));
       checkResult(runtime, true);
     });
 
     test('power', () {
-      final Runtime runtime = getRuntime(loadFile('power.prm'));
+      final Runtime runtime = getRuntime(loadFile('web_samples/power.prm'));
       checkResult(runtime, 1024);
     });
 
     test('sum_of_digits', () {
-      final Runtime runtime = getRuntime(loadFile('sum_of_digits.prm'));
+      final Runtime runtime =
+          getRuntime(loadFile('web_samples/sum_of_digits.prm'));
       checkResult(runtime, 45);
     });
 
     test('to_binary', () {
-      final Runtime runtime = getRuntime(loadFile('to_binary.prm'));
+      final Runtime runtime = getRuntime(loadFile('web_samples/to_binary.prm'));
       checkResult(runtime, '"1010"');
     });
   });
