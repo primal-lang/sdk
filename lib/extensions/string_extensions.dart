@@ -43,6 +43,10 @@ extension StringExtensions on String {
 
   bool get isCloseParenthesis => RegExp(r'\)').hasMatch(this);
 
+  bool get isOpenBracket => RegExp(r'\[').hasMatch(this);
+
+  bool get isCloseBracket => RegExp(r'\]').hasMatch(this);
+
   bool get isBoolean => RegExp(r'true|false').hasMatch(this);
 
   bool get isIf => RegExp(r'if').hasMatch(this);
@@ -54,7 +58,9 @@ extension StringExtensions on String {
       isBinaryOperator ||
       isComma ||
       isOpenParenthesis ||
-      isCloseParenthesis;
+      isCloseParenthesis ||
+      isOpenBracket ||
+      isCloseBracket;
 
   bool get isOperatorDelimiter =>
       isWhitespace ||
@@ -62,7 +68,8 @@ extension StringExtensions on String {
       isLetter ||
       isDoubleQuote ||
       isSingleQuote ||
-      isOpenParenthesis;
+      isOpenParenthesis ||
+      isOpenBracket;
 
   bool get isCommaDelimiter =>
       isWhitespace ||
@@ -71,6 +78,7 @@ extension StringExtensions on String {
       isDoubleQuote ||
       isSingleQuote ||
       isOpenParenthesis ||
+      isOpenBracket ||
       isUnaryOperator;
 
   bool get isOpenParenthesisDelimiter =>
@@ -81,9 +89,29 @@ extension StringExtensions on String {
       isSingleQuote ||
       isOpenParenthesis ||
       isCloseParenthesis ||
+      isOpenBracket ||
       isUnaryOperator;
 
   bool get isCloseParenthesisDelimiter =>
+      isWhitespace ||
+      isComma ||
+      isOpenParenthesis ||
+      isCloseParenthesis ||
+      isOpenBracket ||
+      isCloseBracket ||
+      isBinaryOperator;
+
+  bool get isOpenBracketDelimiter =>
+      isWhitespace ||
+      isDigit ||
+      isLetter ||
+      isDoubleQuote ||
+      isSingleQuote ||
+      isOpenParenthesis ||
+      isCloseBracket ||
+      isUnaryOperator;
+
+  bool get isCloseBracketDelimiter =>
       isWhitespace ||
       isComma ||
       isOpenParenthesis ||

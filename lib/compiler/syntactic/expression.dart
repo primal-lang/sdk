@@ -64,6 +64,25 @@ class StringLiteralExpression extends LiteralExpression<String> {
   Reducible toReducible() => StringReducibleValue(value);
 }
 
+class ListLiteralExpression extends LiteralExpression<List<Expression>> {
+  final List<Expression> arguments;
+
+  ListLiteralExpression({
+    required Location location,
+    required this.arguments,
+  }) : super(
+          location: location,
+          value: arguments,
+        );
+
+  @override
+  String toString() => value.toString();
+
+  @override
+  Reducible toReducible() =>
+      ListReducibleValue(value.map((e) => e.toReducible()).toList());
+}
+
 class IdentifierExpression extends Expression {
   final String value;
 

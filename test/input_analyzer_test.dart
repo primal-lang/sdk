@@ -88,6 +88,8 @@ void main() {
       expect(true, equals(','.isComma));
       expect(true, equals('('.isOpenParenthesis));
       expect(true, equals(')'.isCloseParenthesis));
+      expect(true, equals('['.isOpenBracket));
+      expect(true, equals(']'.isCloseBracket));
       expect(true, equals('\n'.isNewLine));
     });
 

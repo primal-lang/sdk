@@ -772,38 +772,43 @@ void main() {
   });
 
   group('List', () {
+    test('List constructor 1', () {
+      final Runtime runtime = getRuntime('main = []');
+      checkResult(runtime, []);
+    });
+
+    test('List constructor 2', () {
+      final Runtime runtime = getRuntime('main = [1, true, "hello"]');
+      checkResult(runtime, [1, true, '"hello"']);
+    });
+
     test('list.new', () {
       final Runtime runtime = getRuntime('main = list.new()');
       checkResult(runtime, []);
     });
 
     test('list.insertStart 1', () {
-      final Runtime runtime =
-          getRuntime('main = list.insertStart(list.new(), 42)');
+      final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
     });
 
     test('list.insertStart 2', () {
-      final Runtime runtime = getRuntime(
-          'main = list.insertStart(list.insertStart(list.new(), true), 1)');
+      final Runtime runtime = getRuntime('main = list.insertStart([true], 1)');
       checkResult(runtime, [1, true]);
     });
 
     test('list.insertEnd 1', () {
-      final Runtime runtime =
-          getRuntime('main = list.insertEnd(list.new(), 42)');
+      final Runtime runtime = getRuntime('main = list.insertEnd([], 42)');
       checkResult(runtime, [42]);
     });
 
     test('list.insertEnd 2', () {
-      final Runtime runtime = getRuntime(
-          'main = list.insertEnd(list.insertEnd(list.new(), true), 1)');
+      final Runtime runtime = getRuntime('main = list.insertEnd([true], 1)');
       checkResult(runtime, [true, 1]);
     });
 
     test('list.get 1', () {
-      final Runtime runtime = getRuntime(
-          'main = list.get(list.insertStart(list.insertStart(list.new(), 2 + 3), 1), 1)');
+      final Runtime runtime = getRuntime('main = list.get([0, 2 + 3, 4], 1)');
       checkResult(runtime, 5);
     });
   });

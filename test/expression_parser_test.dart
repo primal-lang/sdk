@@ -93,5 +93,15 @@ void main() {
       final Expression expression = getExpression('if (a > b) 1 else 2');
       expect(expression.toString(), 'if(>(a, b), 1, 2)');
     });
+
+    test('Expression 17', () {
+      final Expression expression = getExpression('[]');
+      expect(expression.toString(), '[]');
+    });
+
+    test('Expression 18', () {
+      final Expression expression = getExpression('[1, true, "test", foo]');
+      expect(expression.toString(), '[1, true, "test", foo]');
+    });
   });
 }

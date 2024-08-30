@@ -1,5 +1,6 @@
 import 'package:primal/compiler/errors/lexical_error.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
+import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
@@ -123,6 +124,25 @@ void main() {
           name: 'enabled',
           parameters: [],
           expression: BooleanLiteralExpression(booleanToken(true, 1, 11)),
+        ),
+      ]);
+    });
+
+    test('Literal list definition', () {
+      final List<FunctionDefinition> functions =
+          getFunctions('list = [1, 2, 3]');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'list',
+          parameters: [],
+          expression: ListLiteralExpression(
+            location: const Location(row: 1, column: 8),
+            arguments: [
+              NumberLiteralExpression(numberToken(1, 1, 9)),
+              NumberLiteralExpression(numberToken(2, 1, 12)),
+              NumberLiteralExpression(numberToken(3, 1, 15)),
+            ],
+          ),
         ),
       ]);
     });

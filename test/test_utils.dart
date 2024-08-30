@@ -61,7 +61,14 @@ void checkExpressions(Expression actual, Expression expected) {
   expect(actual.runtimeType, equals(expected.runtimeType));
   checkLocations(actual.location, expected.location);
 
-  if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
+  if ((actual is ListLiteralExpression) &&
+      (expected is ListLiteralExpression)) {
+    expect(actual.arguments.length, equals(expected.arguments.length));
+
+    for (int i = 0; i < actual.arguments.length; i++) {
+      checkExpressions(actual.arguments[i], expected.arguments[i]);
+    }
+  } else if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
     expect(actual.value, equals(expected.value));
   } else if ((actual is IdentifierExpression) &&
       (expected is IdentifierExpression)) {

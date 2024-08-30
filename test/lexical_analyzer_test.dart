@@ -95,6 +95,81 @@ void main() {
       ]);
     });
 
+    test('Valid empty list', () {
+      final List<Token> tokens = getTokens('[]');
+      checkTokens(tokens, [
+        OpenBracketToken(const Lexeme(
+          value: '[',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        CloseBracketToken(const Lexeme(
+          value: ']',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
+      ]);
+    });
+
+    test('Valid non empty list', () {
+      final List<Token> tokens = getTokens('[1, true, "test"]');
+      checkTokens(tokens, [
+        OpenBracketToken(const Lexeme(
+          value: '[',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '1',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
+        CommaToken(const Lexeme(
+          value: ',',
+          location: Location(
+            row: 1,
+            column: 3,
+          ),
+        )),
+        BooleanToken(const Lexeme(
+          value: 'true',
+          location: Location(
+            row: 1,
+            column: 5,
+          ),
+        )),
+        CommaToken(const Lexeme(
+          value: ',',
+          location: Location(
+            row: 1,
+            column: 9,
+          ),
+        )),
+        StringToken(const Lexeme(
+          value: 'test',
+          location: Location(
+            row: 1,
+            column: 11,
+          ),
+        )),
+        CloseBracketToken(const Lexeme(
+          value: ']',
+          location: Location(
+            row: 1,
+            column: 17,
+          ),
+        )),
+      ]);
+    });
+
     test('Identifier with letters', () {
       final List<Token> tokens = getTokens('isEven');
       checkTokens(tokens, [

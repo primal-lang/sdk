@@ -84,6 +84,10 @@ class InitState extends State<Character, void> {
       return OpenParenthesisState(iterator, input.lexeme);
     } else if (input.value.isCloseParenthesis) {
       return CloseParenthesisState(iterator, input.lexeme);
+    } else if (input.value.isOpenBracket) {
+      return OpenBracketState(iterator, input.lexeme);
+    } else if (input.value.isCloseBracket) {
+      return CloseBracketState(iterator, input.lexeme);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -429,6 +433,34 @@ class CloseParenthesisState extends State<Character, Lexeme> {
     if (input.value.isCloseParenthesisDelimiter) {
       iterator.back();
       return ResultState(iterator, [CloseParenthesisToken(output)]);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class OpenBracketState extends State<Character, Lexeme> {
+  const OpenBracketState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value.isOpenBracketDelimiter) {
+      iterator.back();
+      return ResultState(iterator, [OpenBracketToken(output)]);
+    } else {
+      throw InvalidCharacterError(input);
+    }
+  }
+}
+
+class CloseBracketState extends State<Character, Lexeme> {
+  const CloseBracketState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value.isCloseBracketDelimiter) {
+      iterator.back();
+      return ResultState(iterator, [CloseBracketToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }

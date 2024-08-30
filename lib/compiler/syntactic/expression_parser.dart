@@ -186,9 +186,28 @@ class ExpressionParser {
       final Expression expr = expression();
       consume(CloseParenthesisToken, ')');
       return expr;
+    } else if (match([OpenBracketToken])) {
+      return list(previous);
     }
 
     throw InvalidTokenError(peek);
+  }
+
+  Expression list(Token token) {
+    final List<Expression> arguments = [];
+
+    if (!check(CloseBracketToken)) {
+      do {
+        arguments.add(expression());
+      } while (match([CommaToken]));
+    }
+
+    consume(CloseBracketToken, ']');
+
+    return ListLiteralExpression(
+      location: token.location,
+      arguments: arguments,
+    );
   }
 
   bool match(List<Type> types) {

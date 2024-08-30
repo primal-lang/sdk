@@ -204,3 +204,19 @@ class CloseParenthesisToken extends Token<String> {
           location: lexeme.location,
         );
 }
+
+class OpenBracketToken extends Token<String> {
+  OpenBracketToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
+
+class CloseBracketToken extends Token<String> {
+  CloseBracketToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
