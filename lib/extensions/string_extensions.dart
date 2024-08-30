@@ -49,8 +49,6 @@ extension StringExtensions on String {
 
   bool get isElse => RegExp(r'else').hasMatch(this);
 
-  //----------------------------------------------------------------------------
-
   bool get isOperandDelimiter =>
       isWhitespace ||
       isBinaryOperator ||
@@ -58,7 +56,39 @@ extension StringExtensions on String {
       isOpenParenthesis ||
       isCloseParenthesis;
 
-  //----------------------------------------------------------------------------
+  bool get isOperatorDelimiter =>
+      isWhitespace ||
+      isDigit ||
+      isLetter ||
+      isDoubleQuote ||
+      isSingleQuote ||
+      isOpenParenthesis;
+
+  bool get isCommaDelimiter =>
+      isWhitespace ||
+      isDigit ||
+      isLetter ||
+      isDoubleQuote ||
+      isSingleQuote ||
+      isOpenParenthesis ||
+      isUnaryOperator;
+
+  bool get isOpenParenthesisDelimiter =>
+      isWhitespace ||
+      isDigit ||
+      isLetter ||
+      isDoubleQuote ||
+      isSingleQuote ||
+      isOpenParenthesis ||
+      isCloseParenthesis ||
+      isUnaryOperator;
+
+  bool get isCloseParenthesisDelimiter =>
+      isWhitespace ||
+      isComma ||
+      isOpenParenthesis ||
+      isCloseParenthesis ||
+      isBinaryOperator;
 
   bool get isIdentifier => isLetter || isDigit || isDot || isUnderscore;
 
@@ -76,20 +106,4 @@ extension StringExtensions on String {
       isPercent;
 
   bool get isUnaryOperator => isMinus || isBang;
-
-  //----------------------------------------------------------------------------
-
-  bool get isOperatorDelimiter =>
-      isWhitespace ||
-      isDigit ||
-      isLetter ||
-      isDoubleQuote ||
-      isSingleQuote ||
-      isOpenParenthesis ||
-      isCloseParenthesis;
-
-  bool get isOpenParenthesisDelimiter => isOperatorDelimiter || isUnaryOperator;
-
-  bool get isCloseParenthesisDelimiter =>
-      isOperatorDelimiter || isComma || isUnaryOperator;
 }

@@ -397,7 +397,7 @@ class CommaState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isOperatorDelimiter) {
+    if (input.value.isCommaDelimiter) {
       iterator.back();
       return ResultState(iterator, [CommaToken(output)]);
     } else {

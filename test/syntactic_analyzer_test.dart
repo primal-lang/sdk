@@ -66,7 +66,7 @@ void main() {
         getFunctions('isEvent(x,) = true');
         fail('Should fail');
       } catch (e) {
-        expect(e, isA<InvalidTokenError>());
+        expect(e, isA<InvalidCharacterError>());
       }
     });
 
