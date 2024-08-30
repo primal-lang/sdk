@@ -458,6 +458,24 @@ pi = 3.14
       ]);
     });
 
+    test('Invalid function definition 1', () {
+      try {
+        getFunctions('_isEven = true');
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidCharacterError>());
+      }
+    });
+
+    test('Invalid function definition 2', () {
+      try {
+        getFunctions('_isEven(n) = n');
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidCharacterError>());
+      }
+    });
+
     test('Main function definition', () {
       final List<Token> tokens = getTokens('main = isEven(4)');
       checkTokens(tokens, [
@@ -507,7 +525,7 @@ pi = 3.14
     });
 
     test('Function definition', () {
-      final List<Token> tokens = getTokens('isZero(x) = eq(x, 0)');
+      final List<Token> tokens = getTokens('isZero(x) = x == 0');
       checkTokens(tokens, [
         IdentifierToken(const Lexeme(
           value: 'isZero',
@@ -545,45 +563,24 @@ pi = 3.14
           ),
         )),
         IdentifierToken(const Lexeme(
-          value: 'eq',
+          value: 'x',
           location: Location(
             row: 1,
             column: 13,
           ),
         )),
-        OpenParenthesisToken(const Lexeme(
-          value: '(',
+        EqualToken(const Lexeme(
+          value: '==',
           location: Location(
             row: 1,
             column: 15,
-          ),
-        )),
-        IdentifierToken(const Lexeme(
-          value: 'x',
-          location: Location(
-            row: 1,
-            column: 16,
-          ),
-        )),
-        CommaToken(const Lexeme(
-          value: ',',
-          location: Location(
-            row: 1,
-            column: 17,
           ),
         )),
         NumberToken(const Lexeme(
           value: '0',
           location: Location(
             row: 1,
-            column: 19,
-          ),
-        )),
-        CloseParenthesisToken(const Lexeme(
-          value: ')',
-          location: Location(
-            row: 1,
-            column: 20,
+            column: 18,
           ),
         )),
       ]);

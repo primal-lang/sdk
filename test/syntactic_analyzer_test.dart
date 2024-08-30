@@ -36,7 +36,7 @@ void main() {
 
     test('Invalid function definition 4', () {
       try {
-        getFunctions('_isEven = true');
+        getFunctions('isEvent(,) = true');
         fail('Should fail');
       } catch (e) {
         expect(e, isA<InvalidCharacterError>());
@@ -45,7 +45,7 @@ void main() {
 
     test('Invalid function definition 5', () {
       try {
-        getFunctions('_isEven(n) = n');
+        getFunctions('isEvent(x,) = true');
         fail('Should fail');
       } catch (e) {
         expect(e, isA<InvalidCharacterError>());
@@ -54,24 +54,6 @@ void main() {
 
     test('Invalid function definition 6', () {
       try {
-        getFunctions('isEvent(,) = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
-    });
-
-    test('Invalid function definition 7', () {
-      try {
-        getFunctions('isEvent(x,) = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
-    });
-
-    test('Invalid function definition 8', () {
-      try {
         getFunctions('isEven(1 = true');
         fail('Should fail');
       } catch (e) {
@@ -79,7 +61,7 @@ void main() {
       }
     });
 
-    test('Invalid function definition 9', () {
+    test('Invalid function definition 7', () {
       try {
         getFunctions('isEven(a( = true');
         fail('Should fail');
@@ -88,7 +70,7 @@ void main() {
       }
     });
 
-    test('Invalid function definition 1', () {
+    test('Invalid function definition 8', () {
       try {
         getFunctions('isEvent(x), = true');
         fail('Should fail');
