@@ -21,8 +21,6 @@ class ToDecimal extends NativeFunctionPrototype {
       return NumberReducibleValue(double.parse(a.value));
     } else if (a is NumberReducibleValue) {
       return NumberReducibleValue(a.value.toDouble());
-    } else if (a is BooleanReducibleValue) {
-      return NumberReducibleValue(a.value ? 1 : 0);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

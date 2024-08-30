@@ -21,8 +21,6 @@ class ToNumber extends NativeFunctionPrototype {
       return NumberReducibleValue(num.parse(a.value));
     } else if (a is NumberReducibleValue) {
       return a;
-    } else if (a is BooleanReducibleValue) {
-      return NumberReducibleValue(a.value ? 1 : 0);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

@@ -1,3 +1,4 @@
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
@@ -545,12 +546,12 @@ void main() {
       final Runtime runtime = getRuntime('main = bool.and(false, true)');
       checkResult(runtime, false);
     });
-    
+
     test('bool.and', () {
       final Runtime runtime = getRuntime('main = bool.and(true, false)');
       checkResult(runtime, false);
     });
-    
+
     test('bool.and', () {
       final Runtime runtime = getRuntime('main = bool.and(false, false)');
       checkResult(runtime, false);
@@ -723,29 +724,129 @@ void main() {
   });
 
   group('To', () {
-    test('to.number', () {
+    test('to.number 1', () {
       final Runtime runtime = getRuntime('main = to.number("12.5")');
       checkResult(runtime, 12.5);
     });
 
-    test('to.integer', () {
+    test('to.number 2', () {
+      final Runtime runtime = getRuntime('main = to.number(12.5)');
+      checkResult(runtime, 12.5);
+    });
+
+    test('to.number 3', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.number(true)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('to.integer 1', () {
       final Runtime runtime = getRuntime('main = to.integer("12")');
       checkResult(runtime, 12);
     });
 
-    test('to.decimal', () {
+    test('to.integer 2', () {
+      final Runtime runtime = getRuntime('main = to.integer(12)');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer 3', () {
+      final Runtime runtime = getRuntime('main = to.integer(12.4)');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer 4', () {
+      final Runtime runtime = getRuntime('main = to.integer(12.5)');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer 5', () {
+      final Runtime runtime = getRuntime('main = to.integer(12.6)');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer 6', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.integer(true)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('to.decimal 1', () {
+      final Runtime runtime = getRuntime('main = to.decimal("12")');
+      checkResult(runtime, 12.0);
+    });
+
+    test('to.decimal 2', () {
       final Runtime runtime = getRuntime('main = to.decimal(12)');
       checkResult(runtime, 12.0);
     });
 
-    test('to.string', () {
+    test('to.decimal 3', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.decimal(true)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('to.string 1', () {
+      final Runtime runtime = getRuntime('main = to.string("12")');
+      checkResult(runtime, '"12"');
+    });
+
+    test('to.string 2', () {
       final Runtime runtime = getRuntime('main = to.string(12)');
       checkResult(runtime, '"12"');
     });
 
-    test('to.boolean', () {
+    test('to.string 3', () {
+      final Runtime runtime = getRuntime('main = to.string(true)');
+      checkResult(runtime, '"true"');
+    });
+
+    test('to.boolean 1', () {
+      final Runtime runtime = getRuntime('main = to.boolean("hello")');
+      checkResult(runtime, true);
+    });
+
+    test('to.boolean 2', () {
+      final Runtime runtime = getRuntime('main = to.boolean("")');
+      checkResult(runtime, false);
+    });
+
+    test('to.boolean 3', () {
+      final Runtime runtime = getRuntime('main = to.boolean(0)');
+      checkResult(runtime, false);
+    });
+
+    test('to.boolean 4', () {
       final Runtime runtime = getRuntime('main = to.boolean(12)');
       checkResult(runtime, true);
+    });
+
+    test('to.boolean 5', () {
+      final Runtime runtime = getRuntime('main = to.boolean(-1)');
+      checkResult(runtime, true);
+    });
+
+    test('to.boolean 6', () {
+      final Runtime runtime = getRuntime('main = to.boolean(true)');
+      checkResult(runtime, true);
+    });
+
+    test('to.boolean 7', () {
+      final Runtime runtime = getRuntime('main = to.boolean(false)');
+      checkResult(runtime, false);
     });
   });
 

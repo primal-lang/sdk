@@ -21,8 +21,6 @@ class ToInteger extends NativeFunctionPrototype {
       return NumberReducibleValue(int.parse(a.value));
     } else if (a is NumberReducibleValue) {
       return NumberReducibleValue(a.value.toInt());
-    } else if (a is BooleanReducibleValue) {
-      return NumberReducibleValue(a.value ? 1 : 0);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

@@ -16,6 +16,10 @@ class ToString extends NativeFunctionPrototype {
   Reducible substitute(Scope<Reducible> arguments) {
     final Reducible a = arguments.get('a').reduce();
 
-    return StringReducibleValue(a.toString());
+    if (a is StringReducibleValue) {
+      return StringReducibleValue(a.value);
+    } else {
+      return StringReducibleValue(a.toString());
+    }
   }
 }
