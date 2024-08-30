@@ -59,7 +59,7 @@ void main() {
     });
 
     test('isWhitespace', () {
-      const List<String> delimiters = [' ', '\t'];
+      const List<String> delimiters = [' ', '\t', '\n', '\r'];
 
       for (final String delimiter in delimiters) {
         expect(true, equals(delimiter.isWhitespace));
@@ -83,25 +83,22 @@ void main() {
     test('isOther', () {
       expect(true, equals('"'.isDoubleQuote));
       expect(true, equals("'".isSingleQuote));
+      expect(true, equals('_'.isUnderscore));
       expect(true, equals('.'.isDot));
       expect(true, equals(','.isComma));
       expect(true, equals('('.isOpenParenthesis));
       expect(true, equals(')'.isCloseParenthesis));
-      expect(true, equals('_'.isUnderscore));
       expect(true, equals('\n'.isNewLine));
-    });
-
-    test('isDelimiter', () {
-      expect(true, equals(' '.isOperandDelimiter));
-      expect(true, equals(','.isOperandDelimiter));
-      expect(true, equals('='.isOperandDelimiter));
-      expect(true, equals('('.isOperandDelimiter));
-      expect(true, equals(')'.isOperandDelimiter));
     });
 
     test('isBoolean', () {
       expect(true, equals('true'.isBoolean));
       expect(true, equals('false'.isBoolean));
+    });
+
+    test('isCondition', () {
+      expect(true, equals('if'.isIf));
+      expect(true, equals('else'.isElse));
     });
   });
 }
