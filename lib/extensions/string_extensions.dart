@@ -108,6 +108,7 @@ extension StringExtensions on String {
       isDoubleQuote ||
       isSingleQuote ||
       isOpenParenthesis ||
+      isOpenBracket ||
       isCloseBracket ||
       isUnaryOperator;
 
@@ -116,6 +117,7 @@ extension StringExtensions on String {
       isComma ||
       isOpenParenthesis ||
       isCloseParenthesis ||
+      isCloseBracket ||
       isBinaryOperator;
 
   bool get isIdentifier => isLetter || isDigit || isDot || isUnderscore;

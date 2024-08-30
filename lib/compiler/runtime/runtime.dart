@@ -29,8 +29,16 @@ class Runtime {
   }
 
   String reduceFunction(FunctionPrototype function) {
-    final Reducible result = function.substitute(const Scope()).reduce();
+    final Reducible result = fullReduce(function.substitute(const Scope()));
 
     return result.toString();
+  }
+
+  Reducible fullReduce(Reducible reducible) {
+    if (reducible is ListReducibleValue) {
+      return ListReducibleValue(reducible.value.map(fullReduce).toList());
+    } else {
+      return reducible.reduce();
+    }
   }
 }

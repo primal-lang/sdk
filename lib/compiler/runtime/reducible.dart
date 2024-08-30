@@ -57,10 +57,6 @@ class ListReducibleValue extends ReducibleValue<List<Reducible>> {
 
   @override
   String get type => 'List';
-
-  @override
-  Reducible reduce() =>
-      ListReducibleValue(value.map((e) => e.reduce()).toList());
 }
 
 class IdentifierReducible extends Reducible {

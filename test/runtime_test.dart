@@ -778,6 +778,30 @@ void main() {
     });
 
     test('List constructor 2', () {
+      final Runtime runtime = getRuntime('main = [1]');
+      checkResult(runtime, [1]);
+    });
+
+    test('List constructor 3', () {
+      final Runtime runtime = getRuntime('main = [[1]]');
+      checkResult(runtime, [
+        [1]
+      ]);
+    });
+
+    test('List constructor 4', () {
+      final Runtime runtime = getRuntime('main = [1 + 2]');
+      checkResult(runtime, [3]);
+    });
+
+    test('List constructor 5', () {
+      final Runtime runtime = getRuntime('main = [[1 + 2]]');
+      checkResult(runtime, [
+        [3]
+      ]);
+    });
+
+    test('List constructor 6', () {
       final Runtime runtime = getRuntime('main = [1, true, "hello"]');
       checkResult(runtime, [1, true, '"hello"']);
     });
