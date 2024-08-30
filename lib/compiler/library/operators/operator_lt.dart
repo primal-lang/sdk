@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/lt.dart';
+import 'package:primal/compiler/library/comparison/comp_lt.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorLt extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Lt().substitute(arguments);
+      CompLt().substitute(arguments);
 }

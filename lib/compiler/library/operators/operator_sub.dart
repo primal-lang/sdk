@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/numbers/sub.dart';
+import 'package:primal/compiler/library/numbers/num_sub.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorSub extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Sub().substitute(arguments);
+      NumSub().substitute(arguments);
 }

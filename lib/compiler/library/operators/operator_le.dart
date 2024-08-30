@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/le.dart';
+import 'package:primal/compiler/library/comparison/comp_le.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorLe extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Le().substitute(arguments);
+      CompLe().substitute(arguments);
 }

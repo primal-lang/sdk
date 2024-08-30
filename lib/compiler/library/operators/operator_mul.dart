@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/numbers/mul.dart';
+import 'package:primal/compiler/library/numbers/num_mul.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorMul extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Mul().substitute(arguments);
+      NumMul().substitute(arguments);
 }

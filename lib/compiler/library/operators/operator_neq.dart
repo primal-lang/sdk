@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/neq.dart';
+import 'package:primal/compiler/library/comparison/comp_neq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorNeq extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Neq().substitute(arguments);
+      CompNeq().substitute(arguments);
 }

@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/gt.dart';
+import 'package:primal/compiler/library/comparison/comp_gt.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorGt extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Gt().substitute(arguments);
+      CompGt().substitute(arguments);
 }

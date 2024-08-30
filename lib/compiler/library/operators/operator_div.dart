@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/numbers/div.dart';
+import 'package:primal/compiler/library/numbers/num_div.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorDiv extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Div().substitute(arguments);
+      NumDiv().substitute(arguments);
 }

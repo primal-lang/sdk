@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/booleans/and.dart';
+import 'package:primal/compiler/library/booleans/bool_and.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorAnd extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      And().substitute(arguments);
+      BoolAnd().substitute(arguments);
 }

@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/booleans/or.dart';
+import 'package:primal/compiler/library/booleans/bool_or.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorOr extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Or().substitute(arguments);
+      BoolOr().substitute(arguments);
 }

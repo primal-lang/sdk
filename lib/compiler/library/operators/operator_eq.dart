@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/eq.dart';
+import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorEq extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Eq().substitute(arguments);
+      CompEq().substitute(arguments);
 }

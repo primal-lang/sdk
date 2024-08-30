@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/booleans/not.dart';
+import 'package:primal/compiler/library/booleans/bool_not.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -15,5 +15,5 @@ class OperatorNot extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Not().substitute(arguments);
+      BoolNot().substitute(arguments);
 }

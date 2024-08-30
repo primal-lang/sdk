@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/ge.dart';
+import 'package:primal/compiler/library/comparison/comp_ge.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -16,5 +16,5 @@ class OperatorGe extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
-      Ge().substitute(arguments);
+      CompGe().substitute(arguments);
 }
