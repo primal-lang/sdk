@@ -160,6 +160,47 @@ void main() {
       ]);
     });
 
+    test('Condition', () {
+      final List<Token> tokens = getTokens('if test foo else bar');
+      checkTokens(tokens, [
+        IfToken(const Lexeme(
+          value: 'if',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        IdentifierToken(const Lexeme(
+          value: 'test',
+          location: Location(
+            row: 1,
+            column: 4,
+          ),
+        )),
+        IdentifierToken(const Lexeme(
+          value: 'foo',
+          location: Location(
+            row: 1,
+            column: 9,
+          ),
+        )),
+        ElseToken(const Lexeme(
+          value: 'else',
+          location: Location(
+            row: 1,
+            column: 13,
+          ),
+        )),
+        IdentifierToken(const Lexeme(
+          value: 'bar',
+          location: Location(
+            row: 1,
+            column: 18,
+          ),
+        )),
+      ]);
+    });
+
     test('Arithmetic operators', () {
       final List<Token> tokens = getTokens('- + / * %');
       checkTokens(tokens, [
