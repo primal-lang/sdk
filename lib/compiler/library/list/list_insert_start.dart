@@ -4,13 +4,13 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class ListGet extends NativeFunctionPrototype {
-  ListGet()
+class ListInsertStart extends NativeFunctionPrototype {
+  ListInsertStart()
       : super(
-          name: 'list.get',
+          name: 'list.insertStart',
           parameters: [
             Parameter.list('a'),
-            Parameter.number('b'),
+            Parameter.any('b'),
           ],
         );
 
@@ -19,8 +19,8 @@ class ListGet extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
 
-    if ((a is ListReducibleValue) && (b is NumberReducibleValue)) {
-      return a.value[b.value.toInt()];
+    if (a is ListReducibleValue) {
+      return ListReducibleValue([b, ...a.value]);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

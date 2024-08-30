@@ -608,7 +608,7 @@ void main() {
     });
   });
 
-  group('Strings', () {
+  group('String', () {
     test('str.substring', () {
       final Runtime runtime = getRuntime('main = str.substring("hola", 1, 3)');
       checkResult(runtime, '"ol"');
@@ -768,6 +768,43 @@ void main() {
     test('str.reverse', () {
       final Runtime runtime = getRuntime('main = str.reverse("Hello")');
       checkResult(runtime, '"olleH"');
+    });
+  });
+
+  group('List', () {
+    test('list.new', () {
+      final Runtime runtime = getRuntime('main = list.new()');
+      checkResult(runtime, []);
+    });
+
+    test('list.insertStart 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.insertStart(list.new(), 42)');
+      checkResult(runtime, [42]);
+    });
+
+    test('list.insertStart 2', () {
+      final Runtime runtime = getRuntime(
+          'main = list.insertStart(list.insertStart(list.new(), true), 1)');
+      checkResult(runtime, [1, true]);
+    });
+
+    test('list.insertEnd 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.insertEnd(list.new(), 42)');
+      checkResult(runtime, [42]);
+    });
+
+    test('list.insertEnd 2', () {
+      final Runtime runtime = getRuntime(
+          'main = list.insertEnd(list.insertEnd(list.new(), true), 1)');
+      checkResult(runtime, [true, 1]);
+    });
+
+    test('list.get 1', () {
+      final Runtime runtime = getRuntime(
+          'main = list.get(list.insertStart(list.insertStart(list.new(), 2 + 3), 1), 1)');
+      checkResult(runtime, 5);
     });
   });
 
