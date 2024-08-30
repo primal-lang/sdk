@@ -541,14 +541,64 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('bool.and', () {
+      final Runtime runtime = getRuntime('main = bool.and(false, true)');
+      checkResult(runtime, false);
+    });
+    
+    test('bool.and', () {
+      final Runtime runtime = getRuntime('main = bool.and(true, false)');
+      checkResult(runtime, false);
+    });
+    
+    test('bool.and', () {
+      final Runtime runtime = getRuntime('main = bool.and(false, false)');
+      checkResult(runtime, false);
+    });
+
+    test('bool.or', () {
+      final Runtime runtime = getRuntime('main = bool.or(true, true)');
+      checkResult(runtime, true);
+    });
+
+    test('bool.or', () {
+      final Runtime runtime = getRuntime('main = bool.or(true, false)');
+      checkResult(runtime, true);
+    });
+
     test('bool.or', () {
       final Runtime runtime = getRuntime('main = bool.or(false, true)');
+      checkResult(runtime, true);
+    });
+
+    test('bool.or', () {
+      final Runtime runtime = getRuntime('main = bool.or(false, false)');
+      checkResult(runtime, false);
+    });
+
+    test('bool.xor', () {
+      final Runtime runtime = getRuntime('main = bool.xor(true, true)');
+      checkResult(runtime, false);
+    });
+
+    test('bool.xor', () {
+      final Runtime runtime = getRuntime('main = bool.xor(true, false)');
       checkResult(runtime, true);
     });
 
     test('bool.xor', () {
       final Runtime runtime = getRuntime('main = bool.xor(false, true)');
       checkResult(runtime, true);
+    });
+
+    test('bool.xor', () {
+      final Runtime runtime = getRuntime('main = bool.xor(false, false)');
+      checkResult(runtime, false);
+    });
+
+    test('bool.not', () {
+      final Runtime runtime = getRuntime('main = bool.not(true)');
+      checkResult(runtime, false);
     });
 
     test('bool.not', () {
