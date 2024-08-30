@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/booleans/bool_not.dart';
+import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
