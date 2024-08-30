@@ -48,7 +48,6 @@ import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/list/list_get.dart';
 import 'package:primal/compiler/library/list/list_insert_end.dart';
 import 'package:primal/compiler/library/list/list_insert_start.dart';
-import 'package:primal/compiler/library/list/list_new.dart';
 import 'package:primal/compiler/library/logic/bool_and.dart';
 import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/library/logic/bool_or.dart';
@@ -186,7 +185,6 @@ class StandardLibrary {
         StrReverse(),
 
         // List
-        ListNew(),
         ListInsertStart(),
         ListInsertEnd(),
         ListGet(),

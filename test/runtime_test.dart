@@ -782,11 +782,6 @@ void main() {
       checkResult(runtime, [1, true, '"hello"']);
     });
 
-    test('list.new', () {
-      final Runtime runtime = getRuntime('main = list.new()');
-      checkResult(runtime, []);
-    });
-
     test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
@@ -808,6 +803,11 @@ void main() {
     });
 
     test('list.get 1', () {
+      final Runtime runtime = getRuntime('main = list.get([0, 1, 2], 1)');
+      checkResult(runtime, 1);
+    });
+
+    test('list.get 2', () {
       final Runtime runtime = getRuntime('main = list.get([0, 2 + 3, 4], 1)');
       checkResult(runtime, 5);
     });
