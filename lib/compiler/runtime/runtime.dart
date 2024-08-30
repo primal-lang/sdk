@@ -29,9 +29,9 @@ class Runtime {
   }
 
   String reduceFunction(FunctionPrototype function) {
-    final Reducible result = fullReduce(function.substitute(const Scope()));
+    final Reducible result = function.substitute(const Scope()).reduce();
 
-    return result.toString();
+    return fullReduce(result).toString();
   }
 
   Reducible fullReduce(Reducible reducible) {
