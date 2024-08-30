@@ -34,6 +34,8 @@ class ListIterator<T> {
     }
   }
 
+  T get last => _list.last;
+
   void advance() {
     _index++;
   }

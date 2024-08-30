@@ -6,5 +6,7 @@ class State<I, O> {
 
   const State(this.iterator, this.output);
 
+  State get next => process(iterator.next);
+
   State process(I input) => this;
 }

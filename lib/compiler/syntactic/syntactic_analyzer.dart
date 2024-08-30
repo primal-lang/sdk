@@ -17,7 +17,7 @@ class SyntacticAnalyzer
     State state = InitState(iterator);
 
     while (iterator.hasNext) {
-      state = state.process(iterator.next);
+      state = state.next;
 
       if (state is ResultState) {
         result.add(state.output);

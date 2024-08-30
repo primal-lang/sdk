@@ -17,7 +17,7 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
     State state = InitState(iterator);
 
     while (iterator.hasNext) {
-      state = state.process(iterator.next);
+      state = state.next;
 
       if (state is ResultState) {
         if (state.goBack) {
@@ -42,18 +42,20 @@ class InitState extends State<Character, void> {
       return this;
     } else if (input.value.isDoubleQuote) {
       return StringDoubleQuoteState(
-          iterator,
-          Lexeme(
-            value: '',
-            location: input.location,
-          ));
+        iterator,
+        Lexeme(
+          value: '',
+          location: input.location,
+        ),
+      );
     } else if (input.value.isSingleQuote) {
       return StringSingleQuoteState(
-          iterator,
-          Lexeme(
-            value: '',
-            location: input.location,
-          ));
+        iterator,
+        Lexeme(
+          value: '',
+          location: input.location,
+        ),
+      );
     } else if (input.value.isDigit) {
       return IntegerState(iterator, input.lexeme);
     } else if (input.value.isLetter) {
