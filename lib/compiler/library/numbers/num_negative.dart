@@ -18,7 +18,7 @@ class NumNegative extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
 
     if (a is NumberReducibleValue) {
-      return NumberReducibleValue(-a.value);
+      return NumberReducibleValue(-a.value.abs());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

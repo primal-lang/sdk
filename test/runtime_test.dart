@@ -299,8 +299,18 @@ void main() {
       checkResult(runtime, 1);
     });
 
+    test('num.abs', () {
+      final Runtime runtime = getRuntime('main = num.abs(-1)');
+      checkResult(runtime, 1);
+    });
+
     test('num.negative', () {
       final Runtime runtime = getRuntime('main = num.negative(5)');
+      checkResult(runtime, -5);
+    });
+
+    test('num.negative', () {
+      final Runtime runtime = getRuntime('main = num.negative(-5)');
       checkResult(runtime, -5);
     });
 
@@ -309,9 +319,19 @@ void main() {
       checkResult(runtime, 3);
     });
 
+    test('num.inc', () {
+      final Runtime runtime = getRuntime('main = num.inc(-2)');
+      checkResult(runtime, -1);
+    });
+
     test('num.dec', () {
       final Runtime runtime = getRuntime('main = num.dec(0)');
       checkResult(runtime, -1);
+    });
+
+    test('num.dec', () {
+      final Runtime runtime = getRuntime('main = num.dec(-2)');
+      checkResult(runtime, -3);
     });
 
     test('num.add', () {
@@ -349,6 +369,11 @@ void main() {
       checkResult(runtime, 5);
     });
 
+    test('num.min', () {
+      final Runtime runtime = getRuntime('main = num.min(-7, -5)');
+      checkResult(runtime, -7);
+    });
+
     test('num.max', () {
       final Runtime runtime = getRuntime('main = num.max(7, 5)');
       checkResult(runtime, 7);
@@ -359,23 +384,83 @@ void main() {
       checkResult(runtime, 16807);
     });
 
+    test('num.pow', () {
+      final Runtime runtime = getRuntime('main = num.pow(7, 0)');
+      checkResult(runtime, 1);
+    });
+
+    test('num.pow', () {
+      final Runtime runtime = getRuntime('main = num.pow(4, -1)');
+      checkResult(runtime, 0.25);
+    });
+
     test('num.sqrt', () {
       final Runtime runtime = getRuntime('main = num.sqrt(16)');
       checkResult(runtime, 4);
     });
 
+    test('num.sqrt', () {
+      final Runtime runtime = getRuntime('main = num.sqrt(0)');
+      checkResult(runtime, 0);
+    });
+
     test('num.round', () {
-      final Runtime runtime = getRuntime('main = num.round(4.8)');
+      final Runtime runtime = getRuntime('main = num.round(4.0)');
+      checkResult(runtime, 4);
+    });
+
+    test('num.round', () {
+      final Runtime runtime = getRuntime('main = num.round(4.4)');
+      checkResult(runtime, 4);
+    });
+
+    test('num.round', () {
+      final Runtime runtime = getRuntime('main = num.round(4.5)');
+      checkResult(runtime, 5);
+    });
+
+    test('num.round', () {
+      final Runtime runtime = getRuntime('main = num.round(4.6)');
       checkResult(runtime, 5);
     });
 
     test('num.floor', () {
-      final Runtime runtime = getRuntime('main = num.floor(4.8)');
+      final Runtime runtime = getRuntime('main = num.floor(4.0)');
+      checkResult(runtime, 4);
+    });
+
+    test('num.floor', () {
+      final Runtime runtime = getRuntime('main = num.floor(4.4)');
+      checkResult(runtime, 4);
+    });
+
+    test('num.floor', () {
+      final Runtime runtime = getRuntime('main = num.floor(4.5)');
+      checkResult(runtime, 4);
+    });
+
+    test('num.floor', () {
+      final Runtime runtime = getRuntime('main = num.floor(4.6)');
       checkResult(runtime, 4);
     });
 
     test('num.ceil', () {
-      final Runtime runtime = getRuntime('main = num.ceil(4.2)');
+      final Runtime runtime = getRuntime('main = num.ceil(4.0)');
+      checkResult(runtime, 4);
+    });
+
+    test('num.ceil', () {
+      final Runtime runtime = getRuntime('main = num.ceil(4.4)');
+      checkResult(runtime, 5);
+    });
+
+    test('num.ceil', () {
+      final Runtime runtime = getRuntime('main = num.ceil(4.5)');
+      checkResult(runtime, 5);
+    });
+
+    test('num.ceil', () {
+      final Runtime runtime = getRuntime('main = num.ceil(4.6)');
       checkResult(runtime, 5);
     });
 
@@ -404,9 +489,19 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('num.isNegative', () {
+      final Runtime runtime = getRuntime('main = num.isNegative(-5)');
+      checkResult(runtime, true);
+    });
+
     test('num.isPositive', () {
       final Runtime runtime = getRuntime('main = num.isPositive(5)');
       checkResult(runtime, true);
+    });
+
+    test('num.isPositive', () {
+      final Runtime runtime = getRuntime('main = num.isPositive(-5)');
+      checkResult(runtime, false);
     });
 
     test('num.isZero', () {
@@ -414,9 +509,24 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('num.isZero', () {
+      final Runtime runtime = getRuntime('main = num.isZero(0.1)');
+      checkResult(runtime, false);
+    });
+
     test('num.isEven', () {
       final Runtime runtime = getRuntime('main = num.isEven(6)');
       checkResult(runtime, true);
+    });
+
+    test('num.isEven', () {
+      final Runtime runtime = getRuntime('main = num.isEven(7)');
+      checkResult(runtime, false);
+    });
+
+    test('num.isOdd', () {
+      final Runtime runtime = getRuntime('main = num.isOdd(6)');
+      checkResult(runtime, false);
     });
 
     test('num.isOdd', () {
