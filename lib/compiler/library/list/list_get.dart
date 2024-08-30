@@ -16,7 +16,7 @@ class ListGet extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible a = arguments.get('a').reduce();
+    final Reducible a = arguments.get('a');
     final Reducible b = arguments.get('b').reduce();
 
     if ((a is ListReducibleValue) && (b is NumberReducibleValue)) {

@@ -16,8 +16,8 @@ class ListInsertEnd extends NativeFunctionPrototype {
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible a = arguments.get('a').reduce();
-    final Reducible b = arguments.get('b').reduce();
+    final Reducible a = arguments.get('a');
+    final Reducible b = arguments.get('b');
 
     if (a is ListReducibleValue) {
       return ListReducibleValue([...a.value, b]);

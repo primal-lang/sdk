@@ -835,6 +835,17 @@ void main() {
       final Runtime runtime = getRuntime('main = list.get([0, 2 + 3, 4], 1)');
       checkResult(runtime, 5);
     });
+
+    test('list.set 1', () {
+      final Runtime runtime = getRuntime('main = list.set([], 0, 1)');
+      checkResult(runtime, [1]);
+    });
+
+    test('list.set 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.set([1, 2, 3, 4, 5], 2, 42)');
+      checkResult(runtime, [1, 2, 42, 3, 4, 5]);
+    });
   });
 
   group('To', () {
