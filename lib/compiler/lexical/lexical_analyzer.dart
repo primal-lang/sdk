@@ -125,7 +125,7 @@ class IntegerState extends State<Character, Lexeme> {
       return IntegerState(iterator, output.add(input));
     } else if (input.value.isDot) {
       return DecimalInitState(iterator, output.add(input));
-    } else if (input.value.isNumberDelimiter) {
+    } else if (input.value.isOperandDelimiter) {
       iterator.back();
       return ResultState(iterator, [NumberToken(output)]);
     } else {
@@ -154,7 +154,7 @@ class DecimalState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isDigit) {
       return DecimalState(iterator, output.add(input));
-    } else if (input.value.isNumberDelimiter) {
+    } else if (input.value.isOperandDelimiter) {
       iterator.back();
       return ResultState(iterator, [NumberToken(output)]);
     } else {
@@ -170,7 +170,7 @@ class IdentifierState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isIdentifier) {
       return IdentifierState(iterator, output.add(input));
-    } else if (input.value.isIdentifierDelimiter) {
+    } else if (input.value.isOperandDelimiter) {
       iterator.back();
 
       if (output.value.isBoolean) {

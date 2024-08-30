@@ -51,14 +51,7 @@ extension StringExtensions on String {
 
   //----------------------------------------------------------------------------
 
-  bool get isNumberDelimiter =>
-      isWhitespace ||
-      isBinaryOperator ||
-      isComma ||
-      isOpenParenthesis ||
-      isCloseParenthesis;
-
-  bool get isIdentifierDelimiter =>
+  bool get isOperandDelimiter =>
       isWhitespace ||
       isBinaryOperator ||
       isComma ||
@@ -85,13 +78,6 @@ extension StringExtensions on String {
   bool get isUnaryOperator => isMinus || isBang;
 
   //----------------------------------------------------------------------------
-
-  bool get isOperandDelimiter =>
-      isWhitespace ||
-      isBinaryOperator ||
-      isComma ||
-      isOpenParenthesis ||
-      isCloseParenthesis;
 
   bool get isOperatorDelimiter =>
       isWhitespace ||
