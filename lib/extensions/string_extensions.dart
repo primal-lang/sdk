@@ -58,7 +58,16 @@ extension StringExtensions on String {
       isOpenParenthesis ||
       isCloseParenthesis;
 
+  bool get isIdentifierDelimiter =>
+      isWhitespace ||
+      isBinaryOperator ||
+      isComma ||
+      isOpenParenthesis ||
+      isCloseParenthesis;
+
   //----------------------------------------------------------------------------
+
+  bool get isIdentifier => isLetter || isDigit || isDot || isUnderscore;
 
   bool get isBinaryOperator =>
       isMinus ||

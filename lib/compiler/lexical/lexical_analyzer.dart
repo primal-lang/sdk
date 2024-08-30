@@ -142,7 +142,7 @@ class DecimalInitState extends State<Character, Lexeme> {
     if (input.value.isDigit) {
       return DecimalState(iterator, output.add(input));
     } else {
-      throw MalformedNumberError(input);
+      throw InvalidCharacterError(input);
     }
   }
 }
@@ -154,7 +154,7 @@ class DecimalState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isDigit) {
       return DecimalState(iterator, output.add(input));
-    } else if (input.value.isOperandDelimiter) {
+    } else if (input.value.isNumberDelimiter) {
       iterator.back();
       return ResultState(iterator, [NumberToken(output)]);
     } else {
@@ -168,25 +168,20 @@ class IdentifierState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isLetter ||
-        input.value.isDigit ||
-        input.value.isDot ||
-        input.value.isUnderscore) {
+    if (input.value.isIdentifier) {
       return IdentifierState(iterator, output.add(input));
-    } else if (input.value.isOperandDelimiter) {
-      final List<Token> tokens = [
-        if (output.value.isBoolean)
-          BooleanToken(output)
-        else if (output.value.isIf)
-          IfToken(output)
-        else if (output.value.isElse)
-          ElseToken(output)
-        else
-          IdentifierToken(output)
-      ];
+    } else if (input.value.isIdentifierDelimiter) {
       iterator.back();
 
-      return ResultState(iterator, tokens);
+      if (output.value.isBoolean) {
+        return ResultState(iterator, [BooleanToken(output)]);
+      } else if (output.value.isIf) {
+        return ResultState(iterator, [IfToken(output)]);
+      } else if (output.value.isElse) {
+        return ResultState(iterator, [ElseToken(output)]);
+      } else {
+        return ResultState(iterator, [IdentifierToken(output)]);
+      }
     } else {
       throw InvalidCharacterError(input);
     }
