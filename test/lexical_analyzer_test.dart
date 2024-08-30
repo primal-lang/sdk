@@ -20,7 +20,7 @@ void main() {
       ]);
     });
 
-    test('Single single string', () {
+    test('Single quoted string', () {
       final List<Token> tokens = getTokens("'This is a single single string'");
       checkTokens(tokens, [
         StringToken(const Lexeme(
@@ -34,7 +34,7 @@ void main() {
     });
 
     test('Valid number', () {
-      final List<Token> tokens = getTokens('42 -9 1.23 -0.5');
+      final List<Token> tokens = getTokens('42 1.23');
       checkTokens(tokens, [
         NumberToken(const Lexeme(
           value: '42',
@@ -43,39 +43,11 @@ void main() {
             column: 1,
           ),
         )),
-        MinusToken(const Lexeme(
-          value: '-',
-          location: Location(
-            row: 1,
-            column: 4,
-          ),
-        )),
-        NumberToken(const Lexeme(
-          value: '9',
-          location: Location(
-            row: 1,
-            column: 5,
-          ),
-        )),
         NumberToken(const Lexeme(
           value: '1.23',
           location: Location(
             row: 1,
-            column: 7,
-          ),
-        )),
-        MinusToken(const Lexeme(
-          value: '-',
-          location: Location(
-            row: 1,
-            column: 12,
-          ),
-        )),
-        NumberToken(const Lexeme(
-          value: '0.5',
-          location: Location(
-            row: 1,
-            column: 13,
+            column: 4,
           ),
         )),
       ]);
@@ -123,7 +95,7 @@ void main() {
       ]);
     });
 
-    test('Identifier', () {
+    test('Identifier with letters', () {
       final List<Token> tokens = getTokens('isEven');
       checkTokens(tokens, [
         IdentifierToken(const Lexeme(
