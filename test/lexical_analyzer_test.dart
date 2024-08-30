@@ -317,7 +317,7 @@ void main() {
       ]);
     });
 
-    test('Equals', () {
+    test('Assignment', () {
       final List<Token> tokens = getTokens('=');
       checkTokens(tokens, [
         AssignToken(const Lexeme(

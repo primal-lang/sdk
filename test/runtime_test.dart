@@ -56,132 +56,132 @@ void main() {
   });
 
   group('Operators', () {
-    test('==', () {
+    test('== 1', () {
       final Runtime runtime = getRuntime('main = "hey" == "hey"');
       checkResult(runtime, true);
     });
 
-    test('==', () {
+    test('== 2', () {
       final Runtime runtime = getRuntime('main = "hey" == "heyo"');
       checkResult(runtime, false);
     });
 
-    test('==', () {
+    test('== 3', () {
       final Runtime runtime = getRuntime('main = 42 == (41 + 1)');
       checkResult(runtime, true);
     });
 
-    test('==', () {
+    test('== 4', () {
       final Runtime runtime = getRuntime('main = 42 == (41 + 2)');
       checkResult(runtime, false);
     });
 
-    test('==', () {
+    test('== 5', () {
       final Runtime runtime = getRuntime('main = true == (1 >= 1)');
       checkResult(runtime, true);
     });
 
-    test('==', () {
+    test('== 6', () {
       final Runtime runtime = getRuntime('main = true == (1 > 1)');
       checkResult(runtime, false);
     });
 
-    test('!=', () {
+    test('!= 1', () {
       final Runtime runtime = getRuntime('main = "hey" != "hey"');
       checkResult(runtime, false);
     });
 
-    test('!=', () {
+    test('!= 2', () {
       final Runtime runtime = getRuntime('main = "hey" != "heyo"');
       checkResult(runtime, true);
     });
 
-    test('!=', () {
+    test('!= 3', () {
       final Runtime runtime = getRuntime('main = 42 != (41 + 1)');
       checkResult(runtime, false);
     });
 
-    test('!=', () {
+    test('!= 4', () {
       final Runtime runtime = getRuntime('main = 42 != (41 + 2)');
       checkResult(runtime, true);
     });
 
-    test('!=', () {
+    test('!= 5', () {
       final Runtime runtime = getRuntime('main = true != (1 >= 1)');
       checkResult(runtime, false);
     });
 
-    test('!=', () {
+    test('!= 6', () {
       final Runtime runtime = getRuntime('main = true != (1 > 1)');
       checkResult(runtime, true);
     });
 
-    test('>', () {
+    test('> 1', () {
       final Runtime runtime = getRuntime('main = 10 > 4');
       checkResult(runtime, true);
     });
 
-    test('>', () {
+    test('> 2', () {
       final Runtime runtime = getRuntime('main = 4 > 10');
       checkResult(runtime, false);
     });
 
-    test('<', () {
+    test('< 1', () {
       final Runtime runtime = getRuntime('main = 10 < 4');
       checkResult(runtime, false);
     });
 
-    test('<', () {
+    test('< 2', () {
       final Runtime runtime = getRuntime('main = 4 < 10');
       checkResult(runtime, true);
     });
 
-    test('>=', () {
+    test('>= 1', () {
       final Runtime runtime = getRuntime('main = 10 >= 10');
       checkResult(runtime, true);
     });
 
-    test('>=', () {
+    test('>= 2', () {
       final Runtime runtime = getRuntime('main = 10 >= 11');
       checkResult(runtime, false);
     });
 
-    test('<=', () {
+    test('<= 1', () {
       final Runtime runtime = getRuntime('main = 10 <= 10');
       checkResult(runtime, true);
     });
 
-    test('<=', () {
+    test('<= 2', () {
       final Runtime runtime = getRuntime('main = 11 <= 10');
       checkResult(runtime, false);
     });
 
-    test('+', () {
+    test('+ 1', () {
       final Runtime runtime = getRuntime('main = 5 + 7');
       checkResult(runtime, 12);
     });
 
-    test('+', () {
+    test('+ 2', () {
       final Runtime runtime = getRuntime('main = 5 + -7');
       checkResult(runtime, -2);
     });
 
-    test('+', () {
+    test('+ 3', () {
       final Runtime runtime = getRuntime('main = "He" + "llo"');
       checkResult(runtime, '"Hello"');
     });
 
-    test('-', () {
+    test('- 1', () {
       final Runtime runtime = getRuntime('main = 5 - 7');
       checkResult(runtime, -2);
     });
 
-    test('-', () {
+    test('- 2', () {
       final Runtime runtime = getRuntime('main = 5 - -7');
       checkResult(runtime, 12);
     });
 
-    test('-', () {
+    test('- 3', () {
       final Runtime runtime = getRuntime('main = -5');
       checkResult(runtime, -5);
     });
@@ -196,67 +196,67 @@ void main() {
       checkResult(runtime, 0.625);
     });
 
-    test('%', () {
+    test('% 1', () {
       final Runtime runtime = getRuntime('main = 7 % 5');
       checkResult(runtime, 2);
     });
 
-    test('%', () {
+    test('% 2', () {
       final Runtime runtime = getRuntime('main = 7 % 7');
       checkResult(runtime, 0);
     });
 
-    test('%', () {
+    test('% 3', () {
       final Runtime runtime = getRuntime('main = 5 % 7');
       checkResult(runtime, 5);
     });
 
-    test('&', () {
+    test('& 1', () {
       final Runtime runtime = getRuntime('main = true & true');
       checkResult(runtime, true);
     });
 
-    test('&', () {
+    test('& 2', () {
       final Runtime runtime = getRuntime('main = true & false');
       checkResult(runtime, false);
     });
 
-    test('&', () {
+    test('& 3', () {
       final Runtime runtime = getRuntime('main = false & true');
       checkResult(runtime, false);
     });
 
-    test('&', () {
+    test('& 4', () {
       final Runtime runtime = getRuntime('main = false & false');
       checkResult(runtime, false);
     });
 
-    test('|', () {
+    test('| 1', () {
       final Runtime runtime = getRuntime('main = true | true');
       checkResult(runtime, true);
     });
 
-    test('|', () {
+    test('| 2', () {
       final Runtime runtime = getRuntime('main = true | false');
       checkResult(runtime, true);
     });
 
-    test('|', () {
+    test('| 3', () {
       final Runtime runtime = getRuntime('main = false | true');
       checkResult(runtime, true);
     });
 
-    test('|', () {
+    test('| 4', () {
       final Runtime runtime = getRuntime('main = false | false');
       checkResult(runtime, false);
     });
 
-    test('!', () {
+    test('! 1', () {
       final Runtime runtime = getRuntime('main = !false');
       checkResult(runtime, true);
     });
 
-    test('!', () {
+    test('! 2', () {
       final Runtime runtime = getRuntime('main = !true');
       checkResult(runtime, false);
     });
@@ -295,42 +295,42 @@ void main() {
   });
 
   group('Arithmetic', () {
-    test('num.abs', () {
+    test('num.abs 1', () {
       final Runtime runtime = getRuntime('main = num.abs(1)');
       checkResult(runtime, 1);
     });
 
-    test('num.abs', () {
+    test('num.abs 2', () {
       final Runtime runtime = getRuntime('main = num.abs(-1)');
       checkResult(runtime, 1);
     });
 
-    test('num.negative', () {
+    test('num.negative 1', () {
       final Runtime runtime = getRuntime('main = num.negative(5)');
       checkResult(runtime, -5);
     });
 
-    test('num.negative', () {
+    test('num.negative 2', () {
       final Runtime runtime = getRuntime('main = num.negative(-5)');
       checkResult(runtime, -5);
     });
 
-    test('num.inc', () {
+    test('num.inc 1', () {
       final Runtime runtime = getRuntime('main = num.inc(2)');
       checkResult(runtime, 3);
     });
 
-    test('num.inc', () {
+    test('num.inc 2', () {
       final Runtime runtime = getRuntime('main = num.inc(-2)');
       checkResult(runtime, -1);
     });
 
-    test('num.dec', () {
+    test('num.dec 1', () {
       final Runtime runtime = getRuntime('main = num.dec(0)');
       checkResult(runtime, -1);
     });
 
-    test('num.dec', () {
+    test('num.dec 2', () {
       final Runtime runtime = getRuntime('main = num.dec(-2)');
       checkResult(runtime, -3);
     });
@@ -365,12 +365,12 @@ void main() {
       checkResult(runtime, 2);
     });
 
-    test('num.min', () {
+    test('num.min 1', () {
       final Runtime runtime = getRuntime('main = num.min(7, 5)');
       checkResult(runtime, 5);
     });
 
-    test('num.min', () {
+    test('num.min 2', () {
       final Runtime runtime = getRuntime('main = num.min(-7, -5)');
       checkResult(runtime, -7);
     });
@@ -380,87 +380,87 @@ void main() {
       checkResult(runtime, 7);
     });
 
-    test('num.pow', () {
+    test('num.pow 1', () {
       final Runtime runtime = getRuntime('main = num.pow(7, 5)');
       checkResult(runtime, 16807);
     });
 
-    test('num.pow', () {
+    test('num.pow 2', () {
       final Runtime runtime = getRuntime('main = num.pow(7, 0)');
       checkResult(runtime, 1);
     });
 
-    test('num.pow', () {
+    test('num.pow 3', () {
       final Runtime runtime = getRuntime('main = num.pow(4, -1)');
       checkResult(runtime, 0.25);
     });
 
-    test('num.sqrt', () {
+    test('num.sqrt 1', () {
       final Runtime runtime = getRuntime('main = num.sqrt(16)');
       checkResult(runtime, 4);
     });
 
-    test('num.sqrt', () {
+    test('num.sqrt 2', () {
       final Runtime runtime = getRuntime('main = num.sqrt(0)');
       checkResult(runtime, 0);
     });
 
-    test('num.round', () {
+    test('num.round 1', () {
       final Runtime runtime = getRuntime('main = num.round(4.0)');
       checkResult(runtime, 4);
     });
 
-    test('num.round', () {
+    test('num.round 2', () {
       final Runtime runtime = getRuntime('main = num.round(4.4)');
       checkResult(runtime, 4);
     });
 
-    test('num.round', () {
+    test('num.round 3', () {
       final Runtime runtime = getRuntime('main = num.round(4.5)');
       checkResult(runtime, 5);
     });
 
-    test('num.round', () {
+    test('num.round 4', () {
       final Runtime runtime = getRuntime('main = num.round(4.6)');
       checkResult(runtime, 5);
     });
 
-    test('num.floor', () {
+    test('num.floor 1', () {
       final Runtime runtime = getRuntime('main = num.floor(4.0)');
       checkResult(runtime, 4);
     });
 
-    test('num.floor', () {
+    test('num.floor 2', () {
       final Runtime runtime = getRuntime('main = num.floor(4.4)');
       checkResult(runtime, 4);
     });
 
-    test('num.floor', () {
+    test('num.floor 3', () {
       final Runtime runtime = getRuntime('main = num.floor(4.5)');
       checkResult(runtime, 4);
     });
 
-    test('num.floor', () {
+    test('num.floor 4', () {
       final Runtime runtime = getRuntime('main = num.floor(4.6)');
       checkResult(runtime, 4);
     });
 
-    test('num.ceil', () {
+    test('num.ceil 1', () {
       final Runtime runtime = getRuntime('main = num.ceil(4.0)');
       checkResult(runtime, 4);
     });
 
-    test('num.ceil', () {
+    test('num.ceil 2', () {
       final Runtime runtime = getRuntime('main = num.ceil(4.4)');
       checkResult(runtime, 5);
     });
 
-    test('num.ceil', () {
+    test('num.ceil 3', () {
       final Runtime runtime = getRuntime('main = num.ceil(4.5)');
       checkResult(runtime, 5);
     });
 
-    test('num.ceil', () {
+    test('num.ceil 4', () {
       final Runtime runtime = getRuntime('main = num.ceil(4.6)');
       checkResult(runtime, 5);
     });
@@ -485,124 +485,124 @@ void main() {
       checkResult(runtime, 2.302585092994046);
     });
 
-    test('num.isNegative', () {
+    test('num.isNegative 1', () {
       final Runtime runtime = getRuntime('main = num.isNegative(5)');
       checkResult(runtime, false);
     });
 
-    test('num.isNegative', () {
+    test('num.isNegative 2', () {
       final Runtime runtime = getRuntime('main = num.isNegative(-5)');
       checkResult(runtime, true);
     });
 
-    test('num.isPositive', () {
+    test('num.isPositive 1', () {
       final Runtime runtime = getRuntime('main = num.isPositive(5)');
       checkResult(runtime, true);
     });
 
-    test('num.isPositive', () {
+    test('num.isPositive 2', () {
       final Runtime runtime = getRuntime('main = num.isPositive(-5)');
       checkResult(runtime, false);
     });
 
-    test('num.isZero', () {
+    test('num.isZero 1', () {
       final Runtime runtime = getRuntime('main = num.isZero(0)');
       checkResult(runtime, true);
     });
 
-    test('num.isZero', () {
+    test('num.isZero 2', () {
       final Runtime runtime = getRuntime('main = num.isZero(0.1)');
       checkResult(runtime, false);
     });
 
-    test('num.isEven', () {
+    test('num.isEven 1', () {
       final Runtime runtime = getRuntime('main = num.isEven(6)');
       checkResult(runtime, true);
     });
 
-    test('num.isEven', () {
+    test('num.isEven 2', () {
       final Runtime runtime = getRuntime('main = num.isEven(7)');
       checkResult(runtime, false);
     });
 
-    test('num.isOdd', () {
+    test('num.isOdd 1', () {
       final Runtime runtime = getRuntime('main = num.isOdd(6)');
       checkResult(runtime, false);
     });
 
-    test('num.isOdd', () {
+    test('num.isOdd 2', () {
       final Runtime runtime = getRuntime('main = num.isOdd(7)');
       checkResult(runtime, true);
     });
   });
 
   group('Logic', () {
-    test('bool.and', () {
+    test('bool.and 1', () {
       final Runtime runtime = getRuntime('main = bool.and(true, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.and', () {
+    test('bool.and 2', () {
       final Runtime runtime = getRuntime('main = bool.and(false, true)');
       checkResult(runtime, false);
     });
 
-    test('bool.and', () {
+    test('bool.and 3', () {
       final Runtime runtime = getRuntime('main = bool.and(true, false)');
       checkResult(runtime, false);
     });
 
-    test('bool.and', () {
+    test('bool.and 4', () {
       final Runtime runtime = getRuntime('main = bool.and(false, false)');
       checkResult(runtime, false);
     });
 
-    test('bool.or', () {
+    test('bool.or 1', () {
       final Runtime runtime = getRuntime('main = bool.or(true, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.or', () {
+    test('bool.or 2', () {
       final Runtime runtime = getRuntime('main = bool.or(true, false)');
       checkResult(runtime, true);
     });
 
-    test('bool.or', () {
+    test('bool.or 3', () {
       final Runtime runtime = getRuntime('main = bool.or(false, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.or', () {
+    test('bool.or 4', () {
       final Runtime runtime = getRuntime('main = bool.or(false, false)');
       checkResult(runtime, false);
     });
 
-    test('bool.xor', () {
+    test('bool.xor 1', () {
       final Runtime runtime = getRuntime('main = bool.xor(true, true)');
       checkResult(runtime, false);
     });
 
-    test('bool.xor', () {
+    test('bool.xor 2', () {
       final Runtime runtime = getRuntime('main = bool.xor(true, false)');
       checkResult(runtime, true);
     });
 
-    test('bool.xor', () {
+    test('bool.xor 3', () {
       final Runtime runtime = getRuntime('main = bool.xor(false, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.xor', () {
+    test('bool.xor 4', () {
       final Runtime runtime = getRuntime('main = bool.xor(false, false)');
       checkResult(runtime, false);
     });
 
-    test('bool.not', () {
+    test('bool.not 1', () {
       final Runtime runtime = getRuntime('main = bool.not(true)');
       checkResult(runtime, false);
     });
 
-    test('bool.not', () {
+    test('bool.not 2', () {
       final Runtime runtime = getRuntime('main = bool.not(false)');
       checkResult(runtime, true);
     });
@@ -614,34 +614,34 @@ void main() {
       checkResult(runtime, '"ol"');
     });
 
-    test('str.startsWith', () {
+    test('str.startsWith 1', () {
       final Runtime runtime = getRuntime('main = str.startsWith("hola", "ho")');
       checkResult(runtime, true);
     });
 
-    test('str.startsWith', () {
+    test('str.startsWith 2', () {
       final Runtime runtime =
           getRuntime('main = str.startsWith("hola", "hoy")');
       checkResult(runtime, false);
     });
 
-    test('str.endsWith', () {
+    test('str.endsWith 1', () {
       final Runtime runtime = getRuntime('main = str.endsWith("hola", "la")');
       checkResult(runtime, true);
     });
 
-    test('str.endsWith', () {
+    test('str.endsWith 2', () {
       final Runtime runtime = getRuntime('main = str.endsWith("hola", "lol")');
       checkResult(runtime, false);
     });
 
-    test('str.replace', () {
+    test('str.replace 1', () {
       final Runtime runtime =
           getRuntime('main = str.replace("banana", "na", "to")');
       checkResult(runtime, '"batoto"');
     });
 
-    test('str.replace', () {
+    test('str.replace 2', () {
       final Runtime runtime =
           getRuntime('main = str.replace("banana", "bon", "to")');
       checkResult(runtime, '"banana"');
@@ -734,22 +734,23 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('str.contains', () {
+    test('str.contains 1', () {
       final Runtime runtime = getRuntime('main = str.contains("Hello", "ell")');
       checkResult(runtime, true);
     });
 
-    test('str.contains', () {
-      final Runtime runtime = getRuntime('main = str.contains("Hello", "hell")');
+    test('str.contains 2', () {
+      final Runtime runtime =
+          getRuntime('main = str.contains("Hello", "hell")');
       checkResult(runtime, false);
     });
 
-    test('str.take', () {
+    test('str.take 1', () {
       final Runtime runtime = getRuntime('main = str.take("Hello", 0)');
       checkResult(runtime, '""');
     });
 
-    test('str.take', () {
+    test('str.take 2', () {
       final Runtime runtime = getRuntime('main = str.take("Hello", 4)');
       checkResult(runtime, '"Hell"');
     });
