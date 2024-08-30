@@ -17,7 +17,7 @@ class IsInteger extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
 
     if (a is NumberReducibleValue) {
-      return BooleanReducibleValue(a.value == a.value.toInt());
+      return BooleanReducibleValue(a.value is int);
     } else {
       return const BooleanReducibleValue(false);
     }

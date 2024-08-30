@@ -851,32 +851,102 @@ void main() {
   });
 
   group('Is', () {
-    test('is.number', () {
+    test('is.number 1', () {
       final Runtime runtime = getRuntime('main = is.number(12.5)');
       checkResult(runtime, true);
     });
 
-    test('is.integer', () {
+    test('is.number 2', () {
+      final Runtime runtime = getRuntime('main = is.number("12.5")');
+      checkResult(runtime, false);
+    });
+
+    test('is.number 3', () {
+      final Runtime runtime = getRuntime('main = is.number(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer 1', () {
       final Runtime runtime = getRuntime('main = is.integer(12)');
       checkResult(runtime, true);
     });
 
-    test('is.decimal', () {
+    test('is.integer 2', () {
+      final Runtime runtime = getRuntime('main = is.integer(12.0)');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer 3', () {
+      final Runtime runtime = getRuntime('main = is.integer(12.1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer 4', () {
+      final Runtime runtime = getRuntime('main = is.integer("12")');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer 5', () {
+      final Runtime runtime = getRuntime('main = is.integer(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal 1', () {
+      final Runtime runtime = getRuntime('main = is.decimal(12)');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal 2', () {
       final Runtime runtime = getRuntime('main = is.decimal(12.5)');
       checkResult(runtime, true);
     });
 
-    test('is.infinite', () {
+    test('is.decimal 3', () {
+      final Runtime runtime = getRuntime('main = is.decimal("12.5")');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal 4', () {
+      final Runtime runtime = getRuntime('main = is.decimal(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.infinite 1', () {
       final Runtime runtime = getRuntime('main = is.infinite(12)');
       checkResult(runtime, false);
     });
 
-    test('is.string', () {
+    test('is.infinite 2', () {
+      final Runtime runtime = getRuntime('main = is.infinite(1/0)');
+      checkResult(runtime, true);
+    });
+
+    test('is.string 1', () {
       final Runtime runtime = getRuntime('main = is.string("Hey")');
       checkResult(runtime, true);
     });
 
-    test('is.boolean', () {
+    test('is.string 2', () {
+      final Runtime runtime = getRuntime('main = is.string(12)');
+      checkResult(runtime, false);
+    });
+
+    test('is.string 3', () {
+      final Runtime runtime = getRuntime('main = is.string(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.boolean 1', () {
+      final Runtime runtime = getRuntime('main = is.boolean(12)');
+      checkResult(runtime, false);
+    });
+
+    test('is.boolean 2', () {
+      final Runtime runtime = getRuntime('main = is.boolean("true")');
+      checkResult(runtime, false);
+    });
+
+    test('is.boolean 3', () {
       final Runtime runtime = getRuntime('main = is.boolean(true)');
       checkResult(runtime, true);
     });

@@ -314,6 +314,7 @@ class ForwardSlashState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
+      iterator.back();
       return ResultState(iterator, [ForwardSlashToken(output)]);
     } else if (input.value.isForwardSlash) {
       return SingleLineCommentState(iterator);
