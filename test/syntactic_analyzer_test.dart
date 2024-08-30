@@ -127,6 +127,17 @@ void main() {
       ]);
     });
 
+    test('Function with no parameters', () {
+      final List<FunctionDefinition> functions = getFunctions('test = true');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'test',
+          parameters: [],
+          expression: BooleanLiteralExpression(booleanToken(true, 1, 8)),
+        ),
+      ]);
+    });
+
     test('Function with one parameter', () {
       final List<FunctionDefinition> functions = getFunctions('test(a) = true');
       checkFunctions(functions, [

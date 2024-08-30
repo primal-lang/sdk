@@ -5,29 +5,29 @@ import 'test_utils.dart';
 
 void main() {
   group('Control', () {
-    test('if1', () {
+    test('if/else 1', () {
       final Runtime runtime = getRuntime('main = if (true) "yes" else "no"');
       checkResult(runtime, '"yes"');
     });
 
-    test('if2', () {
+    test('if/else 2', () {
       final Runtime runtime = getRuntime('main = if (false) "yes" else "no"');
       checkResult(runtime, '"no"');
     });
 
-    test('if3', () {
-      final Runtime runtime = getRuntime('main = if (true) 1 + 2 else 42');
+    test('if/else 3', () {
+      final Runtime runtime = getRuntime('main = if true 1 + 2 else 42');
       checkResult(runtime, 3);
     });
   });
 
   group('Try/Catch', () {
-    test('try1', () {
+    test('try/catch 1', () {
       final Runtime runtime = getRuntime('main = try(1 / 2, 42)');
       checkResult(runtime, 0.5);
     });
 
-    test('try2', () {
+    test('try/catch 2', () {
       final Runtime runtime =
           getRuntime('main = try(error.throw(0, "Does not compute"), 42)');
       checkResult(runtime, 42);
@@ -60,8 +60,58 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('==', () {
+      final Runtime runtime = getRuntime('main = "hey" == "heyo"');
+      checkResult(runtime, false);
+    });
+
+    test('==', () {
+      final Runtime runtime = getRuntime('main = 42 == (41 + 1)');
+      checkResult(runtime, true);
+    });
+
+    test('==', () {
+      final Runtime runtime = getRuntime('main = 42 == (41 + 2)');
+      checkResult(runtime, false);
+    });
+
+    test('==', () {
+      final Runtime runtime = getRuntime('main = true == (1 >= 1)');
+      checkResult(runtime, true);
+    });
+
+    test('==', () {
+      final Runtime runtime = getRuntime('main = true == (1 > 1)');
+      checkResult(runtime, false);
+    });
+
     test('!=', () {
-      final Runtime runtime = getRuntime('main = 7 != 8');
+      final Runtime runtime = getRuntime('main = "hey" != "hey"');
+      checkResult(runtime, false);
+    });
+
+    test('!=', () {
+      final Runtime runtime = getRuntime('main = "hey" != "heyo"');
+      checkResult(runtime, true);
+    });
+
+    test('!=', () {
+      final Runtime runtime = getRuntime('main = 42 != (41 + 1)');
+      checkResult(runtime, false);
+    });
+
+    test('!=', () {
+      final Runtime runtime = getRuntime('main = 42 != (41 + 2)');
+      checkResult(runtime, true);
+    });
+
+    test('!=', () {
+      final Runtime runtime = getRuntime('main = true != (1 >= 1)');
+      checkResult(runtime, false);
+    });
+
+    test('!=', () {
+      final Runtime runtime = getRuntime('main = true != (1 > 1)');
       checkResult(runtime, true);
     });
 
@@ -70,9 +120,19 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('>', () {
+      final Runtime runtime = getRuntime('main = 4 > 10');
+      checkResult(runtime, false);
+    });
+
     test('<', () {
       final Runtime runtime = getRuntime('main = 10 < 4');
       checkResult(runtime, false);
+    });
+
+    test('<', () {
+      final Runtime runtime = getRuntime('main = 4 < 10');
+      checkResult(runtime, true);
     });
 
     test('>=', () {
@@ -80,14 +140,29 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('>=', () {
+      final Runtime runtime = getRuntime('main = 10 >= 11');
+      checkResult(runtime, false);
+    });
+
     test('<=', () {
       final Runtime runtime = getRuntime('main = 10 <= 10');
       checkResult(runtime, true);
     });
 
+    test('<=', () {
+      final Runtime runtime = getRuntime('main = 11 <= 10');
+      checkResult(runtime, false);
+    });
+
     test('+', () {
       final Runtime runtime = getRuntime('main = 5 + 7');
       checkResult(runtime, 12);
+    });
+
+    test('+', () {
+      final Runtime runtime = getRuntime('main = 5 + -7');
+      checkResult(runtime, -2);
     });
 
     test('+', () {
@@ -98,6 +173,11 @@ void main() {
     test('-', () {
       final Runtime runtime = getRuntime('main = 5 - 7');
       checkResult(runtime, -2);
+    });
+
+    test('-', () {
+      final Runtime runtime = getRuntime('main = 5 - -7');
+      checkResult(runtime, 12);
     });
 
     test('-', () {
@@ -120,8 +200,43 @@ void main() {
       checkResult(runtime, 2);
     });
 
+    test('%', () {
+      final Runtime runtime = getRuntime('main = 7 % 7');
+      checkResult(runtime, 0);
+    });
+
+    test('%', () {
+      final Runtime runtime = getRuntime('main = 5 % 7');
+      checkResult(runtime, 5);
+    });
+
     test('&', () {
       final Runtime runtime = getRuntime('main = true & true');
+      checkResult(runtime, true);
+    });
+
+    test('&', () {
+      final Runtime runtime = getRuntime('main = true & false');
+      checkResult(runtime, false);
+    });
+
+    test('&', () {
+      final Runtime runtime = getRuntime('main = false & true');
+      checkResult(runtime, false);
+    });
+
+    test('&', () {
+      final Runtime runtime = getRuntime('main = false & false');
+      checkResult(runtime, false);
+    });
+
+    test('|', () {
+      final Runtime runtime = getRuntime('main = true | true');
+      checkResult(runtime, true);
+    });
+
+    test('|', () {
+      final Runtime runtime = getRuntime('main = true | false');
       checkResult(runtime, true);
     });
 
@@ -130,9 +245,19 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('|', () {
+      final Runtime runtime = getRuntime('main = false | false');
+      checkResult(runtime, false);
+    });
+
     test('!', () {
       final Runtime runtime = getRuntime('main = !false');
       checkResult(runtime, true);
+    });
+
+    test('!', () {
+      final Runtime runtime = getRuntime('main = !true');
+      checkResult(runtime, false);
     });
   });
 
