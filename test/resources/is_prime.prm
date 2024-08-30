@@ -1,0 +1,17 @@
+isPrime(n) = if (n <= 1)
+                 false
+             else if (n == 2)
+                 true
+             else if (num.isEven(n))
+                 false
+             else
+                 isPrimeHelper(n, 3)
+
+isPrimeHelper(n, divisor) = if (divisor * divisor > n)
+                                true
+                            else if ((n % divisor) == 0)
+                                false
+                            else
+                                isPrimeHelper(n, divisor + 2)
+
+main = isPrime(97)

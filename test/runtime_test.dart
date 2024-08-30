@@ -496,11 +496,40 @@ void main() {
     });
   });
 
-  group('Complex', () {
+  group('Samples', () {
     test('factorial', () {
-      final Runtime runtime = getRuntime(
-          'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)\n\nmain = factorial(5)');
+      final Runtime runtime = getRuntime(loadFile('factorial.prm'));
       checkResult(runtime, 120);
+    });
+
+    test('fibonacci', () {
+      final Runtime runtime = getRuntime(loadFile('fibonacci.prm'));
+      checkResult(runtime, 55);
+    });
+
+    test('is_palindrome', () {
+      final Runtime runtime = getRuntime(loadFile('is_palindrome.prm'));
+      checkResult(runtime, true);
+    });
+
+    test('is_prime', () {
+      final Runtime runtime = getRuntime(loadFile('is_prime.prm'));
+      checkResult(runtime, true);
+    });
+
+    test('power', () {
+      final Runtime runtime = getRuntime(loadFile('power.prm'));
+      checkResult(runtime, 1024);
+    });
+
+    test('sum_of_digits', () {
+      final Runtime runtime = getRuntime(loadFile('sum_of_digits.prm'));
+      checkResult(runtime, 45);
+    });
+
+    test('to_binary', () {
+      final Runtime runtime = getRuntime(loadFile('to_binary.prm'));
+      checkResult(runtime, '"1010"');
     });
   });
 }

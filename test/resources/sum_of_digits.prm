@@ -1,0 +1,6 @@
+sumOfDigits(n) = if (n == 0)
+                     0
+                 else
+                     n % 10 + sumOfDigits(to.integer(n / 10))
+
+main = sumOfDigits(123456789)
