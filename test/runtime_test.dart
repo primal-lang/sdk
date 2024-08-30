@@ -619,15 +619,32 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('str.startsWith', () {
+      final Runtime runtime =
+          getRuntime('main = str.startsWith("hola", "hoy")');
+      checkResult(runtime, false);
+    });
+
     test('str.endsWith', () {
       final Runtime runtime = getRuntime('main = str.endsWith("hola", "la")');
       checkResult(runtime, true);
+    });
+
+    test('str.endsWith', () {
+      final Runtime runtime = getRuntime('main = str.endsWith("hola", "lol")');
+      checkResult(runtime, false);
     });
 
     test('str.replace', () {
       final Runtime runtime =
           getRuntime('main = str.replace("banana", "na", "to")');
       checkResult(runtime, '"batoto"');
+    });
+
+    test('str.replace', () {
+      final Runtime runtime =
+          getRuntime('main = str.replace("banana", "bon", "to")');
+      checkResult(runtime, '"banana"');
     });
 
     test('str.uppercase', () {
@@ -687,12 +704,32 @@ void main() {
       checkResult(runtime, '"e"');
     });
 
-    test('str.isEmpty', () {
+    test('str.isEmpty 1', () {
+      final Runtime runtime = getRuntime('main = str.isEmpty("")');
+      checkResult(runtime, true);
+    });
+
+    test('str.isEmpty 2', () {
+      final Runtime runtime = getRuntime('main = str.isEmpty(" ")');
+      checkResult(runtime, false);
+    });
+
+    test('str.isEmpty 3', () {
       final Runtime runtime = getRuntime('main = str.isEmpty("Hello")');
       checkResult(runtime, false);
     });
 
-    test('str.isNotEmpty', () {
+    test('str.isNotEmpty 1', () {
+      final Runtime runtime = getRuntime('main = str.isNotEmpty("")');
+      checkResult(runtime, false);
+    });
+
+    test('str.isNotEmpty 2', () {
+      final Runtime runtime = getRuntime('main = str.isNotEmpty(" ")');
+      checkResult(runtime, true);
+    });
+
+    test('str.isNotEmpty 3', () {
       final Runtime runtime = getRuntime('main = str.isNotEmpty("Hello")');
       checkResult(runtime, true);
     });
@@ -700,6 +737,16 @@ void main() {
     test('str.contains', () {
       final Runtime runtime = getRuntime('main = str.contains("Hello", "ell")');
       checkResult(runtime, true);
+    });
+
+    test('str.contains', () {
+      final Runtime runtime = getRuntime('main = str.contains("Hello", "hell")');
+      checkResult(runtime, false);
+    });
+
+    test('str.take', () {
+      final Runtime runtime = getRuntime('main = str.take("Hello", 0)');
+      checkResult(runtime, '""');
     });
 
     test('str.take', () {
