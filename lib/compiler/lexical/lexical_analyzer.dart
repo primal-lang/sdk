@@ -20,10 +20,6 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       state = state.next;
 
       if (state is ResultState) {
-        if (state.goBack) {
-          iterator.back();
-        }
-
         result.addAll(state.output);
         state = InitState(iterator);
       }
@@ -129,8 +125,9 @@ class IntegerState extends State<Character, Lexeme> {
       return IntegerState(iterator, output.add(input));
     } else if (input.value.isDot) {
       return DecimalInitState(iterator, output.add(input));
-    } else if (input.value.isOperandDelimiter) {
-      return ResultState(iterator, [NumberToken(output)], true);
+    } else if (input.value.isNumberDelimiter) {
+      iterator.back();
+      return ResultState(iterator, [NumberToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -158,7 +155,8 @@ class DecimalState extends State<Character, Lexeme> {
     if (input.value.isDigit) {
       return DecimalState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
-      return ResultState(iterator, [NumberToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [NumberToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -186,8 +184,9 @@ class IdentifierState extends State<Character, Lexeme> {
         else
           IdentifierToken(output)
       ];
+      iterator.back();
 
-      return ResultState(iterator, tokens, true);
+      return ResultState(iterator, tokens);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -200,7 +199,8 @@ class MinusState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [MinusToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [MinusToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -213,7 +213,8 @@ class PlusState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [PlusToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [PlusToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -228,7 +229,8 @@ class EqualsState extends State<Character, Lexeme> {
     if (input.value.isEquals) {
       return ResultState(iterator, [EqualToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [AssignToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [AssignToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -243,7 +245,8 @@ class GreaterState extends State<Character, Lexeme> {
     if (input.value.isEquals) {
       return ResultState(iterator, [GreaterEqualThanToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [GreaterThanToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [GreaterThanToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -258,7 +261,8 @@ class LessState extends State<Character, Lexeme> {
     if (input.value.isEquals) {
       return ResultState(iterator, [LessEqualThanToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [LessThanToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [LessThanToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -271,7 +275,8 @@ class PipeState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [PipeToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [PipeToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -284,7 +289,8 @@ class AmpersandState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [AmpersandToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [AmpersandToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -299,7 +305,8 @@ class BangState extends State<Character, Lexeme> {
     if (input.value.isEquals) {
       return ResultState(iterator, [NotEqualToken(output.add(input))]);
     } else if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [BangToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [BangToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -329,7 +336,8 @@ class AsteriskState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [AsteriskToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [AsteriskToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -342,7 +350,8 @@ class PercentState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [PercentToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [PercentToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -394,7 +403,8 @@ class CommaState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
-      return ResultState(iterator, [CommaToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [CommaToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -407,7 +417,8 @@ class OpenParenthesisState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isOpenParenthesisDelimiter) {
-      return ResultState(iterator, [OpenParenthesisToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [OpenParenthesisToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -420,7 +431,8 @@ class CloseParenthesisState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isCloseParenthesisDelimiter) {
-      return ResultState(iterator, [CloseParenthesisToken(output)], true);
+      iterator.back();
+      return ResultState(iterator, [CloseParenthesisToken(output)]);
     } else {
       throw InvalidCharacterError(input);
     }
@@ -428,9 +440,7 @@ class CloseParenthesisState extends State<Character, Lexeme> {
 }
 
 class ResultState extends State<void, List<Token>> {
-  final bool goBack;
-
-  const ResultState(super.iterator, super.output, [this.goBack = false]);
+  const ResultState(super.iterator, super.output);
 }
 
 class Lexeme extends Localized {

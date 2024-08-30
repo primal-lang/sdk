@@ -49,7 +49,18 @@ extension StringExtensions on String {
 
   bool get isElse => RegExp(r'else').hasMatch(this);
 
-  bool get isOperator =>
+  //----------------------------------------------------------------------------
+
+  bool get isNumberDelimiter =>
+      isWhitespace ||
+      isBinaryOperator ||
+      isComma ||
+      isOpenParenthesis ||
+      isCloseParenthesis;
+
+  //----------------------------------------------------------------------------
+
+  bool get isBinaryOperator =>
       isMinus ||
       isPlus ||
       isEquals ||
@@ -64,9 +75,11 @@ extension StringExtensions on String {
 
   bool get isUnaryOperator => isMinus || isBang;
 
+  //----------------------------------------------------------------------------
+
   bool get isOperandDelimiter =>
       isWhitespace ||
-      isOperator ||
+      isBinaryOperator ||
       isComma ||
       isOpenParenthesis ||
       isCloseParenthesis;
