@@ -6,7 +6,9 @@ class SyntacticError extends GenericError {
 }
 
 class InvalidTokenError extends SyntacticError {
-  const InvalidTokenError(Token token) : super('Invalid token $token');
+  const InvalidTokenError(Token token, [String? expected])
+      : super(
+            'Invalid token $token${(expected != null) ? '. Expected: $expected' : ''}');
 }
 
 class ExpectedTokenError extends SyntacticError {

@@ -41,7 +41,7 @@ class InitState extends State<Token, void> {
     if (input is IdentifierToken) {
       return FunctionNameState(iterator, FunctionDefinition(name: input.value));
     } else {
-      throw InvalidTokenError(input);
+      throw InvalidTokenError(input, 'identifier');
     }
   }
 }
@@ -60,7 +60,7 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
     } else if (input is OpenParenthesisToken) {
       return FunctionWithParametersState(iterator, output);
     } else {
-      throw InvalidTokenError(input);
+      throw InvalidTokenError(input, "'=' or parameters list");
     }
   }
 }
@@ -76,7 +76,7 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
         output.withParameter(input.value),
       );
     } else {
-      throw InvalidTokenError(input);
+      throw InvalidTokenError(input, 'parameters list');
     }
   }
 }
@@ -91,7 +91,7 @@ class FunctionWithNewParametersState extends State<Token, FunctionDefinition> {
     } else if (input is CloseParenthesisToken) {
       return FunctionParametrizedState(iterator, output);
     } else {
-      throw InvalidTokenError(input);
+      throw InvalidTokenError(input, "',' or ')'");
     }
   }
 }
@@ -107,7 +107,7 @@ class FunctionWithNextParametersState extends State<Token, FunctionDefinition> {
         output.withParameter(input.value),
       );
     } else {
-      throw InvalidTokenError(input);
+      throw InvalidTokenError(input, 'identifier');
     }
   }
 }
@@ -124,7 +124,7 @@ class FunctionParametrizedState extends State<Token, FunctionDefinition> {
         output.withExpression(expressionParser.expression()),
       );
     } else {
-      throw InvalidTokenError(input);
+      throw InvalidTokenError(input, "'='");
     }
   }
 }
