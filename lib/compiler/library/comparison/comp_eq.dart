@@ -29,6 +29,23 @@ class CompEq extends NativeFunctionPrototype {
       return BooleanReducibleValue(a.value == b.value);
     } else if ((a is BooleanReducibleValue) && (b is BooleanReducibleValue)) {
       return BooleanReducibleValue(a.value == b.value);
+    } else if ((a is ListReducibleValue) && (b is ListReducibleValue)) {
+      if (a.value.length != b.value.length) {
+        return const BooleanReducibleValue(false);
+      } else {
+        for (int i = 0; i < a.value.length; i++) {
+          final Reducible comparison = compare(
+            a.value[i].reduce(),
+            b.value[i].reduce(),
+          );
+
+          if (comparison is BooleanReducibleValue && !comparison.value) {
+            return const BooleanReducibleValue(false);
+          }
+        }
+
+        return const BooleanReducibleValue(true);
+      }
     } else {
       throw InvalidArgumentTypesError(
         function: name,
