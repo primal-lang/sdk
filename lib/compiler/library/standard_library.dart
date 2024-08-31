@@ -24,6 +24,7 @@ import 'package:primal/compiler/library/arithmetic/num_mul.dart';
 import 'package:primal/compiler/library/arithmetic/num_negative.dart';
 import 'package:primal/compiler/library/arithmetic/num_pow.dart';
 import 'package:primal/compiler/library/arithmetic/num_round.dart';
+import 'package:primal/compiler/library/arithmetic/num_sign.dart';
 import 'package:primal/compiler/library/arithmetic/num_sin.dart';
 import 'package:primal/compiler/library/arithmetic/num_sqrt.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
@@ -185,6 +186,7 @@ class StandardLibrary {
         NumInfinity(),
         NumFraction(),
         NumClamp(),
+        NumSign(),
 
         // Logic
         BoolAnd(),

@@ -651,6 +651,21 @@ void main() {
       final Runtime runtime = getRuntime('main = num.clamp(6, 1, 5)');
       checkResult(runtime, 5);
     });
+
+    test('num.sign 1', () {
+      final Runtime runtime = getRuntime('main = num.sign(-2)');
+      checkResult(runtime, -1);
+    });
+
+    test('num.sign 2', () {
+      final Runtime runtime = getRuntime('main = num.sign(0)');
+      checkResult(runtime, 0);
+    });
+
+    test('num.sign 3', () {
+      final Runtime runtime = getRuntime('main = num.sign(2)');
+      checkResult(runtime, 1);
+    });
   });
 
   group('Logic', () {
