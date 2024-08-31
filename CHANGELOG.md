@@ -25,13 +25,13 @@
 * Added basic functions for:
     - Control
     - Error
-    - Debugging
     - Comparison
     - Arithmetic
     - Logic
     - String
     - List
     - Casting
+    - Console
 
 ### Runtime
 

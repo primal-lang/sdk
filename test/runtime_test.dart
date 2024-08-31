@@ -48,13 +48,6 @@ void main() {
     });
   });
 
-  group('Debug', () {
-    test('debug', () {
-      final Runtime runtime = getRuntime('main = debug("Enter in function")');
-      checkResult(runtime, '"Enter in function"');
-    });
-  });
-
   group('Operators', () {
     test('== 1', () {
       final Runtime runtime = getRuntime('main = "hey" == "hey"');
@@ -1588,6 +1581,20 @@ void main() {
     test('to_binary', () {
       final Runtime runtime = getRuntime(loadFile('web_samples/to_binary.prm'));
       checkResult(runtime, '"1010"');
+    });
+  });
+
+  group('Console', () {
+    test('console.write', () {
+      final Runtime runtime =
+          getRuntime('main = console.write("Enter in function")');
+      checkResult(runtime, '"Enter in function"');
+    });
+
+    test('console.writeLn', () {
+      final Runtime runtime =
+          getRuntime('main = console.writeLn("Enter in function")');
+      checkResult(runtime, '"Enter in function"');
     });
   });
 }

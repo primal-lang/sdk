@@ -50,9 +50,10 @@ import 'package:primal/compiler/library/comparison/comp_gt.dart';
 import 'package:primal/compiler/library/comparison/comp_le.dart';
 import 'package:primal/compiler/library/comparison/comp_lt.dart';
 import 'package:primal/compiler/library/comparison/comp_neq.dart';
+import 'package:primal/compiler/library/console/console_write.dart';
+import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
-import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/index/element_at.dart';
 import 'package:primal/compiler/library/list/list_concat.dart';
@@ -149,9 +150,6 @@ class StandardLibrary {
 
         // Error
         Throw(),
-
-        // Debug
-        Debug(),
 
         // Comparison
         CompEq(),
@@ -273,5 +271,9 @@ class StandardLibrary {
         ToDecimal(),
         ToString(),
         ToBoolean(),
+
+        // Console
+        ConsoleWrite(),
+        ConsoleWriteLn(),
       ];
 }
