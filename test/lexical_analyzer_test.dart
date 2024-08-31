@@ -627,6 +627,24 @@ pi = 3.14
       }
     });
 
+    test('Invalid function definition 3', () {
+      try {
+        getFunctions('isEvent(,) = true');
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidCharacterError>());
+      }
+    });
+
+    test('Invalid function definition 4', () {
+      try {
+        getFunctions('isEvent(x,) = true');
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidCharacterError>());
+      }
+    });
+
     test('Main function definition', () {
       final List<Token> tokens = getTokens('main = isEven(4)');
       checkTokens(tokens, [
