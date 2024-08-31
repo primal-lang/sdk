@@ -49,6 +49,8 @@ import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_get.dart';
 import 'package:primal/compiler/library/list/list_insert_end.dart';
 import 'package:primal/compiler/library/list/list_insert_start.dart';
+import 'package:primal/compiler/library/list/list_is_empty.dart';
+import 'package:primal/compiler/library/list/list_is_not_empty.dart';
 import 'package:primal/compiler/library/list/list_join.dart';
 import 'package:primal/compiler/library/list/list_length.dart';
 import 'package:primal/compiler/library/list/list_set.dart';
@@ -196,6 +198,8 @@ class StandardLibrary {
         ListJoin(),
         ListLength(),
         ListConcat(),
+        ListIsEmpty(),
+        ListIsNotEmpty(),
 
         // Casting
         IsNumber(),
