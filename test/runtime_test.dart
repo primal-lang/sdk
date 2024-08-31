@@ -879,10 +879,25 @@ void main() {
       checkResult(runtime, [1, 2, 42, 3, 4, 5]);
     });
 
-    test('list.join', () {
+    test('list.join 1', () {
       final Runtime runtime =
           getRuntime('main = list.join(["Hello", "world!"], ", ")');
       checkResult(runtime, '"Hello, world!"');
+    });
+
+    test('list.join 2', () {
+      final Runtime runtime = getRuntime('main = list.join([], ",")');
+      checkResult(runtime, '""');
+    });
+
+    test('list.length 1', () {
+      final Runtime runtime = getRuntime('main = list.length([])');
+      checkResult(runtime, 0);
+    });
+
+    test('list.length 2', () {
+      final Runtime runtime = getRuntime('main = list.length([1, 2, 3])');
+      checkResult(runtime, 3);
     });
   });
 
