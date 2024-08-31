@@ -951,6 +951,12 @@ void main() {
     });
 
     test('list.contains 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.contains([1, 2 + 2, 3], 4)');
+      checkResult(runtime, true);
+    });
+
+    test('list.contains 4', () {
       final Runtime runtime = getRuntime('main = list.contains([1, 2, 3], 4)');
       checkResult(runtime, false);
     });

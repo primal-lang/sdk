@@ -1,4 +1,5 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -20,7 +21,18 @@ class ListContains extends NativeFunctionPrototype {
     final Reducible b = arguments.get('b').reduce();
 
     if (a is ListReducibleValue) {
-      return BooleanReducibleValue(a.value.contains(b));
+      final List<Reducible> list = a.fullyReduced.value;
+      final CompEq eq = CompEq();
+
+      for (final element in list) {
+        final Reducible comparison = eq.compare(element, b);
+
+        if (comparison is BooleanReducibleValue && comparison.value) {
+          return const BooleanReducibleValue(true);
+        }
+      }
+
+      return const BooleanReducibleValue(false);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

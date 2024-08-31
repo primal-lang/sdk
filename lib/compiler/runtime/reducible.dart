@@ -57,6 +57,16 @@ class ListReducibleValue extends ReducibleValue<List<Reducible>> {
 
   @override
   String get type => 'List';
+
+  ListReducibleValue get fullyReduced => fullReduce(this) as ListReducibleValue;
+
+  Reducible fullReduce(Reducible reducible) {
+    if (reducible is ListReducibleValue) {
+      return ListReducibleValue(reducible.value.map(fullReduce).toList());
+    } else {
+      return reducible.reduce();
+    }
+  }
 }
 
 class IdentifierReducible extends Reducible {

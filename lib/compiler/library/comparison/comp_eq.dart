@@ -19,6 +19,10 @@ class CompEq extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
 
+    return compare(a, b);
+  }
+
+  Reducible compare(Reducible a, Reducible b) {
     if ((a is NumberReducibleValue) && (b is NumberReducibleValue)) {
       return BooleanReducibleValue(a.value == b.value);
     } else if ((a is StringReducibleValue) && (b is StringReducibleValue)) {
