@@ -160,7 +160,7 @@ class ExpressionParser {
           (exp is CallExpression) ||
           (exp is ListLiteralExpression)) {
         final Token operator = IdentifierToken(Lexeme(
-          value: 'list.get',
+          value: 'list.at',
           location: previous.location,
         ));
         final Expression index = expression();

@@ -106,7 +106,7 @@ void main() {
 
     test('Expression 19', () {
       final Expression expression = getExpression('[1, true, "test", foo][1]');
-      expect(expression.toString(), 'list.get([1, true, "test", foo], 1)');
+      expect(expression.toString(), 'list.at([1, true, "test", foo], 1)');
     });
   });
 }

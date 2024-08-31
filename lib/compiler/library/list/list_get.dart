@@ -4,10 +4,10 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class ListGet extends NativeFunctionPrototype {
-  ListGet()
+class ListAt extends NativeFunctionPrototype {
+  ListAt()
       : super(
-          name: 'list.get',
+          name: 'list.at',
           parameters: [
             Parameter.any('a'),
             Parameter.number('b'),

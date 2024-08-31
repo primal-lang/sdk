@@ -908,13 +908,13 @@ void main() {
       checkResult(runtime, [true, 1]);
     });
 
-    test('list.get 1', () {
-      final Runtime runtime = getRuntime('main = list.get([0, 1, 2], 1)');
+    test('list.at 1', () {
+      final Runtime runtime = getRuntime('main = list.at([0, 1, 2], 1)');
       checkResult(runtime, 1);
     });
 
-    test('list.get 2', () {
-      final Runtime runtime = getRuntime('main = list.get([0, 2 + 3, 4], 1)');
+    test('list.at 2', () {
+      final Runtime runtime = getRuntime('main = list.at([0, 2 + 3, 4], 1)');
       checkResult(runtime, 5);
     });
 

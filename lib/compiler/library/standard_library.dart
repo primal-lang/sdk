@@ -207,7 +207,7 @@ class StandardLibrary {
         // List
         ListInsertStart(),
         ListInsertEnd(),
-        ListGet(),
+        ListAt(),
         ListSet(),
         ListJoin(),
         ListLength(),

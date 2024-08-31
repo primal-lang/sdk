@@ -155,7 +155,7 @@ void main() {
           name: 'list',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('list.get', 1, 17)),
+            callee: IdentifierExpression(identifierToken('list.at', 1, 17)),
             arguments: [
               ListLiteralExpression(
                 location: const Location(row: 1, column: 8),
