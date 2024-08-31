@@ -60,6 +60,7 @@ import 'package:primal/compiler/library/list/list_last.dart';
 import 'package:primal/compiler/library/list/list_length.dart';
 import 'package:primal/compiler/library/list/list_remove.dart';
 import 'package:primal/compiler/library/list/list_remove_at.dart';
+import 'package:primal/compiler/library/list/list_reverse.dart';
 import 'package:primal/compiler/library/list/list_set.dart';
 import 'package:primal/compiler/library/list/list_tail.dart';
 import 'package:primal/compiler/library/list/list_take.dart';
@@ -218,6 +219,7 @@ class StandardLibrary {
         ListDrop(),
         ListRemove(),
         ListRemoveAt(),
+        ListReverse(),
 
         // Casting
         IsNumber(),

@@ -1033,6 +1033,11 @@ void main() {
           getRuntime('main = list.removeAt([1, 2, 3, 4, 5], 2)');
       checkResult(runtime, [1, 2, 4, 5]);
     });
+
+    test('list.reverse', () {
+      final Runtime runtime = getRuntime('main = list.reverse([1, 2, 3])');
+      checkResult(runtime, [3, 2, 1]);
+    });
   });
 
   group('To', () {
