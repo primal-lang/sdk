@@ -621,6 +621,21 @@ void main() {
       final Runtime runtime = getRuntime('main = is.infinite(num.infinity())');
       checkResult(runtime, true);
     });
+
+    test('num.fraction 1', () {
+      final Runtime runtime = getRuntime('main = num.fraction(1)');
+      checkResult(runtime, 0);
+    });
+
+    test('num.fraction 2', () {
+      final Runtime runtime = getRuntime('main = num.fraction(1.25)');
+      checkResult(runtime, 0.25);
+    });
+
+    test('num.fraction 3', () {
+      final Runtime runtime = getRuntime('main = num.fraction(-1.25)');
+      checkResult(runtime, 0.25);
+    });
   });
 
   group('Logic', () {
