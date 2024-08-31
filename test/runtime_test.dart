@@ -970,6 +970,16 @@ void main() {
       final Runtime runtime = getRuntime('main = list.last([1, 2, 3])');
       checkResult(runtime, 3);
     });
+
+    test('list.init', () {
+      final Runtime runtime = getRuntime('main = list.init([1, 2, 3, 4, 5])');
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.tail', () {
+      final Runtime runtime = getRuntime('main = list.tail([1, 2, 3, 4, 5])');
+      checkResult(runtime, [2, 3, 4, 5]);
+    });
   });
 
   group('To', () {
