@@ -48,6 +48,7 @@ import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/list/list_get.dart';
 import 'package:primal/compiler/library/list/list_insert_end.dart';
 import 'package:primal/compiler/library/list/list_insert_start.dart';
+import 'package:primal/compiler/library/list/list_join.dart';
 import 'package:primal/compiler/library/list/list_set.dart';
 import 'package:primal/compiler/library/logic/bool_and.dart';
 import 'package:primal/compiler/library/logic/bool_not.dart';
@@ -190,6 +191,7 @@ class StandardLibrary {
         ListInsertEnd(),
         ListGet(),
         ListSet(),
+        ListJoin(),
 
         // Casting
         IsNumber(),

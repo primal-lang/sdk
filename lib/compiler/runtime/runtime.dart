@@ -37,6 +37,8 @@ class Runtime {
   Reducible fullReduce(Reducible reducible) {
     if (reducible is ListReducibleValue) {
       return ListReducibleValue(reducible.value.map(fullReduce).toList());
+    } else if (reducible is StringReducibleValue) {
+      return StringReducibleValue('"${reducible.value}"');
     } else {
       return reducible.reduce();
     }

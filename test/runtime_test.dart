@@ -878,6 +878,12 @@ void main() {
           getRuntime('main = list.set([1, 2, 3, 4, 5], 2, 42)');
       checkResult(runtime, [1, 2, 42, 3, 4, 5]);
     });
+
+    test('list.join', () {
+      final Runtime runtime =
+          getRuntime('main = list.join(["Hello", "world!"], ", ")');
+      checkResult(runtime, '"Hello, world!"');
+    });
   });
 
   group('To', () {
