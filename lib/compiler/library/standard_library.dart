@@ -111,6 +111,8 @@ import 'package:primal/compiler/library/string/str_last.dart';
 import 'package:primal/compiler/library/string/str_length.dart';
 import 'package:primal/compiler/library/string/str_lowercase.dart';
 import 'package:primal/compiler/library/string/str_match.dart';
+import 'package:primal/compiler/library/string/str_pad_left.dart';
+import 'package:primal/compiler/library/string/str_pad_right.dart';
 import 'package:primal/compiler/library/string/str_remove_at.dart';
 import 'package:primal/compiler/library/string/str_replace.dart';
 import 'package:primal/compiler/library/string/str_reverse.dart';
@@ -228,6 +230,8 @@ class StandardLibrary {
         StrReverse(),
         StrBytes(),
         StrIndexOf(),
+        StrPadLeft(),
+        StrPadRight(),
 
         // List
         ListInsertStart(),

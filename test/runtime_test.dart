@@ -936,6 +936,39 @@ void main() {
       final Runtime runtime = getRuntime('main = str.indexOf("Hello", "l")');
       checkResult(runtime, 2);
     });
+
+    test('str.padLeft 1', () {
+      final Runtime runtime = getRuntime('main = str.padLeft("12345", 0, "0")');
+      checkResult(runtime, '"12345"');
+    });
+
+    test('str.padLeft 2', () {
+      final Runtime runtime = getRuntime('main = str.padLeft("12345", 5, "0")');
+      checkResult(runtime, '"12345"');
+    });
+
+    test('str.padLeft 2', () {
+      final Runtime runtime = getRuntime('main = str.padLeft("12345", 8, "0")');
+      checkResult(runtime, '"00012345"');
+    });
+
+    test('str.padRight 1', () {
+      final Runtime runtime =
+          getRuntime('main = str.padRight("12345", 0, "0")');
+      checkResult(runtime, '"12345"');
+    });
+
+    test('str.padRight 2', () {
+      final Runtime runtime =
+          getRuntime('main = str.padRight("12345", 5, "0")');
+      checkResult(runtime, '"12345"');
+    });
+
+    test('str.padRight 2', () {
+      final Runtime runtime =
+          getRuntime('main = str.padRight("12345", 8, "0")');
+      checkResult(runtime, '"12345000"');
+    });
   });
 
   group('List', () {
