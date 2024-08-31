@@ -1209,6 +1209,11 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.number 4', () {
+      final Runtime runtime = getRuntime('main = is.number([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
     test('is.integer 1', () {
       final Runtime runtime = getRuntime('main = is.integer(12)');
       checkResult(runtime, true);
@@ -1279,6 +1284,11 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.string 4', () {
+      final Runtime runtime = getRuntime('main = is.string([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
     test('is.boolean 1', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
@@ -1291,6 +1301,36 @@ void main() {
 
     test('is.boolean 3', () {
       final Runtime runtime = getRuntime('main = is.boolean(true)');
+      checkResult(runtime, true);
+    });
+
+    test('is.boolean 4', () {
+      final Runtime runtime = getRuntime('main = is.boolean([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.list 1', () {
+      final Runtime runtime = getRuntime('main = is.list(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.list 2', () {
+      final Runtime runtime = getRuntime('main = is.list(1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.list 3', () {
+      final Runtime runtime = getRuntime('main = is.list("Hello")');
+      checkResult(runtime, false);
+    });
+
+    test('is.list 4', () {
+      final Runtime runtime = getRuntime('main = is.list([])');
+      checkResult(runtime, true);
+    });
+
+    test('is.list 5', () {
+      final Runtime runtime = getRuntime('main = is.list([1, 2, 3])');
       checkResult(runtime, true);
     });
   });

@@ -28,6 +28,7 @@ import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
 import 'package:primal/compiler/library/casting/is_infinite.dart';
 import 'package:primal/compiler/library/casting/is_integer.dart';
+import 'package:primal/compiler/library/casting/is_list.dart';
 import 'package:primal/compiler/library/casting/is_number.dart';
 import 'package:primal/compiler/library/casting/is_string.dart';
 import 'package:primal/compiler/library/casting/to_boolean.dart';
@@ -234,6 +235,7 @@ class StandardLibrary {
         IsInfinite(),
         IsString(),
         IsBoolean(),
+        IsList(),
         ToNumber(),
         ToInteger(),
         ToDecimal(),

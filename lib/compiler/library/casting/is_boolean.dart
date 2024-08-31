@@ -16,10 +16,6 @@ class IsBoolean extends NativeFunctionPrototype {
   Reducible substitute(Scope<Reducible> arguments) {
     final Reducible a = arguments.get('a').reduce();
 
-    if (a is BooleanReducibleValue) {
-      return const BooleanReducibleValue(true);
-    } else {
-      return const BooleanReducibleValue(false);
-    }
+    return BooleanReducibleValue(a is BooleanReducibleValue);
   }
 }
