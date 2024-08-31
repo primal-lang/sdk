@@ -6,11 +6,13 @@ import 'package:primal/compiler/library/arithmetic/num_ceil.dart';
 import 'package:primal/compiler/library/arithmetic/num_clamp.dart';
 import 'package:primal/compiler/library/arithmetic/num_cos.dart';
 import 'package:primal/compiler/library/arithmetic/num_dec.dart';
+import 'package:primal/compiler/library/arithmetic/num_decimal_random.dart';
 import 'package:primal/compiler/library/arithmetic/num_div.dart';
 import 'package:primal/compiler/library/arithmetic/num_floor.dart';
 import 'package:primal/compiler/library/arithmetic/num_fraction.dart';
 import 'package:primal/compiler/library/arithmetic/num_inc.dart';
 import 'package:primal/compiler/library/arithmetic/num_infinity.dart';
+import 'package:primal/compiler/library/arithmetic/num_int_random.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_even.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_negative.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_odd.dart';
@@ -187,6 +189,8 @@ class StandardLibrary {
         NumFraction(),
         NumClamp(),
         NumSign(),
+        NumIntegerRandom(),
+        NumDecimalRandom(),
 
         // Logic
         BoolAnd(),

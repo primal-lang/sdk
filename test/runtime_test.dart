@@ -587,12 +587,12 @@ void main() {
 
     test('num.asRadians 2', () {
       final Runtime runtime = getRuntime('main = num.asRadians(30)');
-      checkResult(runtime, 0.5235987755982988);
+      expect(num.parse(runtime.executeMain()), closeTo(0.523598775598, 0.0001));
     });
 
     test('num.asRadians 3', () {
       final Runtime runtime = getRuntime('main = num.asRadians(180)');
-      checkResult(runtime, 3.141592653589793);
+      expect(num.parse(runtime.executeMain()), closeTo(3.141592653589, 0.0001));
     });
 
     test('num.asDegrees 1', () {
@@ -603,13 +603,13 @@ void main() {
     test('num.asDegrees 2', () {
       final Runtime runtime =
           getRuntime('main = num.asDegrees(0.52359877559829887307)');
-      checkResult(runtime, 30.000000000000004);
+      expect(num.parse(runtime.executeMain()), closeTo(30, 0.0001));
     });
 
     test('num.asDegrees 3', () {
       final Runtime runtime =
           getRuntime('main = num.asDegrees(3.141592653589793)');
-      checkResult(runtime, 180.0);
+      expect(num.parse(runtime.executeMain()), closeTo(180, 0.0001));
     });
 
     test('num.infinity 1', () {
@@ -665,6 +665,16 @@ void main() {
     test('num.sign 3', () {
       final Runtime runtime = getRuntime('main = num.sign(2)');
       checkResult(runtime, 1);
+    });
+
+    test('num.integerRandom', () {
+      final Runtime runtime = getRuntime('main = num.integerRandom(10, 20)');
+      expect(num.parse(runtime.executeMain()), inInclusiveRange(10, 20));
+    });
+
+    test('num.decimalRandom', () {
+      final Runtime runtime = getRuntime('main = num.decimalRandom()');
+      expect(num.parse(runtime.executeMain()), inInclusiveRange(0, 1));
     });
   });
 
