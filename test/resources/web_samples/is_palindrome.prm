@@ -1,10 +1,11 @@
-isPalindrome(s) = isPalindromeHelper(s, 0, str.length(s) - 1)
+isPalindrome(string) = isPalindromeHelper(string, 0, str.length(string) - 1)
 
-isPalindromeHelper(s, start, end) = if (start >= end)
-                                        true
-                                    else if (s[start] != s[end])
-                                        false
-                                    else
-                                        isPalindromeHelper(s, start + 1, end - 1)
+isPalindromeHelper(string, start, end) =
+    if (start >= end)
+        true
+    else if (string[start] != string[end])
+        false
+    else
+        isPalindromeHelper(string, start + 1, end - 1)
 
 main = isPalindrome("level")
