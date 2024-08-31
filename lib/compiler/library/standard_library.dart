@@ -45,6 +45,7 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/throw.dart';
+import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_get.dart';
 import 'package:primal/compiler/library/list/list_insert_end.dart';
 import 'package:primal/compiler/library/list/list_insert_start.dart';
@@ -194,6 +195,7 @@ class StandardLibrary {
         ListSet(),
         ListJoin(),
         ListLength(),
+        ListConcat(),
 
         // Casting
         IsNumber(),

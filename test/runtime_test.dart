@@ -899,6 +899,26 @@ void main() {
       final Runtime runtime = getRuntime('main = list.length([1, 2, 3])');
       checkResult(runtime, 3);
     });
+
+    test('list.concat 1', () {
+      final Runtime runtime = getRuntime('main = list.concat([], [])');
+      checkResult(runtime, []);
+    });
+
+    test('list.concat 2', () {
+      final Runtime runtime = getRuntime('main = list.concat([1, 2], [])');
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('list.concat 3', () {
+      final Runtime runtime = getRuntime('main = list.concat([], [1, 2])');
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('list.concat 4', () {
+      final Runtime runtime = getRuntime('main = list.concat([1, 2], [3, 4])');
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
   });
 
   group('To', () {
