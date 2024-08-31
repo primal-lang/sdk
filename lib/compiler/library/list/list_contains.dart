@@ -21,11 +21,10 @@ class ListContains extends NativeFunctionPrototype {
     final Reducible b = arguments.get('b').reduce();
 
     if (a is ListReducibleValue) {
-      final List<Reducible> list = a.fullyReduced.value;
       final CompEq eq = CompEq();
 
-      for (final element in list) {
-        final Reducible comparison = eq.compare(element, b);
+      for (final Reducible element in a.value) {
+        final Reducible comparison = eq.compare(element.reduce(), b);
 
         if (comparison is BooleanReducibleValue && comparison.value) {
           return const BooleanReducibleValue(true);
