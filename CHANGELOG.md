@@ -1,4 +1,4 @@
-## 0.1.0
+## 0.2.0
 
 ### Language
 
@@ -6,11 +6,15 @@
 * Added syntactic analyzer
 * Added semantic analyzer
 * Added support for:
-    - Boolean
+    - Booleans
     - Numbers
     - Strings
+    - Lists
 * Added main function entry point
 * Added syntactic sugar for `if` conditions
+* Added syntactic sugar to construct lists: `[1, 2, 3]`
+* Added syntactic sugar to access list elements: `list[index]`
+* Added syntactic sugar to access string characters: `string[index]`
 
 ### Standard library
 
@@ -26,6 +30,7 @@
     - Arithmetic
     - Logic
     - String
+    - List
     - Casting
 
 ### Runtime
