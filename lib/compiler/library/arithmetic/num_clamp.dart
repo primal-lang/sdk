@@ -4,12 +4,12 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class ListSwap extends NativeFunctionPrototype {
-  ListSwap()
+class NumClamp extends NativeFunctionPrototype {
+  NumClamp()
       : super(
-          name: 'list.swap',
+          name: 'num.clamp',
           parameters: [
-            Parameter.list('a'),
+            Parameter.number('a'),
             Parameter.number('b'),
             Parameter.number('c'),
           ],
@@ -21,26 +21,10 @@ class ListSwap extends NativeFunctionPrototype {
     final Reducible b = arguments.get('b').reduce();
     final Reducible c = arguments.get('c').reduce();
 
-    if ((a is ListReducibleValue) &&
+    if ((a is NumberReducibleValue) &&
         (b is NumberReducibleValue) &&
         (c is NumberReducibleValue)) {
-      final List<Reducible> result = [];
-      final Reducible valueAtB = a.value[b.value.toInt()];
-      final Reducible valueAtC = a.value[c.value.toInt()];
-
-      for (int i = 0; i < a.value.length; i++) {
-        final Reducible element = a.value[i];
-
-        if (i == b.value.toInt()) {
-          result.add(valueAtC);
-        } else if (i == c.value.toInt()) {
-          result.add(valueAtB);
-        } else {
-          result.add(element);
-        }
-      }
-
-      return ListReducibleValue(result);
+      return NumberReducibleValue(a.value.clamp(b.value, c.value));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

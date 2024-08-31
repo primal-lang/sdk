@@ -31,7 +31,7 @@ class ListSet extends NativeFunctionPrototype {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [a.type, b.type],
+        actual: [a.type, b.type, c.type],
       );
     }
   }

@@ -636,6 +636,21 @@ void main() {
       final Runtime runtime = getRuntime('main = num.fraction(-1.25)');
       checkResult(runtime, 0.25);
     });
+
+    test('num.clamp 1', () {
+      final Runtime runtime = getRuntime('main = num.clamp(0, 1, 2)');
+      checkResult(runtime, 1);
+    });
+
+    test('num.clamp 2', () {
+      final Runtime runtime = getRuntime('main = num.clamp(2, 1, 5)');
+      checkResult(runtime, 2);
+    });
+
+    test('num.clamp 3', () {
+      final Runtime runtime = getRuntime('main = num.clamp(6, 1, 5)');
+      checkResult(runtime, 5);
+    });
   });
 
   group('Logic', () {
