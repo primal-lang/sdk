@@ -594,6 +594,23 @@ void main() {
       final Runtime runtime = getRuntime('main = num.asRadians(180)');
       checkResult(runtime, 3.141592653589793);
     });
+
+    test('num.asDegrees 1', () {
+      final Runtime runtime = getRuntime('main = num.asDegrees(0)');
+      checkResult(runtime, 0.0);
+    });
+
+    test('num.asDegrees 2', () {
+      final Runtime runtime =
+          getRuntime('main = num.asDegrees(0.52359877559829887307)');
+      checkResult(runtime, 30.000000000000004);
+    });
+
+    test('num.asDegrees 3', () {
+      final Runtime runtime =
+          getRuntime('main = num.asDegrees(3.141592653589793)');
+      checkResult(runtime, 180.0);
+    });
   });
 
   group('Logic', () {

@@ -1,5 +1,6 @@
 import 'package:primal/compiler/library/arithmetic/num_abs.dart';
 import 'package:primal/compiler/library/arithmetic/num_add.dart';
+import 'package:primal/compiler/library/arithmetic/num_as_degrees.dart';
 import 'package:primal/compiler/library/arithmetic/num_as_radians.dart';
 import 'package:primal/compiler/library/arithmetic/num_ceil.dart';
 import 'package:primal/compiler/library/arithmetic/num_cos.dart';
@@ -177,6 +178,7 @@ class StandardLibrary {
         NumIsEven(),
         NumIsOdd(),
         NumAsRadians(),
+        NumAsDegrees(),
 
         // Logic
         BoolAnd(),
