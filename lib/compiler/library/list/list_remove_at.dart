@@ -4,12 +4,12 @@ import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class StrRemove extends NativeFunctionPrototype {
-  StrRemove()
+class ListRemoveAt extends NativeFunctionPrototype {
+  ListRemoveAt()
       : super(
-          name: 'str.remove',
+          name: 'list.removeAt',
           parameters: [
-            Parameter.string('a'),
+            Parameter.list('a'),
             Parameter.number('b'),
           ],
         );
@@ -19,9 +19,9 @@ class StrRemove extends NativeFunctionPrototype {
     final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
 
-    if ((a is StringReducibleValue) && (b is NumberReducibleValue)) {
-      return StringReducibleValue(a.value.substring(0, b.value.toInt()) +
-          a.value.substring(b.value.toInt() + 1));
+    if ((a is ListReducibleValue) && (b is NumberReducibleValue)) {
+      return ListReducibleValue(a.value.sublist(0, b.value.toInt()) +
+          a.value.sublist(b.value.toInt() + 1));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

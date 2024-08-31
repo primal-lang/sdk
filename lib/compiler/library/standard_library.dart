@@ -58,6 +58,8 @@ import 'package:primal/compiler/library/list/list_is_not_empty.dart';
 import 'package:primal/compiler/library/list/list_join.dart';
 import 'package:primal/compiler/library/list/list_last.dart';
 import 'package:primal/compiler/library/list/list_length.dart';
+import 'package:primal/compiler/library/list/list_remove.dart';
+import 'package:primal/compiler/library/list/list_remove_at.dart';
 import 'package:primal/compiler/library/list/list_set.dart';
 import 'package:primal/compiler/library/list/list_tail.dart';
 import 'package:primal/compiler/library/list/list_take.dart';
@@ -92,7 +94,7 @@ import 'package:primal/compiler/library/string/str_last.dart';
 import 'package:primal/compiler/library/string/str_length.dart';
 import 'package:primal/compiler/library/string/str_lowercase.dart';
 import 'package:primal/compiler/library/string/str_match.dart';
-import 'package:primal/compiler/library/string/str_remove.dart';
+import 'package:primal/compiler/library/string/str_remove_at.dart';
 import 'package:primal/compiler/library/string/str_replace.dart';
 import 'package:primal/compiler/library/string/str_reverse.dart';
 import 'package:primal/compiler/library/string/str_starts_with.dart';
@@ -194,7 +196,7 @@ class StandardLibrary {
         StrContains(),
         StrTake(),
         StrDrop(),
-        StrRemove(),
+        StrRemoveAt(),
         StrReverse(),
 
         // List
@@ -214,6 +216,8 @@ class StandardLibrary {
         ListTail(),
         ListTake(),
         ListDrop(),
+        ListRemove(),
+        ListRemoveAt(),
 
         // Casting
         IsNumber(),

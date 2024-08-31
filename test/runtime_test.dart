@@ -765,8 +765,8 @@ void main() {
       checkResult(runtime, '"llo"');
     });
 
-    test('str.remove', () {
-      final Runtime runtime = getRuntime('main = str.remove("Hello", 4)');
+    test('str.removeAt', () {
+      final Runtime runtime = getRuntime('main = str.removeAt("Hello", 4)');
       checkResult(runtime, '"Hell"');
     });
 
@@ -1008,6 +1008,30 @@ void main() {
       final Runtime runtime =
           getRuntime('main = list.drop([1, 2, 3, 4, 5], 2)');
       checkResult(runtime, [3, 4, 5]);
+    });
+
+    test('list.remove 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.remove([1, 2, 3, 4, 5], 0)');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.remove 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.remove([1, 2, 3, 4, 5], 2)');
+      checkResult(runtime, [1, 3, 4, 5]);
+    });
+
+    test('list.remove 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.remove([1, 2, 2, 4, 5], 2)');
+      checkResult(runtime, [1, 4, 5]);
+    });
+
+    test('list.removeAt', () {
+      final Runtime runtime =
+          getRuntime('main = list.removeAt([1, 2, 3, 4, 5], 2)');
+      checkResult(runtime, [1, 2, 4, 5]);
     });
   });
 
