@@ -26,7 +26,5 @@ class Console {
   void warning(GenericWarning warning) =>
       stderr.writeln('$yellow$warning$reset');
 
-  void error(Object error) {
-    stderr.writeln('$red$error$reset');
-  }
+  void error(Object error) => stderr.writeln('$red$error$reset');
 }
