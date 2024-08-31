@@ -17,7 +17,7 @@ void main() {
     });
 
     test('if/else 3', () {
-      final Runtime runtime = getRuntime('main = if true 1 + 2 else 42');
+      final Runtime runtime = getRuntime('main = if (true) 1 + 2 else 42');
       checkResult(runtime, 3);
     });
   });
@@ -1393,7 +1393,7 @@ void main() {
 
     test('fibonacci', () {
       final Runtime runtime = getRuntime(loadFile('web_samples/fibonacci.prm'));
-      checkResult(runtime, 55);
+      checkResult(runtime, [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]);
     });
 
     test('is_palindrome', () {

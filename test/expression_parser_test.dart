@@ -85,7 +85,7 @@ void main() {
     });
 
     test('Expression 15', () {
-      final Expression expression = getExpression('if true 1 else 2');
+      final Expression expression = getExpression('if (true) 1 else 2');
       expect(expression.toString(), 'if(true, 1, 2)');
     });
 

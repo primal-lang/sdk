@@ -17,7 +17,7 @@ isEven(x) = (x % 2) == 0
 // Returns true if x is an odd number
 isOdd(x) = !isEven(x)
 
-isBiggerThan10(x) = if x > 10   // if x is greater than 10, return true
+isBiggerThan10(x) = if (x > 10)   // if x is greater than 10, return true
                         true
                     else        // otherwise, return false
                         false
