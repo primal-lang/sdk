@@ -1048,6 +1048,16 @@ void main() {
       final Runtime runtime = getRuntime('main = list.filled(3, 1)');
       checkResult(runtime, [1, 1, 1]);
     });
+
+    test('list.indexOf 1', () {
+      final Runtime runtime = getRuntime('main = list.indexOf([1, 2, 3], 4)');
+      checkResult(runtime, -1);
+    });
+
+    test('list.indexOf 2', () {
+      final Runtime runtime = getRuntime('main = list.indexOf([1, 2, 3], 2)');
+      checkResult(runtime, 1);
+    });
   });
 
   group('To', () {
