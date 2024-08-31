@@ -136,6 +136,31 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('== 7', () {
+      final Runtime runtime = getRuntime('main = [] != []');
+      checkResult(runtime, false);
+    });
+
+    test('== 8', () {
+      final Runtime runtime = getRuntime('main = [] != [1, 2, 3]');
+      checkResult(runtime, true);
+    });
+
+    test('== 9', () {
+      final Runtime runtime = getRuntime('main = [1, 2, 3] != []');
+      checkResult(runtime, true);
+    });
+
+    test('== 10', () {
+      final Runtime runtime = getRuntime('main = [1, 2, 3] != [1, 2, 4]');
+      checkResult(runtime, true);
+    });
+
+    test('== 11', () {
+      final Runtime runtime = getRuntime('main = [1, 2, 3] != [1, 2, 3]');
+      checkResult(runtime, false);
+    });
+
     test('> 1', () {
       final Runtime runtime = getRuntime('main = 10 > 4');
       checkResult(runtime, true);
