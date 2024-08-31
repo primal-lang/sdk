@@ -39,7 +39,7 @@ void main(List<String> args) {
 }
 
 List<String> runtimeWarningsHelper(IntermediateCode code) {
-  return code.warnings.map((e) => e.message).toList();
+  return code.warnings.map((e) => e.toString()).toList();
 }
 
 bool runtimeHasMainHelper(IntermediateCode code) {
