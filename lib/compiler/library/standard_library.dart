@@ -103,6 +103,7 @@ import 'package:primal/compiler/library/string/str_contains.dart';
 import 'package:primal/compiler/library/string/str_drop.dart';
 import 'package:primal/compiler/library/string/str_ends_with.dart';
 import 'package:primal/compiler/library/string/str_first.dart';
+import 'package:primal/compiler/library/string/str_index_of.dart';
 import 'package:primal/compiler/library/string/str_init.dart';
 import 'package:primal/compiler/library/string/str_is_empty.dart';
 import 'package:primal/compiler/library/string/str_is_not_empty.dart';
@@ -226,6 +227,7 @@ class StandardLibrary {
         StrRemoveAt(),
         StrReverse(),
         StrBytes(),
+        StrIndexOf(),
 
         // List
         ListInsertStart(),

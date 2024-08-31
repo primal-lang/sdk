@@ -926,6 +926,16 @@ void main() {
       final Runtime runtime = getRuntime('main = str.bytes("Hello")');
       checkResult(runtime, [72, 101, 108, 108, 111]);
     });
+
+    test('str.indexOf 1', () {
+      final Runtime runtime = getRuntime('main = str.indexOf("Hello", "x")');
+      checkResult(runtime, -1);
+    });
+
+    test('str.indexOf 2', () {
+      final Runtime runtime = getRuntime('main = str.indexOf("Hello", "l")');
+      checkResult(runtime, 2);
+    });
   });
 
   group('List', () {
