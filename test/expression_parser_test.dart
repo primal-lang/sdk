@@ -106,7 +106,12 @@ void main() {
 
     test('Expression 19', () {
       final Expression expression = getExpression('[1, true, "test", foo][1]');
-      expect(expression.toString(), 'list.at([1, true, "test", foo], 1)');
+      expect(expression.toString(), 'element.at([1, true, "test", foo], 1)');
+    });
+
+    test('Expression 20', () {
+      final Expression expression = getExpression('"Hello"[1]');
+      expect(expression.toString(), 'element.at("Hello", 1)');
     });
   });
 }

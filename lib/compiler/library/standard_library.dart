@@ -46,6 +46,7 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/throw.dart';
+import 'package:primal/compiler/library/index/element_at.dart';
 import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_contains.dart';
 import 'package:primal/compiler/library/list/list_drop.dart';
@@ -179,6 +180,9 @@ class StandardLibrary {
         BoolOr(),
         BoolXor(),
         BoolNot(),
+
+        // Index
+        ElementAt(),
 
         // String
         StrSubstring(),

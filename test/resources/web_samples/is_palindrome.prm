@@ -2,7 +2,7 @@ isPalindrome(s) = isPalindromeHelper(s, 0, str.length(s) - 1)
 
 isPalindromeHelper(s, start, end) = if (start >= end)
                                         true
-                                    else if (str.at(s, start) != str.at(s, end))
+                                    else if (s[start] != s[end])
                                         false
                                     else
                                         isPalindromeHelper(s, start + 1, end - 1)

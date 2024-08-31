@@ -654,6 +654,11 @@ void main() {
   });
 
   group('String', () {
+    test('String indexing', () {
+      final Runtime runtime = getRuntime('main = "Hello"[1]');
+      checkResult(runtime, '"e"');
+    });
+
     test('str.substring', () {
       final Runtime runtime = getRuntime('main = str.substring("hola", 1, 3)');
       checkResult(runtime, '"ol"');

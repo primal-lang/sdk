@@ -158,9 +158,10 @@ class ExpressionParser {
     } else if (match([OpenBracketToken])) {
       if ((exp is IdentifierExpression) ||
           (exp is CallExpression) ||
+          (exp is StringLiteralExpression) ||
           (exp is ListLiteralExpression)) {
         final Token operator = IdentifierToken(Lexeme(
-          value: 'list.at',
+          value: 'element.at',
           location: previous.location,
         ));
         final Expression index = expression();
