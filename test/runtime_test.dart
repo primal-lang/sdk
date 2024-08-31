@@ -939,6 +939,31 @@ void main() {
       final Runtime runtime = getRuntime('main = list.isNotEmpty([1, 2, 3])');
       checkResult(runtime, true);
     });
+
+    test('list.contains 1', () {
+      final Runtime runtime = getRuntime('main = list.contains([], 1)');
+      checkResult(runtime, false);
+    });
+
+    test('list.contains 2', () {
+      final Runtime runtime = getRuntime('main = list.contains([1, 2, 3], 1)');
+      checkResult(runtime, true);
+    });
+
+    test('list.contains 3', () {
+      final Runtime runtime = getRuntime('main = list.contains([1, 2, 3], 4)');
+      checkResult(runtime, false);
+    });
+
+    test('list.first', () {
+      final Runtime runtime = getRuntime('main = list.first([1, 2, 3])');
+      checkResult(runtime, 1);
+    });
+
+    test('list.last', () {
+      final Runtime runtime = getRuntime('main = list.last([1, 2, 3])');
+      checkResult(runtime, 3);
+    });
   });
 
   group('To', () {
