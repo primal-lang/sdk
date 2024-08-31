@@ -1038,6 +1038,16 @@ void main() {
       final Runtime runtime = getRuntime('main = list.reverse([1, 2, 3])');
       checkResult(runtime, [3, 2, 1]);
     });
+
+    test('list.filled 1', () {
+      final Runtime runtime = getRuntime('main = list.filled(0, 1)');
+      checkResult(runtime, []);
+    });
+
+    test('list.filled 2', () {
+      final Runtime runtime = getRuntime('main = list.filled(3, 1)');
+      checkResult(runtime, [1, 1, 1]);
+    });
   });
 
   group('To', () {

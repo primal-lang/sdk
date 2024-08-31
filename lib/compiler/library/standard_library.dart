@@ -48,6 +48,7 @@ import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_contains.dart';
 import 'package:primal/compiler/library/list/list_drop.dart';
+import 'package:primal/compiler/library/list/list_filled.dart';
 import 'package:primal/compiler/library/list/list_first.dart';
 import 'package:primal/compiler/library/list/list_get.dart';
 import 'package:primal/compiler/library/list/list_init.dart';
@@ -220,6 +221,7 @@ class StandardLibrary {
         ListRemove(),
         ListRemoveAt(),
         ListReverse(),
+        ListFilled(),
 
         // Casting
         IsNumber(),
