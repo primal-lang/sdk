@@ -969,6 +969,22 @@ void main() {
           getRuntime('main = str.padRight("12345", 8, "0")');
       checkResult(runtime, '"12345000"');
     });
+
+    test('str.split 1', () {
+      final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", "x")');
+      checkResult(runtime, ['"aa,bb,cc"']);
+    });
+
+    test('str.split 2', () {
+      final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", "")');
+      checkResult(
+          runtime, ['"a"', '"a"', '","', '"b"', '"b"', '","', '"c"', '"c"']);
+    });
+
+    test('str.split 3', () {
+      final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", ",")');
+      checkResult(runtime, ['"aa"', '"bb"', '"cc"']);
+    });
   });
 
   group('List', () {

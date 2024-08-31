@@ -116,6 +116,7 @@ import 'package:primal/compiler/library/string/str_pad_right.dart';
 import 'package:primal/compiler/library/string/str_remove_at.dart';
 import 'package:primal/compiler/library/string/str_replace.dart';
 import 'package:primal/compiler/library/string/str_reverse.dart';
+import 'package:primal/compiler/library/string/str_split.dart';
 import 'package:primal/compiler/library/string/str_starts_with.dart';
 import 'package:primal/compiler/library/string/str_substring.dart';
 import 'package:primal/compiler/library/string/str_tail.dart';
@@ -232,6 +233,7 @@ class StandardLibrary {
         StrIndexOf(),
         StrPadLeft(),
         StrPadRight(),
+        StrSplit(),
 
         // List
         ListInsertStart(),
