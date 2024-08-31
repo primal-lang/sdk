@@ -57,6 +57,10 @@ class ListReducibleValue extends ReducibleValue<List<Reducible>> {
 
   @override
   String get type => 'List';
+
+  @override
+  Reducible substitute(Scope<Reducible> arguments) =>
+      ListReducibleValue(value.map((e) => e.substitute(arguments)).toList());
 }
 
 class IdentifierReducible extends Reducible {
