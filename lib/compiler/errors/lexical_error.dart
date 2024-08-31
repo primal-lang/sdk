@@ -6,6 +6,7 @@ class LexicalError extends GenericError {
 }
 
 class InvalidCharacterError extends LexicalError {
-  const InvalidCharacterError(Character character)
-      : super('Invalid character $character');
+  const InvalidCharacterError(Character character, [String? expected])
+      : super(
+            'Invalid character $character${(expected != null) ? '. Expected: $expected' : ''}');
 }

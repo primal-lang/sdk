@@ -133,7 +133,7 @@ class IntegerState extends State<Character, Lexeme> {
       iterator.back();
       return ResultState(iterator, [NumberToken(output)]);
     } else {
-      throw InvalidCharacterError(input);
+      throw InvalidCharacterError(input, 'digit or dot');
     }
   }
 }
@@ -146,7 +146,7 @@ class DecimalInitState extends State<Character, Lexeme> {
     if (input.value.isDigit) {
       return DecimalState(iterator, output.add(input));
     } else {
-      throw InvalidCharacterError(input);
+      throw InvalidCharacterError(input, 'digit');
     }
   }
 }
@@ -162,7 +162,7 @@ class DecimalState extends State<Character, Lexeme> {
       iterator.back();
       return ResultState(iterator, [NumberToken(output)]);
     } else {
-      throw InvalidCharacterError(input);
+      throw InvalidCharacterError(input, 'digit');
     }
   }
 }
