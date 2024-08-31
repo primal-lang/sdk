@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';

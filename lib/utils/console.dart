@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'package:primal/compiler/platform/platform_cli.dart'
+    if (dart.library.html) 'package:primal/compiler/platform/platform_web.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 
 class Console {
@@ -9,8 +10,8 @@ class Console {
   void prompt(Function(String) handler) {
     while (true) {
       try {
-        stdout.write('> ');
-        final String input = stdin.readLineSync()?.trim() ?? '';
+        PlatformInterface().outWrite('> ');
+        final String input = PlatformInterface().readLine();
 
         if (input.isNotEmpty) {
           handler(input);
@@ -21,10 +22,11 @@ class Console {
     }
   }
 
-  void print(String message) => stdout.writeln(message);
+  void print(String message) => PlatformInterface().outWriteLn(message);
 
   void warning(GenericWarning warning) =>
-      stderr.writeln('$yellow$warning$reset');
+      PlatformInterface().errorWriteLn('$yellow$warning$reset');
 
-  void error(Object error) => stderr.writeln('$red$error$reset');
+  void error(Object error) =>
+      PlatformInterface().errorWriteLn('$red$error$reset');
 }
