@@ -579,6 +579,21 @@ void main() {
       final Runtime runtime = getRuntime('main = num.isOdd(7)');
       checkResult(runtime, true);
     });
+
+    test('num.asRadians 1', () {
+      final Runtime runtime = getRuntime('main = num.asRadians(0)');
+      checkResult(runtime, 0.0);
+    });
+
+    test('num.asRadians 2', () {
+      final Runtime runtime = getRuntime('main = num.asRadians(30)');
+      checkResult(runtime, 0.5235987755982988);
+    });
+
+    test('num.asRadians 3', () {
+      final Runtime runtime = getRuntime('main = num.asRadians(180)');
+      checkResult(runtime, 3.141592653589793);
+    });
   });
 
   group('Logic', () {
