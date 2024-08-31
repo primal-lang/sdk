@@ -47,6 +47,7 @@ import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_contains.dart';
+import 'package:primal/compiler/library/list/list_drop.dart';
 import 'package:primal/compiler/library/list/list_first.dart';
 import 'package:primal/compiler/library/list/list_get.dart';
 import 'package:primal/compiler/library/list/list_init.dart';
@@ -59,6 +60,7 @@ import 'package:primal/compiler/library/list/list_last.dart';
 import 'package:primal/compiler/library/list/list_length.dart';
 import 'package:primal/compiler/library/list/list_set.dart';
 import 'package:primal/compiler/library/list/list_tail.dart';
+import 'package:primal/compiler/library/list/list_take.dart';
 import 'package:primal/compiler/library/logic/bool_and.dart';
 import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/library/logic/bool_or.dart';
@@ -210,6 +212,8 @@ class StandardLibrary {
         ListLast(),
         ListInit(),
         ListTail(),
+        ListTake(),
+        ListDrop(),
 
         // Casting
         IsNumber(),

@@ -755,7 +755,12 @@ void main() {
       checkResult(runtime, '"Hell"');
     });
 
-    test('str.drop', () {
+    test('str.drop 1', () {
+      final Runtime runtime = getRuntime('main = str.drop("Hello", 0)');
+      checkResult(runtime, '"Hello"');
+    });
+
+    test('str.drop 2', () {
       final Runtime runtime = getRuntime('main = str.drop("Hello", 2)');
       checkResult(runtime, '"llo"');
     });
@@ -979,6 +984,30 @@ void main() {
     test('list.tail', () {
       final Runtime runtime = getRuntime('main = list.tail([1, 2, 3, 4, 5])');
       checkResult(runtime, [2, 3, 4, 5]);
+    });
+
+    test('list.take 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.take([1, 2, 3, 4, 5], 0)');
+      checkResult(runtime, []);
+    });
+
+    test('list.take 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.take([1, 2, 3, 4, 5], 4)');
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.drop 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.drop([1, 2, 3, 4, 5], 0)');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.drop 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.drop([1, 2, 3, 4, 5], 2)');
+      checkResult(runtime, [3, 4, 5]);
     });
   });
 
