@@ -23,6 +23,12 @@ class OperatorAdd extends NativeFunctionPrototype {
       return NumberReducibleValue(a.value + b.value);
     } else if ((a is StringReducibleValue) && (b is StringReducibleValue)) {
       return StringReducibleValue(a.value + b.value);
+    } else if ((a is ListReducibleValue) && (b is ListReducibleValue)) {
+      return ListReducibleValue([...a.value, ...b.value]);
+    } else if (a is ListReducibleValue) {
+      return ListReducibleValue([...a.value, b]);
+    } else if (b is ListReducibleValue) {
+      return ListReducibleValue([a, ...b.value]);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

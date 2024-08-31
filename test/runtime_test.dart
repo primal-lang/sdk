@@ -823,6 +823,21 @@ void main() {
       checkResult(runtime, 4);
     });
 
+    test('List concatenation 1', () {
+      final Runtime runtime = getRuntime('main = [1, 2] + [3, 4]');
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('List concatenation 2', () {
+      final Runtime runtime = getRuntime('main = 1 + [2, 3]');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('List concatenation 3', () {
+      final Runtime runtime = getRuntime('main = [1, 2] + 3');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
     test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
