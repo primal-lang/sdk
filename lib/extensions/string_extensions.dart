@@ -117,6 +117,7 @@ extension StringExtensions on String {
       isComma ||
       isOpenParenthesis ||
       isCloseParenthesis ||
+      isOpenBracket ||
       isCloseBracket ||
       isBinaryOperator;
 

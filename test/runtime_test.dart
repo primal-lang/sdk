@@ -806,6 +806,23 @@ void main() {
       checkResult(runtime, [1, true, '"hello"']);
     });
 
+    test('List indexing 1', () {
+      final Runtime runtime = getRuntime('main = [1, true, "hello"][1]');
+      checkResult(runtime, true);
+    });
+
+    test('List indexing 2', () {
+      final Runtime runtime =
+          getRuntime('main = [[1, 2, 3], [4, 5, 6], [7, 8, 9]][1]');
+      checkResult(runtime, [4, 5, 6]);
+    });
+
+    test('List indexing 3', () {
+      final Runtime runtime =
+          getRuntime('main = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]][1])[0]');
+      checkResult(runtime, 4);
+    });
+
     test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);

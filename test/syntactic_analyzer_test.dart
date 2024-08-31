@@ -147,6 +147,31 @@ void main() {
       ]);
     });
 
+    test('Indexing list ', () {
+      final List<FunctionDefinition> functions =
+          getFunctions('list = [1, 2, 3][1]');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'list',
+          parameters: [],
+          expression: CallExpression(
+            callee: IdentifierExpression(identifierToken('list.get', 1, 17)),
+            arguments: [
+              ListLiteralExpression(
+                location: const Location(row: 1, column: 8),
+                arguments: [
+                  NumberLiteralExpression(numberToken(1, 1, 9)),
+                  NumberLiteralExpression(numberToken(2, 1, 12)),
+                  NumberLiteralExpression(numberToken(3, 1, 15)),
+                ],
+              ),
+              NumberLiteralExpression(numberToken(1, 1, 18)),
+            ],
+          ),
+        ),
+      ]);
+    });
+
     test('Function with no parameters', () {
       final List<FunctionDefinition> functions = getFunctions('test = true');
       checkFunctions(functions, [

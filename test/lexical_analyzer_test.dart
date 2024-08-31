@@ -170,6 +170,82 @@ void main() {
       ]);
     });
 
+    test('Indexing list', () {
+      final List<Token> tokens = getTokens('[1, 2, 3][1]');
+      checkTokens(tokens, [
+        OpenBracketToken(const Lexeme(
+          value: '[',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '1',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
+        CommaToken(const Lexeme(
+          value: ',',
+          location: Location(
+            row: 1,
+            column: 3,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '2',
+          location: Location(
+            row: 1,
+            column: 5,
+          ),
+        )),
+        CommaToken(const Lexeme(
+          value: ',',
+          location: Location(
+            row: 1,
+            column: 6,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '3',
+          location: Location(
+            row: 1,
+            column: 8,
+          ),
+        )),
+        CloseBracketToken(const Lexeme(
+          value: ']',
+          location: Location(
+            row: 1,
+            column: 9,
+          ),
+        )),
+        OpenBracketToken(const Lexeme(
+          value: '[',
+          location: Location(
+            row: 1,
+            column: 10,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '1',
+          location: Location(
+            row: 1,
+            column: 11,
+          ),
+        )),
+        CloseBracketToken(const Lexeme(
+          value: ']',
+          location: Location(
+            row: 1,
+            column: 12,
+          ),
+        )),
+      ]);
+    });
+
     test('Identifier with letters', () {
       final List<Token> tokens = getTokens('isEven');
       checkTokens(tokens, [

@@ -9,14 +9,14 @@ class ListGet extends NativeFunctionPrototype {
       : super(
           name: 'list.get',
           parameters: [
-            Parameter.list('a'),
+            Parameter.any('a'),
             Parameter.number('b'),
           ],
         );
 
   @override
   Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible a = arguments.get('a');
+    final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
 
     if ((a is ListReducibleValue) && (b is NumberReducibleValue)) {

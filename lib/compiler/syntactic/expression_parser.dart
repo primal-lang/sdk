@@ -145,18 +145,37 @@ class ExpressionParser {
   }
 
   Expression call() {
-    Expression expression = primary();
+    Expression exp = primary();
 
-    while (match([OpenParenthesisToken])) {
-      if ((expression is IdentifierExpression) ||
-          (expression is CallExpression)) {
-        expression = finishCall(expression);
+    if (check(OpenParenthesisToken)) {
+      while (match([OpenParenthesisToken])) {
+        if ((exp is IdentifierExpression) || (exp is CallExpression)) {
+          exp = finishCall(exp);
+        } else {
+          throw InvalidTokenError(peek);
+        }
+      }
+    } else if (match([OpenBracketToken])) {
+      if ((exp is IdentifierExpression) ||
+          (exp is CallExpression) ||
+          (exp is ListLiteralExpression)) {
+        final Token operator = IdentifierToken(Lexeme(
+          value: 'list.get',
+          location: previous.location,
+        ));
+        final Expression index = expression();
+        consume(CloseBracketToken, ']');
+        exp = CallExpression.fromBinaryOperation(
+          operator: operator,
+          left: exp,
+          right: index,
+        );
       } else {
         throw InvalidTokenError(peek);
       }
     }
 
-    return expression;
+    return exp;
   }
 
   Expression finishCall(Expression callee) {
