@@ -2,7 +2,7 @@ import 'package:primal/compiler/errors/generic_error.dart';
 import 'package:primal/compiler/models/location.dart';
 
 class RuntimeError extends GenericError {
-  const RuntimeError(super.message);
+  const RuntimeError(String message) : super('Runtime error', message);
 }
 
 class InvalidArgumentTypesError extends RuntimeError {

@@ -1,7 +1,7 @@
 import 'package:primal/compiler/errors/generic_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
 
-class SyntacticError extends GenericError {
+class SyntacticError extends CompilationError {
   const SyntacticError(super.message);
 }
 

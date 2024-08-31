@@ -2,7 +2,7 @@ import 'package:primal/compiler/errors/generic_error.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class SemanticError extends GenericError {
+class SemanticError extends CompilationError {
   const SemanticError(super.message);
 }
 
@@ -30,14 +30,14 @@ class UndefinedIdentifiersError extends SemanticError {
   }) : super('Undefined identifier "$identifier" at $location');
 }
 
-class UndefinedFunctionError extends GenericError {
+class UndefinedFunctionError extends SemanticError {
   const UndefinedFunctionError({
     required String function,
     required Location location,
   }) : super('Undefined function "$function" at $location');
 }
 
-class InvalidNumberOfArgumentsError extends GenericError {
+class InvalidNumberOfArgumentsError extends SemanticError {
   const InvalidNumberOfArgumentsError({
     required String function,
     required Location location,

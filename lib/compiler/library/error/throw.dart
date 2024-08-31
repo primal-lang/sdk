@@ -1,4 +1,4 @@
-import 'package:primal/compiler/errors/generic_error.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -23,7 +23,7 @@ class Throw extends NativeFunctionPrototype {
   }
 }
 
-class CustomError extends GenericError {
+class CustomError extends RuntimeError {
   final Reducible code;
 
   const CustomError(this.code, super.message);
