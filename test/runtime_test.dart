@@ -921,6 +921,11 @@ void main() {
       final Runtime runtime = getRuntime('main = str.reverse("Hello")');
       checkResult(runtime, '"olleH"');
     });
+
+    test('str.bytes', () {
+      final Runtime runtime = getRuntime('main = str.bytes("Hello")');
+      checkResult(runtime, [72, 101, 108, 108, 111]);
+    });
   });
 
   group('List', () {
