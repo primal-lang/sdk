@@ -1058,6 +1058,12 @@ void main() {
       final Runtime runtime = getRuntime('main = list.indexOf([1, 2, 3], 2)');
       checkResult(runtime, 1);
     });
+
+    test('list.swap', () {
+      final Runtime runtime =
+          getRuntime('main = list.swap([1, 2, 3, 4, 5], 1, 3)');
+      checkResult(runtime, [1, 4, 3, 2, 5]);
+    });
   });
 
   group('To', () {

@@ -1,17 +1,17 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class ListIndexOf extends NativeFunctionPrototype {
-  ListIndexOf()
+class ListSwap extends NativeFunctionPrototype {
+  ListSwap()
       : super(
-          name: 'list.indexOf',
+          name: 'list.swap',
           parameters: [
             Parameter.list('a'),
-            Parameter.any('b'),
+            Parameter.number('b'),
+            Parameter.number('c'),
           ],
         );
 
@@ -19,19 +19,28 @@ class ListIndexOf extends NativeFunctionPrototype {
   Reducible substitute(Scope<Reducible> arguments) {
     final Reducible a = arguments.get('a').reduce();
     final Reducible b = arguments.get('b').reduce();
+    final Reducible c = arguments.get('c').reduce();
 
-    if (a is ListReducibleValue) {
-      final CompEq eq = CompEq();
+    if ((a is ListReducibleValue) &&
+        (b is NumberReducibleValue) &&
+        (c is NumberReducibleValue)) {
+      final List<Reducible> result = [];
+      final Reducible valueAtB = a.value[b.value.toInt()];
+      final Reducible valueAtC = a.value[c.value.toInt()];
 
       for (int i = 0; i < a.value.length; i++) {
-        final Reducible comparison = eq.compare(a.value[i].reduce(), b);
+        final Reducible element = a.value[i];
 
-        if (comparison is BooleanReducibleValue && comparison.value) {
-          return NumberReducibleValue(i);
+        if (i == b.value.toInt()) {
+          result.add(valueAtC);
+        } else if (i == c.value.toInt()) {
+          result.add(valueAtB);
+        } else {
+          result.add(element);
         }
       }
 
-      return const NumberReducibleValue(-1);
+      return ListReducibleValue(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
