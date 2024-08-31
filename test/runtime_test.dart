@@ -611,6 +611,16 @@ void main() {
           getRuntime('main = num.asDegrees(3.141592653589793)');
       checkResult(runtime, 180.0);
     });
+
+    test('num.infinity 1', () {
+      final Runtime runtime = getRuntime('main = num.infinity()');
+      checkResult(runtime, double.infinity);
+    });
+
+    test('num.infinity 2', () {
+      final Runtime runtime = getRuntime('main = is.infinite(num.infinity())');
+      checkResult(runtime, true);
+    });
   });
 
   group('Logic', () {
