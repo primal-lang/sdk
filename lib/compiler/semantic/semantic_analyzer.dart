@@ -109,6 +109,7 @@ class SemanticAnalyzer
   }) {
     for (final CustomFunctionPrototype function in customFunctions) {
       final Set<String> usedParameters = {};
+
       checkNode(
         node: function.node,
         availableParameters: function.parameters.map((e) => e.name).toList(),
@@ -153,13 +154,11 @@ class SemanticAnalyzer
           function: node.name,
           location: node.location,
         );
-      } else {
-        if (function.parameters.length != node.arguments.length) {
-          throw InvalidNumberOfArgumentsError(
-            function: node.name,
-            location: node.location,
-          );
-        }
+      } else if (function.parameters.length != node.arguments.length) {
+        throw InvalidNumberOfArgumentsError(
+          function: node.name,
+          location: node.location,
+        );
       }
 
       for (final Node node in node.arguments) {
