@@ -1,7 +1,7 @@
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/scanner/character.dart';
-import 'package:primal/compiler/scanner/scanner.dart';
+import 'package:primal/compiler/scanner/scanner_analyzer.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
