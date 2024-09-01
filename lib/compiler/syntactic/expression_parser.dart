@@ -228,7 +228,7 @@ class ExpressionParser {
 
     return ListExpression(
       location: token.location,
-      arguments: arguments,
+      elements: arguments,
     );
   }
 

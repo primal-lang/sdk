@@ -57,18 +57,12 @@ class StringExpression extends LiteralExpression<String> {
 }
 
 class ListExpression extends LiteralExpression<List<Expression>> {
-  final List<Expression> arguments;
+  final List<Expression> elements;
 
   ListExpression({
-    required Location location,
-    required this.arguments,
-  }) : super(
-          location: location,
-          value: arguments,
-        );
-
-  @override
-  String toString() => value.toString();
+    required super.location,
+    required this.elements,
+  }) : super(value: elements);
 
   @override
   Node toNode() => ListNode(value.map((e) => e.toNode()).toList());
