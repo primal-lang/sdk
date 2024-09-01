@@ -52,20 +52,16 @@ class ListNode extends LiteralNode<List<Node>> {
   Type get type => const ListType();
 }
 
-class FreeVariableNode extends Node {
+class BoundedVariableNode extends Node {
   final String value;
 
-  const FreeVariableNode(this.value);
+  const BoundedVariableNode(this.value);
 
   @override
   Type get type => const AnyType();
 
   @override
   String toString() => value;
-}
-
-class BoundedVariableNode extends FreeVariableNode {
-  const BoundedVariableNode(super.value);
 }
 
 class CallNode extends Node {
@@ -83,15 +79,12 @@ class CallNode extends Node {
 
     if (callee is FunctionNode) {
       return callee.substitute(arguments).evaluate();
-    } else if (callee is FreeVariableNode) {
+    } else if (callee is BoundedVariableNode) {
       final FunctionPrototype prototype = Runtime.SCOPE
           .get(callee.value); // TODO(momo): do not use global scope
       final FunctionNode function = prototype.toNode();
 
       return function.substitute(arguments).evaluate();
-    } else if (callee is BoundedVariableNode) {
-      throw Exception(
-          'Handle bound variable node callee: $callee'); // TODO(momo): handle
     } else {
       throw Exception(
           'Cannot apply function to: $callee'); // TODO(momo): handle

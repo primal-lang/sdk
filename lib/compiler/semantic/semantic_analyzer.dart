@@ -143,7 +143,7 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
   }) {
-    if (node is FreeVariableNode) {
+    if (node is BoundedVariableNode) {
       return checkVariableIdentifier(
         node: node,
         availableParameters: availableParameters,
@@ -153,7 +153,7 @@ class SemanticAnalyzer
     } else if (node is CallNode) {
       Node callee = node.callee;
 
-      if (callee is FreeVariableNode) {
+      if (callee is BoundedVariableNode) {
         callee = checkCalleeIdentifier(
           node: node,
           callee: callee,
@@ -191,7 +191,7 @@ class SemanticAnalyzer
   }
 
   Node checkVariableIdentifier({
-    required FreeVariableNode node,
+    required BoundedVariableNode node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
@@ -201,6 +201,9 @@ class SemanticAnalyzer
 
       return BoundedVariableNode(node.value);
     } else if (allFunctions.any((f) => f.name == node.value)) {
+      final FunctionPrototype function =
+          allFunctions.firstWhere((f) => f.name == node.value);
+
       return node;
     } else {
       throw UndefinedIdentifierError(node.value);
@@ -209,7 +212,7 @@ class SemanticAnalyzer
 
   Node checkCalleeIdentifier({
     required CallNode node,
-    required FreeVariableNode callee,
+    required BoundedVariableNode callee,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
@@ -219,7 +222,7 @@ class SemanticAnalyzer
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
 
-      return BoundedVariableNode(functionName);
+      return BoundedVariableNodex(functionName);
     } else if (allFunctions.any((f) => f.name == functionName)) {
       final FunctionPrototype function =
           allFunctions.firstWhere((f) => f.name == functionName);
