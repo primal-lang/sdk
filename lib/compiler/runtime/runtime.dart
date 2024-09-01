@@ -23,13 +23,8 @@ class Runtime {
     return evaluate(expression);
   }
 
-  String evaluate(Expression expression) {
-    /*final Node result = function.substitute(const Scope()).evaluate();
-
-    return fullReduce(result).toString();*/
-
-    return '';
-  }
+  String evaluate(Expression expression) =>
+      fullReduce(expression.toNode().evaluate()).toString();
 
   Node fullReduce(Node node) {
     if (node is ListNode) {
