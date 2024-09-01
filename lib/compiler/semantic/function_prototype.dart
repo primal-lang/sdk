@@ -35,7 +35,7 @@ class CustomFunctionPrototype extends FunctionPrototype {
       );
 
   @override
-  Node substitute(Scope<Node> arguments) => node.substitute(arguments);
+  Node substitute(Scope<Node> arguments) => node;
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {

@@ -37,6 +37,13 @@ class FunctionCallType extends Type {
   String toString() => 'FunctionCall';
 }
 
+class FunctionType extends Type {
+  const FunctionType();
+
+  @override
+  String toString() => 'Function';
+}
+
 class AnyType extends Type {
   const AnyType();
 

@@ -1,14 +1,12 @@
+import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
-import 'package:primal/compiler/runtime/scope.dart';
 
 abstract class Node {
   const Node();
 
   Type get type;
 
-  Node substitute(Scope<Node> arguments);
-
-  Node reduce();
+  Node reduce() => this;
 }
 
 abstract class LiteralNode<T> implements Node {
@@ -18,9 +16,6 @@ abstract class LiteralNode<T> implements Node {
 
   @override
   String toString() => value.toString();
-
-  @override
-  Node substitute(Scope<Node> arguments) => this;
 
   @override
   Node reduce() => this;
@@ -52,22 +47,12 @@ class ListNode extends LiteralNode<List<Node>> {
 
   @override
   Type get type => const ListType();
-
-  @override
-  Node substitute(Scope<Node> arguments) =>
-      ListNode(value.map((e) => e.substitute(arguments)).toList());
 }
 
 class IdentifierNode extends Node {
   final String value;
 
   const IdentifierNode(this.value);
-
-  @override
-  Node substitute(Scope<Node> arguments) => arguments.get(value);
-
-  @override
-  Node reduce() => this;
 
   @override
   Type get type => const AnyType();
@@ -94,29 +79,24 @@ class CallNode extends Node {
   });
 
   @override
-  Node substitute(Scope<Node> arguments) => CallNode(
-        callee: callee,
-        arguments: this.arguments.map((e) => e.substitute(arguments)).toList(),
-      );
-
-  @override
-  Node reduce() {
-    /*final FunctionPrototype function = Runtime.SCOPE.get(name);
-    final Scope<Node> newScope = Scope.from(
-      functionName: name,
-      parameters: function.parameters,
-      arguments: arguments,
-      location: location,
-    );
-
-    return function.substitute(newScope).reduce();*/
-
-    return this;
-  }
-
-  @override
   Type get type => const FunctionCallType();
 
   @override
   String toString() => '$callee(${arguments.join(', ')})';
+}
+
+class FunctionNode extends Node {
+  final List<Parameter> parameters;
+  final Node body;
+
+  const FunctionNode({
+    required this.parameters,
+    required this.body,
+  });
+
+  @override
+  Type get type => const FunctionType();
+
+  @override
+  String toString() => '{${parameters.join(', ')} = $body}';
 }
