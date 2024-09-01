@@ -30,12 +30,6 @@ class CustomFunctionPrototype extends FunctionPrototype {
     required this.node,
   });
 
-  CustomFunctionPrototype withNode(Node node) => CustomFunctionPrototype(
-        name: name,
-        parameters: parameters,
-        node: node,
-      );
-
   @override
   Node substitute(Scope<Node> arguments) => node;
 
@@ -47,12 +41,6 @@ class CustomFunctionPrototype extends FunctionPrototype {
       );
 }
 
-class AnonymousFunctionPrototype extends CustomFunctionPrototype {
-  const AnonymousFunctionPrototype({
-    required super.node,
-  }) : super(name: '', parameters: const []);
-}
-
 abstract class NativeFunctionPrototype extends FunctionPrototype {
   const NativeFunctionPrototype({
     required super.name,
@@ -60,5 +48,9 @@ abstract class NativeFunctionPrototype extends FunctionPrototype {
   });
 
   @override
-  FunctionNode toNode() => throw UnimplementedError();
+  FunctionNode toNode() => FunctionNode(
+        name: name,
+        parameters: parameters,
+        body: const BooleanNode(true), // TODO(momo): implement
+      );
 }

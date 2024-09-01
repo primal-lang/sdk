@@ -131,7 +131,11 @@ class SemanticAnalyzer
         }
       }
 
-      result.add(function.withNode(node));
+      result.add(CustomFunctionPrototype(
+        name: function.name,
+        parameters: function.parameters,
+        node: node,
+      ));
     }
 
     return result;
