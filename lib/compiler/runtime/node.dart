@@ -70,12 +70,12 @@ class IdentifierNode extends Node {
     required this.location,
   });
 
-  BoundedVariableNode get asBounded => BoundedVariableNode(
+  IdentifierNode get asBounded => BoundedVariableNode(
         value: value,
         location: location,
       );
 
-  FreeVariableNode get asFree => FreeVariableNode(
+  IdentifierNode get asFree => FreeVariableNode(
         value: value,
         location: location,
       );
@@ -117,6 +117,12 @@ class CallNode extends Node {
     required this.arguments,
     required this.location,
   });
+
+  CallNode withArguments(List<Node> arguments) => CallNode(
+        name: name,
+        arguments: arguments,
+        location: location,
+      );
 
   @override
   Node substitute(Scope<Node> arguments) => CallNode(

@@ -176,16 +176,18 @@ class SemanticAnalyzer
         );
       }
 
+      final List<Node> newArguments = [];
+
       for (final Node node in node.arguments) {
-        checkNode(
+        newArguments.add(checkNode(
           node: node,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,
-        );
+        ));
       }
 
-      return node;
+      return node.withArguments(newArguments);
     } else {
       return node;
     }

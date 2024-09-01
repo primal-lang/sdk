@@ -64,4 +64,10 @@ void main() {
       expect(e, isA<InvalidNumberOfArgumentsError>());
     }
   });
+
+  test('Valid program', () {
+    final IntermediateCode code =
+        getIntermediateCode('foo(x) = x * 2\n\nmain = foo(5)');
+    expect(code.warnings.length, equals(0));
+  });
 }
