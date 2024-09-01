@@ -17,14 +17,14 @@ class ListIndexOf extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     if (a is ListNode) {
       final CompEq eq = CompEq();
 
       for (int i = 0; i < a.value.length; i++) {
-        final Node comparison = eq.compare(a.value[i].reduce(), b);
+        final Node comparison = eq.compare(a.value[i].evaluate(), b);
 
         if (comparison is BooleanNode && comparison.value) {
           return NumberNode(i);

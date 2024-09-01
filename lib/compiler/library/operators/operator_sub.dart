@@ -16,8 +16,8 @@ class OperatorSub extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     if ((a is NumberNode) && (b is NumberNode)) {
       return NumberNode(a.value - b.value);

@@ -16,8 +16,8 @@ class ListJoin extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     if ((a is ListNode) && (b is StringNode)) {
       return StringNode(a.value.join(b.value));

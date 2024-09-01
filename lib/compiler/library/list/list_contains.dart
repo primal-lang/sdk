@@ -17,14 +17,14 @@ class ListContains extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     if (a is ListNode) {
       final CompEq eq = CompEq();
 
       for (final Node element in a.value) {
-        final Node comparison = eq.compare(element.reduce(), b);
+        final Node comparison = eq.compare(element.evaluate(), b);
 
         if (comparison is BooleanNode && comparison.value) {
           return const BooleanNode(true);

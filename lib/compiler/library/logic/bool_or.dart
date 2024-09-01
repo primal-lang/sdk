@@ -16,8 +16,8 @@ class BoolOr extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     if ((a is BooleanNode) && (b is BooleanNode)) {
       return BooleanNode(a.value || b.value);

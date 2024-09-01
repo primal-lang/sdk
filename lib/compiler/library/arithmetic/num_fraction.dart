@@ -15,7 +15,7 @@ class NumFraction extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
+    final Node a = arguments.get('a').evaluate();
 
     if (a is NumberNode) {
       return NumberNode(a.value.abs() % 1);

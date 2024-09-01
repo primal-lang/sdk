@@ -16,8 +16,8 @@ class StrTake extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     if ((a is StringNode) && (b is NumberNode)) {
       return StringNode(a.value.substring(0, b.value.toInt()));

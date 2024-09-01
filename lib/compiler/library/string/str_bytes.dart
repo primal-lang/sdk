@@ -17,7 +17,7 @@ class StrBytes extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
+    final Node a = arguments.get('a').evaluate();
 
     if (a is StringNode) {
       final Uint8List bytes = Uint8List.fromList(utf8.encode(a.value));

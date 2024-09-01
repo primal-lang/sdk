@@ -17,7 +17,7 @@ class If extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
+    final Node a = arguments.get('a').evaluate();
     final Node b = arguments.get('b');
     final Node c = arguments.get('c');
 

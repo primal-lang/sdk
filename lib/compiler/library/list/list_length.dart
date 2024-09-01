@@ -15,7 +15,7 @@ class ListLength extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
+    final Node a = arguments.get('a').evaluate();
 
     if (a is ListNode) {
       return NumberNode(a.value.length);

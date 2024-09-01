@@ -57,5 +57,5 @@ String runtimeExecuteMainHelper(IntermediateCode code) {
 String runtimeReduceHelper(IntermediateCode code, Expression expression) {
   final Runtime runtime = Runtime(code);
 
-  return runtime.reduce(expression);
+  return runtime.evaluate(expression);
 }

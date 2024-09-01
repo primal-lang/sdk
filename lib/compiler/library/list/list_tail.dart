@@ -15,7 +15,7 @@ class ListTail extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
+    final Node a = arguments.get('a').evaluate();
 
     if (a is ListNode) {
       return ListNode(a.value.isNotEmpty ? a.value.sublist(1) : []);

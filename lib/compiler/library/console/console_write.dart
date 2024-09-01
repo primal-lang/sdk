@@ -16,7 +16,7 @@ class ConsoleWrite extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
+    final Node a = arguments.get('a').evaluate();
     PlatformInterface().outWrite(a.toString());
 
     return a;

@@ -15,7 +15,7 @@ class ToBoolean extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
+    final Node a = arguments.get('a').evaluate();
 
     if (a is StringNode) {
       return BooleanNode(a.value.trim().isNotEmpty);

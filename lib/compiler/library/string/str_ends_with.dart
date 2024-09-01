@@ -16,8 +16,8 @@ class StrEndsWith extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     if ((a is StringNode) && (b is StringNode)) {
       return BooleanNode(a.value.endsWith(b.value));

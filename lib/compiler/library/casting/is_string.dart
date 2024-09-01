@@ -14,7 +14,7 @@ class IsString extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
+    final Node a = arguments.get('a').evaluate();
 
     return BooleanNode(a is StringNode);
   }

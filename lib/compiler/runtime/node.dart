@@ -6,7 +6,7 @@ abstract class Node {
 
   Type get type;
 
-  Node reduce() => this;
+  Node evaluate() => this;
 }
 
 abstract class LiteralNode<T> implements Node {
@@ -18,7 +18,7 @@ abstract class LiteralNode<T> implements Node {
   String toString() => value.toString();
 
   @override
-  Node reduce() => this;
+  Node evaluate() => this;
 }
 
 class BooleanNode extends LiteralNode<bool> {

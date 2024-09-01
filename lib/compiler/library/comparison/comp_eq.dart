@@ -16,8 +16,8 @@ class CompEq extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     return compare(a, b);
   }
@@ -35,8 +35,8 @@ class CompEq extends NativeFunctionPrototype {
       } else {
         for (int i = 0; i < a.value.length; i++) {
           final Node comparison = compare(
-            a.value[i].reduce(),
-            b.value[i].reduce(),
+            a.value[i].evaluate(),
+            b.value[i].evaluate(),
           );
 
           if (comparison is BooleanNode && !comparison.value) {

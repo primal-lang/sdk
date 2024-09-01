@@ -19,7 +19,7 @@ class Try extends NativeFunctionPrototype {
     final Node b = arguments.get('b');
 
     try {
-      return a.reduce();
+      return a.evaluate();
     } catch (e) {
       return b;
     }

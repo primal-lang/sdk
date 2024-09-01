@@ -17,9 +17,9 @@ class StrReplace extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
-    final Node c = arguments.get('c').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
+    final Node c = arguments.get('c').evaluate();
 
     if ((a is StringNode) && (b is StringNode) && (c is StringNode)) {
       return StringNode(a.value.replaceAll(b.value, c.value));

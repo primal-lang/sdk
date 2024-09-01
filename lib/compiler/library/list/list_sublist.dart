@@ -17,9 +17,9 @@ class ListSublist extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
-    final Node c = arguments.get('c').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
+    final Node c = arguments.get('c').evaluate();
 
     if ((a is ListNode) && (b is NumberNode) && (c is NumberNode)) {
       return ListNode(

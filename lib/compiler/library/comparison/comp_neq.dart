@@ -16,8 +16,8 @@ class CompNeq extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
     final Node comparison = CompEq().compare(a, b);
 
     return comparison is BooleanNode

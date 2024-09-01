@@ -17,15 +17,15 @@ class ListRemove extends NativeFunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+    final Node a = arguments.get('a').evaluate();
+    final Node b = arguments.get('b').evaluate();
 
     if (a is ListNode) {
       final CompEq eq = CompEq();
       final List<Node> result = [];
 
       for (final Node element in a.value) {
-        final Node elementReduced = element.reduce();
+        final Node elementReduced = element.evaluate();
         final Node comparison = eq.compare(elementReduced, b);
 
         if (comparison is BooleanNode && !comparison.value) {

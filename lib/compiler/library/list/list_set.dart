@@ -18,7 +18,7 @@ class ListSet extends NativeFunctionPrototype {
   @override
   Node substitute(Scope<Node> arguments) {
     final Node a = arguments.get('a');
-    final Node b = arguments.get('b').reduce();
+    final Node b = arguments.get('b').evaluate();
     final Node c = arguments.get('c');
 
     if ((a is ListNode) && (b is NumberNode)) {
