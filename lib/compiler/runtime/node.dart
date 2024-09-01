@@ -79,17 +79,25 @@ class CallNode extends Node {
 
   @override
   Node evaluate() {
-    final Node callee = this.callee.evaluate();
+    final FunctionNode function = getFunctionNode();
+
+    return function.substitute(arguments).evaluate();
+  }
+
+  FunctionNode getFunctionNode() {
+    final Node callee = this.callee;
 
     if (callee is FunctionNode) {
-      return callee.substitute(arguments).evaluate();
+      return callee;
     } else if (callee is FreeVariableNode) {
       final FunctionPrototype prototype = Runtime.SCOPE
           .get(callee.value); // TODO(momo): do not use global scope
+      // TODO(momo): make scope return a function node directly
       final FunctionNode function = prototype.toNode();
 
-      return function.substitute(arguments).evaluate();
+      return function;
     } else if (callee is BoundedVariableNode) {
+      // TODO(momo): there can be a bound variable node here?
       throw Exception(
           'Handle bound variable node callee: $callee'); // TODO(momo): handle
     } else {
