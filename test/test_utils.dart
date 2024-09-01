@@ -60,8 +60,7 @@ void checkExpressions(Expression actual, Expression expected) {
   expect(actual.runtimeType, equals(expected.runtimeType));
   checkLocations(actual.location, expected.location);
 
-  if ((actual is ListLiteralExpression) &&
-      (expected is ListLiteralExpression)) {
+  if ((actual is ListExpression) && (expected is ListExpression)) {
     expect(actual.arguments.length, equals(expected.arguments.length));
 
     for (int i = 0; i < actual.arguments.length; i++) {

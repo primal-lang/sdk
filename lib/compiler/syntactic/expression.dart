@@ -20,8 +20,8 @@ abstract class LiteralExpression<T> extends Expression {
   String toString() => value.toString();
 }
 
-class BooleanLiteralExpression extends LiteralExpression<bool> {
-  BooleanLiteralExpression(Token token)
+class BooleanExpression extends LiteralExpression<bool> {
+  BooleanExpression(Token token)
       : super(
           location: token.location,
           value: token.value,
@@ -31,8 +31,8 @@ class BooleanLiteralExpression extends LiteralExpression<bool> {
   Node toNode() => BooleanNode(value);
 }
 
-class NumberLiteralExpression extends LiteralExpression<num> {
-  NumberLiteralExpression(Token token)
+class NumberExpression extends LiteralExpression<num> {
+  NumberExpression(Token token)
       : super(
           location: token.location,
           value: token.value,
@@ -42,8 +42,8 @@ class NumberLiteralExpression extends LiteralExpression<num> {
   Node toNode() => NumberNode(value);
 }
 
-class StringLiteralExpression extends LiteralExpression<String> {
-  StringLiteralExpression(Token token)
+class StringExpression extends LiteralExpression<String> {
+  StringExpression(Token token)
       : super(
           location: token.location,
           value: token.value,
@@ -56,10 +56,10 @@ class StringLiteralExpression extends LiteralExpression<String> {
   Node toNode() => StringNode(value);
 }
 
-class ListLiteralExpression extends LiteralExpression<List<Expression>> {
+class ListExpression extends LiteralExpression<List<Expression>> {
   final List<Expression> arguments;
 
-  ListLiteralExpression({
+  ListExpression({
     required Location location,
     required this.arguments,
   }) : super(

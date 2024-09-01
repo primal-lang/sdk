@@ -68,8 +68,7 @@ void main() {
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression:
-              StringLiteralExpression(stringToken('Hello, world!', 1, 12)),
+          expression: StringExpression(stringToken('Hello, world!', 1, 12)),
         ),
       ]);
     });
@@ -81,8 +80,7 @@ void main() {
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression:
-              StringLiteralExpression(stringToken('Goodbye, world!', 1, 12)),
+          expression: StringExpression(stringToken('Goodbye, world!', 1, 12)),
         ),
       ]);
     });
@@ -93,7 +91,7 @@ void main() {
         FunctionDefinition(
           name: 'pi',
           parameters: [],
-          expression: NumberLiteralExpression(numberToken(3.14, 1, 6)),
+          expression: NumberExpression(numberToken(3.14, 1, 6)),
         ),
       ]);
     });
@@ -104,7 +102,7 @@ void main() {
         FunctionDefinition(
           name: 'enabled',
           parameters: [],
-          expression: BooleanLiteralExpression(booleanToken(true, 1, 11)),
+          expression: BooleanExpression(booleanToken(true, 1, 11)),
         ),
       ]);
     });
@@ -116,12 +114,12 @@ void main() {
         FunctionDefinition(
           name: 'list',
           parameters: [],
-          expression: ListLiteralExpression(
+          expression: ListExpression(
             location: const Location(row: 1, column: 8),
             arguments: [
-              NumberLiteralExpression(numberToken(1, 1, 9)),
-              NumberLiteralExpression(numberToken(2, 1, 12)),
-              NumberLiteralExpression(numberToken(3, 1, 15)),
+              NumberExpression(numberToken(1, 1, 9)),
+              NumberExpression(numberToken(2, 1, 12)),
+              NumberExpression(numberToken(3, 1, 15)),
             ],
           ),
         ),
@@ -138,15 +136,15 @@ void main() {
           expression: CallExpression(
             callee: IdentifierExpression(identifierToken('element.at', 1, 17)),
             arguments: [
-              ListLiteralExpression(
+              ListExpression(
                 location: const Location(row: 1, column: 8),
                 arguments: [
-                  NumberLiteralExpression(numberToken(1, 1, 9)),
-                  NumberLiteralExpression(numberToken(2, 1, 12)),
-                  NumberLiteralExpression(numberToken(3, 1, 15)),
+                  NumberExpression(numberToken(1, 1, 9)),
+                  NumberExpression(numberToken(2, 1, 12)),
+                  NumberExpression(numberToken(3, 1, 15)),
                 ],
               ),
-              NumberLiteralExpression(numberToken(1, 1, 18)),
+              NumberExpression(numberToken(1, 1, 18)),
             ],
           ),
         ),
@@ -159,7 +157,7 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: [],
-          expression: BooleanLiteralExpression(booleanToken(true, 1, 8)),
+          expression: BooleanExpression(booleanToken(true, 1, 8)),
         ),
       ]);
     });
@@ -170,7 +168,7 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: ['a'],
-          expression: BooleanLiteralExpression(booleanToken(true, 1, 11)),
+          expression: BooleanExpression(booleanToken(true, 1, 11)),
         ),
       ]);
     });
@@ -182,7 +180,7 @@ void main() {
         FunctionDefinition(
           name: 'test',
           parameters: ['a', 'b', 'c'],
-          expression: BooleanLiteralExpression(booleanToken(true, 1, 17)),
+          expression: BooleanExpression(booleanToken(true, 1, 17)),
         ),
       ]);
     });
@@ -201,10 +199,10 @@ void main() {
                 callee: IdentifierExpression(identifierToken('%', 1, 16)),
                 arguments: [
                   IdentifierExpression(identifierToken('x', 1, 14)),
-                  NumberLiteralExpression(numberToken(2, 1, 18)),
+                  NumberExpression(numberToken(2, 1, 18)),
                 ],
               ),
-              NumberLiteralExpression(numberToken(0, 1, 24)),
+              NumberExpression(numberToken(0, 1, 24)),
             ],
           ),
         ),
@@ -247,10 +245,10 @@ void main() {
                 callee: IdentifierExpression(identifierToken('==', 1, 22)),
                 arguments: [
                   IdentifierExpression(identifierToken('n', 1, 20)),
-                  NumberLiteralExpression(numberToken(0, 1, 25)),
+                  NumberExpression(numberToken(0, 1, 25)),
                 ],
               ),
-              NumberLiteralExpression(numberToken(1, 1, 28)),
+              NumberExpression(numberToken(1, 1, 28)),
               CallExpression(
                 callee: IdentifierExpression(identifierToken('*', 1, 37)),
                 arguments: [
@@ -264,7 +262,7 @@ void main() {
                             IdentifierExpression(identifierToken('-', 1, 51)),
                         arguments: [
                           IdentifierExpression(identifierToken('n', 1, 49)),
-                          NumberLiteralExpression(numberToken(1, 1, 53)),
+                          NumberExpression(numberToken(1, 1, 53)),
                         ],
                       ),
                     ],

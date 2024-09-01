@@ -130,7 +130,7 @@ class ExpressionParser {
       if (operator.value == '-') {
         return CallExpression.fromBinaryOperation(
           operator: operator,
-          left: NumberLiteralExpression(
+          left: NumberExpression(
             NumberToken(Lexeme(value: '0', location: operator.location)),
           ),
           right: right,
@@ -160,8 +160,8 @@ class ExpressionParser {
     } else if (match([OpenBracketToken])) {
       if ((exp is IdentifierExpression) ||
           (exp is CallExpression) ||
-          (exp is StringLiteralExpression) ||
-          (exp is ListLiteralExpression)) {
+          (exp is StringExpression) ||
+          (exp is ListExpression)) {
         final Token operator = IdentifierToken(Lexeme(
           value: 'element.at',
           location: previous.location,
@@ -197,11 +197,11 @@ class ExpressionParser {
 
   Expression primary() {
     if (match([BooleanToken])) {
-      return BooleanLiteralExpression(previous);
+      return BooleanExpression(previous);
     } else if (match([NumberToken])) {
-      return NumberLiteralExpression(previous);
+      return NumberExpression(previous);
     } else if (match([StringToken])) {
-      return StringLiteralExpression(previous);
+      return StringExpression(previous);
     } else if (match([IdentifierToken])) {
       return IdentifierExpression(previous);
     } else if (match([OpenParenthesisToken])) {
@@ -226,7 +226,7 @@ class ExpressionParser {
 
     consume(CloseBracketToken, ']');
 
-    return ListLiteralExpression(
+    return ListExpression(
       location: token.location,
       arguments: arguments,
     );
