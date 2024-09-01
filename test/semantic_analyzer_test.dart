@@ -27,7 +27,7 @@ void main() {
       getIntermediateCode('isBiggerThan10 = z > 10');
       fail('Should fail');
     } catch (e) {
-      expect(e, isA<UndefinedIdentifiersError>());
+      expect(e, isA<UndefinedIdentifierError>());
     }
   });
 
@@ -36,7 +36,7 @@ void main() {
       getIntermediateCode('isBiggerThan10 = x');
       fail('Should fail');
     } catch (e) {
-      expect(e, isA<UndefinedIdentifiersError>());
+      expect(e, isA<UndefinedIdentifierError>());
     }
   });
 

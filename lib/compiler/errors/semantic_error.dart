@@ -1,5 +1,4 @@
 import 'package:primal/compiler/errors/generic_error.dart';
-import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
 class SemanticError extends CompilationError {
@@ -23,24 +22,17 @@ class DuplicatedParameterError extends SemanticError {
             'Duplicated parameter "$parameter" in function "$function(${parameters.join(', ')})"');
 }
 
-class UndefinedIdentifiersError extends SemanticError {
-  const UndefinedIdentifiersError({
-    required String identifier,
-    required Location location,
-  }) : super('Undefined identifier "$identifier" at $location');
+class UndefinedIdentifierError extends SemanticError {
+  const UndefinedIdentifierError(String identifier)
+      : super('Undefined identifier "$identifier"');
 }
 
 class UndefinedFunctionError extends SemanticError {
-  const UndefinedFunctionError({
-    required String function,
-    required Location location,
-  }) : super('Undefined function "$function" at $location');
+  const UndefinedFunctionError(String function)
+      : super('Undefined function "$function"');
 }
 
 class InvalidNumberOfArgumentsError extends SemanticError {
-  const InvalidNumberOfArgumentsError({
-    required String function,
-    required Location location,
-  }) : super(
-            'Invalid number of arguments calling function "$function" at $location');
+  const InvalidNumberOfArgumentsError(String function)
+      : super('Invalid number of arguments calling function "$function"');
 }

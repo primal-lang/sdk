@@ -1,8 +1,5 @@
-import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/type.dart';
-import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
 abstract class Node {
   const Node();
@@ -63,22 +60,12 @@ class ListNode extends LiteralNode<List<Node>> {
 
 class IdentifierNode extends Node {
   final String value;
-  final Location location;
 
-  const IdentifierNode({
-    required this.value,
-    required this.location,
-  });
+  const IdentifierNode(this.value);
 
-  IdentifierNode get asBounded => BoundedVariableNode(
-        value: value,
-        location: location,
-      );
+  IdentifierNode get asBounded => BoundedVariableNode(value);
 
-  IdentifierNode get asFree => FreeVariableNode(
-        value: value,
-        location: location,
-      );
+  IdentifierNode get asFree => FreeVariableNode(value);
 
   @override
   Node substitute(Scope<Node> arguments) => arguments.get(value);
@@ -94,46 +81,36 @@ class IdentifierNode extends Node {
 }
 
 class BoundedVariableNode extends IdentifierNode {
-  const BoundedVariableNode({
-    required super.value,
-    required super.location,
-  });
+  const BoundedVariableNode(super.value);
 }
 
 class FreeVariableNode extends IdentifierNode {
-  const FreeVariableNode({
-    required super.value,
-    required super.location,
-  });
+  const FreeVariableNode(super.value);
 }
 
 class CallNode extends Node {
-  final String name;
+  final Node callee;
   final List<Node> arguments;
-  final Location location;
 
   const CallNode({
-    required this.name,
+    required this.callee,
     required this.arguments,
-    required this.location,
   });
 
   CallNode withArguments(List<Node> arguments) => CallNode(
-        name: name,
+        callee: callee,
         arguments: arguments,
-        location: location,
       );
 
   @override
   Node substitute(Scope<Node> arguments) => CallNode(
-        name: name,
+        callee: callee,
         arguments: this.arguments.map((e) => e.substitute(arguments)).toList(),
-        location: location,
       );
 
   @override
   Node reduce() {
-    final FunctionPrototype function = Runtime.SCOPE.get(name);
+    /*final FunctionPrototype function = Runtime.SCOPE.get(name);
     final Scope<Node> newScope = Scope.from(
       functionName: name,
       parameters: function.parameters,
@@ -141,12 +118,14 @@ class CallNode extends Node {
       location: location,
     );
 
-    return function.substitute(newScope).reduce();
+    return function.substitute(newScope).reduce();*/
+
+    return this;
   }
 
   @override
   Type get type => const FunctionType();
 
   @override
-  String toString() => '$name(${arguments.join(', ')})';
+  String toString() => '$callee(${arguments.join(', ')})';
 }

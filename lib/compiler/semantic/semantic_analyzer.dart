@@ -148,49 +148,42 @@ class SemanticAnalyzer
         usedParameters.add(node.value);
 
         return node.asBounded;
+      } else if (allFunctions.any((f) => f.name == node.value)) {
+        return node.asFree;
       } else {
-        if (allFunctions.any((f) => f.name == node.value)) {
-          return node.asFree;
-        } else {
-          throw UndefinedIdentifiersError(
-            identifier: node.value,
-            location: node.location,
-          );
-        }
+        throw UndefinedIdentifierError(node.value);
       }
     } else if (node is CallNode) {
-      final FunctionPrototype? function = getFunctionByName(
-        name: node.name,
-        functions: allFunctions,
-      );
+      final Node callee = node.callee;
 
-      if (function == null) {
-        throw UndefinedFunctionError(
-          function: node.name,
-          location: node.location,
+      if (callee is IdentifierNode) {
+        final FunctionPrototype? function = getFunctionByName(
+          name: callee.value,
+          functions: allFunctions,
         );
-      } else if (function.parameters.length != node.arguments.length) {
-        throw InvalidNumberOfArgumentsError(
-          function: node.name,
-          location: node.location,
-        );
+
+        if (function == null) {
+          throw UndefinedFunctionError(callee.value);
+        } else if (function.parameters.length != node.arguments.length) {
+          throw InvalidNumberOfArgumentsError(callee.value);
+        }
+
+        final List<Node> newArguments = [];
+
+        for (final Node node in node.arguments) {
+          newArguments.add(checkNode(
+            node: node,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            allFunctions: allFunctions,
+          ));
+        }
+
+        return node.withArguments(newArguments);
       }
-
-      final List<Node> newArguments = [];
-
-      for (final Node node in node.arguments) {
-        newArguments.add(checkNode(
-          node: node,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        ));
-      }
-
-      return node.withArguments(newArguments);
-    } else {
-      return node;
     }
+
+    return node;
   }
 
   FunctionPrototype? getFunctionByName({
