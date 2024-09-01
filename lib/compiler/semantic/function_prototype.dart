@@ -28,6 +28,12 @@ class CustomFunctionPrototype extends FunctionPrototype {
     required this.node,
   });
 
+  CustomFunctionPrototype withNode(Node node) => CustomFunctionPrototype(
+        name: name,
+        parameters: parameters,
+        node: node,
+      );
+
   @override
   Node substitute(Scope<Node> arguments) => node.substitute(arguments);
 }

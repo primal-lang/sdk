@@ -28,14 +28,17 @@ class SemanticAnalyzer
     checkDuplicatedFunctions(allFunctions);
     checkDuplicatedParameters(allFunctions);
 
-    checkNodes(
+    final List<CustomFunctionPrototype> checkedFunctions = checkCustomFunctions(
       customFunctions: customFunctions,
       allFunctions: allFunctions,
       warnings: warnings,
     );
 
     return IntermediateCode(
-      functions: Mapper.toMap(allFunctions),
+      functions: Mapper.toMap([
+        ...checkedFunctions,
+        ...StandardLibrary.get(),
+      ]),
       warnings: warnings,
     );
   }
@@ -102,15 +105,17 @@ class SemanticAnalyzer
     return result;
   }
 
-  void checkNodes({
+  List<CustomFunctionPrototype> checkCustomFunctions({
     required List<CustomFunctionPrototype> customFunctions,
     required List<FunctionPrototype> allFunctions,
     required List<GenericWarning> warnings,
   }) {
+    final List<CustomFunctionPrototype> result = [];
+
     for (final CustomFunctionPrototype function in customFunctions) {
       final Set<String> usedParameters = {};
 
-      checkNode(
+      final Node node = checkNode(
         node: function.node,
         availableParameters: function.parameters.map((e) => e.name).toList(),
         usedParameters: usedParameters,
@@ -125,10 +130,14 @@ class SemanticAnalyzer
           ));
         }
       }
+
+      result.add(function.withNode(node));
     }
+
+    return result;
   }
 
-  void checkNode({
+  Node checkNode({
     required Node node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
@@ -137,11 +146,17 @@ class SemanticAnalyzer
     if (node is IdentifierNode) {
       if (availableParameters.contains(node.value)) {
         usedParameters.add(node.value);
-      } else if (!allFunctions.any((f) => f.name == node.value)) {
-        throw UndefinedIdentifiersError(
-          identifier: node.value,
-          location: node.location,
-        );
+
+        return node.asBounded;
+      } else {
+        if (allFunctions.any((f) => f.name == node.value)) {
+          return node.asFree;
+        } else {
+          throw UndefinedIdentifiersError(
+            identifier: node.value,
+            location: node.location,
+          );
+        }
       }
     } else if (node is CallNode) {
       final FunctionPrototype? function = getFunctionByName(
@@ -169,6 +184,10 @@ class SemanticAnalyzer
           allFunctions: allFunctions,
         );
       }
+
+      return node;
+    } else {
+      return node;
     }
   }
 

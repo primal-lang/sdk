@@ -70,6 +70,16 @@ class IdentifierNode extends Node {
     required this.location,
   });
 
+  BoundedVariableNode get asBounded => BoundedVariableNode(
+        value: value,
+        location: location,
+      );
+
+  FreeVariableNode get asFree => FreeVariableNode(
+        value: value,
+        location: location,
+      );
+
   @override
   Node substitute(Scope<Node> arguments) => arguments.get(value);
 
@@ -81,6 +91,20 @@ class IdentifierNode extends Node {
 
   @override
   String toString() => value;
+}
+
+class BoundedVariableNode extends IdentifierNode {
+  const BoundedVariableNode({
+    required super.value,
+    required super.location,
+  });
+}
+
+class FreeVariableNode extends IdentifierNode {
+  const FreeVariableNode({
+    required super.value,
+    required super.location,
+  });
 }
 
 class CallNode extends Node {
