@@ -1,5 +1,7 @@
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
+import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/semantic/function_prototype.dart';
 
 abstract class Node {
   const Node();
@@ -73,6 +75,28 @@ class CallNode extends Node {
     required this.callee,
     required this.arguments,
   });
+
+  @override
+  Node evaluate() {
+    final Node callee = this.callee.evaluate();
+
+    if (callee is FunctionNode) {
+      final List<Node> arguments =
+          this.arguments.map((e) => e.evaluate()).toList();
+      print(arguments);
+
+      return callee.body.evaluate();
+    } else if (callee is FreeVariableNode) {
+      final FunctionPrototype prototype = Runtime.SCOPE.get(callee.value);
+      print(prototype);
+
+      throw Exception('Cannot call $callee'); // TODO(momo): handle
+    } else if (callee is BoundedVariableNode) {
+      throw Exception('Cannot call $callee'); // TODO(momo): handle
+    } else {
+      throw Exception('Cannot call $callee'); // TODO(momo): handle
+    }
+  }
 
   @override
   Type get type => const FunctionCallType();
