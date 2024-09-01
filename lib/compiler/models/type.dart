@@ -30,11 +30,11 @@ class ListType extends Type {
   String toString() => 'List';
 }
 
-class FunctionType extends Type {
-  const FunctionType();
+class FunctionCallType extends Type {
+  const FunctionCallType();
 
   @override
-  String toString() => 'Function';
+  String toString() => 'FunctionCall';
 }
 
 class AnyType extends Type {

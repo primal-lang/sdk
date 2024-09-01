@@ -181,7 +181,10 @@ class SemanticAnalyzer
         ));
       }
 
-      return node.withCallee(callee).withArguments(newArguments);
+      return CallNode(
+        callee: callee,
+        arguments: newArguments,
+      );
     }
 
     return node;
@@ -196,9 +199,9 @@ class SemanticAnalyzer
     if (availableParameters.contains(node.value)) {
       usedParameters.add(node.value);
 
-      return node.asBounded;
+      return BoundedVariableNode(node.value);
     } else if (allFunctions.any((f) => f.name == node.value)) {
-      return node.asFree;
+      return FreeVariableNode(node.value);
     } else {
       throw UndefinedIdentifierError(node.value);
     }
@@ -216,7 +219,7 @@ class SemanticAnalyzer
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
 
-      return callee.asBounded;
+      return BoundedVariableNode(callee.value);
     } else if (allFunctions.any((f) => f.name == functionName)) {
       final FunctionPrototype function =
           allFunctions.firstWhere((f) => f.name == functionName);
@@ -225,7 +228,7 @@ class SemanticAnalyzer
         throw InvalidNumberOfArgumentsError(functionName);
       }
 
-      return callee.asFree;
+      return FreeVariableNode(callee.value);
     } else {
       throw UndefinedFunctionError(functionName);
     }

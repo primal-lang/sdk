@@ -63,10 +63,6 @@ class IdentifierNode extends Node {
 
   const IdentifierNode(this.value);
 
-  IdentifierNode get asBounded => BoundedVariableNode(value);
-
-  IdentifierNode get asFree => FreeVariableNode(value);
-
   @override
   Node substitute(Scope<Node> arguments) => arguments.get(value);
 
@@ -97,16 +93,6 @@ class CallNode extends Node {
     required this.arguments,
   });
 
-  CallNode withCallee(Node callee) => CallNode(
-        callee: callee,
-        arguments: arguments,
-      );
-
-  CallNode withArguments(List<Node> arguments) => CallNode(
-        callee: callee,
-        arguments: arguments,
-      );
-
   @override
   Node substitute(Scope<Node> arguments) => CallNode(
         callee: callee,
@@ -129,7 +115,7 @@ class CallNode extends Node {
   }
 
   @override
-  Type get type => const FunctionType();
+  Type get type => const FunctionCallType();
 
   @override
   String toString() => '$callee(${arguments.join(', ')})';
