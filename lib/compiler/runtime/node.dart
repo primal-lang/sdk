@@ -9,6 +9,8 @@ abstract class Node {
 
   Type get type;
 
+  Node substitute(Map<String, Node> bindings) => this;
+
   Node evaluate() => this;
 }
 
@@ -19,6 +21,9 @@ abstract class LiteralNode<T> implements Node {
 
   @override
   String toString() => value.toString();
+
+  @override
+  Node substitute(Map<String, Node> bindings) => this;
 
   @override
   Node evaluate() => this;
@@ -66,6 +71,16 @@ class FreeVariableNode extends Node {
 
 class BoundedVariableNode extends FreeVariableNode {
   const BoundedVariableNode(super.value);
+
+  @override
+  Node substitute(Map<String, Node> bindings) {
+    if (bindings.containsKey(value)) {
+      return bindings[value]!;
+    } else {
+      // TODO(momo): handle
+      throw Exception('Variable not found: $value');
+    }
+  }
 }
 
 class CallNode extends Node {
@@ -78,10 +93,31 @@ class CallNode extends Node {
   });
 
   @override
+  Node substitute(Map<String, Node> bindings) => CallNode(
+        callee: callee.substitute(bindings),
+        arguments: arguments.map((e) => e.substitute(bindings)).toList(),
+      );
+
+  @override
   Node evaluate() {
     final FunctionNode function = getFunctionNode();
 
-    return function.substitute(arguments).evaluate();
+    if (function.parameters.length != arguments.length) {
+      throw InvalidArgumentCountError(
+        function: function.name,
+        expected: function.parameters.length,
+        actual: arguments.length,
+      );
+    }
+
+    final Map<String, Node> bindings = {};
+
+    for (int i = 0; i < function.parameters.length; i++) {
+      final Parameter parameter = function.parameters[i];
+      bindings[parameter.name] = arguments[i];
+    }
+
+    return function.substitute(bindings).evaluate();
   }
 
   FunctionNode getFunctionNode() {
@@ -124,17 +160,15 @@ class FunctionNode extends Node {
     required this.body,
   });
 
-  Node substitute(List<Node> arguments) {
-    if (parameters.length != arguments.length) {
-      throw InvalidArgumentCountError(
-        function: name,
-        expected: parameters.length,
-        actual: arguments.length,
+  @override
+  Node substitute(Map<String, Node> bindings) => FunctionNode(
+        name: name,
+        parameters: parameters,
+        body: body.substitute(bindings),
       );
-    }
 
-    return body; // TODO(momo): substitute arguments in body
-  }
+  @override
+  Node evaluate() => body;
 
   @override
   Type get type => const FunctionType();

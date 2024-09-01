@@ -24,8 +24,11 @@ class Runtime {
     return evaluate(expression);
   }
 
-  String evaluate(Expression expression) =>
-      fullReduce(expression.toNode().evaluate()).toString();
+  String evaluate(Expression expression) {
+    final Node node = expression.toNode().evaluate();
+
+    return fullReduce(node).toString();
+  }
 
   Node fullReduce(Node node) {
     if (node is ListNode) {
