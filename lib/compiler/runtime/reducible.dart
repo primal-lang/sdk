@@ -33,9 +33,6 @@ class StringReducibleValue extends ReducibleValue<String> {
 
   @override
   String get type => 'String';
-
-  @override
-  String toString() => value;
 }
 
 class NumberReducibleValue extends ReducibleValue<num> {
