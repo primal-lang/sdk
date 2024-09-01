@@ -1,4 +1,5 @@
 import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
@@ -6,7 +7,7 @@ import 'package:primal/compiler/semantic/function_prototype.dart';
 abstract class Reducible {
   const Reducible();
 
-  String get type;
+  Type get type;
 
   Reducible substitute(Scope<Reducible> arguments);
 
@@ -32,28 +33,28 @@ class BooleanReducibleValue extends ReducibleValue<bool> {
   const BooleanReducibleValue(super.value);
 
   @override
-  String get type => 'Boolean';
+  Type get type => const BooleanType();
 }
 
 class NumberReducibleValue extends ReducibleValue<num> {
   const NumberReducibleValue(super.value);
 
   @override
-  String get type => 'Number';
+  Type get type => const NumberType();
 }
 
 class StringReducibleValue extends ReducibleValue<String> {
   const StringReducibleValue(super.value);
 
   @override
-  String get type => 'String';
+  Type get type => const StringType();
 }
 
 class ListReducibleValue extends ReducibleValue<List<Reducible>> {
   const ListReducibleValue(super.value);
 
   @override
-  String get type => 'List';
+  Type get type => const ListType();
 
   @override
   Reducible substitute(Scope<Reducible> arguments) =>
@@ -76,7 +77,7 @@ class IdentifierReducible extends Reducible {
   Reducible reduce() => this;
 
   @override
-  String get type => 'Identifier';
+  Type get type => const AnyType();
 
   @override
   String toString() => value;
@@ -114,7 +115,7 @@ class CallReducible extends Reducible {
   }
 
   @override
-  String get type => 'Function';
+  Type get type => const FunctionType();
 
   @override
   String toString() => '$name(${arguments.join(', ')})';

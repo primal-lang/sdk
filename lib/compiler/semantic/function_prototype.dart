@@ -1,4 +1,5 @@
 import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 
@@ -13,8 +14,7 @@ abstract class FunctionPrototype {
 
   Reducible substitute(Scope<Reducible> arguments);
 
-  List<String> get parameterTypes =>
-      parameters.map((e) => e.type.toString()).toList();
+  List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
 
   bool equalSignature(FunctionPrototype function) => function.name == name;
 }

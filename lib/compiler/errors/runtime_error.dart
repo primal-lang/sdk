@@ -1,5 +1,6 @@
 import 'package:primal/compiler/errors/generic_error.dart';
 import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/type.dart';
 
 class RuntimeError extends GenericError {
   const RuntimeError(String message) : super('Runtime error', message);
@@ -8,8 +9,8 @@ class RuntimeError extends GenericError {
 class InvalidArgumentTypesError extends RuntimeError {
   InvalidArgumentTypesError({
     required String function,
-    required List<String> expected,
-    required List<String> actual,
+    required List<Type> expected,
+    required List<Type> actual,
   }) : super(
             'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
 }
