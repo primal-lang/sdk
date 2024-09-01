@@ -1,6 +1,7 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
+import 'package:primal/compiler/runtime/bindings.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
@@ -9,7 +10,7 @@ abstract class Node {
 
   Type get type;
 
-  Node substitute(Map<String, Node> bindings) => this;
+  Node substitute(Bindings bindings) => this;
 
   Node evaluate() => this;
 }
@@ -23,7 +24,7 @@ abstract class LiteralNode<T> implements Node {
   String toString() => value.toString();
 
   @override
-  Node substitute(Map<String, Node> bindings) => this;
+  Node substitute(Bindings bindings) => this;
 
   @override
   Node evaluate() => this;
@@ -73,14 +74,7 @@ class BoundedVariableNode extends FreeVariableNode {
   const BoundedVariableNode(super.value);
 
   @override
-  Node substitute(Map<String, Node> bindings) {
-    if (bindings.containsKey(value)) {
-      return bindings[value]!;
-    } else {
-      // TODO(momo): handle
-      throw Exception('Variable not found: $value');
-    }
-  }
+  Node substitute(Bindings bindings) => bindings.get(value);
 }
 
 class CallNode extends Node {
@@ -93,7 +87,7 @@ class CallNode extends Node {
   });
 
   @override
-  Node substitute(Map<String, Node> bindings) => CallNode(
+  Node substitute(Bindings bindings) => CallNode(
         callee: callee.substitute(bindings),
         arguments: arguments.map((e) => e.substitute(bindings)).toList(),
       );
@@ -110,12 +104,10 @@ class CallNode extends Node {
       );
     }
 
-    final Map<String, Node> bindings = {};
-
-    for (int i = 0; i < function.parameters.length; i++) {
-      final Parameter parameter = function.parameters[i];
-      bindings[parameter.name] = arguments[i];
-    }
+    final Bindings bindings = Bindings.from(
+      parameters: function.parameters,
+      arguments: arguments,
+    );
 
     return function.substitute(bindings).evaluate();
   }
@@ -161,7 +153,7 @@ class FunctionNode extends Node {
   });
 
   @override
-  Node substitute(Map<String, Node> bindings) => FunctionNode(
+  Node substitute(Bindings bindings) => FunctionNode(
         name: name,
         parameters: parameters,
         body: body.substitute(bindings),
