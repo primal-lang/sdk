@@ -143,7 +143,7 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required Map<String, FunctionPrototype> allFunctions,
   }) {
-    if (node is IdentifierNode) {
+    if (node is BoundedVariableNode) {
       return checkVariableIdentifier(
         node: node,
         availableParameters: availableParameters,
@@ -153,7 +153,7 @@ class SemanticAnalyzer
     } else if (node is CallNode) {
       Node callee = node.callee;
 
-      if (callee is IdentifierNode) {
+      if (callee is BoundedVariableNode) {
         callee = checkCalleeIdentifier(
           node: node,
           callee: callee,
@@ -191,7 +191,7 @@ class SemanticAnalyzer
   }
 
   Node checkVariableIdentifier({
-    required IdentifierNode node,
+    required BoundedVariableNode node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionPrototype> allFunctions,
@@ -199,11 +199,9 @@ class SemanticAnalyzer
     if (availableParameters.contains(node.value)) {
       usedParameters.add(node.value);
 
-      return node;
+      return BoundedVariableNode(node.value);
     } else if (allFunctions.containsKey(node.value)) {
-      final FunctionPrototype function = allFunctions[node.value]!;
-
-      return function.toNode();
+      return node;
     } else {
       throw UndefinedIdentifierError(node.value);
     }
@@ -211,7 +209,7 @@ class SemanticAnalyzer
 
   Node checkCalleeIdentifier({
     required CallNode node,
-    required IdentifierNode callee,
+    required BoundedVariableNode callee,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionPrototype> allFunctions,
@@ -221,7 +219,7 @@ class SemanticAnalyzer
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
 
-      return callee;
+      return BoundedVariableNode(functionName);
     } else if (allFunctions.containsKey(functionName)) {
       final FunctionPrototype function = allFunctions[functionName]!;
 
@@ -229,7 +227,7 @@ class SemanticAnalyzer
         throw InvalidNumberOfArgumentsError(functionName);
       }
 
-      return function.toNode();
+      return callee;
     } else {
       throw UndefinedFunctionError(functionName);
     }
