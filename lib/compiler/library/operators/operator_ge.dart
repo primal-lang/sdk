@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/comp_ge.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -15,6 +15,18 @@ class OperatorGe extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) =>
-      CompGe().substitute(arguments);
+  Reducible substitute(Scope<Reducible> arguments) {
+    final Reducible a = arguments.get('a').reduce();
+    final Reducible b = arguments.get('b').reduce();
+
+    if ((a is NumberReducibleValue) && (b is NumberReducibleValue)) {
+      return BooleanReducibleValue(a.value >= b.value);
+    } else {
+      throw InvalidArgumentTypesError(
+        function: name,
+        expected: parameterTypes,
+        actual: [a.type, b.type],
+      );
+    }
+  }
 }
