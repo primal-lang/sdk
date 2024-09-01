@@ -138,7 +138,7 @@ class SemanticAnalyzer
           location: reducible.location,
         );
       }
-    } else if (reducible is ExpressionReducible) {
+    } else if (reducible is CallReducible) {
       final FunctionPrototype? function = getFunctionByName(
         name: reducible.name,
         functions: allFunctions,

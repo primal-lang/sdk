@@ -82,19 +82,19 @@ class IdentifierReducible extends Reducible {
   String toString() => value;
 }
 
-class ExpressionReducible extends Reducible {
+class CallReducible extends Reducible {
   final String name;
   final List<Reducible> arguments;
   final Location location;
 
-  const ExpressionReducible({
+  const CallReducible({
     required this.name,
     required this.arguments,
     required this.location,
   });
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) => ExpressionReducible(
+  Reducible substitute(Scope<Reducible> arguments) => CallReducible(
         name: name,
         arguments: this.arguments.map((e) => e.substitute(arguments)).toList(),
         location: location,

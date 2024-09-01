@@ -137,7 +137,7 @@ class CallExpression extends Expression {
   String toString() => '$name(${arguments.join(', ')})';
 
   @override
-  Reducible toReducible() => ExpressionReducible(
+  Reducible toReducible() => CallReducible(
         name: name,
         arguments: arguments.map((e) => e.toReducible()).toList(),
         location: location,
