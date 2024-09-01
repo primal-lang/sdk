@@ -65,9 +65,15 @@ void main() {
     }
   });
 
-  test('Valid program', () {
+  test('Valid program 1', () {
     final IntermediateCode code =
         getIntermediateCode('foo(x) = x * 2\n\nmain = foo(5)');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('Valid program 2', () {
+    final IntermediateCode code = getIntermediateCode(
+        'bar = num.abs\n\nfoo(x) = bar()(x) * 2\n\nmain = foo(5)');
     expect(code.warnings.length, equals(0));
   });
 }

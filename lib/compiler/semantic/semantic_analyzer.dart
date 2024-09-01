@@ -144,56 +144,90 @@ class SemanticAnalyzer
     required List<FunctionPrototype> allFunctions,
   }) {
     if (node is IdentifierNode) {
-      if (availableParameters.contains(node.value)) {
-        usedParameters.add(node.value);
-
-        return node.asBounded;
-      } else if (allFunctions.any((f) => f.name == node.value)) {
-        return node.asFree;
-      } else {
-        throw UndefinedIdentifierError(node.value);
-      }
+      return checkVariableIdentifier(
+        node: node,
+        availableParameters: availableParameters,
+        usedParameters: usedParameters,
+        allFunctions: allFunctions,
+      );
     } else if (node is CallNode) {
-      final Node callee = node.callee;
+      Node callee = node.callee;
 
       if (callee is IdentifierNode) {
-        final FunctionPrototype? function = getFunctionByName(
-          name: callee.value,
-          functions: allFunctions,
+        callee = checkCalleeIdentifier(
+          node: node,
+          callee: callee,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          allFunctions: allFunctions,
         );
-
-        if (function == null) {
-          throw UndefinedFunctionError(callee.value);
-        } else if (function.parameters.length != node.arguments.length) {
-          throw InvalidNumberOfArgumentsError(callee.value);
-        }
-
-        final List<Node> newArguments = [];
-
-        for (final Node node in node.arguments) {
-          newArguments.add(checkNode(
-            node: node,
-            availableParameters: availableParameters,
-            usedParameters: usedParameters,
-            allFunctions: allFunctions,
-          ));
-        }
-
-        return node.withArguments(newArguments);
+      } else if (callee is CallNode) {
+        callee = checkNode(
+          node: callee,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          allFunctions: allFunctions,
+        );
       }
+
+      final List<Node> newArguments = [];
+
+      for (final Node node in node.arguments) {
+        newArguments.add(checkNode(
+          node: node,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          allFunctions: allFunctions,
+        ));
+      }
+
+      return node.withCallee(callee).withArguments(newArguments);
     }
 
     return node;
   }
 
-  FunctionPrototype? getFunctionByName({
-    required String name,
-    required List<FunctionPrototype> functions,
+  Node checkVariableIdentifier({
+    required IdentifierNode node,
+    required List<String> availableParameters,
+    required Set<String> usedParameters,
+    required List<FunctionPrototype> allFunctions,
   }) {
-    try {
-      return functions.firstWhere((f) => f.name == name);
-    } catch (e) {
-      return null;
+    if (availableParameters.contains(node.value)) {
+      usedParameters.add(node.value);
+
+      return node.asBounded;
+    } else if (allFunctions.any((f) => f.name == node.value)) {
+      return node.asFree;
+    } else {
+      throw UndefinedIdentifierError(node.value);
+    }
+  }
+
+  Node checkCalleeIdentifier({
+    required CallNode node,
+    required IdentifierNode callee,
+    required List<String> availableParameters,
+    required Set<String> usedParameters,
+    required List<FunctionPrototype> allFunctions,
+  }) {
+    final String functionName = callee.value;
+
+    if (availableParameters.contains(functionName)) {
+      usedParameters.add(functionName);
+
+      return callee.asBounded;
+    } else if (allFunctions.any((f) => f.name == functionName)) {
+      final FunctionPrototype function =
+          allFunctions.firstWhere((f) => f.name == functionName);
+
+      if (function.parameters.length != node.arguments.length) {
+        throw InvalidNumberOfArgumentsError(functionName);
+      }
+
+      return callee.asFree;
+    } else {
+      throw UndefinedFunctionError(functionName);
     }
   }
 }

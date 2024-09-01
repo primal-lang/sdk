@@ -97,6 +97,11 @@ class CallNode extends Node {
     required this.arguments,
   });
 
+  CallNode withCallee(Node callee) => CallNode(
+        callee: callee,
+        arguments: arguments,
+      );
+
   CallNode withArguments(List<Node> arguments) => CallNode(
         callee: callee,
         arguments: arguments,
