@@ -156,9 +156,6 @@ class FunctionNode extends Node {
   Node substitute(Bindings bindings) => body.substitute(bindings);
 
   @override
-  Node evaluate() => body;
-
-  @override
   Type get type => const FunctionType();
 
   @override
