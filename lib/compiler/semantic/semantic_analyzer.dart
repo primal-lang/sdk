@@ -143,7 +143,7 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
   }) {
-    if (node is IdentifierNode) {
+    if (node is FreeVariableNode) {
       return checkVariableIdentifier(
         node: node,
         availableParameters: availableParameters,
@@ -153,7 +153,7 @@ class SemanticAnalyzer
     } else if (node is CallNode) {
       Node callee = node.callee;
 
-      if (callee is IdentifierNode) {
+      if (callee is FreeVariableNode) {
         callee = checkCalleeIdentifier(
           node: node,
           callee: callee,
@@ -191,7 +191,7 @@ class SemanticAnalyzer
   }
 
   Node checkVariableIdentifier({
-    required IdentifierNode node,
+    required FreeVariableNode node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
@@ -201,7 +201,7 @@ class SemanticAnalyzer
 
       return BoundedVariableNode(node.value);
     } else if (allFunctions.any((f) => f.name == node.value)) {
-      return FreeVariableNode(node.value);
+      return node;
     } else {
       throw UndefinedIdentifierError(node.value);
     }
@@ -209,7 +209,7 @@ class SemanticAnalyzer
 
   Node checkCalleeIdentifier({
     required CallNode node,
-    required IdentifierNode callee,
+    required FreeVariableNode callee,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
@@ -219,7 +219,7 @@ class SemanticAnalyzer
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
 
-      return BoundedVariableNode(callee.value);
+      return BoundedVariableNode(functionName);
     } else if (allFunctions.any((f) => f.name == functionName)) {
       final FunctionPrototype function =
           allFunctions.firstWhere((f) => f.name == functionName);
@@ -228,7 +228,7 @@ class SemanticAnalyzer
         throw InvalidNumberOfArgumentsError(functionName);
       }
 
-      return FreeVariableNode(callee.value);
+      return callee;
     } else {
       throw UndefinedFunctionError(functionName);
     }

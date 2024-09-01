@@ -49,10 +49,10 @@ class ListNode extends LiteralNode<List<Node>> {
   Type get type => const ListType();
 }
 
-class IdentifierNode extends Node {
+class FreeVariableNode extends Node {
   final String value;
 
-  const IdentifierNode(this.value);
+  const FreeVariableNode(this.value);
 
   @override
   Type get type => const AnyType();
@@ -61,12 +61,8 @@ class IdentifierNode extends Node {
   String toString() => value;
 }
 
-class BoundedVariableNode extends IdentifierNode {
+class BoundedVariableNode extends FreeVariableNode {
   const BoundedVariableNode(super.value);
-}
-
-class FreeVariableNode extends IdentifierNode {
-  const FreeVariableNode(super.value);
 }
 
 class CallNode extends Node {
