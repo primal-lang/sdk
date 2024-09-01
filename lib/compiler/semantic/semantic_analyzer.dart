@@ -17,28 +17,32 @@ class SemanticAnalyzer
   @override
   IntermediateCode analyze() {
     final List<GenericWarning> warnings = [];
-    final List<FunctionPrototype> functions = getPrototypes(input);
-    functions.addAll(StandardLibrary.get());
-
-    checkDuplicatedFunctions(functions);
-    checkDuplicatedParameters(functions);
 
     final List<CustomFunctionPrototype> customFunctions =
-        functions.whereType<CustomFunctionPrototype>().toList();
+        getCustomFunctions(input);
+    final List<FunctionPrototype> allFunctions = [
+      ...customFunctions,
+      ...StandardLibrary.get(),
+    ];
+
+    checkDuplicatedFunctions(allFunctions);
+    checkDuplicatedParameters(allFunctions);
+
     checkNodes(
       customFunctions: customFunctions,
-      allFunctions: functions,
+      allFunctions: allFunctions,
       warnings: warnings,
     );
 
     return IntermediateCode(
-      functions: Mapper.toMap(functions),
+      functions: Mapper.toMap(allFunctions),
       warnings: warnings,
     );
   }
 
-  List<FunctionPrototype> getPrototypes(List<FunctionDefinition> functions) {
-    final List<FunctionPrototype> result = [];
+  List<CustomFunctionPrototype> getCustomFunctions(
+      List<FunctionDefinition> functions) {
+    final List<CustomFunctionPrototype> result = [];
 
     for (final FunctionDefinition function in functions) {
       result.add(CustomFunctionPrototype(
