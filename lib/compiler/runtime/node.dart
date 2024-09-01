@@ -161,3 +161,56 @@ class FunctionNode extends Node {
   @override
   String toString() => '{${parameters.join(', ')} = $body}';
 }
+
+class BaseFunctionNode extends Node {
+  final String name;
+  final List<Parameter> parameters;
+
+  const BaseFunctionNode({
+    required this.name,
+    required this.parameters,
+  });
+
+  @override
+  Type get type => const FunctionType();
+}
+
+class CustomFunctionNode extends BaseFunctionNode {
+  final Node body;
+
+  const CustomFunctionNode({
+    required super.name,
+    required super.parameters,
+    required this.body,
+  });
+
+  @override
+  Node substitute(Bindings bindings) => body.substitute(bindings);
+
+  @override
+  Type get type => const FunctionType();
+
+  @override
+  String toString() => '{${parameters.join(', ')} = $body}';
+}
+
+class NativeFunctionNode extends BaseFunctionNode {
+  final Function(List<Node>) body;
+
+  const NativeFunctionNode({
+    required super.name,
+    required super.parameters,
+    required this.body,
+  });
+
+  @override
+  Node substitute(Bindings bindings) {
+    final List<Node> arguments =
+        parameters.map((e) => bindings.get(e.name)).toList();
+
+    return body(arguments);
+  }
+
+  @override
+  Type get type => const FunctionType();
+}

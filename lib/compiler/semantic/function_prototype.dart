@@ -53,4 +53,21 @@ abstract class NativeFunctionPrototype extends FunctionPrototype {
         parameters: parameters,
         body: const BooleanNode(true), // TODO(momo): implement
       );
+
+  BaseFunctionNode toNode2() => NativeFunctionNode(
+        name: name,
+        parameters: parameters,
+        body: (arguments) => createNode(
+          name: name,
+          parameters: parameters,
+          arguments: arguments,
+        ),
+      );
+
+  Node createNode({
+    required String name,
+    required List<Parameter> parameters,
+    required List<Node> arguments,
+  }) =>
+      const BooleanNode(true);
 }
