@@ -28,11 +28,11 @@ abstract class ReducibleValue<T> implements Reducible {
   Reducible reduce() => this;
 }
 
-class StringReducibleValue extends ReducibleValue<String> {
-  const StringReducibleValue(super.value);
+class BooleanReducibleValue extends ReducibleValue<bool> {
+  const BooleanReducibleValue(super.value);
 
   @override
-  String get type => 'String';
+  String get type => 'Boolean';
 }
 
 class NumberReducibleValue extends ReducibleValue<num> {
@@ -42,11 +42,11 @@ class NumberReducibleValue extends ReducibleValue<num> {
   String get type => 'Number';
 }
 
-class BooleanReducibleValue extends ReducibleValue<bool> {
-  const BooleanReducibleValue(super.value);
+class StringReducibleValue extends ReducibleValue<String> {
+  const StringReducibleValue(super.value);
 
   @override
-  String get type => 'Boolean';
+  String get type => 'String';
 }
 
 class ListReducibleValue extends ReducibleValue<List<Reducible>> {
