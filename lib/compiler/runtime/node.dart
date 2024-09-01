@@ -1,3 +1,4 @@
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
@@ -81,20 +82,19 @@ class CallNode extends Node {
     final Node callee = this.callee.evaluate();
 
     if (callee is FunctionNode) {
-      final List<Node> arguments =
-          this.arguments.map((e) => e.evaluate()).toList();
-      print(arguments);
-
-      return callee.body.evaluate();
+      return callee.substitute(arguments).evaluate();
     } else if (callee is FreeVariableNode) {
-      final FunctionPrototype prototype = Runtime.SCOPE.get(callee.value);
-      print(prototype);
+      final FunctionPrototype prototype = Runtime.SCOPE
+          .get(callee.value); // TODO(momo): do not use global scope
+      final FunctionNode function = prototype.toNode();
 
-      throw Exception('Cannot call $callee'); // TODO(momo): handle
+      return function.substitute(arguments).evaluate();
     } else if (callee is BoundedVariableNode) {
-      throw Exception('Cannot call $callee'); // TODO(momo): handle
+      throw Exception(
+          'Handle bound variable node callee: $callee'); // TODO(momo): handle
     } else {
-      throw Exception('Cannot call $callee'); // TODO(momo): handle
+      throw Exception(
+          'Cannot apply function to: $callee'); // TODO(momo): handle
     }
   }
 
@@ -106,13 +106,27 @@ class CallNode extends Node {
 }
 
 class FunctionNode extends Node {
+  final String name;
   final List<Parameter> parameters;
   final Node body;
 
   const FunctionNode({
+    required this.name,
     required this.parameters,
     required this.body,
   });
+
+  Node substitute(List<Node> arguments) {
+    if (parameters.length != arguments.length) {
+      throw InvalidArgumentCountError(
+        function: name,
+        expected: parameters.length,
+        actual: arguments.length,
+      );
+    }
+
+    return body;
+  }
 
   @override
   Type get type => const FunctionType();

@@ -12,6 +12,8 @@ abstract class FunctionPrototype {
     required this.parameters,
   });
 
+  FunctionNode toNode();
+
   Node substitute(Scope<Node> arguments);
 
   List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
@@ -36,6 +38,13 @@ class CustomFunctionPrototype extends FunctionPrototype {
 
   @override
   Node substitute(Scope<Node> arguments) => node;
+
+  @override
+  FunctionNode toNode() => FunctionNode(
+        name: name,
+        parameters: parameters,
+        body: node,
+      );
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {
@@ -49,4 +58,7 @@ abstract class NativeFunctionPrototype extends FunctionPrototype {
     required super.name,
     required super.parameters,
   });
+
+  @override
+  FunctionNode toNode() => throw UnimplementedError();
 }

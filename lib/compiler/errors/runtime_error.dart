@@ -1,5 +1,4 @@
 import 'package:primal/compiler/errors/generic_error.dart';
-import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/type.dart';
 
 class RuntimeError extends GenericError {
@@ -20,9 +19,8 @@ class InvalidArgumentCountError extends RuntimeError {
     required String function,
     required int expected,
     required int actual,
-    required Location location,
   }) : super(
-            'Invalid argument count for function "$function" at $location. Expected: $expected. Actual: $actual');
+            'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
 }
 
 class NotFoundInScope extends RuntimeError {
