@@ -4,77 +4,77 @@ import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
-abstract class Reducible {
-  const Reducible();
+abstract class Node {
+  const Node();
 
   Type get type;
 
-  Reducible substitute(Scope<Reducible> arguments);
+  Node substitute(Scope<Node> arguments);
 
-  Reducible reduce();
+  Node reduce();
 }
 
-abstract class ReducibleValue<T> implements Reducible {
+abstract class LiteralNode<T> implements Node {
   final T value;
 
-  const ReducibleValue(this.value);
+  const LiteralNode(this.value);
 
   @override
   String toString() => value.toString();
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) => this;
+  Node substitute(Scope<Node> arguments) => this;
 
   @override
-  Reducible reduce() => this;
+  Node reduce() => this;
 }
 
-class BooleanReducibleValue extends ReducibleValue<bool> {
-  const BooleanReducibleValue(super.value);
+class BooleanNode extends LiteralNode<bool> {
+  const BooleanNode(super.value);
 
   @override
   Type get type => const BooleanType();
 }
 
-class NumberReducibleValue extends ReducibleValue<num> {
-  const NumberReducibleValue(super.value);
+class NumberNode extends LiteralNode<num> {
+  const NumberNode(super.value);
 
   @override
   Type get type => const NumberType();
 }
 
-class StringReducibleValue extends ReducibleValue<String> {
-  const StringReducibleValue(super.value);
+class StringNode extends LiteralNode<String> {
+  const StringNode(super.value);
 
   @override
   Type get type => const StringType();
 }
 
-class ListReducibleValue extends ReducibleValue<List<Reducible>> {
-  const ListReducibleValue(super.value);
+class ListNode extends LiteralNode<List<Node>> {
+  const ListNode(super.value);
 
   @override
   Type get type => const ListType();
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) =>
-      ListReducibleValue(value.map((e) => e.substitute(arguments)).toList());
+  Node substitute(Scope<Node> arguments) =>
+      ListNode(value.map((e) => e.substitute(arguments)).toList());
 }
 
-class IdentifierReducible extends Reducible {
+class IdentifierNode extends Node {
   final String value;
   final Location location;
 
-  const IdentifierReducible({
+  const IdentifierNode({
     required this.value,
     required this.location,
   });
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) => arguments.get(value);
+  Node substitute(Scope<Node> arguments) => arguments.get(value);
 
   @override
-  Reducible reduce() => this;
+  Node reduce() => this;
 
   @override
   Type get type => const AnyType();
@@ -83,28 +83,28 @@ class IdentifierReducible extends Reducible {
   String toString() => value;
 }
 
-class CallReducible extends Reducible {
+class CallNode extends Node {
   final String name;
-  final List<Reducible> arguments;
+  final List<Node> arguments;
   final Location location;
 
-  const CallReducible({
+  const CallNode({
     required this.name,
     required this.arguments,
     required this.location,
   });
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) => CallReducible(
+  Node substitute(Scope<Node> arguments) => CallNode(
         name: name,
         arguments: this.arguments.map((e) => e.substitute(arguments)).toList(),
         location: location,
       );
 
   @override
-  Reducible reduce() {
+  Node reduce() {
     final FunctionPrototype function = Runtime.SCOPE.get(name);
-    final Scope<Reducible> newScope = Scope.from(
+    final Scope<Node> newScope = Scope.from(
       functionName: name,
       parameters: function.parameters,
       arguments: arguments,

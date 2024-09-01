@@ -1,4 +1,4 @@
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
@@ -22,25 +22,25 @@ class Runtime {
 
   String reduce(Expression expression) {
     final FunctionPrototype function = AnonymousFunctionPrototype(
-      reducible: expression.toReducible(),
+      node: expression.toNode(),
     );
 
     return reduceFunction(function);
   }
 
   String reduceFunction(FunctionPrototype function) {
-    final Reducible result = function.substitute(const Scope()).reduce();
+    final Node result = function.substitute(const Scope()).reduce();
 
     return fullReduce(result).toString();
   }
 
-  Reducible fullReduce(Reducible reducible) {
-    if (reducible is ListReducibleValue) {
-      return ListReducibleValue(reducible.value.map(fullReduce).toList());
-    } else if (reducible is StringReducibleValue) {
-      return StringReducibleValue('"${reducible.value}"');
+  Node fullReduce(Node node) {
+    if (node is ListNode) {
+      return ListNode(node.value.map(fullReduce).toList());
+    } else if (node is StringNode) {
+      return StringNode('"${node.value}"');
     } else {
-      return reducible.reduce();
+      return node.reduce();
     }
   }
 }

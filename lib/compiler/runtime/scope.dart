@@ -1,20 +1,20 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 
 class Scope<T> {
   final Map<String, T> data;
 
   const Scope([this.data = const {}]);
 
-  static Scope<Reducible> from({
+  static Scope<Node> from({
     required String functionName,
     required List<Parameter> parameters,
-    required List<Reducible> arguments,
+    required List<Node> arguments,
     required Location location,
   }) {
-    final Map<String, Reducible> result = {};
+    final Map<String, Node> result = {};
 
     if (parameters.length != arguments.length) {
       throw InvalidArgumentCountError(

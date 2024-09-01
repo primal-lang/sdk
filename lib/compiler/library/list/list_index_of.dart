@@ -1,7 +1,7 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
@@ -16,22 +16,22 @@ class ListIndexOf extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible a = arguments.get('a').reduce();
-    final Reducible b = arguments.get('b').reduce();
+  Node substitute(Scope<Node> arguments) {
+    final Node a = arguments.get('a').reduce();
+    final Node b = arguments.get('b').reduce();
 
-    if (a is ListReducibleValue) {
+    if (a is ListNode) {
       final CompEq eq = CompEq();
 
       for (int i = 0; i < a.value.length; i++) {
-        final Reducible comparison = eq.compare(a.value[i].reduce(), b);
+        final Node comparison = eq.compare(a.value[i].reduce(), b);
 
-        if (comparison is BooleanReducibleValue && comparison.value) {
-          return NumberReducibleValue(i);
+        if (comparison is BooleanNode && comparison.value) {
+          return NumberNode(i);
         }
       }
 
-      return const NumberReducibleValue(-1);
+      return const NumberNode(-1);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

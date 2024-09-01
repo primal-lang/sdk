@@ -1,6 +1,6 @@
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 
 abstract class FunctionPrototype {
@@ -12,7 +12,7 @@ abstract class FunctionPrototype {
     required this.parameters,
   });
 
-  Reducible substitute(Scope<Reducible> arguments);
+  Node substitute(Scope<Node> arguments);
 
   List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
 
@@ -20,22 +20,21 @@ abstract class FunctionPrototype {
 }
 
 class CustomFunctionPrototype extends FunctionPrototype {
-  final Reducible reducible;
+  final Node node;
 
   const CustomFunctionPrototype({
     required super.name,
     required super.parameters,
-    required this.reducible,
+    required this.node,
   });
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) =>
-      reducible.substitute(arguments);
+  Node substitute(Scope<Node> arguments) => node.substitute(arguments);
 }
 
 class AnonymousFunctionPrototype extends CustomFunctionPrototype {
   const AnonymousFunctionPrototype({
-    required super.reducible,
+    required super.node,
   }) : super(name: '', parameters: const []);
 }
 

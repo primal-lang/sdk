@@ -1,5 +1,5 @@
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
@@ -14,9 +14,9 @@ class Try extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible a = arguments.get('a');
-    final Reducible b = arguments.get('b');
+  Node substitute(Scope<Node> arguments) {
+    final Node a = arguments.get('a');
+    final Node b = arguments.get('b');
 
     try {
       return a.reduce();

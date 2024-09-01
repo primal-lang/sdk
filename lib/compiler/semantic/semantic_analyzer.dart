@@ -2,7 +2,7 @@ import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/library/standard_library.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
@@ -25,7 +25,7 @@ class SemanticAnalyzer
 
     final List<CustomFunctionPrototype> customFunctions =
         functions.whereType<CustomFunctionPrototype>().toList();
-    checkReducibles(
+    checkNodes(
       customFunctions: customFunctions,
       allFunctions: functions,
       warnings: warnings,
@@ -44,7 +44,7 @@ class SemanticAnalyzer
       result.add(CustomFunctionPrototype(
         name: function.name,
         parameters: function.parameters.map(Parameter.any).toList(),
-        reducible: function.expression!.toReducible(),
+        node: function.expression!.toNode(),
       ));
     }
 
@@ -98,15 +98,15 @@ class SemanticAnalyzer
     return result;
   }
 
-  void checkReducibles({
+  void checkNodes({
     required List<CustomFunctionPrototype> customFunctions,
     required List<FunctionPrototype> allFunctions,
     required List<GenericWarning> warnings,
   }) {
     for (final CustomFunctionPrototype function in customFunctions) {
       final Set<String> usedParameters = {};
-      checkReducible(
-        reducible: function.reducible,
+      checkNode(
+        node: function.node,
         availableParameters: function.parameters.map((e) => e.name).toList(),
         usedParameters: usedParameters,
         allFunctions: allFunctions,
@@ -123,44 +123,44 @@ class SemanticAnalyzer
     }
   }
 
-  void checkReducible({
-    required Reducible reducible,
+  void checkNode({
+    required Node node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required List<FunctionPrototype> allFunctions,
   }) {
-    if (reducible is IdentifierReducible) {
-      if (availableParameters.contains(reducible.value)) {
-        usedParameters.add(reducible.value);
-      } else if (!allFunctions.any((f) => f.name == reducible.value)) {
+    if (node is IdentifierNode) {
+      if (availableParameters.contains(node.value)) {
+        usedParameters.add(node.value);
+      } else if (!allFunctions.any((f) => f.name == node.value)) {
         throw UndefinedIdentifiersError(
-          identifier: reducible.value,
-          location: reducible.location,
+          identifier: node.value,
+          location: node.location,
         );
       }
-    } else if (reducible is CallReducible) {
+    } else if (node is CallNode) {
       final FunctionPrototype? function = getFunctionByName(
-        name: reducible.name,
+        name: node.name,
         functions: allFunctions,
       );
 
       if (function == null) {
         throw UndefinedFunctionError(
-          function: reducible.name,
-          location: reducible.location,
+          function: node.name,
+          location: node.location,
         );
       } else {
-        if (function.parameters.length != reducible.arguments.length) {
+        if (function.parameters.length != node.arguments.length) {
           throw InvalidNumberOfArgumentsError(
-            function: reducible.name,
-            location: reducible.location,
+            function: node.name,
+            location: node.location,
           );
         }
       }
 
-      for (final Reducible reducible in reducible.arguments) {
-        checkReducible(
-          reducible: reducible,
+      for (final Node node in node.arguments) {
+        checkNode(
+          node: node,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,

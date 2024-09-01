@@ -1,11 +1,11 @@
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 
 abstract class Expression extends Localized {
   const Expression({required super.location});
 
-  Reducible toReducible();
+  Node toNode();
 }
 
 abstract class LiteralExpression<T> extends Expression {
@@ -28,7 +28,7 @@ class BooleanLiteralExpression extends LiteralExpression<bool> {
         );
 
   @override
-  Reducible toReducible() => BooleanReducibleValue(value);
+  Node toNode() => BooleanNode(value);
 }
 
 class NumberLiteralExpression extends LiteralExpression<num> {
@@ -39,7 +39,7 @@ class NumberLiteralExpression extends LiteralExpression<num> {
         );
 
   @override
-  Reducible toReducible() => NumberReducibleValue(value);
+  Node toNode() => NumberNode(value);
 }
 
 class StringLiteralExpression extends LiteralExpression<String> {
@@ -53,7 +53,7 @@ class StringLiteralExpression extends LiteralExpression<String> {
   String toString() => '"$value"';
 
   @override
-  Reducible toReducible() => StringReducibleValue(value);
+  Node toNode() => StringNode(value);
 }
 
 class ListLiteralExpression extends LiteralExpression<List<Expression>> {
@@ -71,8 +71,7 @@ class ListLiteralExpression extends LiteralExpression<List<Expression>> {
   String toString() => value.toString();
 
   @override
-  Reducible toReducible() =>
-      ListReducibleValue(value.map((e) => e.toReducible()).toList());
+  Node toNode() => ListNode(value.map((e) => e.toNode()).toList());
 }
 
 class IdentifierExpression extends Expression {
@@ -86,7 +85,7 @@ class IdentifierExpression extends Expression {
   String toString() => value;
 
   @override
-  Reducible toReducible() => IdentifierReducible(
+  Node toNode() => IdentifierNode(
         value: value,
         location: location,
       );
@@ -137,9 +136,9 @@ class CallExpression extends Expression {
   String toString() => '$name(${arguments.join(', ')})';
 
   @override
-  Reducible toReducible() => CallReducible(
+  Node toNode() => CallNode(
         name: name,
-        arguments: arguments.map((e) => e.toReducible()).toList(),
+        arguments: arguments.map((e) => e.toNode()).toList(),
         location: location,
       );
 }

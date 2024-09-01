@@ -1,5 +1,5 @@
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
@@ -13,13 +13,13 @@ class IsInfinite extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible a = arguments.get('a').reduce();
+  Node substitute(Scope<Node> arguments) {
+    final Node a = arguments.get('a').reduce();
 
-    if (a is NumberReducibleValue) {
-      return BooleanReducibleValue(a.value.isInfinite);
+    if (a is NumberNode) {
+      return BooleanNode(a.value.isInfinite);
     } else {
-      return const BooleanReducibleValue(false);
+      return const BooleanNode(false);
     }
   }
 }

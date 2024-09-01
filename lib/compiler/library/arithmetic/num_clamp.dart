@@ -1,6 +1,6 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/reducible.dart';
+import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
@@ -16,15 +16,13 @@ class NumClamp extends NativeFunctionPrototype {
         );
 
   @override
-  Reducible substitute(Scope<Reducible> arguments) {
-    final Reducible a = arguments.get('a').reduce();
-    final Reducible b = arguments.get('b').reduce();
-    final Reducible c = arguments.get('c').reduce();
+  Node substitute(Scope<Node> arguments) {
+    final Node a = arguments.get('a').reduce();
+    final Node b = arguments.get('b').reduce();
+    final Node c = arguments.get('c').reduce();
 
-    if ((a is NumberReducibleValue) &&
-        (b is NumberReducibleValue) &&
-        (c is NumberReducibleValue)) {
-      return NumberReducibleValue(a.value.clamp(b.value, c.value));
+    if ((a is NumberNode) && (b is NumberNode) && (c is NumberNode)) {
+      return NumberNode(a.value.clamp(b.value, c.value));
     } else {
       throw InvalidArgumentTypesError(
         function: name,
