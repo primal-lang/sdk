@@ -29,6 +29,11 @@ class Parameter {
         type: const ListType(),
       );
 
+  factory Parameter.function(String name) => Parameter._(
+        name: name,
+        type: const FunctionType(),
+      );
+
   factory Parameter.any(String name) => Parameter._(
         name: name,
         type: const AnyType(),
