@@ -153,11 +153,7 @@ class FunctionNode extends Node {
   });
 
   @override
-  Node substitute(Bindings bindings) => FunctionNode(
-        name: name,
-        parameters: parameters,
-        body: body.substitute(bindings),
-      );
+  Node substitute(Bindings bindings) => body.substitute(bindings);
 
   @override
   Node evaluate() => body;
