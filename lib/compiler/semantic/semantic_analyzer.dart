@@ -143,7 +143,7 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required Map<String, FunctionPrototype> allFunctions,
   }) {
-    if (node is BoundedVariableNode) {
+    if (node is FreeVariableNode) {
       return checkVariableIdentifier(
         node: node,
         availableParameters: availableParameters,
@@ -153,7 +153,7 @@ class SemanticAnalyzer
     } else if (node is CallNode) {
       Node callee = node.callee;
 
-      if (callee is BoundedVariableNode) {
+      if (callee is FreeVariableNode) {
         callee = checkCalleeIdentifier(
           node: node,
           callee: callee,
@@ -191,7 +191,7 @@ class SemanticAnalyzer
   }
 
   Node checkVariableIdentifier({
-    required BoundedVariableNode node,
+    required FreeVariableNode node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionPrototype> allFunctions,
@@ -209,7 +209,7 @@ class SemanticAnalyzer
 
   Node checkCalleeIdentifier({
     required CallNode node,
-    required BoundedVariableNode callee,
+    required FreeVariableNode callee,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionPrototype> allFunctions,
