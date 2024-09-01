@@ -68,15 +68,12 @@ class ListExpression extends LiteralExpression<List<Expression>> {
   Node toNode() => ListNode(value.map((e) => e.toNode()).toList());
 }
 
-class IdentifierExpression extends Expression {
-  final String value;
-
+class IdentifierExpression extends LiteralExpression<String> {
   IdentifierExpression(Token token)
-      : value = token.value,
-        super(location: token.location);
-
-  @override
-  String toString() => value;
+      : super(
+          location: token.location,
+          value: token.value,
+        );
 
   @override
   Node toNode() => IdentifierNode(
