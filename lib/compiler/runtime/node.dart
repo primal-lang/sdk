@@ -125,7 +125,7 @@ class FunctionNode extends Node {
       );
     }
 
-    return body;
+    return body; // TODO(momo): substitute arguments in body
   }
 
   @override
