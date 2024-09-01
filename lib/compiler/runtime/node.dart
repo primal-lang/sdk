@@ -168,19 +168,3 @@ class FunctionNode extends Node {
   @override
   String toString() => '{${parameters.join(', ')} = $body}';
 }
-
-/*class NativeNode extends Node {
-  @override
-  Type get type => const FunctionType();
-
-  @override
-  Node substitute(Map<String, Node> bindings) => FunctionNode(
-        name: name,
-        parameters: parameters,
-        body: body.substitute(bindings),
-      );
-
-  @override
-  Node evaluate() => body;
-}
-*/
