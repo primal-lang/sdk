@@ -30,7 +30,7 @@ class SemanticAnalyzer
 
     final List<CustomFunctionPrototype> checkedFunctions = checkCustomFunctions(
       customFunctions: customFunctions,
-      allFunctions: allFunctions,
+      allFunctions: Mapper.toMap(allFunctions),
       warnings: warnings,
     );
 
@@ -107,7 +107,7 @@ class SemanticAnalyzer
 
   List<CustomFunctionPrototype> checkCustomFunctions({
     required List<CustomFunctionPrototype> customFunctions,
-    required List<FunctionPrototype> allFunctions,
+    required Map<String, FunctionPrototype> allFunctions,
     required List<GenericWarning> warnings,
   }) {
     final List<CustomFunctionPrototype> result = [];
@@ -141,9 +141,9 @@ class SemanticAnalyzer
     required Node node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
-    required List<FunctionPrototype> allFunctions,
+    required Map<String, FunctionPrototype> allFunctions,
   }) {
-    if (node is BoundedVariableNode) {
+    if (node is IdentifierNode) {
       return checkVariableIdentifier(
         node: node,
         availableParameters: availableParameters,
@@ -153,7 +153,7 @@ class SemanticAnalyzer
     } else if (node is CallNode) {
       Node callee = node.callee;
 
-      if (callee is BoundedVariableNode) {
+      if (callee is IdentifierNode) {
         callee = checkCalleeIdentifier(
           node: node,
           callee: callee,
@@ -191,20 +191,19 @@ class SemanticAnalyzer
   }
 
   Node checkVariableIdentifier({
-    required BoundedVariableNode node,
+    required IdentifierNode node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
-    required List<FunctionPrototype> allFunctions,
+    required Map<String, FunctionPrototype> allFunctions,
   }) {
     if (availableParameters.contains(node.value)) {
       usedParameters.add(node.value);
 
-      return BoundedVariableNode(node.value);
-    } else if (allFunctions.any((f) => f.name == node.value)) {
-      final FunctionPrototype function =
-          allFunctions.firstWhere((f) => f.name == node.value);
-
       return node;
+    } else if (allFunctions.containsKey(node.value)) {
+      final FunctionPrototype function = allFunctions[node.value]!;
+
+      return function.toNode();
     } else {
       throw UndefinedIdentifierError(node.value);
     }
@@ -212,26 +211,25 @@ class SemanticAnalyzer
 
   Node checkCalleeIdentifier({
     required CallNode node,
-    required BoundedVariableNode callee,
+    required IdentifierNode callee,
     required List<String> availableParameters,
     required Set<String> usedParameters,
-    required List<FunctionPrototype> allFunctions,
+    required Map<String, FunctionPrototype> allFunctions,
   }) {
     final String functionName = callee.value;
 
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
 
-      return BoundedVariableNodex(functionName);
-    } else if (allFunctions.any((f) => f.name == functionName)) {
-      final FunctionPrototype function =
-          allFunctions.firstWhere((f) => f.name == functionName);
+      return callee;
+    } else if (allFunctions.containsKey(functionName)) {
+      final FunctionPrototype function = allFunctions[functionName]!;
 
       if (function.parameters.length != node.arguments.length) {
         throw InvalidNumberOfArgumentsError(functionName);
       }
 
-      return callee;
+      return function.toNode();
     } else {
       throw UndefinedFunctionError(functionName);
     }

@@ -52,10 +52,10 @@ class ListNode extends LiteralNode<List<Node>> {
   Type get type => const ListType();
 }
 
-class BoundedVariableNode extends Node {
+class IdentifierNode extends Node {
   final String value;
 
-  const BoundedVariableNode(this.value);
+  const IdentifierNode(this.value);
 
   @override
   Type get type => const AnyType();
@@ -79,7 +79,7 @@ class CallNode extends Node {
 
     if (callee is FunctionNode) {
       return callee.substitute(arguments).evaluate();
-    } else if (callee is BoundedVariableNode) {
+    } else if (callee is IdentifierNode) {
       final FunctionPrototype prototype = Runtime.SCOPE
           .get(callee.value); // TODO(momo): do not use global scope
       final FunctionNode function = prototype.toNode();

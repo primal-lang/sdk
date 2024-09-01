@@ -76,7 +76,7 @@ class IdentifierExpression extends LiteralExpression<String> {
         );
 
   @override
-  Node toNode() => BoundedVariableNode(value);
+  Node toNode() => IdentifierNode(value);
 }
 
 class CallExpression extends Expression {
