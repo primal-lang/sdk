@@ -108,7 +108,7 @@ void checkFunctions(
       expect(actualParameters[i], equals(expectedParameters[i]));
     }
 
-    checkExpressions(actual[i].expression, expected[i].expression);
+    checkExpressions(actual[i].expression!, expected[i].expression!);
   }
 }
 

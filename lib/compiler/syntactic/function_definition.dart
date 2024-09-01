@@ -3,12 +3,12 @@ import 'package:primal/compiler/syntactic/expression.dart';
 class FunctionDefinition {
   final String name;
   final List<String> parameters;
-  final Expression expression;
+  final Expression? expression;
 
   const FunctionDefinition({
     required this.name,
     this.parameters = const [],
-    this.expression = const EmptyExpression(),
+    this.expression,
   });
 
   FunctionDefinition withParameter(String parameter) => FunctionDefinition(

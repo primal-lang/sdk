@@ -44,7 +44,7 @@ class SemanticAnalyzer
       result.add(CustomFunctionPrototype(
         name: function.name,
         parameters: function.parameters.map(Parameter.any).toList(),
-        reducible: function.expression.toReducible(),
+        reducible: function.expression!.toReducible(),
       ));
     }
 

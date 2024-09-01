@@ -1,4 +1,3 @@
-import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/runtime/reducible.dart';
@@ -7,13 +6,6 @@ abstract class Expression extends Localized {
   const Expression({required super.location});
 
   Reducible toReducible();
-}
-
-class EmptyExpression extends Expression {
-  const EmptyExpression() : super(location: const Location(row: 0, column: 0));
-
-  @override
-  Reducible toReducible() => throw const EmptyExpressionEvaluationError();
 }
 
 abstract class LiteralExpression<T> extends Expression {
