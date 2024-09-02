@@ -25,6 +25,7 @@ class Runtime {
   }
 
   String evaluate(Expression expression) {
+    // TODO(momo): evaluate expression semantically before executing it
     final Node node = expression.toNode().evaluate();
 
     return fullReduce(node).toString();

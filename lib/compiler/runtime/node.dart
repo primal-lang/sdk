@@ -118,6 +118,8 @@ class CallNode extends Node {
     if (callee is FunctionNode) {
       return callee;
     } else if (callee is FreeVariableNode) {
+      // TODO(momo): create function pointer in semantic analyzer to avoid
+      // using the scope here
       final FunctionPrototype prototype = Runtime.SCOPE
           .get(callee.value); // TODO(momo): do not use global scope
       // TODO(momo): make scope return a function node directly
