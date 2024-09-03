@@ -1,8 +1,8 @@
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
 
+// TODO(momo): remove and use FunctionNode instead
 abstract class FunctionPrototype {
   final String name;
   final List<Parameter> parameters;
@@ -13,8 +13,6 @@ abstract class FunctionPrototype {
   });
 
   FunctionNode toNode();
-
-  Node substitute(Scope<Node> arguments);
 
   List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
 
@@ -31,10 +29,7 @@ class CustomFunctionPrototype extends FunctionPrototype {
   });
 
   @override
-  Node substitute(Scope<Node> arguments) => node;
-
-  @override
-  FunctionNode toNode() => FunctionNode(
+  FunctionNode toNode() => CustomFunctionNode(
         name: name,
         parameters: parameters,
         body: node,
@@ -46,28 +41,4 @@ abstract class NativeFunctionPrototype extends FunctionPrototype {
     required super.name,
     required super.parameters,
   });
-
-  @override
-  FunctionNode toNode() => FunctionNode(
-        name: name,
-        parameters: parameters,
-        body: const BooleanNode(true), // TODO(momo): implement
-      );
-
-  BaseFunctionNode toNode2() => NativeFunctionNode(
-        name: name,
-        parameters: parameters,
-        body: (arguments) => createNode(
-          name: name,
-          parameters: parameters,
-          arguments: arguments,
-        ),
-      );
-
-  Node createNode({
-    required String name,
-    required List<Parameter> parameters,
-    required List<Node> arguments,
-  }) =>
-      const BooleanNode(true);
 }

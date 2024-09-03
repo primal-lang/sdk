@@ -146,38 +146,19 @@ class CallNode extends Node {
 class FunctionNode extends Node {
   final String name;
   final List<Parameter> parameters;
-  final Node body;
 
   const FunctionNode({
     required this.name,
     required this.parameters,
-    required this.body,
   });
 
-  @override
-  Node substitute(Bindings bindings) => body.substitute(bindings);
-
-  @override
-  Type get type => const FunctionType();
-
-  @override
-  String toString() => '{${parameters.join(', ')} = $body}';
-}
-
-class BaseFunctionNode extends Node {
-  final String name;
-  final List<Parameter> parameters;
-
-  const BaseFunctionNode({
-    required this.name,
-    required this.parameters,
-  });
+  List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
 
   @override
   Type get type => const FunctionType();
 }
 
-class CustomFunctionNode extends BaseFunctionNode {
+class CustomFunctionNode extends FunctionNode {
   final Node body;
 
   const CustomFunctionNode({
@@ -196,13 +177,10 @@ class CustomFunctionNode extends BaseFunctionNode {
   String toString() => '{${parameters.join(', ')} = $body}';
 }
 
-class NativeFunctionNode extends BaseFunctionNode {
-  final Function(List<Node>) body;
-
+abstract class NativeFunctionNode extends FunctionNode {
   const NativeFunctionNode({
     required super.name,
     required super.parameters,
-    required this.body,
   });
 
   @override
@@ -212,6 +190,8 @@ class NativeFunctionNode extends BaseFunctionNode {
 
     return body(arguments);
   }
+
+  Node body(List<Node> arguments);
 
   @override
   Type get type => const FunctionType();
