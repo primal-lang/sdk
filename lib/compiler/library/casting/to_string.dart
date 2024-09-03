@@ -1,4 +1,4 @@
-import 'package:primal/compiler/models/parameter.dart';
+/*import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
@@ -23,3 +23,4 @@ class ToString extends NativeFunctionPrototype {
     }
   }
 }
+*/

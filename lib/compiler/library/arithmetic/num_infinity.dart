@@ -1,4 +1,4 @@
-import 'package:primal/compiler/runtime/node.dart';
+/*import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/function_prototype.dart';
 
@@ -12,3 +12,4 @@ class NumInfinity extends NativeFunctionPrototype {
   @override
   Node substitute(Scope<Node> arguments) => const NumberNode(double.infinity);
 }
+*/

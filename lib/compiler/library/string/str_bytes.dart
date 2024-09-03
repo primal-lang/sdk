@@ -1,4 +1,4 @@
-import 'dart:convert';
+/*import 'dart:convert';
 import 'dart:typed_data';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
@@ -32,3 +32,4 @@ class StrBytes extends NativeFunctionPrototype {
     }
   }
 }
+*/

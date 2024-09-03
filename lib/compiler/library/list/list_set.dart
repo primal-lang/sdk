@@ -1,4 +1,4 @@
-import 'package:primal/compiler/errors/runtime_error.dart';
+/*import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
@@ -35,3 +35,4 @@ class ListSet extends NativeFunctionPrototype {
     }
   }
 }
+*/
