@@ -1,5 +1,5 @@
 import 'package:primal/compiler/errors/generic_error.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
+import 'package:primal/compiler/runtime/node.dart';
 
 class SemanticError extends CompilationError {
   const SemanticError(super.message);
@@ -7,8 +7,8 @@ class SemanticError extends CompilationError {
 
 class DuplicatedFunctionError extends SemanticError {
   DuplicatedFunctionError({
-    required FunctionPrototype function1,
-    required FunctionPrototype function2,
+    required FunctionNode function1,
+    required FunctionNode function2,
   }) : super(
             'Duplicated function "${function1.name}" with parameters (${function1.parameters.join(', ')}) and (${function2.parameters.join(', ')})');
 }

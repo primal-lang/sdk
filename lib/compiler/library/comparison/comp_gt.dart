@@ -1,9 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class CompGt extends NativeFunctionPrototype {
+class CompGt extends NativeFunctionNode {
   CompGt()
       : super(
           name: 'comp.gt',
@@ -12,19 +11,6 @@ class CompGt extends NativeFunctionPrototype {
             Parameter.number('b'),
           ],
         );
-
-  @override
-  FunctionNode toNode() => CompGtNode2(
-        name: name,
-        parameters: parameters,
-      );
-}
-
-class CompGtNode2 extends NativeFunctionNode {
-  const CompGtNode2({
-    required super.name,
-    required super.parameters,
-  });
 
   @override
   Node body(List<Node> arguments) => CompGtNode3(

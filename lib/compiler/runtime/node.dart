@@ -3,7 +3,6 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/bindings.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
 abstract class Node {
   const Node();
@@ -120,12 +119,8 @@ class CallNode extends Node {
     } else if (callee is FreeVariableNode) {
       // TODO(momo): create function pointer in semantic analyzer to avoid
       // using the scope here
-      final FunctionPrototype prototype = Runtime.SCOPE
+      return Runtime.SCOPE
           .get(callee.value); // TODO(momo): do not use global scope
-      // TODO(momo): make scope return a function node directly
-      final FunctionNode function = prototype.toNode();
-
-      return function;
     } else if (callee is BoundedVariableNode) {
       // TODO(momo): there can be a bound variable node here?
       throw Exception(
@@ -153,6 +148,8 @@ class FunctionNode extends Node {
   });
 
   List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
+
+  bool equalSignature(FunctionNode function) => function.name == name;
 
   @override
   Type get type => const FunctionType();

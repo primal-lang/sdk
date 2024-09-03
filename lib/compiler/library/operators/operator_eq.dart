@@ -1,9 +1,8 @@
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class OperatorEq extends NativeFunctionPrototype {
+class OperatorEq extends NativeFunctionNode {
   OperatorEq()
       : super(
           name: '==',
@@ -12,19 +11,6 @@ class OperatorEq extends NativeFunctionPrototype {
             Parameter.any('b'),
           ],
         );
-
-  @override
-  FunctionNode toNode() => OperatorEqNode2(
-        name: name,
-        parameters: parameters,
-      );
-}
-
-class OperatorEqNode2 extends NativeFunctionNode {
-  const OperatorEqNode2({
-    required super.name,
-    required super.parameters,
-  });
 
   @override
   Node body(List<Node> arguments) => OperatorEqNode3(

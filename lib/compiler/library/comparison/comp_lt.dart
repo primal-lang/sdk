@@ -1,9 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class CompLt extends NativeFunctionPrototype {
+class CompLt extends NativeFunctionNode {
   CompLt()
       : super(
           name: 'comp.lt',
@@ -12,19 +11,6 @@ class CompLt extends NativeFunctionPrototype {
             Parameter.number('b'),
           ],
         );
-
-  @override
-  FunctionNode toNode() => CompLtNode2(
-        name: name,
-        parameters: parameters,
-      );
-}
-
-class CompLtNode2 extends NativeFunctionNode {
-  const CompLtNode2({
-    required super.name,
-    required super.parameters,
-  });
 
   @override
   Node body(List<Node> arguments) => CompLtNode3(

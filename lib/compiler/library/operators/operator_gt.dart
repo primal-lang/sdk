@@ -1,9 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class OperatorGt extends NativeFunctionPrototype {
+class OperatorGt extends NativeFunctionNode {
   OperatorGt()
       : super(
           name: '>',
@@ -12,19 +11,6 @@ class OperatorGt extends NativeFunctionPrototype {
             Parameter.number('b'),
           ],
         );
-
-  @override
-  FunctionNode toNode() => OperatorGtNode2(
-        name: name,
-        parameters: parameters,
-      );
-}
-
-class OperatorGtNode2 extends NativeFunctionNode {
-  const OperatorGtNode2({
-    required super.name,
-    required super.parameters,
-  });
 
   @override
   Node body(List<Node> arguments) => OperatorGtNode3(

@@ -1,11 +1,11 @@
-import 'package:primal/compiler/semantic/function_prototype.dart';
+import 'package:primal/compiler/runtime/node.dart';
 
 class Mapper {
-  static Map<String, FunctionPrototype> toMap(
-      List<FunctionPrototype> functions) {
-    final Map<String, FunctionPrototype> result = {};
+  static Map<String, FunctionNode> toMap(
+      List<FunctionNode> functions) {
+    final Map<String, FunctionNode> result = {};
 
-    for (final FunctionPrototype function in functions) {
+    for (final FunctionNode function in functions) {
       result[function.name] = function;
     }
 

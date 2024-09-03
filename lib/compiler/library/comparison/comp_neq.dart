@@ -1,9 +1,8 @@
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class CompNeq extends NativeFunctionPrototype {
+class CompNeq extends NativeFunctionNode {
   CompNeq()
       : super(
           name: 'comp.neq',
@@ -12,19 +11,6 @@ class CompNeq extends NativeFunctionPrototype {
             Parameter.any('b'),
           ],
         );
-
-  @override
-  FunctionNode toNode() => CompNeqNode2(
-        name: name,
-        parameters: parameters,
-      );
-}
-
-class CompNeqNode2 extends NativeFunctionNode {
-  const CompNeqNode2({
-    required super.name,
-    required super.parameters,
-  });
 
   @override
   Node body(List<Node> arguments) => CompNeqNode3(

@@ -1,9 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class If extends NativeFunctionPrototype {
+class If extends NativeFunctionNode {
   If()
       : super(
           name: 'if',
@@ -13,19 +12,6 @@ class If extends NativeFunctionPrototype {
             Parameter.any('c'),
           ],
         );
-
-  @override
-  FunctionNode toNode() => IfNode2(
-        name: name,
-        parameters: parameters,
-      );
-}
-
-class IfNode2 extends NativeFunctionNode {
-  const IfNode2({
-    required super.name,
-    required super.parameters,
-  });
 
   @override
   Node body(List<Node> arguments) => IfNode3(

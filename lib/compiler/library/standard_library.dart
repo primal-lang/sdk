@@ -23,10 +23,10 @@ import 'package:primal/compiler/library/operators/operator_mod.dart';
 import 'package:primal/compiler/library/operators/operator_mul.dart';
 import 'package:primal/compiler/library/operators/operator_neq.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
+import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
-  static List<FunctionPrototype> get() => [
+  static List<FunctionNode> get() => [
         // Operators
         OperatorEq(),
         OperatorNeq(),

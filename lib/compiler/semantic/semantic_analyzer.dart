@@ -3,7 +3,6 @@ import 'package:primal/compiler/library/standard_library.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
@@ -18,9 +17,8 @@ class SemanticAnalyzer
   IntermediateCode analyze() {
     final List<GenericWarning> warnings = [];
 
-    final List<CustomFunctionPrototype> customFunctions =
-        getCustomFunctions(input);
-    final List<FunctionPrototype> allFunctions = [
+    final List<CustomFunctionNode> customFunctions = getCustomFunctions(input);
+    final List<FunctionNode> allFunctions = [
       ...customFunctions,
       ...StandardLibrary.get(),
     ];
@@ -28,7 +26,7 @@ class SemanticAnalyzer
     checkDuplicatedFunctions(allFunctions);
     checkDuplicatedParameters(allFunctions);
 
-    final List<CustomFunctionPrototype> checkedFunctions = checkCustomFunctions(
+    final List<CustomFunctionNode> checkedFunctions = checkCustomFunctions(
       customFunctions: customFunctions,
       allFunctions: Mapper.toMap(allFunctions),
       warnings: warnings,
@@ -43,27 +41,27 @@ class SemanticAnalyzer
     );
   }
 
-  List<CustomFunctionPrototype> getCustomFunctions(
+  List<CustomFunctionNode> getCustomFunctions(
       List<FunctionDefinition> functions) {
-    final List<CustomFunctionPrototype> result = [];
+    final List<CustomFunctionNode> result = [];
 
     for (final FunctionDefinition function in functions) {
-      result.add(CustomFunctionPrototype(
+      result.add(CustomFunctionNode(
         name: function.name,
         parameters: function.parameters.map(Parameter.any).toList(),
-        node: function.expression!.toNode(),
+        body: function.expression!.toNode(),
       ));
     }
 
     return result;
   }
 
-  void checkDuplicatedFunctions(List<FunctionPrototype> functions) {
+  void checkDuplicatedFunctions(List<FunctionNode> functions) {
     for (int i = 0; i < functions.length - 1; i++) {
-      final FunctionPrototype function1 = functions[i];
+      final FunctionNode function1 = functions[i];
 
       for (int j = i + 1; j < functions.length; j++) {
-        final FunctionPrototype function2 = functions[j];
+        final FunctionNode function2 = functions[j];
 
         if (function1.equalSignature(function2)) {
           throw DuplicatedFunctionError(
@@ -75,8 +73,8 @@ class SemanticAnalyzer
     }
   }
 
-  void checkDuplicatedParameters(List<FunctionPrototype> functions) {
-    for (final FunctionPrototype function in functions) {
+  void checkDuplicatedParameters(List<FunctionNode> functions) {
+    for (final FunctionNode function in functions) {
       final Map<String, int> parameters = parametersCount(function);
 
       for (final MapEntry<String, int> entry in parameters.entries) {
@@ -91,7 +89,7 @@ class SemanticAnalyzer
     }
   }
 
-  Map<String, int> parametersCount(FunctionPrototype function) {
+  Map<String, int> parametersCount(FunctionNode function) {
     final Map<String, int> result = {};
 
     for (final Parameter parameter in function.parameters) {
@@ -105,18 +103,18 @@ class SemanticAnalyzer
     return result;
   }
 
-  List<CustomFunctionPrototype> checkCustomFunctions({
-    required List<CustomFunctionPrototype> customFunctions,
-    required Map<String, FunctionPrototype> allFunctions,
+  List<CustomFunctionNode> checkCustomFunctions({
+    required List<CustomFunctionNode> customFunctions,
+    required Map<String, FunctionNode> allFunctions,
     required List<GenericWarning> warnings,
   }) {
-    final List<CustomFunctionPrototype> result = [];
+    final List<CustomFunctionNode> result = [];
 
-    for (final CustomFunctionPrototype function in customFunctions) {
+    for (final CustomFunctionNode function in customFunctions) {
       final Set<String> usedParameters = {};
 
       final Node node = checkNode(
-        node: function.node,
+        node: function.body,
         availableParameters: function.parameters.map((e) => e.name).toList(),
         usedParameters: usedParameters,
         allFunctions: allFunctions,
@@ -131,10 +129,10 @@ class SemanticAnalyzer
         }
       }
 
-      result.add(CustomFunctionPrototype(
+      result.add(CustomFunctionNode(
         name: function.name,
         parameters: function.parameters,
-        node: node,
+        body: node,
       ));
     }
 
@@ -145,7 +143,7 @@ class SemanticAnalyzer
     required Node node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
-    required Map<String, FunctionPrototype> allFunctions,
+    required Map<String, FunctionNode> allFunctions,
   }) {
     if (node is FreeVariableNode) {
       return checkVariableIdentifier(
@@ -198,7 +196,7 @@ class SemanticAnalyzer
     required FreeVariableNode node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
-    required Map<String, FunctionPrototype> allFunctions,
+    required Map<String, FunctionNode> allFunctions,
   }) {
     if (availableParameters.contains(node.value)) {
       usedParameters.add(node.value);
@@ -216,7 +214,7 @@ class SemanticAnalyzer
     required FreeVariableNode callee,
     required List<String> availableParameters,
     required Set<String> usedParameters,
-    required Map<String, FunctionPrototype> allFunctions,
+    required Map<String, FunctionNode> allFunctions,
   }) {
     final String functionName = callee.value;
 
@@ -225,7 +223,7 @@ class SemanticAnalyzer
 
       return BoundedVariableNode(functionName);
     } else if (allFunctions.containsKey(functionName)) {
-      final FunctionPrototype function = allFunctions[functionName]!;
+      final FunctionNode function = allFunctions[functionName]!;
 
       if (function.parameters.length != node.arguments.length) {
         throw InvalidNumberOfArgumentsError(functionName);
