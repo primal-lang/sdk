@@ -55,6 +55,10 @@ class ListNode extends LiteralNode<List<Node>> {
 
   @override
   Type get type => const ListType();
+
+  @override
+  Node substitute(Bindings bindings) =>
+      ListNode(value.map((e) => e.substitute(bindings)).toList());
 }
 
 class FreeVariableNode extends Node {
