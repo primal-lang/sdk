@@ -123,12 +123,8 @@ class CallNode extends Node {
     } else if (callee is FreeVariableNode) {
       // TODO(momo): create function pointer in semantic analyzer to avoid
       // using the scope here
-      return Runtime.SCOPE
-          .get(callee.value); // TODO(momo): do not use global scope
-    } else if (callee is BoundedVariableNode) {
-      // TODO(momo): there can be a bound variable node here?
-      throw Exception(
-          'Handle bound variable node callee: $callee'); // TODO(momo): handle
+      // TODO(momo): do not use global scope
+      return Runtime.SCOPE.get(callee.value);
     } else {
       throw Exception(
           'Cannot apply function to: $callee'); // TODO(momo): handle
@@ -196,4 +192,14 @@ abstract class NativeFunctionNode extends FunctionNode {
 
   @override
   Type get type => const FunctionType();
+}
+
+class NativeFunctionNodeWithArguments extends FunctionNode {
+  final List<Node> arguments;
+
+  const NativeFunctionNodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required this.arguments,
+  });
 }

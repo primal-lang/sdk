@@ -13,20 +13,18 @@ class NumAdd extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumAddNode3(
+  Node body(List<Node> arguments) => NumAddNode(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class NumAddNode3 extends FunctionNode {
-  final List<Node> arguments;
-
-  const NumAddNode3({
+class NumAddNode extends NativeFunctionNodeWithArguments {
+  const NumAddNode({
     required super.name,
     required super.parameters,
-    required this.arguments,
+    required super.arguments,
   });
 
   @override
