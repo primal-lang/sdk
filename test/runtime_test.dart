@@ -1613,9 +1613,15 @@ void main() {
       checkResult(runtime, 4);
     });
 
-    test('Function as result', () {
+    test('Function as result 1', () {
       final Runtime runtime =
           getRuntime('bar = num.abs\n\nfoo(v) = bar()(v)\n\nmain = foo(-4)');
+      checkResult(runtime, 4);
+    });
+
+    test('Function as result 2', () {
+      final Runtime runtime = getRuntime(
+          'bar = num.abs\n\nfoo(f, v) = f(v)\n\nmain = foo(bar(), -4)');
       checkResult(runtime, 4);
     });
   });
