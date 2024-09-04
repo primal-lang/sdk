@@ -1606,6 +1606,14 @@ void main() {
     });
   });
 
+  group('Higher order functions', () {
+    test('Function as parameter', () {
+      final Runtime runtime =
+          getRuntime('foo(f, v) = f(v)\n\nmain = foo(num.abs, -4)');
+      checkResult(runtime, 4);
+    });
+  });
+
   group('Console', () {
     test('console.write', () {
       final Runtime runtime =

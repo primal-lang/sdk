@@ -28,7 +28,7 @@ class NumAbsNode extends NativeFunctionNodeWithArguments {
 
   @override
   Node evaluate() {
-    final Node a = arguments[0];
+    final Node a = arguments[0].evaluate();
 
     if (a is NumberNode) {
       return NumberNode(a.value.abs());
