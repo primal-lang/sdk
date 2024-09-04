@@ -13,20 +13,18 @@ class NumMod extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => NumModNode3(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class NumModNode3 extends FunctionNode {
-  final List<Node> arguments;
-
-  const NumModNode3({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
-    required this.arguments,
+    required super.arguments,
   });
 
   @override

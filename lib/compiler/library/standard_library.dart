@@ -19,8 +19,13 @@ import 'package:primal/compiler/library/arithmetic/num_is_odd.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_positive.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_zero.dart';
 import 'package:primal/compiler/library/arithmetic/num_log.dart';
+import 'package:primal/compiler/library/arithmetic/num_max.dart';
+import 'package:primal/compiler/library/arithmetic/num_min.dart';
 import 'package:primal/compiler/library/arithmetic/num_mod.dart';
 import 'package:primal/compiler/library/arithmetic/num_mul.dart';
+import 'package:primal/compiler/library/arithmetic/num_negative.dart';
+import 'package:primal/compiler/library/arithmetic/num_pow.dart';
+import 'package:primal/compiler/library/arithmetic/num_round.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
 import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
@@ -84,14 +89,14 @@ class StandardLibrary {
         NumDiv(),
         NumMod(),
         NumAbs(),
-        //NumNegative(),
+        NumNegative(),
         NumInc(),
         NumDec(),
-        //NumMin(),
-        //NumMax(),
-        //NumPow(),
+        NumMin(),
+        NumMax(),
+        NumPow(),
         //NumSqrt(),
-        //NumRound(),
+        NumRound(),
         NumFloor(),
         NumCeil(),
         //NumSin(),
