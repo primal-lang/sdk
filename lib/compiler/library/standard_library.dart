@@ -101,37 +101,6 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
   static List<FunctionNode> get() => [
-        // Operators
-        OperatorAdd(),
-        OperatorAnd(),
-        OperatorDiv(),
-        OperatorEq(),
-        OperatorGe(),
-        OperatorGt(),
-        OperatorLe(),
-        OperatorLt(),
-        OperatorMod(),
-        OperatorMul(),
-        OperatorNeq(),
-        OperatorNot(),
-        OperatorOr(),
-        OperatorSub(),
-
-        // Control
-        If(),
-        Try(),
-
-        // Error
-        Throw(),
-
-        // Comparison
-        CompEq(),
-        CompNeq(),
-        CompGt(),
-        CompGe(),
-        CompLt(),
-        CompLe(),
-
         // Arithmetic
         NumAbs(),
         NumAdd(),
@@ -168,43 +137,41 @@ class StandardLibrary {
         NumSum(),
         NumTan(),
 
-        // Logic
-        BoolAnd(),
-        BoolNot(),
-        BoolOr(),
-        BoolXor(),
+        // Casting
+        IsBoolean(),
+        IsDecimal(),
+        IsInfinite(),
+        IsInteger(),
+        IsList(),
+        IsNumber(),
+        IsString(),
+        ToBoolean(),
+        ToDecimal(),
+        ToInteger(),
+        ToNumber(),
+        ToString(),
+
+        // Comparison
+        CompEq(),
+        CompNeq(),
+        CompGt(),
+        CompGe(),
+        CompLt(),
+        CompLe(),
+
+        // Console
+        ConsoleWrite(),
+        ConsoleWriteLn(),
+
+        // Control
+        If(),
+        Try(),
+
+        // Error
+        Throw(),
 
         // Index
         ElementAt(),
-
-        // String
-        /*StrSubstring(),
-        StrStartsWith(),
-        StrEndsWith(),
-        StrReplace(),
-        StrUppercase(),
-        StrLowercase(),
-        StrTrim(),
-        StrMatch(),
-        StrLength(),
-        StrConcat(),
-        StrFirst(),
-        StrLast(),
-        StrInit(),
-        StrTail(),
-        StrAt(),
-        StrIsEmpty(),
-        StrIsNotEmpty(),
-        StrContains(),
-        StrTake(),
-        StrDrop(),
-        StrRemoveAt(),
-        StrReverse(),
-        StrBytes(),
-        StrIndexOf(),
-        StrPadLeft(),
-        StrPadRight(),
-        StrSplit(),*/
 
         // List
         ListAt(),
@@ -231,22 +198,55 @@ class StandardLibrary {
         ListTail(),
         ListTake(),
 
-        // Casting
-        IsBoolean(),
-        IsDecimal(),
-        IsInfinite(),
-        IsInteger(),
-        IsList(),
-        IsNumber(),
-        IsString(),
-        ToBoolean(),
-        ToDecimal(),
-        ToInteger(),
-        ToNumber(),
-        ToString(),
+        // Logic
+        BoolAnd(),
+        BoolNot(),
+        BoolOr(),
+        BoolXor(),
 
-        // Console
-        ConsoleWrite(),
-        ConsoleWriteLn(),
+        // Operators
+        OperatorAdd(),
+        OperatorAnd(),
+        OperatorDiv(),
+        OperatorEq(),
+        OperatorGe(),
+        OperatorGt(),
+        OperatorLe(),
+        OperatorLt(),
+        OperatorMod(),
+        OperatorMul(),
+        OperatorNeq(),
+        OperatorNot(),
+        OperatorOr(),
+        OperatorSub(),
+
+        // String
+        //StrSubstring(),
+        //StrStartsWith(),
+        //StrEndsWith(),
+        //StrReplace(),
+        //StrUppercase(),
+        //StrLowercase(),
+        //StrTrim(),
+        //StrMatch(),
+        //StrLength(),
+        //StrConcat(),
+        //StrFirst(),
+        //StrLast(),
+        //StrInit(),
+        //StrTail(),
+        //StrAt(),
+        //StrIsEmpty(),
+        //StrIsNotEmpty(),
+        //StrContains(),
+        //StrTake(),
+        //StrDrop(),
+        //StrRemoveAt(),
+        //StrReverse(),
+        //StrBytes(),
+        //StrIndexOf(),
+        //StrPadLeft(),
+        //StrPadRight(),
+        //StrSplit(),
       ];
 }
