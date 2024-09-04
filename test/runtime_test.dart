@@ -1612,6 +1612,12 @@ void main() {
           getRuntime('foo(f, v) = f(v)\n\nmain = foo(num.abs, -4)');
       checkResult(runtime, 4);
     });
+
+    test('Function as result', () {
+      final Runtime runtime =
+          getRuntime('bar = num.abs\n\nfoo(v) = bar()(v)\n\nmain = foo(-4)');
+      checkResult(runtime, 4);
+    });
   });
 
   group('Console', () {

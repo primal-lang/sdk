@@ -97,7 +97,7 @@ class CallNode extends Node {
 
   @override
   Node evaluate() {
-    final FunctionNode function = getFunctionNode();
+    final FunctionNode function = getFunctionNode(callee);
 
     if (function.parameters.length != arguments.length) {
       throw InvalidArgumentCountError(
@@ -115,10 +115,10 @@ class CallNode extends Node {
     return function.substitute(bindings).evaluate();
   }
 
-  FunctionNode getFunctionNode() {
-    final Node callee = this.callee;
-
-    if (callee is FunctionNode) {
+  FunctionNode getFunctionNode(Node callee) {
+    if (callee is CallNode) {
+      return getFunctionNode(callee.evaluate());
+    } else if (callee is FunctionNode) {
       return callee;
     } else if (callee is FreeVariableNode) {
       // TODO(momo): create function pointer in semantic analyzer to avoid
