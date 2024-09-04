@@ -13,7 +13,7 @@ class CompGe extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => CompGeNode3(
+  Node node(List<Node> arguments) => CompGeNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

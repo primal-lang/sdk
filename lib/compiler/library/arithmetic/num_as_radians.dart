@@ -1,11 +1,9 @@
-/*import 'dart:math';
+import 'dart:math';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class NumAsRadians extends NativeFunctionPrototype {
+class NumAsRadians extends NativeFunctionNode {
   NumAsRadians()
       : super(
           name: 'num.asRadians',
@@ -15,8 +13,23 @@ class NumAsRadians extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').evaluate();
+  Node node(List<Node> arguments) => NumAsRadiansNode(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NumAsRadiansNode extends NativeFunctionNodeWithArguments {
+  const NumAsRadiansNode({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
 
     if (a is NumberNode) {
       return NumberNode(a.value * (pi / 180));
@@ -29,4 +42,3 @@ class NumAsRadians extends NativeFunctionPrototype {
     }
   }
 }
-*/

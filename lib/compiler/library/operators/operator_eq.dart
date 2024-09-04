@@ -13,7 +13,7 @@ class OperatorEq extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorEqNode3(
+  Node node(List<Node> arguments) => OperatorEqNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

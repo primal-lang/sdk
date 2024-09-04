@@ -13,7 +13,7 @@ class CompNeq extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => CompNeqNode3(
+  Node node(List<Node> arguments) => CompNeqNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

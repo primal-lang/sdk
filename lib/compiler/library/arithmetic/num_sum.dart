@@ -13,7 +13,7 @@ class NumSum extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumSumNode3(
+  Node node(List<Node> arguments) => NumSumNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

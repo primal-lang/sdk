@@ -13,7 +13,7 @@ class OperatorMod extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorModNode3(
+  Node node(List<Node> arguments) => OperatorModNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

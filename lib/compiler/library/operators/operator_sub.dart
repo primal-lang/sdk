@@ -13,7 +13,7 @@ class OperatorSub extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorSubNode3(
+  Node node(List<Node> arguments) => OperatorSubNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

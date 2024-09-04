@@ -13,7 +13,7 @@ class OperatorMul extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorMulNode3(
+  Node node(List<Node> arguments) => OperatorMulNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

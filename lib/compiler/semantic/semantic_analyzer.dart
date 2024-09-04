@@ -49,7 +49,7 @@ class SemanticAnalyzer
       result.add(CustomFunctionNode(
         name: function.name,
         parameters: function.parameters.map(Parameter.any).toList(),
-        body: function.expression!.toNode(),
+        node: function.expression!.toNode(),
       ));
     }
 
@@ -114,7 +114,7 @@ class SemanticAnalyzer
       final Set<String> usedParameters = {};
 
       final Node node = checkNode(
-        node: function.body,
+        node: function.node,
         availableParameters: function.parameters.map((e) => e.name).toList(),
         usedParameters: usedParameters,
         allFunctions: allFunctions,
@@ -132,7 +132,7 @@ class SemanticAnalyzer
       result.add(CustomFunctionNode(
         name: function.name,
         parameters: function.parameters,
-        body: node,
+        node: node,
       ));
     }
 

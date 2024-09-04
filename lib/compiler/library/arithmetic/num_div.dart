@@ -13,7 +13,7 @@ class NumDiv extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumDivNode3(
+  Node node(List<Node> arguments) => NumDivNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

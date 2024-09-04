@@ -12,7 +12,7 @@ class NumAbs extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumAbsNode(
+  Node node(List<Node> arguments) => NumAbsNode(
         name: name,
         parameters: parameters,
         arguments: arguments,

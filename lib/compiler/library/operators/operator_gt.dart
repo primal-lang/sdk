@@ -13,7 +13,7 @@ class OperatorGt extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorGtNode3(
+  Node node(List<Node> arguments) => OperatorGtNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

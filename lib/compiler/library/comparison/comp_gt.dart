@@ -13,7 +13,7 @@ class CompGt extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => CompGtNode3(
+  Node node(List<Node> arguments) => CompGtNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

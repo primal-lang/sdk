@@ -13,7 +13,7 @@ class NumAdd extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumAddNode(
+  Node node(List<Node> arguments) => NumAddNode(
         name: name,
         parameters: parameters,
         arguments: arguments,

@@ -14,7 +14,7 @@ class If extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => IfNode3(
+  Node node(List<Node> arguments) => IfNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

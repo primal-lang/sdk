@@ -13,7 +13,7 @@ class NumMul extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumMulNode3(
+  Node node(List<Node> arguments) => NumMulNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

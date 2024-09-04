@@ -13,7 +13,7 @@ class OperatorAdd extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorAddNode3(
+  Node node(List<Node> arguments) => OperatorAddNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

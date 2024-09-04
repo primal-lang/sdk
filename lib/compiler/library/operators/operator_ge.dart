@@ -13,7 +13,7 @@ class OperatorGe extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorGeNode3(
+  Node node(List<Node> arguments) => OperatorGeNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

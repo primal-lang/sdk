@@ -13,7 +13,7 @@ class NumMod extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumModNode3(
+  Node node(List<Node> arguments) => NumModNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

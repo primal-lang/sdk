@@ -13,7 +13,7 @@ class OperatorDiv extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorDivNode3(
+  Node node(List<Node> arguments) => OperatorDivNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

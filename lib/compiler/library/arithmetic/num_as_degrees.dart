@@ -13,7 +13,7 @@ class NumAsDegrees extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumAsDegreesNode(
+  Node node(List<Node> arguments) => NumAsDegreesNode(
         name: name,
         parameters: parameters,
         arguments: arguments,

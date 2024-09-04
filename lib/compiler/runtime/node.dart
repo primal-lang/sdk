@@ -156,22 +156,22 @@ class FunctionNode extends Node {
 }
 
 class CustomFunctionNode extends FunctionNode {
-  final Node body;
+  final Node node;
 
   const CustomFunctionNode({
     required super.name,
     required super.parameters,
-    required this.body,
+    required this.node,
   });
 
   @override
-  Node substitute(Bindings bindings) => body.substitute(bindings);
+  Node substitute(Bindings bindings) => node.substitute(bindings);
 
   @override
   Type get type => const FunctionType();
 
   @override
-  String toString() => '{${parameters.join(', ')} = $body}';
+  String toString() => '{${parameters.join(', ')} = $node}';
 }
 
 abstract class NativeFunctionNode extends FunctionNode {
@@ -185,10 +185,10 @@ abstract class NativeFunctionNode extends FunctionNode {
     final List<Node> arguments =
         parameters.map((e) => bindings.get(e.name)).toList();
 
-    return body(arguments);
+    return node(arguments);
   }
 
-  Node body(List<Node> arguments);
+  Node node(List<Node> arguments);
 
   @override
   Type get type => const FunctionType();

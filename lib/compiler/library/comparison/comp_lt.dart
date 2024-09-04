@@ -13,7 +13,7 @@ class CompLt extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => CompLtNode3(
+  Node node(List<Node> arguments) => CompLtNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

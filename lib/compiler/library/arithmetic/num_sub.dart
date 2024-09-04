@@ -13,7 +13,7 @@ class NumSub extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => NumSubNode3(
+  Node node(List<Node> arguments) => NumSubNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,

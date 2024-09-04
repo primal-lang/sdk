@@ -13,7 +13,7 @@ class OperatorNeq extends NativeFunctionNode {
         );
 
   @override
-  Node body(List<Node> arguments) => OperatorNeqNode3(
+  Node node(List<Node> arguments) => OperatorNeqNode3(
         name: name,
         parameters: parameters,
         arguments: arguments,
