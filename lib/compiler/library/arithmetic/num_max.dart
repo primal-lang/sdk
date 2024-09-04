@@ -1,11 +1,9 @@
-/*import 'dart:math';
+import 'dart:math';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class NumMax extends NativeFunctionPrototype {
+class NumMax extends NativeFunctionNode {
   NumMax()
       : super(
           name: 'num.max',
@@ -16,9 +14,24 @@ class NumMax extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').evaluate();
-    final Node b = arguments.get('b').evaluate();
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
+    final Node b = arguments[1].evaluate();
 
     if ((a is NumberNode) && (b is NumberNode)) {
       return NumberNode(max(a.value, b.value));
@@ -31,4 +44,3 @@ class NumMax extends NativeFunctionPrototype {
     }
   }
 }
-*/

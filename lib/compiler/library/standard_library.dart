@@ -18,6 +18,7 @@ import 'package:primal/compiler/library/arithmetic/num_is_negative.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_odd.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_positive.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_zero.dart';
+import 'package:primal/compiler/library/arithmetic/num_log.dart';
 import 'package:primal/compiler/library/arithmetic/num_mod.dart';
 import 'package:primal/compiler/library/arithmetic/num_mul.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
@@ -96,7 +97,7 @@ class StandardLibrary {
         //NumSin(),
         NumCos(),
         //NumTan(),
-        //NumLog(),
+        NumLog(),
         NumIsNegative(),
         NumIsPositive(),
         NumIsZero(),
