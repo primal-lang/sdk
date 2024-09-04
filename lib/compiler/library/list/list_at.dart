@@ -2,13 +2,13 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class ListFilled extends NativeFunctionNode {
-  ListFilled()
+class ListAt extends NativeFunctionNode {
+  ListAt()
       : super(
-          name: 'list.filled',
+          name: 'list.at',
           parameters: [
-            Parameter.number('a'),
-            Parameter.any('b'),
+            Parameter.any('a'),
+            Parameter.number('b'),
           ],
         );
 
@@ -32,8 +32,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    if (a is NumberNode) {
-      return ListNode(List.filled(a.value.toInt(), b));
+    if ((a is ListNode) && (b is NumberNode)) {
+      return a.value[b.value.toInt()];
     } else {
       throw InvalidArgumentTypesError(
         function: name,
