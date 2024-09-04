@@ -26,8 +26,12 @@ import 'package:primal/compiler/library/arithmetic/num_mul.dart';
 import 'package:primal/compiler/library/arithmetic/num_negative.dart';
 import 'package:primal/compiler/library/arithmetic/num_pow.dart';
 import 'package:primal/compiler/library/arithmetic/num_round.dart';
+import 'package:primal/compiler/library/arithmetic/num_sign.dart';
+import 'package:primal/compiler/library/arithmetic/num_sin.dart';
+import 'package:primal/compiler/library/arithmetic/num_sqrt.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
 import 'package:primal/compiler/library/arithmetic/num_sum.dart';
+import 'package:primal/compiler/library/arithmetic/num_tan.dart';
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/library/comparison/comp_ge.dart';
 import 'package:primal/compiler/library/comparison/comp_gt.dart';
@@ -95,13 +99,13 @@ class StandardLibrary {
         NumMin(),
         NumMax(),
         NumPow(),
-        //NumSqrt(),
+        NumSqrt(),
         NumRound(),
         NumFloor(),
         NumCeil(),
-        //NumSin(),
+        NumSin(),
         NumCos(),
-        //NumTan(),
+        NumTan(),
         NumLog(),
         NumIsNegative(),
         NumIsPositive(),
@@ -113,7 +117,7 @@ class StandardLibrary {
         NumInfinity(),
         NumFraction(),
         NumClamp(),
-        //NumSign(),
+        NumSign(),
         NumIntegerRandom(),
         NumDecimalRandom(),
 

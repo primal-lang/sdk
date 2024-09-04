@@ -13,20 +13,18 @@ class NumSub extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => NumSubNode3(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class NumSubNode3 extends FunctionNode {
-  final List<Node> arguments;
-
-  const NumSubNode3({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
-    required this.arguments,
+    required super.arguments,
   });
 
   @override
