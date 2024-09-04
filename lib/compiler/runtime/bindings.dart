@@ -22,8 +22,7 @@ class Bindings {
     final Map<String, Node> bindings = {};
 
     for (int i = 0; i < parameters.length; i++) {
-      final Parameter parameter = parameters[i];
-      bindings[parameter.name] = arguments[i];
+      bindings[parameters[i].name] = arguments[i];
     }
 
     return Bindings(bindings);
