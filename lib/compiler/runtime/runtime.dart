@@ -25,7 +25,7 @@ class Runtime {
 
   String evaluate(Expression expression) {
     // TODO(momo): evaluate expression semantically before executing it
-    final Node node = expression.toNode().evaluate();
+    final Node node = expression.toNode();
 
     return fullReduce(node).toString();
   }
@@ -35,8 +35,10 @@ class Runtime {
       return ListNode(node.value.map(fullReduce).toList());
     } else if (node is StringNode) {
       return StringNode('"${node.value}"');
+    } else if (node is CallNode) {
+      return fullReduce(node.evaluate());
     } else {
-      return node.evaluate();
+      return node;
     }
   }
 }
