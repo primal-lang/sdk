@@ -1,9 +1,7 @@
-/*import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class IsBoolean extends NativeFunctionPrototype {
+class IsBoolean extends NativeFunctionNode {
   IsBoolean()
       : super(
           name: 'is.boolean',
@@ -13,10 +11,24 @@ class IsBoolean extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').evaluate();
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
 
     return BooleanNode(a is BooleanNode);
   }
 }
-*/

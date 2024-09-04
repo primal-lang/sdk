@@ -1,9 +1,7 @@
-/*import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class IsString extends NativeFunctionPrototype {
+class IsString extends NativeFunctionNode {
   IsString()
       : super(
           name: 'is.string',
@@ -13,10 +11,24 @@ class IsString extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').evaluate();
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
 
     return BooleanNode(a is StringNode);
   }
 }
-*/

@@ -32,6 +32,13 @@ import 'package:primal/compiler/library/arithmetic/num_sqrt.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
 import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/arithmetic/num_tan.dart';
+import 'package:primal/compiler/library/casting/is_boolean.dart';
+import 'package:primal/compiler/library/casting/is_decimal.dart';
+import 'package:primal/compiler/library/casting/is_infinite.dart';
+import 'package:primal/compiler/library/casting/is_integer.dart';
+import 'package:primal/compiler/library/casting/is_list.dart';
+import 'package:primal/compiler/library/casting/is_number.dart';
+import 'package:primal/compiler/library/casting/is_string.dart';
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/library/comparison/comp_ge.dart';
 import 'package:primal/compiler/library/comparison/comp_gt.dart';
@@ -185,18 +192,19 @@ class StandardLibrary {
         ListSublist(),*/
 
         // Casting
-        /*IsNumber(),
-        IsInteger(),
+        IsBoolean(),
         IsDecimal(),
         IsInfinite(),
-        IsString(),
-        IsBoolean(),
+        IsInteger(),
         IsList(),
-        ToNumber(),
-        ToInteger(),
-        ToDecimal(),
-        ToString(),
-        ToBoolean(),*/
+        IsNumber(),
+        IsString(),
+
+        //ToNumber(),
+        //ToInteger(),
+        //ToDecimal(),
+        //ToString(),
+        //ToBoolean(),
 
         // Console
         //ConsoleWrite(),
