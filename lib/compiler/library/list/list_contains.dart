@@ -34,12 +34,14 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if (a is ListNode) {
+      final eq.NodeWithArguments comparator = eq.NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+
       for (final Node element in a.value) {
-        final Node comparison = eq.NodeWithArguments(
-          name: name,
-          parameters: parameters,
-          arguments: arguments,
-        ).compare(element.evaluate(), b);
+        final Node comparison = comparator.compare(element.evaluate(), b);
 
         if (comparison is BooleanNode && comparison.value) {
           return const BooleanNode(true);

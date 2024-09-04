@@ -61,6 +61,13 @@ import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_contains.dart';
 import 'package:primal/compiler/library/list/list_drop.dart';
 import 'package:primal/compiler/library/list/list_filled.dart';
+import 'package:primal/compiler/library/list/list_first.dart';
+import 'package:primal/compiler/library/list/list_index_of.dart';
+import 'package:primal/compiler/library/list/list_init.dart';
+import 'package:primal/compiler/library/list/list_insert_end.dart';
+import 'package:primal/compiler/library/list/list_insert_start.dart';
+import 'package:primal/compiler/library/list/list_is_empty.dart';
+import 'package:primal/compiler/library/list/list_is_not_empty.dart';
 import 'package:primal/compiler/library/operators/operator_add.dart';
 import 'package:primal/compiler/library/operators/operator_div.dart';
 import 'package:primal/compiler/library/operators/operator_eq.dart';
@@ -187,22 +194,23 @@ class StandardLibrary {
         ListContains(),
         ListDrop(),
         ListFilled(),
-        //ListInsertStart(),
-        //ListInsertEnd(),
+        ListFirst(),
+        ListIndexOf(),
+        ListInit(),
+        ListInsertEnd(),
+        ListInsertStart(),
+        ListIsEmpty(),
+        ListIsNotEmpty(),
+
         //ListSet(),
         //ListJoin(),
         //ListLength(),
-        //ListIsEmpty(),
-        //ListIsNotEmpty(),
-        //ListFirst(),
         //ListLast(),
-        //ListInit(),
         //ListTail(),
         //ListTake(),
         //ListRemove(),
         //ListRemoveAt(),
         //ListReverse(),
-        //ListIndexOf(),
         //ListSwap(),
         //ListSublist(),
 
