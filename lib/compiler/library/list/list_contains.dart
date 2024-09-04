@@ -1,11 +1,9 @@
-/*import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/library/comparison/comp_eq.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/comparison/comp_eq.dart' as eq;
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class ListContains extends NativeFunctionPrototype {
+class ListContains extends NativeFunctionNode {
   ListContains()
       : super(
           name: 'list.contains',
@@ -16,15 +14,32 @@ class ListContains extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').evaluate();
-    final Node b = arguments.get('b').evaluate();
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
+    final Node b = arguments[1].evaluate();
 
     if (a is ListNode) {
-      final CompEq eq = CompEq();
-
       for (final Node element in a.value) {
-        final Node comparison = eq.compare(element.evaluate(), b);
+        final Node comparison = eq.NodeWithArguments(
+          name: name,
+          parameters: parameters,
+          arguments: arguments,
+        ).compare(element.evaluate(), b);
 
         if (comparison is BooleanNode && comparison.value) {
           return const BooleanNode(true);
@@ -41,4 +56,3 @@ class ListContains extends NativeFunctionPrototype {
     }
   }
 }
-*/

@@ -56,6 +56,8 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/index/element_at.dart';
+import 'package:primal/compiler/library/list/list_concat.dart';
+import 'package:primal/compiler/library/list/list_contains.dart';
 import 'package:primal/compiler/library/operators/operator_add.dart';
 import 'package:primal/compiler/library/operators/operator_div.dart';
 import 'package:primal/compiler/library/operators/operator_eq.dart';
@@ -177,29 +179,29 @@ class StandardLibrary {
         StrSplit(),*/
 
         // List
-        /*ListInsertStart(),
-        ListInsertEnd(),
-        ListAt(),
-        ListSet(),
-        ListJoin(),
-        ListLength(),
         ListConcat(),
-        ListIsEmpty(),
-        ListIsNotEmpty(),
         ListContains(),
-        ListFirst(),
-        ListLast(),
-        ListInit(),
-        ListTail(),
-        ListTake(),
-        ListDrop(),
-        ListRemove(),
-        ListRemoveAt(),
-        ListReverse(),
-        ListFilled(),
-        ListIndexOf(),
-        ListSwap(),
-        ListSublist(),*/
+        //ListInsertStart(),
+        //ListInsertEnd(),
+        //ListAt(),
+        //ListSet(),
+        //ListJoin(),
+        //ListLength(),
+        //ListIsEmpty(),
+        //ListIsNotEmpty(),
+        //ListFirst(),
+        //ListLast(),
+        //ListInit(),
+        //ListTail(),
+        //ListTake(),
+        //ListDrop(),
+        //ListRemove(),
+        //ListRemoveAt(),
+        //ListReverse(),
+        //ListFilled(),
+        //ListIndexOf(),
+        //ListSwap(),
+        //ListSublist(),
 
         // Casting
         IsBoolean(),
