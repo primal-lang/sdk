@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/comp_eq.dart';
+import 'package:primal/compiler/library/comparison/comp_eq.dart' as eq;
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
@@ -13,20 +13,18 @@ class OperatorEq extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => OperatorEqNode3(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class OperatorEqNode3 extends FunctionNode {
-  final List<Node> arguments;
-
-  const OperatorEqNode3({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
-    required this.arguments,
+    required super.arguments,
   });
 
   @override
@@ -34,7 +32,7 @@ class OperatorEqNode3 extends FunctionNode {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    return NodeWithArguments(
+    return eq.NodeWithArguments(
       name: name,
       parameters: parameters,
       arguments: arguments,

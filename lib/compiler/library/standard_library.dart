@@ -84,6 +84,7 @@ import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/library/logic/bool_or.dart';
 import 'package:primal/compiler/library/logic/bool_xor.dart';
 import 'package:primal/compiler/library/operators/operator_add.dart';
+import 'package:primal/compiler/library/operators/operator_and.dart';
 import 'package:primal/compiler/library/operators/operator_div.dart';
 import 'package:primal/compiler/library/operators/operator_eq.dart';
 import 'package:primal/compiler/library/operators/operator_ge.dart';
@@ -93,26 +94,28 @@ import 'package:primal/compiler/library/operators/operator_lt.dart';
 import 'package:primal/compiler/library/operators/operator_mod.dart';
 import 'package:primal/compiler/library/operators/operator_mul.dart';
 import 'package:primal/compiler/library/operators/operator_neq.dart';
+import 'package:primal/compiler/library/operators/operator_not.dart';
+import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
   static List<FunctionNode> get() => [
         // Operators
-        OperatorEq(),
-        OperatorNeq(),
-        OperatorGt(),
-        OperatorLt(),
-        OperatorGe(),
-        OperatorLe(),
         OperatorAdd(),
-        OperatorSub(),
-        OperatorMul(),
+        OperatorAnd(),
         OperatorDiv(),
+        OperatorEq(),
+        OperatorGe(),
+        OperatorGt(),
+        OperatorLe(),
+        OperatorLt(),
         OperatorMod(),
-        //OperatorAnd(),
-        //OperatorOr(),
-        //OperatorNot(),
+        OperatorMul(),
+        OperatorNeq(),
+        OperatorNot(),
+        OperatorOr(),
+        OperatorSub(),
 
         // Control
         If(),

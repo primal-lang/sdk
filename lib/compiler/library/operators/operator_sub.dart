@@ -13,20 +13,18 @@ class OperatorSub extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => OperatorSubNode3(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class OperatorSubNode3 extends FunctionNode {
-  final List<Node> arguments;
-
-  const OperatorSubNode3({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
-    required this.arguments,
+    required super.arguments,
   });
 
   @override
