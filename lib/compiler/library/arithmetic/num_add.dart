@@ -13,15 +13,15 @@ class NumAdd extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => NumAddNode(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class NumAddNode extends NativeFunctionNodeWithArguments {
-  const NumAddNode({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,

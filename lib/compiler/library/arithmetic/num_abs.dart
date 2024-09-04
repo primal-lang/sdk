@@ -12,15 +12,15 @@ class NumAbs extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => NumAbsNode(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class NumAbsNode extends NativeFunctionNodeWithArguments {
-  const NumAbsNode({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,

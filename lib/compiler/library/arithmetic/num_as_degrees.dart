@@ -13,15 +13,15 @@ class NumAsDegrees extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => NumAsDegreesNode(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class NumAsDegreesNode extends NativeFunctionNodeWithArguments {
-  const NumAsDegreesNode({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,

@@ -13,15 +13,15 @@ class NumAsRadians extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => NumAsRadiansNode(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class NumAsRadiansNode extends NativeFunctionNodeWithArguments {
-  const NumAsRadiansNode({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,

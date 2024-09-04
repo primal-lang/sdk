@@ -2,6 +2,10 @@ import 'package:primal/compiler/library/arithmetic/num_abs.dart';
 import 'package:primal/compiler/library/arithmetic/num_add.dart';
 import 'package:primal/compiler/library/arithmetic/num_as_degrees.dart';
 import 'package:primal/compiler/library/arithmetic/num_as_radians.dart';
+import 'package:primal/compiler/library/arithmetic/num_ceil.dart';
+import 'package:primal/compiler/library/arithmetic/num_clamp.dart';
+import 'package:primal/compiler/library/arithmetic/num_cos.dart';
+import 'package:primal/compiler/library/arithmetic/num_dec.dart';
 import 'package:primal/compiler/library/arithmetic/num_div.dart';
 import 'package:primal/compiler/library/arithmetic/num_mod.dart';
 import 'package:primal/compiler/library/arithmetic/num_mul.dart';
@@ -68,33 +72,33 @@ class StandardLibrary {
         NumDiv(),
         NumMod(),
         NumAbs(),
-        /*NumNegative(),
-        NumInc(),
+        //NumNegative(),
+        //NumInc(),
         NumDec(),
-        NumMin(),
-        NumMax(),
-        NumPow(),
-        NumSqrt(),
-        NumRound(),
-        NumFloor(),
+        //NumMin(),
+        //NumMax(),
+        //NumPow(),
+        //NumSqrt(),
+        //NumRound(),
+        //NumFloor(),
         NumCeil(),
-        NumSin(),
+        //NumSin(),
         NumCos(),
-        NumTan(),
-        NumLog(),
-        NumIsNegative(),
-        NumIsPositive(),
-        NumIsZero(),
-        NumIsEven(),
-        NumIsOdd(),*/
+        //NumTan(),
+        //NumLog(),
+        //NumIsNegative(),
+        //NumIsPositive(),
+        //NumIsZero(),
+        //NumIsEven(),
+        //NumIsOdd(),
         NumAsRadians(),
         NumAsDegrees(),
-        /*NumInfinity(),
-        NumFraction(),
+        //NumInfinity(),
+        //NumFraction(),
         NumClamp(),
-        NumSign(),
-        NumIntegerRandom(),
-        NumDecimalRandom(),*/
+        //NumSign(),
+        //NumIntegerRandom(),
+        //NumDecimalRandom(),
 
         // Logic
         /*BoolAnd(),
