@@ -1,9 +1,7 @@
-/*import 'dart:math';
+import 'dart:math';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class NumDecimalRandom extends NativeFunctionPrototype {
+class NumDecimalRandom extends NativeFunctionNode {
   NumDecimalRandom()
       : super(
           name: 'num.decimalRandom',
@@ -11,6 +9,5 @@ class NumDecimalRandom extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) => NumberNode(Random().nextDouble());
+  Node node(List<Node> arguments) => NumberNode(Random().nextDouble());
 }
-*/

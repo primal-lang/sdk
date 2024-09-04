@@ -6,7 +6,13 @@ import 'package:primal/compiler/library/arithmetic/num_ceil.dart';
 import 'package:primal/compiler/library/arithmetic/num_clamp.dart';
 import 'package:primal/compiler/library/arithmetic/num_cos.dart';
 import 'package:primal/compiler/library/arithmetic/num_dec.dart';
+import 'package:primal/compiler/library/arithmetic/num_decimal_random.dart';
 import 'package:primal/compiler/library/arithmetic/num_div.dart';
+import 'package:primal/compiler/library/arithmetic/num_floor.dart';
+import 'package:primal/compiler/library/arithmetic/num_fraction.dart';
+import 'package:primal/compiler/library/arithmetic/num_inc.dart';
+import 'package:primal/compiler/library/arithmetic/num_infinity.dart';
+import 'package:primal/compiler/library/arithmetic/num_int_random.dart';
 import 'package:primal/compiler/library/arithmetic/num_mod.dart';
 import 'package:primal/compiler/library/arithmetic/num_mul.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
@@ -73,14 +79,14 @@ class StandardLibrary {
         NumMod(),
         NumAbs(),
         //NumNegative(),
-        //NumInc(),
+        NumInc(),
         NumDec(),
         //NumMin(),
         //NumMax(),
         //NumPow(),
         //NumSqrt(),
         //NumRound(),
-        //NumFloor(),
+        NumFloor(),
         NumCeil(),
         //NumSin(),
         NumCos(),
@@ -93,12 +99,12 @@ class StandardLibrary {
         //NumIsOdd(),
         NumAsRadians(),
         NumAsDegrees(),
-        //NumInfinity(),
-        //NumFraction(),
+        NumInfinity(),
+        NumFraction(),
         NumClamp(),
         //NumSign(),
-        //NumIntegerRandom(),
-        //NumDecimalRandom(),
+        NumIntegerRandom(),
+        NumDecimalRandom(),
 
         // Logic
         /*BoolAnd(),
