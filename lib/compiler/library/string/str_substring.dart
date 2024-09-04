@@ -31,8 +31,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    final Node b = arguments[2].evaluate();
-    final Node c = arguments[3].evaluate();
+    final Node b = arguments[1].evaluate();
+    final Node c = arguments[2].evaluate();
 
     if ((a is StringNode) && (b is NumberNode) && (c is NumberNode)) {
       return StringNode(a.value.substring(b.value.toInt(), c.value.toInt()));

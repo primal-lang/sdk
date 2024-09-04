@@ -30,7 +30,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    final Node b = arguments[2].evaluate();
+    final Node b = arguments[1].evaluate();
 
     if ((a is StringNode) && (b is StringNode)) {
       return BooleanNode(a.value.startsWith(b.value));
