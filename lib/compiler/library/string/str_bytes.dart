@@ -1,12 +1,10 @@
-/*import 'dart:convert';
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class StrBytes extends NativeFunctionPrototype {
+class StrBytes extends NativeFunctionNode {
   StrBytes()
       : super(
           name: 'str.bytes',
@@ -16,8 +14,23 @@ class StrBytes extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').evaluate();
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
       final Uint8List bytes = Uint8List.fromList(utf8.encode(a.value));
@@ -32,4 +45,3 @@ class StrBytes extends NativeFunctionPrototype {
     }
   }
 }
-*/

@@ -97,6 +97,15 @@ import 'package:primal/compiler/library/operators/operator_neq.dart';
 import 'package:primal/compiler/library/operators/operator_not.dart';
 import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
+import 'package:primal/compiler/library/string/str_at.dart';
+import 'package:primal/compiler/library/string/str_bytes.dart';
+import 'package:primal/compiler/library/string/str_concat.dart';
+import 'package:primal/compiler/library/string/str_contains.dart';
+import 'package:primal/compiler/library/string/str_drop.dart';
+import 'package:primal/compiler/library/string/str_ends_with.dart';
+import 'package:primal/compiler/library/string/str_first.dart';
+import 'package:primal/compiler/library/string/str_index_of.dart';
+import 'package:primal/compiler/library/string/str_init.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
@@ -221,30 +230,31 @@ class StandardLibrary {
         OperatorSub(),
 
         // String
+        StrAt(),
+        StrBytes(),
+        StrConcat(),
+        StrContains(),
+        StrDrop(),
+        StrEndsWith(),
+        StrFirst(),
+        StrIndexOf(),
+        StrInit(),
+
         //StrSubstring(),
         //StrStartsWith(),
-        //StrEndsWith(),
         //StrReplace(),
         //StrUppercase(),
         //StrLowercase(),
         //StrTrim(),
         //StrMatch(),
         //StrLength(),
-        //StrConcat(),
-        //StrFirst(),
         //StrLast(),
-        //StrInit(),
         //StrTail(),
-        //StrAt(),
         //StrIsEmpty(),
         //StrIsNotEmpty(),
-        //StrContains(),
         //StrTake(),
-        //StrDrop(),
         //StrRemoveAt(),
         //StrReverse(),
-        //StrBytes(),
-        //StrIndexOf(),
         //StrPadLeft(),
         //StrPadRight(),
         //StrSplit(),
