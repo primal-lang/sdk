@@ -36,9 +36,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
     if (a is BooleanNode) {
       if (a.value) {
-        return b;
+        return b.evaluate();
       } else {
-        return c;
+        return c.evaluate();
       }
     } else {
       throw InvalidArgumentTypesError(
