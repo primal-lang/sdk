@@ -79,6 +79,10 @@ import 'package:primal/compiler/library/list/list_sublist.dart';
 import 'package:primal/compiler/library/list/list_swap.dart';
 import 'package:primal/compiler/library/list/list_tail.dart';
 import 'package:primal/compiler/library/list/list_take.dart';
+import 'package:primal/compiler/library/logic/bool_and.dart';
+import 'package:primal/compiler/library/logic/bool_not.dart';
+import 'package:primal/compiler/library/logic/bool_or.dart';
+import 'package:primal/compiler/library/logic/bool_xor.dart';
 import 'package:primal/compiler/library/operators/operator_add.dart';
 import 'package:primal/compiler/library/operators/operator_div.dart';
 import 'package:primal/compiler/library/operators/operator_eq.dart';
@@ -162,10 +166,10 @@ class StandardLibrary {
         NumTan(),
 
         // Logic
-        //BoolAnd(),
-        //BoolOr(),
-        //BoolXor(),
-        //BoolNot(),
+        BoolAnd(),
+        BoolNot(),
+        BoolOr(),
+        BoolXor(),
 
         // Index
         ElementAt(),
