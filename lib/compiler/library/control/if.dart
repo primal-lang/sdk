@@ -14,20 +14,18 @@ class If extends NativeFunctionNode {
         );
 
   @override
-  Node node(List<Node> arguments) => IfNode3(
+  Node node(List<Node> arguments) => NodeWithArguments(
         name: name,
         parameters: parameters,
         arguments: arguments,
       );
 }
 
-class IfNode3 extends FunctionNode {
-  final List<Node> arguments;
-
-  const IfNode3({
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
     required super.name,
     required super.parameters,
-    required this.arguments,
+    required super.arguments,
   });
 
   @override

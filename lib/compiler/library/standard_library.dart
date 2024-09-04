@@ -50,7 +50,12 @@ import 'package:primal/compiler/library/comparison/comp_gt.dart';
 import 'package:primal/compiler/library/comparison/comp_le.dart';
 import 'package:primal/compiler/library/comparison/comp_lt.dart';
 import 'package:primal/compiler/library/comparison/comp_neq.dart';
+import 'package:primal/compiler/library/console/console_write.dart';
+import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
+import 'package:primal/compiler/library/control/try.dart';
+import 'package:primal/compiler/library/error/throw.dart';
+import 'package:primal/compiler/library/index/element_at.dart';
 import 'package:primal/compiler/library/operators/operator_add.dart';
 import 'package:primal/compiler/library/operators/operator_div.dart';
 import 'package:primal/compiler/library/operators/operator_eq.dart';
@@ -84,10 +89,10 @@ class StandardLibrary {
 
         // Control
         If(),
-        //Try(),
+        Try(),
 
         // Error
-        //Throw(),
+        Throw(),
 
         // Comparison
         CompEq(),
@@ -134,13 +139,13 @@ class StandardLibrary {
         NumTan(),
 
         // Logic
-        /*BoolAnd(),
-        BoolOr(),
-        BoolXor(),
-        BoolNot(),*/
+        //BoolAnd(),
+        //BoolOr(),
+        //BoolXor(),
+        //BoolNot(),
 
         // Index
-        //ElementAt(),
+        ElementAt(),
 
         // String
         /*StrSubstring(),
@@ -211,7 +216,7 @@ class StandardLibrary {
         ToString(),
 
         // Console
-        //ConsoleWrite(),
-        //ConsoleWriteLn(),
+        ConsoleWrite(),
+        ConsoleWriteLn(),
       ];
 }

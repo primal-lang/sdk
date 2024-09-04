@@ -1,11 +1,9 @@
-/*import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/platform/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/platform_web.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class ConsoleWrite extends NativeFunctionPrototype {
+class ConsoleWrite extends NativeFunctionNode {
   ConsoleWrite()
       : super(
           name: 'console.write',
@@ -15,11 +13,25 @@ class ConsoleWrite extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').evaluate();
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
     PlatformInterface().outWrite(a.toString());
 
     return a;
   }
 }
-*/

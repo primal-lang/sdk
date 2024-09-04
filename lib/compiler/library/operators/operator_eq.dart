@@ -34,7 +34,7 @@ class OperatorEqNode3 extends FunctionNode {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    return CompEqNode3(
+    return NodeWithArguments(
       name: name,
       parameters: parameters,
       arguments: arguments,
