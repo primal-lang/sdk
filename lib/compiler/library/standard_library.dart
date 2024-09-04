@@ -39,6 +39,11 @@ import 'package:primal/compiler/library/casting/is_integer.dart';
 import 'package:primal/compiler/library/casting/is_list.dart';
 import 'package:primal/compiler/library/casting/is_number.dart';
 import 'package:primal/compiler/library/casting/is_string.dart';
+import 'package:primal/compiler/library/casting/to_boolean.dart';
+import 'package:primal/compiler/library/casting/to_decimal.dart';
+import 'package:primal/compiler/library/casting/to_integer.dart';
+import 'package:primal/compiler/library/casting/to_number.dart';
+import 'package:primal/compiler/library/casting/to_string.dart';
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/library/comparison/comp_ge.dart';
 import 'package:primal/compiler/library/comparison/comp_gt.dart';
@@ -199,12 +204,11 @@ class StandardLibrary {
         IsList(),
         IsNumber(),
         IsString(),
-
-        //ToNumber(),
-        //ToInteger(),
-        //ToDecimal(),
-        //ToString(),
-        //ToBoolean(),
+        ToBoolean(),
+        ToDecimal(),
+        ToInteger(),
+        ToNumber(),
+        ToString(),
 
         // Console
         //ConsoleWrite(),
