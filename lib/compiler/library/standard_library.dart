@@ -13,6 +13,11 @@ import 'package:primal/compiler/library/arithmetic/num_fraction.dart';
 import 'package:primal/compiler/library/arithmetic/num_inc.dart';
 import 'package:primal/compiler/library/arithmetic/num_infinity.dart';
 import 'package:primal/compiler/library/arithmetic/num_int_random.dart';
+import 'package:primal/compiler/library/arithmetic/num_is_even.dart';
+import 'package:primal/compiler/library/arithmetic/num_is_negative.dart';
+import 'package:primal/compiler/library/arithmetic/num_is_odd.dart';
+import 'package:primal/compiler/library/arithmetic/num_is_positive.dart';
+import 'package:primal/compiler/library/arithmetic/num_is_zero.dart';
 import 'package:primal/compiler/library/arithmetic/num_mod.dart';
 import 'package:primal/compiler/library/arithmetic/num_mul.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
@@ -92,11 +97,11 @@ class StandardLibrary {
         NumCos(),
         //NumTan(),
         //NumLog(),
-        //NumIsNegative(),
-        //NumIsPositive(),
-        //NumIsZero(),
-        //NumIsEven(),
-        //NumIsOdd(),
+        NumIsNegative(),
+        NumIsPositive(),
+        NumIsZero(),
+        NumIsEven(),
+        NumIsOdd(),
         NumAsRadians(),
         NumAsDegrees(),
         NumInfinity(),
