@@ -106,6 +106,15 @@ import 'package:primal/compiler/library/string/str_ends_with.dart';
 import 'package:primal/compiler/library/string/str_first.dart';
 import 'package:primal/compiler/library/string/str_index_of.dart';
 import 'package:primal/compiler/library/string/str_init.dart';
+import 'package:primal/compiler/library/string/str_is_empty.dart';
+import 'package:primal/compiler/library/string/str_is_not_empty.dart';
+import 'package:primal/compiler/library/string/str_last.dart';
+import 'package:primal/compiler/library/string/str_length.dart';
+import 'package:primal/compiler/library/string/str_lowercase.dart';
+import 'package:primal/compiler/library/string/str_match.dart';
+import 'package:primal/compiler/library/string/str_pad_left.dart';
+import 'package:primal/compiler/library/string/str_pad_right.dart';
+import 'package:primal/compiler/library/string/str_remove_at.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
@@ -239,24 +248,24 @@ class StandardLibrary {
         StrFirst(),
         StrIndexOf(),
         StrInit(),
+        StrIsEmpty(),
+        StrIsNotEmpty(),
+        StrLast(),
+        StrLength(),
+        StrLowercase(),
+        StrMatch(),
+        StrPadLeft(),
+        StrPadRight(),
+        StrRemoveAt(),
 
         //StrSubstring(),
         //StrStartsWith(),
         //StrReplace(),
         //StrUppercase(),
-        //StrLowercase(),
         //StrTrim(),
-        //StrMatch(),
-        //StrLength(),
-        //StrLast(),
         //StrTail(),
-        //StrIsEmpty(),
-        //StrIsNotEmpty(),
         //StrTake(),
-        //StrRemoveAt(),
         //StrReverse(),
-        //StrPadLeft(),
-        //StrPadRight(),
         //StrSplit(),
       ];
 }
