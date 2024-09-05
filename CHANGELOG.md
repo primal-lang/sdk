@@ -1,16 +1,9 @@
-## 0.2.0
+## 0.2.0 - Bone
 
 ### Language
 
-* Added lexical analyzer
-* Added syntactic analyzer
-* Added semantic analyzer
 * Added support for:
-    - Booleans
-    - Numbers
-    - Strings
     - Lists
-* Added main function entry point
 * Added syntactic sugar for `if` conditions
 * Added syntactic sugar to construct lists: `[1, 2, 3]`
 * Added syntactic sugar to access list elements: `list[index]`
@@ -23,17 +16,37 @@
     - Comparison: `==`, `!=`, `>`, `<`, `>=`, `<=`
     - Logical: `&`, `|`, `!`
 * Added basic functions for:
+    - List
+    - Console
+
+### Runtime
+
+* Added lazy evaluation
+
+## 0.1.0 - Stone
+
+### Language
+
+* Added lexical analyzer
+* Added syntactic analyzer
+* Added semantic analyzer
+* Added support for:
+    - Booleans
+    - Numbers
+    - Strings
+* Added main function as entry point
+
+### Standard library
+
+* Added basic functions for:
     - Control
     - Error
     - Comparison
     - Arithmetic
     - Logic
     - String
-    - List
     - Casting
-    - Console
 
 ### Runtime
 
 * Added runtime interpreter
-* Added lazy evaluation
