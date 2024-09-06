@@ -1,4 +1,6 @@
-## 0.2.0 - Bone
+# CHANGELOG
+
+## 0.2.0 - Bone Hook
 
 ### Language
 
@@ -23,7 +25,7 @@
 
 * Added lazy evaluation
 
-## 0.1.0 - Stone
+## 0.1.0 - Stone Arrowhead
 
 ### Language
 
