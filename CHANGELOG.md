@@ -10,7 +10,7 @@
 ### Standard library
 
 * Added basic functions for:
-    - Higher order functions
+    - List processing functions
 
 ## 0.2.0 - Bone Hook
 

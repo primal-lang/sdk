@@ -125,7 +125,7 @@ class CallNode extends Node {
       return callee.functionNode();
     } else {
       throw Exception(
-          'Cannot apply function to: $callee'); // TODO(momo): handle
+          'Cannot apply arguments to: $callee'); // TODO(momo): handle
     }
   }
 

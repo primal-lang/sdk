@@ -1297,10 +1297,15 @@ void main() {
       checkResult(runtime, [2, 3]);
     });
 
-    test('list.map', () {
-      final Runtime runtime =
-          getRuntime('main = list.map(num.abs, [1, -2, 3, -4, 5])');
-      checkResult(runtime, [1, 2, 3, 4, 5]);
+    test('list.map 1 ', () {
+      final Runtime runtime = getRuntime('main = list.map(num.abs, [])');
+      checkResult(runtime, []);
+    });
+
+    test('list.map 2', () {
+      final Runtime runtime = getRuntime(
+          'main = list.map(num.abs, [1, -2 - 6, 3 * -3, -4, num.negative(7)])');
+      checkResult(runtime, [1, 8, 9, 4, 7]);
     });
   });
 
