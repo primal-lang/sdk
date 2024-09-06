@@ -81,6 +81,7 @@ import 'package:primal/compiler/library/list/list_remove.dart';
 import 'package:primal/compiler/library/list/list_remove_at.dart';
 import 'package:primal/compiler/library/list/list_reverse.dart';
 import 'package:primal/compiler/library/list/list_set.dart';
+import 'package:primal/compiler/library/list/list_sort.dart';
 import 'package:primal/compiler/library/list/list_sublist.dart';
 import 'package:primal/compiler/library/list/list_swap.dart';
 import 'package:primal/compiler/library/list/list_tail.dart';
@@ -233,6 +234,7 @@ class StandardLibrary {
         ListRemove(),
         ListReverse(),
         ListSet(),
+        ListSort(),
         ListSublist(),
         ListSwap(),
         ListTail(),

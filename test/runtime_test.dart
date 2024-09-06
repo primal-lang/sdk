@@ -1409,6 +1409,24 @@ void main() {
           getRuntime('main = list.zip([1, 3, 5], [2, 4, 6], num.add)');
       checkResult(runtime, [3, 7, 11]);
     });
+
+    test('list.zip 5', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1 + 1 + 1, 3, 5], [2, 4, 6], num.add)');
+      checkResult(runtime, [5, 7, 11]);
+    });
+
+    test('list.sort 1', () {
+      final Runtime runtime = getRuntime(
+          'comparator(a, b) = a - b\n\nmain = list.sort([], comparator)');
+      checkResult(runtime, []);
+    });
+
+    test('list.sort 2', () {
+      final Runtime runtime = getRuntime(
+          'comparator(a, b) = a - b\n\nmain = list.sort([3, 1, 5, 2, 4], comparator)');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
   });
 
   group('To', () {
