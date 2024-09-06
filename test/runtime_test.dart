@@ -1359,7 +1359,7 @@ void main() {
 
     test('list.reduce 1', () {
       final Runtime runtime = getRuntime('main = list.reduce([], 0, num.add)');
-      checkResult(runtime, []);
+      checkResult(runtime, 0);
     });
 
     test('list.reduce 2', () {
