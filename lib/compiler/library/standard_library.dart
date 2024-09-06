@@ -108,6 +108,7 @@ import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
 import 'package:primal/compiler/library/string/str_at.dart';
 import 'package:primal/compiler/library/string/str_bytes.dart';
+import 'package:primal/compiler/library/string/str_compare.dart';
 import 'package:primal/compiler/library/string/str_concat.dart';
 import 'package:primal/compiler/library/string/str_contains.dart';
 import 'package:primal/compiler/library/string/str_drop.dart';
@@ -268,6 +269,7 @@ class StandardLibrary {
         // String
         StrAt(),
         StrBytes(),
+        StrCompare(),
         StrConcat(),
         StrContains(),
         StrDrop(),

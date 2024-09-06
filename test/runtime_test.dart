@@ -1015,6 +1015,23 @@ void main() {
       final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", ",")');
       checkResult(runtime, ['"aa"', '"bb"', '"cc"']);
     });
+
+    test('str.compare 1', () {
+      final Runtime runtime =
+          getRuntime('main = str.compare("hello", "mountain")');
+      checkResult(runtime, -1);
+    });
+
+    test('str.compare 2', () {
+      final Runtime runtime =
+          getRuntime('main = str.compare("table", "table")');
+      checkResult(runtime, 0);
+    });
+
+    test('str.compare 3', () {
+      final Runtime runtime = getRuntime('main = str.compare("monkey", "cat")');
+      checkResult(runtime, 1);
+    });
   });
 
   group('List', () {
@@ -1440,6 +1457,13 @@ void main() {
       final Runtime runtime =
           getRuntime('main = list.sort([3, 1, 5, 2, 4], num.compare)');
       checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.sort 3', () {
+      final Runtime runtime = getRuntime(
+          'main = list.sort(["Peter", "Alice", "John", "Bob", "Daniel"], str.compare)');
+      checkResult(
+          runtime, ['"Alice"', '"Bob"', '"Daniel"', '"John"', '"Peter"']);
     });
   });
 
