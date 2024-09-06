@@ -1335,6 +1335,23 @@ void main() {
           getRuntime('main = list.reduce([1, 2, 3, 4, 5], 10, num.add)');
       checkResult(runtime, 25);
     });
+
+    test('list.all 1', () {
+      final Runtime runtime = getRuntime('main = list.all([], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.all 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.all([2, 4, 5], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.all 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.all([2, 4, 6], num.isEven)');
+      checkResult(runtime, true);
+    });
   });
 
   group('To', () {

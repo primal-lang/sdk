@@ -56,6 +56,7 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/index/element_at.dart';
+import 'package:primal/compiler/library/list/list_all.dart';
 import 'package:primal/compiler/library/list/list_at.dart';
 import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_contains.dart';
@@ -204,6 +205,7 @@ class StandardLibrary {
         ElementAt(),
 
         // List
+        ListAll(),
         ListAt(),
         ListConcat(),
         ListContains(),
