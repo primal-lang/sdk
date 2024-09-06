@@ -1,5 +1,5 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/library/comparison/comp_eq.dart' as eq;
+import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
@@ -34,14 +34,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if (a is ListNode) {
-      final eq.NodeWithArguments comparator = eq.NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
-
       for (int i = 0; i < a.value.length; i++) {
-        final Node comparison = comparator.compare(a.value[i].evaluate(), b);
+        final Node comparison = CompEq.execute(
+          function: this,
+          a: a.value[i].evaluate(),
+          b: b,
+        );
 
         if (comparison is BooleanNode && comparison.value) {
           return NumberNode(i);
