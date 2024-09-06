@@ -1,6 +1,7 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/runtime.dart';
 
 class ListMap extends NativeFunctionNode {
   ListMap()
@@ -29,11 +30,19 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
   @override
   Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1];
+    final Node a = arguments[0];
+    final Node b = arguments[1].evaluate();
 
-    if ((a is ListNode) && (b is FunctionNode)) {
-      return ListNode(a.value); //.map((node) => b.call([node])));
+    if ((a is FreeVariableNode) && (b is ListNode)) {
+      final FunctionNode function = Runtime.SCOPE.get(a.value);
+      final List<Node> result = [];
+
+      for (final Node element in b.value) {
+        final Node value = function.apply([element]);
+        result.add(value);
+      }
+
+      return ListNode(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
