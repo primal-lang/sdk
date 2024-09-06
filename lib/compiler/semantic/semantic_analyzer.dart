@@ -3,7 +3,6 @@ import 'package:primal/compiler/library/standard_library.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
@@ -18,9 +17,8 @@ class SemanticAnalyzer
   IntermediateCode analyze() {
     final List<GenericWarning> warnings = [];
 
-    final List<CustomFunctionPrototype> customFunctions =
-        getCustomFunctions(input);
-    final List<FunctionPrototype> allFunctions = [
+    final List<CustomFunctionNode> customFunctions = getCustomFunctions(input);
+    final List<FunctionNode> allFunctions = [
       ...customFunctions,
       ...StandardLibrary.get(),
     ];
@@ -28,24 +26,27 @@ class SemanticAnalyzer
     checkDuplicatedFunctions(allFunctions);
     checkDuplicatedParameters(allFunctions);
 
-    checkNodes(
+    final List<CustomFunctionNode> checkedFunctions = checkCustomFunctions(
       customFunctions: customFunctions,
-      allFunctions: allFunctions,
+      allFunctions: Mapper.toMap(allFunctions),
       warnings: warnings,
     );
 
     return IntermediateCode(
-      functions: Mapper.toMap(allFunctions),
+      functions: Mapper.toMap([
+        ...checkedFunctions,
+        ...StandardLibrary.get(),
+      ]),
       warnings: warnings,
     );
   }
 
-  List<CustomFunctionPrototype> getCustomFunctions(
+  List<CustomFunctionNode> getCustomFunctions(
       List<FunctionDefinition> functions) {
-    final List<CustomFunctionPrototype> result = [];
+    final List<CustomFunctionNode> result = [];
 
     for (final FunctionDefinition function in functions) {
-      result.add(CustomFunctionPrototype(
+      result.add(CustomFunctionNode(
         name: function.name,
         parameters: function.parameters.map(Parameter.any).toList(),
         node: function.expression!.toNode(),
@@ -55,12 +56,12 @@ class SemanticAnalyzer
     return result;
   }
 
-  void checkDuplicatedFunctions(List<FunctionPrototype> functions) {
+  void checkDuplicatedFunctions(List<FunctionNode> functions) {
     for (int i = 0; i < functions.length - 1; i++) {
-      final FunctionPrototype function1 = functions[i];
+      final FunctionNode function1 = functions[i];
 
       for (int j = i + 1; j < functions.length; j++) {
-        final FunctionPrototype function2 = functions[j];
+        final FunctionNode function2 = functions[j];
 
         if (function1.equalSignature(function2)) {
           throw DuplicatedFunctionError(
@@ -72,8 +73,8 @@ class SemanticAnalyzer
     }
   }
 
-  void checkDuplicatedParameters(List<FunctionPrototype> functions) {
-    for (final FunctionPrototype function in functions) {
+  void checkDuplicatedParameters(List<FunctionNode> functions) {
+    for (final FunctionNode function in functions) {
       final Map<String, int> parameters = parametersCount(function);
 
       for (final MapEntry<String, int> entry in parameters.entries) {
@@ -88,7 +89,7 @@ class SemanticAnalyzer
     }
   }
 
-  Map<String, int> parametersCount(FunctionPrototype function) {
+  Map<String, int> parametersCount(FunctionNode function) {
     final Map<String, int> result = {};
 
     for (final Parameter parameter in function.parameters) {
@@ -102,15 +103,17 @@ class SemanticAnalyzer
     return result;
   }
 
-  void checkNodes({
-    required List<CustomFunctionPrototype> customFunctions,
-    required List<FunctionPrototype> allFunctions,
+  List<CustomFunctionNode> checkCustomFunctions({
+    required List<CustomFunctionNode> customFunctions,
+    required Map<String, FunctionNode> allFunctions,
     required List<GenericWarning> warnings,
   }) {
-    for (final CustomFunctionPrototype function in customFunctions) {
+    final List<CustomFunctionNode> result = [];
+
+    for (final CustomFunctionNode function in customFunctions) {
       final Set<String> usedParameters = {};
 
-      checkNode(
+      final Node node = checkNode(
         node: function.node,
         availableParameters: function.parameters.map((e) => e.name).toList(),
         usedParameters: usedParameters,
@@ -125,61 +128,110 @@ class SemanticAnalyzer
           ));
         }
       }
+
+      result.add(CustomFunctionNode(
+        name: function.name,
+        parameters: function.parameters,
+        node: node,
+      ));
     }
+
+    return result;
   }
 
-  void checkNode({
+  Node checkNode({
     required Node node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
-    required List<FunctionPrototype> allFunctions,
+    required Map<String, FunctionNode> allFunctions,
   }) {
-    if (node is IdentifierNode) {
-      if (availableParameters.contains(node.value)) {
-        usedParameters.add(node.value);
-      } else if (!allFunctions.any((f) => f.name == node.value)) {
-        throw UndefinedIdentifiersError(
-          identifier: node.value,
-          location: node.location,
-        );
-      }
-    } else if (node is CallNode) {
-      final FunctionPrototype? function = getFunctionByName(
-        name: node.name,
-        functions: allFunctions,
+    if (node is FreeVariableNode) {
+      return checkVariableIdentifier(
+        node: node,
+        availableParameters: availableParameters,
+        usedParameters: usedParameters,
+        allFunctions: allFunctions,
       );
+    } else if (node is CallNode) {
+      Node callee = node.callee;
 
-      if (function == null) {
-        throw UndefinedFunctionError(
-          function: node.name,
-          location: node.location,
-        );
-      } else if (function.parameters.length != node.arguments.length) {
-        throw InvalidNumberOfArgumentsError(
-          function: node.name,
-          location: node.location,
-        );
-      }
-
-      for (final Node node in node.arguments) {
-        checkNode(
+      if (callee is FreeVariableNode) {
+        callee = checkCalleeIdentifier(
           node: node,
+          callee: callee,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          allFunctions: allFunctions,
+        );
+      } else if (callee is CallNode) {
+        callee = checkNode(
+          node: callee,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,
         );
       }
+
+      final List<Node> newArguments = [];
+
+      for (final Node node in node.arguments) {
+        newArguments.add(checkNode(
+          node: node,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          allFunctions: allFunctions,
+        ));
+      }
+
+      return CallNode(
+        callee: callee,
+        arguments: newArguments,
+      );
+    }
+
+    return node;
+  }
+
+  Node checkVariableIdentifier({
+    required FreeVariableNode node,
+    required List<String> availableParameters,
+    required Set<String> usedParameters,
+    required Map<String, FunctionNode> allFunctions,
+  }) {
+    if (availableParameters.contains(node.value)) {
+      usedParameters.add(node.value);
+
+      return BoundedVariableNode(node.value);
+    } else if (allFunctions.containsKey(node.value)) {
+      return node;
+    } else {
+      throw UndefinedIdentifierError(node.value);
     }
   }
 
-  FunctionPrototype? getFunctionByName({
-    required String name,
-    required List<FunctionPrototype> functions,
+  Node checkCalleeIdentifier({
+    required CallNode node,
+    required FreeVariableNode callee,
+    required List<String> availableParameters,
+    required Set<String> usedParameters,
+    required Map<String, FunctionNode> allFunctions,
   }) {
-    try {
-      return functions.firstWhere((f) => f.name == name);
-    } catch (e) {
-      return null;
+    final String functionName = callee.value;
+
+    if (availableParameters.contains(functionName)) {
+      usedParameters.add(functionName);
+
+      return BoundedVariableNode(functionName);
+    } else if (allFunctions.containsKey(functionName)) {
+      final FunctionNode function = allFunctions[functionName]!;
+
+      if (function.parameters.length != node.arguments.length) {
+        throw InvalidNumberOfArgumentsError(functionName);
+      }
+
+      return callee;
+    } else {
+      throw UndefinedFunctionError(functionName);
     }
   }
 }

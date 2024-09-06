@@ -1,10 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class ListInsertStart extends NativeFunctionPrototype {
+class ListInsertStart extends NativeFunctionNode {
   ListInsertStart()
       : super(
           name: 'list.insertStart',
@@ -15,9 +13,24 @@ class ListInsertStart extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a');
-    final Node b = arguments.get('b');
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
+    final Node b = arguments[1].evaluate();
 
     if (a is ListNode) {
       return ListNode([b, ...a.value]);

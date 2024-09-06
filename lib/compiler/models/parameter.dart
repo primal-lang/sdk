@@ -31,7 +31,7 @@ class Parameter {
 
   factory Parameter.function(String name) => Parameter._(
         name: name,
-        type: const FunctionType(),
+        type: const FunctionCallType(),
       );
 
   factory Parameter.any(String name) => Parameter._(

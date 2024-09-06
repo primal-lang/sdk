@@ -1,16 +1,23 @@
-## 0.2.0
+# CHANGELOG
+
+## 0.3.0 - [Unreleased]
 
 ### Language
 
-* Added lexical analyzer
-* Added syntactic analyzer
-* Added semantic analyzer
 * Added support for:
-    - Booleans
-    - Numbers
-    - Strings
+    - Higher order functions
+
+### Standard library
+
+* Added basic functions for:
+    - List processing functions
+
+## 0.2.0 - Bone Hook
+
+### Language
+
+* Added support for:
     - Lists
-* Added main function entry point
 * Added syntactic sugar for `if` conditions
 * Added syntactic sugar to construct lists: `[1, 2, 3]`
 * Added syntactic sugar to access list elements: `list[index]`
@@ -23,17 +30,37 @@
     - Comparison: `==`, `!=`, `>`, `<`, `>=`, `<=`
     - Logical: `&`, `|`, `!`
 * Added basic functions for:
+    - List
+    - Console
+
+### Runtime
+
+* Added lazy evaluation
+
+## 0.1.0 - Stone Arrowhead
+
+### Language
+
+* Added lexical analyzer
+* Added syntactic analyzer
+* Added semantic analyzer
+* Added support for:
+    - Booleans
+    - Numbers
+    - Strings
+* Added main function as entry point
+
+### Standard library
+
+* Added basic functions for:
     - Control
     - Error
     - Comparison
     - Arithmetic
     - Logic
     - String
-    - List
     - Casting
-    - Console
 
 ### Runtime
 
 * Added runtime interpreter
-* Added lazy evaluation

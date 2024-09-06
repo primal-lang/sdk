@@ -1,10 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class CompEq extends NativeFunctionPrototype {
+class CompEq extends NativeFunctionNode {
   CompEq()
       : super(
           name: 'comp.eq',
@@ -15,14 +13,17 @@ class CompEq extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
 
-    return compare(a, b);
-  }
-
-  Node compare(Node a, Node b) {
+  static Node execute({
+    required FunctionNode function,
+    required Node a,
+    required Node b,
+  }) {
     if ((a is NumberNode) && (b is NumberNode)) {
       return BooleanNode(a.value == b.value);
     } else if ((a is StringNode) && (b is StringNode)) {
@@ -34,9 +35,10 @@ class CompEq extends NativeFunctionPrototype {
         return const BooleanNode(false);
       } else {
         for (int i = 0; i < a.value.length; i++) {
-          final Node comparison = compare(
-            a.value[i].reduce(),
-            b.value[i].reduce(),
+          final Node comparison = execute(
+            function: function,
+            a: a.value[i].evaluate(),
+            b: b.value[i].evaluate(),
           );
 
           if (comparison is BooleanNode && !comparison.value) {
@@ -48,10 +50,30 @@ class CompEq extends NativeFunctionPrototype {
       }
     } else {
       throw InvalidArgumentTypesError(
-        function: name,
-        expected: parameterTypes,
+        function: function.name,
+        expected: function.parameterTypes,
         actual: [a.type, b.type],
       );
     }
+  }
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
+    final Node b = arguments[1].evaluate();
+
+    return CompEq.execute(
+      function: this,
+      a: a,
+      b: b,
+    );
   }
 }

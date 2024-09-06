@@ -48,6 +48,28 @@ void main() {
     });
   });
 
+  group('Constants', () {
+    test('Boolean', () {
+      final Runtime runtime = getRuntime('main = true');
+      checkResult(runtime, true);
+    });
+
+    test('Number', () {
+      final Runtime runtime = getRuntime('main = 42');
+      checkResult(runtime, 42);
+    });
+
+    test('String', () {
+      final Runtime runtime = getRuntime('main = "Hello"');
+      checkResult(runtime, '"Hello"');
+    });
+
+    test('List', () {
+      final Runtime runtime = getRuntime('main = [1, 2, 3]');
+      checkResult(runtime, [1, 2, 3]);
+    });
+  });
+
   group('Operators', () {
     test('== 1', () {
       final Runtime runtime = getRuntime('main = "hey" == "hey"');
@@ -669,6 +691,21 @@ void main() {
       final Runtime runtime = getRuntime('main = num.decimalRandom()');
       expect(num.parse(runtime.executeMain()), inInclusiveRange(0, 1));
     });
+
+    test('num.compare 1', () {
+      final Runtime runtime = getRuntime('main = num.compare(3, 7)');
+      checkResult(runtime, -1);
+    });
+
+    test('num.compare 2', () {
+      final Runtime runtime = getRuntime('main = num.compare(7, 7)');
+      checkResult(runtime, 0);
+    });
+
+    test('num.compare 3', () {
+      final Runtime runtime = getRuntime('main = num.compare(7, 3)');
+      checkResult(runtime, 1);
+    });
   });
 
   group('Logic', () {
@@ -978,6 +1015,23 @@ void main() {
       final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", ",")');
       checkResult(runtime, ['"aa"', '"bb"', '"cc"']);
     });
+
+    test('str.compare 1', () {
+      final Runtime runtime =
+          getRuntime('main = str.compare("hello", "mountain")');
+      checkResult(runtime, -1);
+    });
+
+    test('str.compare 2', () {
+      final Runtime runtime =
+          getRuntime('main = str.compare("table", "table")');
+      checkResult(runtime, 0);
+    });
+
+    test('str.compare 3', () {
+      final Runtime runtime = getRuntime('main = str.compare("monkey", "cat")');
+      checkResult(runtime, 1);
+    });
   });
 
   group('List', () {
@@ -1273,6 +1327,143 @@ void main() {
       final Runtime runtime =
           getRuntime('main = list.sublist([1, 2, 3, 4, 5], 1, 3)');
       checkResult(runtime, [2, 3]);
+    });
+
+    test('list.map 1 ', () {
+      final Runtime runtime = getRuntime('main = list.map([], num.abs)');
+      checkResult(runtime, []);
+    });
+
+    test('list.map 2', () {
+      final Runtime runtime = getRuntime(
+          'main = list.map([1, -2 - 6, 3 * -3, -4, num.negative(7)], num.abs)');
+      checkResult(runtime, [1, 8, 9, 4, 7]);
+    });
+
+    test('list.filter 1', () {
+      final Runtime runtime = getRuntime('main = list.filter([], num.isEven)');
+      checkResult(runtime, []);
+    });
+
+    test('list.filter 2', () {
+      final Runtime runtime = getRuntime(
+          'main = list.filter([-3, -2, -1, 0, 1, 2, 3], num.isEven)');
+      checkResult(runtime, [-2, 0, 2]);
+    });
+
+    test('list.filter 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.filter([-3, -2, -1, 1, 2, 3], num.isZero)');
+      checkResult(runtime, []);
+    });
+
+    test('list.reduce 1', () {
+      final Runtime runtime = getRuntime('main = list.reduce([], 0, num.add)');
+      checkResult(runtime, 0);
+    });
+
+    test('list.reduce 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.reduce([1, 2, 3, 4, 5], 10, num.add)');
+      checkResult(runtime, 25);
+    });
+
+    test('list.all 1', () {
+      final Runtime runtime = getRuntime('main = list.all([], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.all 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.all([2, 4, 5], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.all 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.all([2, 4, 6], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.none 1', () {
+      final Runtime runtime = getRuntime('main = list.none([], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.none 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.none([1, 2, 3], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.none 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.none([1, 3, 7], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.any 1', () {
+      final Runtime runtime = getRuntime('main = list.any([], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.any 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.any([1, 3, 5], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.none 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.any([1, 2, 3], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.zip 1', () {
+      final Runtime runtime = getRuntime('main = list.zip([], [], num.add)');
+      checkResult(runtime, []);
+    });
+
+    test('list.zip 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3, 5], [2, 4], num.add)');
+      checkResult(runtime, [3, 7, 5]);
+    });
+
+    test('list.zip 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3], [2, 4, 6], num.add)');
+      checkResult(runtime, [3, 7, 6]);
+    });
+
+    test('list.zip 4', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3, 5], [2, 4, 6], num.add)');
+      checkResult(runtime, [3, 7, 11]);
+    });
+
+    test('list.zip 5', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1 + 1 + 1, 3, 5], [2, 4, 6], num.add)');
+      checkResult(runtime, [5, 7, 11]);
+    });
+
+    test('list.sort 1', () {
+      final Runtime runtime = getRuntime('main = list.sort([], num.compare)');
+      checkResult(runtime, []);
+    });
+
+    test('list.sort 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.sort([3, 1, 5, 2, 4], num.compare)');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.sort 3', () {
+      final Runtime runtime = getRuntime(
+          'main = list.sort(["Peter", "Alice", "John", "Bob", "Daniel"], str.compare)');
+      checkResult(
+          runtime, ['"Alice"', '"Bob"', '"Daniel"', '"John"', '"Peter"']);
     });
   });
 
@@ -1581,6 +1772,26 @@ void main() {
     test('to_binary', () {
       final Runtime runtime = getRuntime(loadFile('web_samples/to_binary.prm'));
       checkResult(runtime, '"1010"');
+    });
+  });
+
+  group('Higher order functions', () {
+    test('Function as parameter', () {
+      final Runtime runtime =
+          getRuntime('foo(f, v) = f(v)\n\nmain = foo(num.abs, -4)');
+      checkResult(runtime, 4);
+    });
+
+    test('Function as result 1', () {
+      final Runtime runtime =
+          getRuntime('bar = num.abs\n\nfoo(v) = bar()(v)\n\nmain = foo(-4)');
+      checkResult(runtime, 4);
+    });
+
+    test('Function as result 2', () {
+      final Runtime runtime = getRuntime(
+          'bar = num.abs\n\nfoo(f, v) = f(v)\n\nmain = foo(bar(), -4)');
+      checkResult(runtime, 4);
     });
   });
 

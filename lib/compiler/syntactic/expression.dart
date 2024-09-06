@@ -76,10 +76,7 @@ class IdentifierExpression extends LiteralExpression<String> {
         );
 
   @override
-  Node toNode() => IdentifierNode(
-        value: value,
-        location: location,
-      );
+  Node toNode() => FreeVariableNode(value);
 }
 
 class CallExpression extends Expression {
@@ -121,15 +118,12 @@ class CallExpression extends Expression {
         arguments: [left, right],
       );
 
-  String get name => callee.toString();
-
   @override
-  String toString() => '$name(${arguments.join(', ')})';
+  String toString() => '$callee(${arguments.join(', ')})';
 
   @override
   Node toNode() => CallNode(
-        name: name,
+        callee: callee.toNode(),
         arguments: arguments.map((e) => e.toNode()).toList(),
-        location: location,
       );
 }

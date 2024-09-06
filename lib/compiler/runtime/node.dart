@@ -1,17 +1,17 @@
-import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
+import 'package:primal/compiler/runtime/bindings.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
 abstract class Node {
   const Node();
 
   Type get type;
 
-  Node substitute(Scope<Node> arguments);
+  Node substitute(Bindings bindings) => this;
 
-  Node reduce();
+  Node evaluate() => this;
 }
 
 abstract class LiteralNode<T> implements Node {
@@ -23,10 +23,10 @@ abstract class LiteralNode<T> implements Node {
   String toString() => value.toString();
 
   @override
-  Node substitute(Scope<Node> arguments) => this;
+  Node substitute(Bindings bindings) => this;
 
   @override
-  Node reduce() => this;
+  Node evaluate() => this;
 }
 
 class BooleanNode extends LiteralNode<bool> {
@@ -57,24 +57,26 @@ class ListNode extends LiteralNode<List<Node>> {
   Type get type => const ListType();
 
   @override
-  Node substitute(Scope<Node> arguments) =>
-      ListNode(value.map((e) => e.substitute(arguments)).toList());
+  Node substitute(Bindings bindings) =>
+      ListNode(value.map((e) => e.substitute(bindings)).toList());
 }
 
-class IdentifierNode extends Node {
+class FreeVariableNode extends Node {
   final String value;
-  final Location location;
 
-  const IdentifierNode({
-    required this.value,
-    required this.location,
-  });
+  const FreeVariableNode(this.value);
 
-  @override
-  Node substitute(Scope<Node> arguments) => arguments.get(value);
+  // TODO(momo): create function pointer in semantic analyzer to avoid
+  // using the scope here
+  FunctionNode functionNode() {
+    final Node node = Runtime.SCOPE.get(value);
 
-  @override
-  Node reduce() => this;
+    if (node is FunctionNode) {
+      return node;
+    } else {
+      throw InvalidFunctionError(value);
+    }
+  }
 
   @override
   Type get type => const AnyType();
@@ -83,40 +85,133 @@ class IdentifierNode extends Node {
   String toString() => value;
 }
 
+class BoundedVariableNode extends FreeVariableNode {
+  const BoundedVariableNode(super.value);
+
+  @override
+  Node substitute(Bindings bindings) => bindings.get(value);
+}
+
 class CallNode extends Node {
-  final String name;
+  final Node callee;
   final List<Node> arguments;
-  final Location location;
 
   const CallNode({
-    required this.name,
+    required this.callee,
     required this.arguments,
-    required this.location,
   });
 
   @override
-  Node substitute(Scope<Node> arguments) => CallNode(
-        name: name,
-        arguments: this.arguments.map((e) => e.substitute(arguments)).toList(),
-        location: location,
+  Node substitute(Bindings bindings) => CallNode(
+        callee: callee.substitute(bindings),
+        arguments: arguments.map((e) => e.substitute(bindings)).toList(),
       );
 
   @override
-  Node reduce() {
-    final FunctionPrototype function = Runtime.SCOPE.get(name);
-    final Scope<Node> newScope = Scope.from(
-      functionName: name,
-      parameters: function.parameters,
+  Node evaluate() {
+    final FunctionNode function = getFunctionNode(callee);
+
+    return function.apply(arguments);
+  }
+
+  FunctionNode getFunctionNode(Node callee) {
+    if (callee is CallNode) {
+      return getFunctionNode(callee.evaluate());
+    } else if (callee is FunctionNode) {
+      return callee;
+    } else if (callee is FreeVariableNode) {
+      return callee.functionNode();
+    } else {
+      throw InvalidFunctionError(callee.toString());
+    }
+  }
+
+  @override
+  Type get type => const FunctionCallType();
+
+  @override
+  String toString() => '$callee(${arguments.join(', ')})';
+}
+
+class FunctionNode extends Node {
+  final String name;
+  final List<Parameter> parameters;
+
+  const FunctionNode({
+    required this.name,
+    required this.parameters,
+  });
+
+  List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
+
+  bool equalSignature(FunctionNode function) => function.name == name;
+
+  Node apply(List<Node> arguments) {
+    if (parameters.length != arguments.length) {
+      throw InvalidArgumentCountError(
+        function: name,
+        expected: parameters.length,
+        actual: arguments.length,
+      );
+    }
+
+    final Bindings bindings = Bindings.from(
+      parameters: parameters,
       arguments: arguments,
-      location: location,
     );
 
-    return function.substitute(newScope).reduce();
+    return substitute(bindings).evaluate();
   }
+
+  @override
+  Type get type => const FunctionType();
+}
+
+class CustomFunctionNode extends FunctionNode {
+  final Node node;
+
+  const CustomFunctionNode({
+    required super.name,
+    required super.parameters,
+    required this.node,
+  });
+
+  @override
+  Node substitute(Bindings bindings) => node.substitute(bindings);
 
   @override
   Type get type => const FunctionType();
 
   @override
-  String toString() => '$name(${arguments.join(', ')})';
+  String toString() => '{${parameters.join(', ')} = $node}';
+}
+
+abstract class NativeFunctionNode extends FunctionNode {
+  const NativeFunctionNode({
+    required super.name,
+    required super.parameters,
+  });
+
+  @override
+  Node substitute(Bindings bindings) {
+    final List<Node> arguments =
+        parameters.map((e) => bindings.get(e.name)).toList();
+
+    return node(arguments);
+  }
+
+  Node node(List<Node> arguments);
+
+  @override
+  Type get type => const FunctionType();
+}
+
+class NativeFunctionNodeWithArguments extends FunctionNode {
+  final List<Node> arguments;
+
+  const NativeFunctionNodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required this.arguments,
+  });
 }

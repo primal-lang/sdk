@@ -1,10 +1,10 @@
 import 'package:primal/compiler/library/standard_library.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
+import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/mapper.dart';
 
 class IntermediateCode {
-  final Map<String, FunctionPrototype> functions;
+  final Map<String, FunctionNode> functions;
   final List<GenericWarning> warnings;
 
   IntermediateCode({

@@ -1,5 +1,4 @@
 import 'package:primal/compiler/errors/generic_error.dart';
-import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/type.dart';
 
 class RuntimeError extends GenericError {
@@ -20,17 +19,16 @@ class InvalidArgumentCountError extends RuntimeError {
     required String function,
     required int expected,
     required int actual,
-    required Location location,
   }) : super(
-            'Invalid argument count for function "$function" at $location. Expected: $expected. Actual: $actual');
+            'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
 }
 
-class NotFoundInScope extends RuntimeError {
-  const NotFoundInScope(String variable)
+class NotFoundInScopeError extends RuntimeError {
+  const NotFoundInScopeError(String variable)
       : super('Variable "$variable" not found in scope');
 }
 
-class EmptyExpressionEvaluationError extends RuntimeError {
-  const EmptyExpressionEvaluationError()
-      : super('Cannot reduce empty expression');
+class InvalidFunctionError extends RuntimeError {
+  const InvalidFunctionError(String variable)
+      : super('"$variable" is not a function');
 }

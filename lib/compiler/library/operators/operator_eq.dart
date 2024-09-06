@@ -1,10 +1,8 @@
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class OperatorEq extends NativeFunctionPrototype {
+class OperatorEq extends NativeFunctionNode {
   OperatorEq()
       : super(
           name: '==',
@@ -15,5 +13,29 @@ class OperatorEq extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) => CompEq().substitute(arguments);
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
+    final Node b = arguments[1].evaluate();
+
+    return CompEq.execute(
+      function: this,
+      a: a,
+      b: b,
+    );
+  }
 }

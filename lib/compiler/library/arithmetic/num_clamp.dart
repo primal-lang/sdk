@@ -1,10 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class NumClamp extends NativeFunctionPrototype {
+class NumClamp extends NativeFunctionNode {
   NumClamp()
       : super(
           name: 'num.clamp',
@@ -16,10 +14,25 @@ class NumClamp extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a').reduce();
-    final Node b = arguments.get('b').reduce();
-    final Node c = arguments.get('c').reduce();
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
+    final Node b = arguments[1].evaluate();
+    final Node c = arguments[2].evaluate();
 
     if ((a is NumberNode) && (b is NumberNode) && (c is NumberNode)) {
       return NumberNode(a.value.clamp(b.value, c.value));

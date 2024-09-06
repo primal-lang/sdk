@@ -27,7 +27,7 @@ void main() {
       getIntermediateCode('isBiggerThan10 = z > 10');
       fail('Should fail');
     } catch (e) {
-      expect(e, isA<UndefinedIdentifiersError>());
+      expect(e, isA<UndefinedIdentifierError>());
     }
   });
 
@@ -36,7 +36,7 @@ void main() {
       getIntermediateCode('isBiggerThan10 = x');
       fail('Should fail');
     } catch (e) {
-      expect(e, isA<UndefinedIdentifiersError>());
+      expect(e, isA<UndefinedIdentifierError>());
     }
   });
 
@@ -63,5 +63,23 @@ void main() {
     } catch (e) {
       expect(e, isA<InvalidNumberOfArgumentsError>());
     }
+  });
+
+  test('Valid program 1', () {
+    final IntermediateCode code =
+        getIntermediateCode('foo(x) = x * 2\n\nmain = foo(5)');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('Valid program 2', () {
+    final IntermediateCode code = getIntermediateCode(
+        'bar = num.abs\n\nfoo(x) = bar()(x) * 2\n\nmain = foo(5)');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('Valid program 3', () {
+    final IntermediateCode code =
+        getIntermediateCode('apply(f, v) = f(v)\n\nmain = apply(num.abs, 5)');
+    expect(code.warnings.length, equals(0));
   });
 }

@@ -1,5 +1,4 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
@@ -12,7 +11,6 @@ class Scope<T> {
     required String functionName,
     required List<Parameter> parameters,
     required List<Node> arguments,
-    required Location location,
   }) {
     final Map<String, Node> result = {};
 
@@ -21,7 +19,6 @@ class Scope<T> {
         function: functionName,
         expected: parameters.length,
         actual: arguments.length,
-        location: location,
       );
     } else {
       for (int i = 0; i < parameters.length; i++) {
@@ -36,7 +33,7 @@ class Scope<T> {
     final T? result = data[name];
 
     if (result == null) {
-      throw NotFoundInScope(name);
+      throw NotFoundInScopeError(name);
     } else {
       return result;
     }

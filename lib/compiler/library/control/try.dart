@@ -1,9 +1,7 @@
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 
-class Try extends NativeFunctionPrototype {
+class Try extends NativeFunctionNode {
   Try()
       : super(
           name: 'try',
@@ -14,12 +12,27 @@ class Try extends NativeFunctionPrototype {
         );
 
   @override
-  Node substitute(Scope<Node> arguments) {
-    final Node a = arguments.get('a');
-    final Node b = arguments.get('b');
+  Node node(List<Node> arguments) => NodeWithArguments(
+        name: name,
+        parameters: parameters,
+        arguments: arguments,
+      );
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0];
+    final Node b = arguments[1];
 
     try {
-      return a.reduce();
+      return a.evaluate();
     } catch (e) {
       return b;
     }

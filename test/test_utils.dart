@@ -78,7 +78,7 @@ void checkExpressions(Expression actual, Expression expected) {
       (expected is IdentifierExpression)) {
     expect(actual.value, equals(expected.value));
   } else if ((actual is CallExpression) && (expected is CallExpression)) {
-    expect(actual.name, equals(expected.name));
+    expect(actual.callee.toString(), equals(expected.callee.toString()));
     expect(actual.arguments.length, equals(expected.arguments.length));
 
     for (int i = 0; i < actual.arguments.length; i++) {

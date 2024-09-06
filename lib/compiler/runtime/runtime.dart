@@ -1,6 +1,6 @@
+import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/function_prototype.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 
@@ -8,30 +8,26 @@ class Runtime {
   final IntermediateCode intermediateCode;
 
   // TODO(momo): pass it as a parameter
-  static Scope SCOPE = const Scope();
+  static Scope<FunctionNode> SCOPE = const Scope();
 
   Runtime(this.intermediateCode) {
     SCOPE = Scope(intermediateCode.functions);
   }
 
-  FunctionPrototype? get main => intermediateCode.functions['main'];
+  bool get hasMain => intermediateCode.functions.containsKey('main');
 
-  bool get hasMain => main != null;
+  String executeMain() {
+    const Compiler compiler = Compiler();
+    final Expression expression = compiler.expression('main()');
 
-  String executeMain() => reduceFunction(main!);
-
-  String reduce(Expression expression) {
-    final FunctionPrototype function = AnonymousFunctionPrototype(
-      node: expression.toNode(),
-    );
-
-    return reduceFunction(function);
+    return evaluate(expression);
   }
 
-  String reduceFunction(FunctionPrototype function) {
-    final Node result = function.substitute(const Scope()).reduce();
+  String evaluate(Expression expression) {
+    // TODO(momo): evaluate expression semantically before executing it
+    final Node node = expression.toNode();
 
-    return fullReduce(result).toString();
+    return fullReduce(node).toString();
   }
 
   Node fullReduce(Node node) {
@@ -39,8 +35,10 @@ class Runtime {
       return ListNode(node.value.map(fullReduce).toList());
     } else if (node is StringNode) {
       return StringNode('"${node.value}"');
+    } else if (node is CallNode) {
+      return fullReduce(node.evaluate());
     } else {
-      return node.reduce();
+      return node;
     }
   }
 }
