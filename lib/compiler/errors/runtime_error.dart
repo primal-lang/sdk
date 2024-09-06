@@ -23,12 +23,12 @@ class InvalidArgumentCountError extends RuntimeError {
             'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
 }
 
-class NotFoundInScope extends RuntimeError {
-  const NotFoundInScope(String variable)
+class NotFoundInScopeError extends RuntimeError {
+  const NotFoundInScopeError(String variable)
       : super('Variable "$variable" not found in scope');
 }
 
-class EmptyExpressionEvaluationError extends RuntimeError {
-  const EmptyExpressionEvaluationError()
-      : super('Cannot reduce empty expression');
+class InvalidFunctionError extends RuntimeError {
+  const InvalidFunctionError(String variable)
+      : super('"$variable" is not a function');
 }

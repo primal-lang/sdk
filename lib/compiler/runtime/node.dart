@@ -68,15 +68,13 @@ class FreeVariableNode extends Node {
 
   // TODO(momo): create function pointer in semantic analyzer to avoid
   // using the scope here
-  // TODO(momo): do not use global scope
   FunctionNode functionNode() {
     final Node node = Runtime.SCOPE.get(value);
 
     if (node is FunctionNode) {
       return node;
     } else {
-      throw Exception(
-          'Variable "$value" is not a function'); // TODO(momo): handle
+      throw InvalidFunctionError(value);
     }
   }
 
@@ -124,8 +122,7 @@ class CallNode extends Node {
     } else if (callee is FreeVariableNode) {
       return callee.functionNode();
     } else {
-      throw Exception(
-          'Cannot apply arguments to: $callee'); // TODO(momo): handle
+      throw InvalidFunctionError(callee.toString());
     }
   }
 
