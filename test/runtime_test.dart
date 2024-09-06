@@ -1307,6 +1307,23 @@ void main() {
           'main = list.map(num.abs, [1, -2 - 6, 3 * -3, -4, num.negative(7)])');
       checkResult(runtime, [1, 8, 9, 4, 7]);
     });
+
+    test('list.filter 1', () {
+      final Runtime runtime = getRuntime('main = list.filter(num.isEven, [])');
+      checkResult(runtime, []);
+    });
+
+    test('list.filter 2', () {
+      final Runtime runtime = getRuntime(
+          'main = list.filter(num.isEven, [-3, -2, -1, 0, 1, 2, 3])');
+      checkResult(runtime, [-2, 0, 2]);
+    });
+
+    test('list.filter 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.filter(num.isZero, [-3, -2, -1, 1, 2, 3])');
+      checkResult(runtime, []);
+    });
   });
 
   group('To', () {

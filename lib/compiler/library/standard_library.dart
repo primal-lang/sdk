@@ -61,6 +61,7 @@ import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_contains.dart';
 import 'package:primal/compiler/library/list/list_drop.dart';
 import 'package:primal/compiler/library/list/list_filled.dart';
+import 'package:primal/compiler/library/list/list_filter.dart';
 import 'package:primal/compiler/library/list/list_first.dart';
 import 'package:primal/compiler/library/list/list_index_of.dart';
 import 'package:primal/compiler/library/list/list_init.dart';
@@ -207,6 +208,7 @@ class StandardLibrary {
         ListContains(),
         ListDrop(),
         ListFilled(),
+        ListFilter(),
         ListFirst(),
         ListIndexOf(),
         ListInit(),
