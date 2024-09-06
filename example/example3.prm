@@ -1,1 +1,1 @@
-main(args) = list.at(args[0], args[1])
+main(list, index) = list.at(list, index)

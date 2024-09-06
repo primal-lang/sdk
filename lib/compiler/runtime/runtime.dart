@@ -22,7 +22,7 @@ class Runtime {
     final FunctionNode? main = intermediateCode.functions['main'];
 
     if ((main != null) && main.parameters.isNotEmpty) {
-      return compiler.expression('main($arguments)');
+      return compiler.expression('main(${arguments.join(', ')})');
     } else {
       return compiler.expression('main()');
     }
