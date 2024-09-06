@@ -1386,6 +1386,29 @@ void main() {
           getRuntime('main = list.any([1, 2, 3], num.isEven)');
       checkResult(runtime, true);
     });
+
+    test('list.zip 1', () {
+      final Runtime runtime = getRuntime('main = list.zip([], [], num.add)');
+      checkResult(runtime, []);
+    });
+
+    test('list.zip 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3, 5], [2, 4], num.add)');
+      checkResult(runtime, [3, 7, 5]);
+    });
+
+    test('list.zip 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3], [2, 4, 6], num.add)');
+      checkResult(runtime, [3, 7, 6]);
+    });
+
+    test('list.zip 4', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3, 5], [2, 4, 6], num.add)');
+      checkResult(runtime, [3, 7, 11]);
+    });
   });
 
   group('To', () {

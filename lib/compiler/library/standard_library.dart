@@ -85,6 +85,7 @@ import 'package:primal/compiler/library/list/list_sublist.dart';
 import 'package:primal/compiler/library/list/list_swap.dart';
 import 'package:primal/compiler/library/list/list_tail.dart';
 import 'package:primal/compiler/library/list/list_take.dart';
+import 'package:primal/compiler/library/list/list_zip.dart';
 import 'package:primal/compiler/library/logic/bool_and.dart';
 import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/library/logic/bool_or.dart';
@@ -236,6 +237,7 @@ class StandardLibrary {
         ListSwap(),
         ListTail(),
         ListTake(),
+        ListZip(),
 
         // Logic
         BoolAnd(),
