@@ -1369,6 +1369,23 @@ void main() {
           getRuntime('main = list.none([1, 3, 7], num.isEven)');
       checkResult(runtime, true);
     });
+
+    test('list.any 1', () {
+      final Runtime runtime = getRuntime('main = list.any([], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.any 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.any([1, 3, 5], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.none 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.any([1, 2, 3], num.isEven)');
+      checkResult(runtime, true);
+    });
   });
 
   group('To', () {
