@@ -1298,31 +1298,42 @@ void main() {
     });
 
     test('list.map 1 ', () {
-      final Runtime runtime = getRuntime('main = list.map(num.abs, [])');
+      final Runtime runtime = getRuntime('main = list.map([], num.abs)');
       checkResult(runtime, []);
     });
 
     test('list.map 2', () {
       final Runtime runtime = getRuntime(
-          'main = list.map(num.abs, [1, -2 - 6, 3 * -3, -4, num.negative(7)])');
+          'main = list.map([1, -2 - 6, 3 * -3, -4, num.negative(7)], num.abs)');
       checkResult(runtime, [1, 8, 9, 4, 7]);
     });
 
     test('list.filter 1', () {
-      final Runtime runtime = getRuntime('main = list.filter(num.isEven, [])');
+      final Runtime runtime = getRuntime('main = list.filter([], num.isEven)');
       checkResult(runtime, []);
     });
 
     test('list.filter 2', () {
       final Runtime runtime = getRuntime(
-          'main = list.filter(num.isEven, [-3, -2, -1, 0, 1, 2, 3])');
+          'main = list.filter([-3, -2, -1, 0, 1, 2, 3], num.isEven)');
       checkResult(runtime, [-2, 0, 2]);
     });
 
     test('list.filter 3', () {
       final Runtime runtime =
-          getRuntime('main = list.filter(num.isZero, [-3, -2, -1, 1, 2, 3])');
+          getRuntime('main = list.filter([-3, -2, -1, 1, 2, 3], num.isZero)');
       checkResult(runtime, []);
+    });
+
+    test('list.reduce 1', () {
+      final Runtime runtime = getRuntime('main = list.reduce([], 0, num.add)');
+      checkResult(runtime, []);
+    });
+
+    test('list.reduce 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.reduce([1, 2, 3, 4, 5], 10, num.add)');
+      checkResult(runtime, 25);
     });
   });
 

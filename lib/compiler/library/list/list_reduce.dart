@@ -2,13 +2,14 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class ListFilter extends NativeFunctionNode {
-  ListFilter()
+class ListReduce extends NativeFunctionNode {
+  ListReduce()
       : super(
-          name: 'list.filter',
+          name: 'list.reduce',
           parameters: [
             Parameter.list('a'),
-            Parameter.function('b'),
+            Parameter.any('b'),
+            Parameter.function('c'),
           ],
         );
 
@@ -30,21 +31,18 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    final Node b = arguments[1];
+    final Node b = arguments[1].evaluate();
+    final Node c = arguments[2];
 
-    if ((a is ListNode) && (b is FreeVariableNode)) {
-      final FunctionNode function = b.functionNode();
-      final List<Node> result = [];
+    if ((a is ListNode) && (c is FreeVariableNode)) {
+      final FunctionNode function = c.functionNode();
+      Node accumulated = b;
 
       for (final Node element in a.value) {
-        final Node value = function.apply([element]);
-
-        if (value is BooleanNode && value.value) {
-          result.add(element);
-        }
+        accumulated = function.apply([accumulated, element]);
       }
 
-      return ListNode(result);
+      return accumulated;
     } else {
       throw InvalidArgumentTypesError(
         function: name,
