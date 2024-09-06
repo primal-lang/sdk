@@ -71,6 +71,7 @@ import 'package:primal/compiler/library/list/list_is_not_empty.dart';
 import 'package:primal/compiler/library/list/list_join.dart';
 import 'package:primal/compiler/library/list/list_last.dart';
 import 'package:primal/compiler/library/list/list_length.dart';
+import 'package:primal/compiler/library/list/list_map.dart';
 import 'package:primal/compiler/library/list/list_remove.dart';
 import 'package:primal/compiler/library/list/list_remove_at.dart';
 import 'package:primal/compiler/library/list/list_reverse.dart';
@@ -216,6 +217,7 @@ class StandardLibrary {
         ListJoin(),
         ListLast(),
         ListLength(),
+        ListMap(),
         ListRemoveAt(),
         ListRemove(),
         ListReverse(),

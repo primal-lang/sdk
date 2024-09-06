@@ -1296,6 +1296,12 @@ void main() {
           getRuntime('main = list.sublist([1, 2, 3, 4, 5], 1, 3)');
       checkResult(runtime, [2, 3]);
     });
+
+    /*test('list.map', () {
+      final Runtime runtime =
+          getRuntime('main = list.map(num.abs, [1, -2, 3, -4, 5])');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });*/
   });
 
   group('To', () {
