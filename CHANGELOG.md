@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 0.3.0 - [Unreleased]
+
+### Language
+
+* Added support for:
+    - Higher order functions
+
+### Standard library
+
+* Added basic functions for:
+    - Higher order functions
+
 ## 0.2.0 - Bone Hook
 
 ### Language
