@@ -1,11 +1,12 @@
 # CHANGELOG
 
-## 0.3.0 - [Unreleased]
+## 0.3.0 - Clay Pot
 
 ### Language
 
 * Added support for:
     - Higher order functions
+* Added main function optional parameters
 
 ### Standard library
 

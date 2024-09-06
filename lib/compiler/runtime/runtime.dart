@@ -16,16 +16,20 @@ class Runtime {
 
   bool get hasMain => intermediateCode.functions.containsKey('main');
 
-  bool get hasMainParameters {
+  Expression mainExpression(List<String> arguments) {
+    const Compiler compiler = Compiler();
+
     final FunctionNode? main = intermediateCode.functions['main'];
 
-    return (main != null) && main.parameters.isNotEmpty;
+    if ((main != null) && main.parameters.isNotEmpty) {
+      return compiler.expression('main($arguments)');
+    } else {
+      return compiler.expression('main()');
+    }
   }
 
-  String executeMain() {
-    const Compiler compiler = Compiler();
-    final Expression expression =
-        compiler.expression(hasMainParameters ? 'main([])' : 'main()');
+  String executeMain([List<String>? arguments]) {
+    final Expression expression = mainExpression(arguments ?? []);
 
     return evaluate(expression);
   }

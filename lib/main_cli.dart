@@ -22,7 +22,8 @@ void main(List<String> args) {
     final Runtime runtime = Runtime(intermediateCode);
 
     if (runtime.hasMain) {
-      final String result = runtime.executeMain();
+      final String result =
+          runtime.executeMain((args.length > 1) ? args.sublist(1) : []);
       console.print(result);
     } else {
       console.prompt((input) {
