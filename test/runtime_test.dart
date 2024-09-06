@@ -691,6 +691,21 @@ void main() {
       final Runtime runtime = getRuntime('main = num.decimalRandom()');
       expect(num.parse(runtime.executeMain()), inInclusiveRange(0, 1));
     });
+
+    test('num.compare 1', () {
+      final Runtime runtime = getRuntime('main = num.compare(3, 7)');
+      checkResult(runtime, -1);
+    });
+
+    test('num.compare 2', () {
+      final Runtime runtime = getRuntime('main = num.compare(7, 7)');
+      checkResult(runtime, 0);
+    });
+
+    test('num.compare 3', () {
+      final Runtime runtime = getRuntime('main = num.compare(7, 3)');
+      checkResult(runtime, 1);
+    });
   });
 
   group('Logic', () {
@@ -1417,14 +1432,13 @@ void main() {
     });
 
     test('list.sort 1', () {
-      final Runtime runtime = getRuntime(
-          'comparator(a, b) = a - b\n\nmain = list.sort([], comparator)');
+      final Runtime runtime = getRuntime('main = list.sort([], num.compare)');
       checkResult(runtime, []);
     });
 
     test('list.sort 2', () {
-      final Runtime runtime = getRuntime(
-          'comparator(a, b) = a - b\n\nmain = list.sort([3, 1, 5, 2, 4], comparator)');
+      final Runtime runtime =
+          getRuntime('main = list.sort([3, 1, 5, 2, 4], num.compare)');
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
   });

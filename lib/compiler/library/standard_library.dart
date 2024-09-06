@@ -4,6 +4,7 @@ import 'package:primal/compiler/library/arithmetic/num_as_degrees.dart';
 import 'package:primal/compiler/library/arithmetic/num_as_radians.dart';
 import 'package:primal/compiler/library/arithmetic/num_ceil.dart';
 import 'package:primal/compiler/library/arithmetic/num_clamp.dart';
+import 'package:primal/compiler/library/arithmetic/num_compare.dart';
 import 'package:primal/compiler/library/arithmetic/num_cos.dart';
 import 'package:primal/compiler/library/arithmetic/num_dec.dart';
 import 'package:primal/compiler/library/arithmetic/num_decimal_random.dart';
@@ -143,6 +144,7 @@ class StandardLibrary {
         NumAsRadians(),
         NumCeil(),
         NumClamp(),
+        NumCompare(),
         NumCos(),
         NumDec(),
         NumDecimalRandom(),
