@@ -99,20 +99,7 @@ class CallNode extends Node {
   Node evaluate() {
     final FunctionNode function = getFunctionNode(callee);
 
-    if (function.parameters.length != arguments.length) {
-      throw InvalidArgumentCountError(
-        function: function.name,
-        expected: function.parameters.length,
-        actual: arguments.length,
-      );
-    }
-
-    final Bindings bindings = Bindings.from(
-      parameters: function.parameters,
-      arguments: arguments,
-    );
-
-    return function.substitute(bindings).evaluate();
+    return function.apply(arguments);
   }
 
   FunctionNode getFunctionNode(Node callee) {
@@ -150,6 +137,23 @@ class FunctionNode extends Node {
   List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
 
   bool equalSignature(FunctionNode function) => function.name == name;
+
+  Node apply(List<Node> arguments) {
+    if (parameters.length != arguments.length) {
+      throw InvalidArgumentCountError(
+        function: name,
+        expected: parameters.length,
+        actual: arguments.length,
+      );
+    }
+
+    final Bindings bindings = Bindings.from(
+      parameters: parameters,
+      arguments: arguments,
+    );
+
+    return substitute(bindings).evaluate();
+  }
 
   @override
   Type get type => const FunctionType();
