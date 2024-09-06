@@ -16,9 +16,16 @@ class Runtime {
 
   bool get hasMain => intermediateCode.functions.containsKey('main');
 
+  bool get hasMainParameters {
+    final FunctionNode? main = intermediateCode.functions['main'];
+
+    return (main != null) && main.parameters.isNotEmpty;
+  }
+
   String executeMain() {
     const Compiler compiler = Compiler();
-    final Expression expression = compiler.expression('main()');
+    final Expression expression =
+        compiler.expression(hasMainParameters ? 'main([])' : 'main()');
 
     return evaluate(expression);
   }
