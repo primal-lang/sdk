@@ -66,6 +66,8 @@ void checkExpressions(Expression actual, Expression expected) {
     for (int i = 0; i < actual.value.length; i++) {
       checkExpressions(actual.value[i], expected.value[i]);
     }
+  } else if ((actual is MapExpression) && (expected is MapExpression)) {
+    expect(actual.value.toString(), equals(expected.value.toString()));
   } else if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
     expect(actual.value, equals(expected.value));
   } else if ((actual is IdentifierExpression) &&

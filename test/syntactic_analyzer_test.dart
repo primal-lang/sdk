@@ -151,6 +151,62 @@ void main() {
       ]);
     });
 
+    test('Literal map definition', () {
+      final List<FunctionDefinition> functions =
+          getFunctions('map = {1: "one", 2: "two", 3: "three"}');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'map',
+          parameters: [],
+          expression: MapExpression(
+            location: const Location(row: 1, column: 7),
+            value: {
+              NumberExpression(numberToken(1, 1, 8)): StringExpression(
+                stringToken('one', 1, 12),
+              ),
+              NumberExpression(numberToken(2, 1, 19)): StringExpression(
+                stringToken('two', 1, 23),
+              ),
+              NumberExpression(numberToken(3, 1, 30)): StringExpression(
+                stringToken('three', 1, 34),
+              ),
+            },
+          ),
+        ),
+      ]);
+    });
+
+    test('Indexing map ', () {
+      final List<FunctionDefinition> functions =
+          getFunctions('map = {1: "one", 2: "two", 3: "three"}[1]');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'map',
+          parameters: [],
+          expression: CallExpression(
+            callee: IdentifierExpression(identifierToken('element.at', 1, 39)),
+            arguments: [
+              MapExpression(
+                location: const Location(row: 1, column: 7),
+                value: {
+                  NumberExpression(numberToken(1, 1, 8)): StringExpression(
+                    stringToken('one', 1, 12),
+                  ),
+                  NumberExpression(numberToken(2, 1, 19)): StringExpression(
+                    stringToken('two', 1, 23),
+                  ),
+                  NumberExpression(numberToken(3, 1, 30)): StringExpression(
+                    stringToken('three', 1, 34),
+                  ),
+                },
+              ),
+              NumberExpression(numberToken(1, 1, 40)),
+            ],
+          ),
+        ),
+      ]);
+    });
+
     test('Function with no parameters', () {
       final List<FunctionDefinition> functions = getFunctions('test = true');
       checkFunctions(functions, [

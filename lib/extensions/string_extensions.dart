@@ -150,10 +150,15 @@ extension StringExtensions on String {
 
   bool get isOpenBracesDelimiter =>
       isWhitespace ||
+      isDigit ||
       isLetter ||
       isDoubleQuote ||
       isSingleQuote ||
-      isCloseBraces;
+      isOpenParenthesis ||
+      isOpenBracket ||
+      isOpenBraces ||
+      isCloseBraces ||
+      isUnaryOperator;
 
   bool get isCloseBracesDelimiter =>
       isWhitespace ||
