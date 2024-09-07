@@ -39,6 +39,8 @@ extension StringExtensions on String {
 
   bool get isComma => RegExp(r',').hasMatch(this);
 
+  bool get isColon => RegExp(r':').hasMatch(this);
+
   bool get isOpenParenthesis => RegExp(r'\(').hasMatch(this);
 
   bool get isCloseParenthesis => RegExp(r'\)').hasMatch(this);
@@ -46,6 +48,10 @@ extension StringExtensions on String {
   bool get isOpenBracket => RegExp(r'\[').hasMatch(this);
 
   bool get isCloseBracket => RegExp(r'\]').hasMatch(this);
+
+  bool get isOpenBraces => RegExp(r'\{').hasMatch(this);
+
+  bool get isCloseBraces => RegExp(r'\}').hasMatch(this);
 
   bool get isBoolean => RegExp(r'true|false').hasMatch(this);
 
@@ -57,10 +63,13 @@ extension StringExtensions on String {
       isWhitespace ||
       isBinaryOperator ||
       isComma ||
+      isColon ||
       isOpenParenthesis ||
       isCloseParenthesis ||
       isOpenBracket ||
-      isCloseBracket;
+      isCloseBracket ||
+      isOpenBraces ||
+      isCloseBraces;
 
   bool get isOperatorDelimiter =>
       isWhitespace ||
@@ -69,7 +78,8 @@ extension StringExtensions on String {
       isDoubleQuote ||
       isSingleQuote ||
       isOpenParenthesis ||
-      isOpenBracket;
+      isOpenBracket ||
+      isOpenBraces;
 
   bool get isCommaDelimiter =>
       isWhitespace ||
@@ -79,6 +89,18 @@ extension StringExtensions on String {
       isSingleQuote ||
       isOpenParenthesis ||
       isOpenBracket ||
+      isOpenBraces ||
+      isUnaryOperator;
+
+  bool get isColonDelimiter =>
+      isWhitespace ||
+      isDigit ||
+      isLetter ||
+      isDoubleQuote ||
+      isSingleQuote ||
+      isOpenParenthesis ||
+      isOpenBracket ||
+      isOpenBraces ||
       isUnaryOperator;
 
   bool get isOpenParenthesisDelimiter =>
@@ -90,11 +112,14 @@ extension StringExtensions on String {
       isOpenParenthesis ||
       isCloseParenthesis ||
       isOpenBracket ||
+      isOpenBraces ||
       isUnaryOperator;
 
   bool get isCloseParenthesisDelimiter =>
       isWhitespace ||
       isComma ||
+      isColon ||
+      isLetter ||
       isOpenParenthesis ||
       isCloseParenthesis ||
       isOpenBracket ||
@@ -110,12 +135,30 @@ extension StringExtensions on String {
       isOpenParenthesis ||
       isOpenBracket ||
       isCloseBracket ||
+      isOpenBraces ||
       isUnaryOperator;
 
   bool get isCloseBracketDelimiter =>
       isWhitespace ||
       isComma ||
+      isLetter ||
       isOpenParenthesis ||
+      isCloseParenthesis ||
+      isOpenBracket ||
+      isCloseBracket ||
+      isBinaryOperator;
+
+  bool get isOpenBracesDelimiter =>
+      isWhitespace ||
+      isLetter ||
+      isDoubleQuote ||
+      isSingleQuote ||
+      isCloseBraces;
+
+  bool get isCloseBracesDelimiter =>
+      isWhitespace ||
+      isComma ||
+      isLetter ||
       isCloseParenthesis ||
       isOpenBracket ||
       isCloseBracket ||

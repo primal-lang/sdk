@@ -189,6 +189,14 @@ class CommaToken extends Token<String> {
         );
 }
 
+class ColonToken extends Token<String> {
+  ColonToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
+
 class OpenParenthesisToken extends Token<String> {
   OpenParenthesisToken(Lexeme lexeme)
       : super(
@@ -215,6 +223,22 @@ class OpenBracketToken extends Token<String> {
 
 class CloseBracketToken extends Token<String> {
   CloseBracketToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
+
+class OpenBracesToken extends Token<String> {
+  OpenBracesToken(Lexeme lexeme)
+      : super(
+          value: lexeme.value,
+          location: lexeme.location,
+        );
+}
+
+class CloseBracesToken extends Token<String> {
+  CloseBracesToken(Lexeme lexeme)
       : super(
           value: lexeme.value,
           location: lexeme.location,

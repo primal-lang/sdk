@@ -246,6 +246,136 @@ void main() {
       ]);
     });
 
+    test('Valid empty map', () {
+      final List<Token> tokens = getTokens('{}');
+      checkTokens(tokens, [
+        OpenBracesToken(const Lexeme(
+          value: '{',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        CloseBracesToken(const Lexeme(
+          value: '}',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
+      ]);
+    });
+
+    test('Valid non empty map', () {
+      final List<Token> tokens = getTokens('{"name": "John", "age": 42}');
+      checkTokens(tokens, [
+        OpenBracesToken(const Lexeme(
+          value: '{',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        StringToken(const Lexeme(
+          value: 'name',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
+        ColonToken(const Lexeme(
+          value: ':',
+          location: Location(
+            row: 1,
+            column: 8,
+          ),
+        )),
+        StringToken(const Lexeme(
+          value: 'John',
+          location: Location(
+            row: 1,
+            column: 10,
+          ),
+        )),
+        CommaToken(const Lexeme(
+          value: ',',
+          location: Location(
+            row: 1,
+            column: 16,
+          ),
+        )),
+        StringToken(const Lexeme(
+          value: 'age',
+          location: Location(
+            row: 1,
+            column: 18,
+          ),
+        )),
+        ColonToken(const Lexeme(
+          value: ':',
+          location: Location(
+            row: 1,
+            column: 23,
+          ),
+        )),
+        NumberToken(const Lexeme(
+          value: '42',
+          location: Location(
+            row: 1,
+            column: 25,
+          ),
+        )),
+        CloseBracesToken(const Lexeme(
+          value: '}',
+          location: Location(
+            row: 1,
+            column: 27,
+          ),
+        )),
+      ]);
+    });
+
+    test('Indexing map', () {
+      final List<Token> tokens = getTokens('{}["name"]');
+      checkTokens(tokens, [
+        OpenBracesToken(const Lexeme(
+          value: '{',
+          location: Location(
+            row: 1,
+            column: 1,
+          ),
+        )),
+        CloseBracesToken(const Lexeme(
+          value: '}',
+          location: Location(
+            row: 1,
+            column: 2,
+          ),
+        )),
+        OpenBracketToken(const Lexeme(
+          value: '[',
+          location: Location(
+            row: 1,
+            column: 3,
+          ),
+        )),
+        StringToken(const Lexeme(
+          value: 'name',
+          location: Location(
+            row: 1,
+            column: 4,
+          ),
+        )),
+        CloseBracketToken(const Lexeme(
+          value: ']',
+          location: Location(
+            row: 1,
+            column: 10,
+          ),
+        )),
+      ]);
+    });
+
     test('Identifier with letters', () {
       final List<Token> tokens = getTokens('isEven');
       checkTokens(tokens, [

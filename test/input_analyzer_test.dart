@@ -86,10 +86,13 @@ void main() {
       expect(true, equals('_'.isUnderscore));
       expect(true, equals('.'.isDot));
       expect(true, equals(','.isComma));
+      expect(true, equals(':'.isColon));
       expect(true, equals('('.isOpenParenthesis));
       expect(true, equals(')'.isCloseParenthesis));
       expect(true, equals('['.isOpenBracket));
       expect(true, equals(']'.isCloseBracket));
+      expect(true, equals('{'.isOpenBraces));
+      expect(true, equals('}'.isCloseBraces));
       expect(true, equals('\n'.isNewLine));
     });
 
