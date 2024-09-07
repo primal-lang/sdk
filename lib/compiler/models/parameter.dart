@@ -29,9 +29,14 @@ class Parameter {
         type: const ListType(),
       );
 
+  factory Parameter.map(String name) => Parameter._(
+        name: name,
+        type: const MapType(),
+      );
+
   factory Parameter.function(String name) => Parameter._(
         name: name,
-        type: const FunctionCallType(),
+        type: const FunctionType(),
       );
 
   factory Parameter.any(String name) => Parameter._(

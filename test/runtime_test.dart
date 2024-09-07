@@ -1608,6 +1608,18 @@ void main() {
       checkResult(runtime, 99);
     });
 
+    test('map.at 1', () {
+      final Runtime runtime = getRuntime(
+          'main = map.at({"name": "John", "age": 42, "married": true}, "age")');
+      checkResult(runtime, 42);
+    });
+
+    test('map.at 2', () {
+      final Runtime runtime = getRuntime(
+          'main = map.at({"name": "John", "age": 42 + 1, "married": true}, "age")');
+      checkResult(runtime, 43);
+    });
+
     /*test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
@@ -1626,16 +1638,6 @@ void main() {
     test('list.insertEnd 2', () {
       final Runtime runtime = getRuntime('main = list.insertEnd([true], 1)');
       checkResult(runtime, [true, 1]);
-    });
-
-    test('list.at 1', () {
-      final Runtime runtime = getRuntime('main = list.at([0, 1, 2], 1)');
-      checkResult(runtime, 1);
-    });
-
-    test('list.at 2', () {
-      final Runtime runtime = getRuntime('main = list.at([0, 2 + 3, 4], 1)');
-      checkResult(runtime, 5);
     });
 
     test('list.set 1', () {

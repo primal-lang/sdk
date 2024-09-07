@@ -2,13 +2,13 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class ListAt extends NativeFunctionNode {
-  ListAt()
+class MapAt extends NativeFunctionNode {
+  MapAt()
       : super(
-          name: 'list.at',
+          name: 'map.at',
           parameters: [
-            Parameter.list('a'),
-            Parameter.number('b'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 
@@ -32,8 +32,15 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    if ((a is ListNode) && (b is NumberNode)) {
-      return a.value[b.value.toInt()];
+    if ((a is MapNode) && (b is LiteralNode)) {
+      final Map<dynamic, Node> map = a.evaluateKeys();
+      final dynamic key = b.value;
+
+      if (map.containsKey(key)) {
+        return map[key]!;
+      } else {
+        throw InvalidMapIndex(key);
+      }
     } else {
       throw InvalidArgumentTypesError(
         function: name,
