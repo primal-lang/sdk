@@ -2210,5 +2210,15 @@ void main() {
       final Runtime runtime = getRuntime('main = hash.md5("Hello")');
       checkResult(runtime, '"8b1a9953c4611296a827abf8c47804d7"');
     });
+
+    test('hash.sha1 1', () {
+      final Runtime runtime = getRuntime('main = hash.sha1("")');
+      checkResult(runtime, '"da39a3ee5e6b4b0d3255bfef95601890afd80709"');
+    });
+
+    test('hash.sha1 2', () {
+      final Runtime runtime = getRuntime('main = hash.sha1("Hello")');
+      checkResult(runtime, '"f7ff9e8b7bb2e09b70935a5d785e0cc5d9d0abf0"');
+    });
   });
 }
