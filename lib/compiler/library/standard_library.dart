@@ -59,6 +59,7 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/index/element_at.dart';
+import 'package:primal/compiler/library/json/json_decode.dart';
 import 'package:primal/compiler/library/list/list_all.dart';
 import 'package:primal/compiler/library/list/list_any.dart';
 import 'package:primal/compiler/library/list/list_at.dart';
@@ -223,6 +224,9 @@ class StandardLibrary {
 
         // Index
         ElementAt(),
+
+        // Json
+        JsonDecode(),
 
         // List
         ListAll(),

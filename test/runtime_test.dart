@@ -2121,4 +2121,33 @@ void main() {
       checkResult(runtime, '"Enter in function"');
     });
   });
+
+  group('Json', () {
+    test('json.decode 1', () {
+      final Runtime runtime = getRuntime('main = json.decode("[]")');
+      checkResult(runtime, []);
+    });
+
+    test('json.decode 2', () {
+      final Runtime runtime = getRuntime('main = json.decode("[1, 2, 3]")');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('json.decode 3', () {
+      final Runtime runtime =
+          getRuntime("main = json.decode('[1, \"Hello\", true]')");
+      checkResult(runtime, [1, '"Hello"', true]);
+    });
+
+    test('json.decode 4', () {
+      final Runtime runtime = getRuntime(
+          "main = json.decode('{\"name\": \"John\", \"age\": 42, \"married\": true, \"numbers\": [1, 2, 3]}')");
+      checkResult(runtime, {
+        '"name"': '"John"',
+        '"age"': 42,
+        '"married"': true,
+        '"numbers"': [1, 2, 3]
+      });
+    });
+  });
 }
