@@ -146,6 +146,7 @@ extension StringExtensions on String {
       isCloseParenthesis ||
       isOpenBracket ||
       isCloseBracket ||
+      isCloseBraces ||
       isBinaryOperator;
 
   bool get isOpenBracesDelimiter =>

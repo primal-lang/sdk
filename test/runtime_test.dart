@@ -1643,6 +1643,23 @@ void main() {
       checkResult(runtime, ['"name"', '"age"', '"married"', 3]);
     });
 
+    test('map.values 1', () {
+      final Runtime runtime = getRuntime('main = map.values({})');
+      checkResult(runtime, []);
+    });
+
+    test('map.values 2', () {
+      final Runtime runtime = getRuntime(
+          'main = map.values({"name": "John", "age": 42, "married": true, 3: 2, "foo": [1, 2, 3]})');
+      checkResult(runtime, [
+        '"John"',
+        42,
+        true,
+        2,
+        [1, 2, 3]
+      ]);
+    });
+
     /*test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
