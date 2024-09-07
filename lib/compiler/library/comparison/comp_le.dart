@@ -18,6 +18,26 @@ class CompLe extends NativeFunctionNode {
         parameters: parameters,
         arguments: arguments,
       );
+
+  static Node execute({
+    required FunctionNode function,
+    required Node a,
+    required Node b,
+  }) {
+    if ((a is NumberNode) && (b is NumberNode)) {
+      return BooleanNode(a.value <= b.value);
+    } else if ((a is StringNode) && (b is StringNode)) {
+      final int comparison = a.value.compareTo(b.value);
+
+      return BooleanNode(comparison <= 0);
+    } else {
+      throw InvalidArgumentTypesError(
+        function: function.name,
+        expected: function.parameterTypes,
+        actual: [a.type, b.type],
+      );
+    }
+  }
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -32,14 +52,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    if ((a is NumberNode) && (b is NumberNode)) {
-      return BooleanNode(a.value <= b.value);
-    } else {
-      throw InvalidArgumentTypesError(
-        function: name,
-        expected: parameterTypes,
-        actual: [a.type, b.type],
-      );
-    }
+    return CompLe.execute(
+      function: this,
+      a: a,
+      b: b,
+    );
   }
 }

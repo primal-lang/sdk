@@ -18,6 +18,22 @@ class CompNeq extends NativeFunctionNode {
         parameters: parameters,
         arguments: arguments,
       );
+
+  static Node execute({
+    required FunctionNode function,
+    required Node a,
+    required Node b,
+  }) {
+    final Node comparison = CompEq.execute(
+      function: function,
+      a: a,
+      b: b,
+    );
+
+    return comparison is BooleanNode
+        ? BooleanNode(!comparison.value)
+        : comparison;
+  }
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -32,14 +48,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    final Node comparison = CompEq.execute(
+    return CompNeq.execute(
       function: this,
       a: a,
       b: b,
     );
-
-    return comparison is BooleanNode
-        ? BooleanNode(!comparison.value)
-        : comparison;
   }
 }

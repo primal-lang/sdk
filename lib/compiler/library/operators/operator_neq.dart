@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/comparison/comp_eq.dart';
+import 'package:primal/compiler/library/comparison/comp_neq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
@@ -32,14 +32,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    final Node comparison = CompEq.execute(
+    return CompNeq.execute(
       function: this,
       a: a,
       b: b,
     );
-
-    return comparison is BooleanNode
-        ? BooleanNode(!comparison.value)
-        : comparison;
   }
 }
