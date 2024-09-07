@@ -33,7 +33,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1];
 
     if ((a is ListNode) && (b is FreeVariableNode)) {
-      final FunctionNode function = b.functionNode();
+      final FunctionNode function = b.evaluate();
 
       for (final Node element in a.value) {
         final Node value = function.apply([element]);

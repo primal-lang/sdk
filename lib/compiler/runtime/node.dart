@@ -136,7 +136,8 @@ class FreeVariableNode extends Node {
 
   // TODO(momo): create function pointer in semantic analyzer to avoid
   // using the scope here
-  FunctionNode functionNode() {
+  @override
+  FunctionNode evaluate() {
     final Node node = Runtime.SCOPE.get(value);
 
     if (node is FunctionNode) {
@@ -153,7 +154,7 @@ class FreeVariableNode extends Node {
   String toString() => value;
 
   @override
-  dynamic native() => functionNode().native();
+  dynamic native() => evaluate().native();
 }
 
 class BoundedVariableNode extends FreeVariableNode {
@@ -188,10 +189,10 @@ class CallNode extends Node {
   FunctionNode getFunctionNode(Node callee) {
     if (callee is CallNode) {
       return getFunctionNode(callee.evaluate());
+    } else if (callee is FreeVariableNode) {
+      return callee.evaluate();
     } else if (callee is FunctionNode) {
       return callee;
-    } else if (callee is FreeVariableNode) {
-      return callee.functionNode();
     } else {
       throw InvalidFunctionError(callee.toString());
     }

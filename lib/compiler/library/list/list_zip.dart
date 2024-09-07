@@ -36,7 +36,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node c = arguments[2];
 
     if ((a is ListNode) && (b is ListNode) && (c is FreeVariableNode)) {
-      final FunctionNode function = c.functionNode();
+      final FunctionNode function = c.evaluate();
       final List<Node> result = [];
       final int maxLength = max(a.value.length, b.value.length);
 
