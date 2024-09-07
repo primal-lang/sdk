@@ -23,6 +23,15 @@ class InvalidArgumentCountError extends RuntimeError {
             'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
 }
 
+class InvalidMapIndex extends RuntimeError {
+  const InvalidMapIndex(String index) : super('Invalid map index: "$index"');
+}
+
+class ElementNotFoundError extends RuntimeError {
+  const ElementNotFoundError(String index)
+      : super('Element not found at index: "$index"');
+}
+
 class NotFoundInScopeError extends RuntimeError {
   const NotFoundInScopeError(String variable)
       : super('Variable "$variable" not found in scope');

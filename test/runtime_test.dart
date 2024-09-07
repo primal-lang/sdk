@@ -1527,6 +1527,420 @@ void main() {
     });
   });
 
+  group('Map', () {
+    test('Map constructor 1', () {
+      final Runtime runtime = getRuntime('main = {}');
+      checkResult(runtime, {});
+    });
+
+    test('Map constructor 2', () {
+      final Runtime runtime = getRuntime('main = {"foo": 1}');
+      checkResult(runtime, {'"foo"': 1});
+    });
+
+    test('Map constructor 3', () {
+      final Runtime runtime = getRuntime('main = {"foo": {"bar": 2}}');
+      checkResult(runtime, {
+        '"foo"': {'"bar"': 2}
+      });
+    });
+
+    test('Map constructor 4', () {
+      final Runtime runtime = getRuntime('main = {"foo": 1 + 2}');
+      checkResult(runtime, {'"foo"': 3});
+    });
+
+    test('Map constructor 5', () {
+      final Runtime runtime =
+          getRuntime('main = {"name": "John", "age": 42, "married": true}');
+      checkResult(
+          runtime, {'"name"': '"John"', '"age"': 42, '"married"': true});
+    });
+
+    test('Map indexing 1', () {
+      final Runtime runtime = getRuntime(
+          'main = {"name": "John", "age": 42, "married": true}["age"]');
+      checkResult(runtime, 42);
+    });
+
+    test('Map indexing 2', () {
+      final Runtime runtime = getRuntime(
+          'main = {"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"]');
+      checkResult(runtime, [42, 99, 201]);
+    });
+
+    test('Map indexing 3', () {
+      final Runtime runtime = getRuntime(
+          'main = {"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"][1]');
+      checkResult(runtime, 99);
+    });
+
+    /*test('list.insertStart 1', () {
+      final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
+      checkResult(runtime, [42]);
+    });
+
+    test('list.insertStart 2', () {
+      final Runtime runtime = getRuntime('main = list.insertStart([true], 1)');
+      checkResult(runtime, [1, true]);
+    });
+
+    test('list.insertEnd 1', () {
+      final Runtime runtime = getRuntime('main = list.insertEnd([], 42)');
+      checkResult(runtime, [42]);
+    });
+
+    test('list.insertEnd 2', () {
+      final Runtime runtime = getRuntime('main = list.insertEnd([true], 1)');
+      checkResult(runtime, [true, 1]);
+    });
+
+    test('list.at 1', () {
+      final Runtime runtime = getRuntime('main = list.at([0, 1, 2], 1)');
+      checkResult(runtime, 1);
+    });
+
+    test('list.at 2', () {
+      final Runtime runtime = getRuntime('main = list.at([0, 2 + 3, 4], 1)');
+      checkResult(runtime, 5);
+    });
+
+    test('list.set 1', () {
+      final Runtime runtime = getRuntime('main = list.set([], 0, 1)');
+      checkResult(runtime, [1]);
+    });
+
+    test('list.set 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.set([1, 2, 3, 4, 5], 2, 42)');
+      checkResult(runtime, [1, 2, 42, 3, 4, 5]);
+    });
+
+    test('list.join 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.join(["Hello", "world!"], ", ")');
+      checkResult(runtime, '"Hello, world!"');
+    });
+
+    test('list.join 2', () {
+      final Runtime runtime = getRuntime('main = list.join([], ",")');
+      checkResult(runtime, '""');
+    });
+
+    test('list.length 1', () {
+      final Runtime runtime = getRuntime('main = list.length([])');
+      checkResult(runtime, 0);
+    });
+
+    test('list.length 2', () {
+      final Runtime runtime = getRuntime('main = list.length([1, 2, 3])');
+      checkResult(runtime, 3);
+    });
+
+    test('list.concat 1', () {
+      final Runtime runtime = getRuntime('main = list.concat([], [])');
+      checkResult(runtime, []);
+    });
+
+    test('list.concat 2', () {
+      final Runtime runtime = getRuntime('main = list.concat([1, 2], [])');
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('list.concat 3', () {
+      final Runtime runtime = getRuntime('main = list.concat([], [1, 2])');
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('list.concat 4', () {
+      final Runtime runtime = getRuntime('main = list.concat([1, 2], [3, 4])');
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.isEmpty 1', () {
+      final Runtime runtime = getRuntime('main = list.isEmpty([])');
+      checkResult(runtime, true);
+    });
+
+    test('list.isEmpty 2', () {
+      final Runtime runtime = getRuntime('main = list.isEmpty([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('list.isNotEmpty 1', () {
+      final Runtime runtime = getRuntime('main = list.isNotEmpty([])');
+      checkResult(runtime, false);
+    });
+
+    test('list.isNotEmpty 2', () {
+      final Runtime runtime = getRuntime('main = list.isNotEmpty([1, 2, 3])');
+      checkResult(runtime, true);
+    });
+
+    test('list.contains 1', () {
+      final Runtime runtime = getRuntime('main = list.contains([], 1)');
+      checkResult(runtime, false);
+    });
+
+    test('list.contains 2', () {
+      final Runtime runtime = getRuntime('main = list.contains([1, 2, 3], 1)');
+      checkResult(runtime, true);
+    });
+
+    test('list.contains 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.contains([1, 2 + 2, 3], 4)');
+      checkResult(runtime, true);
+    });
+
+    test('list.contains 4', () {
+      final Runtime runtime = getRuntime('main = list.contains([1, 2, 3], 4)');
+      checkResult(runtime, false);
+    });
+
+    test('list.first', () {
+      final Runtime runtime = getRuntime('main = list.first([1, 2, 3])');
+      checkResult(runtime, 1);
+    });
+
+    test('list.last', () {
+      final Runtime runtime = getRuntime('main = list.last([1, 2, 3])');
+      checkResult(runtime, 3);
+    });
+
+    test('list.init', () {
+      final Runtime runtime = getRuntime('main = list.init([1, 2, 3, 4, 5])');
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.tail', () {
+      final Runtime runtime = getRuntime('main = list.tail([1, 2, 3, 4, 5])');
+      checkResult(runtime, [2, 3, 4, 5]);
+    });
+
+    test('list.take 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.take([1, 2, 3, 4, 5], 0)');
+      checkResult(runtime, []);
+    });
+
+    test('list.take 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.take([1, 2, 3, 4, 5], 4)');
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.drop 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.drop([1, 2, 3, 4, 5], 0)');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.drop 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.drop([1, 2, 3, 4, 5], 2)');
+      checkResult(runtime, [3, 4, 5]);
+    });
+
+    test('list.remove 1', () {
+      final Runtime runtime =
+          getRuntime('main = list.remove([1, 2, 3, 4, 5], 0)');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.remove 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.remove([1, 2, 3, 4, 5], 2)');
+      checkResult(runtime, [1, 3, 4, 5]);
+    });
+
+    test('list.remove 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.remove([1, 2, 2, 4, 5], 2)');
+      checkResult(runtime, [1, 4, 5]);
+    });
+
+    test('list.removeAt', () {
+      final Runtime runtime =
+          getRuntime('main = list.removeAt([1, 2, 3, 4, 5], 2)');
+      checkResult(runtime, [1, 2, 4, 5]);
+    });
+
+    test('list.reverse', () {
+      final Runtime runtime = getRuntime('main = list.reverse([1, 2, 3])');
+      checkResult(runtime, [3, 2, 1]);
+    });
+
+    test('list.filled 1', () {
+      final Runtime runtime = getRuntime('main = list.filled(0, 1)');
+      checkResult(runtime, []);
+    });
+
+    test('list.filled 2', () {
+      final Runtime runtime = getRuntime('main = list.filled(3, 1)');
+      checkResult(runtime, [1, 1, 1]);
+    });
+
+    test('list.indexOf 1', () {
+      final Runtime runtime = getRuntime('main = list.indexOf([1, 2, 3], 4)');
+      checkResult(runtime, -1);
+    });
+
+    test('list.indexOf 2', () {
+      final Runtime runtime = getRuntime('main = list.indexOf([1, 2, 3], 2)');
+      checkResult(runtime, 1);
+    });
+
+    test('list.swap', () {
+      final Runtime runtime =
+          getRuntime('main = list.swap([1, 2, 3, 4, 5], 1, 3)');
+      checkResult(runtime, [1, 4, 3, 2, 5]);
+    });
+
+    test('list.sublist', () {
+      final Runtime runtime =
+          getRuntime('main = list.sublist([1, 2, 3, 4, 5], 1, 3)');
+      checkResult(runtime, [2, 3]);
+    });
+
+    test('list.map 1 ', () {
+      final Runtime runtime = getRuntime('main = list.map([], num.abs)');
+      checkResult(runtime, []);
+    });
+
+    test('list.map 2', () {
+      final Runtime runtime = getRuntime(
+          'main = list.map([1, -2 - 6, 3 * -3, -4, num.negative(7)], num.abs)');
+      checkResult(runtime, [1, 8, 9, 4, 7]);
+    });
+
+    test('list.filter 1', () {
+      final Runtime runtime = getRuntime('main = list.filter([], num.isEven)');
+      checkResult(runtime, []);
+    });
+
+    test('list.filter 2', () {
+      final Runtime runtime = getRuntime(
+          'main = list.filter([-3, -2, -1, 0, 1, 2, 3], num.isEven)');
+      checkResult(runtime, [-2, 0, 2]);
+    });
+
+    test('list.filter 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.filter([-3, -2, -1, 1, 2, 3], num.isZero)');
+      checkResult(runtime, []);
+    });
+
+    test('list.reduce 1', () {
+      final Runtime runtime = getRuntime('main = list.reduce([], 0, num.add)');
+      checkResult(runtime, 0);
+    });
+
+    test('list.reduce 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.reduce([1, 2, 3, 4, 5], 10, num.add)');
+      checkResult(runtime, 25);
+    });
+
+    test('list.all 1', () {
+      final Runtime runtime = getRuntime('main = list.all([], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.all 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.all([2, 4, 5], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.all 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.all([2, 4, 6], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.none 1', () {
+      final Runtime runtime = getRuntime('main = list.none([], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.none 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.none([1, 2, 3], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.none 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.none([1, 3, 7], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.any 1', () {
+      final Runtime runtime = getRuntime('main = list.any([], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.any 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.any([1, 3, 5], num.isEven)');
+      checkResult(runtime, false);
+    });
+
+    test('list.none 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.any([1, 2, 3], num.isEven)');
+      checkResult(runtime, true);
+    });
+
+    test('list.zip 1', () {
+      final Runtime runtime = getRuntime('main = list.zip([], [], num.add)');
+      checkResult(runtime, []);
+    });
+
+    test('list.zip 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3, 5], [2, 4], num.add)');
+      checkResult(runtime, [3, 7, 5]);
+    });
+
+    test('list.zip 3', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3], [2, 4, 6], num.add)');
+      checkResult(runtime, [3, 7, 6]);
+    });
+
+    test('list.zip 4', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1, 3, 5], [2, 4, 6], num.add)');
+      checkResult(runtime, [3, 7, 11]);
+    });
+
+    test('list.zip 5', () {
+      final Runtime runtime =
+          getRuntime('main = list.zip([1 + 1 + 1, 3, 5], [2, 4, 6], num.add)');
+      checkResult(runtime, [5, 7, 11]);
+    });
+
+    test('list.sort 1', () {
+      final Runtime runtime = getRuntime('main = list.sort([], num.compare)');
+      checkResult(runtime, []);
+    });
+
+    test('list.sort 2', () {
+      final Runtime runtime =
+          getRuntime('main = list.sort([3, 1, 5, 2, 4], num.compare)');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.sort 3', () {
+      final Runtime runtime = getRuntime(
+          'main = list.sort(["Peter", "Alice", "John", "Bob", "Daniel"], str.compare)');
+      checkResult(
+          runtime, ['"Alice"', '"Bob"', '"Daniel"', '"John"', '"Peter"']);
+    });*/
+  });
+
   group('To', () {
     test('to.number 1', () {
       final Runtime runtime = getRuntime('main = to.number("12.5")');

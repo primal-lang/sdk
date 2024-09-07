@@ -8,7 +8,7 @@ class ElementAt extends NativeFunctionNode {
           name: 'element.at',
           parameters: [
             Parameter.any('a'),
-            Parameter.number('b'),
+            Parameter.any('b'),
           ],
         );
 
@@ -34,6 +34,26 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
     if ((a is ListNode) && (b is NumberNode)) {
       return a.value[b.value.toInt()];
+    } else if ((a is MapNode) && (b is LiteralNode)) {
+      final Map<dynamic, Node> map = {};
+
+      for (final entry in a.value.entries) {
+        final Node key = entry.key.evaluate();
+
+        if (key is LiteralNode) {
+          map[key.value] = entry.value;
+        } else {
+          throw InvalidMapIndex(key.toString());
+        }
+      }
+
+      final Node? node = map[b.value];
+
+      if (node != null) {
+        return node;
+      } else {
+        throw ElementNotFoundError(b.value.toString());
+      }
     } else if ((a is StringNode) && (b is NumberNode)) {
       return StringNode(a.value[b.value.toInt()]);
     } else {

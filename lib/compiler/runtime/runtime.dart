@@ -44,6 +44,11 @@ class Runtime {
   Node fullReduce(Node node) {
     if (node is ListNode) {
       return ListNode(node.value.map(fullReduce).toList());
+    } else if (node is MapNode) {
+      final Iterable<MapEntry<Node, Node>> entries = node.value.entries
+          .map((e) => MapEntry(fullReduce(e.key), fullReduce(e.value)));
+
+      return MapNode(Map.fromEntries(entries));
     } else if (node is StringNode) {
       return StringNode('"${node.value}"');
     } else if (node is CallNode) {
