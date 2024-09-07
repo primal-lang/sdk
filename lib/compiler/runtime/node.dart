@@ -27,6 +27,22 @@ abstract class LiteralNode<T> implements Node {
 
   @override
   Node evaluate() => this;
+
+  static LiteralNode from(dynamic value) {
+    if (value is bool) {
+      return BooleanNode(value);
+    } else if (value is num) {
+      return NumberNode(value);
+    } else if (value is String) {
+      return StringNode(value);
+    } else if (value is List<Node>) {
+      return ListNode(value);
+    } else if (value is Map<Node, Node>) {
+      return MapNode(value);
+    } else {
+      throw InvalidLiteralValue(value);
+    }
+  }
 }
 
 class BooleanNode extends LiteralNode<bool> {

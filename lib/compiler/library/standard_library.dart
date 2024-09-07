@@ -95,6 +95,7 @@ import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/library/logic/bool_or.dart';
 import 'package:primal/compiler/library/logic/bool_xor.dart';
 import 'package:primal/compiler/library/map/map_at.dart';
+import 'package:primal/compiler/library/map/map_set.dart';
 import 'package:primal/compiler/library/operators/operator_add.dart';
 import 'package:primal/compiler/library/operators/operator_and.dart';
 import 'package:primal/compiler/library/operators/operator_div.dart';
@@ -257,6 +258,7 @@ class StandardLibrary {
 
         // Map
         MapAt(),
+        MapSet(),
 
         // Operators
         OperatorAdd(),

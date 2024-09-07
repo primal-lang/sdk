@@ -23,6 +23,11 @@ class InvalidArgumentCountError extends RuntimeError {
             'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
 }
 
+class InvalidLiteralValue extends RuntimeError {
+  const InvalidLiteralValue(String value)
+      : super('Invalid literal value: "$value"');
+}
+
 class InvalidMapIndex extends RuntimeError {
   const InvalidMapIndex(String index) : super('Invalid map index: "$index"');
 }
