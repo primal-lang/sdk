@@ -92,6 +92,7 @@ These are the available types at runtime:
 * Number
 * String
 * List
+* Map
 * Function
 
 ## Runtime
