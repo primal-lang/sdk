@@ -2081,6 +2081,11 @@ void main() {
       final Runtime runtime = getRuntime(loadFile('web_samples/to_binary.prm'));
       checkResult(runtime, '"1010"');
     });
+
+    test('frequency', () {
+      final Runtime runtime = getRuntime(loadFile('web_samples/frequency.prm'));
+      checkResult(runtime, {});
+    });
   });
 
   group('Higher order functions', () {

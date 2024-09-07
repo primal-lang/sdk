@@ -30,7 +30,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
   @override
   Node evaluate() {
-    final Node a = arguments[0];
+    final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
     final Node c = arguments[2];
 
