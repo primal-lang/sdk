@@ -2149,5 +2149,21 @@ void main() {
         '"numbers"': [1, 2, 3]
       });
     });
+
+    test('json.encode 1', () {
+      final Runtime runtime = getRuntime('main = json.encode([])');
+      checkResult(runtime, '"[]"');
+    });
+
+    test('json.encode 2', () {
+      final Runtime runtime = getRuntime('main = json.encode([1, 2, 3])');
+      checkResult(runtime, '"[1, 2, 3]"');
+    });
+
+    test('json.encode 2', () {
+      final Runtime runtime =
+          getRuntime('main = json.encode([1, "Hello", true])');
+      checkResult(runtime, '"[1, "Hello", true]"');
+    });
   });
 }
