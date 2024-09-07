@@ -87,6 +87,13 @@ If the main function is not present, the program will still run, but no computat
 
 This approach offers flexibility and ease of use but relies on runtime checks to catch type-related issues, which can lead to errors that are only caught during execution.
 
+These are the available types at runtime:
+* Boolean
+* Number
+* String
+* List
+* Function
+
 ## Runtime
 
 `Primal` is an interpreted language. The compiler translates the source code into an intermediate representation that is then executed by the interpreter. The interpreter is responsible for executing the intermediate representation and producing the output of the program.
