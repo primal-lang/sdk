@@ -2084,7 +2084,7 @@ void main() {
 
     test('frequency', () {
       final Runtime runtime = getRuntime(loadFile('web_samples/frequency.prm'));
-      checkResult(runtime, {});
+      checkResult(runtime, {1: 2, 2: 4, 3: 1, 4: 1, 5: 2});
     });
   });
 
