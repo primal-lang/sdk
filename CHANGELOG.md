@@ -13,6 +13,7 @@
     - Console
     - Map
     - Json
+    - Hashing
 
 ### Runtime
 
