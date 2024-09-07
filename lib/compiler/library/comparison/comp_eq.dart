@@ -48,6 +48,36 @@ class CompEq extends NativeFunctionNode {
 
         return const BooleanNode(true);
       }
+    } else if ((a is MapNode) && (b is MapNode)) {
+      if (a.value.length != b.value.length) {
+        return const BooleanNode(false);
+      } else {
+        final Map<dynamic, Node> mapA = a.evaluateKeys();
+        final Map<dynamic, Node> mapB = b.evaluateKeys();
+
+        final Set<dynamic> keys = {
+          ...mapA.keys,
+          ...mapB.keys,
+        };
+
+        for (final dynamic key in keys) {
+          if (!mapA.containsKey(key) || !mapB.containsKey(key)) {
+            return const BooleanNode(false);
+          }
+
+          final Node comparison = execute(
+            function: function,
+            a: mapA[key]!.evaluate(),
+            b: mapB[key]!.evaluate(),
+          );
+
+          if (comparison is BooleanNode && !comparison.value) {
+            return const BooleanNode(false);
+          }
+        }
+
+        return const BooleanNode(true);
+      }
     } else {
       throw InvalidArgumentTypesError(
         function: function.name,

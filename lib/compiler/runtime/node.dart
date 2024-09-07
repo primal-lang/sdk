@@ -74,6 +74,22 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
 
     return MapNode(Map.fromEntries(entries));
   }
+
+  Map<dynamic, Node> evaluateKeys() {
+    final Map<dynamic, Node> map = {};
+
+    for (final entry in value.entries) {
+      final Node key = entry.key.evaluate();
+
+      if (key is LiteralNode) {
+        map[key.value] = entry.value;
+      } else {
+        throw InvalidMapIndex(key.toString());
+      }
+    }
+
+    return map;
+  }
 }
 
 class FreeVariableNode extends Node {

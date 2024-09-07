@@ -35,18 +35,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     if ((a is ListNode) && (b is NumberNode)) {
       return a.value[b.value.toInt()];
     } else if ((a is MapNode) && (b is LiteralNode)) {
-      final Map<dynamic, Node> map = {};
-
-      for (final entry in a.value.entries) {
-        final Node key = entry.key.evaluate();
-
-        if (key is LiteralNode) {
-          map[key.value] = entry.value;
-        } else {
-          throw InvalidMapIndex(key.toString());
-        }
-      }
-
+      final Map<dynamic, Node> map = a.evaluateKeys();
       final Node? node = map[b.value];
 
       if (node != null) {

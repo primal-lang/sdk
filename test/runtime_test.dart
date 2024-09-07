@@ -121,6 +121,39 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('== 11', () {
+      final Runtime runtime =
+          getRuntime('main = [1, 2, 3] == [4 - 3, 1 + 1, 3 * 1]');
+      checkResult(runtime, true);
+    });
+
+    test('== 12', () {
+      final Runtime runtime = getRuntime('main = {} == {}');
+      checkResult(runtime, true);
+    });
+
+    test('== 13', () {
+      final Runtime runtime = getRuntime('main = {} == {"a": 1}');
+      checkResult(runtime, false);
+    });
+
+    test('== 14', () {
+      final Runtime runtime = getRuntime('main = {"a": 1} == {}');
+      checkResult(runtime, false);
+    });
+
+    test('== 15', () {
+      final Runtime runtime = getRuntime(
+          'main = {"a": 1, "b": 2, "c": 3} == {"a": 1, "b": 2, "c": 3}');
+      checkResult(runtime, true);
+    });
+
+    test('== 16', () {
+      final Runtime runtime = getRuntime(
+          'main = {"a": 1, "b": 2, "c": 3} == {"a": 3 - 2, "b": 1 + 1, "c": 3 * 1}');
+      checkResult(runtime, true);
+    });
+
     test('!= 1', () {
       final Runtime runtime = getRuntime('main = "hey" != "hey"');
       checkResult(runtime, false);
@@ -2164,6 +2197,11 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.string 5', () {
+      final Runtime runtime = getRuntime('main = is.string({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
     test('is.boolean 1', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
@@ -2181,6 +2219,11 @@ void main() {
 
     test('is.boolean 4', () {
       final Runtime runtime = getRuntime('main = is.boolean([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.boolean 5', () {
+      final Runtime runtime = getRuntime('main = is.boolean({"foo": 1})');
       checkResult(runtime, false);
     });
 
@@ -2206,6 +2249,41 @@ void main() {
 
     test('is.list 5', () {
       final Runtime runtime = getRuntime('main = is.list([1, 2, 3])');
+      checkResult(runtime, true);
+    });
+
+    test('is.list 6', () {
+      final Runtime runtime = getRuntime('main = is.list({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.map 1', () {
+      final Runtime runtime = getRuntime('main = is.map(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.map 2', () {
+      final Runtime runtime = getRuntime('main = is.map(1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.map 3', () {
+      final Runtime runtime = getRuntime('main = is.list("map")');
+      checkResult(runtime, false);
+    });
+
+    test('is.map 4', () {
+      final Runtime runtime = getRuntime('main = is.map({})');
+      checkResult(runtime, true);
+    });
+
+    test('is.map 5', () {
+      final Runtime runtime = getRuntime('main = is.map([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.map 6', () {
+      final Runtime runtime = getRuntime('main = is.map({"foo": 1})');
       checkResult(runtime, true);
     });
   });
