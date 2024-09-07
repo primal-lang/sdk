@@ -1571,7 +1571,7 @@ void main() {
 
     test('Map indexing 3', () {
       final Runtime runtime = getRuntime(
-          'main = {"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"][1]');
+          'main = ({"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"])[1]');
       checkResult(runtime, 99);
     });
 
