@@ -36,7 +36,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
       return StringNode(json);
     } else if (a is ListNode) {
-      final String json = jsonEncode(a.value);
+      final String json = jsonEncode(a.asList());
 
       return StringNode(json);
     } else {

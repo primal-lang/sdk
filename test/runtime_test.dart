@@ -2157,13 +2157,13 @@ void main() {
 
     test('json.encode 2', () {
       final Runtime runtime = getRuntime('main = json.encode([1, 2, 3])');
-      checkResult(runtime, '"[1, 2, 3]"');
+      checkResult(runtime, '"[1,2,3]"');
     });
 
-    test('json.encode 2', () {
+    test('json.encode 3', () {
       final Runtime runtime =
           getRuntime('main = json.encode([1, "Hello", true])');
-      checkResult(runtime, '"[1, "Hello", true]"');
+      checkResult(runtime, '"[1,"Hello",true]"');
     });
   });
 }

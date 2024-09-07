@@ -75,6 +75,22 @@ class ListNode extends LiteralNode<List<Node>> {
   @override
   Node substitute(Bindings bindings) =>
       ListNode(value.map((e) => e.substitute(bindings)).toList());
+
+  List<dynamic> asList() {
+    final List result = [];
+
+    for (final element in value) {
+      final Node node = element.evaluate();
+
+      if (node is LiteralNode) {
+        result.add(node.value);
+      } else {
+        throw InvalidMapIndex(node.toString());
+      }
+    }
+
+    return result;
+  }
 }
 
 class MapNode extends LiteralNode<Map<Node, Node>> {
