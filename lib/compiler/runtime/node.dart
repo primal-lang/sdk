@@ -12,6 +12,8 @@ abstract class Node {
   Node substitute(Bindings bindings) => this;
 
   Node evaluate() => this;
+
+  dynamic native();
 }
 
 abstract class LiteralNode<T> implements Node {
@@ -50,6 +52,9 @@ class BooleanNode extends LiteralNode<bool> {
 
   @override
   Type get type => const BooleanType();
+
+  @override
+  bool native() => value;
 }
 
 class NumberNode extends LiteralNode<num> {
@@ -57,6 +62,9 @@ class NumberNode extends LiteralNode<num> {
 
   @override
   Type get type => const NumberType();
+
+  @override
+  num native() => value;
 }
 
 class StringNode extends LiteralNode<String> {
@@ -64,6 +72,9 @@ class StringNode extends LiteralNode<String> {
 
   @override
   Type get type => const StringType();
+
+  @override
+  String native() => value;
 }
 
 class ListNode extends LiteralNode<List<Node>> {
@@ -76,21 +87,8 @@ class ListNode extends LiteralNode<List<Node>> {
   Node substitute(Bindings bindings) =>
       ListNode(value.map((e) => e.substitute(bindings)).toList());
 
-  List<dynamic> asList() {
-    final List result = [];
-
-    for (final element in value) {
-      final Node node = element.evaluate();
-
-      if (node is LiteralNode) {
-        result.add(node.value);
-      } else {
-        result.add(node.toString());
-      }
-    }
-
-    return result;
-  }
+  @override
+  dynamic native() => value.map((e) => e.native()).toList();
 }
 
 class MapNode extends LiteralNode<Map<Node, Node>> {
@@ -123,23 +121,14 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
     return map;
   }
 
-  Map<dynamic, dynamic> asMap() {
+  @override
+  Map<dynamic, dynamic> native() {
     final Map<dynamic, dynamic> map = {};
 
     for (final entry in value.entries) {
-      final Node key = entry.key.evaluate();
-
-      if (key is LiteralNode) {
-        final Node value = entry.value.evaluate();
-
-        if (value is LiteralNode) {
-          map[key.value] = value.value;
-        } else {
-          map[key.value] = value.toString();
-        }
-      } else {
-        throw InvalidMapIndex(key.toString());
-      }
+      final dynamic key = entry.key.native();
+      final dynamic value = entry.value.native();
+      map[key] = value;
     }
 
     return map;
@@ -168,6 +157,9 @@ class FreeVariableNode extends Node {
 
   @override
   String toString() => value;
+
+  @override
+  dynamic native() => functionNode().name;
 }
 
 class BoundedVariableNode extends FreeVariableNode {
@@ -216,6 +208,9 @@ class CallNode extends Node {
 
   @override
   String toString() => '$callee(${arguments.join(', ')})';
+
+  @override
+  dynamic native() => evaluate().native();
 }
 
 class FunctionNode extends Node {
@@ -254,6 +249,9 @@ class FunctionNode extends Node {
   @override
   String toString() =>
       '$name(${parameters.map((e) => '${e.name}: ${e.type}').join(', ')})';
+
+  @override
+  dynamic native() => toString();
 }
 
 class CustomFunctionNode extends FunctionNode {

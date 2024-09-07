@@ -2167,6 +2167,11 @@ void main() {
     });
 
     test('json.encode 4', () {
+      final Runtime runtime = getRuntime('main = json.encode([1, 2, [3, 4]])');
+      checkResult(runtime, '"[1,2,[3,4]]"');
+    });
+
+    test('json.encode 4', () {
       final Runtime runtime = getRuntime('main = json.encode({})');
       checkResult(runtime, '"{}"');
     });

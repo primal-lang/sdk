@@ -32,11 +32,11 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is MapNode) {
-      final String json = jsonEncode(a.asMap());
+      final String json = jsonEncode(a.native());
 
       return StringNode(json);
     } else if (a is ListNode) {
-      final String json = jsonEncode(a.asList());
+      final String json = jsonEncode(a.native());
 
       return StringNode(json);
     } else {
