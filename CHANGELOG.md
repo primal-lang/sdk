@@ -12,6 +12,7 @@
 * Added basic functions for:
     - Console
     - Map
+    - Json
 
 ### Runtime
 
