@@ -7,6 +7,10 @@
 * Added basic functions for:
     - Console
 
+### Runtime
+
+* Added shebang support
+
 ## 0.3.0 - Clay Pot
 
 ### Language

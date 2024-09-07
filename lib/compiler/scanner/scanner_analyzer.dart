@@ -11,6 +11,10 @@ class Scanner extends Analyzer<String, List<Character>> {
     final List<String> rows = input.split('\n');
 
     for (int i = 0; i < rows.length; i++) {
+      if ((i == 0) && rows[i].startsWith('#!')) {
+        continue;
+      }
+
       final List<String> columns =
           rows[i].runes.map(String.fromCharCode).toList();
 
