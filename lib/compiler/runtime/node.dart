@@ -165,6 +165,10 @@ class FunctionNode extends Node {
 
   @override
   Type get type => const FunctionType();
+
+  @override
+  String toString() =>
+      '$name(${parameters.map((e) => '${e.name}: ${e.type}').join(', ')})';
 }
 
 class CustomFunctionNode extends FunctionNode {
@@ -181,9 +185,6 @@ class CustomFunctionNode extends FunctionNode {
 
   @override
   Type get type => const FunctionType();
-
-  @override
-  String toString() => '{${parameters.join(', ')} = $node}';
 }
 
 abstract class NativeFunctionNode extends FunctionNode {

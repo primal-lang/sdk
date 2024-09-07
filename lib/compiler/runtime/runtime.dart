@@ -48,6 +48,8 @@ class Runtime {
       return StringNode('"${node.value}"');
     } else if (node is CallNode) {
       return fullReduce(node.evaluate());
+    } else if (node is FreeVariableNode) {
+      return node.functionNode();
     } else {
       return node;
     }
