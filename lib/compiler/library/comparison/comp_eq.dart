@@ -52,8 +52,8 @@ class CompEq extends NativeFunctionNode {
       if (a.value.length != b.value.length) {
         return const BooleanNode(false);
       } else {
-        final Map<dynamic, Node> mapA = a.evaluateKeys();
-        final Map<dynamic, Node> mapB = b.evaluateKeys();
+        final Map<dynamic, Node> mapA = a.asMapWithKeys();
+        final Map<dynamic, Node> mapB = b.asMapWithKeys();
 
         final Set<dynamic> keys = {
           ...mapA.keys,

@@ -33,7 +33,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is MapNode) && (b is LiteralNode)) {
-      final Map<dynamic, Node> map = a.evaluateKeys();
+      final Map<dynamic, Node> map = a.asMapWithKeys();
       final dynamic key = b.value;
 
       if (map.containsKey(key)) {

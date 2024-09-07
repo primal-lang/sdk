@@ -2165,5 +2165,17 @@ void main() {
           getRuntime('main = json.encode([1, "Hello", true])');
       checkResult(runtime, '"[1,"Hello",true]"');
     });
+
+    test('json.encode 4', () {
+      final Runtime runtime = getRuntime('main = json.encode({})');
+      checkResult(runtime, '"{}"');
+    });
+
+    test('json.encode 5', () {
+      final Runtime runtime = getRuntime(
+          'main = json.encode({"name": "John", "age": 42, "married": true, "numbers": [1, 2, 3]})');
+      checkResult(runtime,
+          '"{"name":"John","age":42,"married":true,"numbers":[1,2,3]}"');
+    });
   });
 }

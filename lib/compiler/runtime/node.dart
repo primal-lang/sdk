@@ -85,7 +85,7 @@ class ListNode extends LiteralNode<List<Node>> {
       if (node is LiteralNode) {
         result.add(node.value);
       } else {
-        throw InvalidMapIndex(node.toString());
+        result.add(node.toString());
       }
     }
 
@@ -107,7 +107,7 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
     return MapNode(Map.fromEntries(entries));
   }
 
-  Map<dynamic, Node> evaluateKeys() {
+  Map<dynamic, Node> asMapWithKeys() {
     final Map<dynamic, Node> map = {};
 
     for (final entry in value.entries) {
@@ -115,6 +115,28 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
 
       if (key is LiteralNode) {
         map[key.value] = entry.value;
+      } else {
+        throw InvalidMapIndex(key.toString());
+      }
+    }
+
+    return map;
+  }
+
+  Map<dynamic, dynamic> asMap() {
+    final Map<dynamic, dynamic> map = {};
+
+    for (final entry in value.entries) {
+      final Node key = entry.key.evaluate();
+
+      if (key is LiteralNode) {
+        final Node value = entry.value.evaluate();
+
+        if (value is LiteralNode) {
+          map[key.value] = value.value;
+        } else {
+          map[key.value] = value.toString();
+        }
       } else {
         throw InvalidMapIndex(key.toString());
       }
