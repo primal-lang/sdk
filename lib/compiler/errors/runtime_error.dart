@@ -32,3 +32,8 @@ class InvalidFunctionError extends RuntimeError {
   const InvalidFunctionError(String variable)
       : super('"$variable" is not a function');
 }
+
+class UnimplementedFunctionWebError extends RuntimeError {
+  const UnimplementedFunctionWebError(String function)
+      : super('Function "$function" is not implemented on the web platform');
+}

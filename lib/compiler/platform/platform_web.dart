@@ -1,3 +1,4 @@
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/platform/platform_base.dart';
 
 class PlatformInterface extends PlatformBase {
@@ -14,5 +15,6 @@ class PlatformInterface extends PlatformBase {
   void errorWriteLn(String content) => print(content);
 
   @override
-  String readLine() => throw UnimplementedError();
+  String readLine() =>
+      throw const UnimplementedFunctionWebError('console.readLine');
 }

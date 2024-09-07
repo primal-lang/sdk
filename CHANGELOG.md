@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.4.0 - Copper Chisel [Unreleased]
+
+### Standard library
+
+* Added basic functions for:
+    - Console
+
 ## 0.3.0 - Clay Pot
 
 ### Language
