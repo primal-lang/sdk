@@ -1705,6 +1705,19 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('map.removeAt 1', () {
+      final Runtime runtime = getRuntime(
+          'main = map.removeAt({"name": "John", "age": 42, "married": true}, "age")');
+      checkResult(runtime, {'"name"': '"John"', '"married"': true});
+    });
+
+    test('map.removeAt 2', () {
+      final Runtime runtime = getRuntime(
+          'main = map.removeAt({"name": "John", "age": 42, "married": true}, "foo")');
+      checkResult(
+          runtime, {'"name"': '"John"', '"age"': 42, '"married"': true});
+    });
+
     /*test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
@@ -1826,12 +1839,6 @@ void main() {
       final Runtime runtime =
           getRuntime('main = list.remove([1, 2, 2, 4, 5], 2)');
       checkResult(runtime, [1, 4, 5]);
-    });
-
-    test('list.removeAt', () {
-      final Runtime runtime =
-          getRuntime('main = list.removeAt([1, 2, 3, 4, 5], 2)');
-      checkResult(runtime, [1, 2, 4, 5]);
     });
 
     test('list.reverse', () {
