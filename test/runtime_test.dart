@@ -2199,4 +2199,16 @@ void main() {
           '"{"name":"John","age":42,"married":true,"numbers":[1,2,3]}"');
     });
   });
+
+  group('Hash', () {
+    test('hash.md5 1', () {
+      final Runtime runtime = getRuntime('main = hash.md5("")');
+      checkResult(runtime, '"d41d8cd98f00b204e9800998ecf8427e"');
+    });
+
+    test('hash.md5 2', () {
+      final Runtime runtime = getRuntime('main = hash.md5("Hello")');
+      checkResult(runtime, '"8b1a9953c4611296a827abf8c47804d7"');
+    });
+  });
 }

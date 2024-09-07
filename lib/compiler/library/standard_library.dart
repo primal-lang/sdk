@@ -58,6 +58,7 @@ import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/error/throw.dart';
+import 'package:primal/compiler/library/hash/hash_md5.dart';
 import 'package:primal/compiler/library/index/element_at.dart';
 import 'package:primal/compiler/library/json/json_decode.dart';
 import 'package:primal/compiler/library/json/json_encode.dart';
@@ -222,6 +223,9 @@ class StandardLibrary {
 
         // Error
         Throw(),
+
+        // Hash
+        HashMd5(),
 
         // Index
         ElementAt(),
