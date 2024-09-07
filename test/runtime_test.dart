@@ -2106,6 +2106,22 @@ void main() {
           'bar = num.abs\n\nfoo(f, v) = f(v)\n\nmain = foo(bar(), -4)');
       checkResult(runtime, 4);
     });
+
+    test('Print function 1', () {
+      final Runtime runtime = getRuntime('main = num.add');
+      checkResult(runtime, '"num.add(a: Number, b: Number)"');
+    });
+
+    test('Print function 2', () {
+      final Runtime runtime = getRuntime('foo(a, b) = a + b\n\nmain = foo');
+      checkResult(runtime, '"foo(a: Any, b: Any)"');
+    });
+
+    test('Print function 3', () {
+      final Runtime runtime = getRuntime('main = [num.add, num.abs]');
+      checkResult(
+          runtime, '["num.add(a: Number, b: Number)", "num.abs(a: Number)"]');
+    });
   });
 
   group('Console', () {

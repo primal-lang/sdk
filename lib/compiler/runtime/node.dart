@@ -153,7 +153,7 @@ class FreeVariableNode extends Node {
   String toString() => value;
 
   @override
-  dynamic native() => functionNode().name;
+  dynamic native() => functionNode().native();
 }
 
 class BoundedVariableNode extends FreeVariableNode {
