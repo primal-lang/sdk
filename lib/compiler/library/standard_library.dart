@@ -60,6 +60,8 @@ import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/hash/hash_md5.dart';
 import 'package:primal/compiler/library/hash/hash_sha1.dart';
+import 'package:primal/compiler/library/hash/hash_sha256.dart';
+import 'package:primal/compiler/library/hash/hash_sha512.dart';
 import 'package:primal/compiler/library/index/element_at.dart';
 import 'package:primal/compiler/library/json/json_decode.dart';
 import 'package:primal/compiler/library/json/json_encode.dart';
@@ -228,6 +230,8 @@ class StandardLibrary {
         // Hash
         HashMd5(),
         HashSha1(),
+        HashSha256(),
+        HashSha512(),
 
         // Index
         ElementAt(),
