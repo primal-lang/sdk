@@ -95,6 +95,7 @@ import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/library/logic/bool_or.dart';
 import 'package:primal/compiler/library/logic/bool_xor.dart';
 import 'package:primal/compiler/library/map/map_at.dart';
+import 'package:primal/compiler/library/map/map_contains_key.dart';
 import 'package:primal/compiler/library/map/map_keys.dart';
 import 'package:primal/compiler/library/map/map_set.dart';
 import 'package:primal/compiler/library/map/map_values.dart';
@@ -260,6 +261,7 @@ class StandardLibrary {
 
         // Map
         MapAt(),
+        MapContainsKey(),
         MapKeys(),
         MapSet(),
         MapValues(),

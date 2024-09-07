@@ -1660,6 +1660,29 @@ void main() {
       ]);
     });
 
+    test('map.contains 1', () {
+      final Runtime runtime = getRuntime('main = map.containsKey({}, "name")');
+      checkResult(runtime, false);
+    });
+
+    test('map.contains 2', () {
+      final Runtime runtime =
+          getRuntime('main = map.containsKey({"name": "John"}, "name")');
+      checkResult(runtime, true);
+    });
+
+    test('map.contains 3', () {
+      final Runtime runtime =
+          getRuntime('main = map.containsKey({("na" + "me"): "John"}, "name")');
+      checkResult(runtime, true);
+    });
+
+    test('map.contains 4', () {
+      final Runtime runtime =
+          getRuntime('main = map.containsKey({"name": "John"}, "age")');
+      checkResult(runtime, false);
+    });
+
     /*test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
@@ -1739,27 +1762,6 @@ void main() {
     test('list.isNotEmpty 2', () {
       final Runtime runtime = getRuntime('main = list.isNotEmpty([1, 2, 3])');
       checkResult(runtime, true);
-    });
-
-    test('list.contains 1', () {
-      final Runtime runtime = getRuntime('main = list.contains([], 1)');
-      checkResult(runtime, false);
-    });
-
-    test('list.contains 2', () {
-      final Runtime runtime = getRuntime('main = list.contains([1, 2, 3], 1)');
-      checkResult(runtime, true);
-    });
-
-    test('list.contains 3', () {
-      final Runtime runtime =
-          getRuntime('main = list.contains([1, 2 + 2, 3], 4)');
-      checkResult(runtime, true);
-    });
-
-    test('list.contains 4', () {
-      final Runtime runtime = getRuntime('main = list.contains([1, 2, 3], 4)');
-      checkResult(runtime, false);
     });
 
     test('list.first', () {
