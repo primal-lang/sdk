@@ -28,6 +28,10 @@ class InvalidLiteralValue extends RuntimeError {
       : super('Invalid literal value: "$value"');
 }
 
+class InvalidValueError extends RuntimeError {
+  const InvalidValueError(String value) : super('Invalid value: "$value"');
+}
+
 class InvalidMapIndex extends RuntimeError {
   const InvalidMapIndex(String index) : super('Invalid map index: "$index"');
 }

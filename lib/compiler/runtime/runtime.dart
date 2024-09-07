@@ -1,4 +1,5 @@
 import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
@@ -38,25 +39,34 @@ class Runtime {
     // TODO(momo): evaluate expression semantically before executing it
     final Node node = expression.toNode();
 
-    return fullReduce(node).toString();
+    return format(node.native()).toString();
   }
 
-  Node fullReduce(Node node) {
-    if (node is ListNode) {
-      return ListNode(node.value.map(fullReduce).toList());
-    } else if (node is MapNode) {
-      final Iterable<MapEntry<Node, Node>> entries = node.value.entries
-          .map((e) => MapEntry(fullReduce(e.key), fullReduce(e.value)));
-
-      return MapNode(Map.fromEntries(entries));
-    } else if (node is StringNode) {
-      return StringNode('"${node.value}"');
-    } else if (node is CallNode) {
-      return fullReduce(node.evaluate());
-    } else if (node is FreeVariableNode) {
-      return node.functionNode();
+  dynamic format(dynamic value) {
+    if (value is bool) {
+      return value;
+    } else if (value is num) {
+      return value;
+    } else if (value is String) {
+      return '"$value"';
+    } else if (value is List) {
+      return getList(value);
+    } else if (value is Map) {
+      return getMap(value);
     } else {
-      return node;
+      throw InvalidValueError(value.toString());
     }
+  }
+
+  dynamic getList(List<dynamic> element) => element.map(format).toList();
+
+  dynamic getMap(Map<dynamic, dynamic> element) {
+    final Map<dynamic, dynamic> result = {};
+
+    element.forEach((key, value) {
+      result[format(key)] = format(value);
+    });
+
+    return result;
   }
 }

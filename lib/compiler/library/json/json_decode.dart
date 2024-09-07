@@ -56,8 +56,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     } else if (value is Map) {
       return getMap(value);
     } else {
-      // TODO(momo): handle
-      throw RuntimeError('Invalid value type: ${value.runtimeType}');
+      throw InvalidValueError(value.toString());
     }
   }
 
