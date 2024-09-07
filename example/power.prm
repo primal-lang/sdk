@@ -1,0 +1,6 @@
+power(base, exp) = if (exp == 0)
+                       1
+                   else
+                      base * power(base, exp - 1)
+
+main = power(2, 10)

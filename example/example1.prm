@@ -1,5 +1,0 @@
-foo(n) = n * 2
-
-bar(n) = foo(n)
-
-main = bar(3)

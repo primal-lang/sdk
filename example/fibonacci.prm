@@ -1,0 +1,13 @@
+fibonacci(n) = if (n < -1)
+                   error.throw(-1, 'Cannot calculate Fibonacci with a negative number')
+               else if (n == 0)
+                   []
+               else
+                   fibonacci(n - 1) + fibonacciHelper(n)
+
+fibonacciHelper(n) = if ((n == 1) | (n == 2))
+                         1
+                     else
+                         fibonacciHelper(n - 1) + fibonacciHelper(n - 2)
+
+main = fibonacci(10)
