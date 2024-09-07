@@ -16,5 +16,5 @@ class PlatformInterface extends PlatformBase {
 
   @override
   String readLine() =>
-      throw const UnimplementedFunctionWebError('console.readLine');
+      throw const UnimplementedFunctionWebError('console.read');
 }

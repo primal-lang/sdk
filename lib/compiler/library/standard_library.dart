@@ -51,7 +51,7 @@ import 'package:primal/compiler/library/comparison/comp_gt.dart';
 import 'package:primal/compiler/library/comparison/comp_le.dart';
 import 'package:primal/compiler/library/comparison/comp_lt.dart';
 import 'package:primal/compiler/library/comparison/comp_neq.dart';
-import 'package:primal/compiler/library/console/console_read_line.dart';
+import 'package:primal/compiler/library/console/console_read.dart';
 import 'package:primal/compiler/library/console/console_write.dart';
 import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
@@ -199,7 +199,7 @@ class StandardLibrary {
         CompLe(),
 
         // Console
-        ConsoleReadLine(),
+        ConsoleRead(),
         ConsoleWrite(),
         ConsoleWriteLn(),
 
