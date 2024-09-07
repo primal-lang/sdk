@@ -30,14 +30,13 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    final Node b = arguments[1];
+    final Node b = arguments[1].evaluate();
 
-    if ((a is ListNode) && (b is FreeVariableNode)) {
-      final FunctionNode function = b.evaluate();
+    if ((a is ListNode) && (b is FunctionNode)) {
       final List<Node> result = List<Node>.from(a.value);
 
-      result.sort((a, b) {
-        final Node value = function.apply([a, b]);
+      result.sort((x, y) {
+        final Node value = b.apply([x, y]);
 
         if (value is NumberNode) {
           return value.value as int;
