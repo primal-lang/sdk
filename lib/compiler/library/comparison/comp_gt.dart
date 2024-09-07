@@ -7,8 +7,8 @@ class CompGt extends NativeFunctionNode {
       : super(
           name: 'comp.gt',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 

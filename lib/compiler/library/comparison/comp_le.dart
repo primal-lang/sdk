@@ -7,8 +7,8 @@ class CompLe extends NativeFunctionNode {
       : super(
           name: 'comp.le',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 

@@ -7,8 +7,8 @@ class CompLt extends NativeFunctionNode {
       : super(
           name: 'comp.lt',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 

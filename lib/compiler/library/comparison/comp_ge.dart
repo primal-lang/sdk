@@ -7,8 +7,8 @@ class CompGe extends NativeFunctionNode {
       : super(
           name: 'comp.ge',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 

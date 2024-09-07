@@ -7,8 +7,8 @@ class OperatorGt extends NativeFunctionNode {
       : super(
           name: '>',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 
