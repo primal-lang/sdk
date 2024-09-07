@@ -1,6 +1,7 @@
 .dart_tool/
 .idx/
 .vscode/
-bin/
+bin/aot/
+bin/web/
 scripts/
 example/test/
