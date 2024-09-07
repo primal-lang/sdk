@@ -99,6 +99,7 @@ import 'package:primal/compiler/library/map/map_contains_key.dart';
 import 'package:primal/compiler/library/map/map_is_empty.dart';
 import 'package:primal/compiler/library/map/map_is_not_empty.dart';
 import 'package:primal/compiler/library/map/map_keys.dart';
+import 'package:primal/compiler/library/map/map_length.dart';
 import 'package:primal/compiler/library/map/map_remove_at.dart';
 import 'package:primal/compiler/library/map/map_set.dart';
 import 'package:primal/compiler/library/map/map_values.dart';
@@ -268,6 +269,7 @@ class StandardLibrary {
         MapIsEmpty(),
         MapIsNotEmpty(),
         MapKeys(),
+        MapLength(),
         MapRemoveAt(),
         MapSet(),
         MapValues(),

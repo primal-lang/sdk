@@ -2,10 +2,16 @@
 
 ## 0.4.0 - Copper Chisel [Unreleased]
 
+### Language
+
+* Added support for:
+    - Maps
+
 ### Standard library
 
 * Added basic functions for:
     - Console
+    - Map
 
 ### Runtime
 
