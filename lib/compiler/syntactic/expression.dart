@@ -57,15 +57,28 @@ class StringExpression extends LiteralExpression<String> {
 }
 
 class ListExpression extends LiteralExpression<List<Expression>> {
-  final List<Expression> elements;
-
-  ListExpression({
+  const ListExpression({
     required super.location,
-    required this.elements,
-  }) : super(value: elements);
+    required super.value,
+  });
 
   @override
   Node toNode() => ListNode(value.map((e) => e.toNode()).toList());
+}
+
+class MapExpression extends LiteralExpression<Map<Expression, Expression>> {
+  const MapExpression({
+    required super.location,
+    required super.value,
+  });
+
+  @override
+  Node toNode() {
+    final Iterable<MapEntry<Node, Node>> entries =
+        value.entries.map((e) => MapEntry(e.key.toNode(), e.value.toNode()));
+
+    return MapNode(Map.fromEntries(entries));
+  }
 }
 
 class IdentifierExpression extends LiteralExpression<String> {

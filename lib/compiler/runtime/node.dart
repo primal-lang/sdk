@@ -61,6 +61,21 @@ class ListNode extends LiteralNode<List<Node>> {
       ListNode(value.map((e) => e.substitute(bindings)).toList());
 }
 
+class MapNode extends LiteralNode<Map<Node, Node>> {
+  const MapNode(super.value);
+
+  @override
+  Type get type => const MapType();
+
+  @override
+  Node substitute(Bindings bindings) {
+    final Iterable<MapEntry<Node, Node>> entries = value.entries.map((e) =>
+        MapEntry(e.key.substitute(bindings), e.value.substitute(bindings)));
+
+    return MapNode(Map.fromEntries(entries));
+  }
+}
+
 class FreeVariableNode extends Node {
   final String value;
 

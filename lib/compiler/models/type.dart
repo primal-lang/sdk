@@ -30,6 +30,13 @@ class ListType extends Type {
   String toString() => 'List';
 }
 
+class MapType extends Type {
+  const MapType();
+
+  @override
+  String toString() => 'Map';
+}
+
 class FunctionCallType extends Type {
   const FunctionCallType();
 

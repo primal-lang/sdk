@@ -116,7 +116,7 @@ void main() {
           parameters: [],
           expression: ListExpression(
             location: const Location(row: 1, column: 8),
-            elements: [
+            value: [
               NumberExpression(numberToken(1, 1, 9)),
               NumberExpression(numberToken(2, 1, 12)),
               NumberExpression(numberToken(3, 1, 15)),
@@ -138,7 +138,7 @@ void main() {
             arguments: [
               ListExpression(
                 location: const Location(row: 1, column: 8),
-                elements: [
+                value: [
                   NumberExpression(numberToken(1, 1, 9)),
                   NumberExpression(numberToken(2, 1, 12)),
                   NumberExpression(numberToken(3, 1, 15)),

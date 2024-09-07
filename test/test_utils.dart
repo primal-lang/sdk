@@ -61,10 +61,10 @@ void checkExpressions(Expression actual, Expression expected) {
   checkLocations(actual.location, expected.location);
 
   if ((actual is ListExpression) && (expected is ListExpression)) {
-    expect(actual.elements.length, equals(expected.elements.length));
+    expect(actual.value.length, equals(expected.value.length));
 
-    for (int i = 0; i < actual.elements.length; i++) {
-      checkExpressions(actual.elements[i], expected.elements[i]);
+    for (int i = 0; i < actual.value.length; i++) {
+      checkExpressions(actual.value[i], expected.value[i]);
     }
   } else if ((actual is LiteralExpression) && (expected is LiteralExpression)) {
     expect(actual.value, equals(expected.value));

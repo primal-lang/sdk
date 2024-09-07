@@ -161,7 +161,8 @@ class ExpressionParser {
       if ((exp is IdentifierExpression) ||
           (exp is CallExpression) ||
           (exp is StringExpression) ||
-          (exp is ListExpression)) {
+          (exp is ListExpression) ||
+          (exp is MapExpression)) {
         final Token operator = IdentifierToken(Lexeme(
           value: 'element.at',
           location: previous.location,
@@ -210,17 +211,19 @@ class ExpressionParser {
       return expr;
     } else if (match([OpenBracketToken])) {
       return list(previous);
+    } else if (match([OpenBracesToken])) {
+      return map(previous);
     }
 
     throw InvalidTokenError(peek);
   }
 
   Expression list(Token token) {
-    final List<Expression> arguments = [];
+    final List<Expression> elements = [];
 
     if (!check(CloseBracketToken)) {
       do {
-        arguments.add(expression());
+        elements.add(expression());
       } while (match([CommaToken]));
     }
 
@@ -228,7 +231,27 @@ class ExpressionParser {
 
     return ListExpression(
       location: token.location,
-      elements: arguments,
+      value: elements,
+    );
+  }
+
+  Expression map(Token token) {
+    final Map<Expression, Expression> pairs = {};
+
+    if (!check(CloseBracesToken)) {
+      do {
+        final Expression key = expression();
+        consume(ColonToken, ':');
+        final Expression value = expression();
+        pairs[key] = value;
+      } while (match([CommaToken]));
+    }
+
+    consume(CloseBracesToken, '}');
+
+    return MapExpression(
+      location: token.location,
+      value: pairs,
     );
   }
 

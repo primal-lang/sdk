@@ -105,11 +105,25 @@ void main() {
     });
 
     test('Expression 19', () {
+      final Expression expression =
+          getExpression('{"name": "John", "age": 42, "married": true}');
+      expect(expression.toString(),
+          '{"name": "John", "age": 42, "married": true}');
+    });
+
+    test('Expression 20', () {
       final Expression expression = getExpression('[1, true, "test", foo][1]');
       expect(expression.toString(), 'element.at([1, true, "test", foo], 1)');
     });
 
-    test('Expression 20', () {
+    test('Expression 21', () {
+      final Expression expression =
+          getExpression('{"name": "John", "age": 42, "married": true}["test"]');
+      expect(expression.toString(),
+          'element.at({"name": "John", "age": 42, "married": true}, "test")');
+    });
+
+    test('Expression 22', () {
       final Expression expression = getExpression('"Hello"[1]');
       expect(expression.toString(), 'element.at("Hello", 1)');
     });
