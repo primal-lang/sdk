@@ -1,8 +1,5 @@
-class GenericWarning implements Exception {
-  final String message;
+import 'package:primal/compiler/errors/generic_error.dart';
 
-  const GenericWarning(this.message);
-
-  @override
-  String toString() => 'Warning: $message';
+class GenericWarning extends GenericError {
+  const GenericWarning(String message) : super('Warning', message);
 }
