@@ -1,10 +1,15 @@
-frequency(list) = frequencyHelper(list, {})
+frequency(list) = frequency.helper(list, {})
 
-frequencyHelper(list, result) = if (list.isEmpty(list))
-                                    result
-                                else if (map.containsKey(result, list.first(list)))
-                                    frequencyHelper(list.tail(list), map.set(result, list.first(list), result[list.first(list)] + 1))
-                                else
-                                    frequencyHelper(list.tail(list), map.set(result, list.first(list), 1))
+frequency.helper(list, result) =
+    if (list.isEmpty(list))
+        result
+    else
+        frequency.count(list.first(list), list.tail(list), result)
+
+frequency.count(first, tail, result) =
+    if (map.containsKey(result, first))
+        frequency.helper(tail, map.set(result, first, result[first] + 1))
+    else
+        frequency.helper(tail, map.set(result, first, 1))
 
 main = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])

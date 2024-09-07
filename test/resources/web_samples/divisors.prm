@@ -1,10 +1,10 @@
-divisors(n) = divisorsHelper(n, 1)
+divisors(n) = divisors.helper(n, 1)
 
-divisorsHelper(n, x) = if (x > n)
-                           []
-                       else if ((n % x) == 0)
-                           x + divisorsHelper(n, x + 1)
-                       else
-                           divisorsHelper(n, x + 1)
+divisors.helper(n, x) = if (x > n)
+                            []
+                        else if ((n % x) == 0)
+                            x + divisors.helper(n, x + 1)
+                        else
+                            divisors.helper(n, x + 1)
 
 main = divisors(10)

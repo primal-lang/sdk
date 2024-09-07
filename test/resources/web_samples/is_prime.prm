@@ -5,13 +5,13 @@ isPrime(n) = if (n <= 1)
              else if (num.isEven(n))
                  false
              else
-                 isPrimeHelper(n, 3)
+                 isPrime.helper(n, 3)
 
-isPrimeHelper(n, divisor) = if (divisor * divisor > n)
-                                true
-                            else if ((n % divisor) == 0)
-                                false
-                            else
-                                isPrimeHelper(n, divisor + 2)
+isPrime.helper(n, divisor) = if (divisor * divisor > n)
+                                 true
+                             else if ((n % divisor) == 0)
+                                 false
+                             else
+                                 isPrime.helper(n, divisor + 2)
 
 main = isPrime(97)

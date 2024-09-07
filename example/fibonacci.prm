@@ -3,11 +3,11 @@ fibonacci(n) = if (n < -1)
                else if (n == 0)
                    []
                else
-                   fibonacci(n - 1) + fibonacciHelper(n)
+                   fibonacci(n - 1) + fibonacci.helper(n)
 
-fibonacciHelper(n) = if ((n == 1) | (n == 2))
-                         1
-                     else
-                         fibonacciHelper(n - 1) + fibonacciHelper(n - 2)
+fibonacci.helper(n) = if ((n == 1) | (n == 2))
+                          1
+                      else
+                          fibonacci.helper(n - 1) + fibonacci.helper(n - 2)
 
 main = fibonacci(10)
