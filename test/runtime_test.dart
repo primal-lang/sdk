@@ -1632,6 +1632,17 @@ void main() {
           runtime, {'"name"': '"John"', '"age"': 30, '"married"': true});
     });
 
+    test('map.keys 1', () {
+      final Runtime runtime = getRuntime('main = map.keys({})');
+      checkResult(runtime, []);
+    });
+
+    test('map.keys 2', () {
+      final Runtime runtime = getRuntime(
+          'main = map.keys({"name": "John", "age": 42, "married": true, 3: 2})');
+      checkResult(runtime, ['"name"', '"age"', '"married"', 3]);
+    });
+
     /*test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
