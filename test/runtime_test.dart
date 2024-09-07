@@ -1683,6 +1683,28 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('map.isEmpty 1', () {
+      final Runtime runtime = getRuntime('main = map.isEmpty({})');
+      checkResult(runtime, true);
+    });
+
+    test('map.isEmpty 2', () {
+      final Runtime runtime =
+          getRuntime('main = map.isEmpty({"name": "John"})');
+      checkResult(runtime, false);
+    });
+
+    test('map.isNotEmpty 1', () {
+      final Runtime runtime = getRuntime('main = map.isNotEmpty({})');
+      checkResult(runtime, false);
+    });
+
+    test('map.isNotEmpty 2', () {
+      final Runtime runtime =
+          getRuntime('main = map.isNotEmpty({"name": "John"})');
+      checkResult(runtime, true);
+    });
+
     /*test('list.insertStart 1', () {
       final Runtime runtime = getRuntime('main = list.insertStart([], 42)');
       checkResult(runtime, [42]);
@@ -1742,26 +1764,6 @@ void main() {
     test('list.concat 4', () {
       final Runtime runtime = getRuntime('main = list.concat([1, 2], [3, 4])');
       checkResult(runtime, [1, 2, 3, 4]);
-    });
-
-    test('list.isEmpty 1', () {
-      final Runtime runtime = getRuntime('main = list.isEmpty([])');
-      checkResult(runtime, true);
-    });
-
-    test('list.isEmpty 2', () {
-      final Runtime runtime = getRuntime('main = list.isEmpty([1, 2, 3])');
-      checkResult(runtime, false);
-    });
-
-    test('list.isNotEmpty 1', () {
-      final Runtime runtime = getRuntime('main = list.isNotEmpty([])');
-      checkResult(runtime, false);
-    });
-
-    test('list.isNotEmpty 2', () {
-      final Runtime runtime = getRuntime('main = list.isNotEmpty([1, 2, 3])');
-      checkResult(runtime, true);
     });
 
     test('list.first', () {
