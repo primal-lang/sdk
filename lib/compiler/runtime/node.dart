@@ -30,6 +30,9 @@ abstract class LiteralNode<T> implements Node {
   @override
   Node evaluate() => this;
 
+  @override
+  dynamic native() => value;
+
   static LiteralNode from(dynamic value) {
     if (value is bool) {
       return BooleanNode(value);
@@ -52,9 +55,6 @@ class BooleanNode extends LiteralNode<bool> {
 
   @override
   Type get type => const BooleanType();
-
-  @override
-  bool native() => value;
 }
 
 class NumberNode extends LiteralNode<num> {
@@ -62,9 +62,6 @@ class NumberNode extends LiteralNode<num> {
 
   @override
   Type get type => const NumberType();
-
-  @override
-  num native() => value;
 }
 
 class StringNode extends LiteralNode<String> {
@@ -72,9 +69,6 @@ class StringNode extends LiteralNode<String> {
 
   @override
   Type get type => const StringType();
-
-  @override
-  String native() => value;
 }
 
 class ListNode extends LiteralNode<List<Node>> {
