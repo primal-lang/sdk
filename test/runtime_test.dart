@@ -186,6 +186,16 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('> 3', () {
+      final Runtime runtime = getRuntime('main = "Hello" > "Bye"');
+      checkResult(runtime, true);
+    });
+
+    test('> 4', () {
+      final Runtime runtime = getRuntime('main = "Bye" > "Hello"');
+      checkResult(runtime, false);
+    });
+
     test('< 1', () {
       final Runtime runtime = getRuntime('main = 10 < 4');
       checkResult(runtime, false);
@@ -196,13 +206,43 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('< 3', () {
+      final Runtime runtime = getRuntime('main = "Hello" < "Bye"');
+      checkResult(runtime, false);
+    });
+
+    test('< 4', () {
+      final Runtime runtime = getRuntime('main = "Bye" < "Hello"');
+      checkResult(runtime, true);
+    });
+
     test('>= 1', () {
       final Runtime runtime = getRuntime('main = 10 >= 10');
       checkResult(runtime, true);
     });
 
     test('>= 2', () {
+      final Runtime runtime = getRuntime('main = 11 >= 10');
+      checkResult(runtime, true);
+    });
+
+    test('>= 3', () {
       final Runtime runtime = getRuntime('main = 10 >= 11');
+      checkResult(runtime, false);
+    });
+
+    test('>= 4', () {
+      final Runtime runtime = getRuntime('main = "Hello" >= "Hello"');
+      checkResult(runtime, true);
+    });
+
+    test('>= 5', () {
+      final Runtime runtime = getRuntime('main = "See you" >= "Hello"');
+      checkResult(runtime, true);
+    });
+
+    test('>= 6', () {
+      final Runtime runtime = getRuntime('main = "Hello" >= "See you"');
       checkResult(runtime, false);
     });
 
@@ -212,7 +252,27 @@ void main() {
     });
 
     test('<= 2', () {
+      final Runtime runtime = getRuntime('main = 10 <= 11');
+      checkResult(runtime, true);
+    });
+
+    test('<= 3', () {
       final Runtime runtime = getRuntime('main = 11 <= 10');
+      checkResult(runtime, false);
+    });
+
+    test('<= 4', () {
+      final Runtime runtime = getRuntime('main = "Hello" <= "Hello"');
+      checkResult(runtime, true);
+    });
+
+    test('<= 5', () {
+      final Runtime runtime = getRuntime('main = "Hello" <= "See you"');
+      checkResult(runtime, true);
+    });
+
+    test('<= 6', () {
+      final Runtime runtime = getRuntime('main = "See you" <= "Hello"');
       checkResult(runtime, false);
     });
 
