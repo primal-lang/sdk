@@ -2315,5 +2315,36 @@ void main() {
       final Runtime runtime = getRuntime('main = time.millisecond(time.now())');
       expect(num.parse(runtime.executeMain()), closeTo(now.second, 999));
     });
+
+    test('time.epoch', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime = getRuntime('main = time.epoch(time.now())');
+      expect(num.parse(runtime.executeMain()),
+          closeTo(now.millisecondsSinceEpoch, 500));
+    });
+
+    test('time.compare 1', () {
+      final DateTime date1 = DateTime.parse('2024-09-01T0:00:00');
+      final DateTime date2 = DateTime.parse('2024-09-02T0:00:00');
+      final Runtime runtime = getRuntime(
+          'main = time.compare(time.fromIso("${date1.toIso8601String()}"), time.fromIso("${date2.toIso8601String()}"))');
+      checkResult(runtime, -1);
+    });
+
+    test('time.compare 2', () {
+      final DateTime date1 = DateTime.parse('2024-09-01T0:00:00');
+      final DateTime date2 = DateTime.parse('2024-09-01T0:00:00');
+      final Runtime runtime = getRuntime(
+          'main = time.compare(time.fromIso("${date1.toIso8601String()}"), time.fromIso("${date2.toIso8601String()}"))');
+      checkResult(runtime, 0);
+    });
+
+    test('time.compare 3', () {
+      final DateTime date1 = DateTime.parse('2024-09-021T0:00:00');
+      final DateTime date2 = DateTime.parse('2024-09-01T0:00:00');
+      final Runtime runtime = getRuntime(
+          'main = time.compare(time.fromIso("${date1.toIso8601String()}"), time.fromIso("${date2.toIso8601String()}"))');
+      checkResult(runtime, 1);
+    });
   });
 }

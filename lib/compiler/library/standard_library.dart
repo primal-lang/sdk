@@ -152,6 +152,7 @@ import 'package:primal/compiler/library/string/str_take.dart';
 import 'package:primal/compiler/library/string/str_trim.dart';
 import 'package:primal/compiler/library/string/str_uppercase.dart';
 import 'package:primal/compiler/library/timestamp/time_day.dart';
+import 'package:primal/compiler/library/timestamp/time_epoch.dart';
 import 'package:primal/compiler/library/timestamp/time_from_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_hour.dart';
 import 'package:primal/compiler/library/timestamp/time_millisecond.dart';
@@ -348,6 +349,7 @@ class StandardLibrary {
 
         // Timestamp
         TimeDay(),
+        TimeEpoch(),
         TimeFromIso(),
         TimeHour(),
         TimeMillisecond(),
