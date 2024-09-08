@@ -50,7 +50,7 @@ class Runtime {
     } else if (value is String) {
       return '"$value"';
     } else if (value is DateTime) {
-      return value.toIso8601String();
+      return '"${value.toIso8601String()}"';
     } else if (value is List) {
       return getList(value);
     } else if (value is Map) {

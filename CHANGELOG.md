@@ -6,6 +6,7 @@
 
 * Added support for:
     - Maps
+    - Timestamp
 
 ### Standard library
 
@@ -14,6 +15,7 @@
     - Map
     - Json
     - Hashing
+    - Timestamp
 
 ### Runtime
 

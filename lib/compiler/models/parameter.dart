@@ -9,9 +9,9 @@ class Parameter {
     required this.type,
   });
 
-  factory Parameter.string(String name) => Parameter._(
+  factory Parameter.boolean(String name) => Parameter._(
         name: name,
-        type: const StringType(),
+        type: const BooleanType(),
       );
 
   factory Parameter.number(String name) => Parameter._(
@@ -19,9 +19,14 @@ class Parameter {
         type: const NumberType(),
       );
 
-  factory Parameter.boolean(String name) => Parameter._(
+  factory Parameter.string(String name) => Parameter._(
         name: name,
-        type: const BooleanType(),
+        type: const StringType(),
+      );
+
+  factory Parameter.timestamp(String name) => Parameter._(
+        name: name,
+        type: const TimestampType(),
       );
 
   factory Parameter.list(String name) => Parameter._(

@@ -2259,8 +2259,12 @@ void main() {
   group('Timestamp', () {
     test('time.now', () {
       final Runtime runtime = getRuntime('main = time.now()');
-      expect(runtime.executeMain().substring(0, 14),
-          equals(DateTime.now().toIso8601String().substring(0, 14)));
+      checkDates(runtime, DateTime.now());
+    });
+
+    test('time.toIso', () {
+      final Runtime runtime = getRuntime('main = time.toIso(time.now())');
+      checkDates(runtime, DateTime.now());
     });
   });
 }

@@ -117,6 +117,11 @@ void checkResult(Runtime runtime, Object result) {
   expect(runtime.executeMain(), result.toString());
 }
 
+void checkDates(Runtime runtime, DateTime result) {
+  expect(runtime.executeMain().substring(0, 14),
+      equals('"${result.toIso8601String().substring(0, 13)}'));
+}
+
 StringToken stringToken(String value, int row, int column) =>
     StringToken(Lexeme(
       value: value,
