@@ -2273,5 +2273,47 @@ void main() {
           getRuntime('main = time.fromIso("${now.toIso8601String()}")');
       checkDates(runtime, now);
     });
+
+    test('time.year', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime = getRuntime('main = time.year(time.now())');
+      expect(num.parse(runtime.executeMain()), closeTo(now.year, 0));
+    });
+
+    test('time.month', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime = getRuntime('main = time.month(time.now())');
+      expect(num.parse(runtime.executeMain()), closeTo(now.month, 0));
+    });
+
+    test('time.day', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime = getRuntime('main = time.day(time.now())');
+      expect(num.parse(runtime.executeMain()), closeTo(now.day, 0));
+    });
+
+    test('time.hour', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime = getRuntime('main = time.hour(time.now())');
+      expect(num.parse(runtime.executeMain()), closeTo(now.hour, 0));
+    });
+
+    test('time.minute', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime = getRuntime('main = time.minute(time.now())');
+      expect(num.parse(runtime.executeMain()), closeTo(now.minute, 0));
+    });
+
+    test('time.second', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime = getRuntime('main = time.second(time.now())');
+      expect(num.parse(runtime.executeMain()), closeTo(now.second, 1));
+    });
+
+    test('time.millisecond', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime = getRuntime('main = time.millisecond(time.now())');
+      expect(num.parse(runtime.executeMain()), closeTo(now.second, 999));
+    });
   });
 }

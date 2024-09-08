@@ -151,9 +151,16 @@ import 'package:primal/compiler/library/string/str_substring.dart';
 import 'package:primal/compiler/library/string/str_take.dart';
 import 'package:primal/compiler/library/string/str_trim.dart';
 import 'package:primal/compiler/library/string/str_uppercase.dart';
+import 'package:primal/compiler/library/timestamp/time_day.dart';
 import 'package:primal/compiler/library/timestamp/time_from_iso.dart';
+import 'package:primal/compiler/library/timestamp/time_hour.dart';
+import 'package:primal/compiler/library/timestamp/time_millisecond.dart';
+import 'package:primal/compiler/library/timestamp/time_minute.dart';
+import 'package:primal/compiler/library/timestamp/time_month.dart';
 import 'package:primal/compiler/library/timestamp/time_now.dart';
+import 'package:primal/compiler/library/timestamp/time_second.dart';
 import 'package:primal/compiler/library/timestamp/time_to_iso.dart';
+import 'package:primal/compiler/library/timestamp/time_year.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
@@ -340,8 +347,15 @@ class StandardLibrary {
         StrUppercase(),
 
         // Timestamp
+        TimeDay(),
         TimeFromIso(),
+        TimeHour(),
+        TimeMillisecond(),
+        TimeMinute(),
+        TimeMonth(),
         TimeNow(),
+        TimeSecond(),
         TimeToIso(),
+        TimeYear(),
       ];
 }
