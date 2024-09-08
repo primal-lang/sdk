@@ -34,7 +34,7 @@ class InvalidValueError extends RuntimeError {
 
 class InvalidMapIndexError extends RuntimeError {
   const InvalidMapIndexError(String index)
-      : super('Invalid map index: "$index"');
+      : super('No element present in map for key: "$index"');
 }
 
 class ElementNotFoundError extends RuntimeError {
