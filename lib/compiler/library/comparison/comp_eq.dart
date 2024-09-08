@@ -24,12 +24,14 @@ class CompEq extends NativeFunctionNode {
     required Node a,
     required Node b,
   }) {
-    if ((a is NumberNode) && (b is NumberNode)) {
+    if ((a is BooleanNode) && (b is BooleanNode)) {
+      return BooleanNode(a.value == b.value);
+    } else if ((a is NumberNode) && (b is NumberNode)) {
       return BooleanNode(a.value == b.value);
     } else if ((a is StringNode) && (b is StringNode)) {
       return BooleanNode(a.value == b.value);
-    } else if ((a is BooleanNode) && (b is BooleanNode)) {
-      return BooleanNode(a.value == b.value);
+    } else if ((a is TimestampNode) && (b is TimestampNode)) {
+      return BooleanNode(a.value.compareTo(b.value) == 0);
     } else if ((a is ListNode) && (b is ListNode)) {
       if (a.value.length != b.value.length) {
         return const BooleanNode(false);

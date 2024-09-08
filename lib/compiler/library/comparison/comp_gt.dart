@@ -27,9 +27,9 @@ class CompGt extends NativeFunctionNode {
     if ((a is NumberNode) && (b is NumberNode)) {
       return BooleanNode(a.value > b.value);
     } else if ((a is StringNode) && (b is StringNode)) {
-      final int comparison = a.value.compareTo(b.value);
-
-      return BooleanNode(comparison > 0);
+      return BooleanNode(a.value.compareTo(b.value) > 0);
+    } else if ((a is TimestampNode) && (b is TimestampNode)) {
+      return BooleanNode(a.value.compareTo(b.value) > 0);
     } else {
       throw InvalidArgumentTypesError(
         function: function.name,

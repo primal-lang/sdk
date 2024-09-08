@@ -154,6 +154,18 @@ void main() {
       checkResult(runtime, true);
     });
 
+    test('== 17', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-01T00:00:00")');
+      checkResult(runtime, true);
+    });
+
+    test('== 17', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-02T00:00:00")');
+      checkResult(runtime, false);
+    });
+
     test('!= 1', () {
       final Runtime runtime = getRuntime('main = "hey" != "hey"');
       checkResult(runtime, false);
@@ -209,6 +221,18 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('== 12', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-01T00:00:00")');
+      checkResult(runtime, false);
+    });
+
+    test('== 13', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-02T00:00:00")');
+      checkResult(runtime, true);
+    });
+
     test('> 1', () {
       final Runtime runtime = getRuntime('main = 10 > 4');
       checkResult(runtime, true);
@@ -229,6 +253,18 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('> 5', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") > time.fromIso("2024-09-02T00:00:00")');
+      checkResult(runtime, false);
+    });
+
+    test('> 6', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-02T00:00:00") > time.fromIso("2024-09-01T00:00:00")');
+      checkResult(runtime, true);
+    });
+
     test('< 1', () {
       final Runtime runtime = getRuntime('main = 10 < 4');
       checkResult(runtime, false);
@@ -247,6 +283,18 @@ void main() {
     test('< 4', () {
       final Runtime runtime = getRuntime('main = "Bye" < "Hello"');
       checkResult(runtime, true);
+    });
+
+    test('< 5', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") < time.fromIso("2024-09-02T00:00:00")');
+      checkResult(runtime, true);
+    });
+
+    test('< 6', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-02T00:00:00") < time.fromIso("2024-09-01T00:00:00")');
+      checkResult(runtime, false);
     });
 
     test('>= 1', () {
@@ -279,6 +327,24 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('>= 7', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") >= time.fromIso("2024-09-01T00:00:00")');
+      checkResult(runtime, true);
+    });
+
+    test('>= 8', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-02T00:00:00") >= time.fromIso("2024-09-01T00:00:00")');
+      checkResult(runtime, true);
+    });
+
+    test('>= 9', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") >= time.fromIso("2024-09-02T00:00:00")');
+      checkResult(runtime, false);
+    });
+
     test('<= 1', () {
       final Runtime runtime = getRuntime('main = 10 <= 10');
       checkResult(runtime, true);
@@ -306,6 +372,24 @@ void main() {
 
     test('<= 6', () {
       final Runtime runtime = getRuntime('main = "See you" <= "Hello"');
+      checkResult(runtime, false);
+    });
+
+    test('<= 7', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") <= time.fromIso("2024-09-01T00:00:00")');
+      checkResult(runtime, true);
+    });
+
+    test('<= 8', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-01T00:00:00") <= time.fromIso("2024-09-02T00:00:00")');
+      checkResult(runtime, true);
+    });
+
+    test('<= 9', () {
+      final Runtime runtime = getRuntime(
+          'main = time.fromIso("2024-09-02T00:00:00") <= time.fromIso("2024-09-01T00:00:00")');
       checkResult(runtime, false);
     });
 
@@ -2324,26 +2408,20 @@ void main() {
     });
 
     test('time.compare 1', () {
-      final DateTime date1 = DateTime.parse('2024-09-01T00:00:00');
-      final DateTime date2 = DateTime.parse('2024-09-02T00:00:00');
       final Runtime runtime = getRuntime(
-          'main = time.compare(time.fromIso("${date1.toIso8601String()}"), time.fromIso("${date2.toIso8601String()}"))');
+          'main = time.compare(time.fromIso("2024-09-01T00:00:00"), time.fromIso("2024-09-02T00:00:00"))');
       checkResult(runtime, -1);
     });
 
     test('time.compare 2', () {
-      final DateTime date1 = DateTime.parse('2024-09-01T00:00:00');
-      final DateTime date2 = DateTime.parse('2024-09-01T00:00:00');
       final Runtime runtime = getRuntime(
-          'main = time.compare(time.fromIso("${date1.toIso8601String()}"), time.fromIso("${date2.toIso8601String()}"))');
+          'main = time.compare(time.fromIso("2024-09-01T00:00:00"), time.fromIso("2024-09-01T00:00:00"))');
       checkResult(runtime, 0);
     });
 
     test('time.compare 3', () {
-      final DateTime date1 = DateTime.parse('2024-09-02T00:00:00');
-      final DateTime date2 = DateTime.parse('2024-09-01T00:00:00');
       final Runtime runtime = getRuntime(
-          'main = time.compare(time.fromIso("${date1.toIso8601String()}"), time.fromIso("${date2.toIso8601String()}"))');
+          'main = time.compare(time.fromIso("2024-09-02T00:00:00"), time.fromIso("2024-09-01T00:00:00"))');
       checkResult(runtime, 1);
     });
   });
