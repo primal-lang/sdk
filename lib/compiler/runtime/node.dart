@@ -45,7 +45,7 @@ abstract class LiteralNode<T> implements Node {
     } else if (value is Map<Node, Node>) {
       return MapNode(value);
     } else {
-      throw InvalidLiteralValue(value);
+      throw InvalidLiteralValueError(value);
     }
   }
 }
@@ -103,13 +103,7 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
     final Map<dynamic, Node> map = {};
 
     for (final entry in value.entries) {
-      final Node key = entry.key.evaluate();
-
-      if (key is LiteralNode) {
-        map[key.value] = entry.value;
-      } else {
-        throw InvalidMapIndex(key.toString());
-      }
+      map[entry.key.native()] = entry.value;
     }
 
     return map;
