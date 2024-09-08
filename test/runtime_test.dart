@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
@@ -2423,6 +2424,19 @@ void main() {
       final Runtime runtime = getRuntime(
           'main = time.compare(time.fromIso("2024-09-02T00:00:00"), time.fromIso("2024-09-01T00:00:00"))');
       checkResult(runtime, 1);
+    });
+  });
+
+  group('Environment', () {
+    test('env.get 1', () {
+      final Runtime runtime = getRuntime('main = env.get("INVALID_VARIABLE")');
+      checkResult(runtime, '""');
+    });
+
+    test('env.get 2', () {
+      final String username = Platform.environment['USERNAME'] ?? '';
+      final Runtime runtime = getRuntime('main = env.get("USERNAME")');
+      checkResult(runtime, '"$username"');
     });
   });
 }

@@ -57,6 +57,7 @@ import 'package:primal/compiler/library/console/console_write.dart';
 import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
+import 'package:primal/compiler/library/environment/env_get.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/hash/hash_md5.dart';
 import 'package:primal/compiler/library/hash/hash_sha1.dart';
@@ -235,6 +236,9 @@ class StandardLibrary {
         // Control
         If(),
         Try(),
+
+        // Environment
+        EnvironmentGet(),
 
         // Error
         Throw(),
