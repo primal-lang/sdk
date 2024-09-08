@@ -2266,5 +2266,12 @@ void main() {
       final Runtime runtime = getRuntime('main = time.toIso(time.now())');
       checkDates(runtime, DateTime.now());
     });
+
+    test('time.fromIso', () {
+      final DateTime now = DateTime.now();
+      final Runtime runtime =
+          getRuntime('main = time.fromIso("${now.toIso8601String()}")');
+      checkDates(runtime, now);
+    });
   });
 }
