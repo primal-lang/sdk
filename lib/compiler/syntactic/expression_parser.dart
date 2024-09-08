@@ -290,7 +290,15 @@ class ExpressionParser {
     return previous;
   }
 
-  Token get peek => iterator.peek!;
+  Token get peek {
+    final Token? token = iterator.peek;
+
+    if (token != null) {
+      return token;
+    } else {
+      throw const UnexpectedEndOfFileError();
+    }
+  }
 
   Token get previous => iterator.previous!;
 }
