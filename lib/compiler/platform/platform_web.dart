@@ -17,4 +17,8 @@ class PlatformInterface extends PlatformBase {
   @override
   String readLine() =>
       throw const UnimplementedFunctionWebError('console.read');
+
+  @override
+  String getEnvironmentVariable(String name) =>
+      throw const UnimplementedFunctionWebError('env.get');
 }

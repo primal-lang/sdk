@@ -8,4 +8,6 @@ abstract class PlatformBase {
   void errorWriteLn(String content);
 
   String readLine();
+
+  String getEnvironmentVariable(String name);
 }

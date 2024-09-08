@@ -16,4 +16,7 @@ class PlatformInterface extends PlatformBase {
 
   @override
   String readLine() => stdin.readLineSync()?.trim() ?? '';
+  
+  @override
+  String getEnvironmentVariable(String name) => Platform.environment[name] ?? '';
 }
