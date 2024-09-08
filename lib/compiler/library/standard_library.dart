@@ -238,7 +238,7 @@ class StandardLibrary {
         Try(),
 
         // Environment
-        EnvironmentGet(),
+        EnvGet(),
 
         // Error
         Throw(),

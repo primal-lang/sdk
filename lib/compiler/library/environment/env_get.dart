@@ -3,8 +3,8 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class EnvironmentGet extends NativeFunctionNode {
-  EnvironmentGet()
+class EnvGet extends NativeFunctionNode {
+  EnvGet()
       : super(
           name: 'env.get',
           parameters: [
