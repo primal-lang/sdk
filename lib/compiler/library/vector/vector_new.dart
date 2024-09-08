@@ -1,15 +1,13 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class ListRemove extends NativeFunctionNode {
-  ListRemove()
+class VectorNew extends NativeFunctionNode {
+  VectorNew()
       : super(
-          name: 'list.remove',
+          name: 'vector.new',
           parameters: [
             Parameter.list('a'),
-            Parameter.any('b'),
           ],
         );
 
@@ -31,30 +29,26 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
 
     if (a is ListNode) {
-      final List<Node> result = [];
-
       for (final Node element in a.value) {
-        final Node elementReduced = element.evaluate();
-        final BooleanNode comparison = CompEq.execute(
-          function: this,
-          a: elementReduced,
-          b: b,
-        );
+        final dynamic value = element.native();
 
-        if (!comparison.value) {
-          result.add(elementReduced);
+        if (value is! num) {
+          throw InvalidArgumentTypesError(
+            function: name,
+            expected: parameterTypes,
+            actual: [a.type],
+          );
         }
       }
 
-      return ListNode(result);
+      return VectorNode(a.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [a.type, b.type],
+        actual: [a.type],
       );
     }
   }

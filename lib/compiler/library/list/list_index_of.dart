@@ -35,13 +35,13 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
     if (a is ListNode) {
       for (int i = 0; i < a.value.length; i++) {
-        final Node comparison = CompEq.execute(
+        final BooleanNode comparison = CompEq.execute(
           function: this,
           a: a.value[i].evaluate(),
           b: b,
         );
 
-        if (comparison is BooleanNode && comparison.value) {
+        if (comparison.value) {
           return NumberNode(i);
         }
       }

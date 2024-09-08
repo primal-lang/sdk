@@ -30,6 +30,13 @@ class TimestampType extends Type {
   String toString() => 'Timestamp';
 }
 
+class VectorType extends Type {
+  const VectorType();
+
+  @override
+  String toString() => 'Vector';
+}
+
 class ListType extends Type {
   const ListType();
 

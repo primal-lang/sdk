@@ -34,6 +34,11 @@ class Parameter {
         type: const ListType(),
       );
 
+  factory Parameter.vector(String name) => Parameter._(
+        name: name,
+        type: const VectorType(),
+      );
+
   factory Parameter.map(String name) => Parameter._(
         name: name,
         type: const MapType(),

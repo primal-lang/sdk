@@ -164,6 +164,9 @@ import 'package:primal/compiler/library/timestamp/time_now.dart';
 import 'package:primal/compiler/library/timestamp/time_second.dart';
 import 'package:primal/compiler/library/timestamp/time_to_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_year.dart';
+import 'package:primal/compiler/library/vector/vector_magnitude.dart';
+import 'package:primal/compiler/library/vector/vector_new.dart';
+import 'package:primal/compiler/library/vector/vector_normalize.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
@@ -365,5 +368,10 @@ class StandardLibrary {
         TimeSecond(),
         TimeToIso(),
         TimeYear(),
+
+        // Vector
+        VectorMagnitude(),
+        VectorNew(),
+        VectorNormalize(),
       ];
 }

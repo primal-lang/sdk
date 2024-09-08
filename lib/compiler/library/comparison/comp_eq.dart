@@ -19,7 +19,7 @@ class CompEq extends NativeFunctionNode {
         arguments: arguments,
       );
 
-  static Node execute({
+  static BooleanNode execute({
     required FunctionNode function,
     required Node a,
     required Node b,
@@ -37,13 +37,13 @@ class CompEq extends NativeFunctionNode {
         return const BooleanNode(false);
       } else {
         for (int i = 0; i < a.value.length; i++) {
-          final Node comparison = execute(
+          final BooleanNode comparison = execute(
             function: function,
             a: a.value[i].evaluate(),
             b: b.value[i].evaluate(),
           );
 
-          if (comparison is BooleanNode && !comparison.value) {
+          if (!comparison.value) {
             return const BooleanNode(false);
           }
         }
@@ -67,13 +67,13 @@ class CompEq extends NativeFunctionNode {
             return const BooleanNode(false);
           }
 
-          final Node comparison = execute(
+          final BooleanNode comparison = execute(
             function: function,
             a: mapA[key]!.evaluate(),
             b: mapB[key]!.evaluate(),
           );
 
-          if (comparison is BooleanNode && !comparison.value) {
+          if (!comparison.value) {
             return const BooleanNode(false);
           }
         }

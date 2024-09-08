@@ -1655,6 +1655,44 @@ void main() {
     });
   });
 
+  group('Vector', () {
+    test('vector.new 1', () {
+      final Runtime runtime = getRuntime('main = vector.new([])');
+      checkResult(runtime, []);
+    });
+
+    test('vector.new 2', () {
+      final Runtime runtime = getRuntime('main = vector.new([1, 2])');
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('vector.magnitude 1', () {
+      final Runtime runtime =
+          getRuntime('main = vector.magnitude(vector.new([]))');
+      checkResult(runtime, 0.0);
+    });
+
+    test('vector.magnitude 2', () {
+      final Runtime runtime =
+          getRuntime('main = vector.magnitude(vector.new([1, 2, 3]))');
+      expect(
+          num.parse(runtime.executeMain()), closeTo(3.7416573867739413, 0.001));
+    });
+
+    test('vector.normalize 1', () {
+      final Runtime runtime =
+          getRuntime('main = vector.normalize(vector.new([]))');
+      checkResult(runtime, []);
+    });
+
+    test('vector.magnitude 2', () {
+      final Runtime runtime =
+          getRuntime('main = vector.normalize(vector.new([1, 2, 3]))');
+      checkResult(runtime,
+          [0.2672612419124244, 0.5345224838248488, 0.8017837257372732]);
+    });
+  });
+
   group('Map', () {
     test('Map constructor 1', () {
       final Runtime runtime = getRuntime('main = {}');

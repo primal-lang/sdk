@@ -1,15 +1,14 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/library/comparison/comp_eq.dart';
+import 'package:primal/compiler/library/vector/vector_magnitude.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class ListRemove extends NativeFunctionNode {
-  ListRemove()
+class VectorNormalize extends NativeFunctionNode {
+  VectorNormalize()
       : super(
-          name: 'list.remove',
+          name: 'vector.normalize',
           parameters: [
-            Parameter.list('a'),
-            Parameter.any('b'),
+            Parameter.vector('a'),
           ],
         );
 
@@ -31,30 +30,22 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
 
-    if (a is ListNode) {
-      final List<Node> result = [];
+    if (a is VectorNode) {
+      final NumberNode magnitude = VectorMagnitude.execute(
+        function: this,
+        a: a,
+      );
+      final List list = a.native();
 
-      for (final Node element in a.value) {
-        final Node elementReduced = element.evaluate();
-        final BooleanNode comparison = CompEq.execute(
-          function: this,
-          a: elementReduced,
-          b: b,
-        );
-
-        if (!comparison.value) {
-          result.add(elementReduced);
-        }
-      }
-
-      return ListNode(result);
+      return VectorNode(list
+          .map((element) => NumberNode(element / magnitude.value))
+          .toList());
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [a.type, b.type],
+        actual: [a.type],
       );
     }
   }

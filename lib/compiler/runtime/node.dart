@@ -89,7 +89,21 @@ class ListNode extends LiteralNode<List<Node>> {
       ListNode(value.map((e) => e.substitute(bindings)).toList());
 
   @override
-  dynamic native() => value.map((e) => e.native()).toList();
+  List native() => value.map((e) => e.native()).toList();
+}
+
+class VectorNode extends LiteralNode<List<Node>> {
+  const VectorNode(super.value);
+
+  @override
+  Type get type => const VectorType();
+
+  @override
+  Node substitute(Bindings bindings) =>
+      VectorNode(value.map((e) => e.substitute(bindings)).toList());
+
+  @override
+  List native() => value.map((e) => e.native()).toList();
 }
 
 class MapNode extends LiteralNode<Map<Node, Node>> {
@@ -109,7 +123,7 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
   Map<dynamic, Node> asMapWithKeys() {
     final Map<dynamic, Node> map = {};
 
-    for (final entry in value.entries) {
+    for (final MapEntry<Node, Node> entry in value.entries) {
       map[entry.key.native()] = entry.value;
     }
 
@@ -120,7 +134,7 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
   Map<dynamic, dynamic> native() {
     final Map<dynamic, dynamic> map = {};
 
-    for (final entry in value.entries) {
+    for (final MapEntry<Node, Node> entry in value.entries) {
       final dynamic key = entry.key.native();
       final dynamic value = entry.value.native();
       map[key] = value;

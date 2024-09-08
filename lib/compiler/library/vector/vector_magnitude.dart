@@ -1,14 +1,14 @@
-import 'package:primal/compiler/library/comparison/comp_eq.dart';
+import 'dart:math';
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class CompNeq extends NativeFunctionNode {
-  CompNeq()
+class VectorMagnitude extends NativeFunctionNode {
+  VectorMagnitude()
       : super(
-          name: 'comp.neq',
+          name: 'vector.magnitude',
           parameters: [
-            Parameter.any('a'),
-            Parameter.any('b'),
+            Parameter.vector('a'),
           ],
         );
 
@@ -19,18 +19,26 @@ class CompNeq extends NativeFunctionNode {
         arguments: arguments,
       );
 
-  static Node execute({
+  static NumberNode execute({
     required FunctionNode function,
     required Node a,
-    required Node b,
   }) {
-    final BooleanNode comparison = CompEq.execute(
-      function: function,
-      a: a,
-      b: b,
-    );
+    if (a is VectorNode) {
+      double magnitude = 0;
+      final List list = a.native();
 
-    return BooleanNode(!comparison.value);
+      for (final dynamic element in list) {
+        magnitude += element * element;
+      }
+
+      return NumberNode(sqrt(magnitude));
+    } else {
+      throw InvalidArgumentTypesError(
+        function: function.name,
+        expected: function.parameterTypes,
+        actual: [a.type],
+      );
+    }
   }
 }
 
@@ -44,12 +52,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
 
-    return CompNeq.execute(
+    return VectorMagnitude.execute(
       function: this,
       a: a,
-      b: b,
     );
   }
 }
