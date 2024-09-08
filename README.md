@@ -91,6 +91,7 @@ These are the available types at runtime:
 * Boolean
 * Number
 * String
+* Timestamp
 * List
 * Map
 * Function
