@@ -2,12 +2,12 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class StrTail extends NativeFunctionNode {
-  StrTail()
+class ListRest extends NativeFunctionNode {
+  ListRest()
       : super(
-          name: 'str.tail',
+          name: 'list.rest',
           parameters: [
-            Parameter.string('a'),
+            Parameter.list('a'),
           ],
         );
 
@@ -30,8 +30,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   Node evaluate() {
     final Node a = arguments[0].evaluate();
 
-    if (a is StringNode) {
-      return StringNode(a.value.isNotEmpty ? a.value.substring(1) : '');
+    if (a is ListNode) {
+      return ListNode(a.value.isNotEmpty ? a.value.sublist(1) : []);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

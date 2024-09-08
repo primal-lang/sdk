@@ -964,8 +964,13 @@ void main() {
       checkResult(runtime, '"Hell"');
     });
 
-    test('str.tail', () {
-      final Runtime runtime = getRuntime('main = str.tail("Hello")');
+    test('str.rest 1', () {
+      final Runtime runtime = getRuntime('main = str.rest("")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.rest 2', () {
+      final Runtime runtime = getRuntime('main = str.rest("Hello")');
       checkResult(runtime, '"ello"');
     });
 
@@ -1332,8 +1337,13 @@ void main() {
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.tail', () {
-      final Runtime runtime = getRuntime('main = list.tail([1, 2, 3, 4, 5])');
+    test('list.rest 1', () {
+      final Runtime runtime = getRuntime('main = list.rest([])');
+      checkResult(runtime, []);
+    });
+
+    test('list.rest 2', () {
+      final Runtime runtime = getRuntime('main = list.rest([1, 2, 3, 4, 5])');
       checkResult(runtime, [2, 3, 4, 5]);
     });
 

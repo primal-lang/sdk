@@ -36,9 +36,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
     if ((a is ListNode) && (b is NumberNode)) {
       final List<Node> head = a.value.sublist(0, b.value.toInt());
-      final List<Node> tail = a.value.sublist(b.value.toInt(), a.value.length);
+      final List<Node> rest = a.value.sublist(b.value.toInt(), a.value.length);
 
-      return ListNode([...head, c.evaluate(), ...tail]);
+      return ListNode([...head, c.evaluate(), ...rest]);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

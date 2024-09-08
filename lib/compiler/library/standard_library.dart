@@ -88,12 +88,12 @@ import 'package:primal/compiler/library/list/list_none.dart';
 import 'package:primal/compiler/library/list/list_reduce.dart';
 import 'package:primal/compiler/library/list/list_remove.dart';
 import 'package:primal/compiler/library/list/list_remove_at.dart';
+import 'package:primal/compiler/library/list/list_rest.dart';
 import 'package:primal/compiler/library/list/list_reverse.dart';
 import 'package:primal/compiler/library/list/list_set.dart';
 import 'package:primal/compiler/library/list/list_sort.dart';
 import 'package:primal/compiler/library/list/list_sublist.dart';
 import 'package:primal/compiler/library/list/list_swap.dart';
-import 'package:primal/compiler/library/list/list_tail.dart';
 import 'package:primal/compiler/library/list/list_take.dart';
 import 'package:primal/compiler/library/list/list_zip.dart';
 import 'package:primal/compiler/library/logic/bool_and.dart';
@@ -143,11 +143,11 @@ import 'package:primal/compiler/library/string/str_pad_left.dart';
 import 'package:primal/compiler/library/string/str_pad_right.dart';
 import 'package:primal/compiler/library/string/str_remove_at.dart';
 import 'package:primal/compiler/library/string/str_replace.dart';
+import 'package:primal/compiler/library/string/str_rest.dart';
 import 'package:primal/compiler/library/string/str_reverse.dart';
 import 'package:primal/compiler/library/string/str_split.dart';
 import 'package:primal/compiler/library/string/str_starts_with.dart';
 import 'package:primal/compiler/library/string/str_substring.dart';
-import 'package:primal/compiler/library/string/str_tail.dart';
 import 'package:primal/compiler/library/string/str_take.dart';
 import 'package:primal/compiler/library/string/str_trim.dart';
 import 'package:primal/compiler/library/string/str_uppercase.dart';
@@ -264,12 +264,12 @@ class StandardLibrary {
         ListReduce(),
         ListRemoveAt(),
         ListRemove(),
+        ListRest(),
         ListReverse(),
         ListSet(),
         ListSort(),
         ListSublist(),
         ListSwap(),
-        ListTail(),
         ListTake(),
         ListZip(),
 
@@ -327,11 +327,11 @@ class StandardLibrary {
         StrPadRight(),
         StrRemoveAt(),
         StrReplace(),
+        StrRest(),
         StrReverse(),
         StrSplit(),
         StrStartsWith(),
         StrSubstring(),
-        StrTail(),
         StrTake(),
         StrTrim(),
         StrUppercase(),
