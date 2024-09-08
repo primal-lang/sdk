@@ -151,6 +151,7 @@ import 'package:primal/compiler/library/string/str_substring.dart';
 import 'package:primal/compiler/library/string/str_take.dart';
 import 'package:primal/compiler/library/string/str_trim.dart';
 import 'package:primal/compiler/library/string/str_uppercase.dart';
+import 'package:primal/compiler/library/timestamp/time_now.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
@@ -335,5 +336,8 @@ class StandardLibrary {
         StrTake(),
         StrTrim(),
         StrUppercase(),
+
+        // Timestamp
+        TimeNow(),
       ];
 }

@@ -71,6 +71,13 @@ class StringNode extends LiteralNode<String> {
   Type get type => const StringType();
 }
 
+class TimestampNode extends LiteralNode<DateTime> {
+  const TimestampNode(super.value);
+
+  @override
+  Type get type => const TimestampType();
+}
+
 class ListNode extends LiteralNode<List<Node>> {
   const ListNode(super.value);
 

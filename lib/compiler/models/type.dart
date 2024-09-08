@@ -2,11 +2,11 @@ class Type {
   const Type();
 }
 
-class StringType extends Type {
-  const StringType();
+class BooleanType extends Type {
+  const BooleanType();
 
   @override
-  String toString() => 'String';
+  String toString() => 'Boolean';
 }
 
 class NumberType extends Type {
@@ -16,11 +16,18 @@ class NumberType extends Type {
   String toString() => 'Number';
 }
 
-class BooleanType extends Type {
-  const BooleanType();
+class StringType extends Type {
+  const StringType();
 
   @override
-  String toString() => 'Boolean';
+  String toString() => 'String';
+}
+
+class TimestampType extends Type {
+  const TimestampType();
+
+  @override
+  String toString() => 'Timestamp';
 }
 
 class ListType extends Type {
