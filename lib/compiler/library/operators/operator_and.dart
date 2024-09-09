@@ -30,15 +30,30 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
 
-    if ((a is BooleanNode) && (b is BooleanNode)) {
-      return BooleanNode(a.value && b.value);
+    if (a is BooleanNode) {
+      final bool valueA = a.value;
+
+      if (valueA) {
+        final Node b = arguments[1].evaluate();
+
+        if (b is BooleanNode) {
+          return BooleanNode(valueA && b.value);
+        } else {
+          throw InvalidArgumentTypesError(
+            function: name,
+            expected: parameterTypes,
+            actual: [a.type, b.type],
+          );
+        }
+      } else {
+        return const BooleanNode(false);
+      }
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [a.type, b.type],
+        actual: [a.type],
       );
     }
   }
