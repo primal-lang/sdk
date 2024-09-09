@@ -32,13 +32,11 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is BooleanNode) {
-      final bool valueA = a.value;
-
-      if (valueA) {
+      if (a.value) {
         final Node b = arguments[1].evaluate();
 
         if (b is BooleanNode) {
-          return BooleanNode(valueA && b.value);
+          return b;
         } else {
           throw InvalidArgumentTypesError(
             function: name,

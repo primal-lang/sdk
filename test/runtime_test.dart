@@ -546,6 +546,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('& 5', () {
+      final Runtime runtime =
+          getRuntime('main = false & error.throw(-1, "Error")');
+      checkResult(runtime, false);
+    });
+
     test('| 1', () {
       final Runtime runtime = getRuntime('main = true | true');
       checkResult(runtime, true);
@@ -564,6 +570,12 @@ void main() {
     test('| 4', () {
       final Runtime runtime = getRuntime('main = false | false');
       checkResult(runtime, false);
+    });
+
+    test('| 5', () {
+      final Runtime runtime =
+          getRuntime('main = true | error.throw(-1, "Error")');
+      checkResult(runtime, true);
     });
 
     test('! 1', () {
@@ -3083,6 +3095,12 @@ void main() {
     test('frequency', () {
       final Runtime runtime = getRuntime(loadFile('web_samples/frequency.prm'));
       checkResult(runtime, {1: 2, 2: 4, 3: 1, 4: 1, 5: 2});
+    });
+
+    test('balanced_parenthesis', () {
+      final Runtime runtime =
+          getRuntime(loadFile('web_samples/balanced_parenthesis.prm'));
+      checkResult(runtime, true);
     });
   });
 
