@@ -33,7 +33,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if (a is QueueNode) {
-      return QueueNode([b, ...a.value]);
+      return QueueNode([...a.value, b]);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

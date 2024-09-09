@@ -2112,7 +2112,7 @@ void main() {
 
     test('queue.enqueue 2', () {
       final Runtime runtime =
-          getRuntime('main = queue.enqueue(queue.new([2, 3]), 1)');
+          getRuntime('main = queue.enqueue(queue.new([1, 2]), 3)');
       checkResult(runtime, [1, 2, 3]);
     });
 
