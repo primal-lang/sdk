@@ -3,12 +3,12 @@ import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class SetRemove extends NativeFunctionNode {
-  SetRemove()
+class ListContains extends NativeFunctionNode {
+  ListContains()
       : super(
-          name: 'set.remove',
+          name: 'list.contains',
           parameters: [
-            Parameter.set('a'),
+            Parameter.list('a'),
             Parameter.any('b'),
           ],
         );
@@ -33,22 +33,20 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    if (a is SetNode) {
-      final Set<Node> set = {};
-
-      for (final Node node in a.value) {
+    if (a is ListNode) {
+      for (final Node element in a.value) {
         final BooleanNode comparison = CompEq.execute(
           function: this,
-          a: node.evaluate(),
+          a: element.evaluate(),
           b: b,
         );
 
-        if (!comparison.value) {
-          set.add(node);
+        if (comparison.value) {
+          return const BooleanNode(true);
         }
       }
 
-      return SetNode(set);
+      return const BooleanNode(false);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
