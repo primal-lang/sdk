@@ -2116,9 +2116,10 @@ void main() {
       checkResult(runtime, [1, 2, 3]);
     });
 
-    /*test('queue.pop 1', () {
+    test('queue.dequeue 1', () {
       try {
-        final Runtime runtime = getRuntime('main = queue.pop(queue.new([]))');
+        final Runtime runtime =
+            getRuntime('main = queue.dequeue(queue.new([]))');
         runtime.executeMain();
         fail('Should fail');
       } catch (e) {
@@ -2126,16 +2127,17 @@ void main() {
       }
     });
 
-    test('queue.pop 2', () {
+    test('queue.dequeue 2', () {
       final Runtime runtime =
-          getRuntime('main = queue.pop(queue.new([1, 2, 3]))');
-      checkResult(runtime, [1, 2]);
+          getRuntime('main = queue.dequeue(queue.new([1, 2, 3]))');
+      checkResult(runtime, [2, 3]);
     });
 
-    test('queue.pop 3', () {
-      final Runtime runtime = getRuntime('main = queue.pop(queue.new([1]))');
+    test('queue.dequeue 3', () {
+      final Runtime runtime =
+          getRuntime('main = queue.dequeue(queue.new([1]))');
       checkResult(runtime, []);
-    });*/
+    });
 
     /*test('queue.peek 1', () {
       try {
