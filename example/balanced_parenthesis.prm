@@ -1,0 +1,16 @@
+balancedParenthesis(list) = balancedParenthesis.helper(list, stack.new([]))
+
+balancedParenthesis.helper(list, stack) =
+    if (str.isEmpty(list))
+        stack.isEmpty(stack)
+    else if (str.first(list) == '(')
+        balancedParenthesis.helper(str.rest(list), stack.push(stack, '('))
+    else if (str.first(list) == ')')
+        if ((stack.isNotEmpty(stack)) & (stack.peek(stack) == '('))
+            balancedParenthesis.helper(str.rest(list), stack.pop(stack))
+        else
+            false
+    else
+        error.throw(-1, 'Invalid element in the list')
+
+main = balancedParenthesis("(((()()(()))()))")

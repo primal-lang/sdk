@@ -18,6 +18,37 @@ class BoolAnd extends NativeFunctionNode {
         parameters: parameters,
         arguments: arguments,
       );
+
+  static BooleanNode execute({
+    required FunctionNode function,
+    required List<Node> arguments,
+  }) {
+    final Node a = arguments[0].evaluate();
+
+    if (a is BooleanNode) {
+      if (a.value) {
+        final Node b = arguments[1].evaluate();
+
+        if (b is BooleanNode) {
+          return b;
+        } else {
+          throw InvalidArgumentTypesError(
+            function: function.name,
+            expected: function.parameterTypes,
+            actual: [a.type, b.type],
+          );
+        }
+      } else {
+        return const BooleanNode(false);
+      }
+    } else {
+      throw InvalidArgumentTypesError(
+        function: function.name,
+        expected: function.parameterTypes,
+        actual: [a.type],
+      );
+    }
+  }
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -28,18 +59,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
-
-    if ((a is BooleanNode) && (b is BooleanNode)) {
-      return BooleanNode(a.value && b.value);
-    } else {
-      throw InvalidArgumentTypesError(
-        function: name,
-        expected: parameterTypes,
-        actual: [a.type, b.type],
+  Node evaluate() => BoolAnd.execute(
+        function: this,
+        arguments: arguments,
       );
-    }
-  }
 }

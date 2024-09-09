@@ -1,4 +1,4 @@
-import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/logic/bool_and.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
@@ -28,31 +28,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-
-    if (a is BooleanNode) {
-      if (a.value) {
-        final Node b = arguments[1].evaluate();
-
-        if (b is BooleanNode) {
-          return b;
-        } else {
-          throw InvalidArgumentTypesError(
-            function: name,
-            expected: parameterTypes,
-            actual: [a.type, b.type],
-          );
-        }
-      } else {
-        return const BooleanNode(false);
-      }
-    } else {
-      throw InvalidArgumentTypesError(
-        function: name,
-        expected: parameterTypes,
-        actual: [a.type],
+  Node evaluate() => BoolAnd.execute(
+        function: this,
+        arguments: arguments,
       );
-    }
-  }
 }
