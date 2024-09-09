@@ -133,6 +133,7 @@ import 'package:primal/compiler/library/set/set_is_not_empty.dart';
 import 'package:primal/compiler/library/set/set_length.dart';
 import 'package:primal/compiler/library/set/set_new.dart';
 import 'package:primal/compiler/library/set/set_remove.dart';
+import 'package:primal/compiler/library/set/set_union.dart';
 import 'package:primal/compiler/library/string/str_at.dart';
 import 'package:primal/compiler/library/string/str_bytes.dart';
 import 'package:primal/compiler/library/string/str_compare.dart';
@@ -347,6 +348,7 @@ class StandardLibrary {
         SetLength(),
         SetNew(),
         SetRemove(),
+        SetUnion(),
 
         // String
         StrAt(),

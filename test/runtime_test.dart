@@ -1880,6 +1880,30 @@ void main() {
           getRuntime('main = set.length(set.new([1, 2, 3]))');
       checkResult(runtime, 3);
     });
+
+    test('set.union 1', () {
+      final Runtime runtime =
+          getRuntime('main = set.union(set.new([]), set.new([]))');
+      checkResult(runtime, {});
+    });
+
+    test('set.union 2', () {
+      final Runtime runtime =
+          getRuntime('main = set.union(set.new([1, 2]), set.new([]))');
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set.union 3', () {
+      final Runtime runtime =
+          getRuntime('main = set.union(set.new([]), set.new([1, 2]))');
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set.union 4', () {
+      final Runtime runtime =
+          getRuntime('main = set.union(set.new([1, 2]), set.new([2, 3]))');
+      checkResult(runtime, {1, 2, 3});
+    });
   });
 
   group('Map', () {
