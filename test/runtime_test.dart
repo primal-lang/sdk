@@ -2139,6 +2139,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.number 8', () {
+      final Runtime runtime =
+          getRuntime('main = is.number(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.integer 1', () {
       final Runtime runtime = getRuntime('main = is.integer(12)');
       checkResult(runtime, true);
@@ -2225,6 +2231,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.string 7', () {
+      final Runtime runtime =
+          getRuntime('main = is.string(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.boolean 1', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
@@ -2253,6 +2265,12 @@ void main() {
     test('is.boolean 6', () {
       final Runtime runtime =
           getRuntime('main = is.boolean(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.boolean 7', () {
+      final Runtime runtime =
+          getRuntime('main = is.boolean(set.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2286,9 +2304,14 @@ void main() {
       checkResult(runtime, false);
     });
 
-    test('is.list 6', () {
+    test('is.list 7', () {
       final Runtime runtime =
           getRuntime('main = is.list(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.list 8', () {
+      final Runtime runtime = getRuntime('main = is.list(set.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2322,9 +2345,14 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('is.map 6', () {
+    test('is.map 7', () {
       final Runtime runtime =
           getRuntime('main = is.map(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.map 8', () {
+      final Runtime runtime = getRuntime('main = is.map(set.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2358,9 +2386,56 @@ void main() {
       checkResult(runtime, false);
     });
 
-    test('is.vector 6', () {
+    test('is.vector 7', () {
       final Runtime runtime =
           getRuntime('main = is.vector(vector.new([1, 2, 3]))');
+      checkResult(runtime, true);
+    });
+
+    test('is.vector 8', () {
+      final Runtime runtime =
+          getRuntime('main = is.vector(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 1', () {
+      final Runtime runtime = getRuntime('main = is.set(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 2', () {
+      final Runtime runtime = getRuntime('main = is.set(1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 3', () {
+      final Runtime runtime = getRuntime('main = is.set("Hello")');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 4', () {
+      final Runtime runtime = getRuntime('main = is.set([])');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 5', () {
+      final Runtime runtime = getRuntime('main = is.set([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 6', () {
+      final Runtime runtime = getRuntime('main = is.set({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 7', () {
+      final Runtime runtime =
+          getRuntime('main = is.set(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 8', () {
+      final Runtime runtime = getRuntime('main = is.set(set.new([1, 2, 3]))');
       checkResult(runtime, true);
     });
   });
