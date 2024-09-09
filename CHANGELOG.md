@@ -15,7 +15,7 @@
 ### Standard library
 
 * Added basic functions for:
-    - Console
+    - Console (read)
     - Map
     - Timestamp
     - Vector
@@ -62,7 +62,7 @@
     - Logical: `&`, `|`, `!`
 * Added basic functions for:
     - List
-    - Console
+    - Console (write)
 
 ### Runtime
 
