@@ -11,6 +11,6 @@ balancedParenthesis.helper(list, stack) =
         else
             false
     else
-        error.throw(-1, 'Invalid element in the list')
+        error.throw(-1, 'Invalid element in the list: "' + str.first(list) + '"')
 
-main = balancedParenthesis("(((()()(()))()))")
+main = balancedParenthesis("((((()()(()))())))")
