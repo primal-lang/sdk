@@ -136,6 +136,8 @@ import 'package:primal/compiler/library/set/set_length.dart';
 import 'package:primal/compiler/library/set/set_new.dart';
 import 'package:primal/compiler/library/set/set_remove.dart';
 import 'package:primal/compiler/library/set/set_union.dart';
+import 'package:primal/compiler/library/stack/stack_is_empty.dart';
+import 'package:primal/compiler/library/stack/stack_is_not_empty.dart';
 import 'package:primal/compiler/library/stack/stack_new.dart';
 import 'package:primal/compiler/library/stack/stack_peek.dart';
 import 'package:primal/compiler/library/stack/stack_pop.dart';
@@ -359,6 +361,8 @@ class StandardLibrary {
         SetUnion(),
 
         // Stack
+        StackIsEmpty(),
+        StackIsNotEmpty(),
         StackNew(),
         StackPeek(),
         StackPop(),

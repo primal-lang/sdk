@@ -2046,6 +2046,29 @@ void main() {
       final Runtime runtime = getRuntime('main = stack.peek(stack.new([1]))');
       checkResult(runtime, 1);
     });
+
+    test('stack.isEmpty 1', () {
+      final Runtime runtime = getRuntime('main = stack.isEmpty(stack.new([]))');
+      checkResult(runtime, true);
+    });
+
+    test('stack.isEmpty 2', () {
+      final Runtime runtime =
+          getRuntime('main = stack.isEmpty(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('stack.isNotEmpty 1', () {
+      final Runtime runtime =
+          getRuntime('main = stack.isNotEmpty(stack.new([]))');
+      checkResult(runtime, false);
+    });
+
+    test('stack.isNotEmpty 2', () {
+      final Runtime runtime =
+          getRuntime('main = stack.isNotEmpty(stack.new([1, 2, 3]))');
+      checkResult(runtime, true);
+    });
   });
 
   group('Map', () {
