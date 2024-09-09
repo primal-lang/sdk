@@ -1847,6 +1847,28 @@ void main() {
           getRuntime('main = set.contains(set.new([1, 2]), 3)');
       checkResult(runtime, false);
     });
+
+    test('set.isEmpty 1', () {
+      final Runtime runtime = getRuntime('main = set.isEmpty(set.new([]))');
+      checkResult(runtime, true);
+    });
+
+    test('set.isEmpty 2', () {
+      final Runtime runtime =
+          getRuntime('main = set.isEmpty(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('set.isNotEmpty 1', () {
+      final Runtime runtime = getRuntime('main = set.isNotEmpty(set.new([]))');
+      checkResult(runtime, false);
+    });
+
+    test('set.isNotEmpty 2', () {
+      final Runtime runtime =
+          getRuntime('main = set.isNotEmpty(set.new([1, 2, 3]))');
+      checkResult(runtime, true);
+    });
   });
 
   group('Map', () {
