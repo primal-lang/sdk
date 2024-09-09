@@ -40,6 +40,7 @@ import 'package:primal/compiler/library/casting/is_integer.dart';
 import 'package:primal/compiler/library/casting/is_list.dart';
 import 'package:primal/compiler/library/casting/is_map.dart';
 import 'package:primal/compiler/library/casting/is_number.dart';
+import 'package:primal/compiler/library/casting/is_queue.dart';
 import 'package:primal/compiler/library/casting/is_set.dart';
 import 'package:primal/compiler/library/casting/is_stack.dart';
 import 'package:primal/compiler/library/casting/is_string.dart';
@@ -240,6 +241,7 @@ class StandardLibrary {
         IsList(),
         IsMap(),
         IsNumber(),
+        IsQueue(),
         IsSet(),
         IsStack(),
         IsString(),

@@ -2549,6 +2549,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.number 10', () {
+      final Runtime runtime =
+          getRuntime('main = is.number(queue.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.integer 1', () {
       final Runtime runtime = getRuntime('main = is.integer(12)');
       checkResult(runtime, true);
@@ -2647,6 +2653,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.string 9', () {
+      final Runtime runtime =
+          getRuntime('main = is.string(queue.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.boolean 1', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
@@ -2687,6 +2699,12 @@ void main() {
     test('is.boolean 8', () {
       final Runtime runtime =
           getRuntime('main = is.boolean(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.boolean 9', () {
+      final Runtime runtime =
+          getRuntime('main = is.boolean(queue.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2737,6 +2755,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.list 10', () {
+      final Runtime runtime =
+          getRuntime('main = is.list(queue.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.map 1', () {
       final Runtime runtime = getRuntime('main = is.map(true)');
       checkResult(runtime, false);
@@ -2780,6 +2804,11 @@ void main() {
 
     test('is.map 9', () {
       final Runtime runtime = getRuntime('main = is.map(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.map 10', () {
+      final Runtime runtime = getRuntime('main = is.map(queue.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2831,6 +2860,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.vector 10', () {
+      final Runtime runtime =
+          getRuntime('main = is.vector(queue.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.set 1', () {
       final Runtime runtime = getRuntime('main = is.set(true)');
       checkResult(runtime, false);
@@ -2874,6 +2909,11 @@ void main() {
 
     test('is.set 9', () {
       final Runtime runtime = getRuntime('main = is.set(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 10', () {
+      final Runtime runtime = getRuntime('main = is.set(queue.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2926,6 +2966,75 @@ void main() {
     test('is.stack 10', () {
       final Runtime runtime =
           getRuntime('main = is.stack(stack.new([1, 2, 3]))');
+      checkResult(runtime, true);
+    });
+
+    test('is.stack 11', () {
+      final Runtime runtime =
+          getRuntime('main = is.stack(queue.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 1', () {
+      final Runtime runtime = getRuntime('main = is.queue(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 2', () {
+      final Runtime runtime = getRuntime('main = is.queue(1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 3', () {
+      final Runtime runtime = getRuntime('main = is.queue("Hello")');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 4', () {
+      final Runtime runtime = getRuntime('main = is.queue([])');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 5', () {
+      final Runtime runtime = getRuntime('main = is.queue([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 6', () {
+      final Runtime runtime = getRuntime('main = is.queue({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 7', () {
+      final Runtime runtime =
+          getRuntime('main = is.queue(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 8', () {
+      final Runtime runtime = getRuntime('main = is.queue(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 9', () {
+      final Runtime runtime = getRuntime('main = is.queue(stack.new([]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 10', () {
+      final Runtime runtime =
+          getRuntime('main = is.queue(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.queue 11', () {
+      final Runtime runtime = getRuntime('main = is.queue(queue.new([]))');
+      checkResult(runtime, true);
+    });
+
+    test('is.queue 12', () {
+      final Runtime runtime =
+          getRuntime('main = is.queue(queue.new([1, 2, 3]))');
       checkResult(runtime, true);
     });
   });
