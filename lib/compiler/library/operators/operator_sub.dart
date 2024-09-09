@@ -1,4 +1,5 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/vector/vector_sub.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
@@ -34,6 +35,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
     if ((a is NumberNode) && (b is NumberNode)) {
       return NumberNode(a.value - b.value);
+    } else if ((a is VectorNode) && (b is VectorNode)) {
+      return VectorSub.execute(
+        function: this,
+        a: a,
+        b: b,
+      );
     } else {
       throw InvalidArgumentTypesError(
         function: name,

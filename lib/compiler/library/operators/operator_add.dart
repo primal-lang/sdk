@@ -1,4 +1,5 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/vector/vector_add.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
@@ -36,6 +37,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       return NumberNode(a.value + b.value);
     } else if ((a is StringNode) && (b is StringNode)) {
       return StringNode(a.value + b.value);
+    } else if ((a is VectorNode) && (b is VectorNode)) {
+      return VectorAdd.execute(
+        function: this,
+        a: a,
+        b: b,
+      );
     } else if ((a is ListNode) && (b is ListNode)) {
       return ListNode([...a.value, ...b.value]);
     } else if (a is ListNode) {

@@ -409,6 +409,18 @@ void main() {
       checkResult(runtime, '"Hello"');
     });
 
+    test('+ 4', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([]) + vector.new([])');
+      checkResult(runtime, []);
+    });
+
+    test('+ 5', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([1, 2]) + vector.new([3, 4])');
+      checkResult(runtime, [4, 6]);
+    });
+
     test('- 1', () {
       final Runtime runtime = getRuntime('main = 5 - 7');
       checkResult(runtime, -2);
@@ -422,6 +434,18 @@ void main() {
     test('- 3', () {
       final Runtime runtime = getRuntime('main = -5');
       checkResult(runtime, -5);
+    });
+
+    test('- 4', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([]) - vector.new([])');
+      checkResult(runtime, []);
+    });
+
+    test('- 5', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([1, 2]) - vector.new([3, 4])');
+      checkResult(runtime, [-2, -2]);
     });
 
     test('*', () {

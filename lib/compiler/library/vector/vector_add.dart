@@ -18,20 +18,12 @@ class VectorAdd extends NativeFunctionNode {
         parameters: parameters,
         arguments: arguments,
       );
-}
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
-    required super.name,
-    required super.parameters,
-    required super.arguments,
-  });
-
-  @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
-
+  static VectorNode execute({
+    required FunctionNode function,
+    required Node a,
+    required Node b,
+  }) {
     if ((a is VectorNode) && (b is VectorNode)) {
       if (a.value.length != b.value.length) {
         throw IterablesWithDifferentLengthError(
@@ -49,10 +41,30 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       return VectorNode(value);
     } else {
       throw InvalidArgumentTypesError(
-        function: name,
-        expected: parameterTypes,
+        function: function.name,
+        expected: function.parameterTypes,
         actual: [a.type],
       );
     }
+  }
+}
+
+class NodeWithArguments extends NativeFunctionNodeWithArguments {
+  const NodeWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Node evaluate() {
+    final Node a = arguments[0].evaluate();
+    final Node b = arguments[1].evaluate();
+
+    return VectorAdd.execute(
+      function: this,
+      a: a,
+      b: b,
+    );
   }
 }
