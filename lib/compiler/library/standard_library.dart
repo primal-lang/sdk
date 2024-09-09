@@ -130,6 +130,8 @@ import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
 import 'package:primal/compiler/library/queue/queue_dequeue.dart';
 import 'package:primal/compiler/library/queue/queue_enqueue.dart';
+import 'package:primal/compiler/library/queue/queue_is_empty.dart';
+import 'package:primal/compiler/library/queue/queue_is_not_empty.dart';
 import 'package:primal/compiler/library/queue/queue_new.dart';
 import 'package:primal/compiler/library/queue/queue_peek.dart';
 import 'package:primal/compiler/library/set/set_add.dart';
@@ -360,6 +362,8 @@ class StandardLibrary {
         // Queue
         QueueDequeue(),
         QueueEnqueue(),
+        QueueIsEmpty(),
+        QueueIsNotEmpty(),
         QueueNew(),
         QueuePeek(),
 

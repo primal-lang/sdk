@@ -2160,7 +2160,7 @@ void main() {
       checkResult(runtime, 1);
     });
 
-    /*test('queue.isEmpty 1', () {
+    test('queue.isEmpty 1', () {
       final Runtime runtime = getRuntime('main = queue.isEmpty(queue.new([]))');
       checkResult(runtime, true);
     });
@@ -2181,7 +2181,7 @@ void main() {
       final Runtime runtime =
           getRuntime('main = queue.isNotEmpty(queue.new([1, 2, 3]))');
       checkResult(runtime, true);
-    });*/
+    });
 
     /*test('queue.length 1', () {
       final Runtime runtime = getRuntime('main = queue.length(queue.new([]))');
