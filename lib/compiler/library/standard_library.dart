@@ -132,6 +132,7 @@ import 'package:primal/compiler/library/queue/queue_dequeue.dart';
 import 'package:primal/compiler/library/queue/queue_enqueue.dart';
 import 'package:primal/compiler/library/queue/queue_is_empty.dart';
 import 'package:primal/compiler/library/queue/queue_is_not_empty.dart';
+import 'package:primal/compiler/library/queue/queue_length.dart';
 import 'package:primal/compiler/library/queue/queue_new.dart';
 import 'package:primal/compiler/library/queue/queue_peek.dart';
 import 'package:primal/compiler/library/set/set_add.dart';
@@ -364,6 +365,7 @@ class StandardLibrary {
         QueueEnqueue(),
         QueueIsEmpty(),
         QueueIsNotEmpty(),
+        QueueLength(),
         QueueNew(),
         QueuePeek(),
 

@@ -2183,7 +2183,7 @@ void main() {
       checkResult(runtime, true);
     });
 
-    /*test('queue.length 1', () {
+    test('queue.length 1', () {
       final Runtime runtime = getRuntime('main = queue.length(queue.new([]))');
       checkResult(runtime, 0);
     });
@@ -2192,7 +2192,7 @@ void main() {
       final Runtime runtime =
           getRuntime('main = queue.length(queue.new([1, 2, 3]))');
       checkResult(runtime, 3);
-    });*/
+    });
 
     /*test('queue.reverse 1', () {
       final Runtime runtime = getRuntime('main = queue.reverse(queue.new([]))');
