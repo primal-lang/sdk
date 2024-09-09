@@ -2139,7 +2139,7 @@ void main() {
       checkResult(runtime, []);
     });
 
-    /*test('queue.peek 1', () {
+    test('queue.peek 1', () {
       try {
         final Runtime runtime = getRuntime('main = queue.peek(queue.new([]))');
         runtime.executeMain();
@@ -2152,13 +2152,13 @@ void main() {
     test('queue.peek 2', () {
       final Runtime runtime =
           getRuntime('main = queue.peek(queue.new([1, 2, 3]))');
-      checkResult(runtime, 3);
+      checkResult(runtime, 1);
     });
 
     test('queue.peek 3', () {
       final Runtime runtime = getRuntime('main = queue.peek(queue.new([1]))');
       checkResult(runtime, 1);
-    });*/
+    });
 
     /*test('queue.isEmpty 1', () {
       final Runtime runtime = getRuntime('main = queue.isEmpty(queue.new([]))');

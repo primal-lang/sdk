@@ -131,6 +131,7 @@ import 'package:primal/compiler/library/operators/operator_sub.dart';
 import 'package:primal/compiler/library/queue/queue_dequeue.dart';
 import 'package:primal/compiler/library/queue/queue_enqueue.dart';
 import 'package:primal/compiler/library/queue/queue_new.dart';
+import 'package:primal/compiler/library/queue/queue_peek.dart';
 import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_contains.dart';
 import 'package:primal/compiler/library/set/set_intersection.dart';
@@ -360,6 +361,7 @@ class StandardLibrary {
         QueueDequeue(),
         QueueEnqueue(),
         QueueNew(),
+        QueuePeek(),
 
         // Set
         SetAdd(),
