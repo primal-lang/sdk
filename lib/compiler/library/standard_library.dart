@@ -169,6 +169,7 @@ import 'package:primal/compiler/library/vector/vector_add.dart';
 import 'package:primal/compiler/library/vector/vector_magnitude.dart';
 import 'package:primal/compiler/library/vector/vector_new.dart';
 import 'package:primal/compiler/library/vector/vector_normalize.dart';
+import 'package:primal/compiler/library/vector/vector_sub.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StandardLibrary {
@@ -377,5 +378,6 @@ class StandardLibrary {
         VectorMagnitude(),
         VectorNew(),
         VectorNormalize(),
+        VectorSub(),
       ];
 }

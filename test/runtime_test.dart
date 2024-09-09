@@ -1714,6 +1714,29 @@ void main() {
         expect(e, isA<IterablesWithDifferentLengthError>());
       }
     });
+
+    test('vector.sub 1', () {
+      final Runtime runtime =
+          getRuntime('main = vector.sub(vector.new([]), vector.new([]))');
+      checkResult(runtime, []);
+    });
+
+    test('vector.sub 2', () {
+      final Runtime runtime = getRuntime(
+          'main = vector.sub(vector.new([1, 2]), vector.new([3, 4]))');
+      checkResult(runtime, [-2, -2]);
+    });
+
+    test('vector.sub 3', () {
+      try {
+        final Runtime runtime = getRuntime(
+            'main = vector.sub(vector.new([1, 2]), vector.new([4, 5, 6]))');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<IterablesWithDifferentLengthError>());
+      }
+    });
   });
 
   group('Map', () {
