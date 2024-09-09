@@ -1818,6 +1818,23 @@ void main() {
       final Runtime runtime = getRuntime('main = set.add(set.new([1, 2]), 2)');
       checkResult(runtime, {1, 2});
     });
+
+    test('set.remove 1', () {
+      final Runtime runtime = getRuntime('main = set.remove(set.new([]), 1)');
+      checkResult(runtime, {});
+    });
+
+    test('set.remove 2', () {
+      final Runtime runtime =
+          getRuntime('main = set.remove(set.new([1, 2]), 3)');
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set.remove 3', () {
+      final Runtime runtime =
+          getRuntime('main = set.remove(set.new([1, 2]), 2)');
+      checkResult(runtime, {1});
+    });
   });
 
   group('Map', () {
