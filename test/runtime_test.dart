@@ -2194,7 +2194,7 @@ void main() {
       checkResult(runtime, 3);
     });
 
-    /*test('queue.reverse 1', () {
+    test('queue.reverse 1', () {
       final Runtime runtime = getRuntime('main = queue.reverse(queue.new([]))');
       checkResult(runtime, []);
     });
@@ -2203,7 +2203,7 @@ void main() {
       final Runtime runtime =
           getRuntime('main = queue.reverse(queue.new([1, 2, 3]))');
       checkResult(runtime, [3, 2, 1]);
-    });*/
+    });
   });
 
   group('Map', () {

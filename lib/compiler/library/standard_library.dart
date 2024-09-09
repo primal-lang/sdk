@@ -135,6 +135,7 @@ import 'package:primal/compiler/library/queue/queue_is_not_empty.dart';
 import 'package:primal/compiler/library/queue/queue_length.dart';
 import 'package:primal/compiler/library/queue/queue_new.dart';
 import 'package:primal/compiler/library/queue/queue_peek.dart';
+import 'package:primal/compiler/library/queue/queue_reverse.dart';
 import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_contains.dart';
 import 'package:primal/compiler/library/set/set_intersection.dart';
@@ -368,6 +369,7 @@ class StandardLibrary {
         QueueLength(),
         QueueNew(),
         QueuePeek(),
+        QueueReverse(),
 
         // Set
         SetAdd(),
