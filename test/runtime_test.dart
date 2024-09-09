@@ -421,6 +421,59 @@ void main() {
       checkResult(runtime, [4, 6]);
     });
 
+    test('+ 6', () {
+      final Runtime runtime = getRuntime('main = set.new([]) + 1');
+      checkResult(runtime, {1});
+    });
+
+    test('+ 7', () {
+      final Runtime runtime = getRuntime('main = 1 + set.new([])');
+      checkResult(runtime, {1});
+    });
+
+    test('+ 8', () {
+      final Runtime runtime = getRuntime('main = set.new([1, 2]) + 3');
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('+ 9', () {
+      final Runtime runtime = getRuntime('main = 3 + set.new([1, 2])');
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('+ 10', () {
+      final Runtime runtime = getRuntime('main = set.new([1, 2]) + 2');
+      checkResult(runtime, {1, 2});
+    });
+
+    test('+ 11', () {
+      final Runtime runtime = getRuntime('main = 2 + set.new([1, 2])');
+      checkResult(runtime, {1, 2});
+    });
+
+    test('+ 12', () {
+      final Runtime runtime = getRuntime('main = set.new([]) + set.new([])');
+      checkResult(runtime, {});
+    });
+
+    test('+ 13', () {
+      final Runtime runtime =
+          getRuntime('main = set.new([1, 2]) + set.new([3])');
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('+ 14', () {
+      final Runtime runtime =
+          getRuntime('main = set.new([1]) + set.new([2, 3])');
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('+ 15', () {
+      final Runtime runtime =
+          getRuntime('main = set.new([1, 2]) + set.new([2, 3])');
+      checkResult(runtime, {1, 2, 3});
+    });
+
     test('- 1', () {
       final Runtime runtime = getRuntime('main = 5 - 7');
       checkResult(runtime, -2);

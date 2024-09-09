@@ -1,4 +1,6 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/set/set_add.dart';
+import 'package:primal/compiler/library/set/set_union.dart';
 import 'package:primal/compiler/library/vector/vector_add.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
@@ -8,8 +10,8 @@ class OperatorAdd extends NativeFunctionNode {
       : super(
           name: '+',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 
@@ -45,10 +47,28 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       );
     } else if ((a is ListNode) && (b is ListNode)) {
       return ListNode([...a.value, ...b.value]);
-    } else if (a is ListNode) {
+    } else if ((a is ListNode) && (b is! ListNode)) {
       return ListNode([...a.value, b]);
-    } else if (b is ListNode) {
+    } else if ((a is! ListNode) && (b is ListNode)) {
       return ListNode([a, ...b.value]);
+    } else if ((a is SetNode) && (b is SetNode)) {
+      return SetUnion.execute(
+        function: this,
+        a: a,
+        b: b,
+      );
+    } else if ((a is SetNode) && (b is! SetNode)) {
+      return SetAdd.execute(
+        function: this,
+        a: a,
+        b: b,
+      );
+    } else if ((a is! SetNode) && (b is SetNode)) {
+      return SetAdd.execute(
+        function: this,
+        a: b,
+        b: a,
+      );
     } else {
       throw InvalidArgumentTypesError(
         function: name,

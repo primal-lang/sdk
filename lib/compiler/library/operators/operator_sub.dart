@@ -1,4 +1,5 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/set/set_remove.dart';
 import 'package:primal/compiler/library/vector/vector_sub.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
@@ -8,8 +9,8 @@ class OperatorSub extends NativeFunctionNode {
       : super(
           name: '-',
           parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
+            Parameter.any('a'),
+            Parameter.any('b'),
           ],
         );
 
@@ -40,6 +41,18 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         function: this,
         a: a,
         b: b,
+      );
+    } else if ((a is SetNode) && (b is! SetNode)) {
+      return SetRemove.execute(
+        function: this,
+        a: a,
+        b: b,
+      );
+    } else if ((a is! SetNode) && (b is SetNode)) {
+      return SetRemove.execute(
+        function: this,
+        a: b,
+        b: a,
       );
     } else {
       throw InvalidArgumentTypesError(

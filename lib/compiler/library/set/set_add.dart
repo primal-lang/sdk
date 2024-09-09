@@ -18,6 +18,29 @@ class SetAdd extends NativeFunctionNode {
         parameters: parameters,
         arguments: arguments,
       );
+
+  static SetNode execute({
+    required FunctionNode function,
+    required Node a,
+    required Node b,
+  }) {
+    if (a is SetNode) {
+      if (a.native().contains(b.native())) {
+        return a;
+      } else {
+        final Set<Node> set = {...a.value};
+        set.add(b);
+
+        return SetNode(set);
+      }
+    } else {
+      throw InvalidArgumentTypesError(
+        function: function.name,
+        expected: function.parameterTypes,
+        actual: [a.type, b.type],
+      );
+    }
+  }
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -32,21 +55,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    if (a is SetNode) {
-      if (a.native().contains(b.native())) {
-        return a;
-      } else {
-        final Set<Node> set = {...a.value};
-        set.add(b);
-
-        return SetNode(set);
-      }
-    } else {
-      throw InvalidArgumentTypesError(
-        function: name,
-        expected: parameterTypes,
-        actual: [a.type, b.type],
-      );
-    }
+    return SetAdd.execute(
+      function: this,
+      a: a,
+      b: b,
+    );
   }
 }

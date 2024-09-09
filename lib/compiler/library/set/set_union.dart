@@ -18,6 +18,30 @@ class SetUnion extends NativeFunctionNode {
         parameters: parameters,
         arguments: arguments,
       );
+
+  static SetNode execute({
+    required FunctionNode function,
+    required Node a,
+    required Node b,
+  }) {
+    if ((a is SetNode) && (b is SetNode)) {
+      final Set<Node> set = {...a.value};
+
+      for (final Node node in b.value) {
+        if (!set.contains(node.native())) {
+          set.add(node);
+        }
+      }
+
+      return SetNode(set);
+    } else {
+      throw InvalidArgumentTypesError(
+        function: function.name,
+        expected: function.parameterTypes,
+        actual: [a.type, b.type],
+      );
+    }
+  }
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -32,22 +56,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    if ((a is SetNode) && (b is SetNode)) {
-      final Set<Node> set = {...a.value};
-
-      for (final Node node in b.value) {
-        if (!set.contains(node.native())) {
-          set.add(node);
-        }
-      }
-
-      return SetNode(set);
-    } else {
-      throw InvalidArgumentTypesError(
-        function: name,
-        expected: parameterTypes,
-        actual: [a.type, b.type],
-      );
-    }
+    return SetUnion.execute(
+      function: this,
+      a: a,
+      b: b,
+    );
   }
 }
