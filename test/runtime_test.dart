@@ -1835,6 +1835,18 @@ void main() {
           getRuntime('main = set.remove(set.new([1, 2]), 2)');
       checkResult(runtime, {1});
     });
+
+    test('set.contains 1', () {
+      final Runtime runtime =
+          getRuntime('main = set.contains(set.new([1, 2, 3]), 2)');
+      checkResult(runtime, true);
+    });
+
+    test('set.contains 2', () {
+      final Runtime runtime =
+          getRuntime('main = set.contains(set.new([1, 2]), 3)');
+      checkResult(runtime, false);
+    });
   });
 
   group('Map', () {
