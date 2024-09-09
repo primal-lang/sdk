@@ -34,10 +34,7 @@ class CompEq extends NativeFunctionNode {
       return BooleanNode(a.value.compareTo(b.value) == 0);
     } else if ((a is ListNode) && (b is ListNode)) {
       if (a.value.length != b.value.length) {
-        throw IterablesWithDifferentLengthError(
-          iterable1: a.native(),
-          iterable2: b.native(),
-        );
+        return const BooleanNode(false);
       } else {
         for (int i = 0; i < a.value.length; i++) {
           final BooleanNode comparison = execute(
@@ -55,10 +52,7 @@ class CompEq extends NativeFunctionNode {
       }
     } else if ((a is MapNode) && (b is MapNode)) {
       if (a.value.length != b.value.length) {
-        throw IterablesWithDifferentLengthError(
-          iterable1: a.native(),
-          iterable2: b.native(),
-        );
+        return const BooleanNode(false);
       } else {
         final Map<dynamic, Node> mapA = a.asMapWithKeys();
         final Map<dynamic, Node> mapB = b.asMapWithKeys();

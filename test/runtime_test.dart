@@ -1737,6 +1737,31 @@ void main() {
         expect(e, isA<IterablesWithDifferentLengthError>());
       }
     });
+
+    test('vector.angle 1', () {
+      try {
+        final Runtime runtime =
+            getRuntime('main = vector.angle(vector.new([]), vector.new([]))');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RuntimeError>());
+      }
+    });
+
+    test('vector.angle 2', () {
+      final Runtime runtime = getRuntime(
+          'main = vector.angle(vector.new([1, 2]), vector.new([3, 4]))');
+      expect(num.parse(runtime.executeMain()),
+          closeTo(0.17985349979247847, 0.000001));
+    });
+
+    test('vector.angle 3', () {
+      final Runtime runtime = getRuntime(
+          'main = vector.angle(vector.new([3, 4, 0]), vector.new([4, 3, 0]))');
+      expect(
+          num.parse(runtime.executeMain()), closeTo(0.28379410920832, 0.0001));
+    });
   });
 
   group('Map', () {

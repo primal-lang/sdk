@@ -166,6 +166,7 @@ import 'package:primal/compiler/library/timestamp/time_second.dart';
 import 'package:primal/compiler/library/timestamp/time_to_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_year.dart';
 import 'package:primal/compiler/library/vector/vector_add.dart';
+import 'package:primal/compiler/library/vector/vector_angle.dart';
 import 'package:primal/compiler/library/vector/vector_magnitude.dart';
 import 'package:primal/compiler/library/vector/vector_new.dart';
 import 'package:primal/compiler/library/vector/vector_normalize.dart';
@@ -375,6 +376,7 @@ class StandardLibrary {
 
         // Vector
         VectorAdd(),
+        VectorAngle(),
         VectorMagnitude(),
         VectorNew(),
         VectorNormalize(),
