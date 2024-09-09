@@ -2069,6 +2069,17 @@ void main() {
           getRuntime('main = stack.isNotEmpty(stack.new([1, 2, 3]))');
       checkResult(runtime, true);
     });
+
+    test('stack.length 1', () {
+      final Runtime runtime = getRuntime('main = stack.length(stack.new([]))');
+      checkResult(runtime, 0);
+    });
+
+    test('stack.length 2', () {
+      final Runtime runtime =
+          getRuntime('main = stack.length(stack.new([1, 2, 3]))');
+      checkResult(runtime, 3);
+    });
   });
 
   group('Map', () {
