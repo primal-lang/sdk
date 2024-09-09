@@ -1993,6 +1993,17 @@ void main() {
       final Runtime runtime = getRuntime('main = stack.new([1, 2])');
       checkResult(runtime, [1, 2]);
     });
+
+    test('stack.push 1', () {
+      final Runtime runtime = getRuntime('main = stack.push(stack.new([]), 1)');
+      checkResult(runtime, [1]);
+    });
+
+    test('stack.push 2', () {
+      final Runtime runtime =
+          getRuntime('main = stack.push(stack.new([1, 2]), 3)');
+      checkResult(runtime, [1, 2, 3]);
+    });
   });
 
   group('Map', () {
