@@ -117,7 +117,7 @@ class SetNode extends LiteralNode<Set<Node>> {
       SetNode(value.map((e) => e.substitute(bindings)).toSet());
 
   @override
-  List native() => value.map((e) => e.native()).toList();
+  Set native() => value.map((e) => e.native()).toSet();
 }
 
 class MapNode extends LiteralNode<Map<Node, Node>> {

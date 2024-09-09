@@ -51,6 +51,8 @@ class Runtime {
       return '"$value"';
     } else if (value is DateTime) {
       return '"${value.toIso8601String()}"';
+    } else if (value is Set) {
+      return getSet(value);
     } else if (value is List) {
       return getList(value);
     } else if (value is Map) {
@@ -61,6 +63,8 @@ class Runtime {
   }
 
   dynamic getList(List<dynamic> element) => element.map(format).toList();
+
+  dynamic getSet(Set<dynamic> element) => element.map(format).toSet();
 
   dynamic getMap(Map<dynamic, dynamic> element) {
     final Map<dynamic, dynamic> result = {};

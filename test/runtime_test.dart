@@ -1791,17 +1791,32 @@ void main() {
   group('Set', () {
     test('set.new 1', () {
       final Runtime runtime = getRuntime('main = set.new([])');
-      checkResult(runtime, []);
+      checkResult(runtime, {});
     });
 
     test('set.new 2', () {
       final Runtime runtime = getRuntime('main = set.new([1, 2])');
-      checkResult(runtime, [1, 2]);
+      checkResult(runtime, {1, 2});
     });
 
     test('set.new 3', () {
       final Runtime runtime = getRuntime('main = set.new([1, 2, 1])');
-      checkResult(runtime, [1, 2]);
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set.add 1', () {
+      final Runtime runtime = getRuntime('main = set.add(set.new([]), 1)');
+      checkResult(runtime, {1});
+    });
+
+    test('set.add 2', () {
+      final Runtime runtime = getRuntime('main = set.add(set.new([1, 2]), 3)');
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('set.add 3', () {
+      final Runtime runtime = getRuntime('main = set.add(set.new([1, 2]), 2)');
+      checkResult(runtime, {1, 2});
     });
   });
 

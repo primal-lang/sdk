@@ -126,6 +126,7 @@ import 'package:primal/compiler/library/operators/operator_neq.dart';
 import 'package:primal/compiler/library/operators/operator_not.dart';
 import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
+import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_new.dart';
 import 'package:primal/compiler/library/string/str_at.dart';
 import 'package:primal/compiler/library/string/str_bytes.dart';
@@ -334,6 +335,7 @@ class StandardLibrary {
         OperatorSub(),
 
         // Set
+        SetAdd(),
         SetNew(),
 
         // String
