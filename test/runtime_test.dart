@@ -2004,6 +2004,27 @@ void main() {
           getRuntime('main = stack.push(stack.new([1, 2]), 3)');
       checkResult(runtime, [1, 2, 3]);
     });
+
+    test('stack.pop 1', () {
+      try {
+        final Runtime runtime = getRuntime('main = stack.pop(stack.new([]))');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RuntimeError>());
+      }
+    });
+
+    test('stack.pop 2', () {
+      final Runtime runtime =
+          getRuntime('main = stack.pop(stack.new([1, 2, 3]))');
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('stack.pop 3', () {
+      final Runtime runtime = getRuntime('main = stack.pop(stack.new([1]))');
+      checkResult(runtime, []);
+    });
   });
 
   group('Map', () {
