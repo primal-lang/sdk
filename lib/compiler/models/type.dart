@@ -37,6 +37,13 @@ class VectorType extends Type {
   String toString() => 'Vector';
 }
 
+class StackType extends Type {
+  const StackType();
+
+  @override
+  String toString() => 'Stack';
+}
+
 class SetType extends Type {
   const SetType();
 

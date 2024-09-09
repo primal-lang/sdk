@@ -120,6 +120,20 @@ class SetNode extends LiteralNode<Set<Node>> {
   Set native() => value.map((e) => e.native()).toSet();
 }
 
+class StackNode extends LiteralNode<List<Node>> {
+  const StackNode(super.value);
+
+  @override
+  Type get type => const StackType();
+
+  @override
+  Node substitute(Bindings bindings) =>
+      StackNode(value.map((e) => e.substitute(bindings)).toList());
+
+  @override
+  List native() => value.map((e) => e.native()).toList();
+}
+
 class MapNode extends LiteralNode<Map<Node, Node>> {
   const MapNode(super.value);
 

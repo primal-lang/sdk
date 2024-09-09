@@ -135,6 +135,7 @@ import 'package:primal/compiler/library/set/set_length.dart';
 import 'package:primal/compiler/library/set/set_new.dart';
 import 'package:primal/compiler/library/set/set_remove.dart';
 import 'package:primal/compiler/library/set/set_union.dart';
+import 'package:primal/compiler/library/stack/stack_new.dart';
 import 'package:primal/compiler/library/string/str_at.dart';
 import 'package:primal/compiler/library/string/str_bytes.dart';
 import 'package:primal/compiler/library/string/str_compare.dart';
@@ -351,6 +352,9 @@ class StandardLibrary {
         SetNew(),
         SetRemove(),
         SetUnion(),
+
+        // Stack
+        StackNew(),
 
         // String
         StrAt(),

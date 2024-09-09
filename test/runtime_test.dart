@@ -1983,6 +1983,18 @@ void main() {
     });
   });
 
+  group('Stack', () {
+    test('stack.new 1', () {
+      final Runtime runtime = getRuntime('main = stack.new([])');
+      checkResult(runtime, []);
+    });
+
+    test('stack.new 2', () {
+      final Runtime runtime = getRuntime('main = stack.new([1, 2])');
+      checkResult(runtime, [1, 2]);
+    });
+  });
+
   group('Map', () {
     test('Map constructor 1', () {
       final Runtime runtime = getRuntime('main = {}');

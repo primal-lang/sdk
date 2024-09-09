@@ -44,6 +44,11 @@ class Parameter {
         type: const SetType(),
       );
 
+  factory Parameter.stack(String name) => Parameter._(
+        name: name,
+        type: const StackType(),
+      );
+
   factory Parameter.map(String name) => Parameter._(
         name: name,
         type: const MapType(),
