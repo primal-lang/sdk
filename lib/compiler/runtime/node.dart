@@ -106,6 +106,20 @@ class VectorNode extends LiteralNode<List<Node>> {
   List native() => value.map((e) => e.native()).toList();
 }
 
+class SetNode extends LiteralNode<Set<Node>> {
+  const SetNode(super.value);
+
+  @override
+  Type get type => const SetType();
+
+  @override
+  Node substitute(Bindings bindings) =>
+      SetNode(value.map((e) => e.substitute(bindings)).toSet());
+
+  @override
+  List native() => value.map((e) => e.native()).toList();
+}
+
 class MapNode extends LiteralNode<Map<Node, Node>> {
   const MapNode(super.value);
 

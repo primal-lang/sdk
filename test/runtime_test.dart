@@ -1788,6 +1788,23 @@ void main() {
     });
   });
 
+  group('Set', () {
+    test('set.new 1', () {
+      final Runtime runtime = getRuntime('main = set.new([])');
+      checkResult(runtime, []);
+    });
+
+    test('set.new 2', () {
+      final Runtime runtime = getRuntime('main = set.new([1, 2])');
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('set.new 3', () {
+      final Runtime runtime = getRuntime('main = set.new([1, 2, 1])');
+      checkResult(runtime, [1, 2]);
+    });
+  });
+
   group('Map', () {
     test('Map constructor 1', () {
       final Runtime runtime = getRuntime('main = {}');

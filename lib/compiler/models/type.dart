@@ -37,6 +37,13 @@ class VectorType extends Type {
   String toString() => 'Vector';
 }
 
+class SetType extends Type {
+  const SetType();
+
+  @override
+  String toString() => 'Set';
+}
+
 class ListType extends Type {
   const ListType();
 
