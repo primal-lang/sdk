@@ -1889,20 +1889,44 @@ void main() {
 
     test('set.union 2', () {
       final Runtime runtime =
-          getRuntime('main = set.union(set.new([1, 2]), set.new([]))');
-      checkResult(runtime, {1, 2});
+          getRuntime('main = set.union(set.new([1, 2]), set.new([3]))');
+      checkResult(runtime, {1, 2, 3});
     });
 
     test('set.union 3', () {
       final Runtime runtime =
-          getRuntime('main = set.union(set.new([]), set.new([1, 2]))');
-      checkResult(runtime, {1, 2});
+          getRuntime('main = set.union(set.new([1]), set.new([2, 3]))');
+      checkResult(runtime, {1, 2, 3});
     });
 
     test('set.union 4', () {
       final Runtime runtime =
           getRuntime('main = set.union(set.new([1, 2]), set.new([2, 3]))');
       checkResult(runtime, {1, 2, 3});
+    });
+
+    test('set.intersection 1', () {
+      final Runtime runtime =
+          getRuntime('main = set.intersection(set.new([]), set.new([]))');
+      checkResult(runtime, {});
+    });
+
+    test('set.intersection 2', () {
+      final Runtime runtime =
+          getRuntime('main = set.intersection(set.new([1]), set.new([2]))');
+      checkResult(runtime, {});
+    });
+
+    test('set.intersection 3', () {
+      final Runtime runtime = getRuntime(
+          'main = set.intersection(set.new([1, 2]), set.new([2, 3]))');
+      checkResult(runtime, {2});
+    });
+
+    test('set.intersection 4', () {
+      final Runtime runtime = getRuntime(
+          'main = set.intersection(set.new([2, 3]), set.new([1, 2]))');
+      checkResult(runtime, {2});
     });
   });
 

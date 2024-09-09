@@ -128,6 +128,7 @@ import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
 import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_contains.dart';
+import 'package:primal/compiler/library/set/set_intersection.dart';
 import 'package:primal/compiler/library/set/set_is_empty.dart';
 import 'package:primal/compiler/library/set/set_is_not_empty.dart';
 import 'package:primal/compiler/library/set/set_length.dart';
@@ -343,6 +344,7 @@ class StandardLibrary {
         // Set
         SetAdd(),
         SetContains(),
+        SetIntersection(),
         SetIsEmpty(),
         SetIsNotEmpty(),
         SetLength(),
