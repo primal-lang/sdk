@@ -2335,6 +2335,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.number 9', () {
+      final Runtime runtime =
+          getRuntime('main = is.number(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.integer 1', () {
       final Runtime runtime = getRuntime('main = is.integer(12)');
       checkResult(runtime, true);
@@ -2427,6 +2433,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.string 8', () {
+      final Runtime runtime =
+          getRuntime('main = is.string(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.boolean 1', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
@@ -2461,6 +2473,12 @@ void main() {
     test('is.boolean 7', () {
       final Runtime runtime =
           getRuntime('main = is.boolean(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.boolean 8', () {
+      final Runtime runtime =
+          getRuntime('main = is.boolean(stack.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2505,6 +2523,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.list 9', () {
+      final Runtime runtime =
+          getRuntime('main = is.list(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.map 1', () {
       final Runtime runtime = getRuntime('main = is.map(true)');
       checkResult(runtime, false);
@@ -2543,6 +2567,11 @@ void main() {
 
     test('is.map 8', () {
       final Runtime runtime = getRuntime('main = is.map(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.map 9', () {
+      final Runtime runtime = getRuntime('main = is.map(stack.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2588,6 +2617,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.vector 9', () {
+      final Runtime runtime =
+          getRuntime('main = is.vector(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.set 1', () {
       final Runtime runtime = getRuntime('main = is.set(true)');
       checkResult(runtime, false);
@@ -2626,6 +2661,63 @@ void main() {
 
     test('is.set 8', () {
       final Runtime runtime = getRuntime('main = is.set(set.new([1, 2, 3]))');
+      checkResult(runtime, true);
+    });
+
+    test('is.set 9', () {
+      final Runtime runtime = getRuntime('main = is.set(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 1', () {
+      final Runtime runtime = getRuntime('main = is.stack(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 2', () {
+      final Runtime runtime = getRuntime('main = is.stack(1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 3', () {
+      final Runtime runtime = getRuntime('main = is.stack("Hello")');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 4', () {
+      final Runtime runtime = getRuntime('main = is.stack([])');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 5', () {
+      final Runtime runtime = getRuntime('main = is.stack([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 6', () {
+      final Runtime runtime = getRuntime('main = is.stack({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 7', () {
+      final Runtime runtime =
+          getRuntime('main = is.stack(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 8', () {
+      final Runtime runtime = getRuntime('main = is.stack(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.stack 9', () {
+      final Runtime runtime = getRuntime('main = is.stack(stack.new([]))');
+      checkResult(runtime, true);
+    });
+
+    test('is.stack 10', () {
+      final Runtime runtime =
+          getRuntime('main = is.stack(stack.new([1, 2, 3]))');
       checkResult(runtime, true);
     });
   });
