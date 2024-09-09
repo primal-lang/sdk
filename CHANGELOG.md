@@ -7,15 +7,23 @@
 * Added support for:
     - Maps
     - Timestamp
+    - Vector
+    - Set
+    - Stack
+    - Queue
 
 ### Standard library
 
 * Added basic functions for:
     - Console
     - Map
+    - Timestamp
+    - Vector
+    - Set
+    - Stack
+    - Queue
     - Json
     - Hashing
-    - Timestamp
     - Environment
 
 ### Runtime

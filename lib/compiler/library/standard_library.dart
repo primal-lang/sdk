@@ -127,6 +127,7 @@ import 'package:primal/compiler/library/operators/operator_neq.dart';
 import 'package:primal/compiler/library/operators/operator_not.dart';
 import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
+import 'package:primal/compiler/library/queue/queue_new.dart';
 import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_contains.dart';
 import 'package:primal/compiler/library/set/set_intersection.dart';
@@ -350,6 +351,9 @@ class StandardLibrary {
         OperatorNot(),
         OperatorOr(),
         OperatorSub(),
+
+        // Queue
+        QueueNew(),
 
         // Set
         SetAdd(),

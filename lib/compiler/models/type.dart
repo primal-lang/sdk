@@ -44,6 +44,13 @@ class StackType extends Type {
   String toString() => 'Stack';
 }
 
+class QueueType extends Type {
+  const QueueType();
+
+  @override
+  String toString() => 'Queue';
+}
+
 class SetType extends Type {
   const SetType();
 

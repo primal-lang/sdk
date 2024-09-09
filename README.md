@@ -97,6 +97,7 @@ These are the available types at runtime:
 * Set
 * Stack
 * Vector
+* Queue
 * Function
 
 ## Runtime

@@ -134,6 +134,20 @@ class StackNode extends LiteralNode<List<Node>> {
   List native() => value.map((e) => e.native()).toList();
 }
 
+class QueueNode extends LiteralNode<List<Node>> {
+  const QueueNode(super.value);
+
+  @override
+  Type get type => const QueueType();
+
+  @override
+  Node substitute(Bindings bindings) =>
+      QueueNode(value.map((e) => e.substitute(bindings)).toList());
+
+  @override
+  List native() => value.map((e) => e.native()).toList();
+}
+
 class MapNode extends LiteralNode<Map<Node, Node>> {
   const MapNode(super.value);
 
@@ -303,9 +317,6 @@ class CustomFunctionNode extends FunctionNode {
 
   @override
   Node substitute(Bindings bindings) => node.substitute(bindings);
-
-  @override
-  Type get type => const FunctionType();
 }
 
 abstract class NativeFunctionNode extends FunctionNode {
@@ -323,9 +334,6 @@ abstract class NativeFunctionNode extends FunctionNode {
   }
 
   Node node(List<Node> arguments);
-
-  @override
-  Type get type => const FunctionType();
 }
 
 class NativeFunctionNodeWithArguments extends FunctionNode {
