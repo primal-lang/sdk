@@ -1869,6 +1869,17 @@ void main() {
           getRuntime('main = set.isNotEmpty(set.new([1, 2, 3]))');
       checkResult(runtime, true);
     });
+
+    test('set.length 1', () {
+      final Runtime runtime = getRuntime('main = set.length(set.new([]))');
+      checkResult(runtime, 0);
+    });
+
+    test('set.length 2', () {
+      final Runtime runtime =
+          getRuntime('main = set.length(set.new([1, 2, 3]))');
+      checkResult(runtime, 3);
+    });
   });
 
   group('Map', () {

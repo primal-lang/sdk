@@ -130,6 +130,7 @@ import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_contains.dart';
 import 'package:primal/compiler/library/set/set_is_empty.dart';
 import 'package:primal/compiler/library/set/set_is_not_empty.dart';
+import 'package:primal/compiler/library/set/set_length.dart';
 import 'package:primal/compiler/library/set/set_new.dart';
 import 'package:primal/compiler/library/set/set_remove.dart';
 import 'package:primal/compiler/library/string/str_at.dart';
@@ -343,6 +344,7 @@ class StandardLibrary {
         SetContains(),
         SetIsEmpty(),
         SetIsNotEmpty(),
+        SetLength(),
         SetNew(),
         SetRemove(),
 
