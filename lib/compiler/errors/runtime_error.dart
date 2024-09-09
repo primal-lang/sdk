@@ -23,6 +23,13 @@ class InvalidArgumentCountError extends RuntimeError {
             'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
 }
 
+class IterablesWithDifferentLengthError extends RuntimeError {
+  const IterablesWithDifferentLengthError({
+    required dynamic iterable1,
+    required dynamic iterable2,
+  }) : super('Iterables with different length: $iterable1 and $iterable2');
+}
+
 class InvalidLiteralValueError extends RuntimeError {
   const InvalidLiteralValueError(String value)
       : super('Invalid literal value: "$value"');

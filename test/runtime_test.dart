@@ -1691,6 +1691,29 @@ void main() {
       checkResult(runtime,
           [0.2672612419124244, 0.5345224838248488, 0.8017837257372732]);
     });
+
+    test('vector.add 1', () {
+      final Runtime runtime =
+          getRuntime('main = vector.add(vector.new([]), vector.new([]))');
+      checkResult(runtime, []);
+    });
+
+    test('vector.add 2', () {
+      final Runtime runtime = getRuntime(
+          'main = vector.add(vector.new([1, 2]), vector.new([3, 4]))');
+      checkResult(runtime, [4, 6]);
+    });
+
+    test('vector.add 3', () {
+      try {
+        final Runtime runtime = getRuntime(
+            'main = vector.add(vector.new([1, 2]), vector.new([4, 5, 6]))');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<IterablesWithDifferentLengthError>());
+      }
+    });
   });
 
   group('Map', () {
