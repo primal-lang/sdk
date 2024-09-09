@@ -49,6 +49,11 @@ class Parameter {
         type: const StackType(),
       );
 
+  factory Parameter.queue(String name) => Parameter._(
+        name: name,
+        type: const QueueType(),
+      );
+
   factory Parameter.map(String name) => Parameter._(
         name: name,
         type: const MapType(),

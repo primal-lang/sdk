@@ -2104,16 +2104,17 @@ void main() {
       checkResult(runtime, [1, 2]);
     });
 
-    /*test('queue.push 1', () {
-      final Runtime runtime = getRuntime('main = queue.push(queue.new([]), 1)');
+    test('queue.enqueue 1', () {
+      final Runtime runtime =
+          getRuntime('main = queue.enqueue(queue.new([]), 1)');
       checkResult(runtime, [1]);
     });
 
-    test('queue.push 2', () {
+    test('queue.enqueue 2', () {
       final Runtime runtime =
-          getRuntime('main = queue.push(queue.new([1, 2]), 3)');
+          getRuntime('main = queue.enqueue(queue.new([2, 3]), 1)');
       checkResult(runtime, [1, 2, 3]);
-    });*/
+    });
 
     /*test('queue.pop 1', () {
       try {
