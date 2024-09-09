@@ -143,6 +143,7 @@ import 'package:primal/compiler/library/stack/stack_new.dart';
 import 'package:primal/compiler/library/stack/stack_peek.dart';
 import 'package:primal/compiler/library/stack/stack_pop.dart';
 import 'package:primal/compiler/library/stack/stack_push.dart';
+import 'package:primal/compiler/library/stack/stack_reverse.dart';
 import 'package:primal/compiler/library/string/str_at.dart';
 import 'package:primal/compiler/library/string/str_bytes.dart';
 import 'package:primal/compiler/library/string/str_compare.dart';
@@ -369,6 +370,7 @@ class StandardLibrary {
         StackPeek(),
         StackPop(),
         StackPush(),
+        StackReverse(),
 
         // String
         StrAt(),

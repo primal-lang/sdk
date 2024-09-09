@@ -95,6 +95,7 @@ These are the available types at runtime:
 * List
 * Map
 * Set
+* Stack
 * Vector
 * Function
 

@@ -2080,6 +2080,17 @@ void main() {
           getRuntime('main = stack.length(stack.new([1, 2, 3]))');
       checkResult(runtime, 3);
     });
+
+    test('stack.reverse 1', () {
+      final Runtime runtime = getRuntime('main = stack.reverse(stack.new([]))');
+      checkResult(runtime, []);
+    });
+
+    test('stack.reverse 2', () {
+      final Runtime runtime =
+          getRuntime('main = stack.reverse(stack.new([1, 2, 3]))');
+      checkResult(runtime, [3, 2, 1]);
+    });
   });
 
   group('Map', () {
