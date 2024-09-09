@@ -1992,22 +1992,38 @@ void main() {
 
   group('Is', () {
     test('is.number 1', () {
-      final Runtime runtime = getRuntime('main = is.number(12.5)');
+      final Runtime runtime = getRuntime('main = is.number(42)');
       checkResult(runtime, true);
     });
 
     test('is.number 2', () {
+      final Runtime runtime = getRuntime('main = is.number(12.5)');
+      checkResult(runtime, true);
+    });
+
+    test('is.number 3', () {
       final Runtime runtime = getRuntime('main = is.number("12.5")');
       checkResult(runtime, false);
     });
 
-    test('is.number 3', () {
+    test('is.number 4', () {
       final Runtime runtime = getRuntime('main = is.number(true)');
       checkResult(runtime, false);
     });
 
-    test('is.number 4', () {
+    test('is.number 5', () {
       final Runtime runtime = getRuntime('main = is.number([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.number 6', () {
+      final Runtime runtime = getRuntime('main = is.number({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.number 7', () {
+      final Runtime runtime =
+          getRuntime('main = is.number(vector.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2091,6 +2107,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.string 6', () {
+      final Runtime runtime =
+          getRuntime('main = is.string(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.boolean 1', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
@@ -2113,6 +2135,12 @@ void main() {
 
     test('is.boolean 5', () {
       final Runtime runtime = getRuntime('main = is.boolean({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.boolean 6', () {
+      final Runtime runtime =
+          getRuntime('main = is.boolean(vector.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
@@ -2146,6 +2174,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.list 6', () {
+      final Runtime runtime =
+          getRuntime('main = is.list(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
     test('is.map 1', () {
       final Runtime runtime = getRuntime('main = is.map(true)');
       checkResult(runtime, false);
@@ -2173,6 +2207,48 @@ void main() {
 
     test('is.map 6', () {
       final Runtime runtime = getRuntime('main = is.map({"foo": 1})');
+      checkResult(runtime, true);
+    });
+
+    test('is.map 6', () {
+      final Runtime runtime =
+          getRuntime('main = is.map(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.vector 1', () {
+      final Runtime runtime = getRuntime('main = is.vector(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.vector 2', () {
+      final Runtime runtime = getRuntime('main = is.vector(1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.vector 3', () {
+      final Runtime runtime = getRuntime('main = is.vector("Hello")');
+      checkResult(runtime, false);
+    });
+
+    test('is.vector 4', () {
+      final Runtime runtime = getRuntime('main = is.vector([])');
+      checkResult(runtime, false);
+    });
+
+    test('is.vector 5', () {
+      final Runtime runtime = getRuntime('main = is.vector([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.vector 6', () {
+      final Runtime runtime = getRuntime('main = is.vector({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.vector 6', () {
+      final Runtime runtime =
+          getRuntime('main = is.vector(vector.new([1, 2, 3]))');
       checkResult(runtime, true);
     });
   });

@@ -41,6 +41,7 @@ import 'package:primal/compiler/library/casting/is_list.dart';
 import 'package:primal/compiler/library/casting/is_map.dart';
 import 'package:primal/compiler/library/casting/is_number.dart';
 import 'package:primal/compiler/library/casting/is_string.dart';
+import 'package:primal/compiler/library/casting/is_vector.dart';
 import 'package:primal/compiler/library/casting/to_boolean.dart';
 import 'package:primal/compiler/library/casting/to_decimal.dart';
 import 'package:primal/compiler/library/casting/to_integer.dart';
@@ -217,6 +218,7 @@ class StandardLibrary {
         IsMap(),
         IsNumber(),
         IsString(),
+        IsVector(),
         ToBoolean(),
         ToDecimal(),
         ToInteger(),
