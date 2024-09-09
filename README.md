@@ -94,6 +94,7 @@ These are the available types at runtime:
 * Timestamp
 * List
 * Map
+* Vector
 * Function
 
 ## Runtime
