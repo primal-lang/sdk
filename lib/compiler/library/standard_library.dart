@@ -35,6 +35,7 @@ import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/arithmetic/num_tan.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
+import 'package:primal/compiler/library/casting/is_function.dart';
 import 'package:primal/compiler/library/casting/is_infinite.dart';
 import 'package:primal/compiler/library/casting/is_integer.dart';
 import 'package:primal/compiler/library/casting/is_list.dart';
@@ -44,6 +45,7 @@ import 'package:primal/compiler/library/casting/is_queue.dart';
 import 'package:primal/compiler/library/casting/is_set.dart';
 import 'package:primal/compiler/library/casting/is_stack.dart';
 import 'package:primal/compiler/library/casting/is_string.dart';
+import 'package:primal/compiler/library/casting/is_timestamp.dart';
 import 'package:primal/compiler/library/casting/is_vector.dart';
 import 'package:primal/compiler/library/casting/to_boolean.dart';
 import 'package:primal/compiler/library/casting/to_decimal.dart';
@@ -243,6 +245,7 @@ class StandardLibrary {
         // Casting
         IsBoolean(),
         IsDecimal(),
+        IsFunction(),
         IsInfinite(),
         IsInteger(),
         IsList(),
@@ -252,6 +255,7 @@ class StandardLibrary {
         IsSet(),
         IsStack(),
         IsString(),
+        IsTimestamp(),
         IsVector(),
         ToBoolean(),
         ToDecimal(),
