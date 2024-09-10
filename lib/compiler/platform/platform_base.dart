@@ -14,4 +14,6 @@ abstract class PlatformBase {
   String environmentGetVariable(String name);
 
   File fileFromPath(String path);
+
+  bool fileExists(File file);
 }

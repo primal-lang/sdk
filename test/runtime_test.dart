@@ -3859,10 +3859,22 @@ void main() {
   });
 
   group('File', () {
-    test('file.fromPath 1', () {
+    test('file.fromPath', () {
       final Runtime runtime =
           getRuntime('main = file.fromPath("test/resources/files/file1.txt")');
       checkResult(runtime, '"$resourcesPath/files/file1.txt"');
+    });
+
+    test('file.exists 1', () {
+      final Runtime runtime = getRuntime(
+          'main = file.exists(file.fromPath("test/resources/files/file1.txt"))');
+      checkResult(runtime, true);
+    });
+
+    test('file.exists 2', () {
+      final Runtime runtime = getRuntime(
+          'main = file.exists(file.fromPath("test/resources/files/file0.txt"))');
+      checkResult(runtime, false);
     });
   });
 }

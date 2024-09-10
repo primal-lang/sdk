@@ -23,4 +23,7 @@ class PlatformInterface extends PlatformBase {
 
   @override
   File fileFromPath(String path) => File(path);
+
+  @override
+  bool fileExists(File file) => file.existsSync();
 }

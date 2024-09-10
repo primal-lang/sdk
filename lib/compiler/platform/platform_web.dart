@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/platform/platform_base.dart';
 
@@ -27,4 +26,8 @@ class PlatformInterface extends PlatformBase {
   @override
   File fileFromPath(String path) =>
       throw const UnimplementedFunctionWebError('file.fromPath');
+
+  @override
+  bool fileExists(File file) =>
+      throw const UnimplementedFunctionWebError('file.exists');
 }
