@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:primal/compiler/platform/base/platform_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_cli.dart';
-import 'package:primal/compiler/platform/platform_base.dart';
 
 class PlatformInterface extends PlatformBase {
   @override

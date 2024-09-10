@@ -1,5 +1,5 @@
-import 'package:primal/compiler/platform/platform_cli.dart'
-    if (dart.library.html) 'package:primal/compiler/platform/platform_web.dart';
+import 'package:primal/compiler/platform/base/platform_cli.dart'
+    if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 
 class Console {
