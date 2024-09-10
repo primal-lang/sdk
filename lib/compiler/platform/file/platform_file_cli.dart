@@ -71,4 +71,15 @@ class PlatformFileCli extends PlatformFileBase {
       return false;
     }
   }
+
+  @override
+  bool move(File fileSource, File fileDestination) {
+    try {
+      fileSource.renameSync(fileDestination.path);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

@@ -74,6 +74,7 @@ import 'package:primal/compiler/library/file/file_exists.dart';
 import 'package:primal/compiler/library/file/file_extension.dart';
 import 'package:primal/compiler/library/file/file_from_path.dart';
 import 'package:primal/compiler/library/file/file_length.dart';
+import 'package:primal/compiler/library/file/file_move.dart';
 import 'package:primal/compiler/library/file/file_name.dart';
 import 'package:primal/compiler/library/file/file_path.dart';
 import 'package:primal/compiler/library/file/file_read.dart';
@@ -309,6 +310,7 @@ class StandardLibrary {
         FileExtension(),
         FileFromPath(),
         FileLength(),
+        FileMove(),
         FileName(),
         FilePath(),
         FileRead(),

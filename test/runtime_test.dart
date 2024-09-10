@@ -3908,7 +3908,7 @@ void main() {
       expect(true, fileExists);
     });
 
-    test('file.create', () {
+    test('file.delete', () {
       final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
           'main = file.delete(file.fromPath("test/resources/files/temp/file$id.txt"))');
@@ -3936,6 +3936,12 @@ void main() {
     test('file.copy', () {
       final Runtime runtime = getRuntime(
           'file1 = file.fromPath("test/resources/files/file1.txt")\n\nfile2 = file.fromPath("test/resources/files/file2.txt")\n\nmain = file.copy(file1(), file2())');
+      checkResult(runtime, true);
+    });
+
+    test('file.move', () {
+      final Runtime runtime = getRuntime(
+          'file1 = file.fromPath("test/resources/files/file2.txt")\n\nfile2 = file.fromPath("test/resources/files/temp/file2.txt")\n\nmain = file.move(file1(), file2())');
       checkResult(runtime, true);
     });
   });
