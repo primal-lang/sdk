@@ -79,6 +79,7 @@ import 'package:primal/compiler/library/file/file_name.dart';
 import 'package:primal/compiler/library/file/file_parent.dart';
 import 'package:primal/compiler/library/file/file_path.dart';
 import 'package:primal/compiler/library/file/file_read.dart';
+import 'package:primal/compiler/library/file/file_rename.dart';
 import 'package:primal/compiler/library/file/file_write.dart';
 import 'package:primal/compiler/library/hash/hash_md5.dart';
 import 'package:primal/compiler/library/hash/hash_sha1.dart';
@@ -316,6 +317,7 @@ class StandardLibrary {
         FileParent(),
         FilePath(),
         FileRead(),
+        FileRename(),
         FileWrite(),
 
         // Hash

@@ -55,6 +55,18 @@ class PlatformFileCli extends PlatformFileBase {
   String name(File file) => path_lib.basename(file.path);
 
   @override
+  bool rename(File file, String name) {
+    try {
+      final String newFilePath = '${file.parent.path}/$name';
+      file.renameSync(newFilePath);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
   String extension(File file) {
     final String name = path_lib.extension(file.path);
 

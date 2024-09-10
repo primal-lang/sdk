@@ -19,6 +19,8 @@ abstract class PlatformFileBase {
 
   String name(File file);
 
+  bool rename(File file, String name);
+
   String extension(File file);
 
   bool copy(File fileSource, File fileDestination);

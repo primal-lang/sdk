@@ -3950,5 +3950,11 @@ void main() {
           'main = file.parent(file.fromPath("test/resources/files/file1.txt"))');
       checkResult(runtime, '"$resourcesPath/files"');
     });
+
+    test('file.rename', () {
+      final Runtime runtime = getRuntime(
+          'main = file.rename(file.fromPath("test/resources/files/temp/file2.txt"), "file3.txt")');
+      checkResult(runtime, true);
+    });
   });
 }
