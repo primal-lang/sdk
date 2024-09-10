@@ -18,4 +18,6 @@ abstract class PlatformFileBase {
   String path(File file);
 
   String name(File file);
+
+  String extension(File file);
 }

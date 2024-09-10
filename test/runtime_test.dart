@@ -3926,5 +3926,11 @@ void main() {
           'main = file.name(file.fromPath("test/resources/files/file1.txt"))');
       checkResult(runtime, '"file1.txt"');
     });
+
+    test('file.extension', () {
+      final Runtime runtime = getRuntime(
+          'main = file.extension(file.fromPath("test/resources/files/file1.txt"))');
+      checkResult(runtime, '"txt"');
+    });
   });
 }

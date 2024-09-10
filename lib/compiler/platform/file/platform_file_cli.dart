@@ -45,4 +45,11 @@ class PlatformFileCli extends PlatformFileBase {
 
   @override
   String name(File file) => path_lib.basename(file.path);
+
+  @override
+  String extension(File file) {
+    final String name = path_lib.extension(file.path);
+
+    return name.startsWith('.') ? name.substring(1) : name;
+  }
 }
