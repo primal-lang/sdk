@@ -7,6 +7,31 @@ import 'package:test/test.dart';
 import 'test_utils.dart';
 
 void main() {
+  group('Test Check', () {
+    test('test name verification', () {
+      final String content = File('test/runtime_test.dart').readAsStringSync();
+      expect(content, isNotEmpty);
+
+      final RegExp regex = RegExp(r"test\('.*?', \(\) \{");
+      final Iterable<RegExpMatch> matches = regex.allMatches(content);
+      final List<String> list =
+          matches.map((match) => match.group(0) ?? '').toList();
+
+      final List<String> found = [];
+
+      for (final String entry in list) {
+        if (found.contains(entry)) {
+          print(entry);
+        } else {
+          found.add(entry);
+        }
+      }
+
+      final Set<String> set = Set.from(list);
+      expect(list.length, set.length);
+    });
+  });
+
   group('Control', () {
     test('if/else 1', () {
       final Runtime runtime = getRuntime('main = if (true) "yes" else "no"');
@@ -1440,7 +1465,7 @@ void main() {
       checkResult(runtime, '"12345"');
     });
 
-    test('str.padLeft 2', () {
+    test('str.padLeft 3', () {
       final Runtime runtime = getRuntime('main = str.padLeft("12345", 8, "0")');
       checkResult(runtime, '"00012345"');
     });
@@ -1457,7 +1482,7 @@ void main() {
       checkResult(runtime, '"12345"');
     });
 
-    test('str.padRight 2', () {
+    test('str.padRight 3', () {
       final Runtime runtime =
           getRuntime('main = str.padRight("12345", 8, "0")');
       checkResult(runtime, '"12345000"');
@@ -1881,7 +1906,7 @@ void main() {
       checkResult(runtime, false);
     });
 
-    test('list.none 3', () {
+    test('list.any 3', () {
       final Runtime runtime =
           getRuntime('main = list.any([1, 2, 3], num.isEven)');
       checkResult(runtime, true);
@@ -1965,7 +1990,7 @@ void main() {
       checkResult(runtime, []);
     });
 
-    test('vector.magnitude 2', () {
+    test('vector.normalize 2', () {
       final Runtime runtime =
           getRuntime('main = vector.normalize(vector.new([1, 2, 3]))');
       checkResult(runtime,
@@ -3072,7 +3097,7 @@ void main() {
       checkResult(runtime, false);
     });
 
-    test('is.list 12', () {
+    test('is.list 14', () {
       final Runtime runtime = getRuntime('main = is.list(time.now())');
       checkResult(runtime, false);
     });
@@ -3292,7 +3317,7 @@ void main() {
       checkResult(runtime, false);
     });
 
-    test('is.set 12', () {
+    test('is.set 14', () {
       final Runtime runtime = getRuntime('main = is.set(time.now())');
       checkResult(runtime, false);
     });
@@ -3892,12 +3917,12 @@ void main() {
       checkResult(runtime, '"[1,2,[3,4]]"');
     });
 
-    test('json.encode 4', () {
+    test('json.encode 5', () {
       final Runtime runtime = getRuntime('main = json.encode({})');
       checkResult(runtime, '"{}"');
     });
 
-    test('json.encode 5', () {
+    test('json.encode 6', () {
       final Runtime runtime = getRuntime(
           'main = json.encode({"name": "John", "age": 42, "married": true, "numbers": [1, 2, 3]})');
       checkResult(runtime,
