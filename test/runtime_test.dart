@@ -3733,4 +3733,12 @@ void main() {
       checkResult(runtime, '"$username"');
     });
   });
+
+  group('File', () {
+    test('file.fromPath 1', () {
+      final Runtime runtime =
+          getRuntime('main = file.fromPath("test/resources/files/file1.txt")');
+      checkResult(runtime, '"$resourcesPath/files/file1.txt"');
+    });
+  });
 }

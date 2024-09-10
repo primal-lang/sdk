@@ -10,8 +10,8 @@ class Console {
   void prompt(Function(String) handler) {
     while (true) {
       try {
-        PlatformInterface().outWrite('> ');
-        final String input = PlatformInterface().readLine();
+        PlatformInterface().consoleOutWrite('> ');
+        final String input = PlatformInterface().consoleReadLine();
 
         if (input.isNotEmpty) {
           handler(input);
@@ -22,11 +22,11 @@ class Console {
     }
   }
 
-  void print(String message) => PlatformInterface().outWriteLn(message);
+  void print(String message) => PlatformInterface().consoleOutWriteLn(message);
 
   void warning(GenericWarning warning) =>
-      PlatformInterface().errorWriteLn('$yellow$warning$reset');
+      PlatformInterface().consoleErrorWriteLn('$yellow$warning$reset');
 
   void error(Object error) =>
-      PlatformInterface().errorWriteLn('$red$error$reset');
+      PlatformInterface().consoleErrorWriteLn('$red$error$reset');
 }

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
@@ -69,6 +70,13 @@ class StringNode extends LiteralNode<String> {
 
   @override
   Type get type => const StringType();
+}
+
+class FileNode extends LiteralNode<File> {
+  const FileNode(super.value);
+
+  @override
+  Type get type => const FileType();
 }
 
 class TimestampNode extends LiteralNode<DateTime> {

@@ -66,6 +66,7 @@ import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
 import 'package:primal/compiler/library/error/throw.dart';
+import 'package:primal/compiler/library/file/file_from_path.dart';
 import 'package:primal/compiler/library/hash/hash_md5.dart';
 import 'package:primal/compiler/library/hash/hash_sha1.dart';
 import 'package:primal/compiler/library/hash/hash_sha256.dart';
@@ -287,6 +288,9 @@ class StandardLibrary {
 
         // Error
         Throw(),
+
+        // File
+        FileFromPath(),
 
         // Hash
         HashMd5(),

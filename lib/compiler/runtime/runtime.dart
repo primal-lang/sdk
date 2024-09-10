@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/node.dart';
@@ -51,6 +53,8 @@ class Runtime {
       return '"$value"';
     } else if (value is DateTime) {
       return '"${value.toIso8601String()}"';
+    } else if (value is File) {
+      return '"${value.absolute.path}"';
     } else if (value is Set) {
       return getSet(value);
     } else if (value is List) {

@@ -3,20 +3,24 @@ import 'package:primal/compiler/platform/platform_base.dart';
 
 class PlatformInterface extends PlatformBase {
   @override
-  void outWrite(String content) => stdout.write(content);
+  void consoleOutWrite(String content) => stdout.write(content);
 
   @override
-  void outWriteLn(String content) => stdout.writeln(content);
+  void consoleOutWriteLn(String content) => stdout.writeln(content);
 
   @override
-  void errorWrite(String content) => stderr.write(content);
+  void consoleErrorWrite(String content) => stderr.write(content);
 
   @override
-  void errorWriteLn(String content) => stderr.writeln(content);
+  void consoleErrorWriteLn(String content) => stderr.writeln(content);
 
   @override
-  String readLine() => stdin.readLineSync()?.trim() ?? '';
-  
+  String consoleReadLine() => stdin.readLineSync()?.trim() ?? '';
+
   @override
-  String getEnvironmentVariable(String name) => Platform.environment[name] ?? '';
+  String environmentGetVariable(String name) =>
+      Platform.environment[name] ?? '';
+
+  @override
+  File fileFromPath(String path) => File(path);
 }

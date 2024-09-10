@@ -1,13 +1,17 @@
+import 'dart:io';
+
 abstract class PlatformBase {
-  void outWrite(String content);
+  void consoleOutWrite(String content);
 
-  void outWriteLn(String content);
+  void consoleOutWriteLn(String content);
 
-  void errorWrite(String content);
+  void consoleErrorWrite(String content);
 
-  void errorWriteLn(String content);
+  void consoleErrorWriteLn(String content);
 
-  String readLine();
+  String consoleReadLine();
 
-  String getEnvironmentVariable(String name);
+  String environmentGetVariable(String name);
+
+  File fileFromPath(String path);
 }

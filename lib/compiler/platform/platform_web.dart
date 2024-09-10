@@ -1,24 +1,30 @@
+import 'dart:io';
+
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/platform/platform_base.dart';
 
 class PlatformInterface extends PlatformBase {
   @override
-  void outWrite(String content) => print(content);
+  void consoleOutWrite(String content) => print(content);
 
   @override
-  void outWriteLn(String content) => print(content);
+  void consoleOutWriteLn(String content) => print(content);
 
   @override
-  void errorWrite(String content) => print(content);
+  void consoleErrorWrite(String content) => print(content);
 
   @override
-  void errorWriteLn(String content) => print(content);
+  void consoleErrorWriteLn(String content) => print(content);
 
   @override
-  String readLine() =>
+  String consoleReadLine() =>
       throw const UnimplementedFunctionWebError('console.read');
 
   @override
-  String getEnvironmentVariable(String name) =>
+  String environmentGetVariable(String name) =>
       throw const UnimplementedFunctionWebError('env.get');
+
+  @override
+  File fileFromPath(String path) =>
+      throw const UnimplementedFunctionWebError('file.fromPath');
 }

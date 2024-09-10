@@ -23,6 +23,13 @@ class StringType extends Type {
   String toString() => 'String';
 }
 
+class FileType extends Type {
+  const FileType();
+
+  @override
+  String toString() => 'File';
+}
+
 class TimestampType extends Type {
   const TimestampType();
 

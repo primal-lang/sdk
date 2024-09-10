@@ -30,7 +30,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   @override
   Node evaluate() {
     final Node a = arguments[0].evaluate();
-    PlatformInterface().outWrite(a.toString());
+    PlatformInterface().consoleOutWrite(a.toString());
 
     return a;
   }

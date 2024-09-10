@@ -24,6 +24,11 @@ class Parameter {
         type: const StringType(),
       );
 
+  factory Parameter.file(String name) => Parameter._(
+        name: name,
+        type: const FileType(),
+      );
+
   factory Parameter.timestamp(String name) => Parameter._(
         name: name,
         type: const TimestampType(),

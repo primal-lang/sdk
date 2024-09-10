@@ -150,3 +150,5 @@ String loadFile(String path) {
 
   return file.readAsStringSync();
 }
+
+String get resourcesPath => File('test/resources').absolute.path;
