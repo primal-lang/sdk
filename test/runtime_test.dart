@@ -161,78 +161,78 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('== 17', () {
+    test('== 18', () {
       final Runtime runtime = getRuntime(
           'main = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-02T00:00:00")');
       checkResult(runtime, false);
     });
 
-    test('== 18', () {
-      final Runtime runtime = getRuntime('main = set.new([]) == set.new([])');
-      checkResult(runtime, true);
-    });
-
     test('== 19', () {
-      final Runtime runtime =
-          getRuntime('main = set.new([1, 2, 3]) == set.new([1, 2, 3])');
+      final Runtime runtime = getRuntime('main = set.new([]) == set.new([])');
       checkResult(runtime, true);
     });
 
     test('== 20', () {
       final Runtime runtime =
+          getRuntime('main = set.new([1, 2, 3]) == set.new([1, 2, 3])');
+      checkResult(runtime, true);
+    });
+
+    test('== 21', () {
+      final Runtime runtime =
           getRuntime('main = set.new([1, 2]) == set.new([2])');
       checkResult(runtime, false);
     });
 
-    test('== 21', () {
+    test('== 22', () {
       final Runtime runtime =
           getRuntime('main = stack.new([]) == stack.new([])');
       checkResult(runtime, true);
     });
 
-    test('== 22', () {
+    test('== 23', () {
       final Runtime runtime =
           getRuntime('main = stack.new([1, 2, 3]) == stack.new([1, 2, 3])');
       checkResult(runtime, true);
     });
 
-    test('== 23', () {
+    test('== 24', () {
       final Runtime runtime =
           getRuntime('main = stack.new([1, 2]) == stack.new([2])');
       checkResult(runtime, false);
     });
 
-    test('== 24', () {
+    test('== 25', () {
       final Runtime runtime =
           getRuntime('main = queue.new([]) == queue.new([])');
       checkResult(runtime, true);
     });
 
-    test('== 25', () {
+    test('== 26', () {
       final Runtime runtime =
           getRuntime('main = queue.new([1, 2, 3]) == queue.new([1, 2, 3])');
       checkResult(runtime, true);
     });
 
-    test('== 26', () {
+    test('== 27', () {
       final Runtime runtime =
           getRuntime('main = queue.new([1, 2]) == queue.new([2])');
       checkResult(runtime, false);
     });
 
-    test('== 27', () {
+    test('== 28', () {
       final Runtime runtime =
           getRuntime('main = vector.new([]) == vector.new([])');
       checkResult(runtime, true);
     });
 
-    test('== 28', () {
+    test('== 29', () {
       final Runtime runtime =
           getRuntime('main = vector.new([1, 2, 3]) == vector.new([1, 2, 3])');
       checkResult(runtime, true);
     });
 
-    test('== 29', () {
+    test('== 30', () {
       final Runtime runtime =
           getRuntime('main = vector.new([1, 2]) == vector.new([2])');
       checkResult(runtime, false);
@@ -268,40 +268,111 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('== 7', () {
+    test('!= 7', () {
       final Runtime runtime = getRuntime('main = [] != []');
       checkResult(runtime, false);
     });
 
-    test('== 8', () {
+    test('!= 8', () {
       final Runtime runtime = getRuntime('main = [] != [1, 2, 3]');
       checkResult(runtime, true);
     });
 
-    test('== 9', () {
+    test('!= 9', () {
       final Runtime runtime = getRuntime('main = [1, 2, 3] != []');
       checkResult(runtime, true);
     });
 
-    test('== 10', () {
+    test('!= 10', () {
       final Runtime runtime = getRuntime('main = [1, 2, 3] != [1, 2, 4]');
       checkResult(runtime, true);
     });
 
-    test('== 11', () {
+    test('!= 11', () {
       final Runtime runtime = getRuntime('main = [1, 2, 3] != [1, 2, 3]');
       checkResult(runtime, false);
     });
 
-    test('== 12', () {
+    test('!= 12', () {
       final Runtime runtime = getRuntime(
           'main = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-01T00:00:00")');
       checkResult(runtime, false);
     });
 
-    test('== 13', () {
+    test('!= 13', () {
       final Runtime runtime = getRuntime(
           'main = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-02T00:00:00")');
+      checkResult(runtime, true);
+    });
+
+    test('!= 14', () {
+      final Runtime runtime = getRuntime('main = set.new([]) != set.new([])');
+      checkResult(runtime, false);
+    });
+
+    test('!= 15', () {
+      final Runtime runtime =
+          getRuntime('main = set.new([1, 2, 3]) != set.new([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('!= 16', () {
+      final Runtime runtime =
+          getRuntime('main = set.new([1, 2]) != set.new([2])');
+      checkResult(runtime, true);
+    });
+
+    test('!= 17', () {
+      final Runtime runtime =
+          getRuntime('main = stack.new([]) != stack.new([])');
+      checkResult(runtime, false);
+    });
+
+    test('!= 18', () {
+      final Runtime runtime =
+          getRuntime('main = stack.new([1, 2, 3]) != stack.new([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('!= 19', () {
+      final Runtime runtime =
+          getRuntime('main = stack.new([1, 2]) != stack.new([2])');
+      checkResult(runtime, true);
+    });
+
+    test('!= 20', () {
+      final Runtime runtime =
+          getRuntime('main = queue.new([]) != queue.new([])');
+      checkResult(runtime, false);
+    });
+
+    test('!= 21', () {
+      final Runtime runtime =
+          getRuntime('main = queue.new([1, 2, 3]) != queue.new([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('!= 22', () {
+      final Runtime runtime =
+          getRuntime('main = queue.new([1, 2]) != queue.new([2])');
+      checkResult(runtime, true);
+    });
+
+    test('!= 23', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([]) != vector.new([])');
+      checkResult(runtime, false);
+    });
+
+    test('!= 24', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([1, 2, 3]) != vector.new([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('!= 25', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([1, 2]) != vector.new([2])');
       checkResult(runtime, true);
     });
 
