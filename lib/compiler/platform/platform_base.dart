@@ -16,4 +16,6 @@ abstract class PlatformBase {
   File fileFromPath(String path);
 
   bool fileExists(File file);
+
+  String fileRead(File file);
 }

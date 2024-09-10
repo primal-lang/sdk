@@ -26,4 +26,7 @@ class PlatformInterface extends PlatformBase {
 
   @override
   bool fileExists(File file) => file.existsSync();
+
+  @override
+  String fileRead(File file) => file.readAsStringSync();
 }

@@ -30,4 +30,8 @@ class PlatformInterface extends PlatformBase {
   @override
   bool fileExists(File file) =>
       throw const UnimplementedFunctionWebError('file.exists');
+
+  @override
+  String fileRead(File file) =>
+      throw const UnimplementedFunctionWebError('file.read');
 }

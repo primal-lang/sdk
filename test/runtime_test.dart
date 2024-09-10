@@ -3876,5 +3876,11 @@ void main() {
           'main = file.exists(file.fromPath("test/resources/files/file0.txt"))');
       checkResult(runtime, false);
     });
+
+    test('file.read', () {
+      final Runtime runtime = getRuntime(
+          'main = file.read(file.fromPath("test/resources/files/file1.txt"))');
+      checkResult(runtime, '"Hello, world!"');
+    });
   });
 }
