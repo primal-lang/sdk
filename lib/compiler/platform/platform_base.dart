@@ -18,4 +18,6 @@ abstract class PlatformBase {
   bool fileExists(File file);
 
   String fileRead(File file);
+
+  void fileWrite(File file, String content);
 }

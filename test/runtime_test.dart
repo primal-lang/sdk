@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
@@ -3881,6 +3882,13 @@ void main() {
       final Runtime runtime = getRuntime(
           'main = file.read(file.fromPath("test/resources/files/file1.txt"))');
       checkResult(runtime, '"Hello, world!"');
+    });
+
+    test('file.write', () {
+      final String value = Random().nextInt(10000).toString();
+      final Runtime runtime = getRuntime(
+          'testFile(file, value) = file.read(file.write(file, value))\n\nmain = testFile(file.fromPath("test/resources/files/file_temp.txt"), "$value")');
+      checkResult(runtime, '"$value"');
     });
   });
 }

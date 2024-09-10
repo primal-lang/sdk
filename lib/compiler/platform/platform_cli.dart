@@ -29,4 +29,7 @@ class PlatformInterface extends PlatformBase {
 
   @override
   String fileRead(File file) => file.readAsStringSync();
+
+  @override
+  void fileWrite(File file, String content) => file.writeAsStringSync(content);
 }
