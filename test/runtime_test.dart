@@ -2752,6 +2752,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.number 14', () {
+      final Runtime runtime =
+          getRuntime('main = is.number(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.integer 1', () {
       final Runtime runtime = getRuntime('main = is.integer(12)');
       checkResult(runtime, true);
@@ -2872,6 +2878,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.string 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.string(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.boolean 1', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
@@ -2937,6 +2949,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.boolean 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.boolean(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.list 1', () {
       final Runtime runtime = getRuntime('main = is.list(true)');
       checkResult(runtime, false);
@@ -2997,6 +3015,12 @@ void main() {
 
     test('is.list 12', () {
       final Runtime runtime = getRuntime('main = is.list(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
+    test('is.list 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.list(directory.fromPath("."))');
       checkResult(runtime, false);
     });
 
@@ -3071,6 +3095,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.map 14', () {
+      final Runtime runtime =
+          getRuntime('main = is.map(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.vector 1', () {
       final Runtime runtime = getRuntime('main = is.vector(true)');
       checkResult(runtime, false);
@@ -3141,6 +3171,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.vector 14', () {
+      final Runtime runtime =
+          getRuntime('main = is.vector(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.set 1', () {
       final Runtime runtime = getRuntime('main = is.set(true)');
       checkResult(runtime, false);
@@ -3199,6 +3235,12 @@ void main() {
 
     test('is.set 12', () {
       final Runtime runtime = getRuntime('main = is.set(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.set(directory.fromPath("."))');
       checkResult(runtime, false);
     });
 
@@ -3280,6 +3322,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.stack 15', () {
+      final Runtime runtime =
+          getRuntime('main = is.stack(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.queue 1', () {
       final Runtime runtime = getRuntime('main = is.queue(true)');
       checkResult(runtime, false);
@@ -3358,6 +3406,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.queue 16', () {
+      final Runtime runtime =
+          getRuntime('main = is.queue(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.function 1', () {
       final Runtime runtime = getRuntime('main = is.function(true)');
       checkResult(runtime, false);
@@ -3420,6 +3474,12 @@ void main() {
     test('is.function 12', () {
       final Runtime runtime =
           getRuntime('main = is.function(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
+    test('is.function 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.function(directory.fromPath("."))');
       checkResult(runtime, false);
     });
 
@@ -3488,6 +3548,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.timestamp 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.timestamp(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.file 1', () {
       final Runtime runtime = getRuntime('main = is.file(true)');
       checkResult(runtime, false);
@@ -3548,6 +3614,83 @@ void main() {
 
     test('is.file 12', () {
       final Runtime runtime = getRuntime('main = is.file(file.fromPath("."))');
+      checkResult(runtime, true);
+    });
+
+    test('is.file 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.file(directory.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 1', () {
+      final Runtime runtime = getRuntime('main = is.directory(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 2', () {
+      final Runtime runtime = getRuntime('main = is.directory(1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 3', () {
+      final Runtime runtime = getRuntime('main = is.directory("Hello")');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 4', () {
+      final Runtime runtime = getRuntime('main = is.directory([])');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 5', () {
+      final Runtime runtime = getRuntime('main = is.directory({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 6', () {
+      final Runtime runtime =
+          getRuntime('main = is.directory(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 7', () {
+      final Runtime runtime =
+          getRuntime('main = is.directory(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 8', () {
+      final Runtime runtime =
+          getRuntime('main = is.directory(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 9', () {
+      final Runtime runtime =
+          getRuntime('main = is.directory(queue.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 10', () {
+      final Runtime runtime = getRuntime('main = is.directory(num.abs)');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 11', () {
+      final Runtime runtime = getRuntime('main = is.directory(time.now())');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 12', () {
+      final Runtime runtime =
+          getRuntime('main = is.directory(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
+    test('is.directory 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.directory(directory.fromPath("."))');
       checkResult(runtime, true);
     });
   });
