@@ -30,4 +30,8 @@ class PlatformFileWeb extends PlatformFileBase {
   @override
   bool delete(File file) =>
       throw const UnimplementedFunctionWebError('file.delete');
+
+  @override
+  String path(File file) =>
+      throw const UnimplementedFunctionWebError('file.path');
 }

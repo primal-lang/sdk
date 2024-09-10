@@ -3914,5 +3914,11 @@ void main() {
           'main = file.delete(file.fromPath("test/resources/files/temp/file$id.txt"))');
       checkResult(runtime, true);
     });
+
+    test('file.path', () {
+      final Runtime runtime = getRuntime(
+          'main = file.path(file.fromPath("test/resources/files/file1.txt"))');
+      checkResult(runtime, '"$resourcesPath/files/file1.txt"');
+    });
   });
 }

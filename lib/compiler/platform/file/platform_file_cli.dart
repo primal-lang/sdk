@@ -38,4 +38,7 @@ class PlatformFileCli extends PlatformFileBase {
       return false;
     }
   }
+
+  @override
+  String path(File file) => file.absolute.path;
 }
