@@ -3890,5 +3890,11 @@ void main() {
           'testFile(file, value) = file.read(file.write(file, value))\n\nmain = testFile(file.fromPath("test/resources/files/file_temp.txt"), "$value")');
       checkResult(runtime, '"$value"');
     });
+
+    test('file.length', () {
+      final Runtime runtime = getRuntime(
+          'main = file.length(file.fromPath("test/resources/files/file1.txt"))');
+      checkResult(runtime, 13);
+    });
   });
 }

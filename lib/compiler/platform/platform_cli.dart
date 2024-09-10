@@ -32,4 +32,7 @@ class PlatformInterface extends PlatformBase {
 
   @override
   void fileWrite(File file, String content) => file.writeAsStringSync(content);
+
+  @override
+  int fileLength(File file) => file.lengthSync();
 }

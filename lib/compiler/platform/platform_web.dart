@@ -38,4 +38,8 @@ class PlatformInterface extends PlatformBase {
   @override
   void fileWrite(File file, String content) =>
       throw const UnimplementedFunctionWebError('file.write');
+
+  @override
+  int fileLength(File file) =>
+      throw const UnimplementedFunctionWebError('file.length');
 }

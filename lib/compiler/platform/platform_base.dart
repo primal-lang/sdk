@@ -20,4 +20,6 @@ abstract class PlatformBase {
   String fileRead(File file);
 
   void fileWrite(File file, String content);
+
+  int fileLength(File file);
 }
