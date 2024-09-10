@@ -239,6 +239,18 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('== 31', () {
+      final Runtime runtime =
+          getRuntime('main = file.fromPath(".") == file.fromPath(".")');
+      checkResult(runtime, true);
+    });
+
+    test('== 32', () {
+      final Runtime runtime =
+          getRuntime('main = file.fromPath(".") == file.fromPath("..")');
+      checkResult(runtime, false);
+    });
+
     test('!= 1', () {
       final Runtime runtime = getRuntime('main = "hey" != "hey"');
       checkResult(runtime, false);
@@ -374,6 +386,18 @@ void main() {
     test('!= 25', () {
       final Runtime runtime =
           getRuntime('main = vector.new([1, 2]) != vector.new([2])');
+      checkResult(runtime, true);
+    });
+
+    test('== 26', () {
+      final Runtime runtime =
+          getRuntime('main = file.fromPath(".") != file.fromPath(".")');
+      checkResult(runtime, false);
+    });
+
+    test('== 27', () {
+      final Runtime runtime =
+          getRuntime('main = file.fromPath(".") != file.fromPath("..")');
       checkResult(runtime, true);
     });
 
