@@ -251,6 +251,18 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('== 33', () {
+      final Runtime runtime = getRuntime(
+          'main = directory.fromPath(".") == directory.fromPath(".")');
+      checkResult(runtime, true);
+    });
+
+    test('== 34', () {
+      final Runtime runtime = getRuntime(
+          'main = directory.fromPath(".") == directory.fromPath("..")');
+      checkResult(runtime, false);
+    });
+
     test('!= 1', () {
       final Runtime runtime = getRuntime('main = "hey" != "hey"');
       checkResult(runtime, false);
@@ -389,15 +401,27 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('== 26', () {
+    test('!= 26', () {
       final Runtime runtime =
           getRuntime('main = file.fromPath(".") != file.fromPath(".")');
       checkResult(runtime, false);
     });
 
-    test('== 27', () {
+    test('!= 27', () {
       final Runtime runtime =
           getRuntime('main = file.fromPath(".") != file.fromPath("..")');
+      checkResult(runtime, true);
+    });
+
+    test('!= 28', () {
+      final Runtime runtime = getRuntime(
+          'main = directory.fromPath(".") != directory.fromPath(".")');
+      checkResult(runtime, false);
+    });
+
+    test('!= 29', () {
+      final Runtime runtime = getRuntime(
+          'main = directory.fromPath(".") != directory.fromPath("..")');
       checkResult(runtime, true);
     });
 
