@@ -4,10 +4,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class FileCreate extends NativeFunctionNode {
-  FileCreate()
+class FileDelete extends NativeFunctionNode {
+  FileDelete()
       : super(
-          name: 'file.create',
+          name: 'file.delete',
           parameters: [
             Parameter.file('a'),
           ],
@@ -33,9 +33,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is FileNode) {
-      final bool created = PlatformInterface().file.create(a.value);
+      final bool deleted = PlatformInterface().file.delete(a.value);
 
-      return BooleanNode(created);
+      return BooleanNode(deleted);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

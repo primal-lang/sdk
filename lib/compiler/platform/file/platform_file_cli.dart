@@ -18,5 +18,24 @@ class PlatformFileCli extends PlatformFileBase {
   int length(File file) => file.lengthSync();
 
   @override
-  void create(File file) => file.createSync();
+  bool create(File file) {
+    try {
+      file.createSync(recursive: true);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  bool delete(File file) {
+    try {
+      file.deleteSync(recursive: true);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

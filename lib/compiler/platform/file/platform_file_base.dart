@@ -11,5 +11,7 @@ abstract class PlatformFileBase {
 
   int length(File file);
 
-  void create(File file);
+  bool create(File file);
+
+  bool delete(File file);
 }

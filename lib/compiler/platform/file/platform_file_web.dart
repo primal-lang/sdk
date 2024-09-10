@@ -24,6 +24,10 @@ class PlatformFileWeb extends PlatformFileBase {
       throw const UnimplementedFunctionWebError('file.length');
 
   @override
-  void create(File file) =>
+  bool create(File file) =>
       throw const UnimplementedFunctionWebError('file.create');
+
+  @override
+  bool delete(File file) =>
+      throw const UnimplementedFunctionWebError('file.delete');
 }

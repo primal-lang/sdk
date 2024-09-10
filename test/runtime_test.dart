@@ -3901,7 +3901,8 @@ void main() {
       final String id = Random().nextInt(10).toString();
       final Runtime runtime = getRuntime(
           'main = file.create(file.fromPath("test/resources/files/temp/file$id.txt"))');
-      runtime.executeMain();
+      final dynamic result = runtime.executeMain();
+      expect(result, 'true');
       final bool fileExists =
           File('$resourcesPath/files/temp/file$id.txt').existsSync();
       expect(true, fileExists);
