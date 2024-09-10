@@ -2745,6 +2745,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.number 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.number(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.integer 1', () {
       final Runtime runtime = getRuntime('main = is.integer(12)');
       checkResult(runtime, true);
@@ -2859,6 +2865,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.string 12', () {
+      final Runtime runtime =
+          getRuntime('main = is.string(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.boolean 1', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
@@ -2918,6 +2930,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.boolean 12', () {
+      final Runtime runtime =
+          getRuntime('main = is.boolean(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.list 1', () {
       final Runtime runtime = getRuntime('main = is.list(true)');
       checkResult(runtime, false);
@@ -2973,6 +2991,11 @@ void main() {
 
     test('is.list 11', () {
       final Runtime runtime = getRuntime('main = is.list(num.abs)');
+      checkResult(runtime, false);
+    });
+
+    test('is.list 12', () {
+      final Runtime runtime = getRuntime('main = is.list(file.fromPath("."))');
       checkResult(runtime, false);
     });
 
@@ -3042,6 +3065,11 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.map 13', () {
+      final Runtime runtime = getRuntime('main = is.map(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.vector 1', () {
       final Runtime runtime = getRuntime('main = is.vector(true)');
       checkResult(runtime, false);
@@ -3106,6 +3134,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.vector 13', () {
+      final Runtime runtime =
+          getRuntime('main = is.vector(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.set 1', () {
       final Runtime runtime = getRuntime('main = is.set(true)');
       checkResult(runtime, false);
@@ -3159,6 +3193,11 @@ void main() {
 
     test('is.set 11', () {
       final Runtime runtime = getRuntime('main = is.set(num.abs)');
+      checkResult(runtime, false);
+    });
+
+    test('is.set 12', () {
+      final Runtime runtime = getRuntime('main = is.set(file.fromPath("."))');
       checkResult(runtime, false);
     });
 
@@ -3235,6 +3274,11 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.stack 14', () {
+      final Runtime runtime = getRuntime('main = is.stack(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.queue 1', () {
       final Runtime runtime = getRuntime('main = is.queue(true)');
       checkResult(runtime, false);
@@ -3308,6 +3352,11 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.queue 15', () {
+      final Runtime runtime = getRuntime('main = is.queue(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.function 1', () {
       final Runtime runtime = getRuntime('main = is.function(true)');
       checkResult(runtime, false);
@@ -3367,6 +3416,12 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('is.function 12', () {
+      final Runtime runtime =
+          getRuntime('main = is.function(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
     test('is.timestamp 1', () {
       final Runtime runtime = getRuntime('main = is.timestamp(true)');
       checkResult(runtime, false);
@@ -3423,6 +3478,75 @@ void main() {
 
     test('is.timestamp 11', () {
       final Runtime runtime = getRuntime('main = is.timestamp(time.now())');
+      checkResult(runtime, true);
+    });
+
+    test('is.timestamp 12', () {
+      final Runtime runtime =
+          getRuntime('main = is.timestamp(file.fromPath("."))');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 1', () {
+      final Runtime runtime = getRuntime('main = is.file(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 2', () {
+      final Runtime runtime = getRuntime('main = is.file(1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 3', () {
+      final Runtime runtime = getRuntime('main = is.file("Hello")');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 4', () {
+      final Runtime runtime = getRuntime('main = is.file([])');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 5', () {
+      final Runtime runtime = getRuntime('main = is.file({"foo": 1})');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 6', () {
+      final Runtime runtime =
+          getRuntime('main = is.file(vector.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 7', () {
+      final Runtime runtime = getRuntime('main = is.file(set.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 8', () {
+      final Runtime runtime =
+          getRuntime('main = is.file(stack.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 9', () {
+      final Runtime runtime =
+          getRuntime('main = is.file(queue.new([1, 2, 3]))');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 10', () {
+      final Runtime runtime = getRuntime('main = is.file(num.abs)');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 11', () {
+      final Runtime runtime = getRuntime('main = is.file(time.now())');
+      checkResult(runtime, false);
+    });
+
+    test('is.file 12', () {
+      final Runtime runtime = getRuntime('main = is.file(file.fromPath("."))');
       checkResult(runtime, true);
     });
   });

@@ -35,6 +35,7 @@ import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/arithmetic/num_tan.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
+import 'package:primal/compiler/library/casting/is_file.dart';
 import 'package:primal/compiler/library/casting/is_function.dart';
 import 'package:primal/compiler/library/casting/is_infinite.dart';
 import 'package:primal/compiler/library/casting/is_integer.dart';
@@ -247,6 +248,7 @@ class StandardLibrary {
         // Casting
         IsBoolean(),
         IsDecimal(),
+        IsFile(),
         IsFunction(),
         IsInfinite(),
         IsInteger(),
