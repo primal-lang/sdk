@@ -35,6 +35,7 @@ import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/arithmetic/num_tan.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
+import 'package:primal/compiler/library/casting/is_directory.dart';
 import 'package:primal/compiler/library/casting/is_file.dart';
 import 'package:primal/compiler/library/casting/is_function.dart';
 import 'package:primal/compiler/library/casting/is_infinite.dart';
@@ -65,6 +66,7 @@ import 'package:primal/compiler/library/console/console_write.dart';
 import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
+import 'package:primal/compiler/library/directory/directory_from_path.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/file/file_copy.dart';
@@ -261,6 +263,7 @@ class StandardLibrary {
         // Casting
         IsBoolean(),
         IsDecimal(),
+        IsDirectory(),
         IsFile(),
         IsFunction(),
         IsInfinite(),
@@ -297,6 +300,9 @@ class StandardLibrary {
         // Control
         If(),
         Try(),
+
+        // Directory
+        DirectoryFromPath(),
 
         // Environment
         EnvGet(),

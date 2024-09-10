@@ -3957,4 +3957,12 @@ void main() {
       checkResult(runtime, true);
     });
   });
+
+  group('Directory', () {
+    test('directory.fromPath', () {
+      final Runtime runtime =
+          getRuntime('main = directory.fromPath("test/resources/files")');
+      checkResult(runtime, '"$resourcesPath/files"');
+    });
+  });
 }

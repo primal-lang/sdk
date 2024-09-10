@@ -1,15 +1,12 @@
-import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/platform/base/platform_cli.dart'
-    if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class FilePath extends NativeFunctionNode {
-  FilePath()
+class IsDirectory extends NativeFunctionNode {
+  IsDirectory()
       : super(
-          name: 'file.path',
+          name: 'is.directory',
           parameters: [
-            Parameter.file('a'),
+            Parameter.any('a'),
           ],
         );
 
@@ -32,16 +29,6 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   Node evaluate() {
     final Node a = arguments[0].evaluate();
 
-    if (a is FileNode) {
-      final String path = PlatformInterface().file.path(a.value);
-
-      return StringNode(path);
-    } else {
-      throw InvalidArgumentTypesError(
-        function: name,
-        expected: parameterTypes,
-        actual: [a.type],
-      );
-    }
+    return BooleanNode(a is DirectoryNode);
   }
 }

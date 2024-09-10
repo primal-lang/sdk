@@ -1,4 +1,5 @@
 import 'package:primal/compiler/platform/console/platform_console_base.dart';
+import 'package:primal/compiler/platform/directory/platform_directory_base.dart';
 import 'package:primal/compiler/platform/environment/platform_environment_base.dart';
 import 'package:primal/compiler/platform/file/platform_file_base.dart';
 
@@ -8,4 +9,6 @@ abstract class PlatformBase {
   PlatformEnvironmentBase get environment;
 
   PlatformFileBase get file;
+
+  PlatformDirectoryBase get directory;
 }

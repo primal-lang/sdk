@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/platform/base/platform_cli.dart'
@@ -33,7 +34,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      return FileNode(PlatformInterface().file.fromPath(a.value));
+      final File file = PlatformInterface().file.fromPath(a.value);
+
+      return FileNode(file);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

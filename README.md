@@ -98,6 +98,8 @@ These are the available types at runtime:
 * Stack
 * Vector
 * Queue
+* File
+* Directory
 * Function
 
 ## Runtime

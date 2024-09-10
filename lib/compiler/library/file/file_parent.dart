@@ -34,9 +34,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is FileNode) {
-      final Directory directory = PlatformInterface().file.parent(a.value);
+      final Directory parent = PlatformInterface().file.parent(a.value);
 
-      return DirectoryNode(directory);
+      return DirectoryNode(parent);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

@@ -32,6 +32,10 @@ class CompEq extends NativeFunctionNode {
       return BooleanNode(a.value == b.value);
     } else if ((a is TimestampNode) && (b is TimestampNode)) {
       return BooleanNode(a.value.compareTo(b.value) == 0);
+    } else if ((a is FileNode) && (b is FileNode)) {
+      return BooleanNode(a.value.absolute.path == b.value.absolute.path);
+    } else if ((a is DirectoryNode) && (b is DirectoryNode)) {
+      return BooleanNode(a.value.absolute.path == b.value.absolute.path);
     } else if ((a is ListNode) && (b is ListNode)) {
       return compareLists(
         function: function,

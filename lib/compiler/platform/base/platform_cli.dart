@@ -1,6 +1,8 @@
 import 'package:primal/compiler/platform/base/platform_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_cli.dart';
+import 'package:primal/compiler/platform/directory/platform_directory_base.dart';
+import 'package:primal/compiler/platform/directory/platform_directory_cli.dart';
 import 'package:primal/compiler/platform/environment/platform_environment_base.dart';
 import 'package:primal/compiler/platform/environment/platform_environment_cli.dart';
 import 'package:primal/compiler/platform/file/platform_file_base.dart';
@@ -15,4 +17,7 @@ class PlatformInterface extends PlatformBase {
 
   @override
   PlatformFileBase get file => PlatformFileCli();
+
+  @override
+  PlatformDirectoryBase get directory => PlatformDirectoryCli();
 }
