@@ -2655,6 +2655,29 @@ void main() {
       final Runtime runtime = getRuntime('main = to.boolean(false)');
       checkResult(runtime, false);
     });
+
+    test('to.list 1', () {
+      final Runtime runtime = getRuntime('main = to.list(set.new([1, 2, 3]))');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('to.list 2', () {
+      final Runtime runtime =
+          getRuntime('main = to.list(vector.new([1, 2, 3]))');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('to.list 3', () {
+      final Runtime runtime =
+          getRuntime('main = to.list(stack.new([1, 2, 3]))');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('to.list 4', () {
+      final Runtime runtime =
+          getRuntime('main = to.list(queue.new([1, 2, 3]))');
+      checkResult(runtime, [1, 2, 3]);
+    });
   });
 
   group('Is', () {

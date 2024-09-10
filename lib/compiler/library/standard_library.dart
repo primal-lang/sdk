@@ -50,6 +50,7 @@ import 'package:primal/compiler/library/casting/is_vector.dart';
 import 'package:primal/compiler/library/casting/to_boolean.dart';
 import 'package:primal/compiler/library/casting/to_decimal.dart';
 import 'package:primal/compiler/library/casting/to_integer.dart';
+import 'package:primal/compiler/library/casting/to_list.dart';
 import 'package:primal/compiler/library/casting/to_number.dart';
 import 'package:primal/compiler/library/casting/to_string.dart';
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
@@ -260,6 +261,7 @@ class StandardLibrary {
         ToBoolean(),
         ToDecimal(),
         ToInteger(),
+        ToList(),
         ToNumber(),
         ToString(),
 
