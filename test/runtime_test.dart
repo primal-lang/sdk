@@ -3898,7 +3898,7 @@ void main() {
     });
 
     test('file.create', () {
-      final String id = Random().nextInt(10).toString();
+      final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
           'main = file.create(file.fromPath("test/resources/files/temp/file$id.txt"))');
       final dynamic result = runtime.executeMain();
@@ -3906,6 +3906,13 @@ void main() {
       final bool fileExists =
           File('$resourcesPath/files/temp/file$id.txt').existsSync();
       expect(true, fileExists);
+    });
+
+    test('file.create', () {
+      final String id = DateTime.now().day.toString();
+      final Runtime runtime = getRuntime(
+          'main = file.delete(file.fromPath("test/resources/files/temp/file$id.txt"))');
+      checkResult(runtime, true);
     });
   });
 }

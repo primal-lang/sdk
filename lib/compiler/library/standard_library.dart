@@ -68,6 +68,7 @@ import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/file/file_create.dart';
+import 'package:primal/compiler/library/file/file_delete.dart';
 import 'package:primal/compiler/library/file/file_exists.dart';
 import 'package:primal/compiler/library/file/file_from_path.dart';
 import 'package:primal/compiler/library/file/file_length.dart';
@@ -298,6 +299,7 @@ class StandardLibrary {
 
         // File
         FileCreate(),
+        FileDelete(),
         FileExists(),
         FileFromPath(),
         FileLength(),
