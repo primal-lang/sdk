@@ -3944,5 +3944,11 @@ void main() {
           'file1 = file.fromPath("test/resources/files/file2.txt")\n\nfile2 = file.fromPath("test/resources/files/temp/file2.txt")\n\nmain = file.move(file1(), file2())');
       checkResult(runtime, true);
     });
+
+    test('file.parent', () {
+      final Runtime runtime = getRuntime(
+          'main = file.parent(file.fromPath("test/resources/files/file1.txt"))');
+      checkResult(runtime, '"$resourcesPath/files"');
+    });
   });
 }

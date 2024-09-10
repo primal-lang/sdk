@@ -55,6 +55,8 @@ class Runtime {
       return '"${value.toIso8601String()}"';
     } else if (value is File) {
       return '"${value.absolute.path}"';
+    } else if (value is Directory) {
+      return '"${value.absolute.path}"';
     } else if (value is Set) {
       return getSet(value);
     } else if (value is List) {

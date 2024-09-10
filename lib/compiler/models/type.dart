@@ -30,6 +30,13 @@ class FileType extends Type {
   String toString() => 'File';
 }
 
+class DirectoryType extends Type {
+  const DirectoryType();
+
+  @override
+  String toString() => 'Directory';
+}
+
 class TimestampType extends Type {
   const TimestampType();
 

@@ -24,4 +24,6 @@ abstract class PlatformFileBase {
   bool copy(File fileSource, File fileDestination);
 
   bool move(File fileSource, File fileDestination);
+
+  Directory parent(File file);
 }

@@ -82,4 +82,7 @@ class PlatformFileCli extends PlatformFileBase {
       return false;
     }
   }
+
+  @override
+  Directory parent(File file) => file.parent;
 }

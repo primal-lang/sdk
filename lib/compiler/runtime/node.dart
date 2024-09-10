@@ -79,6 +79,13 @@ class FileNode extends LiteralNode<File> {
   Type get type => const FileType();
 }
 
+class DirectoryNode extends LiteralNode<Directory> {
+  const DirectoryNode(super.value);
+
+  @override
+  Type get type => const DirectoryType();
+}
+
 class TimestampNode extends LiteralNode<DateTime> {
   const TimestampNode(super.value);
 

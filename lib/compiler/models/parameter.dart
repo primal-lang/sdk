@@ -29,6 +29,11 @@ class Parameter {
         type: const FileType(),
       );
 
+  factory Parameter.directory(String name) => Parameter._(
+        name: name,
+        type: const DirectoryType(),
+      );
+
   factory Parameter.timestamp(String name) => Parameter._(
         name: name,
         type: const TimestampType(),
