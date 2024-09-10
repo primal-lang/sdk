@@ -4,13 +4,13 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class FileWrite extends NativeFunctionNode {
-  FileWrite()
+class FileCopy extends NativeFunctionNode {
+  FileCopy()
       : super(
-          name: 'file.write',
+          name: 'file.copy',
           parameters: [
             Parameter.file('a'),
-            Parameter.string('b'),
+            Parameter.file('b'),
           ],
         );
 
@@ -34,10 +34,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    if ((a is FileNode) && (b is StringNode)) {
-      final bool written = PlatformInterface().file.write(a.value, b.value);
+    if ((a is FileNode) && (b is FileNode)) {
+      final bool copied = PlatformInterface().file.copy(a.value, b.value);
 
-      return BooleanNode(written);
+      return BooleanNode(copied);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

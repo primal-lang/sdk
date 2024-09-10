@@ -7,7 +7,7 @@ abstract class PlatformFileBase {
 
   String read(File file);
 
-  void write(File file, String content);
+  bool write(File file, String content);
 
   int length(File file);
 
@@ -20,4 +20,6 @@ abstract class PlatformFileBase {
   String name(File file);
 
   String extension(File file);
+
+  bool copy(File fileSource, File fileDestination);
 }

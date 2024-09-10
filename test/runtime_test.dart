@@ -3887,8 +3887,8 @@ void main() {
     test('file.write', () {
       final String value = Random().nextInt(10000).toString();
       final Runtime runtime = getRuntime(
-          'testFile(file, value) = file.read(file.write(file, value))\n\nmain = testFile(file.fromPath("test/resources/files/temp/file_temp.txt"), "$value")');
-      checkResult(runtime, '"$value"');
+          'testFile(file, value) = file.write(file, value)\n\nmain = testFile(file.fromPath("test/resources/files/temp/file_temp.txt"), "$value")');
+      checkResult(runtime, true);
     });
 
     test('file.length', () {
@@ -3931,6 +3931,12 @@ void main() {
       final Runtime runtime = getRuntime(
           'main = file.extension(file.fromPath("test/resources/files/file1.txt"))');
       checkResult(runtime, '"txt"');
+    });
+
+    test('file.copy', () {
+      final Runtime runtime = getRuntime(
+          'file1 = file.fromPath("test/resources/files/file1.txt")\n\nfile2 = file.fromPath("test/resources/files/file2.txt")\n\nmain = file.copy(file1(), file2())');
+      checkResult(runtime, true);
     });
   });
 }

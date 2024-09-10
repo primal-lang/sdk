@@ -13,7 +13,15 @@ class PlatformFileCli extends PlatformFileBase {
   String read(File file) => file.readAsStringSync();
 
   @override
-  void write(File file, String content) => file.writeAsStringSync(content);
+  bool write(File file, String content) {
+    try {
+      file.writeAsStringSync(content);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   @override
   int length(File file) => file.lengthSync();
@@ -51,5 +59,16 @@ class PlatformFileCli extends PlatformFileBase {
     final String name = path_lib.extension(file.path);
 
     return name.startsWith('.') ? name.substring(1) : name;
+  }
+
+  @override
+  bool copy(File fileSource, File fileDestination) {
+    try {
+      fileSource.copySync(fileDestination.path);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

@@ -16,7 +16,7 @@ class PlatformFileWeb extends PlatformFileBase {
       throw const UnimplementedFunctionWebError('file.read');
 
   @override
-  void write(File file, String content) =>
+  bool write(File file, String content) =>
       throw const UnimplementedFunctionWebError('file.write');
 
   @override
@@ -42,4 +42,8 @@ class PlatformFileWeb extends PlatformFileBase {
   @override
   String extension(File file) =>
       throw const UnimplementedFunctionWebError('file.extension');
+
+  @override
+  bool copy(File fileSource, File fileDestination) =>
+      throw const UnimplementedFunctionWebError('file.copy');
 }
