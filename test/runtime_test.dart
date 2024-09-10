@@ -3887,7 +3887,7 @@ void main() {
     test('file.write', () {
       final String value = Random().nextInt(10000).toString();
       final Runtime runtime = getRuntime(
-          'testFile(file, value) = file.read(file.write(file, value))\n\nmain = testFile(file.fromPath("test/resources/files/file_temp.txt"), "$value")');
+          'testFile(file, value) = file.read(file.write(file, value))\n\nmain = testFile(file.fromPath("test/resources/files/temp/file_temp.txt"), "$value")');
       checkResult(runtime, '"$value"');
     });
 
@@ -3895,6 +3895,16 @@ void main() {
       final Runtime runtime = getRuntime(
           'main = file.length(file.fromPath("test/resources/files/file1.txt"))');
       checkResult(runtime, 13);
+    });
+
+    test('file.create', () {
+      final String id = Random().nextInt(10).toString();
+      final Runtime runtime = getRuntime(
+          'main = file.create(file.fromPath("test/resources/files/temp/file$id.txt"))');
+      runtime.executeMain();
+      final bool fileExists =
+          File('$resourcesPath/files/temp/file$id.txt').existsSync();
+      expect(true, fileExists);
     });
   });
 }

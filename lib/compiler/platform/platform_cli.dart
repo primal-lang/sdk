@@ -35,4 +35,7 @@ class PlatformInterface extends PlatformBase {
 
   @override
   int fileLength(File file) => file.lengthSync();
+
+  @override
+  void fileCreate(File file) => file.createSync();
 }

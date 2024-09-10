@@ -22,4 +22,6 @@ abstract class PlatformBase {
   void fileWrite(File file, String content);
 
   int fileLength(File file);
+
+  void fileCreate(File file);
 }

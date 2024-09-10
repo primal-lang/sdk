@@ -5,4 +5,4 @@ bin/aot/
 bin/web/
 scripts/
 example/test/
-test/resources/files/file_temp.txt
+test/resources/files/temp/
