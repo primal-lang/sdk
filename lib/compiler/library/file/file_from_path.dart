@@ -33,7 +33,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      return FileNode(PlatformInterface().fileFromPath(a.value));
+      return FileNode(PlatformInterface().file.fromPath(a.value));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

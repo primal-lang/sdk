@@ -35,7 +35,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is FileNode) && (b is StringNode)) {
-      PlatformInterface().fileWrite(a.value, b.value);
+      PlatformInterface().file.write(a.value, b.value);
 
       return a;
     } else {

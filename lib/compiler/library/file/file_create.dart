@@ -33,7 +33,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is FileNode) {
-      PlatformInterface().fileCreate(a.value);
+      PlatformInterface().file.create(a.value);
 
       return a;
     } else {
