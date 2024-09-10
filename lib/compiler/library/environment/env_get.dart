@@ -33,7 +33,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      return StringNode(PlatformInterface().environmentGetVariable(a.value));
+      return StringNode(PlatformInterface().environment.getVariable(a.value));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

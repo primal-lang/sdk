@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:primal/compiler/platform/console/platform_console_base.dart';
+import 'package:primal/compiler/platform/environment/platform_environment_base.dart';
 
 abstract class PlatformBase {
   PlatformConsoleBase get console;
 
-  String environmentGetVariable(String name);
+  PlatformEnvironmentBase get environment;
 
   File fileFromPath(String path);
 

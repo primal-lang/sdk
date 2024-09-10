@@ -2,14 +2,15 @@ import 'dart:io';
 import 'package:primal/compiler/platform/base/platform_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_cli.dart';
+import 'package:primal/compiler/platform/environment/platform_environment_base.dart';
+import 'package:primal/compiler/platform/environment/platform_environment_cli.dart';
 
 class PlatformInterface extends PlatformBase {
   @override
   PlatformConsoleBase get console => PlatformConsoleCli();
 
   @override
-  String environmentGetVariable(String name) =>
-      Platform.environment[name] ?? '';
+  PlatformEnvironmentBase get environment => PlatformEnvironmentCli();
 
   @override
   File fileFromPath(String path) => File(path);

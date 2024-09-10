@@ -3,14 +3,15 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/platform/base/platform_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_web.dart';
+import 'package:primal/compiler/platform/environment/platform_environment_base.dart';
+import 'package:primal/compiler/platform/environment/platform_environment_web.dart';
 
 class PlatformInterface extends PlatformBase {
   @override
   PlatformConsoleBase get console => PlatformConsoleWeb();
 
   @override
-  String environmentGetVariable(String name) =>
-      throw const UnimplementedFunctionWebError('env.get');
+  PlatformEnvironmentBase get environment => PlatformEnvironmentWeb();
 
   @override
   File fileFromPath(String path) =>
