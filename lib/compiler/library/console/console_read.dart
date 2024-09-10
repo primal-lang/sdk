@@ -11,5 +11,5 @@ class ConsoleRead extends NativeFunctionNode {
 
   @override
   Node node(List<Node> arguments) =>
-      StringNode(PlatformInterface().consoleReadLine());
+      StringNode(PlatformInterface().console.readLine());
 }

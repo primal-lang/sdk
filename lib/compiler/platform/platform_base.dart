@@ -1,15 +1,8 @@
 import 'dart:io';
+import 'package:primal/compiler/platform/console/platform_console_base.dart';
 
 abstract class PlatformBase {
-  void consoleOutWrite(String content);
-
-  void consoleOutWriteLn(String content);
-
-  void consoleErrorWrite(String content);
-
-  void consoleErrorWriteLn(String content);
-
-  String consoleReadLine();
+  PlatformConsoleBase get console;
 
   String environmentGetVariable(String name);
 

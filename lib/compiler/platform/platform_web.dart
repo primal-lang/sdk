@@ -1,23 +1,12 @@
 import 'dart:io';
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/platform/console/platform_console_base.dart';
+import 'package:primal/compiler/platform/console/platform_console_web.dart';
 import 'package:primal/compiler/platform/platform_base.dart';
 
 class PlatformInterface extends PlatformBase {
   @override
-  void consoleOutWrite(String content) => print(content);
-
-  @override
-  void consoleOutWriteLn(String content) => print(content);
-
-  @override
-  void consoleErrorWrite(String content) => print(content);
-
-  @override
-  void consoleErrorWriteLn(String content) => print(content);
-
-  @override
-  String consoleReadLine() =>
-      throw const UnimplementedFunctionWebError('console.read');
+  PlatformConsoleBase get console => PlatformConsoleWeb();
 
   @override
   String environmentGetVariable(String name) =>

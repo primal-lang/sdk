@@ -1,21 +1,11 @@
 import 'dart:io';
+import 'package:primal/compiler/platform/console/platform_console_base.dart';
+import 'package:primal/compiler/platform/console/platform_console_cli.dart';
 import 'package:primal/compiler/platform/platform_base.dart';
 
 class PlatformInterface extends PlatformBase {
   @override
-  void consoleOutWrite(String content) => stdout.write(content);
-
-  @override
-  void consoleOutWriteLn(String content) => stdout.writeln(content);
-
-  @override
-  void consoleErrorWrite(String content) => stderr.write(content);
-
-  @override
-  void consoleErrorWriteLn(String content) => stderr.writeln(content);
-
-  @override
-  String consoleReadLine() => stdin.readLineSync()?.trim() ?? '';
+  PlatformConsoleBase get console => PlatformConsoleCli();
 
   @override
   String environmentGetVariable(String name) =>
