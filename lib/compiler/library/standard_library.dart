@@ -72,6 +72,7 @@ import 'package:primal/compiler/library/file/file_delete.dart';
 import 'package:primal/compiler/library/file/file_exists.dart';
 import 'package:primal/compiler/library/file/file_from_path.dart';
 import 'package:primal/compiler/library/file/file_length.dart';
+import 'package:primal/compiler/library/file/file_name.dart';
 import 'package:primal/compiler/library/file/file_path.dart';
 import 'package:primal/compiler/library/file/file_read.dart';
 import 'package:primal/compiler/library/file/file_write.dart';
@@ -304,6 +305,7 @@ class StandardLibrary {
         FileExists(),
         FileFromPath(),
         FileLength(),
+        FileName(),
         FilePath(),
         FileRead(),
         FileWrite(),

@@ -3920,5 +3920,11 @@ void main() {
           'main = file.path(file.fromPath("test/resources/files/file1.txt"))');
       checkResult(runtime, '"$resourcesPath/files/file1.txt"');
     });
+
+    test('file.name', () {
+      final Runtime runtime = getRuntime(
+          'main = file.name(file.fromPath("test/resources/files/file1.txt"))');
+      checkResult(runtime, '"file1.txt"');
+    });
   });
 }

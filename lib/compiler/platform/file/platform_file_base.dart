@@ -16,4 +16,6 @@ abstract class PlatformFileBase {
   bool delete(File file);
 
   String path(File file);
+
+  String name(File file);
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as path_lib;
 import 'package:primal/compiler/platform/file/platform_file_base.dart';
 
 class PlatformFileCli extends PlatformFileBase {
@@ -41,4 +42,7 @@ class PlatformFileCli extends PlatformFileBase {
 
   @override
   String path(File file) => file.absolute.path;
+
+  @override
+  String name(File file) => path_lib.basename(file.path);
 }

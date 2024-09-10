@@ -34,4 +34,8 @@ class PlatformFileWeb extends PlatformFileBase {
   @override
   String path(File file) =>
       throw const UnimplementedFunctionWebError('file.path');
+
+  @override
+  String name(File file) =>
+      throw const UnimplementedFunctionWebError('file.name');
 }
