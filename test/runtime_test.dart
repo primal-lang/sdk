@@ -167,6 +167,77 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('== 18', () {
+      final Runtime runtime = getRuntime('main = set.new([]) == set.new([])');
+      checkResult(runtime, true);
+    });
+
+    test('== 19', () {
+      final Runtime runtime =
+          getRuntime('main = set.new([1, 2, 3]) == set.new([1, 2, 3])');
+      checkResult(runtime, true);
+    });
+
+    test('== 20', () {
+      final Runtime runtime =
+          getRuntime('main = set.new([1, 2]) == set.new([2])');
+      checkResult(runtime, false);
+    });
+
+    test('== 21', () {
+      final Runtime runtime =
+          getRuntime('main = stack.new([]) == stack.new([])');
+      checkResult(runtime, true);
+    });
+
+    test('== 22', () {
+      final Runtime runtime =
+          getRuntime('main = stack.new([1, 2, 3]) == stack.new([1, 2, 3])');
+      checkResult(runtime, true);
+    });
+
+    test('== 23', () {
+      final Runtime runtime =
+          getRuntime('main = stack.new([1, 2]) == stack.new([2])');
+      checkResult(runtime, false);
+    });
+
+    test('== 24', () {
+      final Runtime runtime =
+          getRuntime('main = queue.new([]) == queue.new([])');
+      checkResult(runtime, true);
+    });
+
+    test('== 25', () {
+      final Runtime runtime =
+          getRuntime('main = queue.new([1, 2, 3]) == queue.new([1, 2, 3])');
+      checkResult(runtime, true);
+    });
+
+    test('== 26', () {
+      final Runtime runtime =
+          getRuntime('main = queue.new([1, 2]) == queue.new([2])');
+      checkResult(runtime, false);
+    });
+
+    test('== 27', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([]) == vector.new([])');
+      checkResult(runtime, true);
+    });
+
+    test('== 28', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([1, 2, 3]) == vector.new([1, 2, 3])');
+      checkResult(runtime, true);
+    });
+
+    test('== 29', () {
+      final Runtime runtime =
+          getRuntime('main = vector.new([1, 2]) == vector.new([2])');
+      checkResult(runtime, false);
+    });
+
     test('!= 1', () {
       final Runtime runtime = getRuntime('main = "hey" != "hey"');
       checkResult(runtime, false);
