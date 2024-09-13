@@ -96,8 +96,8 @@ These are the available types at runtime:
 * Map
 * Set
 * Stack
-* Vector
 * Queue
+* Vector
 * File
 * Directory
 * Function
