@@ -1307,6 +1307,12 @@ void main() {
       checkResult(runtime, '"banana"');
     });
 
+    test('str.replace 3', () {
+      final Runtime runtime =
+          getRuntime('main = str.replace("aaa123BBB", "[a-z]", "x")');
+      checkResult(runtime, '"xxx123BBB"');
+    });
+
     test('str.uppercase', () {
       final Runtime runtime = getRuntime('main = str.uppercase("Primal")');
       checkResult(runtime, '"PRIMAL"');

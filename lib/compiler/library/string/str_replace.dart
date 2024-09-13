@@ -35,7 +35,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node c = arguments[2].evaluate();
 
     if ((a is StringNode) && (b is StringNode) && (c is StringNode)) {
-      return StringNode(a.value.replaceAll(b.value, c.value));
+      return StringNode(a.value.replaceAll(RegExp(b.value), c.value));
     } else {
       throw InvalidArgumentTypesError(
         function: name,
