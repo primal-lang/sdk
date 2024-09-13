@@ -1,3 +1,8 @@
+/*
+  Input: a positive number
+  Output: the factorial of that number
+*/
+
 factorial(n) = if (n < 0)
                    error.throw(0, "Cannot calculate factorial of a negative number")
                else if (n == 0)

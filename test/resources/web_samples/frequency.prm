@@ -1,3 +1,8 @@
+/*
+  Input: a list of elements
+  Output: a map with the elements as keys and the amount of appearances in the list as a value
+*/
+
 frequency(list) = frequency.helper(list, {})
 
 frequency.helper(list, result) =

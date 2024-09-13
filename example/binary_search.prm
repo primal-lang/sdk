@@ -1,3 +1,8 @@
+/*
+  Input: a list of elements that can be ordered (i.e. numbers, strings and timestamps) and an element to search in the list
+  Output: true if the element is present in the list, false otherwise
+*/
+
 binarySearch(list, element) =
     if (list.isEmpty(list))
         false

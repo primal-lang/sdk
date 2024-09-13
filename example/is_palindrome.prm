@@ -1,3 +1,8 @@
+/*
+  Input: a string
+  Output: true if the string is a palindrome, false otherwise
+*/
+
 isPalindrome(string) = isPalindrome.helper(string, 0, str.length(string) - 1)
 
 isPalindrome.helper(string, start, end) =

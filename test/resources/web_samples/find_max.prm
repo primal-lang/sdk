@@ -1,3 +1,8 @@
+/*
+  Input: a list of numbers
+  Output: the maximum number in the list
+*/
+
 findMax(list) = if (list.isEmpty(list))
                     error.throw(-1, 'Cannot find max number in an empty list')
                 else

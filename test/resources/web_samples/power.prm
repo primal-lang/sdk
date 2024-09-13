@@ -1,3 +1,8 @@
+/*
+  Input: a number representing the base and another number representing the exponent
+  Output: the result of base to the exponent power
+*/
+
 power(base, exp) = if (exp == 0)
                        1
                    else

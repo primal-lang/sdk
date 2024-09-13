@@ -1,3 +1,8 @@
+/*
+  Input: a positive integer
+  Output: the sum of all the digits of the number
+*/
+
 sumOfDigits(n) = if (n == 0)
                      0
                  else

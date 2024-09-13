@@ -1,3 +1,8 @@
+/*
+  Input: an positive integer
+  Output: the list of all the divisors of that number
+*/
+
 divisors(n) = divisors.helper(n, 1)
 
 divisors.helper(n, x) = if (x > n)

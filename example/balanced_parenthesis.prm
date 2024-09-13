@@ -1,3 +1,8 @@
+/*
+  Input: a string containing opening and closing parenthesis
+  Output: true if the parenthesis are balanced, false otherwise
+*/
+
 balancedParenthesis(list) = balancedParenthesis.helper(list, stack.new([]))
 
 balancedParenthesis.helper(list, stack) =
