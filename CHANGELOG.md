@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.4.0 - Copper Chisel [Unreleased]
+## 0.4.0 - Copper Chisel
 
 ### Language
 
@@ -17,7 +17,6 @@
 ### Standard library
 
 * Added basic functions for:
-    - Console (read)
     - Map
     - Timestamp
     - Set
