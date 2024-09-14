@@ -72,4 +72,7 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
       return false;
     }
   }
+
+  @override
+  String path(Directory directory) => directory.absolute.path;
 }

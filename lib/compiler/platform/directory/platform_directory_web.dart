@@ -30,4 +30,8 @@ class PlatformDirectoryWeb extends PlatformDirectoryBase {
   @override
   bool rename(Directory directory, String name) =>
       throw const UnimplementedFunctionWebError('directory.rename');
+
+  @override
+  String path(Directory directory) =>
+      throw const UnimplementedFunctionWebError('directory.path');
 }
