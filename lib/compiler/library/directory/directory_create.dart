@@ -4,10 +4,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class DirectoryExists extends NativeFunctionNode {
-  DirectoryExists()
+class DirectoryCreate extends NativeFunctionNode {
+  DirectoryCreate()
       : super(
-          name: 'directory.exists',
+          name: 'directory.create',
           parameters: [
             Parameter.directory('a'),
           ],
@@ -33,9 +33,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is DirectoryNode) {
-      final bool exists = PlatformInterface().directory.exists(a.value);
+      final bool created = PlatformInterface().directory.create(a.value);
 
-      return BooleanNode(exists);
+      return BooleanNode(created);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

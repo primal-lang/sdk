@@ -7,4 +7,15 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
 
   @override
   bool exists(Directory directory) => directory.existsSync();
+
+  @override
+  bool create(Directory directory) {
+    try {
+      directory.createSync(recursive: true);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

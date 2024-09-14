@@ -4198,6 +4198,17 @@ void main() {
           'main = directory.exists(directory.fromPath("test/resources/filesX"))');
       checkResult(runtime, false);
     });
+
+    test('directory.create', () {
+      final String id = DateTime.now().day.toString();
+      final Runtime runtime = getRuntime(
+          'main = directory.create(directory.fromPath("test/resources/files/temp$id"))');
+      final dynamic result = runtime.executeMain();
+      expect(result, 'true');
+      final bool fileExists =
+          Directory('$resourcesPath/files/temp$id').existsSync();
+      expect(true, fileExists);
+    });
   });
 
   group('Main', () {

@@ -10,4 +10,8 @@ class PlatformDirectoryWeb extends PlatformDirectoryBase {
   @override
   bool exists(Directory directory) =>
       throw const UnimplementedFunctionWebError('directory.exists');
+
+  @override
+  bool create(Directory directory) =>
+      throw const UnimplementedFunctionWebError('directory.create');
 }
