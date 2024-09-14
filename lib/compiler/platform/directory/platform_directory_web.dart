@@ -42,4 +42,8 @@ class PlatformDirectoryWeb extends PlatformDirectoryBase {
   @override
   Directory parent(Directory directory) =>
       throw const UnimplementedFunctionWebError('directory.parent');
+
+  @override
+  List<FileSystemEntity> list(Directory directory) =>
+      throw const UnimplementedFunctionWebError('directory.list');
 }

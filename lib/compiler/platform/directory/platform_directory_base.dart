@@ -20,4 +20,6 @@ abstract class PlatformDirectoryBase {
   String name(Directory directory);
 
   Directory parent(Directory directory);
+
+  List<FileSystemEntity> list(Directory directory);
 }

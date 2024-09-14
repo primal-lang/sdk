@@ -82,4 +82,7 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
 
   @override
   Directory parent(Directory directory) => directory.parent;
+
+  @override
+  List<FileSystemEntity> list(Directory directory) => directory.listSync();
 }

@@ -71,6 +71,7 @@ import 'package:primal/compiler/library/directory/directory_create.dart';
 import 'package:primal/compiler/library/directory/directory_delete.dart';
 import 'package:primal/compiler/library/directory/directory_exists.dart';
 import 'package:primal/compiler/library/directory/directory_from_path.dart';
+import 'package:primal/compiler/library/directory/directory_list.dart';
 import 'package:primal/compiler/library/directory/directory_move.dart';
 import 'package:primal/compiler/library/directory/directory_name.dart';
 import 'package:primal/compiler/library/directory/directory_parent.dart';
@@ -316,6 +317,7 @@ class StandardLibrary {
         DirectoryDelete(),
         DirectoryExists(),
         DirectoryFromPath(),
+        DirectoryList(),
         DirectoryMove(),
         DirectoryName(),
         DirectoryParent(),
