@@ -2,7 +2,7 @@
   <a href="https://primal-lang.org"><img src="https://primal-lang.org/img/rounded.png" alt="Primal" height="170"></a>
 
 <p align="center">
-<a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/license-MIT-green.svg" /></a>
+<a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
 <a href="https://github.com/primal-lang/sdk/releases/tag/v0.4.0"><img src="https://img.shields.io/badge/Latest-0.4.0-blue" /></a>
 </p>
 
