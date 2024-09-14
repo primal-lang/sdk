@@ -67,6 +67,7 @@ import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
 import 'package:primal/compiler/library/directory/directory_create.dart';
+import 'package:primal/compiler/library/directory/directory_delete.dart';
 import 'package:primal/compiler/library/directory/directory_exists.dart';
 import 'package:primal/compiler/library/directory/directory_from_path.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
@@ -305,6 +306,7 @@ class StandardLibrary {
 
         // Directory
         DirectoryCreate(),
+        DirectoryDelete(),
         DirectoryExists(),
         DirectoryFromPath(),
 

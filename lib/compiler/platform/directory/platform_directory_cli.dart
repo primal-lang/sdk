@@ -18,4 +18,15 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
       return false;
     }
   }
+
+  @override
+  bool delete(Directory directory) {
+    try {
+      directory.deleteSync(recursive: true);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

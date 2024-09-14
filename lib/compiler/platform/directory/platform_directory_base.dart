@@ -6,4 +6,6 @@ abstract class PlatformDirectoryBase {
   bool exists(Directory directory);
 
   bool create(Directory directory);
+
+  bool delete(Directory directory);
 }

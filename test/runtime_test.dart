@@ -4130,11 +4130,17 @@ void main() {
       expect(true, fileExists);
     });
 
-    test('file.delete', () {
+    test('file.delete 1', () {
       final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
           'main = file.delete(file.fromPath("test/resources/files/temp/file$id.txt"))');
       checkResult(runtime, true);
+    });
+
+    test('file.delete 2', () {
+      final Runtime runtime = getRuntime(
+          'main = file.delete(file.fromPath("test/resources/files/temp2/file1.txt"))');
+      checkResult(runtime, false);
     });
 
     test('file.path', () {
@@ -4208,6 +4214,19 @@ void main() {
       final bool fileExists =
           Directory('$resourcesPath/files/temp$id').existsSync();
       expect(true, fileExists);
+    });
+
+    test('directory.delete 1', () {
+      final String id = DateTime.now().day.toString();
+      final Runtime runtime = getRuntime(
+          'main = directory.delete(directory.fromPath("test/resources/files/temp$id"))');
+      checkResult(runtime, true);
+    });
+
+    test('directory.delete 2', () {
+      final Runtime runtime = getRuntime(
+          'main = directory.delete(directory.fromPath("test/resources/files/tempX"))');
+      checkResult(runtime, false);
     });
   });
 
