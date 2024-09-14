@@ -3826,20 +3826,28 @@ void main() {
 
   group('Higher order functions', () {
     test('Function as parameter', () {
-      final Runtime runtime =
-          getRuntime('foo(f, v) = f(v)\n\nmain = foo(num.abs, -4)');
+      final Runtime runtime = getRuntime('''
+foo(f, v) = f(v)
+main = foo(num.abs, -4)
+''');
       checkResult(runtime, 4);
     });
 
     test('Function as result 1', () {
-      final Runtime runtime =
-          getRuntime('bar = num.abs\n\nfoo(v) = bar()(v)\n\nmain = foo(-4)');
+      final Runtime runtime = getRuntime('''
+bar = num.abs
+foo(v) = bar()(v)
+main = foo(-4)
+''');
       checkResult(runtime, 4);
     });
 
     test('Function as result 2', () {
-      final Runtime runtime = getRuntime(
-          'bar = num.abs\n\nfoo(f, v) = f(v)\n\nmain = foo(bar(), -4)');
+      final Runtime runtime = getRuntime('''
+bar = num.abs
+foo(f, v) = f(v)
+main = foo(bar(), -4)
+''');
       checkResult(runtime, 4);
     });
 
@@ -3849,7 +3857,10 @@ void main() {
     });
 
     test('Print function 2', () {
-      final Runtime runtime = getRuntime('foo(a, b) = a + b\n\nmain = foo');
+      final Runtime runtime = getRuntime('''
+foo(a, b) = a + b
+main = foo
+''');
       checkResult(runtime, '"foo(a: Any, b: Any)"');
     });
 
@@ -4108,8 +4119,10 @@ void main() {
 
     test('file.write', () {
       final String value = Random().nextInt(10000).toString();
-      final Runtime runtime = getRuntime(
-          'testFile(file, value) = file.write(file, value)\n\nmain = testFile(file.fromPath("test/resources/files/temp/file_temp.txt"), "$value")');
+      final Runtime runtime = getRuntime('''
+testFile(file, value) = file.write(file, value)
+main = testFile(file.fromPath("test/resources/files/temp/file_temp.txt"), "$value")
+''');
       checkResult(runtime, true);
     });
 
@@ -4162,14 +4175,20 @@ void main() {
     });
 
     test('file.copy', () {
-      final Runtime runtime = getRuntime(
-          'file1 = file.fromPath("test/resources/files/file1.txt")\n\nfile2 = file.fromPath("test/resources/files/file2.txt")\n\nmain = file.copy(file1(), file2())');
+      final Runtime runtime = getRuntime('''
+file1 = file.fromPath("test/resources/files/file1.txt")
+file2 = file.fromPath("test/resources/files/file2.txt")
+main = file.copy(file1(), file2())
+''');
       checkResult(runtime, true);
     });
 
     test('file.move', () {
-      final Runtime runtime = getRuntime(
-          'file1 = file.fromPath("test/resources/files/file2.txt")\n\nfile2 = file.fromPath("test/resources/files/temp/file2.txt")\n\nmain = file.move(file1(), file2())');
+      final Runtime runtime = getRuntime('''
+file1 = file.fromPath("test/resources/files/file2.txt")
+file2 = file.fromPath("test/resources/files/temp/file2.txt")
+main = file.move(file1(), file2())
+''');
       checkResult(runtime, true);
     });
 
@@ -4238,7 +4257,7 @@ main = directory.copy(directory1(), directory2())
       checkResult(runtime, true);
     });
 
-    test('file.move', () {
+    test('directory.move', () {
       final Runtime runtime = getRuntime('''
 directory1 = directory.fromPath("test/resources/files/temp_new")
 directory2 = directory.fromPath("test/resources/files/temp_extra")
