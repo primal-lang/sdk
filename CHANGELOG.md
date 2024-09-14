@@ -7,10 +7,12 @@
 * Added support for:
     - Maps
     - Timestamp
-    - Vector
     - Set
     - Stack
     - Queue
+    - Vector
+    - File
+    - Directory
 
 ### Standard library
 
@@ -18,10 +20,12 @@
     - Console (read)
     - Map
     - Timestamp
-    - Vector
     - Set
     - Stack
     - Queue
+    - Vector
+    - File
+    - Directory
     - Json
     - Hashing
     - Environment
