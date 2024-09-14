@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as path_lib;
 import 'package:primal/compiler/platform/directory/platform_directory_base.dart';
 
 class PlatformDirectoryCli extends PlatformDirectoryBase {
@@ -75,4 +76,7 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
 
   @override
   String path(Directory directory) => directory.absolute.path;
+
+  @override
+  String name(Directory directory) => path_lib.basename(directory.path);
 }

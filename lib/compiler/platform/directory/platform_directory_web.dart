@@ -34,4 +34,8 @@ class PlatformDirectoryWeb extends PlatformDirectoryBase {
   @override
   String path(Directory directory) =>
       throw const UnimplementedFunctionWebError('directory.path');
+
+  @override
+  String name(Directory directory) =>
+      throw const UnimplementedFunctionWebError('directory.name');
 }

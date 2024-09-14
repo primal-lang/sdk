@@ -16,4 +16,6 @@ abstract class PlatformDirectoryBase {
   bool rename(Directory directory, String name);
 
   String path(Directory directory);
+
+  String name(Directory directory);
 }
