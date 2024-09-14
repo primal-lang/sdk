@@ -4228,6 +4228,15 @@ void main() {
           'main = directory.delete(directory.fromPath("test/resources/files/tempX"))');
       checkResult(runtime, false);
     });
+
+    test('directory.copy', () {
+      final Runtime runtime = getRuntime('''
+directory1 = directory.fromPath("test/resources/files/temp")
+directory2 = directory.fromPath("test/resources/files/temp_new")
+main = directory.copy(directory1(), directory2())
+''');
+      checkResult(runtime, true);
+    });
   });
 
   group('Main', () {

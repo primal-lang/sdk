@@ -29,4 +29,24 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
       return false;
     }
   }
+
+  @override
+  bool copy(Directory source, Directory destination) {
+    try {
+      source.listSync().forEach((entity) {
+        final String newPath =
+            entity.path.replaceAll(source.path, destination.path);
+
+        if (entity is File) {
+          entity.copySync(newPath);
+        } else if (entity is Directory) {
+          copy(Directory(entity.path), Directory(newPath));
+        }
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

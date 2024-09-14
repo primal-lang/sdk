@@ -8,4 +8,6 @@ abstract class PlatformDirectoryBase {
   bool create(Directory directory);
 
   bool delete(Directory directory);
+
+  bool copy(Directory source, Directory destination);
 }
