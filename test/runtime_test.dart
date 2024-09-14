@@ -4186,6 +4186,18 @@ void main() {
           getRuntime('main = directory.fromPath("test/resources/files")');
       checkResult(runtime, '"$resourcesPath/files"');
     });
+
+    test('directory.exists 1', () {
+      final Runtime runtime = getRuntime(
+          'main = directory.exists(directory.fromPath("test/resources/files"))');
+      checkResult(runtime, true);
+    });
+
+    test('directory.exists 2', () {
+      final Runtime runtime = getRuntime(
+          'main = directory.exists(directory.fromPath("test/resources/filesX"))');
+      checkResult(runtime, false);
+    });
   });
 
   group('Main', () {

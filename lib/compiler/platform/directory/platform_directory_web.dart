@@ -6,4 +6,8 @@ class PlatformDirectoryWeb extends PlatformDirectoryBase {
   @override
   Directory fromPath(String path) =>
       throw const UnimplementedFunctionWebError('directory.fromPath');
+
+  @override
+  bool exists(Directory directory) =>
+      throw const UnimplementedFunctionWebError('directory.exists');
 }
