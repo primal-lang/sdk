@@ -4283,6 +4283,12 @@ main = directory.move(directory1(), directory2())
           'main = directory.name(directory.fromPath("test/resources/files/temp"))');
       checkResult(runtime, '"temp"');
     });
+
+    test('directory.parent', () {
+      final Runtime runtime = getRuntime(
+          'main = directory.parent(directory.fromPath("test/resources/files/temp"))');
+      checkResult(runtime, '"$resourcesPath/files"');
+    });
   });
 
   group('Main', () {

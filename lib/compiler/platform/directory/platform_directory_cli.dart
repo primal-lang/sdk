@@ -79,4 +79,7 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
 
   @override
   String name(Directory directory) => path_lib.basename(directory.path);
+
+  @override
+  Directory parent(Directory directory) => directory.parent;
 }

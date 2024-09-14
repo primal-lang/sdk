@@ -18,4 +18,6 @@ abstract class PlatformDirectoryBase {
   String path(Directory directory);
 
   String name(Directory directory);
+
+  Directory parent(Directory directory);
 }

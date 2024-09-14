@@ -73,6 +73,7 @@ import 'package:primal/compiler/library/directory/directory_exists.dart';
 import 'package:primal/compiler/library/directory/directory_from_path.dart';
 import 'package:primal/compiler/library/directory/directory_move.dart';
 import 'package:primal/compiler/library/directory/directory_name.dart';
+import 'package:primal/compiler/library/directory/directory_parent.dart';
 import 'package:primal/compiler/library/directory/directory_path.dart';
 import 'package:primal/compiler/library/directory/directory_rename.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
@@ -317,6 +318,7 @@ class StandardLibrary {
         DirectoryFromPath(),
         DirectoryMove(),
         DirectoryName(),
+        DirectoryParent(),
         DirectoryPath(),
         DirectoryRename(),
 
