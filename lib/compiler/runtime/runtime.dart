@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/node.dart';
