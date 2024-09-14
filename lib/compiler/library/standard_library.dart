@@ -72,6 +72,7 @@ import 'package:primal/compiler/library/directory/directory_delete.dart';
 import 'package:primal/compiler/library/directory/directory_exists.dart';
 import 'package:primal/compiler/library/directory/directory_from_path.dart';
 import 'package:primal/compiler/library/directory/directory_move.dart';
+import 'package:primal/compiler/library/directory/directory_rename.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/file/file_copy.dart';
@@ -313,6 +314,7 @@ class StandardLibrary {
         DirectoryExists(),
         DirectoryFromPath(),
         DirectoryMove(),
+        DirectoryRename(),
 
         // Environment
         EnvGet(),

@@ -23,9 +23,9 @@ abstract class PlatformFileBase {
 
   String extension(File file);
 
-  bool copy(File fileSource, File fileDestination);
+  bool copy(File source, File destination);
 
-  bool move(File fileSource, File fileDestination);
+  bool move(File source, File destination);
 
   Directory parent(File file);
 }

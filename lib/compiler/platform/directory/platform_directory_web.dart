@@ -26,4 +26,8 @@ class PlatformDirectoryWeb extends PlatformDirectoryBase {
   @override
   bool move(Directory source, Directory destination) =>
       throw const UnimplementedFunctionWebError('directory.move');
+
+  @override
+  bool rename(Directory directory, String name) =>
+      throw const UnimplementedFunctionWebError('directory.rename');
 }

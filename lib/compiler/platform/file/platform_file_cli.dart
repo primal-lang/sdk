@@ -74,9 +74,9 @@ class PlatformFileCli extends PlatformFileBase {
   }
 
   @override
-  bool copy(File fileSource, File fileDestination) {
+  bool copy(File source, File destination) {
     try {
-      fileSource.copySync(fileDestination.path);
+      source.copySync(destination.path);
 
       return true;
     } catch (e) {
@@ -85,9 +85,9 @@ class PlatformFileCli extends PlatformFileBase {
   }
 
   @override
-  bool move(File fileSource, File fileDestination) {
+  bool move(File source, File destination) {
     try {
-      fileSource.renameSync(fileDestination.path);
+      source.renameSync(destination.path);
 
       return true;
     } catch (e) {

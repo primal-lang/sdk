@@ -60,4 +60,16 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
       return false;
     }
   }
+
+  @override
+  bool rename(Directory directory, String name) {
+    try {
+      final String newFilePath = '${directory.parent.path}/$name';
+      directory.renameSync(newFilePath);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

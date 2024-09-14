@@ -12,4 +12,6 @@ abstract class PlatformDirectoryBase {
   bool copy(Directory source, Directory destination);
 
   bool move(Directory source, Directory destination);
+
+  bool rename(Directory directory, String name);
 }

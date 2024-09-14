@@ -48,11 +48,11 @@ class PlatformFileWeb extends PlatformFileBase {
       throw const UnimplementedFunctionWebError('file.extension');
 
   @override
-  bool copy(File fileSource, File fileDestination) =>
+  bool copy(File source, File destination) =>
       throw const UnimplementedFunctionWebError('file.copy');
 
   @override
-  bool move(File fileSource, File fileDestination) =>
+  bool move(File source, File destination) =>
       throw const UnimplementedFunctionWebError('file.move');
 
   @override
