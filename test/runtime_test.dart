@@ -4237,6 +4237,15 @@ main = directory.copy(directory1(), directory2())
 ''');
       checkResult(runtime, true);
     });
+
+    test('file.move', () {
+      final Runtime runtime = getRuntime('''
+directory1 = directory.fromPath("test/resources/files/temp_new")
+directory2 = directory.fromPath("test/resources/files/temp_extra")
+main = directory.move(directory1(), directory2())
+''');
+      checkResult(runtime, true);
+    });
   });
 
   group('Main', () {

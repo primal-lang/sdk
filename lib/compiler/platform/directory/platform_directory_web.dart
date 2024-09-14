@@ -22,4 +22,8 @@ class PlatformDirectoryWeb extends PlatformDirectoryBase {
   @override
   bool copy(Directory source, Directory destination) =>
       throw const UnimplementedFunctionWebError('directory.copy');
+
+  @override
+  bool move(Directory source, Directory destination) =>
+      throw const UnimplementedFunctionWebError('directory.move');
 }

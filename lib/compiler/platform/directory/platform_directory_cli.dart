@@ -49,4 +49,15 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
       return false;
     }
   }
+
+  @override
+  bool move(Directory source, Directory destination) {
+    try {
+      source.renameSync(destination.path);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
