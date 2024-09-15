@@ -1580,6 +1580,15 @@ void main() {
       checkResult(runtime, 4);
     });
 
+    test('List indexing 4', () {
+      final Runtime runtime = getRuntime('''
+foo(values) = [values[0]]
+
+main = foo([2])
+''');
+      checkResult(runtime, [2]);
+    });
+
     test('List concatenation 1', () {
       final Runtime runtime = getRuntime('main = [1, 2] + [3, 4]');
       checkResult(runtime, [1, 2, 3, 4]);
