@@ -2224,6 +2224,17 @@ main = foo([2])
           'main = set.intersection(set.new([2, 3]), set.new([1, 2]))');
       checkResult(runtime, {2});
     });
+
+    test('set.variable', () {
+      final Runtime runtime = getRuntime('''
+foo(values) = [set.add(values, 1)]
+
+main = foo(set.new([2, 3]))
+''');
+      checkResult(runtime, [
+        {2, 3, 1}
+      ]);
+    });
   });
 
   group('Stack', () {
