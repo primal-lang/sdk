@@ -200,6 +200,19 @@ class SemanticAnalyzer
       }
 
       return ListNode(elements);
+    } else if (node is MapNode) {
+      final Map<Node, Node> elements = {};
+
+      for (final MapEntry<Node, Node> entry in node.value.entries) {
+        elements[entry.key] = checkNode(
+          node: entry.value,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          allFunctions: allFunctions,
+        );
+      }
+
+      return MapNode(elements);
     }
 
     return node;

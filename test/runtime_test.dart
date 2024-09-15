@@ -2508,6 +2508,20 @@ main = foo(set.new([2, 3]))
       checkResult(runtime, 99);
     });
 
+    test('Map indexing 4', () {
+      final Runtime runtime = getRuntime('''
+foo(values) = {
+  "name": values["name"],
+  "age": values["age"],
+  "married": values["married"]
+}
+
+main = foo({"name": "John", "age": 42, "married": true})
+''');
+      checkResult(
+          runtime, {'"name"': '"John"', '"age"': 42, '"married"': true});
+    });
+
     test('map.at 1', () {
       final Runtime runtime = getRuntime(
           'main = map.at({"name": "John", "age": 42, "married": true}, "age")');
