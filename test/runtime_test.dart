@@ -3809,6 +3809,23 @@ main = foo({"name": "John", "age": 42, "married": true})
   });
 
   group('Samples', () {
+    test('balanced_parenthesis', () {
+      final Runtime runtime =
+          getRuntime(loadFile('web_samples/balanced_parenthesis.prm'));
+      checkResult(runtime, true);
+    });
+
+    test('binary_search', () {
+      final Runtime runtime =
+          getRuntime(loadFile('web_samples/binary_search.prm'));
+      checkResult(runtime, false);
+    });
+
+    test('divisors', () {
+      final Runtime runtime = getRuntime(loadFile('web_samples/divisors.prm'));
+      checkResult(runtime, [1, 2, 5, 10]);
+    });
+
     test('factorial', () {
       final Runtime runtime = getRuntime(loadFile('web_samples/factorial.prm'));
       checkResult(runtime, 120);
@@ -3819,10 +3836,31 @@ main = foo({"name": "John", "age": 42, "married": true})
       checkResult(runtime, [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]);
     });
 
+    test('find_max', () {
+      final Runtime runtime = getRuntime(loadFile('web_samples/find_max.prm'));
+      checkResult(runtime, 9);
+    });
+
+    test('frequency', () {
+      final Runtime runtime = getRuntime(loadFile('web_samples/frequency.prm'));
+      checkResult(runtime, {1: 2, 2: 4, 3: 1, 4: 1, 5: 2});
+    });
+
+    test('moving_averages', () {
+      final Runtime runtime =
+          getRuntime(loadFile('web_samples/moving_averages.prm'));
+      checkResult(runtime, [55, 41, 67, 58, 66, 58, 54, 34]);
+    });
+
     test('is_palindrome', () {
       final Runtime runtime =
           getRuntime(loadFile('web_samples/is_palindrome.prm'));
       checkResult(runtime, true);
+    });
+
+    test('power', () {
+      final Runtime runtime = getRuntime(loadFile('web_samples/power.prm'));
+      checkResult(runtime, 1024);
     });
 
     test('is_prime', () {
@@ -3830,9 +3868,10 @@ main = foo({"name": "John", "age": 42, "married": true})
       checkResult(runtime, true);
     });
 
-    test('power', () {
-      final Runtime runtime = getRuntime(loadFile('web_samples/power.prm'));
-      checkResult(runtime, 1024);
+    test('reverse_list', () {
+      final Runtime runtime =
+          getRuntime(loadFile('web_samples/reverse_list.prm'));
+      checkResult(runtime, [5, 4, 3, 2, 1]);
     });
 
     test('sum_of_digits', () {
@@ -3844,17 +3883,6 @@ main = foo({"name": "John", "age": 42, "married": true})
     test('to_binary', () {
       final Runtime runtime = getRuntime(loadFile('web_samples/to_binary.prm'));
       checkResult(runtime, '"1010"');
-    });
-
-    test('frequency', () {
-      final Runtime runtime = getRuntime(loadFile('web_samples/frequency.prm'));
-      checkResult(runtime, {1: 2, 2: 4, 3: 1, 4: 1, 5: 2});
-    });
-
-    test('balanced_parenthesis', () {
-      final Runtime runtime =
-          getRuntime(loadFile('web_samples/balanced_parenthesis.prm'));
-      checkResult(runtime, true);
     });
   });
 
