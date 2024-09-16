@@ -1,0 +1,11 @@
+/*
+  Input: a list of elements
+  Output: a list with the elements in reverse order
+*/
+
+reverseList(list) = if (list.isEmpty(list))
+                        []
+                    else
+                        reverseList(list.rest(list)) + list.first(list)
+
+main = reverseList([1, 2, 3, 4, 5])
