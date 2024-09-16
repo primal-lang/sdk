@@ -204,12 +204,21 @@ class SemanticAnalyzer
       final Map<Node, Node> elements = {};
 
       for (final MapEntry<Node, Node> entry in node.value.entries) {
-        elements[entry.key] = checkNode(
+        final Node key = checkNode(
+          node: entry.key,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          allFunctions: allFunctions,
+        );
+
+        final Node value = checkNode(
           node: entry.value,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,
         );
+
+        elements[key] = value;
       }
 
       return MapNode(elements);
