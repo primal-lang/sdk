@@ -1,6 +1,8 @@
 .dart_tool/
 .idx/
-.vscode/
+!.vscode/
+!.claude/
+!.claude/*
 bin/aot/
 bin/web/
 scripts/
