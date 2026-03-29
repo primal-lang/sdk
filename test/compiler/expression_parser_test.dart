@@ -1,3 +1,6 @@
+@Tags(['compiler'])
+library;
+
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/expression_parser.dart';

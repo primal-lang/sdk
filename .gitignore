@@ -1,10 +1,12 @@
 .dart_tool/
 .idx/
+!scripts/
 !.vscode/
 !.claude/
 !.claude/*
 bin/aot/
 bin/web/
 scripts/
+coverage/
 example/test/
 test/resources/files/temp*

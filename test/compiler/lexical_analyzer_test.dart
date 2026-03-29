@@ -1,3 +1,6 @@
+@Tags(['compiler'])
+library;
+
 import 'package:primal/compiler/errors/lexical_error.dart';
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';

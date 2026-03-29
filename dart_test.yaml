@@ -1,1 +1,11 @@
 timeout: 120s
+
+tags:
+  compiler:
+    description: "Compiler pipeline tests (scanner, lexer, parser, semantic)"
+  runtime:
+    description: "Runtime execution tests (standard library, evaluation)"
+  io:
+    description: "I/O tests (file, directory, console, environment)"
+  unit:
+    description: "Unit tests (models, utils, extensions, platform)"

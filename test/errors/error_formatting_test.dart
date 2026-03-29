@@ -1,3 +1,6 @@
+@Tags(['unit'])
+library;
+
 import 'package:primal/compiler/errors/generic_error.dart';
 import 'package:primal/compiler/errors/lexical_error.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';

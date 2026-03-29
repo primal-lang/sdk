@@ -1,3 +1,6 @@
+@Tags(['unit'])
+library;
+
 import 'package:primal/compiler/models/location.dart';
 import 'package:test/test.dart';
 

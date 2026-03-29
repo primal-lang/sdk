@@ -1,3 +1,6 @@
+@Tags(['compiler'])
+library;
+
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:test/test.dart';

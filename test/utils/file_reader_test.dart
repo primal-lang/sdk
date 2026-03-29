@@ -1,3 +1,4 @@
+@Tags(['unit'])
 @TestOn('vm')
 library;
 

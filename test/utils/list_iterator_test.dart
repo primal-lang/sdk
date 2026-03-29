@@ -1,3 +1,6 @@
+@Tags(['unit'])
+library;
+
 import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/utils/list_iterator.dart';
 import 'package:test/test.dart';

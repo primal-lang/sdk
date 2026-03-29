@@ -1,3 +1,6 @@
+@Tags(['unit'])
+library;
+
 import 'package:primal/extensions/string_extensions.dart';
 import 'package:test/test.dart';
 

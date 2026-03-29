@@ -1,3 +1,6 @@
+@Tags(['compiler'])
+library;
+
 import 'package:primal/compiler/scanner/character.dart';
 import 'package:primal/compiler/scanner/scanner_analyzer.dart';
 import 'package:test/test.dart';

@@ -1,3 +1,6 @@
+@Tags(['unit'])
+library;
+
 import 'package:primal/utils/stack.dart';
 import 'package:test/test.dart';
 
