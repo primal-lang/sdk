@@ -1,5 +1,6 @@
 <p align="center">
   <a href="https://primal-lang.org"><img src="https://primal-lang.org/img/rounded.png" alt="Primal" height="170"></a>
+</p>
 
 <p align="center">
 <a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
@@ -45,7 +46,7 @@ The language has the following characteristics:
 
 ## Philosophy
 
-Everything in `Primal` is a function, which can be composed to create more complex functions. Functions cannot be overloaded (i.e. only one function with a given name can exist in a program). The full list of functions can be found in the  [reference](https://primal-lang.org/reference) page.
+Everything in `Primal` is a function, which can be composed to create more complex functions. Functions cannot be overloaded (i.e. only one function with a given name can exist in a program). The full list of functions can be found in the [reference](https://primal-lang.org/reference) page.
 
 Being a functional language, `Primal` does not have loop constructions. Instead, it uses recursion to perform repetitive tasks, allowing for a more declarative style of programming.
 
@@ -56,8 +57,8 @@ The syntax is designed to be simple and easy to read and consists of function de
 A function declaration is composed of:
 
 * **Name:** which must match the regular expression `[a-zA-Z][\w\.]*`
-* **Parameters (optional):** a list of identifiers, each matching the regular expression `[a-zA-Z][\w\.]`
-* **Body:** an expression which consist of combinations of:
+* **Parameters (optional):** a list of identifiers, each matching the regular expression `[a-zA-Z][\w\.]*`
+* **Body:** an expression which consists of combinations of:
     - Constants: `"Hello"`, `42`, `true`, `[1, 2, 3]`, etc
     - Operations: `foo + 3`, `!foo`, `foo >= bar`, etc
     - Function calls: `foo(x)`, `bar(10)`, etc
