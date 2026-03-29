@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
-import '../test_utils.dart';
+import '../utils/test_utils.dart';
 
 void main() {
   group('Directory', () {

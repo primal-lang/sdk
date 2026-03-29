@@ -3,7 +3,7 @@ import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/expression_parser.dart';
 import 'package:primal/utils/list_iterator.dart';
 import 'package:test/test.dart';
-import '../test_utils.dart';
+import '../utils/test_utils.dart';
 
 void main() {
   Expression getExpression(String input) {

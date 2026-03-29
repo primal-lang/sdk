@@ -3,7 +3,7 @@ import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:test/test.dart';
-import '../test_utils.dart';
+import '../utils/test_utils.dart';
 
 void main() {
   group('Lexical Analyzer', () {
