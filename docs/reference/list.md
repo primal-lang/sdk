@@ -4,10 +4,12 @@
 
 ### Constructor
 - **Syntax:** `[Any, Any, Any, ...]: List`
-- **Output:** A list created from comma-separated elements
+- **Input:** Comma-separated elements
+- **Output:** A list containing the elements
 
 ### Indexing
 - **Syntax:** `List[Number]: Any`
+- **Input:** A list and an index
 - **Output:** The element at the specified index position
 
 ### Filled

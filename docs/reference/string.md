@@ -4,10 +4,12 @@
 
 ### Constructor
 - **Syntax:** `"text": String`
-- **Output:** A string created from text surrounded by single or double quotes
+- **Input:** Text surrounded by single or double quotes
+- **Output:** A string
 
 ### Indexing
 - **Syntax:** `String[Number]: String`
+- **Input:** A string and an index
 - **Output:** The character at the specified index position
 
 ## Access

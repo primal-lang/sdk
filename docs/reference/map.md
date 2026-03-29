@@ -4,10 +4,12 @@
 
 ### Constructor
 - **Syntax:** `{Any: Any, ...}: Map`
-- **Output:** A map created from a list of key-value pairs separated by comma
+- **Input:** A list of pairs separated by comma
+- **Output:** A map containing all the pairs
 
 ### Indexing
 - **Syntax:** `Map[Any]: Any`
+- **Input:** A map and a key
 - **Output:** The value associated with the key
 
 ## Access
