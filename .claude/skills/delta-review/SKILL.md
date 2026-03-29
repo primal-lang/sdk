@@ -29,3 +29,5 @@ description: Reviews staged and unstaged changes in this Dart project, checking 
    End with a one-line summary: "X critical, Y warnings, Z nits across N files."
 
 5. **Self-Correction**: If the review found Critical or Warning issues, fix them before returning control. Do NOT re-run the review after fixing. The user will request another review if needed.
+
+6. **Formatting**: Before returning control to the user, run `dart format .` to ensure all code is properly formatted.
