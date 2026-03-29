@@ -3,62 +3,128 @@
 ## Construction
 
 ### Constructor
+
 - **Syntax:** `{Any: Any, ...}: Map`
 - **Input:** A list of pairs separated by comma
 - **Output:** A map containing all the pairs
+- **Example:**
+
+```
+{"name": "Alice", "age": 30} // returns {"name": "Alice", "age": 30}
+```
 
 ### Indexing
+
 - **Syntax:** `Map[Any]: Any`
 - **Input:** A map and a key
 - **Output:** The value associated with the key
+- **Example:**
+
+```
+{"name": "Alice"}["name"] // returns "Alice"
+```
 
 ## Access
 
 ### At
+
 - **Signature:** `map.at(a: Map, b: Any): Any`
 - **Input:** A map and a key
 - **Output:** The value associated with the key
+- **Example:**
+
+```
+map.at({"name": "Alice"}, "name") // returns "Alice"
+```
 
 ### Keys
+
 - **Signature:** `map.keys(a: Map): List`
 - **Input:** One map
 - **Output:** A list containing all the keys
+- **Example:**
+
+```
+map.keys({"a": 1, "b": 2}) // returns ["a", "b"]
+```
 
 ### Values
+
 - **Signature:** `map.values(a: Map): List`
 - **Input:** One map
 - **Output:** A list containing all the values
+- **Example:**
+
+```
+map.values({"a": 1, "b": 2}) // returns [1, 2]
+```
 
 ## Modification
 
 ### Set
+
 - **Signature:** `map.set(a: Map, b: Any, c: Any): Map`
 - **Input:** A map, a key, and a value
 - **Output:** A new map containing the new key-value pair
+- **Example:**
+
+```
+map.set({"a": 1}, "b", 2) // returns {"a": 1, "b": 2}
+```
 
 ### Remove At
+
 - **Signature:** `map.removeAt(a: Map, b: Any): Map`
 - **Input:** A map and a key
 - **Output:** A new map with the key removed
+- **Example:**
+
+```
+map.removeAt({"a": 1, "b": 2}, "a") // returns {"b": 2}
+```
 
 ## Properties
 
 ### Contains Key
+
 - **Signature:** `map.containsKey(a: Map, b: Any): Boolean`
 - **Input:** A map and a key
 - **Output:** True if the key is in the map, false otherwise
+- **Example:**
+
+```
+map.containsKey({"a": 1}, "a") // returns true
+```
 
 ### Is Empty
+
 - **Signature:** `map.isEmpty(a: Map): Boolean`
 - **Input:** One map
 - **Output:** True if the map is empty, false otherwise
+- **Example:**
+
+```
+map.isEmpty({}) // returns true
+```
 
 ### Is Not Empty
+
 - **Signature:** `map.isNotEmpty(a: Map): Boolean`
 - **Input:** One map
 - **Output:** True if the map is not empty, false otherwise
+- **Example:**
+
+```
+map.isNotEmpty({"a": 1}) // returns true
+```
 
 ### Length
+
 - **Signature:** `map.length(a: Map): Number`
 - **Input:** One map
 - **Output:** The number of key-value pairs in the map
+- **Example:**
+
+```
+map.length({"a": 1, "b": 2}) // returns 2
+```
