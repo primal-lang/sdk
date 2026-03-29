@@ -3,7 +3,7 @@ import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:test/test.dart';
-import 'test_utils.dart';
+import '../test_utils.dart';
 
 void main() {
   group('Lexical Analyzer', () {
@@ -62,19 +62,11 @@ void main() {
     });
 
     test('Invalid integer', () {
-      try {
-        getTokens('42a');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(() => getTokens('42a'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid decimal', () {
-      try {
-        getTokens('1..2');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(() => getTokens('1..2'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Valid boolean true', () {
@@ -897,39 +889,31 @@ pi = 3.14
     });
 
     test('Invalid function definition 1', () {
-      try {
-        getFunctions('_isEven = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(
+        () => getFunctions('_isEven = true'),
+        throwsA(isA<InvalidCharacterError>()),
+      );
     });
 
     test('Invalid function definition 2', () {
-      try {
-        getFunctions('_isEven(n) = n');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(
+        () => getFunctions('_isEven(n) = n'),
+        throwsA(isA<InvalidCharacterError>()),
+      );
     });
 
     test('Invalid function definition 3', () {
-      try {
-        getFunctions('isEvent(,) = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(
+        () => getFunctions('isEvent(,) = true'),
+        throwsA(isA<InvalidCharacterError>()),
+      );
     });
 
     test('Invalid function definition 4', () {
-      try {
-        getFunctions('isEvent(x,) = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(
+        () => getFunctions('isEvent(x,) = true'),
+        throwsA(isA<InvalidCharacterError>()),
+      );
     });
 
     test('Main function definition', () {
@@ -1205,21 +1189,11 @@ pi = 3.14
     });
 
     test('Decimal starting with dot', () {
-      try {
-        getTokens('.5');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(() => getTokens('.5'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Number followed by dot and letter', () {
-      try {
-        getTokens('42.x');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(() => getTokens('42.x'), throwsA(isA<InvalidCharacterError>()));
     });
 
     // --- Edge cases: identifiers and keywords ---
@@ -1603,39 +1577,19 @@ pi = 3.14
     // --- Edge cases: invalid characters ---
 
     test('Invalid character @', () {
-      try {
-        getTokens('@');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(() => getTokens('@'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character #', () {
-      try {
-        getTokens('#');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(() => getTokens('#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character \$', () {
-      try {
-        getTokens('\$');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(() => getTokens('\$'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character ~', () {
-      try {
-        getTokens('~');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidCharacterError>());
-      }
+      expect(() => getTokens('~'), throwsA(isA<InvalidCharacterError>()));
     });
 
     // --- Edge cases: shebang ---

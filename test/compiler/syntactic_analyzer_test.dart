@@ -3,62 +3,47 @@ import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
-import 'test_utils.dart';
+import '../test_utils.dart';
 
 void main() {
   group('Syntactic Analyzer', () {
     test('Invalid function definition 1', () {
-      try {
-        getFunctions('123');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidTokenError>());
-      }
+      expect(() => getFunctions('123'), throwsA(isA<InvalidTokenError>()));
     });
 
     test('Invalid function definition 2', () {
-      try {
-        getFunctions('isEven ,');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidTokenError>());
-      }
+      expect(
+        () => getFunctions('isEven ,'),
+        throwsA(isA<InvalidTokenError>()),
+      );
     });
 
     test('Invalid function definition 3', () {
-      try {
-        getFunctions('isEven() = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidTokenError>());
-      }
+      expect(
+        () => getFunctions('isEven() = true'),
+        throwsA(isA<InvalidTokenError>()),
+      );
     });
 
     test('Invalid function definition 4', () {
-      try {
-        getFunctions('isEven(1 = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidTokenError>());
-      }
+      expect(
+        () => getFunctions('isEven(1 = true'),
+        throwsA(isA<InvalidTokenError>()),
+      );
     });
 
     test('Invalid function definition 5', () {
-      try {
-        getFunctions('isEven(a( = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidTokenError>());
-      }
+      expect(
+        () => getFunctions('isEven(a( = true'),
+        throwsA(isA<InvalidTokenError>()),
+      );
     });
 
     test('Invalid function definition 6', () {
-      try {
-        getFunctions('isEvent(x), = true');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<InvalidTokenError>());
-      }
+      expect(
+        () => getFunctions('isEvent(x), = true'),
+        throwsA(isA<InvalidTokenError>()),
+      );
     });
 
     test('Literal double quoted string definition', () {
@@ -352,68 +337,54 @@ void main() {
     // Error cases: UnexpectedEndOfFileError
 
     test('Error: missing expression body', () {
-      try {
-        getFunctions('test =');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<UnexpectedEndOfFileError>());
-      }
+      expect(
+        () => getFunctions('test ='),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
     });
 
     test('Error: incomplete binary operation', () {
-      try {
-        getFunctions('test = 1 +');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<UnexpectedEndOfFileError>());
-      }
+      expect(
+        () => getFunctions('test = 1 +'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
     });
 
     test('Error: function with parameters but no body', () {
-      try {
-        getFunctions('test(a)');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<UnexpectedEndOfFileError>());
-      }
+      expect(
+        () => getFunctions('test(a)'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
     });
 
     test('Error: if without else', () {
-      try {
-        getFunctions('test = if (true) 1');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<UnexpectedEndOfFileError>());
-      }
+      expect(
+        () => getFunctions('test = if (true) 1'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
     });
 
     // Error cases: ExpectedTokenError
 
     test('Error: if missing condition parentheses', () {
-      try {
-        getFunctions('test = if true 1 else 2');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<ExpectedTokenError>());
-      }
+      expect(
+        () => getFunctions('test = if true 1 else 2'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
     });
 
     test('Error: map missing colon', () {
-      try {
-        getFunctions('test = {1 2}');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<ExpectedTokenError>());
-      }
+      expect(
+        () => getFunctions('test = {1 2}'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
     });
 
     test('Error: list with wrong closing bracket', () {
-      try {
-        getFunctions('test = [1, 2)');
-        fail('Should fail');
-      } catch (e) {
-        expect(e, isA<ExpectedTokenError>());
-      }
+      expect(
+        () => getFunctions('test = [1, 2)'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
     });
 
     // Binary operators
