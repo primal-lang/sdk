@@ -6,220 +6,28 @@ The Primal compiler is a four-stage pipeline that transforms source code into an
 Source Code
     |
     v
- Scanner ............. Characters with locations
+ Scanner ............. Characters with locations          → compiler/scanner.md
     |
     v
- Lexical Analyzer .... Tokens (keywords, literals, operators, delimiters)
+ Lexical Analyzer .... Tokens (keywords, literals, ...)   → compiler/lexical.md
     |
     v
- Syntactic Analyzer .. Function definitions with expression trees
+ Syntactic Analyzer .. Function definitions with ASTs     → compiler/syntactic.md
     |
     v
- Semantic Analyzer ... Intermediate code (validated, scope-resolved functions)
+ Semantic Analyzer ... Validated, scope-resolved functions → compiler/semantic.md
     |
     v
- Runtime ............. Evaluation via node substitution and reduction
+ Runtime ............. Evaluation via node substitution    → compiler/runtime.md
 ```
 
 The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateCode` is then handed to the `Runtime` for execution.
 
----
-
-## 1. Scanner
-
-**File**: `lib/compiler/scanner/scanner_analyzer.dart`
-
-The scanner converts a raw input string into a flat list of `Character` objects, each annotated with its row and column position.
-
-- Iterates over UTF-8 runes and wraps each in a `Character(value, row, column)`.
-- Handles shebang lines (`#!` on the first line) by skipping them.
-- Injects newline characters between rows so downstream stages can rely on consistent line boundaries.
-
-The output preserves every character from the source (including whitespace), with location information used later for error reporting.
+Each pipeline stage is documented in its own file under [`compiler/`](compiler/).
 
 ---
 
-## 2. Lexical Analysis
-
-**Files**: `lib/compiler/lexical/lexical_analyzer.dart`, `lib/compiler/lexical/token.dart`
-
-The lexical analyzer consumes the character list and produces a list of typed tokens. It is implemented as a **state machine** with 20+ state classes, each responsible for recognizing a specific kind of lexeme.
-
-### State Machine
-
-The analyzer starts in `InitState` and transitions based on the current character:
-
-| Character class                                   | Target state                              |
-| ------------------------------------------------- | ----------------------------------------- |
-| Letter                                            | `IdentifierState`                         |
-| Digit                                             | `IntegerState`                            |
-| `"`                                               | `StringDoubleQuoteState`                  |
-| `'`                                               | `StringSingleQuoteState`                  |
-| `+`                                               | `PlusState`                               |
-| `-`                                               | `MinusState`                              |
-| `=`                                               | `EqualsState`                             |
-| `>`                                               | `GreaterState`                            |
-| `<`                                               | `LessState`                               |
-| `\|`                                              | `PipeState`                               |
-| `&`                                               | `AmpersandState`                          |
-| `!`                                               | `BangState`                               |
-| `/`                                               | `ForwardSlashState` (division or comment) |
-| Delimiters `(`, `)`, `[`, `]`, `{`, `}`, `,`, `:` | Corresponding delimiter states            |
-| Whitespace / newline                              | Skipped, returns to `InitState`           |
-
-Multi-character tokens are accumulated via a `Lexeme` object that tracks the starting location and collects characters with `.add(Character)`.
-
-### Token Types
-
-All tokens extend `Token<T>` and carry a typed value plus location:
-
-- **Literals**: `StringToken`, `NumberToken`, `BooleanToken`
-- **Identifiers**: `IdentifierToken` (variable and function names)
-- **Keywords**: `IfToken`, `ElseToken`
-- **Assignment**: `AssignToken` (`=`)
-- **Binary operators**: `PlusToken`, `MinusToken`, `AsteriskToken`, `ForwardSlashToken`, `PercentToken`, `PipeToken`, `AmpersandToken`, `EqualToken`, `NotEqualToken`, `GreaterThanToken`, `GreaterEqualThanToken`, `LessThanToken`, `LessEqualThanToken`
-- **Unary operators**: `BangToken`
-- **Delimiters**: `OpenParenthesisToken`, `CloseParenthesisToken`, `OpenBracketToken`, `CloseBracketToken`, `OpenBracesToken`, `CloseBracesToken`, `CommaToken`, `ColonToken`
-
-Comments (single-line `//` and multi-line `/* */`) are recognized and discarded.
-
----
-
-## 3. Syntactic Analysis
-
-**Files**: `lib/compiler/syntactic/syntactic_analyzer.dart`, `lib/compiler/syntactic/function_definition.dart`, `lib/compiler/syntactic/expression_parser.dart`, `lib/compiler/syntactic/expression.dart`
-
-The syntactic analyzer (parser) converts the token list into a list of `FunctionDefinition` objects, each containing a name, parameter list, and an expression tree.
-
-### Function Definition Parsing
-
-A state machine parses top-level function definitions:
-
-```
-identifier = expression               -- nullary function
-identifier(p1, p2, ...) = expression  -- parameterized function
-```
-
-States:
-
-1. `InitState` - expects an identifier (the function name).
-2. `FunctionNameState` - expects either `=` (nullary) or `(` (parameterized).
-3. `FunctionWithParametersState` / `FunctionWithNewParametersState` / `FunctionWithNextParametersState` - parse the comma-separated parameter list.
-4. `FunctionParametrizedState` - expects `=` after closing `)`.
-5. `ResultState` - expression parsing is complete; one `FunctionDefinition` is emitted.
-
-### Expression Parser
-
-The expression parser is a **recursive descent parser** with the following precedence levels (lowest to highest):
-
-| Precedence | Rule           | Operators / Forms                                  |
-| ---------- | -------------- | -------------------------------------------------- |
-| 1          | `ifExpression` | `if (cond) expr else expr`                         |
-| 2          | `equality`     | `==`, `!=`                                         |
-| 3          | `comparison`   | `>`, `>=`, `<`, `<=`                               |
-| 4          | `logic`        | `\|` (or), `&` (and)                               |
-| 5          | `term`         | `+`, `-`                                           |
-| 6          | `factor`       | `*`, `/`, `%`                                      |
-| 7          | `unary`        | `!`, `-` (negation)                                |
-| 8          | `call`         | function application `f(args)`, indexing `a[i]`    |
-| 9          | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}` |
-
-### Expression Tree
-
-All expressions extend `Expression` (which has a `Location`):
-
-- `LiteralExpression<T>` - base for all literal values
-  - `BooleanExpression`, `NumberExpression`, `StringExpression`
-  - `ListExpression` (contains `List<Expression>`)
-  - `MapExpression` (contains `Map<Expression, Expression>`)
-- `IdentifierExpression` - a named reference (variable or function)
-- `CallExpression` - function application (callee expression + argument list)
-  - Also used to represent binary and unary operators via factory constructors (`fromBinaryOperation`, `fromUnaryOperation`, `fromIf`)
-
-Operators and `if` expressions are desugared into `CallExpression` nodes at parse time, unifying all computation as function application.
-
----
-
-## 4. Semantic Analysis
-
-**File**: `lib/compiler/semantic/semantic_analyzer.dart`
-
-The semantic analyzer validates the parsed function definitions and produces `IntermediateCode`. It performs the following checks:
-
-1. **Function extraction** - converts each `FunctionDefinition` into a `CustomFunctionNode` with typed parameters.
-2. **Duplicate function detection** - reports an error if two functions share the same name.
-3. **Duplicate parameter detection** - reports an error if a function has repeated parameter names.
-4. **Identifier resolution** - for every `FreeVariableNode` in a function body:
-   - If it matches a parameter name, it is converted to a `BoundedVariableNode`.
-   - If it matches a known function name (custom or standard library), it remains a `FreeVariableNode` (resolved at runtime via scope).
-   - Otherwise, an `UndefinedIdentifierError` is raised.
-5. **Call validation** - for every `CallNode`, the argument count is checked against the callee's parameter count.
-6. **Unused parameter warnings** - parameters that are never referenced in the function body produce a warning.
-
-Nested structures (`CallNode`, `ListNode`, `MapNode`) are checked recursively.
-
-### Intermediate Code
-
-The output of semantic analysis is `IntermediateCode` (`lib/compiler/semantic/intermediate_code.dart`):
-
-- `functions`: `Map<String, FunctionNode>` - all functions (user-defined + standard library), keyed by name.
-- `warnings`: `List<GenericWarning>` - any warnings produced during analysis.
-
----
-
-## 5. Runtime
-
-**Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/node.dart`, `lib/compiler/runtime/bindings.dart`, `lib/compiler/runtime/scope.dart`
-
-The runtime evaluates intermediate code through **node substitution and reduction**.
-
-### Node Hierarchy
-
-All runtime values are nodes. The base `Node` class defines:
-
-- `type` - returns the node's `Type`.
-- `substitute(Bindings)` - replaces bound variables with their argument values.
-- `evaluate()` - reduces the node to a value.
-- `native()` - converts to a native Dart value.
-
-**Literal nodes** (self-evaluating):
-`BooleanNode`, `NumberNode`, `StringNode`, `FileNode`, `DirectoryNode`, `TimestampNode`
-
-**Collection nodes** (substitute recursively; self-evaluating):
-`ListNode`, `MapNode`, `SetNode`, `VectorNode`, `StackNode`, `QueueNode`
-
-**Variable nodes**:
-
-- `FreeVariableNode(name)` - resolved at runtime by looking up `name` in the global scope.
-- `BoundedVariableNode(name)` - replaced during substitution via bindings.
-
-**Call node**:
-`CallNode(callee, arguments)` - on evaluation, evaluates the callee to a `FunctionNode`, then calls `apply()` with the arguments.
-
-**Function nodes**:
-
-- `FunctionNode` - base, with name and parameters.
-- `CustomFunctionNode` - user-defined; `apply()` substitutes arguments into the body, then evaluates.
-- `NativeFunctionNode` - built-in; delegates to a Dart implementation.
-
-### Evaluation Model
-
-Function application follows these steps:
-
-1. Evaluate the callee expression to get a `FunctionNode`.
-2. Create `Bindings` from the function's parameters and the provided arguments.
-3. Substitute all `BoundedVariableNode`s in the function body with their bound values.
-4. Evaluate the resulting node.
-
-This is a substitution-based evaluation model consistent with lambda calculus reduction.
-
-### Scope
-
-`Scope` (`lib/compiler/runtime/scope.dart`) is a global map from function names to `FunctionNode` definitions, stored as `Runtime.SCOPE`. Free variables in function bodies are resolved against this scope at evaluation time.
-
----
-
-## 6. Type System
+## 1. Type System
 
 **File**: `lib/compiler/models/type.dart`
 
@@ -247,7 +55,7 @@ Type checking is **dynamic** - it happens at runtime when native functions valid
 
 ---
 
-## 7. Standard Library
+## 2. Standard Library
 
 **File**: `lib/compiler/library/standard_library.dart`
 
@@ -305,7 +113,7 @@ class _Node extends NativeFunctionNodeWithArguments {
 
 ---
 
-## 8. Error and Warning System
+## 3. Error and Warning System
 
 **Files**: `lib/compiler/errors/`, `lib/compiler/warnings/`
 
@@ -352,7 +160,7 @@ Non-fatal diagnostics collected during semantic analysis:
 
 ---
 
-## 9. Platform Abstraction
+## 4. Platform Abstraction
 
 **Files**: `lib/compiler/platform/`
 
@@ -380,7 +188,7 @@ The active platform is selected at startup based on the entry point (`main_cli.d
 
 ---
 
-## 10. Entry Points
+## 5. Entry Points
 
 ### CLI (`lib/main/main_cli.dart`)
 
@@ -405,7 +213,7 @@ Each call creates a fresh `Runtime` instance (stateless).
 
 ---
 
-## 11. Utilities
+## 6. Utilities
 
 **Files**: `lib/utils/`, `lib/extensions/`
 
@@ -420,7 +228,7 @@ Supporting infrastructure used across compiler stages:
 
 ---
 
-## 12. Design Patterns
+## 7. Design Patterns
 
 | Pattern             | Where                                | Purpose                                                     |
 | ------------------- | ------------------------------------ | ----------------------------------------------------------- |
