@@ -6,24 +6,24 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Vector', () {
-    test('vector.new 1', () {
+    test('vector.new creates empty vector from empty list', () {
       final Runtime runtime = getRuntime('main = vector.new([])');
       checkResult(runtime, []);
     });
 
-    test('vector.new 2', () {
+    test('vector.new creates vector from non-empty list', () {
       final Runtime runtime = getRuntime('main = vector.new([1, 2])');
       checkResult(runtime, [1, 2]);
     });
 
-    test('vector.magnitude 1', () {
+    test('vector.magnitude returns zero for empty vector', () {
       final Runtime runtime = getRuntime(
         'main = vector.magnitude(vector.new([]))',
       );
       checkResult(runtime, 0.0);
     });
 
-    test('vector.magnitude 2', () {
+    test('vector.magnitude computes length of non-empty vector', () {
       final Runtime runtime = getRuntime(
         'main = vector.magnitude(vector.new([1, 2, 3]))',
       );
@@ -33,14 +33,14 @@ void main() {
       );
     });
 
-    test('vector.normalize 1', () {
+    test('vector.normalize returns empty vector for empty input', () {
       final Runtime runtime = getRuntime(
         'main = vector.normalize(vector.new([]))',
       );
       checkResult(runtime, []);
     });
 
-    test('vector.normalize 2', () {
+    test('vector.normalize returns unit vector for non-empty input', () {
       final Runtime runtime = getRuntime(
         'main = vector.normalize(vector.new([1, 2, 3]))',
       );
@@ -51,21 +51,21 @@ void main() {
       ]);
     });
 
-    test('vector.add 1', () {
+    test('vector.add of two empty vectors returns empty vector', () {
       final Runtime runtime = getRuntime(
         'main = vector.add(vector.new([]), vector.new([]))',
       );
       checkResult(runtime, []);
     });
 
-    test('vector.add 2', () {
+    test('vector.add sums corresponding components', () {
       final Runtime runtime = getRuntime(
         'main = vector.add(vector.new([1, 2]), vector.new([3, 4]))',
       );
       checkResult(runtime, [4, 6]);
     });
 
-    test('vector.add 3', () {
+    test('vector.add throws for vectors with different lengths', () {
       final Runtime runtime = getRuntime(
         'main = vector.add(vector.new([1, 2]), vector.new([4, 5, 6]))',
       );
@@ -75,21 +75,21 @@ void main() {
       );
     });
 
-    test('vector.sub 1', () {
+    test('vector.sub of two empty vectors returns empty vector', () {
       final Runtime runtime = getRuntime(
         'main = vector.sub(vector.new([]), vector.new([]))',
       );
       checkResult(runtime, []);
     });
 
-    test('vector.sub 2', () {
+    test('vector.sub subtracts corresponding components', () {
       final Runtime runtime = getRuntime(
         'main = vector.sub(vector.new([1, 2]), vector.new([3, 4]))',
       );
       checkResult(runtime, [-2, -2]);
     });
 
-    test('vector.sub 3', () {
+    test('vector.sub throws for vectors with different lengths', () {
       final Runtime runtime = getRuntime(
         'main = vector.sub(vector.new([1, 2]), vector.new([4, 5, 6]))',
       );
@@ -99,14 +99,14 @@ void main() {
       );
     });
 
-    test('vector.angle 1', () {
+    test('vector.angle throws for empty vectors', () {
       final Runtime runtime = getRuntime(
         'main = vector.angle(vector.new([]), vector.new([]))',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('vector.angle 2', () {
+    test('vector.angle computes angle between 2D vectors', () {
       final Runtime runtime = getRuntime(
         'main = vector.angle(vector.new([1, 2]), vector.new([3, 4]))',
       );
@@ -116,7 +116,7 @@ void main() {
       );
     });
 
-    test('vector.angle 3', () {
+    test('vector.angle computes angle between 3D vectors', () {
       final Runtime runtime = getRuntime(
         'main = vector.angle(vector.new([3, 4, 0]), vector.new([4, 3, 0]))',
       );

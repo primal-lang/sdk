@@ -6,27 +6,27 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Hash', () {
-    test('hash.md5 1', () {
+    test('hash.md5 hashes empty string', () {
       final Runtime runtime = getRuntime('main = hash.md5("")');
       checkResult(runtime, '"d41d8cd98f00b204e9800998ecf8427e"');
     });
 
-    test('hash.md5 2', () {
+    test('hash.md5 hashes non-empty string', () {
       final Runtime runtime = getRuntime('main = hash.md5("Hello")');
       checkResult(runtime, '"8b1a9953c4611296a827abf8c47804d7"');
     });
 
-    test('hash.sha1 1', () {
+    test('hash.sha1 hashes empty string', () {
       final Runtime runtime = getRuntime('main = hash.sha1("")');
       checkResult(runtime, '"da39a3ee5e6b4b0d3255bfef95601890afd80709"');
     });
 
-    test('hash.sha1 2', () {
+    test('hash.sha1 hashes non-empty string', () {
       final Runtime runtime = getRuntime('main = hash.sha1("Hello")');
       checkResult(runtime, '"f7ff9e8b7bb2e09b70935a5d785e0cc5d9d0abf0"');
     });
 
-    test('hash.sha256 1', () {
+    test('hash.sha256 hashes empty string', () {
       final Runtime runtime = getRuntime('main = hash.sha256("")');
       checkResult(
         runtime,
@@ -34,7 +34,7 @@ void main() {
       );
     });
 
-    test('hash.sha256 2', () {
+    test('hash.sha256 hashes non-empty string', () {
       final Runtime runtime = getRuntime('main = hash.sha256("Hello")');
       checkResult(
         runtime,
@@ -42,7 +42,7 @@ void main() {
       );
     });
 
-    test('hash.sha512 1', () {
+    test('hash.sha512 hashes empty string', () {
       final Runtime runtime = getRuntime('main = hash.sha512("")');
       checkResult(
         runtime,
@@ -50,7 +50,7 @@ void main() {
       );
     });
 
-    test('hash.sha512 2', () {
+    test('hash.sha512 hashes non-empty string', () {
       final Runtime runtime = getRuntime('main = hash.sha512("Hello")');
       checkResult(
         runtime,
@@ -73,6 +73,32 @@ void main() {
     test('hash.sha256 throws for number argument', () {
       final Runtime runtime = getRuntime('main = hash.sha256(123)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Hash Error Cases', () {
+    test('hash.md5 throws InvalidArgumentTypesError for number argument', () {
+      final Runtime runtime = getRuntime('main = hash.md5(42)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha256 throws InvalidArgumentTypesError for boolean argument', () {
+      final Runtime runtime = getRuntime('main = hash.sha256(true)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha512 throws InvalidArgumentTypesError for number argument', () {
+      final Runtime runtime = getRuntime('main = hash.sha512(42)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
     });
   });
 }

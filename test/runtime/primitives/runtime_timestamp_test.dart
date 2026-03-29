@@ -74,21 +74,21 @@ void main() {
       );
     });
 
-    test('time.compare 1', () {
+    test('time.compare returns -1 for earlier date', () {
       final Runtime runtime = getRuntime(
         'main = time.compare(time.fromIso("2024-09-01T00:00:00"), time.fromIso("2024-09-02T00:00:00"))',
       );
       checkResult(runtime, -1);
     });
 
-    test('time.compare 2', () {
+    test('time.compare returns 0 for equal dates', () {
       final Runtime runtime = getRuntime(
         'main = time.compare(time.fromIso("2024-09-01T00:00:00"), time.fromIso("2024-09-01T00:00:00"))',
       );
       checkResult(runtime, 0);
     });
 
-    test('time.compare 3', () {
+    test('time.compare returns 1 for later date', () {
       final Runtime runtime = getRuntime(
         'main = time.compare(time.fromIso("2024-09-02T00:00:00"), time.fromIso("2024-09-01T00:00:00"))',
       );

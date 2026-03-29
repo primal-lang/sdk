@@ -6,112 +6,112 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Queue', () {
-    test('queue.new 1', () {
+    test('queue.new creates empty queue from empty list', () {
       final Runtime runtime = getRuntime('main = queue.new([])');
       checkResult(runtime, []);
     });
 
-    test('queue.new 2', () {
+    test('queue.new creates queue from non-empty list', () {
       final Runtime runtime = getRuntime('main = queue.new([1, 2])');
       checkResult(runtime, [1, 2]);
     });
 
-    test('queue.enqueue 1', () {
+    test('queue.enqueue adds element to empty queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.enqueue(queue.new([]), 1)',
       );
       checkResult(runtime, [1]);
     });
 
-    test('queue.enqueue 2', () {
+    test('queue.enqueue adds element to back of non-empty queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.enqueue(queue.new([1, 2]), 3)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('queue.dequeue 1', () {
+    test('queue.dequeue throws on empty queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.dequeue(queue.new([]))',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('queue.dequeue 2', () {
+    test('queue.dequeue removes front element from queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.dequeue(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, [2, 3]);
     });
 
-    test('queue.dequeue 3', () {
+    test('queue.dequeue on single-element queue returns empty queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.dequeue(queue.new([1]))',
       );
       checkResult(runtime, []);
     });
 
-    test('queue.peek 1', () {
+    test('queue.peek throws on empty queue', () {
       final Runtime runtime = getRuntime('main = queue.peek(queue.new([]))');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('queue.peek 2', () {
+    test('queue.peek returns front element of multi-element queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.peek(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, 1);
     });
 
-    test('queue.peek 3', () {
+    test('queue.peek returns element of single-element queue', () {
       final Runtime runtime = getRuntime('main = queue.peek(queue.new([1]))');
       checkResult(runtime, 1);
     });
 
-    test('queue.isEmpty 1', () {
+    test('queue.isEmpty returns true for empty queue', () {
       final Runtime runtime = getRuntime('main = queue.isEmpty(queue.new([]))');
       checkResult(runtime, true);
     });
 
-    test('queue.isEmpty 2', () {
+    test('queue.isEmpty returns false for non-empty queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.isEmpty(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('queue.isNotEmpty 1', () {
+    test('queue.isNotEmpty returns false for empty queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.isNotEmpty(queue.new([]))',
       );
       checkResult(runtime, false);
     });
 
-    test('queue.isNotEmpty 2', () {
+    test('queue.isNotEmpty returns true for non-empty queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.isNotEmpty(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, true);
     });
 
-    test('queue.length 1', () {
+    test('queue.length returns zero for empty queue', () {
       final Runtime runtime = getRuntime('main = queue.length(queue.new([]))');
       checkResult(runtime, 0);
     });
 
-    test('queue.length 2', () {
+    test('queue.length returns element count for non-empty queue', () {
       final Runtime runtime = getRuntime(
         'main = queue.length(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, 3);
     });
 
-    test('queue.reverse 1', () {
+    test('queue.reverse on empty queue returns empty queue', () {
       final Runtime runtime = getRuntime('main = queue.reverse(queue.new([]))');
       checkResult(runtime, []);
     });
 
-    test('queue.reverse 2', () {
+    test('queue.reverse reverses element order', () {
       final Runtime runtime = getRuntime(
         'main = queue.reverse(queue.new([1, 2, 3]))',
       );

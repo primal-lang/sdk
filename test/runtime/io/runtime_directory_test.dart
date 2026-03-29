@@ -1,3 +1,6 @@
+@TestOn('vm')
+library;
+
 import 'dart:io';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
@@ -14,14 +17,14 @@ void main() {
       checkResult(runtime, '"$resourcesPath/files"');
     });
 
-    test('directory.exists 1', () {
+    test('directory.exists returns true for existing directory', () {
       final Runtime runtime = getRuntime(
         'main = directory.exists(directory.fromPath("test/resources/files"))',
       );
       checkResult(runtime, true);
     });
 
-    test('directory.exists 2', () {
+    test('directory.exists returns false for non-existing directory', () {
       final Runtime runtime = getRuntime(
         'main = directory.exists(directory.fromPath("test/resources/filesX"))',
       );
@@ -41,7 +44,7 @@ void main() {
       expect(true, fileExists);
     });
 
-    test('directory.delete 1', () {
+    test('directory.delete returns true for existing directory', () {
       final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
         'main = directory.delete(directory.fromPath("test/resources/files/temp$id"))',
@@ -49,7 +52,7 @@ void main() {
       checkResult(runtime, true);
     });
 
-    test('directory.delete 2', () {
+    test('directory.delete returns false for non-existing directory', () {
       final Runtime runtime = getRuntime(
         'main = directory.delete(directory.fromPath("test/resources/files/tempX"))',
       );

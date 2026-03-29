@@ -6,42 +6,42 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Arithmetic', () {
-    test('num.abs 1', () {
+    test('num.abs returns same value for positive input', () {
       final Runtime runtime = getRuntime('main = num.abs(1)');
       checkResult(runtime, 1);
     });
 
-    test('num.abs 2', () {
+    test('num.abs returns positive for negative input', () {
       final Runtime runtime = getRuntime('main = num.abs(-1)');
       checkResult(runtime, 1);
     });
 
-    test('num.negative 1', () {
+    test('num.negative negates positive input', () {
       final Runtime runtime = getRuntime('main = num.negative(5)');
       checkResult(runtime, -5);
     });
 
-    test('num.negative 2', () {
+    test('num.negative keeps negative input negative', () {
       final Runtime runtime = getRuntime('main = num.negative(-5)');
       checkResult(runtime, -5);
     });
 
-    test('num.inc 1', () {
+    test('num.inc increments positive number', () {
       final Runtime runtime = getRuntime('main = num.inc(2)');
       checkResult(runtime, 3);
     });
 
-    test('num.inc 2', () {
+    test('num.inc increments negative number', () {
       final Runtime runtime = getRuntime('main = num.inc(-2)');
       checkResult(runtime, -1);
     });
 
-    test('num.dec 1', () {
+    test('num.dec decrements zero to negative one', () {
       final Runtime runtime = getRuntime('main = num.dec(0)');
       checkResult(runtime, -1);
     });
 
-    test('num.dec 2', () {
+    test('num.dec decrements negative number', () {
       final Runtime runtime = getRuntime('main = num.dec(-2)');
       checkResult(runtime, -3);
     });
@@ -76,12 +76,12 @@ void main() {
       checkResult(runtime, 2);
     });
 
-    test('num.min 1', () {
+    test('num.min returns smaller of two positive numbers', () {
       final Runtime runtime = getRuntime('main = num.min(7, 5)');
       checkResult(runtime, 5);
     });
 
-    test('num.min 2', () {
+    test('num.min returns smaller of two negative numbers', () {
       final Runtime runtime = getRuntime('main = num.min(-7, -5)');
       checkResult(runtime, -7);
     });
@@ -91,87 +91,87 @@ void main() {
       checkResult(runtime, 7);
     });
 
-    test('num.pow 1', () {
+    test('num.pow raises to positive exponent', () {
       final Runtime runtime = getRuntime('main = num.pow(7, 5)');
       checkResult(runtime, 16807);
     });
 
-    test('num.pow 2', () {
+    test('num.pow returns one for zero exponent', () {
       final Runtime runtime = getRuntime('main = num.pow(7, 0)');
       checkResult(runtime, 1);
     });
 
-    test('num.pow 3', () {
+    test('num.pow returns fraction for negative exponent', () {
       final Runtime runtime = getRuntime('main = num.pow(4, -1)');
       checkResult(runtime, 0.25);
     });
 
-    test('num.sqrt 1', () {
+    test('num.sqrt returns square root of perfect square', () {
       final Runtime runtime = getRuntime('main = num.sqrt(16)');
       checkResult(runtime, 4);
     });
 
-    test('num.sqrt 2', () {
+    test('num.sqrt returns zero for zero input', () {
       final Runtime runtime = getRuntime('main = num.sqrt(0)');
       checkResult(runtime, 0);
     });
 
-    test('num.round 1', () {
+    test('num.round returns same value for whole number', () {
       final Runtime runtime = getRuntime('main = num.round(4.0)');
       checkResult(runtime, 4);
     });
 
-    test('num.round 2', () {
+    test('num.round rounds down below half', () {
       final Runtime runtime = getRuntime('main = num.round(4.4)');
       checkResult(runtime, 4);
     });
 
-    test('num.round 3', () {
+    test('num.round rounds up at half', () {
       final Runtime runtime = getRuntime('main = num.round(4.5)');
       checkResult(runtime, 5);
     });
 
-    test('num.round 4', () {
+    test('num.round rounds up above half', () {
       final Runtime runtime = getRuntime('main = num.round(4.6)');
       checkResult(runtime, 5);
     });
 
-    test('num.floor 1', () {
+    test('num.floor returns same value for whole number', () {
       final Runtime runtime = getRuntime('main = num.floor(4.0)');
       checkResult(runtime, 4);
     });
 
-    test('num.floor 2', () {
+    test('num.floor rounds down below half', () {
       final Runtime runtime = getRuntime('main = num.floor(4.4)');
       checkResult(runtime, 4);
     });
 
-    test('num.floor 3', () {
+    test('num.floor rounds down at half', () {
       final Runtime runtime = getRuntime('main = num.floor(4.5)');
       checkResult(runtime, 4);
     });
 
-    test('num.floor 4', () {
+    test('num.floor rounds down above half', () {
       final Runtime runtime = getRuntime('main = num.floor(4.6)');
       checkResult(runtime, 4);
     });
 
-    test('num.ceil 1', () {
+    test('num.ceil returns same value for whole number', () {
       final Runtime runtime = getRuntime('main = num.ceil(4.0)');
       checkResult(runtime, 4);
     });
 
-    test('num.ceil 2', () {
+    test('num.ceil rounds up below half', () {
       final Runtime runtime = getRuntime('main = num.ceil(4.4)');
       checkResult(runtime, 5);
     });
 
-    test('num.ceil 3', () {
+    test('num.ceil rounds up at half', () {
       final Runtime runtime = getRuntime('main = num.ceil(4.5)');
       checkResult(runtime, 5);
     });
 
-    test('num.ceil 4', () {
+    test('num.ceil rounds up above half', () {
       final Runtime runtime = getRuntime('main = num.ceil(4.6)');
       checkResult(runtime, 5);
     });
@@ -196,141 +196,141 @@ void main() {
       checkResult(runtime, 2.302585092994046);
     });
 
-    test('num.isNegative 1', () {
+    test('num.isNegative returns false for positive input', () {
       final Runtime runtime = getRuntime('main = num.isNegative(5)');
       checkResult(runtime, false);
     });
 
-    test('num.isNegative 2', () {
+    test('num.isNegative returns true for negative input', () {
       final Runtime runtime = getRuntime('main = num.isNegative(-5)');
       checkResult(runtime, true);
     });
 
-    test('num.isPositive 1', () {
+    test('num.isPositive returns true for positive input', () {
       final Runtime runtime = getRuntime('main = num.isPositive(5)');
       checkResult(runtime, true);
     });
 
-    test('num.isPositive 2', () {
+    test('num.isPositive returns false for negative input', () {
       final Runtime runtime = getRuntime('main = num.isPositive(-5)');
       checkResult(runtime, false);
     });
 
-    test('num.isZero 1', () {
+    test('num.isZero returns true for zero', () {
       final Runtime runtime = getRuntime('main = num.isZero(0)');
       checkResult(runtime, true);
     });
 
-    test('num.isZero 2', () {
+    test('num.isZero returns false for non-zero', () {
       final Runtime runtime = getRuntime('main = num.isZero(0.1)');
       checkResult(runtime, false);
     });
 
-    test('num.isEven 1', () {
+    test('num.isEven returns true for even number', () {
       final Runtime runtime = getRuntime('main = num.isEven(6)');
       checkResult(runtime, true);
     });
 
-    test('num.isEven 2', () {
+    test('num.isEven returns false for odd number', () {
       final Runtime runtime = getRuntime('main = num.isEven(7)');
       checkResult(runtime, false);
     });
 
-    test('num.isOdd 1', () {
+    test('num.isOdd returns false for even number', () {
       final Runtime runtime = getRuntime('main = num.isOdd(6)');
       checkResult(runtime, false);
     });
 
-    test('num.isOdd 2', () {
+    test('num.isOdd returns true for odd number', () {
       final Runtime runtime = getRuntime('main = num.isOdd(7)');
       checkResult(runtime, true);
     });
 
-    test('num.asRadians 1', () {
+    test('num.asRadians converts zero degrees to zero radians', () {
       final Runtime runtime = getRuntime('main = num.asRadians(0)');
       checkResult(runtime, 0.0);
     });
 
-    test('num.asRadians 2', () {
+    test('num.asRadians converts 30 degrees to pi/6', () {
       final Runtime runtime = getRuntime('main = num.asRadians(30)');
       expect(num.parse(runtime.executeMain()), closeTo(0.523598775598, 0.0001));
     });
 
-    test('num.asRadians 3', () {
+    test('num.asRadians converts 180 degrees to pi', () {
       final Runtime runtime = getRuntime('main = num.asRadians(180)');
       expect(num.parse(runtime.executeMain()), closeTo(3.141592653589, 0.0001));
     });
 
-    test('num.asDegrees 1', () {
+    test('num.asDegrees converts zero radians to zero degrees', () {
       final Runtime runtime = getRuntime('main = num.asDegrees(0)');
       checkResult(runtime, 0.0);
     });
 
-    test('num.asDegrees 2', () {
+    test('num.asDegrees converts pi/6 to 30 degrees', () {
       final Runtime runtime = getRuntime(
         'main = num.asDegrees(0.52359877559829887307)',
       );
       expect(num.parse(runtime.executeMain()), closeTo(30, 0.0001));
     });
 
-    test('num.asDegrees 3', () {
+    test('num.asDegrees converts pi to 180 degrees', () {
       final Runtime runtime = getRuntime(
         'main = num.asDegrees(3.141592653589793)',
       );
       expect(num.parse(runtime.executeMain()), closeTo(180, 0.0001));
     });
 
-    test('num.infinity 1', () {
+    test('num.infinity returns infinity value', () {
       final Runtime runtime = getRuntime('main = num.infinity()');
       checkResult(runtime, double.infinity);
     });
 
-    test('num.infinity 2', () {
+    test('num.infinity result is recognized as infinite', () {
       final Runtime runtime = getRuntime('main = is.infinite(num.infinity())');
       checkResult(runtime, true);
     });
 
-    test('num.fraction 1', () {
+    test('num.fraction returns zero for integer input', () {
       final Runtime runtime = getRuntime('main = num.fraction(1)');
       checkResult(runtime, 0);
     });
 
-    test('num.fraction 2', () {
+    test('num.fraction extracts decimal part of positive number', () {
       final Runtime runtime = getRuntime('main = num.fraction(1.25)');
       checkResult(runtime, 0.25);
     });
 
-    test('num.fraction 3', () {
+    test('num.fraction extracts decimal part of negative number', () {
       final Runtime runtime = getRuntime('main = num.fraction(-1.25)');
       checkResult(runtime, 0.25);
     });
 
-    test('num.clamp 1', () {
+    test('num.clamp clamps value below min to min', () {
       final Runtime runtime = getRuntime('main = num.clamp(0, 1, 2)');
       checkResult(runtime, 1);
     });
 
-    test('num.clamp 2', () {
+    test('num.clamp returns value when within range', () {
       final Runtime runtime = getRuntime('main = num.clamp(2, 1, 5)');
       checkResult(runtime, 2);
     });
 
-    test('num.clamp 3', () {
+    test('num.clamp clamps value above max to max', () {
       final Runtime runtime = getRuntime('main = num.clamp(6, 1, 5)');
       checkResult(runtime, 5);
     });
 
-    test('num.sign 1', () {
+    test('num.sign returns -1 for negative number', () {
       final Runtime runtime = getRuntime('main = num.sign(-2)');
       checkResult(runtime, -1);
     });
 
-    test('num.sign 2', () {
+    test('num.sign returns 0 for zero', () {
       final Runtime runtime = getRuntime('main = num.sign(0)');
       checkResult(runtime, 0);
     });
 
-    test('num.sign 3', () {
+    test('num.sign returns 1 for positive number', () {
       final Runtime runtime = getRuntime('main = num.sign(2)');
       checkResult(runtime, 1);
     });
@@ -345,17 +345,17 @@ void main() {
       expect(num.parse(runtime.executeMain()), inInclusiveRange(0, 1));
     });
 
-    test('num.compare 1', () {
+    test('num.compare returns -1 when first is less', () {
       final Runtime runtime = getRuntime('main = num.compare(3, 7)');
       checkResult(runtime, -1);
     });
 
-    test('num.compare 2', () {
+    test('num.compare returns 0 when equal', () {
       final Runtime runtime = getRuntime('main = num.compare(7, 7)');
       checkResult(runtime, 0);
     });
 
-    test('num.compare 3', () {
+    test('num.compare returns 1 when first is greater', () {
       final Runtime runtime = getRuntime('main = num.compare(7, 3)');
       checkResult(runtime, 1);
     });

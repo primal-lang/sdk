@@ -6,136 +6,136 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('To', () {
-    test('to.number 1', () {
+    test('to.number converts string to number', () {
       final Runtime runtime = getRuntime('main = to.number("12.5")');
       checkResult(runtime, 12.5);
     });
 
-    test('to.number 2', () {
+    test('to.number returns number unchanged', () {
       final Runtime runtime = getRuntime('main = to.number(12.5)');
       checkResult(runtime, 12.5);
     });
 
-    test('to.number 3', () {
+    test('to.number throws for boolean argument', () {
       final Runtime runtime = getRuntime('main = to.number(true)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('to.integer 1', () {
+    test('to.integer converts string to integer', () {
       final Runtime runtime = getRuntime('main = to.integer("12")');
       checkResult(runtime, 12);
     });
 
-    test('to.integer 2', () {
+    test('to.integer returns integer unchanged', () {
       final Runtime runtime = getRuntime('main = to.integer(12)');
       checkResult(runtime, 12);
     });
 
-    test('to.integer 3', () {
+    test('to.integer truncates decimal below .5', () {
       final Runtime runtime = getRuntime('main = to.integer(12.4)');
       checkResult(runtime, 12);
     });
 
-    test('to.integer 4', () {
+    test('to.integer truncates decimal at .5', () {
       final Runtime runtime = getRuntime('main = to.integer(12.5)');
       checkResult(runtime, 12);
     });
 
-    test('to.integer 5', () {
+    test('to.integer truncates decimal above .5', () {
       final Runtime runtime = getRuntime('main = to.integer(12.6)');
       checkResult(runtime, 12);
     });
 
-    test('to.integer 6', () {
+    test('to.integer throws for boolean argument', () {
       final Runtime runtime = getRuntime('main = to.integer(true)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('to.decimal 1', () {
+    test('to.decimal converts string to decimal', () {
       final Runtime runtime = getRuntime('main = to.decimal("12")');
       checkResult(runtime, 12.0);
     });
 
-    test('to.decimal 2', () {
+    test('to.decimal converts integer to decimal', () {
       final Runtime runtime = getRuntime('main = to.decimal(12)');
       checkResult(runtime, 12.0);
     });
 
-    test('to.decimal 3', () {
+    test('to.decimal throws for boolean argument', () {
       final Runtime runtime = getRuntime('main = to.decimal(true)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('to.string 1', () {
+    test('to.string returns string unchanged', () {
       final Runtime runtime = getRuntime('main = to.string("12")');
       checkResult(runtime, '"12"');
     });
 
-    test('to.string 2', () {
+    test('to.string converts number to string', () {
       final Runtime runtime = getRuntime('main = to.string(12)');
       checkResult(runtime, '"12"');
     });
 
-    test('to.string 3', () {
+    test('to.string converts boolean to string', () {
       final Runtime runtime = getRuntime('main = to.string(true)');
       checkResult(runtime, '"true"');
     });
 
-    test('to.boolean 1', () {
+    test('to.boolean returns true for non-empty string', () {
       final Runtime runtime = getRuntime('main = to.boolean("hello")');
       checkResult(runtime, true);
     });
 
-    test('to.boolean 2', () {
+    test('to.boolean returns false for empty string', () {
       final Runtime runtime = getRuntime('main = to.boolean("")');
       checkResult(runtime, false);
     });
 
-    test('to.boolean 3', () {
+    test('to.boolean returns false for zero', () {
       final Runtime runtime = getRuntime('main = to.boolean(0)');
       checkResult(runtime, false);
     });
 
-    test('to.boolean 4', () {
+    test('to.boolean returns true for positive number', () {
       final Runtime runtime = getRuntime('main = to.boolean(12)');
       checkResult(runtime, true);
     });
 
-    test('to.boolean 5', () {
+    test('to.boolean returns true for negative number', () {
       final Runtime runtime = getRuntime('main = to.boolean(-1)');
       checkResult(runtime, true);
     });
 
-    test('to.boolean 6', () {
+    test('to.boolean returns true unchanged', () {
       final Runtime runtime = getRuntime('main = to.boolean(true)');
       checkResult(runtime, true);
     });
 
-    test('to.boolean 7', () {
+    test('to.boolean returns false unchanged', () {
       final Runtime runtime = getRuntime('main = to.boolean(false)');
       checkResult(runtime, false);
     });
 
-    test('to.list 1', () {
+    test('to.list converts set to list', () {
       final Runtime runtime = getRuntime('main = to.list(set.new([1, 2, 3]))');
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('to.list 2', () {
+    test('to.list converts vector to list', () {
       final Runtime runtime = getRuntime(
         'main = to.list(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('to.list 3', () {
+    test('to.list converts stack to list', () {
       final Runtime runtime = getRuntime(
         'main = to.list(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('to.list 4', () {
+    test('to.list converts queue to list', () {
       final Runtime runtime = getRuntime(
         'main = to.list(queue.new([1, 2, 3]))',
       );
@@ -144,864 +144,864 @@ void main() {
   });
 
   group('Is', () {
-    test('is.number 1', () {
+    test('is.number returns true for integer', () {
       final Runtime runtime = getRuntime('main = is.number(42)');
       checkResult(runtime, true);
     });
 
-    test('is.number 2', () {
+    test('is.number returns true for decimal', () {
       final Runtime runtime = getRuntime('main = is.number(12.5)');
       checkResult(runtime, true);
     });
 
-    test('is.number 3', () {
+    test('is.number returns false for numeric string', () {
       final Runtime runtime = getRuntime('main = is.number("12.5")');
       checkResult(runtime, false);
     });
 
-    test('is.number 4', () {
+    test('is.number returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.number(true)');
       checkResult(runtime, false);
     });
 
-    test('is.number 5', () {
+    test('is.number returns false for list', () {
       final Runtime runtime = getRuntime('main = is.number([1, 2, 3])');
       checkResult(runtime, false);
     });
 
-    test('is.number 6', () {
+    test('is.number returns false for map', () {
       final Runtime runtime = getRuntime('main = is.number({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.number 7', () {
+    test('is.number returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.number(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.number 8', () {
+    test('is.number returns false for set', () {
       final Runtime runtime = getRuntime(
         'main = is.number(set.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.number 9', () {
+    test('is.number returns false for stack', () {
       final Runtime runtime = getRuntime(
         'main = is.number(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.number 10', () {
+    test('is.number returns false for queue', () {
       final Runtime runtime = getRuntime(
         'main = is.number(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.number 11', () {
+    test('is.number returns false for function', () {
       final Runtime runtime = getRuntime('main = is.number(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.number 12', () {
+    test('is.number returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.number(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.number 13', () {
+    test('is.number returns false for file', () {
       final Runtime runtime = getRuntime(
         'main = is.number(file.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.number 14', () {
+    test('is.number returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.number(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.integer 1', () {
+    test('is.integer returns true for integer', () {
       final Runtime runtime = getRuntime('main = is.integer(12)');
       checkResult(runtime, true);
     });
 
-    test('is.integer 2', () {
+    test('is.integer returns false for whole decimal', () {
       final Runtime runtime = getRuntime('main = is.integer(12.0)');
       checkResult(runtime, false);
     });
 
-    test('is.integer 3', () {
+    test('is.integer returns false for fractional decimal', () {
       final Runtime runtime = getRuntime('main = is.integer(12.1)');
       checkResult(runtime, false);
     });
 
-    test('is.integer 4', () {
+    test('is.integer returns false for string', () {
       final Runtime runtime = getRuntime('main = is.integer("12")');
       checkResult(runtime, false);
     });
 
-    test('is.integer 5', () {
+    test('is.integer returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.integer(true)');
       checkResult(runtime, false);
     });
 
-    test('is.decimal 1', () {
+    test('is.decimal returns false for integer', () {
       final Runtime runtime = getRuntime('main = is.decimal(12)');
       checkResult(runtime, false);
     });
 
-    test('is.decimal 2', () {
+    test('is.decimal returns true for decimal', () {
       final Runtime runtime = getRuntime('main = is.decimal(12.5)');
       checkResult(runtime, true);
     });
 
-    test('is.decimal 3', () {
+    test('is.decimal returns false for numeric string', () {
       final Runtime runtime = getRuntime('main = is.decimal("12.5")');
       checkResult(runtime, false);
     });
 
-    test('is.decimal 4', () {
+    test('is.decimal returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.decimal(true)');
       checkResult(runtime, false);
     });
 
-    test('is.infinite 1', () {
+    test('is.infinite returns false for finite number', () {
       final Runtime runtime = getRuntime('main = is.infinite(12)');
       checkResult(runtime, false);
     });
 
-    test('is.infinite 2', () {
+    test('is.infinite returns true for division by zero', () {
       final Runtime runtime = getRuntime('main = is.infinite(1/0)');
       checkResult(runtime, true);
     });
 
-    test('is.string 1', () {
+    test('is.string returns true for string', () {
       final Runtime runtime = getRuntime('main = is.string("Hey")');
       checkResult(runtime, true);
     });
 
-    test('is.string 2', () {
+    test('is.string returns false for number', () {
       final Runtime runtime = getRuntime('main = is.string(12)');
       checkResult(runtime, false);
     });
 
-    test('is.string 3', () {
+    test('is.string returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.string(true)');
       checkResult(runtime, false);
     });
 
-    test('is.string 4', () {
+    test('is.string returns false for list', () {
       final Runtime runtime = getRuntime('main = is.string([1, 2, 3])');
       checkResult(runtime, false);
     });
 
-    test('is.string 5', () {
+    test('is.string returns false for map', () {
       final Runtime runtime = getRuntime('main = is.string({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.string 6', () {
+    test('is.string returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.string(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.string 7', () {
+    test('is.string returns false for set', () {
       final Runtime runtime = getRuntime(
         'main = is.string(set.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.string 8', () {
+    test('is.string returns false for stack', () {
       final Runtime runtime = getRuntime(
         'main = is.string(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.string 9', () {
+    test('is.string returns false for queue', () {
       final Runtime runtime = getRuntime(
         'main = is.string(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.string 10', () {
+    test('is.string returns false for function', () {
       final Runtime runtime = getRuntime('main = is.string(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.string 11', () {
+    test('is.string returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.string(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.string 12', () {
+    test('is.string returns false for file', () {
       final Runtime runtime = getRuntime(
         'main = is.string(file.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.string 13', () {
+    test('is.string returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.string(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.boolean 1', () {
+    test('is.boolean returns false for number', () {
       final Runtime runtime = getRuntime('main = is.boolean(12)');
       checkResult(runtime, false);
     });
 
-    test('is.boolean 2', () {
+    test('is.boolean returns false for string "true"', () {
       final Runtime runtime = getRuntime('main = is.boolean("true")');
       checkResult(runtime, false);
     });
 
-    test('is.boolean 3', () {
+    test('is.boolean returns true for boolean value', () {
       final Runtime runtime = getRuntime('main = is.boolean(true)');
       checkResult(runtime, true);
     });
 
-    test('is.boolean 4', () {
+    test('is.boolean returns false for list', () {
       final Runtime runtime = getRuntime('main = is.boolean([1, 2, 3])');
       checkResult(runtime, false);
     });
 
-    test('is.boolean 5', () {
+    test('is.boolean returns false for map', () {
       final Runtime runtime = getRuntime('main = is.boolean({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.boolean 6', () {
+    test('is.boolean returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.boolean(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.boolean 7', () {
+    test('is.boolean returns false for set', () {
       final Runtime runtime = getRuntime(
         'main = is.boolean(set.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.boolean 8', () {
+    test('is.boolean returns false for stack', () {
       final Runtime runtime = getRuntime(
         'main = is.boolean(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.boolean 9', () {
+    test('is.boolean returns false for queue', () {
       final Runtime runtime = getRuntime(
         'main = is.boolean(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.boolean 10', () {
+    test('is.boolean returns false for function', () {
       final Runtime runtime = getRuntime('main = is.boolean(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.boolean 11', () {
+    test('is.boolean returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.boolean(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.boolean 12', () {
+    test('is.boolean returns false for file', () {
       final Runtime runtime = getRuntime(
         'main = is.boolean(file.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.boolean 13', () {
+    test('is.boolean returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.boolean(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.list 1', () {
+    test('is.list returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.list(true)');
       checkResult(runtime, false);
     });
 
-    test('is.list 2', () {
+    test('is.list returns false for number', () {
       final Runtime runtime = getRuntime('main = is.list(1)');
       checkResult(runtime, false);
     });
 
-    test('is.list 3', () {
+    test('is.list returns false for string', () {
       final Runtime runtime = getRuntime('main = is.list("Hello")');
       checkResult(runtime, false);
     });
 
-    test('is.list 4', () {
+    test('is.list returns true for empty list', () {
       final Runtime runtime = getRuntime('main = is.list([])');
       checkResult(runtime, true);
     });
 
-    test('is.list 5', () {
+    test('is.list returns true for non-empty list', () {
       final Runtime runtime = getRuntime('main = is.list([1, 2, 3])');
       checkResult(runtime, true);
     });
 
-    test('is.list 6', () {
+    test('is.list returns false for map', () {
       final Runtime runtime = getRuntime('main = is.list({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.list 7', () {
+    test('is.list returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.list(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.list 8', () {
+    test('is.list returns false for set', () {
       final Runtime runtime = getRuntime('main = is.list(set.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
-    test('is.list 9', () {
+    test('is.list returns false for stack', () {
       final Runtime runtime = getRuntime(
         'main = is.list(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.list 10', () {
+    test('is.list returns false for queue', () {
       final Runtime runtime = getRuntime(
         'main = is.list(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.list 11', () {
+    test('is.list returns false for function', () {
       final Runtime runtime = getRuntime('main = is.list(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.list 12', () {
+    test('is.list returns false for file', () {
       final Runtime runtime = getRuntime('main = is.list(file.fromPath("."))');
       checkResult(runtime, false);
     });
 
-    test('is.list 13', () {
+    test('is.list returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.list(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.list 14', () {
+    test('is.list returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.list(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.map 1', () {
+    test('is.map returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.map(true)');
       checkResult(runtime, false);
     });
 
-    test('is.map 2', () {
+    test('is.map returns false for number', () {
       final Runtime runtime = getRuntime('main = is.map(1)');
       checkResult(runtime, false);
     });
 
-    test('is.map 3', () {
+    test('is.map returns false for string', () {
       final Runtime runtime = getRuntime('main = is.list("map")');
       checkResult(runtime, false);
     });
 
-    test('is.map 4', () {
+    test('is.map returns true for empty map', () {
       final Runtime runtime = getRuntime('main = is.map({})');
       checkResult(runtime, true);
     });
 
-    test('is.map 5', () {
+    test('is.map returns false for list', () {
       final Runtime runtime = getRuntime('main = is.map([1, 2, 3])');
       checkResult(runtime, false);
     });
 
-    test('is.map 6', () {
+    test('is.map returns true for non-empty map', () {
       final Runtime runtime = getRuntime('main = is.map({"foo": 1})');
       checkResult(runtime, true);
     });
 
-    test('is.map 7', () {
+    test('is.map returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.map(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.map 8', () {
+    test('is.map returns false for set', () {
       final Runtime runtime = getRuntime('main = is.map(set.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
-    test('is.map 9', () {
+    test('is.map returns false for stack', () {
       final Runtime runtime = getRuntime('main = is.map(stack.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
-    test('is.map 10', () {
+    test('is.map returns false for queue', () {
       final Runtime runtime = getRuntime('main = is.map(queue.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
-    test('is.map 11', () {
+    test('is.map returns false for function', () {
       final Runtime runtime = getRuntime('main = is.map(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.map 12', () {
+    test('is.map returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.map(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.map 13', () {
+    test('is.map returns false for file', () {
       final Runtime runtime = getRuntime('main = is.map(file.fromPath("."))');
       checkResult(runtime, false);
     });
 
-    test('is.map 14', () {
+    test('is.map returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.map(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.vector 1', () {
+    test('is.vector returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.vector(true)');
       checkResult(runtime, false);
     });
 
-    test('is.vector 2', () {
+    test('is.vector returns false for number', () {
       final Runtime runtime = getRuntime('main = is.vector(1)');
       checkResult(runtime, false);
     });
 
-    test('is.vector 3', () {
+    test('is.vector returns false for string', () {
       final Runtime runtime = getRuntime('main = is.vector("Hello")');
       checkResult(runtime, false);
     });
 
-    test('is.vector 4', () {
+    test('is.vector returns false for empty list', () {
       final Runtime runtime = getRuntime('main = is.vector([])');
       checkResult(runtime, false);
     });
 
-    test('is.vector 5', () {
+    test('is.vector returns false for list', () {
       final Runtime runtime = getRuntime('main = is.vector([1, 2, 3])');
       checkResult(runtime, false);
     });
 
-    test('is.vector 6', () {
+    test('is.vector returns false for map', () {
       final Runtime runtime = getRuntime('main = is.vector({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.vector 7', () {
+    test('is.vector returns true for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.vector(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, true);
     });
 
-    test('is.vector 8', () {
+    test('is.vector returns false for set', () {
       final Runtime runtime = getRuntime(
         'main = is.vector(set.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.vector 9', () {
+    test('is.vector returns false for stack', () {
       final Runtime runtime = getRuntime(
         'main = is.vector(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.vector 10', () {
+    test('is.vector returns false for queue', () {
       final Runtime runtime = getRuntime(
         'main = is.vector(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.vector 11', () {
+    test('is.vector returns false for function', () {
       final Runtime runtime = getRuntime('main = is.vector(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.vector 12', () {
+    test('is.vector returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.vector(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.vector 13', () {
+    test('is.vector returns false for file', () {
       final Runtime runtime = getRuntime(
         'main = is.vector(file.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.vector 14', () {
+    test('is.vector returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.vector(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.set 1', () {
+    test('is.set returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.set(true)');
       checkResult(runtime, false);
     });
 
-    test('is.set 2', () {
+    test('is.set returns false for number', () {
       final Runtime runtime = getRuntime('main = is.set(1)');
       checkResult(runtime, false);
     });
 
-    test('is.set 3', () {
+    test('is.set returns false for string', () {
       final Runtime runtime = getRuntime('main = is.set("Hello")');
       checkResult(runtime, false);
     });
 
-    test('is.set 4', () {
+    test('is.set returns false for empty list', () {
       final Runtime runtime = getRuntime('main = is.set([])');
       checkResult(runtime, false);
     });
 
-    test('is.set 5', () {
+    test('is.set returns false for list', () {
       final Runtime runtime = getRuntime('main = is.set([1, 2, 3])');
       checkResult(runtime, false);
     });
 
-    test('is.set 6', () {
+    test('is.set returns false for map', () {
       final Runtime runtime = getRuntime('main = is.set({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.set 7', () {
+    test('is.set returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.set(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.set 8', () {
+    test('is.set returns true for set', () {
       final Runtime runtime = getRuntime('main = is.set(set.new([1, 2, 3]))');
       checkResult(runtime, true);
     });
 
-    test('is.set 9', () {
+    test('is.set returns false for stack', () {
       final Runtime runtime = getRuntime('main = is.set(stack.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
-    test('is.set 10', () {
+    test('is.set returns false for queue', () {
       final Runtime runtime = getRuntime('main = is.set(queue.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
-    test('is.set 11', () {
+    test('is.set returns false for function', () {
       final Runtime runtime = getRuntime('main = is.set(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.set 12', () {
+    test('is.set returns false for file', () {
       final Runtime runtime = getRuntime('main = is.set(file.fromPath("."))');
       checkResult(runtime, false);
     });
 
-    test('is.set 13', () {
+    test('is.set returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.set(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.set 14', () {
+    test('is.set returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.set(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.stack 1', () {
+    test('is.stack returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.stack(true)');
       checkResult(runtime, false);
     });
 
-    test('is.stack 2', () {
+    test('is.stack returns false for number', () {
       final Runtime runtime = getRuntime('main = is.stack(1)');
       checkResult(runtime, false);
     });
 
-    test('is.stack 3', () {
+    test('is.stack returns false for string', () {
       final Runtime runtime = getRuntime('main = is.stack("Hello")');
       checkResult(runtime, false);
     });
 
-    test('is.stack 4', () {
+    test('is.stack returns false for empty list', () {
       final Runtime runtime = getRuntime('main = is.stack([])');
       checkResult(runtime, false);
     });
 
-    test('is.stack 5', () {
+    test('is.stack returns false for list', () {
       final Runtime runtime = getRuntime('main = is.stack([1, 2, 3])');
       checkResult(runtime, false);
     });
 
-    test('is.stack 6', () {
+    test('is.stack returns false for map', () {
       final Runtime runtime = getRuntime('main = is.stack({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.stack 7', () {
+    test('is.stack returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.stack(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.stack 8', () {
+    test('is.stack returns false for set', () {
       final Runtime runtime = getRuntime('main = is.stack(set.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
-    test('is.stack 9', () {
+    test('is.stack returns true for empty stack', () {
       final Runtime runtime = getRuntime('main = is.stack(stack.new([]))');
       checkResult(runtime, true);
     });
 
-    test('is.stack 10', () {
+    test('is.stack returns true for non-empty stack', () {
       final Runtime runtime = getRuntime(
         'main = is.stack(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, true);
     });
 
-    test('is.stack 11', () {
+    test('is.stack returns false for queue', () {
       final Runtime runtime = getRuntime(
         'main = is.stack(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.stack 12', () {
+    test('is.stack returns false for function', () {
       final Runtime runtime = getRuntime('main = is.stack(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.stack 13', () {
+    test('is.stack returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.stack(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.stack 14', () {
+    test('is.stack returns false for file', () {
       final Runtime runtime = getRuntime('main = is.stack(file.fromPath("."))');
       checkResult(runtime, false);
     });
 
-    test('is.stack 15', () {
+    test('is.stack returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.stack(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.queue 1', () {
+    test('is.queue returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.queue(true)');
       checkResult(runtime, false);
     });
 
-    test('is.queue 2', () {
+    test('is.queue returns false for number', () {
       final Runtime runtime = getRuntime('main = is.queue(1)');
       checkResult(runtime, false);
     });
 
-    test('is.queue 3', () {
+    test('is.queue returns false for string', () {
       final Runtime runtime = getRuntime('main = is.queue("Hello")');
       checkResult(runtime, false);
     });
 
-    test('is.queue 4', () {
+    test('is.queue returns false for empty list', () {
       final Runtime runtime = getRuntime('main = is.queue([])');
       checkResult(runtime, false);
     });
 
-    test('is.queue 5', () {
+    test('is.queue returns false for list', () {
       final Runtime runtime = getRuntime('main = is.queue([1, 2, 3])');
       checkResult(runtime, false);
     });
 
-    test('is.queue 6', () {
+    test('is.queue returns false for map', () {
       final Runtime runtime = getRuntime('main = is.queue({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.queue 7', () {
+    test('is.queue returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.queue(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.queue 8', () {
+    test('is.queue returns false for set', () {
       final Runtime runtime = getRuntime('main = is.queue(set.new([1, 2, 3]))');
       checkResult(runtime, false);
     });
 
-    test('is.queue 9', () {
+    test('is.queue returns false for empty stack', () {
       final Runtime runtime = getRuntime('main = is.queue(stack.new([]))');
       checkResult(runtime, false);
     });
 
-    test('is.queue 10', () {
+    test('is.queue returns false for non-empty stack', () {
       final Runtime runtime = getRuntime(
         'main = is.queue(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.queue 11', () {
+    test('is.queue returns true for empty queue', () {
       final Runtime runtime = getRuntime('main = is.queue(queue.new([]))');
       checkResult(runtime, true);
     });
 
-    test('is.queue 12', () {
+    test('is.queue returns true for non-empty queue', () {
       final Runtime runtime = getRuntime(
         'main = is.queue(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, true);
     });
 
-    test('is.queue 13', () {
+    test('is.queue returns false for function', () {
       final Runtime runtime = getRuntime('main = is.queue(num.abs)');
       checkResult(runtime, false);
     });
 
-    test('is.queue 14', () {
+    test('is.queue returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.queue(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.queue 15', () {
+    test('is.queue returns false for file', () {
       final Runtime runtime = getRuntime('main = is.queue(file.fromPath("."))');
       checkResult(runtime, false);
     });
 
-    test('is.queue 16', () {
+    test('is.queue returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.queue(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.function 1', () {
+    test('is.function returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.function(true)');
       checkResult(runtime, false);
     });
 
-    test('is.function 2', () {
+    test('is.function returns false for number', () {
       final Runtime runtime = getRuntime('main = is.function(1)');
       checkResult(runtime, false);
     });
 
-    test('is.function 3', () {
+    test('is.function returns false for string', () {
       final Runtime runtime = getRuntime('main = is.function("Hello")');
       checkResult(runtime, false);
     });
 
-    test('is.function 4', () {
+    test('is.function returns false for list', () {
       final Runtime runtime = getRuntime('main = is.function([])');
       checkResult(runtime, false);
     });
 
-    test('is.function 5', () {
+    test('is.function returns false for map', () {
       final Runtime runtime = getRuntime('main = is.function({"foo": 1})');
       checkResult(runtime, false);
     });
 
-    test('is.function 6', () {
+    test('is.function returns false for vector', () {
       final Runtime runtime = getRuntime(
         'main = is.function(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.function 7', () {
+    test('is.function returns false for set', () {
       final Runtime runtime = getRuntime(
         'main = is.function(set.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.function 8', () {
+    test('is.function returns false for stack', () {
       final Runtime runtime = getRuntime(
         'main = is.function(stack.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.function 9', () {
+    test('is.function returns false for queue', () {
       final Runtime runtime = getRuntime(
         'main = is.function(queue.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.function 10', () {
+    test('is.function returns true for function reference', () {
       final Runtime runtime = getRuntime('main = is.function(num.abs)');
       checkResult(runtime, true);
     });
 
-    test('is.function 11', () {
+    test('is.function returns false for timestamp', () {
       final Runtime runtime = getRuntime('main = is.function(time.now())');
       checkResult(runtime, false);
     });
 
-    test('is.function 12', () {
+    test('is.function returns false for file', () {
       final Runtime runtime = getRuntime(
         'main = is.function(file.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.function 13', () {
+    test('is.function returns false for directory', () {
       final Runtime runtime = getRuntime(
         'main = is.function(directory.fromPath("."))',
       );
       checkResult(runtime, false);
     });
 
-    test('is.timestamp 1', () {
+    test('is.timestamp returns false for boolean', () {
       final Runtime runtime = getRuntime('main = is.timestamp(true)');
       checkResult(runtime, false);
     });
 
-    test('is.timestamp 2', () {
+    test('is.timestamp returns false for number', () {
       final Runtime runtime = getRuntime('main = is.timestamp(1)');
       checkResult(runtime, false);
     });
 
-    test('is.timestamp 3', () {
+    test('is.timestamp returns false for string', () {
       final Runtime runtime = getRuntime('main = is.timestamp("Hello")');
       checkResult(runtime, false);
     });

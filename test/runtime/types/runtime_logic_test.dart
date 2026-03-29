@@ -6,72 +6,72 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Logic', () {
-    test('bool.and 1', () {
+    test('bool.and returns true when both are true', () {
       final Runtime runtime = getRuntime('main = bool.and(true, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.and 2', () {
+    test('bool.and returns false when first is false', () {
       final Runtime runtime = getRuntime('main = bool.and(false, true)');
       checkResult(runtime, false);
     });
 
-    test('bool.and 3', () {
+    test('bool.and returns false when second is false', () {
       final Runtime runtime = getRuntime('main = bool.and(true, false)');
       checkResult(runtime, false);
     });
 
-    test('bool.and 4', () {
+    test('bool.and returns false when both are false', () {
       final Runtime runtime = getRuntime('main = bool.and(false, false)');
       checkResult(runtime, false);
     });
 
-    test('bool.or 1', () {
+    test('bool.or returns true when both are true', () {
       final Runtime runtime = getRuntime('main = bool.or(true, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.or 2', () {
+    test('bool.or returns true when first is true', () {
       final Runtime runtime = getRuntime('main = bool.or(true, false)');
       checkResult(runtime, true);
     });
 
-    test('bool.or 3', () {
+    test('bool.or returns true when second is true', () {
       final Runtime runtime = getRuntime('main = bool.or(false, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.or 4', () {
+    test('bool.or returns false when both are false', () {
       final Runtime runtime = getRuntime('main = bool.or(false, false)');
       checkResult(runtime, false);
     });
 
-    test('bool.xor 1', () {
+    test('bool.xor returns false when both are true', () {
       final Runtime runtime = getRuntime('main = bool.xor(true, true)');
       checkResult(runtime, false);
     });
 
-    test('bool.xor 2', () {
+    test('bool.xor returns true when only first is true', () {
       final Runtime runtime = getRuntime('main = bool.xor(true, false)');
       checkResult(runtime, true);
     });
 
-    test('bool.xor 3', () {
+    test('bool.xor returns true when only second is true', () {
       final Runtime runtime = getRuntime('main = bool.xor(false, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.xor 4', () {
+    test('bool.xor returns false when both are false', () {
       final Runtime runtime = getRuntime('main = bool.xor(false, false)');
       checkResult(runtime, false);
     });
 
-    test('bool.not 1', () {
+    test('bool.not negates true to false', () {
       final Runtime runtime = getRuntime('main = bool.not(true)');
       checkResult(runtime, false);
     });
 
-    test('bool.not 2', () {
+    test('bool.not negates false to true', () {
       final Runtime runtime = getRuntime('main = bool.not(false)');
       checkResult(runtime, true);
     });

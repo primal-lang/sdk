@@ -16,43 +16,43 @@ void main() {
       checkResult(runtime, '"ol"');
     });
 
-    test('str.startsWith 1', () {
+    test('str.startsWith returns true for matching prefix', () {
       final Runtime runtime = getRuntime('main = str.startsWith("hola", "ho")');
       checkResult(runtime, true);
     });
 
-    test('str.startsWith 2', () {
+    test('str.startsWith returns false for non-matching prefix', () {
       final Runtime runtime = getRuntime(
         'main = str.startsWith("hola", "hoy")',
       );
       checkResult(runtime, false);
     });
 
-    test('str.endsWith 1', () {
+    test('str.endsWith returns true for matching suffix', () {
       final Runtime runtime = getRuntime('main = str.endsWith("hola", "la")');
       checkResult(runtime, true);
     });
 
-    test('str.endsWith 2', () {
+    test('str.endsWith returns false for non-matching suffix', () {
       final Runtime runtime = getRuntime('main = str.endsWith("hola", "lol")');
       checkResult(runtime, false);
     });
 
-    test('str.replace 1', () {
+    test('str.replace replaces all occurrences of a substring', () {
       final Runtime runtime = getRuntime(
         'main = str.replace("banana", "na", "to")',
       );
       checkResult(runtime, '"batoto"');
     });
 
-    test('str.replace 2', () {
+    test('str.replace returns original when pattern not found', () {
       final Runtime runtime = getRuntime(
         'main = str.replace("banana", "bon", "to")',
       );
       checkResult(runtime, '"banana"');
     });
 
-    test('str.replace 3', () {
+    test('str.replace replaces characters matching a regex pattern', () {
       final Runtime runtime = getRuntime(
         'main = str.replace("aaa123BBB", "[a-z]", "x")',
       );
@@ -108,12 +108,12 @@ void main() {
       checkResult(runtime, '"Hell"');
     });
 
-    test('str.rest 1', () {
+    test('str.rest returns empty string for empty input', () {
       final Runtime runtime = getRuntime('main = str.rest("")');
       checkResult(runtime, '""');
     });
 
-    test('str.rest 2', () {
+    test('str.rest returns string without first character', () {
       final Runtime runtime = getRuntime('main = str.rest("Hello")');
       checkResult(runtime, '"ello"');
     });
@@ -123,64 +123,64 @@ void main() {
       checkResult(runtime, '"e"');
     });
 
-    test('str.isEmpty 1', () {
+    test('str.isEmpty returns true for empty string', () {
       final Runtime runtime = getRuntime('main = str.isEmpty("")');
       checkResult(runtime, true);
     });
 
-    test('str.isEmpty 2', () {
+    test('str.isEmpty returns false for whitespace-only string', () {
       final Runtime runtime = getRuntime('main = str.isEmpty(" ")');
       checkResult(runtime, false);
     });
 
-    test('str.isEmpty 3', () {
+    test('str.isEmpty returns false for non-empty string', () {
       final Runtime runtime = getRuntime('main = str.isEmpty("Hello")');
       checkResult(runtime, false);
     });
 
-    test('str.isNotEmpty 1', () {
+    test('str.isNotEmpty returns false for empty string', () {
       final Runtime runtime = getRuntime('main = str.isNotEmpty("")');
       checkResult(runtime, false);
     });
 
-    test('str.isNotEmpty 2', () {
+    test('str.isNotEmpty returns true for whitespace-only string', () {
       final Runtime runtime = getRuntime('main = str.isNotEmpty(" ")');
       checkResult(runtime, true);
     });
 
-    test('str.isNotEmpty 3', () {
+    test('str.isNotEmpty returns true for non-empty string', () {
       final Runtime runtime = getRuntime('main = str.isNotEmpty("Hello")');
       checkResult(runtime, true);
     });
 
-    test('str.contains 1', () {
+    test('str.contains returns true when substring is present', () {
       final Runtime runtime = getRuntime('main = str.contains("Hello", "ell")');
       checkResult(runtime, true);
     });
 
-    test('str.contains 2', () {
+    test('str.contains returns false for case-sensitive mismatch', () {
       final Runtime runtime = getRuntime(
         'main = str.contains("Hello", "hell")',
       );
       checkResult(runtime, false);
     });
 
-    test('str.take 1', () {
+    test('str.take returns empty string when taking zero characters', () {
       final Runtime runtime = getRuntime('main = str.take("Hello", 0)');
       checkResult(runtime, '""');
     });
 
-    test('str.take 2', () {
+    test('str.take returns first n characters', () {
       final Runtime runtime = getRuntime('main = str.take("Hello", 4)');
       checkResult(runtime, '"Hell"');
     });
 
-    test('str.drop 1', () {
+    test('str.drop returns full string when dropping zero characters', () {
       final Runtime runtime = getRuntime('main = str.drop("Hello", 0)');
       checkResult(runtime, '"Hello"');
     });
 
-    test('str.drop 2', () {
+    test('str.drop returns string after dropping first n characters', () {
       final Runtime runtime = getRuntime('main = str.drop("Hello", 2)');
       checkResult(runtime, '"llo"');
     });
@@ -200,58 +200,58 @@ void main() {
       checkResult(runtime, [72, 101, 108, 108, 111]);
     });
 
-    test('str.indexOf 1', () {
+    test('str.indexOf returns negative one when substring not found', () {
       final Runtime runtime = getRuntime('main = str.indexOf("Hello", "x")');
       checkResult(runtime, -1);
     });
 
-    test('str.indexOf 2', () {
+    test('str.indexOf returns index of first occurrence', () {
       final Runtime runtime = getRuntime('main = str.indexOf("Hello", "l")');
       checkResult(runtime, 2);
     });
 
-    test('str.padLeft 1', () {
+    test('str.padLeft does not pad when target width is zero', () {
       final Runtime runtime = getRuntime('main = str.padLeft("12345", 0, "0")');
       checkResult(runtime, '"12345"');
     });
 
-    test('str.padLeft 2', () {
+    test('str.padLeft does not pad when string already meets width', () {
       final Runtime runtime = getRuntime('main = str.padLeft("12345", 5, "0")');
       checkResult(runtime, '"12345"');
     });
 
-    test('str.padLeft 3', () {
+    test('str.padLeft pads string to target width on the left', () {
       final Runtime runtime = getRuntime('main = str.padLeft("12345", 8, "0")');
       checkResult(runtime, '"00012345"');
     });
 
-    test('str.padRight 1', () {
+    test('str.padRight does not pad when target width is zero', () {
       final Runtime runtime = getRuntime(
         'main = str.padRight("12345", 0, "0")',
       );
       checkResult(runtime, '"12345"');
     });
 
-    test('str.padRight 2', () {
+    test('str.padRight does not pad when string already meets width', () {
       final Runtime runtime = getRuntime(
         'main = str.padRight("12345", 5, "0")',
       );
       checkResult(runtime, '"12345"');
     });
 
-    test('str.padRight 3', () {
+    test('str.padRight pads string to target width on the right', () {
       final Runtime runtime = getRuntime(
         'main = str.padRight("12345", 8, "0")',
       );
       checkResult(runtime, '"12345000"');
     });
 
-    test('str.split 1', () {
+    test('str.split returns single-element list when delimiter not found', () {
       final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", "x")');
       checkResult(runtime, ['"aa,bb,cc"']);
     });
 
-    test('str.split 2', () {
+    test('str.split splits into individual characters with empty delimiter', () {
       final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", "")');
       checkResult(runtime, [
         '"a"',
@@ -265,26 +265,26 @@ void main() {
       ]);
     });
 
-    test('str.split 3', () {
+    test('str.split splits string by delimiter', () {
       final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", ",")');
       checkResult(runtime, ['"aa"', '"bb"', '"cc"']);
     });
 
-    test('str.compare 1', () {
+    test('str.compare returns negative one when first string is lesser', () {
       final Runtime runtime = getRuntime(
         'main = str.compare("hello", "mountain")',
       );
       checkResult(runtime, -1);
     });
 
-    test('str.compare 2', () {
+    test('str.compare returns zero for equal strings', () {
       final Runtime runtime = getRuntime(
         'main = str.compare("table", "table")',
       );
       checkResult(runtime, 0);
     });
 
-    test('str.compare 3', () {
+    test('str.compare returns one when first string is greater', () {
       final Runtime runtime = getRuntime('main = str.compare("monkey", "cat")');
       checkResult(runtime, 1);
     });
@@ -387,6 +387,50 @@ void main() {
     test('str.trim throws for wrong type', () {
       final Runtime runtime = getRuntime('main = str.trim(42)');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+  });
+
+  group('String Error Cases', () {
+    test('str.at throws RangeError for out-of-bounds index', () {
+      final Runtime runtime = getRuntime('main = str.at("Hello", 10)');
+      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+    });
+
+    test('str.at throws RangeError for negative index', () {
+      final Runtime runtime = getRuntime('main = str.at("Hello", -1)');
+      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+    });
+
+    test('str.substring throws InvalidArgumentTypesError for number instead of string', () {
+      final Runtime runtime = getRuntime('main = str.substring(123, 0, 2)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('str.length throws InvalidArgumentTypesError for number argument', () {
+      final Runtime runtime = getRuntime('main = str.length(42)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('str.indexOf throws InvalidArgumentTypesError for number first argument', () {
+      final Runtime runtime = getRuntime('main = str.indexOf(42, "x")');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('str.indexOf throws InvalidArgumentTypesError for number second argument', () {
+      final Runtime runtime = getRuntime('main = str.indexOf("Hello", 42)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
     });
   });
 }

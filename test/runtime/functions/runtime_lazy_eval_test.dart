@@ -18,5 +18,31 @@ void main() {
       );
       checkResult(runtime, 2);
     });
+
+    test('nested if with lazy outer else', () {
+      final Runtime runtime = getRuntime(
+        'main = if (true) (if (true) 1 else 2) else error.throw(-1, "Error")',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('nested if with lazy inner else', () {
+      final Runtime runtime = getRuntime(
+        'main = if (true) (if (true) 1 else error.throw(-1, "Error")) else 0',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('try does not propagate caught error', () {
+      final Runtime runtime = getRuntime(
+        'main = try(error.throw(-1, "Fail"), 42)',
+      );
+      checkResult(runtime, 42);
+    });
+
+    test('try returns value when no error', () {
+      final Runtime runtime = getRuntime('main = try(10, -1)');
+      checkResult(runtime, 10);
+    });
   });
 }

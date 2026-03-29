@@ -1,3 +1,6 @@
+@TestOn('vm')
+library;
+
 import 'dart:io';
 import 'dart:math';
 import 'package:primal/compiler/runtime/runtime.dart';
@@ -15,14 +18,14 @@ void main() {
       checkResult(runtime, '"$resourcesPath/files/file1.txt"');
     });
 
-    test('file.exists 1', () {
+    test('file.exists returns true for existing file', () {
       final Runtime runtime = getRuntime(
         'main = file.exists(file.fromPath("test/resources/files/file1.txt"))',
       );
       checkResult(runtime, true);
     });
 
-    test('file.exists 2', () {
+    test('file.exists returns false for non-existing file', () {
       final Runtime runtime = getRuntime(
         'main = file.exists(file.fromPath("test/resources/files/file0.txt"))',
       );
@@ -65,7 +68,7 @@ main = testFile(file.fromPath("test/resources/files/temp/file_temp.txt"), "$valu
       expect(true, fileExists);
     });
 
-    test('file.delete 1', () {
+    test('file.delete returns true for existing file', () {
       final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
         'main = file.delete(file.fromPath("test/resources/files/temp/file$id.txt"))',
@@ -73,7 +76,7 @@ main = testFile(file.fromPath("test/resources/files/temp/file_temp.txt"), "$valu
       checkResult(runtime, true);
     });
 
-    test('file.delete 2', () {
+    test('file.delete returns false for non-existing file', () {
       final Runtime runtime = getRuntime(
         'main = file.delete(file.fromPath("test/resources/files/temp2/file1.txt"))',
       );

@@ -6,155 +6,155 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Set', () {
-    test('set.new 1', () {
+    test('set.new creates empty set from empty list', () {
       final Runtime runtime = getRuntime('main = set.new([])');
       checkResult(runtime, {});
     });
 
-    test('set.new 2', () {
+    test('set.new creates set from list with unique elements', () {
       final Runtime runtime = getRuntime('main = set.new([1, 2])');
       checkResult(runtime, {1, 2});
     });
 
-    test('set.new 3', () {
+    test('set.new removes duplicates from list', () {
       final Runtime runtime = getRuntime('main = set.new([1, 2, 1])');
       checkResult(runtime, {1, 2});
     });
 
-    test('set.add 1', () {
+    test('set.add adds element to empty set', () {
       final Runtime runtime = getRuntime('main = set.add(set.new([]), 1)');
       checkResult(runtime, {1});
     });
 
-    test('set.add 2', () {
+    test('set.add adds new element to non-empty set', () {
       final Runtime runtime = getRuntime('main = set.add(set.new([1, 2]), 3)');
       checkResult(runtime, {1, 2, 3});
     });
 
-    test('set.add 3', () {
+    test('set.add does not duplicate existing element', () {
       final Runtime runtime = getRuntime('main = set.add(set.new([1, 2]), 2)');
       checkResult(runtime, {1, 2});
     });
 
-    test('set.remove 1', () {
+    test('set.remove on empty set returns empty set', () {
       final Runtime runtime = getRuntime('main = set.remove(set.new([]), 1)');
       checkResult(runtime, {});
     });
 
-    test('set.remove 2', () {
+    test('set.remove returns unchanged set when element absent', () {
       final Runtime runtime = getRuntime(
         'main = set.remove(set.new([1, 2]), 3)',
       );
       checkResult(runtime, {1, 2});
     });
 
-    test('set.remove 3', () {
+    test('set.remove removes existing element', () {
       final Runtime runtime = getRuntime(
         'main = set.remove(set.new([1, 2]), 2)',
       );
       checkResult(runtime, {1});
     });
 
-    test('set.contains 1', () {
+    test('set.contains returns true for existing element', () {
       final Runtime runtime = getRuntime(
         'main = set.contains(set.new([1, 2, 3]), 2)',
       );
       checkResult(runtime, true);
     });
 
-    test('set.contains 2', () {
+    test('set.contains returns false for missing element', () {
       final Runtime runtime = getRuntime(
         'main = set.contains(set.new([1, 2]), 3)',
       );
       checkResult(runtime, false);
     });
 
-    test('set.isEmpty 1', () {
+    test('set.isEmpty returns true for empty set', () {
       final Runtime runtime = getRuntime('main = set.isEmpty(set.new([]))');
       checkResult(runtime, true);
     });
 
-    test('set.isEmpty 2', () {
+    test('set.isEmpty returns false for non-empty set', () {
       final Runtime runtime = getRuntime(
         'main = set.isEmpty(set.new([1, 2, 3]))',
       );
       checkResult(runtime, false);
     });
 
-    test('set.isNotEmpty 1', () {
+    test('set.isNotEmpty returns false for empty set', () {
       final Runtime runtime = getRuntime('main = set.isNotEmpty(set.new([]))');
       checkResult(runtime, false);
     });
 
-    test('set.isNotEmpty 2', () {
+    test('set.isNotEmpty returns true for non-empty set', () {
       final Runtime runtime = getRuntime(
         'main = set.isNotEmpty(set.new([1, 2, 3]))',
       );
       checkResult(runtime, true);
     });
 
-    test('set.length 1', () {
+    test('set.length returns zero for empty set', () {
       final Runtime runtime = getRuntime('main = set.length(set.new([]))');
       checkResult(runtime, 0);
     });
 
-    test('set.length 2', () {
+    test('set.length returns element count for non-empty set', () {
       final Runtime runtime = getRuntime(
         'main = set.length(set.new([1, 2, 3]))',
       );
       checkResult(runtime, 3);
     });
 
-    test('set.union 1', () {
+    test('set.union of two empty sets returns empty set', () {
       final Runtime runtime = getRuntime(
         'main = set.union(set.new([]), set.new([]))',
       );
       checkResult(runtime, {});
     });
 
-    test('set.union 2', () {
+    test('set.union combines disjoint sets', () {
       final Runtime runtime = getRuntime(
         'main = set.union(set.new([1, 2]), set.new([3]))',
       );
       checkResult(runtime, {1, 2, 3});
     });
 
-    test('set.union 3', () {
+    test('set.union combines sets with smaller first operand', () {
       final Runtime runtime = getRuntime(
         'main = set.union(set.new([1]), set.new([2, 3]))',
       );
       checkResult(runtime, {1, 2, 3});
     });
 
-    test('set.union 4', () {
+    test('set.union merges overlapping sets without duplicates', () {
       final Runtime runtime = getRuntime(
         'main = set.union(set.new([1, 2]), set.new([2, 3]))',
       );
       checkResult(runtime, {1, 2, 3});
     });
 
-    test('set.intersection 1', () {
+    test('set.intersection of two empty sets returns empty set', () {
       final Runtime runtime = getRuntime(
         'main = set.intersection(set.new([]), set.new([]))',
       );
       checkResult(runtime, {});
     });
 
-    test('set.intersection 2', () {
+    test('set.intersection of disjoint sets returns empty set', () {
       final Runtime runtime = getRuntime(
         'main = set.intersection(set.new([1]), set.new([2]))',
       );
       checkResult(runtime, {});
     });
 
-    test('set.intersection 3', () {
+    test('set.intersection returns common elements', () {
       final Runtime runtime = getRuntime(
         'main = set.intersection(set.new([1, 2]), set.new([2, 3]))',
       );
       checkResult(runtime, {2});
     });
 
-    test('set.intersection 4', () {
+    test('set.intersection is commutative', () {
       final Runtime runtime = getRuntime(
         'main = set.intersection(set.new([2, 3]), set.new([1, 2]))',
       );

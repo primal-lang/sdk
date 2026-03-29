@@ -13,7 +13,7 @@ main = foo(num.abs, -4)
       checkResult(runtime, 4);
     });
 
-    test('Function as result 1', () {
+    test('function stored in variable and called indirectly', () {
       final Runtime runtime = getRuntime('''
 bar = num.abs
 foo(v) = bar()(v)
@@ -22,7 +22,7 @@ main = foo(-4)
       checkResult(runtime, 4);
     });
 
-    test('Function as result 2', () {
+    test('function stored in variable and passed as argument', () {
       final Runtime runtime = getRuntime('''
 bar = num.abs
 foo(f, v) = f(v)
@@ -31,12 +31,12 @@ main = foo(bar(), -4)
       checkResult(runtime, 4);
     });
 
-    test('Print function 1', () {
+    test('core function prints its signature', () {
       final Runtime runtime = getRuntime('main = num.add');
       checkResult(runtime, '"num.add(a: Number, b: Number)"');
     });
 
-    test('Print function 2', () {
+    test('custom function prints its signature', () {
       final Runtime runtime = getRuntime('''
 foo(a, b) = a + b
 main = foo
@@ -44,7 +44,7 @@ main = foo
       checkResult(runtime, '"foo(a: Any, b: Any)"');
     });
 
-    test('Print function 3', () {
+    test('list of functions prints their signatures', () {
       final Runtime runtime = getRuntime('main = [num.add, num.abs]');
       checkResult(
         runtime,
