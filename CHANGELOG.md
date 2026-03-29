@@ -5,7 +5,7 @@
 ### Language
 
 * Added support for:
-    - Maps
+    - Map
     - Timestamp
     - Set
     - Stack
@@ -25,7 +25,7 @@
     - Vector
     - File
     - Directory
-    - Json
+    - JSON
     - Hashing
     - Environment
 
@@ -51,7 +51,7 @@
 ### Language
 
 * Added support for:
-    - Lists
+    - List
 * Added syntactic sugar for `if` conditions
 * Added syntactic sugar to construct lists: `[1, 2, 3]`
 * Added syntactic sugar to access list elements: `list[index]`
