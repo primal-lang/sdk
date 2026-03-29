@@ -1,12 +1,20 @@
 # Primal
 
-It is a minimalist, lightweight, functional programming language that is designed to be simple and easy to learn. It is inspired by Lambda Calculus, a mathematical formalism that is used to define functions and perform computations.
+It is a minimalist, lightweight, functional programming language that is designed to be simple and easy to learn. Its core model, where everything is a function and all computation is expressed through function composition, is inspired by Lambda Calculus.
 
 It is a declarative language, which means that it focuses on what should be done rather than how it should be done. This makes it easier to read and understand, especially for beginners.
 
 It is free and open-source under the MIT license, meaning that you can use it for any purpose, commercial or non-commercial, without any restrictions. You can also modify the source code and distribute it as you see fit.
 
 It is still under development, so there may be bugs and missing features. If you encounter any issues, please report them on GitHub. If you have any suggestions or ideas for improvement, please let us know by sending us feedback using the web form.
+
+## Getting started
+
+Pre-built binaries are available for Linux, macOS, and Windows. Download the appropriate binary from the GitHub releases page, place it in your PATH, and run it with a source file as an argument:
+
+primal program.prm
+
+If no source file is provided, the interpreter starts in interactive mode.
 
 ## Goal
 
@@ -18,6 +26,7 @@ The language has the following characteristics:
 
 - Lazy evaluated
 - Dynamically typed
+- Immutable
 - Single threaded
 - Interpreted
 - Expression oriented
@@ -26,9 +35,13 @@ The language has the following characteristics:
 
 ## Functions
 
-Everything in Primal is a function, which can be combined to create more complex functions. Functions cannot be overloaded (i.e. only one function with a given name can exist in a program). The language includes a comprehensive set of over 200 core functions, providing developers with a wide range of useful tools. The full list can be found in the reference page.
+Everything in Primal is a function, which can be combined to create more complex functions. Functions are first-class values, meaning they can be passed as arguments to other functions and returned as results. Functions cannot be overloaded (i.e. only one function with a given name can exist in a program). The language includes a comprehensive set of over 200 core functions, providing developers with a wide range of useful tools. The full list can be found in the reference page.
 
 Being a functional language, Primal does not have loop constructions. Instead, it uses recursion to perform repetitive tasks, allowing for a more declarative style of programming.
+
+All values in Primal are immutable. Once a value is created, it cannot be changed. This design choice simplifies reasoning about programs and avoids common bugs related to shared mutable state.
+
+Primal does not have a module system. Each program is a single file containing all of its function declarations.
 
 ## Syntax
 
@@ -36,9 +49,9 @@ The syntax is designed to be simple and easy to read and consists of function de
 
 A function declaration is composed of:
 
-- Name: which must match the regular expression [a-zA-Z][\w\.]\*
-- Parameters (optional): a list of identifiers, each matching the regular expression [a-zA-Z][\w\.]\*
-- Body: an expression which consist of combinations of:
+- Name: which must match the regular expression [a-zA-Z][\w.]\*
+- Parameters (optional): a list of identifiers, each matching the regular expression [a-zA-Z][\w.]\*
+- Body: an expression which consists of combinations of:
   - Constants: "Hello", 42, true, [1, 2, 3], etc
   - Operations: foo + 3, !foo, foo >= bar, etc
   - Function calls: foo(x), bar(10), etc
@@ -50,12 +63,19 @@ cube(n) = pow(n, 3)
 And here is an example of a function without parameters:
 pi = 3.14159
 
-Main function
+Here is an example of a conditional expression:
+abs(n) = if (n >= 0) n else -n
+
+Strings support basic operations such as concatenation, but there is no string interpolation syntax.
+
+### Main function
+
 There is a special function in the language called main, which serves as the entry point of a program when it is run. The main function is optional and can be declared with any number of parameters, including none. If present, it can call other functions and perform computations to produce a result.
 
 If the main function is not present, the program will still run, but no computations will be performed. In this case, the program will run in interactive mode, where the user can enter expressions and see the results of their evaluation.
 
-Typing system
+## Typing system
+
 Primal has a dynamic runtime type checking. This means that users cannot explicitly declare types for parameters or return values in the code. Instead, the system performs type checks during execution to ensure that values match the expected types when passed to functions.
 
 This approach offers flexibility and ease of use but relies on runtime checks to catch type-related issues, which can lead to errors that are only caught during execution.
@@ -87,6 +107,12 @@ System:
 
 ## Runtime
 
-Primal is an interpreted language. The compiler translates the source code into an intermediate representation that is then executed by the interpreter. The interpreter is responsible for executing the intermediate representation and producing the output of the program.
+Primal is an interpreted language. The source code is first parsed into an intermediate representation, which is then evaluated by the interpreter to produce the output of the program.
 
-This allows for fast development and testing cycles since changes to the source code can be quickly compiled and executed without the need for a separate build step.
+This allows for fast development and testing cycles since changes to the source code can be immediately executed without the need for a separate build step.
+
+The interpreter manages memory automatically through garbage collection, freeing developers from manual memory management.
+
+When running in interactive mode (i.e. when no main function is defined), the interpreter provides a REPL (Read-Eval-Print Loop) where users can type expressions at a prompt and see their results immediately.
+
+The interpreter and SDK are written in Dart.
