@@ -15,6 +15,7 @@ class PlatformFileCli extends PlatformFileBase {
   @override
   bool write(File file, String content) {
     try {
+      file.parent.createSync(recursive: true);
       file.writeAsStringSync(content);
 
       return true;
