@@ -1,7 +1,7 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
-import '../helpers/pipeline_helpers.dart';
+import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Type Mismatch Errors', () {
