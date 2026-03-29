@@ -1,3 +1,8 @@
+# Context
+
+- For an overview of the Primal language (syntax, typing, runtime), consult `docs/primal.md`.
+- For details on a specific core function, consult `docs/reference.md` and its linked pages.
+
 # Critical Instructions
 
 ## Planning
