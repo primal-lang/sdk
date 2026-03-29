@@ -91,4 +91,165 @@ main = apply(num.abs, 5)
 ''');
     expect(code.warnings.length, equals(0));
   });
+
+  // --- Error: argument count mismatches ---
+
+  test('Too few arguments', () {
+    try {
+      getIntermediateCode(
+        'isBiggerThan(x, y) = x > y\nmain = isBiggerThan(20)',
+      );
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<InvalidNumberOfArgumentsError>());
+    }
+  });
+
+  test('Zero arguments when function expects some', () {
+    try {
+      getIntermediateCode(
+        'identity(x) = x\nmain = identity()',
+      );
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<InvalidNumberOfArgumentsError>());
+    }
+  });
+
+  test('Arguments when function expects zero', () {
+    try {
+      getIntermediateCode(
+        'constant = 10\nmain = constant(5)',
+      );
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<InvalidNumberOfArgumentsError>());
+    }
+  });
+
+  // --- Error: undefined identifiers in expressions ---
+
+  test('Undefined identifier in nested expression', () {
+    try {
+      getIntermediateCode('f(x) = x + z');
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<UndefinedIdentifierError>());
+    }
+  });
+
+  test('Undefined function in nested call', () {
+    try {
+      getIntermediateCode('f(x) = unknown(x) + 1');
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<UndefinedFunctionError>());
+    }
+  });
+
+  test('Undefined identifier as function argument', () {
+    try {
+      getIntermediateCode('f(x) = x\nmain = f(z)');
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<UndefinedIdentifierError>());
+    }
+  });
+
+  test('Undefined identifier in list literal', () {
+    try {
+      getIntermediateCode('main = [1, z, 3]');
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<UndefinedIdentifierError>());
+    }
+  });
+
+  test('Undefined identifier in map literal', () {
+    try {
+      getIntermediateCode('main = {"key": z}');
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<UndefinedIdentifierError>());
+    }
+  });
+
+  // --- Error: duplicated parameters with more params ---
+
+  test('Duplicated parameter among three', () {
+    try {
+      getIntermediateCode('f(a, b, a) = a + b');
+      fail('Should fail');
+    } catch (e) {
+      expect(e, isA<DuplicatedParameterError>());
+    }
+  });
+
+  // --- Warnings ---
+
+  test('Multiple unused parameters', () {
+    final IntermediateCode code = getIntermediateCode(
+      'f(x, y, z) = 1',
+    );
+    expect(code.warnings.length, equals(3));
+  });
+
+  test('All parameters used', () {
+    final IntermediateCode code = getIntermediateCode(
+      'f(x, y) = x + y',
+    );
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('No parameters no warnings', () {
+    final IntermediateCode code = getIntermediateCode('f = 10');
+    expect(code.warnings.length, equals(0));
+  });
+
+  // --- Valid programs: recursion and composition ---
+
+  test('Self-recursive function', () {
+    final IntermediateCode code = getIntermediateCode('''
+countdown(n) = if (n <= 0) 0 else countdown(n - 1)
+main = countdown(10)
+''');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('Mutual recursion', () {
+    final IntermediateCode code = getIntermediateCode('''
+isEven(n) = if (n == 0) true else isOdd(n - 1)
+isOdd(n) = if (n == 0) false else isEven(n - 1)
+main = isEven(4)
+''');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('Chained function calls', () {
+    final IntermediateCode code = getIntermediateCode('''
+double(x) = x * 2
+quadruple(x) = double(double(x))
+main = quadruple(3)
+''');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('Multiple functions calling each other', () {
+    final IntermediateCode code = getIntermediateCode('''
+add(a, b) = a + b
+mul(a, b) = a * b
+combined(x, y) = add(mul(x, y), x)
+main = combined(3, 4)
+''');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('Parameter shadowing a function name', () {
+    final IntermediateCode code = getIntermediateCode('''
+double(x) = x * 2
+apply(double, v) = double + v
+main = apply(10, 5)
+''');
+    expect(code.warnings.length, equals(0));
+  });
 }
