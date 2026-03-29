@@ -251,19 +251,22 @@ void main() {
       checkResult(runtime, ['"aa,bb,cc"']);
     });
 
-    test('str.split splits into individual characters with empty delimiter', () {
-      final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", "")');
-      checkResult(runtime, [
-        '"a"',
-        '"a"',
-        '","',
-        '"b"',
-        '"b"',
-        '","',
-        '"c"',
-        '"c"',
-      ]);
-    });
+    test(
+      'str.split splits into individual characters with empty delimiter',
+      () {
+        final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", "")');
+        checkResult(runtime, [
+          '"a"',
+          '"a"',
+          '","',
+          '"b"',
+          '"b"',
+          '","',
+          '"c"',
+          '"c"',
+        ]);
+      },
+    );
 
     test('str.split splits string by delimiter', () {
       final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", ",")');
@@ -401,13 +404,16 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<RangeError>()));
     });
 
-    test('str.substring throws InvalidArgumentTypesError for number instead of string', () {
-      final Runtime runtime = getRuntime('main = str.substring(123, 0, 2)');
-      expect(
-        runtime.executeMain,
-        throwsA(isA<InvalidArgumentTypesError>()),
-      );
-    });
+    test(
+      'str.substring throws InvalidArgumentTypesError for number instead of string',
+      () {
+        final Runtime runtime = getRuntime('main = str.substring(123, 0, 2)');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
 
     test('str.length throws InvalidArgumentTypesError for number argument', () {
       final Runtime runtime = getRuntime('main = str.length(42)');
@@ -417,20 +423,26 @@ void main() {
       );
     });
 
-    test('str.indexOf throws InvalidArgumentTypesError for number first argument', () {
-      final Runtime runtime = getRuntime('main = str.indexOf(42, "x")');
-      expect(
-        runtime.executeMain,
-        throwsA(isA<InvalidArgumentTypesError>()),
-      );
-    });
+    test(
+      'str.indexOf throws InvalidArgumentTypesError for number first argument',
+      () {
+        final Runtime runtime = getRuntime('main = str.indexOf(42, "x")');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
 
-    test('str.indexOf throws InvalidArgumentTypesError for number second argument', () {
-      final Runtime runtime = getRuntime('main = str.indexOf("Hello", 42)');
-      expect(
-        runtime.executeMain,
-        throwsA(isA<InvalidArgumentTypesError>()),
-      );
-    });
+    test(
+      'str.indexOf throws InvalidArgumentTypesError for number second argument',
+      () {
+        final Runtime runtime = getRuntime('main = str.indexOf("Hello", 42)');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
   });
 }

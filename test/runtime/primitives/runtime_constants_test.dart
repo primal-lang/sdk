@@ -57,7 +57,10 @@ void main() {
 
     test('nested list', () {
       final Runtime runtime = getRuntime('main = [[1, 2], [3, 4]]');
-      checkResult(runtime, [[1, 2], [3, 4]]);
+      checkResult(runtime, [
+        [1, 2],
+        [3, 4],
+      ]);
     });
 
     test('list of mixed types', () {

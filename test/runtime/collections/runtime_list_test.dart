@@ -706,12 +706,17 @@ main = foo([2])
       expect(runtime.executeMain, throwsA(isA<StateError>()));
     });
 
-    test('list.reduce throws InvalidArgumentTypesError with non-function accumulator', () {
-      final Runtime runtime = getRuntime('main = list.reduce([1, 2, 3], 0, 42)');
-      expect(
-        runtime.executeMain,
-        throwsA(isA<InvalidArgumentTypesError>()),
-      );
-    });
+    test(
+      'list.reduce throws InvalidArgumentTypesError with non-function accumulator',
+      () {
+        final Runtime runtime = getRuntime(
+          'main = list.reduce([1, 2, 3], 0, 42)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
   });
 }

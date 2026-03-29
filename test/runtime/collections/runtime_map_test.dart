@@ -282,14 +282,17 @@ main = foo({"name": "John", "age": 42, "married": true})
       );
     });
 
-    test('map.containsKey throws InvalidArgumentTypesError for non-map first argument', () {
-      final Runtime runtime = getRuntime(
-        'main = map.containsKey([1, 2], "a")',
-      );
-      expect(
-        runtime.executeMain,
-        throwsA(isA<InvalidArgumentTypesError>()),
-      );
-    });
+    test(
+      'map.containsKey throws InvalidArgumentTypesError for non-map first argument',
+      () {
+        final Runtime runtime = getRuntime(
+          'main = map.containsKey([1, 2], "a")',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
   });
 }

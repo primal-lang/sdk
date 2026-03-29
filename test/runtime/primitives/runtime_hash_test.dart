@@ -85,20 +85,26 @@ void main() {
       );
     });
 
-    test('hash.sha256 throws InvalidArgumentTypesError for boolean argument', () {
-      final Runtime runtime = getRuntime('main = hash.sha256(true)');
-      expect(
-        runtime.executeMain,
-        throwsA(isA<InvalidArgumentTypesError>()),
-      );
-    });
+    test(
+      'hash.sha256 throws InvalidArgumentTypesError for boolean argument',
+      () {
+        final Runtime runtime = getRuntime('main = hash.sha256(true)');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
 
-    test('hash.sha512 throws InvalidArgumentTypesError for number argument', () {
-      final Runtime runtime = getRuntime('main = hash.sha512(42)');
-      expect(
-        runtime.executeMain,
-        throwsA(isA<InvalidArgumentTypesError>()),
-      );
-    });
+    test(
+      'hash.sha512 throws InvalidArgumentTypesError for number argument',
+      () {
+        final Runtime runtime = getRuntime('main = hash.sha512(42)');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
   });
 }

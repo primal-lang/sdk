@@ -130,12 +130,15 @@ void main() {
       );
     });
 
-    test('json.decode throws InvalidArgumentTypesError for boolean argument', () {
-      final Runtime runtime = getRuntime('main = json.decode(true)');
-      expect(
-        runtime.executeMain,
-        throwsA(isA<InvalidArgumentTypesError>()),
-      );
-    });
+    test(
+      'json.decode throws InvalidArgumentTypesError for boolean argument',
+      () {
+        final Runtime runtime = getRuntime('main = json.decode(true)');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
   });
 }
