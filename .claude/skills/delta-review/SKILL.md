@@ -7,7 +7,8 @@ description: Reviews staged and unstaged changes in this Dart project, checking 
    a. Run `git diff HEAD` to see changes to tracked files
    b. Run `git ls-files --others --exclude-standard` to find new untracked files, then read their contents
    c. If there are no changes, report LGTM and stop
-   d. Otherwise, proceed with the Analysis Phase
+   d. Run `dart analyze` and include any issues in the report
+   e. Proceed with the Analysis Phase
 
 2. **Analysis Phase**: Read CLAUDE.md and analysis_options.yaml for project conventions. Then, for every changed file, review the diff and check for:
    - **Correctness**: Logic errors, off-by-one mistakes, missing edge cases, broken control flow, incorrect conditions, proper error handling. For compiler phases (scanner, lexical, syntactic, semantic, runtime), verify state machine transitions are complete and deterministic. For library functions, verify type checks match the expected `Type` and `evaluate()` returns the correct `Node` subtype.
