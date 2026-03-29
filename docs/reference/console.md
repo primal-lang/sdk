@@ -1,21 +1,22 @@
 # Console
 
-## console.write
+## Output
 
-`console.write(a: Any): Any`
+### Write
+- **Signature:** `console.write(a: Any): Any`
+- **Input:** One argument of any type
+- **Output:** The argument, after writing it to standard output
 
-Writes the argument to standard output and returns it.
+### Write Line
+- **Signature:** `console.writeLn(a: Any): Any`
+- **Input:** One argument of any type
+- **Output:** The argument, after writing it followed by a newline to standard output
 
-## console.writeLn
+## Input
 
-`console.writeLn(a: Any): Any`
-
-Writes the argument to standard output followed by a newline, and returns it.
-
-## console.read
-
-`console.read(): String`
-
-Reads a line from standard input and returns it as a string.
+### Read
+- **Signature:** `console.read(): String`
+- **Input:** None
+- **Output:** A line read from standard input as a string
 
 Note: This function is not available on the web platform.

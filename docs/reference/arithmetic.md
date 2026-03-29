@@ -1,211 +1,231 @@
 # Arithmetic
 
-## num.abs
+## Basic Operations
 
-`num.abs(a: Number): Number`
+### Absolute Value
 
-Returns the absolute value of a number.
+- **Signature:** `num.abs(a: Number): Number`
+- **Input:** One number
+- **Output:** The absolute value of the number
 
-## num.negative
+```
+num.abs(a: Number): Number
+```
 
-`num.negative(a: Number): Number`
+### Negation
 
-Returns the negative value of a number.
+- **Signature:** `num.negative(a: Number): Number`
+- **Input:** One number
+- **Output:** The negative value of the number
 
-## num.inc
+### Increment
 
-`num.inc(a: Number): Number`
+- **Signature:** `num.inc(a: Number): Number`
+- **Input:** One number
+- **Output:** The number incremented by one
 
-Returns the number incremented by one.
+### Decrement
 
-## num.dec
+- **Signature:** `num.dec(a: Number): Number`
+- **Input:** One number
+- **Output:** The number decremented by one
 
-`num.dec(a: Number): Number`
+### Sign
 
-Returns the number decremented by one.
+- **Signature:** `num.sign(a: Number): Number`
+- **Input:** One number
+- **Output:** 1 for positive, -1 for negative, or 0 for zero
 
-## num.add
+### Fraction
 
-`num.add(a: Number, b: Number): Number`
+- **Signature:** `num.fraction(a: Number): Number`
+- **Input:** One number
+- **Output:** The fractional part of the number
 
-Returns the sum of two numbers.
+### Infinity
 
-## num.sum
+- **Signature:** `num.infinity(): Number`
+- **Input:** None
+- **Output:** Positive infinity
 
-`num.sum(a: Number, b: Number): Number`
+## Arithmetic Operations
 
-Returns the sum of two numbers.
+### Addition
 
-## num.sub
+- **Signature:** `num.add(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The sum of the numbers
 
-`num.sub(a: Number, b: Number): Number`
+### Sum
 
-Returns the difference between two numbers.
+- **Signature:** `num.sum(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The sum of the numbers
 
-## num.mul
+### Subtraction
 
-`num.mul(a: Number, b: Number): Number`
+- **Signature:** `num.sub(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The difference between the numbers
 
-Returns the product of two numbers.
+### Multiplication
 
-## num.div
+- **Signature:** `num.mul(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The product of the numbers
 
-`num.div(a: Number, b: Number): Number`
+### Division
 
-Returns the quotient of two numbers.
+- **Signature:** `num.div(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The quotient of the numbers
 
-## num.mod
+### Modulo
 
-`num.mod(a: Number, b: Number): Number`
+- **Signature:** `num.mod(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The remainder of dividing the numbers
 
-Returns the remainder of dividing two numbers.
+### Power
 
-## num.pow
+- **Signature:** `num.pow(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The first number raised to the power of the second
 
-`num.pow(a: Number, b: Number): Number`
+### Square Root
 
-Returns the first number raised to the power of the second.
+- **Signature:** `num.sqrt(a: Number): Number`
+- **Input:** One number
+- **Output:** The square root of the number
 
-## num.sqrt
+## Rounding
 
-`num.sqrt(a: Number): Number`
+### Round
 
-Returns the square root of a number.
+- **Signature:** `num.round(a: Number): Number`
+- **Input:** One number
+- **Output:** The number rounded to the nearest integer
 
-## num.min
+### Floor
 
-`num.min(a: Number, b: Number): Number`
+- **Signature:** `num.floor(a: Number): Number`
+- **Input:** One number
+- **Output:** The largest integer less than or equal to the number
 
-Returns the smaller of two numbers.
+### Ceiling
 
-## num.max
+- **Signature:** `num.ceil(a: Number): Number`
+- **Input:** One number
+- **Output:** The smallest integer greater than or equal to the number
 
-`num.max(a: Number, b: Number): Number`
+## Constraints
 
-Returns the larger of two numbers.
+### Minimum
 
-## num.round
+- **Signature:** `num.min(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The smaller of the two numbers
 
-`num.round(a: Number): Number`
+### Maximum
 
-Returns a number rounded to the nearest integer.
+- **Signature:** `num.max(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The larger of the two numbers
 
-## num.floor
+### Clamp
 
-`num.floor(a: Number): Number`
+- **Signature:** `num.clamp(a: Number, b: Number, c: Number): Number`
+- **Input:** Three numbers
+- **Output:** The first number constrained within the range defined by the second and third numbers
 
-Returns the largest integer less than or equal to a number.
+## Trigonometry
 
-## num.ceil
+### Sine
 
-`num.ceil(a: Number): Number`
+- **Signature:** `num.sin(a: Number): Number`
+- **Input:** One number in radians
+- **Output:** The sine of the number
 
-Returns the smallest integer greater than or equal to a number.
+### Cosine
 
-## num.sin
+- **Signature:** `num.cos(a: Number): Number`
+- **Input:** One number in radians
+- **Output:** The cosine of the number
 
-`num.sin(a: Number): Number`
+### Tangent
 
-Returns the sine of a number in radians.
+- **Signature:** `num.tan(a: Number): Number`
+- **Input:** One number in radians
+- **Output:** The tangent of the number
 
-## num.cos
+### Logarithm
 
-`num.cos(a: Number): Number`
+- **Signature:** `num.log(a: Number): Number`
+- **Input:** One number
+- **Output:** The natural logarithm of the number
 
-Returns the cosine of a number in radians.
+### To Radians
 
-## num.tan
+- **Signature:** `num.asRadians(a: Number): Number`
+- **Input:** One number in degrees
+- **Output:** The angle converted to radians
 
-`num.tan(a: Number): Number`
+### To Degrees
 
-Returns the tangent of a number in radians.
+- **Signature:** `num.asDegrees(a: Number): Number`
+- **Input:** One number in radians
+- **Output:** The angle converted to degrees
 
-## num.log
+## Properties
 
-`num.log(a: Number): Number`
+### Is Negative
 
-Returns the natural logarithm of a number.
+- **Signature:** `num.isNegative(a: Number): Boolean`
+- **Input:** One number
+- **Output:** True if the number is negative, false otherwise
 
-## num.isNegative
+### Is Positive
 
-`num.isNegative(a: Number): Boolean`
+- **Signature:** `num.isPositive(a: Number): Boolean`
+- **Input:** One number
+- **Output:** True if the number is positive, false otherwise
 
-Returns true if the number is negative; false otherwise.
+### Is Zero
 
-## num.isPositive
+- **Signature:** `num.isZero(a: Number): Boolean`
+- **Input:** One number
+- **Output:** True if the number is zero, false otherwise
 
-`num.isPositive(a: Number): Boolean`
+### Is Even
 
-Returns true if the number is positive; false otherwise.
+- **Signature:** `num.isEven(a: Number): Boolean`
+- **Input:** One number
+- **Output:** True if the number is even, false otherwise
 
-## num.isZero
+### Is Odd
 
-`num.isZero(a: Number): Boolean`
+- **Signature:** `num.isOdd(a: Number): Boolean`
+- **Input:** One number
+- **Output:** True if the number is odd, false otherwise
 
-Returns true if the number is zero; false otherwise.
+## Random
 
-## num.isEven
+### Integer Random
 
-`num.isEven(a: Number): Boolean`
+- **Signature:** `num.integerRandom(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** A random integer between the two numbers (inclusive)
 
-Returns true if the number is even; false otherwise.
+### Decimal Random
 
-## num.isOdd
+- **Signature:** `num.decimalRandom(): Number`
+- **Input:** None
+- **Output:** A random decimal number between 0 and 1
 
-`num.isOdd(a: Number): Boolean`
+## Comparison
 
-Returns true if the number is odd; false otherwise.
+### Compare
 
-## num.asRadians
-
-`num.asRadians(a: Number): Number`
-
-Converts an angle from degrees to radians.
-
-## num.asDegrees
-
-`num.asDegrees(a: Number): Number`
-
-Converts an angle from radians to degrees.
-
-## num.infinity
-
-`num.infinity(): Number`
-
-Returns positive infinity.
-
-## num.fraction
-
-`num.fraction(a: Number): Number`
-
-Returns the fractional part of a number.
-
-## num.clamp
-
-`num.clamp(a: Number, b: Number, c: Number): Number`
-
-Returns the first number constrained within the range defined by the second and third numbers.
-
-## num.sign
-
-`num.sign(a: Number): Number`
-
-Returns 1 for positive, -1 for negative, or 0 for zero.
-
-## num.integerRandom
-
-`num.integerRandom(a: Number, b: Number): Number`
-
-Returns a random integer between two numbers (inclusive).
-
-## num.decimalRandom
-
-`num.decimalRandom(): Number`
-
-Returns a random decimal number between 0 and 1.
-
-## num.compare
-
-`num.compare(a: Number, b: Number): Number`
-
-Returns 1 if the first number is larger, -1 if smaller, or 0 if equal.
+- **Signature:** `num.compare(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** 1 if the first number is larger, -1 if smaller, or 0 if equal

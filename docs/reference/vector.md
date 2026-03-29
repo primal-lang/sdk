@@ -1,37 +1,37 @@
 # Vector
 
-## vector.new
+## Creation
 
-`vector.new(a: List): Vector`
+### New
+- **Signature:** `vector.new(a: List): Vector`
+- **Input:** One list of numbers
+- **Output:** A vector created from the list
 
-Creates a vector from a list of numbers.
+## Operations
 
-## vector.normalize
+### Add
+- **Signature:** `vector.add(a: Vector, b: Vector): Vector`
+- **Input:** Two vectors
+- **Output:** The sum of the two vectors
 
-`vector.normalize(a: Vector): Vector`
+### Subtract
+- **Signature:** `vector.sub(a: Vector, b: Vector): Vector`
+- **Input:** Two vectors
+- **Output:** The difference of the two vectors
 
-Returns a vector with the same direction but with a magnitude of 1.
+### Normalize
+- **Signature:** `vector.normalize(a: Vector): Vector`
+- **Input:** One vector
+- **Output:** A vector with the same direction but with a magnitude of 1
 
-## vector.add
+## Properties
 
-`vector.add(a: Vector, b: Vector): Vector`
+### Magnitude
+- **Signature:** `vector.magnitude(a: Vector): Number`
+- **Input:** One vector
+- **Output:** The magnitude of the vector
 
-Returns the sum of two vectors.
-
-## vector.sub
-
-`vector.sub(a: Vector, b: Vector): Vector`
-
-Returns the difference of two vectors.
-
-## vector.magnitude
-
-`vector.magnitude(a: Vector): Number`
-
-Returns the magnitude of the vector.
-
-## vector.angle
-
-`vector.angle(a: Vector, b: Vector): Number`
-
-Returns the angle between two vectors in radians.
+### Angle
+- **Signature:** `vector.angle(a: Vector, b: Vector): Number`
+- **Input:** Two vectors
+- **Output:** The angle between the two vectors in radians

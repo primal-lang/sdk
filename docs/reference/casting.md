@@ -2,124 +2,104 @@
 
 ## Conversion Functions
 
-### to.number
+### To Number
+- **Signature:** `to.number(a: Any): Number`
+- **Input:** One argument of any type
+- **Output:** The argument converted to a number
 
-`to.number(a: Any): Number`
+### To Integer
+- **Signature:** `to.integer(a: Any): Number`
+- **Input:** One argument of any type
+- **Output:** The argument converted to an integer
 
-Converts an argument of any type to a number.
+### To Decimal
+- **Signature:** `to.decimal(a: Any): Number`
+- **Input:** One argument of any type
+- **Output:** The argument converted to a decimal number
 
-### to.integer
+### To String
+- **Signature:** `to.string(a: Any): String`
+- **Input:** One argument of any type
+- **Output:** The argument converted to a string
 
-`to.integer(a: Any): Number`
+### To Boolean
+- **Signature:** `to.boolean(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** The argument converted to a boolean
 
-Converts an argument of any type to an integer.
-
-### to.decimal
-
-`to.decimal(a: Any): Number`
-
-Converts an argument of any type to a decimal number.
-
-### to.string
-
-`to.string(a: Any): String`
-
-Converts an argument of any type to a string.
-
-### to.boolean
-
-`to.boolean(a: Any): Boolean`
-
-Converts an argument of any type to a boolean.
-
-### to.list
-
-`to.list(a: Any): List`
-
-Converts an argument of any type to a list.
+### To List
+- **Signature:** `to.list(a: Any): List`
+- **Input:** One argument of any type
+- **Output:** The argument converted to a list
 
 ## Type Checking Functions
 
-### is.number
+### Is Number
+- **Signature:** `is.number(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a number, false otherwise
 
-`is.number(a: Any): Boolean`
+### Is Integer
+- **Signature:** `is.integer(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is an integer, false otherwise
 
-Returns true if the argument is a number; false otherwise.
+### Is Decimal
+- **Signature:** `is.decimal(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a decimal number, false otherwise
 
-### is.integer
+### Is Infinite
+- **Signature:** `is.infinite(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is infinite, false otherwise
 
-`is.integer(a: Any): Boolean`
+### Is String
+- **Signature:** `is.string(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a string, false otherwise
 
-Returns true if the argument is an integer; false otherwise.
+### Is Boolean
+- **Signature:** `is.boolean(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a boolean, false otherwise
 
-### is.decimal
+### Is Timestamp
+- **Signature:** `is.timestamp(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a timestamp, false otherwise
 
-`is.decimal(a: Any): Boolean`
+### Is Function
+- **Signature:** `is.function(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a function, false otherwise
 
-Returns true if the argument is a decimal number; false otherwise.
+### Is List
+- **Signature:** `is.list(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a list, false otherwise
 
-### is.infinite
+### Is Map
+- **Signature:** `is.map(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a map, false otherwise
 
-`is.infinite(a: Any): Boolean`
+### Is Vector
+- **Signature:** `is.vector(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a vector, false otherwise
 
-Returns true if the argument is infinite; false otherwise.
+### Is Set
+- **Signature:** `is.set(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a set, false otherwise
 
-### is.string
+### Is Stack
+- **Signature:** `is.stack(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a stack, false otherwise
 
-`is.string(a: Any): Boolean`
-
-Returns true if the argument is a string; false otherwise.
-
-### is.boolean
-
-`is.boolean(a: Any): Boolean`
-
-Returns true if the argument is a boolean; false otherwise.
-
-### is.timestamp
-
-`is.timestamp(a: Any): Boolean`
-
-Returns true if the argument is a timestamp; false otherwise.
-
-### is.function
-
-`is.function(a: Any): Boolean`
-
-Returns true if the argument is a function; false otherwise.
-
-### is.list
-
-`is.list(a: Any): Boolean`
-
-Returns true if the argument is a list; false otherwise.
-
-### is.map
-
-`is.map(a: Any): Boolean`
-
-Returns true if the argument is a map; false otherwise.
-
-### is.vector
-
-`is.vector(a: Any): Boolean`
-
-Returns true if the argument is a vector; false otherwise.
-
-### is.set
-
-`is.set(a: Any): Boolean`
-
-Returns true if the argument is a set; false otherwise.
-
-### is.stack
-
-`is.stack(a: Any): Boolean`
-
-Returns true if the argument is a stack; false otherwise.
-
-### is.queue
-
-`is.queue(a: Any): Boolean`
-
-Returns true if the argument is a queue; false otherwise.
+### Is Queue
+- **Signature:** `is.queue(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a queue, false otherwise

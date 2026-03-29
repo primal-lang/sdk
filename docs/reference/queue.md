@@ -1,49 +1,47 @@
 # Queue
 
-## queue.new
+## Creation
 
-`queue.new(a: List): Queue`
+### New
+- **Signature:** `queue.new(a: List): Queue`
+- **Input:** One list
+- **Output:** A queue with the first element at the front
 
-Creates a queue from the list with the first element at the front.
+## Operations
 
-## queue.enqueue
+### Enqueue
+- **Signature:** `queue.enqueue(a: Queue, b: Any): Queue`
+- **Input:** A queue and a value
+- **Output:** A new queue with the element added to the end
 
-`queue.enqueue(a: Queue, b: Any): Queue`
+### Dequeue
+- **Signature:** `queue.dequeue(a: Queue): Queue`
+- **Input:** One queue
+- **Output:** A new queue with the front element removed
 
-Returns a new queue with the element added to the end.
+### Peek
+- **Signature:** `queue.peek(a: Queue): Any`
+- **Input:** One queue
+- **Output:** The element at the front of the queue
 
-## queue.dequeue
+### Reverse
+- **Signature:** `queue.reverse(a: Queue): Queue`
+- **Input:** One queue
+- **Output:** A new queue with the elements in reverse order
 
-`queue.dequeue(a: Queue): Queue`
+## Properties
 
-Returns a new queue with the front element removed.
+### Is Empty
+- **Signature:** `queue.isEmpty(a: Queue): Boolean`
+- **Input:** One queue
+- **Output:** True if the queue is empty, false otherwise
 
-## queue.peek
+### Is Not Empty
+- **Signature:** `queue.isNotEmpty(a: Queue): Boolean`
+- **Input:** One queue
+- **Output:** True if the queue is not empty, false otherwise
 
-`queue.peek(a: Queue): Any`
-
-Returns the element at the front of the queue.
-
-## queue.isEmpty
-
-`queue.isEmpty(a: Queue): Boolean`
-
-Returns true if the queue is empty, false otherwise.
-
-## queue.isNotEmpty
-
-`queue.isNotEmpty(a: Queue): Boolean`
-
-Returns true if the queue is not empty, false otherwise.
-
-## queue.length
-
-`queue.length(a: Queue): Number`
-
-Returns the number of elements in the queue.
-
-## queue.reverse
-
-`queue.reverse(a: Queue): Queue`
-
-Returns a new queue with the elements in reverse order.
+### Length
+- **Signature:** `queue.length(a: Queue): Number`
+- **Input:** One queue
+- **Output:** The number of elements in the queue

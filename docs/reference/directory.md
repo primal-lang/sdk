@@ -2,68 +2,63 @@
 
 Note: Directory functions are not available on the web platform.
 
-## directory.fromPath
+## Creation
 
-`directory.fromPath(a: String): Directory`
+### From Path
+- **Signature:** `directory.fromPath(a: String): Directory`
+- **Input:** One string path
+- **Output:** A directory object pointing to the given path
 
-Returns a directory object pointing to the given path.
+### Create
+- **Signature:** `directory.create(a: Directory): Boolean`
+- **Input:** One directory
+- **Output:** True if successful, false otherwise
 
-## directory.exists
+## Operations
 
-`directory.exists(a: Directory): Boolean`
+### Exists
+- **Signature:** `directory.exists(a: Directory): Boolean`
+- **Input:** One directory
+- **Output:** True if the directory exists, false otherwise
 
-Returns true if the directory exists, false otherwise.
+### Delete
+- **Signature:** `directory.delete(a: Directory): Boolean`
+- **Input:** One directory
+- **Output:** True if successful, false otherwise
 
-## directory.create
+### Copy
+- **Signature:** `directory.copy(a: Directory, b: Directory): Boolean`
+- **Input:** Two directories
+- **Output:** True if successful, false otherwise
 
-`directory.create(a: Directory): Boolean`
+### Move
+- **Signature:** `directory.move(a: Directory, b: Directory): Boolean`
+- **Input:** Two directories
+- **Output:** True if successful, false otherwise
 
-Creates the directory. Returns true if successful, false otherwise.
+### Rename
+- **Signature:** `directory.rename(a: Directory, b: String): Boolean`
+- **Input:** A directory and a string
+- **Output:** True if successful, false otherwise
 
-## directory.delete
+### List
+- **Signature:** `directory.list(a: Directory): List`
+- **Input:** One directory
+- **Output:** A list of all files and directories within the directory
 
-`directory.delete(a: Directory): Boolean`
+## Properties
 
-Deletes the directory. Returns true if successful, false otherwise.
+### Path
+- **Signature:** `directory.path(a: Directory): String`
+- **Input:** One directory
+- **Output:** The directory's path as a string
 
-## directory.copy
+### Name
+- **Signature:** `directory.name(a: Directory): String`
+- **Input:** One directory
+- **Output:** The directory's name as a string
 
-`directory.copy(a: Directory, b: Directory): Boolean`
-
-Copies the directory to a new location. Returns true if successful, false otherwise.
-
-## directory.move
-
-`directory.move(a: Directory, b: Directory): Boolean`
-
-Moves the directory to a new location. Returns true if successful, false otherwise.
-
-## directory.rename
-
-`directory.rename(a: Directory, b: String): Boolean`
-
-Renames the directory. Returns true if successful, false otherwise.
-
-## directory.path
-
-`directory.path(a: Directory): String`
-
-Returns the directory's path as a string.
-
-## directory.name
-
-`directory.name(a: Directory): String`
-
-Returns the directory's name as a string.
-
-## directory.parent
-
-`directory.parent(a: Directory): Directory`
-
-Returns the parent directory.
-
-## directory.list
-
-`directory.list(a: Directory): List`
-
-Returns a list of all files and directories within the directory.
+### Parent
+- **Signature:** `directory.parent(a: Directory): Directory`
+- **Input:** One directory
+- **Output:** The parent directory

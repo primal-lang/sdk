@@ -1,13 +1,13 @@
 # Control
 
-## if-else
+## Control Flow
 
-`if (a: Boolean) b: Any else c: Any`
+### If-Else
+- **Syntax:** `if (a: Boolean) b: Any else c: Any`
+- **Input:** A boolean condition and two arguments of matching types
+- **Output:** The first argument if the condition is true, the second argument otherwise
 
-Accepts a conditional argument that must evaluate to a boolean, along with two arguments of matching types. Returns the first argument if the condition is true; otherwise returns the second argument.
-
-## try
-
-`try(a: Any, b: Any): Any`
-
-Accepts two arguments that must evaluate to the same type. Returns the first argument unless it produces an error, in which case it returns the second argument as a fallback.
+### Try
+- **Signature:** `try(a: Any, b: Any): Any`
+- **Input:** Two arguments of the same type
+- **Output:** The first argument unless it produces an error, in which case the second argument

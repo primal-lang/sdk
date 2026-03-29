@@ -1,13 +1,13 @@
 # JSON
 
-## json.encode
+## Functions
 
-`json.encode(a: Map): String`
+### Encode
+- **Signature:** `json.encode(a: Map): String`
+- **Input:** One map
+- **Output:** A JSON string encoding of the map
 
-Encodes a map into a JSON string.
-
-## json.decode
-
-`json.decode(a: String): Map`
-
-Parses a JSON string and returns a map.
+### Decode
+- **Signature:** `json.decode(a: String): Map`
+- **Input:** One JSON string
+- **Output:** A map parsed from the JSON string

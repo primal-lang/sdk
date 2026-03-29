@@ -1,49 +1,47 @@
 # Stack
 
-## stack.new
+## Creation
 
-`stack.new(a: List): Stack`
+### New
+- **Signature:** `stack.new(a: List): Stack`
+- **Input:** One list
+- **Output:** A stack with the last element at the top
 
-Creates a stack from the list with the last element at the top.
+## Operations
 
-## stack.push
+### Push
+- **Signature:** `stack.push(a: Stack, b: Any): Stack`
+- **Input:** A stack and a value
+- **Output:** A new stack with the element added to the top
 
-`stack.push(a: Stack, b: Any): Stack`
+### Pop
+- **Signature:** `stack.pop(a: Stack): Stack`
+- **Input:** One stack
+- **Output:** A new stack with the top element removed
 
-Returns a new stack with the element added to the top.
+### Peek
+- **Signature:** `stack.peek(a: Stack): Any`
+- **Input:** One stack
+- **Output:** The element at the top of the stack
 
-## stack.pop
+### Reverse
+- **Signature:** `stack.reverse(a: Stack): Stack`
+- **Input:** One stack
+- **Output:** A new stack with the elements in reverse order
 
-`stack.pop(a: Stack): Stack`
+## Properties
 
-Returns a new stack with the top element removed.
+### Is Empty
+- **Signature:** `stack.isEmpty(a: Stack): Boolean`
+- **Input:** One stack
+- **Output:** True if the stack is empty, false otherwise
 
-## stack.peek
+### Is Not Empty
+- **Signature:** `stack.isNotEmpty(a: Stack): Boolean`
+- **Input:** One stack
+- **Output:** True if the stack is not empty, false otherwise
 
-`stack.peek(a: Stack): Any`
-
-Returns the element at the top of the stack.
-
-## stack.isEmpty
-
-`stack.isEmpty(a: Stack): Boolean`
-
-Returns true if the stack is empty, false otherwise.
-
-## stack.isNotEmpty
-
-`stack.isNotEmpty(a: Stack): Boolean`
-
-Returns true if the stack is not empty, false otherwise.
-
-## stack.length
-
-`stack.length(a: Stack): Number`
-
-Returns the number of elements in the stack.
-
-## stack.reverse
-
-`stack.reverse(a: Stack): Stack`
-
-Returns a new stack with the elements in reverse order.
+### Length
+- **Signature:** `stack.length(a: Stack): Number`
+- **Input:** One stack
+- **Output:** The number of elements in the stack

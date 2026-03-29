@@ -2,8 +2,9 @@
 
 Note: Environment functions are not available on the web platform.
 
-## env.get
+## Functions
 
-`env.get(a: String): String`
-
-Returns the value of the environment variable with the given name. If the variable does not exist, an empty string is returned.
+### Get
+- **Signature:** `env.get(a: String): String`
+- **Input:** One string name
+- **Output:** The value of the environment variable, or an empty string if it does not exist

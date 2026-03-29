@@ -1,67 +1,62 @@
 # Map
 
-## Constructor
+## Construction
 
-`{Any: Any, ...}: Map`
+### Constructor
+- **Syntax:** `{Any: Any, ...}: Map`
+- **Output:** A map created from a list of key-value pairs separated by comma
 
-Creates a map from a list of key-value pairs separated by comma.
+### Indexing
+- **Syntax:** `Map[Any]: Any`
+- **Output:** The value associated with the key
 
-## Indexing
+## Access
 
-`Map[Any]: Any`
+### At
+- **Signature:** `map.at(a: Map, b: Any): Any`
+- **Input:** A map and a key
+- **Output:** The value associated with the key
 
-Returns the value associated with the key.
+### Keys
+- **Signature:** `map.keys(a: Map): List`
+- **Input:** One map
+- **Output:** A list containing all the keys
 
-## map.at
+### Values
+- **Signature:** `map.values(a: Map): List`
+- **Input:** One map
+- **Output:** A list containing all the values
 
-`map.at(a: Map, b: Any): Any`
+## Modification
 
-Returns the value associated with the key.
+### Set
+- **Signature:** `map.set(a: Map, b: Any, c: Any): Map`
+- **Input:** A map, a key, and a value
+- **Output:** A new map containing the new key-value pair
 
-## map.set
+### Remove At
+- **Signature:** `map.removeAt(a: Map, b: Any): Map`
+- **Input:** A map and a key
+- **Output:** A new map with the key removed
 
-`map.set(a: Map, b: Any, c: Any): Map`
+## Properties
 
-Returns a new map containing the new key-value pair.
+### Contains Key
+- **Signature:** `map.containsKey(a: Map, b: Any): Boolean`
+- **Input:** A map and a key
+- **Output:** True if the key is in the map, false otherwise
 
-## map.keys
+### Is Empty
+- **Signature:** `map.isEmpty(a: Map): Boolean`
+- **Input:** One map
+- **Output:** True if the map is empty, false otherwise
 
-`map.keys(a: Map): List`
+### Is Not Empty
+- **Signature:** `map.isNotEmpty(a: Map): Boolean`
+- **Input:** One map
+- **Output:** True if the map is not empty, false otherwise
 
-Returns a list containing all the keys.
-
-## map.values
-
-`map.values(a: Map): List`
-
-Returns a list containing all the values.
-
-## map.containsKey
-
-`map.containsKey(a: Map, b: Any): Boolean`
-
-Returns true if the key is in the map, false otherwise.
-
-## map.isEmpty
-
-`map.isEmpty(a: Map): Boolean`
-
-Returns true if the map is empty, false otherwise.
-
-## map.isNotEmpty
-
-`map.isNotEmpty(a: Map): Boolean`
-
-Returns true if the map is not empty, false otherwise.
-
-## map.removeAt
-
-`map.removeAt(a: Map, b: Any): Map`
-
-Returns a new map with the key removed.
-
-## map.length
-
-`map.length(a: Map): Number`
-
-Returns the number of key-value pairs in the map.
+### Length
+- **Signature:** `map.length(a: Map): Number`
+- **Input:** One map
+- **Output:** The number of key-value pairs in the map

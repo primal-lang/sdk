@@ -1,25 +1,23 @@
 # Logic
 
-## bool.and
+## Functions
 
-`bool.and(a: Boolean, b: Boolean): Boolean`
+### And
+- **Signature:** `bool.and(a: Boolean, b: Boolean): Boolean`
+- **Input:** Two booleans
+- **Output:** True if both arguments are true, false otherwise
 
-True if both arguments are true. False otherwise.
+### Or
+- **Signature:** `bool.or(a: Boolean, b: Boolean): Boolean`
+- **Input:** Two booleans
+- **Output:** True if at least one argument is true, false otherwise
 
-## bool.or
+### Xor
+- **Signature:** `bool.xor(a: Boolean, b: Boolean): Boolean`
+- **Input:** Two booleans
+- **Output:** True if exactly one argument is true, false otherwise
 
-`bool.or(a: Boolean, b: Boolean): Boolean`
-
-True if at least one argument is true. False otherwise.
-
-## bool.xor
-
-`bool.xor(a: Boolean, b: Boolean): Boolean`
-
-True if exactly one argument is true. False otherwise.
-
-## bool.not
-
-`bool.not(a: Boolean): Boolean`
-
-True if the argument is false. False if the argument is true.
+### Not
+- **Signature:** `bool.not(a: Boolean): Boolean`
+- **Input:** One boolean
+- **Output:** True if the argument is false, false if the argument is true

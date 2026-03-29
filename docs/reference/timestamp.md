@@ -1,73 +1,69 @@
 # Timestamp
 
-## time.now
+## Creation
 
-`time.now(): Timestamp`
+### Now
+- **Signature:** `time.now(): Timestamp`
+- **Input:** None
+- **Output:** A timestamp representing the current date and time
 
-Returns a timestamp representing the current date and time.
+### From ISO
+- **Signature:** `time.fromIso(a: String): Timestamp`
+- **Input:** One ISO 8601 string
+- **Output:** A timestamp parsed from the string
 
-## time.toIso
+## Conversion
 
-`time.toIso(a: Timestamp): String`
+### To ISO
+- **Signature:** `time.toIso(a: Timestamp): String`
+- **Input:** One timestamp
+- **Output:** The ISO 8601 string representation
 
-Converts a timestamp to its ISO 8601 string representation.
+### Epoch
+- **Signature:** `time.epoch(a: Timestamp): Number`
+- **Input:** One timestamp
+- **Output:** The number of milliseconds elapsed since the Unix epoch
 
-## time.fromIso
+## Components
 
-`time.fromIso(a: String): Timestamp`
+### Year
+- **Signature:** `time.year(a: Timestamp): Number`
+- **Input:** One timestamp
+- **Output:** The year component of the timestamp
 
-Parses an ISO 8601 string and returns a timestamp.
+### Month
+- **Signature:** `time.month(a: Timestamp): Number`
+- **Input:** One timestamp
+- **Output:** The month component of the timestamp (1-12)
 
-## time.year
+### Day
+- **Signature:** `time.day(a: Timestamp): Number`
+- **Input:** One timestamp
+- **Output:** The day component of the timestamp (1-31)
 
-`time.year(a: Timestamp): Number`
+### Hour
+- **Signature:** `time.hour(a: Timestamp): Number`
+- **Input:** One timestamp
+- **Output:** The hour component of the timestamp (0-23)
 
-Returns the year component of a timestamp.
+### Minute
+- **Signature:** `time.minute(a: Timestamp): Number`
+- **Input:** One timestamp
+- **Output:** The minute component of the timestamp (0-59)
 
-## time.month
+### Second
+- **Signature:** `time.second(a: Timestamp): Number`
+- **Input:** One timestamp
+- **Output:** The second component of the timestamp (0-59)
 
-`time.month(a: Timestamp): Number`
+### Millisecond
+- **Signature:** `time.millisecond(a: Timestamp): Number`
+- **Input:** One timestamp
+- **Output:** The millisecond component of the timestamp (0-999)
 
-Returns the month component of a timestamp (1-12).
+## Comparison
 
-## time.day
-
-`time.day(a: Timestamp): Number`
-
-Returns the day component of a timestamp (1-31).
-
-## time.hour
-
-`time.hour(a: Timestamp): Number`
-
-Returns the hour component of a timestamp (0-23).
-
-## time.minute
-
-`time.minute(a: Timestamp): Number`
-
-Returns the minute component of a timestamp (0-59).
-
-## time.second
-
-`time.second(a: Timestamp): Number`
-
-Returns the second component of a timestamp (0-59).
-
-## time.millisecond
-
-`time.millisecond(a: Timestamp): Number`
-
-Returns the millisecond component of a timestamp (0-999).
-
-## time.epoch
-
-`time.epoch(a: Timestamp): Number`
-
-Returns the number of milliseconds elapsed since the Unix epoch.
-
-## time.compare
-
-`time.compare(a: Timestamp, b: Timestamp): Number`
-
-Returns 1 if the first timestamp is greater, -1 if smaller, 0 if equal.
+### Compare
+- **Signature:** `time.compare(a: Timestamp, b: Timestamp): Number`
+- **Input:** Two timestamps
+- **Output:** 1 if the first timestamp is greater, -1 if smaller, 0 if equal

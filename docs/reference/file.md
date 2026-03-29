@@ -2,86 +2,80 @@
 
 Note: File functions are not available on the web platform.
 
-## file.fromPath
+## Creation
 
-`file.fromPath(a: String): File`
+### From Path
+- **Signature:** `file.fromPath(a: String): File`
+- **Input:** One string path
+- **Output:** A file object pointing to the given path
 
-Returns a file object pointing to the given path.
+### Create
+- **Signature:** `file.create(a: File): Boolean`
+- **Input:** One file
+- **Output:** True if successful, false otherwise
 
-## file.exists
+## Read and Write
 
-`file.exists(a: File): Boolean`
+### Read
+- **Signature:** `file.read(a: File): String`
+- **Input:** One file
+- **Output:** The contents of the file as a string
 
-Returns true if the file exists, false otherwise.
+### Write
+- **Signature:** `file.write(a: File, b: String): Boolean`
+- **Input:** A file and a string
+- **Output:** True if successful, false otherwise
 
-## file.read
+## Operations
 
-`file.read(a: File): String`
+### Exists
+- **Signature:** `file.exists(a: File): Boolean`
+- **Input:** One file
+- **Output:** True if the file exists, false otherwise
 
-Returns the contents of the file as a string.
+### Delete
+- **Signature:** `file.delete(a: File): Boolean`
+- **Input:** One file
+- **Output:** True if successful, false otherwise
 
-## file.write
+### Copy
+- **Signature:** `file.copy(a: File, b: File): Boolean`
+- **Input:** Two files
+- **Output:** True if successful, false otherwise
 
-`file.write(a: File, b: String): Boolean`
+### Move
+- **Signature:** `file.move(a: File, b: File): Boolean`
+- **Input:** Two files
+- **Output:** True if successful, false otherwise
 
-Writes the string content to the file. Returns true if successful, false otherwise.
+### Rename
+- **Signature:** `file.rename(a: File, b: String): Boolean`
+- **Input:** A file and a string
+- **Output:** True if successful, false otherwise
 
-## file.create
+## Properties
 
-`file.create(a: File): Boolean`
+### Length
+- **Signature:** `file.length(a: File): Number`
+- **Input:** One file
+- **Output:** The file's length in bytes
 
-Creates the file. Returns true if successful, false otherwise.
+### Path
+- **Signature:** `file.path(a: File): String`
+- **Input:** One file
+- **Output:** The file's path as a string
 
-## file.delete
+### Name
+- **Signature:** `file.name(a: File): String`
+- **Input:** One file
+- **Output:** The file's name as a string
 
-`file.delete(a: File): Boolean`
+### Extension
+- **Signature:** `file.extension(a: File): String`
+- **Input:** One file
+- **Output:** The file's extension as a string
 
-Deletes the file. Returns true if successful, false otherwise.
-
-## file.copy
-
-`file.copy(a: File, b: File): Boolean`
-
-Copies the first file to the second file's location. Returns true if successful, false otherwise.
-
-## file.move
-
-`file.move(a: File, b: File): Boolean`
-
-Moves the first file to the second file's location. Returns true if successful, false otherwise.
-
-## file.rename
-
-`file.rename(a: File, b: String): Boolean`
-
-Renames the file. Returns true if successful, false otherwise.
-
-## file.length
-
-`file.length(a: File): Number`
-
-Returns the file's length in bytes.
-
-## file.path
-
-`file.path(a: File): String`
-
-Returns the file's path as a string.
-
-## file.name
-
-`file.name(a: File): String`
-
-Returns the file's name as a string.
-
-## file.extension
-
-`file.extension(a: File): String`
-
-Returns the file's extension as a string.
-
-## file.parent
-
-`file.parent(a: File): Directory`
-
-Returns the file's parent directory.
+### Parent
+- **Signature:** `file.parent(a: File): Directory`
+- **Input:** One file
+- **Output:** The file's parent directory
