@@ -4157,6 +4157,46 @@ main = foo({"name": "John", "age": 42, "married": true})
       final Runtime runtime = getRuntime(loadFile('web_samples/to_binary.prm'));
       checkResult(runtime, '"1010"');
     });
+
+    test('flatten', () {
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/flatten.prm'),
+      );
+      checkResult(runtime, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    });
+
+    test('gcd_lcm', () {
+      final Runtime runtime = getRuntime(loadFile('web_samples/gcd_lcm.prm'));
+      checkResult(runtime, [6, 144.0]);
+    });
+
+    test('matrix_multiply', () {
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/matrix_multiply.prm'),
+      );
+      checkResult(runtime, [[19, 22], [43, 50]]);
+    });
+
+    test('pi_estimate', () {
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/pi_estimate.prm'),
+      );
+      checkResult(runtime, 3.0418396189294032);
+    });
+
+    test('quicksort', () {
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/quicksort.prm'),
+      );
+      checkResult(runtime, [3, 9, 27, 38, 43]);
+    });
+
+    test('to_roman_numerals', () {
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/to_roman_numerals.prm'),
+      );
+      checkResult(runtime, '"MCMLXXXIV"');
+    });
   });
 
   group('Higher order functions', () {

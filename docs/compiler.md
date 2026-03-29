@@ -49,23 +49,23 @@ The lexical analyzer consumes the character list and produces a list of typed to
 
 The analyzer starts in `InitState` and transitions based on the current character:
 
-| Character class | Target state |
-|---|---|
-| Letter | `IdentifierState` |
-| Digit | `IntegerState` |
-| `"` | `StringDoubleQuoteState` |
-| `'` | `StringSingleQuoteState` |
-| `+` | `PlusState` |
-| `-` | `MinusState` |
-| `=` | `EqualsState` |
-| `>` | `GreaterState` |
-| `<` | `LessState` |
-| `\|` | `PipeState` |
-| `&` | `AmpersandState` |
-| `!` | `BangState` |
-| `/` | `ForwardSlashState` (division or comment) |
-| Delimiters `(`, `)`, `[`, `]`, `{`, `}`, `,`, `:` | Corresponding delimiter states |
-| Whitespace / newline | Skipped, returns to `InitState` |
+| Character class                                   | Target state                              |
+| ------------------------------------------------- | ----------------------------------------- |
+| Letter                                            | `IdentifierState`                         |
+| Digit                                             | `IntegerState`                            |
+| `"`                                               | `StringDoubleQuoteState`                  |
+| `'`                                               | `StringSingleQuoteState`                  |
+| `+`                                               | `PlusState`                               |
+| `-`                                               | `MinusState`                              |
+| `=`                                               | `EqualsState`                             |
+| `>`                                               | `GreaterState`                            |
+| `<`                                               | `LessState`                               |
+| `\|`                                              | `PipeState`                               |
+| `&`                                               | `AmpersandState`                          |
+| `!`                                               | `BangState`                               |
+| `/`                                               | `ForwardSlashState` (division or comment) |
+| Delimiters `(`, `)`, `[`, `]`, `{`, `}`, `,`, `:` | Corresponding delimiter states            |
+| Whitespace / newline                              | Skipped, returns to `InitState`           |
 
 Multi-character tokens are accumulated via a `Lexeme` object that tracks the starting location and collects characters with `.add(Character)`.
 
@@ -101,6 +101,7 @@ identifier(p1, p2, ...) = expression  -- parameterized function
 ```
 
 States:
+
 1. `InitState` - expects an identifier (the function name).
 2. `FunctionNameState` - expects either `=` (nullary) or `(` (parameterized).
 3. `FunctionWithParametersState` / `FunctionWithNewParametersState` / `FunctionWithNextParametersState` - parse the comma-separated parameter list.
@@ -111,17 +112,17 @@ States:
 
 The expression parser is a **recursive descent parser** with the following precedence levels (lowest to highest):
 
-| Precedence | Rule | Operators / Forms |
-|---|---|---|
-| 1 | `ifExpression` | `if (cond) expr else expr` |
-| 2 | `equality` | `==`, `!=` |
-| 3 | `comparison` | `>`, `>=`, `<`, `<=` |
-| 4 | `logic` | `\|` (or), `&` (and) |
-| 5 | `term` | `+`, `-` |
-| 6 | `factor` | `*`, `/`, `%` |
-| 7 | `unary` | `!`, `-` (negation) |
-| 8 | `call` | function application `f(args)`, indexing `a[i]` |
-| 9 | `primary` | literals, identifiers, `(expr)`, `[list]`, `{map}` |
+| Precedence | Rule           | Operators / Forms                                  |
+| ---------- | -------------- | -------------------------------------------------- |
+| 1          | `ifExpression` | `if (cond) expr else expr`                         |
+| 2          | `equality`     | `==`, `!=`                                         |
+| 3          | `comparison`   | `>`, `>=`, `<`, `<=`                               |
+| 4          | `logic`        | `\|` (or), `&` (and)                               |
+| 5          | `term`         | `+`, `-`                                           |
+| 6          | `factor`       | `*`, `/`, `%`                                      |
+| 7          | `unary`        | `!`, `-` (negation)                                |
+| 8          | `call`         | function application `f(args)`, indexing `a[i]`    |
+| 9          | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}` |
 
 ### Expression Tree
 
@@ -188,6 +189,7 @@ All runtime values are nodes. The base `Node` class defines:
 `ListNode`, `MapNode`, `SetNode`, `VectorNode`, `StackNode`, `QueueNode`
 
 **Variable nodes**:
+
 - `FreeVariableNode(name)` - resolved at runtime by looking up `name` in the global scope.
 - `BoundedVariableNode(name)` - replaced during substitution via bindings.
 
@@ -195,6 +197,7 @@ All runtime values are nodes. The base `Node` class defines:
 `CallNode(callee, arguments)` - on evaluation, evaluates the callee to a `FunctionNode`, then calls `apply()` with the arguments.
 
 **Function nodes**:
+
 - `FunctionNode` - base, with name and parameters.
 - `CustomFunctionNode` - user-defined; `apply()` substitutes arguments into the body, then evaluates.
 - `NativeFunctionNode` - built-in; delegates to a Dart implementation.
@@ -222,23 +225,23 @@ This is a substitution-based evaluation model consistent with lambda calculus re
 
 Types are represented as classes extending `Type`:
 
-| Type class | Represents |
-|---|---|
-| `BooleanType` | Boolean values |
-| `NumberType` | Numeric values (integer and decimal) |
-| `StringType` | String values |
-| `ListType` | Ordered collections |
-| `MapType` | Key-value associations |
-| `SetType` | Unique element collections |
-| `StackType` | LIFO collections |
-| `QueueType` | FIFO collections |
-| `VectorType` | Mathematical vectors |
-| `FileType` | File handles |
-| `DirectoryType` | Directory handles |
-| `TimestampType` | Date/time values |
-| `FunctionType` | Function values |
-| `FunctionCallType` | Function call expressions |
-| `AnyType` | Wildcard (accepts any type) |
+| Type class         | Represents                           |
+| ------------------ | ------------------------------------ |
+| `BooleanType`      | Boolean values                       |
+| `NumberType`       | Numeric values (integer and decimal) |
+| `StringType`       | String values                        |
+| `ListType`         | Ordered collections                  |
+| `MapType`          | Key-value associations               |
+| `SetType`          | Unique element collections           |
+| `StackType`        | LIFO collections                     |
+| `QueueType`        | FIFO collections                     |
+| `VectorType`       | Mathematical vectors                 |
+| `FileType`         | File handles                         |
+| `DirectoryType`    | Directory handles                    |
+| `TimestampType`    | Date/time values                     |
+| `FunctionType`     | Function values                      |
+| `FunctionCallType` | Function call expressions            |
+| `AnyType`          | Wildcard (accepts any type)          |
 
 Type checking is **dynamic** - it happens at runtime when native functions validate their argument types, not during compilation.
 
@@ -250,28 +253,28 @@ Type checking is **dynamic** - it happens at runtime when native functions valid
 
 The standard library provides 230+ built-in functions, organized by namespace:
 
-| Namespace | Count | Examples |
-|---|---|---|
-| `num.*` | 35 | `num.add`, `num.sqrt`, `num.sin`, `num.clamp` |
-| `str.*` | 28 | `str.length`, `str.split`, `str.replace`, `str.reverse` |
-| `list.*` | 31 | `list.map`, `list.filter`, `list.reduce`, `list.sort` |
-| `bool.*` | 4 | `bool.and`, `bool.or`, `bool.not`, `bool.xor` |
-| `comp.*` | 6 | `comp.eq`, `comp.lt`, `comp.ge` |
-| `map.*` | 9 | `map.at`, `map.set`, `map.keys`, `map.values` |
-| `set.*` | 8+ | `set.add`, `set.union`, `set.intersection` |
-| `stack.*` | 8 | `stack.push`, `stack.pop`, `stack.peek` |
-| `queue.*` | 8 | `queue.enqueue`, `queue.dequeue`, `queue.peek` |
-| `vector.*` | 6 | `vector.add`, `vector.magnitude`, `vector.normalize` |
-| `time.*` | 12 | `time.now`, `time.from.iso`, `time.year` |
-| `file.*` | 13 | `file.read`, `file.write`, `file.exists` |
-| `dir.*` | 11 | `dir.create`, `dir.list`, `dir.exists` |
-| `hash.*` | 4 | `hash.md5`, `hash.sha256` |
-| `json.*` | 2 | `json.encode`, `json.decode` |
-| `console.*` | 3 | `console.write`, `console.read` |
-| Casting | 22 | `is.boolean`, `to.string`, `to.integer` |
-| Operators | 14 | `operator.add`, `operator.eq`, `operator.not` |
-| Control flow | 2 | `if`, `try` |
-| Other | 3 | `element.at`, `env.get`, `throw` |
+| Namespace    | Count | Examples                                                |
+| ------------ | ----- | ------------------------------------------------------- |
+| `num.*`      | 35    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`           |
+| `str.*`      | 28    | `str.length`, `str.split`, `str.replace`, `str.reverse` |
+| `list.*`     | 31    | `list.map`, `list.filter`, `list.reduce`, `list.sort`   |
+| `bool.*`     | 4     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`           |
+| `comp.*`     | 6     | `comp.eq`, `comp.lt`, `comp.ge`                         |
+| `map.*`      | 9     | `map.at`, `map.set`, `map.keys`, `map.values`           |
+| `set.*`      | 8+    | `set.add`, `set.union`, `set.intersection`              |
+| `stack.*`    | 8     | `stack.push`, `stack.pop`, `stack.peek`                 |
+| `queue.*`    | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`          |
+| `vector.*`   | 6     | `vector.add`, `vector.magnitude`, `vector.normalize`    |
+| `time.*`     | 12    | `time.now`, `time.from.iso`, `time.year`                |
+| `file.*`     | 13    | `file.read`, `file.write`, `file.exists`                |
+| `dir.*`      | 11    | `dir.create`, `dir.list`, `dir.exists`                  |
+| `hash.*`     | 4     | `hash.md5`, `hash.sha256`                               |
+| `json.*`     | 2     | `json.encode`, `json.decode`                            |
+| `console.*`  | 3     | `console.write`, `console.read`                         |
+| Casting      | 22    | `is.boolean`, `to.string`, `to.integer`                 |
+| Operators    | 14    | `operator.add`, `operator.eq`, `operator.not`           |
+| Control flow | 2     | `if`, `try`                                             |
+| Other        | 3     | `element.at`, `env.get`, `throw`                        |
 
 ### Implementation Pattern
 
@@ -312,34 +315,34 @@ All diagnostics extend `GenericError(errorType, message)`.
 
 Raised during compilation and abort the pipeline:
 
-| Stage | Error | Cause |
-|---|---|---|
-| Lexical | `InvalidCharacterError` | Unrecognized character |
-| Syntactic | `InvalidTokenError` | Unexpected token in context |
-| Syntactic | `ExpectedTokenError` | Missing required token |
-| Syntactic | `UnexpectedEndOfFileError` | Premature end of input |
-| Semantic | `DuplicatedFunctionError` | Two functions with the same name |
-| Semantic | `DuplicatedParameterError` | Repeated parameter in a function |
-| Semantic | `UndefinedIdentifierError` | Reference to unknown variable/function |
-| Semantic | `UndefinedFunctionError` | Call to unknown function |
-| Semantic | `InvalidNumberOfArgumentsError` | Wrong argument count in a call |
+| Stage     | Error                           | Cause                                  |
+| --------- | ------------------------------- | -------------------------------------- |
+| Lexical   | `InvalidCharacterError`         | Unrecognized character                 |
+| Syntactic | `InvalidTokenError`             | Unexpected token in context            |
+| Syntactic | `ExpectedTokenError`            | Missing required token                 |
+| Syntactic | `UnexpectedEndOfFileError`      | Premature end of input                 |
+| Semantic  | `DuplicatedFunctionError`       | Two functions with the same name       |
+| Semantic  | `DuplicatedParameterError`      | Repeated parameter in a function       |
+| Semantic  | `UndefinedIdentifierError`      | Reference to unknown variable/function |
+| Semantic  | `UndefinedFunctionError`        | Call to unknown function               |
+| Semantic  | `InvalidNumberOfArgumentsError` | Wrong argument count in a call         |
 
 ### Runtime Errors
 
 Raised during execution:
 
-| Error | Cause |
-|---|---|
-| `InvalidArgumentTypesError` | Wrong argument types for a native function |
-| `InvalidArgumentCountError` | Wrong number of arguments at runtime |
+| Error                               | Cause                                       |
+| ----------------------------------- | ------------------------------------------- |
+| `InvalidArgumentTypesError`         | Wrong argument types for a native function  |
+| `InvalidArgumentCountError`         | Wrong number of arguments at runtime        |
 | `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `zip`) |
-| `InvalidLiteralValueError` | Invalid literal value |
-| `InvalidValueError` | Invalid computed value |
-| `InvalidMapIndexError` | Key not found in map |
-| `ElementNotFoundError` | Element not in collection |
-| `NotFoundInScopeError` | Function not found in runtime scope |
-| `InvalidFunctionError` | Callee is not a function |
-| `UnimplementedFunctionWebError` | I/O function called on web platform |
+| `InvalidLiteralValueError`          | Invalid literal value                       |
+| `InvalidValueError`                 | Invalid computed value                      |
+| `InvalidMapIndexError`              | Key not found in map                        |
+| `ElementNotFoundError`              | Element not in collection                   |
+| `NotFoundInScopeError`              | Function not found in runtime scope         |
+| `InvalidFunctionError`              | Callee is not a function                    |
+| `UnimplementedFunctionWebError`     | I/O function called on web platform         |
 
 ### Warnings
 
@@ -366,12 +369,12 @@ The compiler uses a **strategy pattern** to abstract platform-specific operation
 
 ### Implementations
 
-| | CLI | Web |
-|---|---|---|
-| Console output | `stdout` / `stderr` | `print()` |
-| Console input | `stdin.readLineSync()` | Unsupported |
-| File system | `dart:io` synchronous API | Unsupported (throws `UnimplementedFunctionWebError`) |
-| Environment | `Platform.environment` | Unsupported |
+|                | CLI                       | Web                                                  |
+| -------------- | ------------------------- | ---------------------------------------------------- |
+| Console output | `stdout` / `stderr`       | `print()`                                            |
+| Console input  | `stdin.readLineSync()`    | Unsupported                                          |
+| File system    | `dart:io` synchronous API | Unsupported (throws `UnimplementedFunctionWebError`) |
+| Environment    | `Platform.environment`    | Unsupported                                          |
 
 The active platform is selected at startup based on the entry point (`main_cli.dart` or `main_web.dart`).
 
@@ -419,11 +422,11 @@ Supporting infrastructure used across compiler stages:
 
 ## 12. Design Patterns
 
-| Pattern | Where | Purpose |
-|---|---|---|
-| State machine | Lexical analyzer, syntactic analyzer | Tokenization and function definition parsing |
-| Recursive descent | Expression parser | Precedence-aware expression parsing |
-| Substitution model | Runtime evaluation | Function application via variable substitution |
-| Strategy | Platform abstraction | CLI vs. web I/O implementations |
-| Two-class native | Standard library | Separate declaration from evaluation for built-in functions |
-| Analyzer base class | All pipeline stages | Uniform `Analyzer<Input, Output>` interface |
+| Pattern             | Where                                | Purpose                                                     |
+| ------------------- | ------------------------------------ | ----------------------------------------------------------- |
+| State machine       | Lexical analyzer, syntactic analyzer | Tokenization and function definition parsing                |
+| Recursive descent   | Expression parser                    | Precedence-aware expression parsing                         |
+| Substitution model  | Runtime evaluation                   | Function application via variable substitution              |
+| Strategy            | Platform abstraction                 | CLI vs. web I/O implementations                             |
+| Two-class native    | Standard library                     | Separate declaration from evaluation for built-in functions |
+| Analyzer base class | All pipeline stages                  | Uniform `Analyzer<Input, Output>` interface                 |
