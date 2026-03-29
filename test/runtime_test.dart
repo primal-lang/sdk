@@ -4733,4 +4733,924 @@ main = directory.move(directory1(), directory2())
       expect(runtime.executeMain(['aaa', 'bbb', 'ccc']), '"aaabbbccc"');
     });
   });
+
+  group('Operator Precedence', () {
+    test('mul before add', () {
+      final Runtime runtime = getRuntime('main = 2 + 3 * 4');
+      checkResult(runtime, 14);
+    });
+
+    test('parentheses override precedence', () {
+      final Runtime runtime = getRuntime('main = (2 + 3) * 4');
+      checkResult(runtime, 20);
+    });
+
+    test('sub with mul', () {
+      final Runtime runtime = getRuntime('main = 10 - 2 * 3');
+      checkResult(runtime, 4);
+    });
+
+    test('add before equality', () {
+      final Runtime runtime = getRuntime('main = 1 + 2 == 3');
+      checkResult(runtime, true);
+    });
+
+    test('div before sub', () {
+      final Runtime runtime = getRuntime('main = 10 - 6 / 3');
+      checkResult(runtime, 8.0);
+    });
+
+    test('mod before add', () {
+      final Runtime runtime = getRuntime('main = 1 + 7 % 3');
+      checkResult(runtime, 2);
+    });
+
+    test('nested parentheses', () {
+      final Runtime runtime = getRuntime('main = ((2 + 3) * (4 - 1))');
+      checkResult(runtime, 15);
+    });
+  });
+
+  group('Lazy Evaluation', () {
+    test('if true does not evaluate else branch', () {
+      final Runtime runtime = getRuntime(
+        'main = if (true) 1 else error.throw(-1, "Error")',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('if false does not evaluate then branch', () {
+      final Runtime runtime = getRuntime(
+        'main = if (false) error.throw(-1, "Error") else 2',
+      );
+      checkResult(runtime, 2);
+    });
+  });
+
+  group('Division and Modulo Edge Cases', () {
+    test('division by zero', () {
+      final Runtime runtime = getRuntime('main = 5 / 0');
+      checkResult(runtime, double.infinity);
+    });
+
+    test('negative division by zero', () {
+      final Runtime runtime = getRuntime('main = -5 / 0');
+      checkResult(runtime, double.negativeInfinity);
+    });
+
+    test('modulo by zero', () {
+      try {
+        final Runtime runtime = getRuntime('main = 5 % 0');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<UnsupportedError>());
+      }
+    });
+
+    test('num.div by zero', () {
+      final Runtime runtime = getRuntime('main = num.div(5, 0)');
+      checkResult(runtime, double.infinity);
+    });
+
+    test('num.mod by zero', () {
+      try {
+        final Runtime runtime = getRuntime('main = num.mod(5, 0)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<UnsupportedError>());
+      }
+    });
+  });
+
+  group('Numeric Edge Cases', () {
+    test('num.sqrt negative throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = num.sqrt(-1)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<UnsupportedError>());
+      }
+    });
+
+    test('num.round negative half', () {
+      final Runtime runtime = getRuntime('main = num.round(-0.5)');
+      checkResult(runtime, -1);
+    });
+
+    test('num.floor negative', () {
+      final Runtime runtime = getRuntime('main = num.floor(-4.6)');
+      checkResult(runtime, -5);
+    });
+
+    test('num.ceil negative', () {
+      final Runtime runtime = getRuntime('main = num.ceil(-4.6)');
+      checkResult(runtime, -4);
+    });
+
+    test('num.isPositive zero', () {
+      final Runtime runtime = getRuntime('main = num.isPositive(0)');
+      checkResult(runtime, false);
+    });
+
+    test('num.isNegative zero', () {
+      final Runtime runtime = getRuntime('main = num.isNegative(0)');
+      checkResult(runtime, false);
+    });
+
+    test('num.isZero zero decimal', () {
+      final Runtime runtime = getRuntime('main = num.isZero(0.0)');
+      checkResult(runtime, true);
+    });
+
+    test('num.max both negative', () {
+      final Runtime runtime = getRuntime('main = num.max(-7, -5)');
+      checkResult(runtime, -5);
+    });
+
+    test('decimal equals integer', () {
+      final Runtime runtime = getRuntime('main = 1.0 == 1');
+      checkResult(runtime, true);
+    });
+
+    test('num.sign positive decimal', () {
+      final Runtime runtime = getRuntime('main = num.sign(0.5)');
+      checkResult(runtime, 1);
+    });
+
+    test('num.sign negative decimal', () {
+      final Runtime runtime = getRuntime('main = num.sign(-0.5)');
+      checkResult(runtime, -1);
+    });
+
+    test('num.clamp value equals min', () {
+      final Runtime runtime = getRuntime('main = num.clamp(1, 1, 5)');
+      checkResult(runtime, 1);
+    });
+
+    test('num.clamp value equals max', () {
+      final Runtime runtime = getRuntime('main = num.clamp(5, 1, 5)');
+      checkResult(runtime, 5);
+    });
+  });
+
+  group('Empty Collection Operations', () {
+    test('list.first empty throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = list.first([])');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<StateError>());
+      }
+    });
+
+    test('list.last empty throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = list.last([])');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<StateError>());
+      }
+    });
+
+    test('list.init empty returns empty', () {
+      final Runtime runtime = getRuntime('main = list.init([])');
+      checkResult(runtime, []);
+    });
+
+    test('str.first empty throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = str.first("")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('str.last empty throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = str.last("")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('str.init empty returns empty', () {
+      final Runtime runtime = getRuntime('main = str.init("")');
+      checkResult(runtime, '""');
+    });
+
+    test('list.at empty throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = list.at([], 0)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('str.at empty throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = str.at("", 0)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+  });
+
+  group('Out of Bounds', () {
+    test('list indexing out of bounds', () {
+      try {
+        final Runtime runtime = getRuntime('main = [1, 2, 3][5]');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('string indexing out of bounds', () {
+      try {
+        final Runtime runtime = getRuntime('main = "Hello"[10]');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('list.at out of bounds', () {
+      try {
+        final Runtime runtime = getRuntime('main = list.at([1, 2], 5)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('str.at out of bounds', () {
+      try {
+        final Runtime runtime = getRuntime('main = str.at("Hi", 5)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('list.removeAt out of bounds', () {
+      try {
+        final Runtime runtime = getRuntime(
+          'main = list.removeAt([1, 2], 5)',
+        );
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('list.swap out of bounds', () {
+      try {
+        final Runtime runtime = getRuntime('main = list.swap([1], 0, 5)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('list.sublist out of bounds', () {
+      try {
+        final Runtime runtime = getRuntime('main = list.sublist([1, 2], 0, 10)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('str.substring out of bounds', () {
+      try {
+        final Runtime runtime = getRuntime(
+          'main = str.substring("Hi", 0, 10)',
+        );
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('list negative index', () {
+      try {
+        final Runtime runtime = getRuntime('main = list.at([1, 2, 3], -1)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+  });
+
+  group('Type Mismatch Errors', () {
+    test('number plus boolean', () {
+      try {
+        final Runtime runtime = getRuntime('main = 5 + true');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('string minus string', () {
+      try {
+        final Runtime runtime = getRuntime('main = "hello" - "world"');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('string times number', () {
+      try {
+        final Runtime runtime = getRuntime('main = "hello" * 3');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('num.abs with string', () {
+      try {
+        final Runtime runtime = getRuntime('main = num.abs("hello")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('str.length with number', () {
+      try {
+        final Runtime runtime = getRuntime('main = str.length(42)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('list.length with number', () {
+      try {
+        final Runtime runtime = getRuntime('main = list.length(42)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('boolean greater than', () {
+      try {
+        final Runtime runtime = getRuntime('main = true > false');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+  });
+
+  group('Cross-Type Equality', () {
+    test('number equals string throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = 42 == "42"');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('boolean equals number throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = true == 1');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('list equals map throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = [] == {}');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('number not-equals string throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = 42 != "42"');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+  });
+
+  group('Map Missing Key', () {
+    test('map.at missing key throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = map.at({"a": 1}, "b")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidMapIndexError>());
+      }
+    });
+
+    test('map indexing missing key throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = {"a": 1}["b"]');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RuntimeError>());
+      }
+    });
+
+    test('map.set adds new key to non-empty map', () {
+      final Runtime runtime = getRuntime(
+        'main = map.set({"a": 1}, "b", 2)',
+      );
+      checkResult(runtime, {'"a"': 1, '"b"': 2});
+    });
+  });
+
+  group('Nested Collections', () {
+    test('nested list equality', () {
+      final Runtime runtime = getRuntime(
+        'main = [1, [2, 3]] == [1, [2, 3]]',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('nested list inequality', () {
+      final Runtime runtime = getRuntime(
+        'main = [1, [2, 3]] == [1, [2, 4]]',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list of maps', () {
+      final Runtime runtime = getRuntime(
+        'main = [{"a": 1}, {"b": 2}]',
+      );
+      checkResult(runtime, [{'"a"': 1}, {'"b"': 2}]);
+    });
+
+    test('map with list value', () {
+      final Runtime runtime = getRuntime(
+        'main = {"nums": [1, 2, 3]}',
+      );
+      checkResult(runtime, {'"nums"': [1, 2, 3]});
+    });
+
+    test('deeply nested list', () {
+      final Runtime runtime = getRuntime('main = [[[1]]]');
+      checkResult(runtime, [
+        [
+          [1],
+        ],
+      ]);
+    });
+
+    test('index into nested list', () {
+      final Runtime runtime = getRuntime(
+        'main = ([[1, 2], [3, 4]])[1]',
+      );
+      checkResult(runtime, [3, 4]);
+    });
+
+    test('map with nested map equality', () {
+      final Runtime runtime = getRuntime(
+        'main = {"a": {"b": 1}} == {"a": {"b": 1}}',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('map with nested map inequality', () {
+      final Runtime runtime = getRuntime(
+        'main = {"a": {"b": 1}} == {"a": {"b": 2}}',
+      );
+      checkResult(runtime, false);
+    });
+  });
+
+  group('Casting Edge Cases', () {
+    test('to.number non-numeric string throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.number("hello")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<FormatException>());
+      }
+    });
+
+    test('to.integer non-numeric string throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.integer("hello")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<FormatException>());
+      }
+    });
+
+    test('to.list with number throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.list(42)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('to.boolean with list throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.boolean([])');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('to.boolean with map throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.boolean({})');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+
+    test('to.decimal non-numeric string throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.decimal("hello")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<FormatException>());
+      }
+    });
+
+    test('to.list with list', () {
+      try {
+        final Runtime runtime = getRuntime('main = to.list([1, 2, 3])');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<InvalidArgumentTypesError>());
+      }
+    });
+  });
+
+  group('Try/Catch Advanced', () {
+    test('try catches empty list first', () {
+      final Runtime runtime = getRuntime('main = try(list.first([]), -1)');
+      checkResult(runtime, -1);
+    });
+
+    test('try catches missing map key', () {
+      final Runtime runtime = getRuntime(
+        'main = try(map.at({}, "x"), "default")',
+      );
+      checkResult(runtime, '"default"');
+    });
+
+    test('try catches type mismatch', () {
+      final Runtime runtime = getRuntime('main = try(5 + true, 0)');
+      checkResult(runtime, 0);
+    });
+
+    test('try catches out of bounds', () {
+      final Runtime runtime = getRuntime('main = try([1, 2][5], -1)');
+      checkResult(runtime, -1);
+    });
+
+    test('try returns value when no error', () {
+      final Runtime runtime = getRuntime('main = try(1 + 2, 42)');
+      checkResult(runtime, 3);
+    });
+  });
+
+  group('JSON Edge Cases', () {
+    test('json.decode invalid string throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = json.decode("not json")');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<FormatException>());
+      }
+    });
+
+    test('json.decode empty object', () {
+      final Runtime runtime = getRuntime('main = json.decode("{}")');
+      checkResult(runtime, {});
+    });
+
+    test('json.decode nested', () {
+      final Runtime runtime = getRuntime(
+        "main = json.decode('{\"a\": {\"b\": 1}}')",
+      );
+      checkResult(runtime, {'"a"': {'"b"': 1}});
+    });
+
+    test('json.encode then decode roundtrip', () {
+      final Runtime runtime = getRuntime(
+        'main = json.decode(json.encode([1, 2, 3]))',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+  });
+
+  group('Recursion', () {
+    test('direct recursion countdown', () {
+      final Runtime runtime = getRuntime('''
+countdown(n) = if (n <= 0) 0 else countdown(n - 1)
+main = countdown(5)
+''');
+      checkResult(runtime, 0);
+    });
+
+    test('recursive sum', () {
+      final Runtime runtime = getRuntime('''
+sum(n) = if (n <= 0) 0 else n + sum(n - 1)
+main = sum(5)
+''');
+      checkResult(runtime, 15);
+    });
+
+    test('mutual recursion', () {
+      final Runtime runtime = getRuntime('''
+isEven(n) = if (n == 0) true else isOdd(n - 1)
+isOdd(n) = if (n == 0) false else isEven(n - 1)
+main = isEven(4)
+''');
+      checkResult(runtime, true);
+    });
+
+    test('mutual recursion odd', () {
+      final Runtime runtime = getRuntime('''
+isEven(n) = if (n == 0) true else isOdd(n - 1)
+isOdd(n) = if (n == 0) false else isEven(n - 1)
+main = isOdd(5)
+''');
+      checkResult(runtime, true);
+    });
+  });
+
+  group('Custom Functions with Higher-Order', () {
+    test('list.map with custom function', () {
+      final Runtime runtime = getRuntime('''
+double(n) = n * 2
+main = list.map([1, 2, 3], double)
+''');
+      checkResult(runtime, [2, 4, 6]);
+    });
+
+    test('list.filter with custom predicate', () {
+      final Runtime runtime = getRuntime('''
+isSmall(n) = n < 5
+main = list.filter([1, 7, 3, 9, 2], isSmall)
+''');
+      checkResult(runtime, [1, 3, 2]);
+    });
+
+    test('list.reduce with custom function', () {
+      final Runtime runtime = getRuntime('''
+mul(a, b) = a * b
+main = list.reduce([1, 2, 3, 4], 1, mul)
+''');
+      checkResult(runtime, 24);
+    });
+
+    test('list.sort with custom comparator', () {
+      final Runtime runtime = getRuntime('''
+reverseCompare(a, b) = num.compare(b, a)
+main = list.sort([3, 1, 5, 2, 4], reverseCompare)
+''');
+      checkResult(runtime, [5, 4, 3, 2, 1]);
+    });
+
+    test('list.all with custom predicate', () {
+      final Runtime runtime = getRuntime('''
+isPositive(n) = n > 0
+main = list.all([1, 2, 3], isPositive)
+''');
+      checkResult(runtime, true);
+    });
+
+    test('list.any with custom predicate', () {
+      final Runtime runtime = getRuntime('''
+isNeg(n) = n < 0
+main = list.any([1, -2, 3], isNeg)
+''');
+      checkResult(runtime, true);
+    });
+
+    test('list.none with custom predicate', () {
+      final Runtime runtime = getRuntime('''
+isNeg(n) = n < 0
+main = list.none([1, 2, 3], isNeg)
+''');
+      checkResult(runtime, true);
+    });
+  });
+
+  group('String Edge Cases', () {
+    test('str.reverse empty', () {
+      final Runtime runtime = getRuntime('main = str.reverse("")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.bytes empty', () {
+      final Runtime runtime = getRuntime('main = str.bytes("")');
+      checkResult(runtime, []);
+    });
+
+    test('str.split empty string', () {
+      final Runtime runtime = getRuntime('main = str.split("", ",")');
+      checkResult(runtime, ['""']);
+    });
+
+    test('str.join single element', () {
+      final Runtime runtime = getRuntime(
+        'main = list.join(["hello"], ", ")',
+      );
+      checkResult(runtime, '"hello"');
+    });
+
+    test('str.match negative', () {
+      final Runtime runtime = getRuntime(
+        'main = str.match("hello123", "^[0-9]+\$")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.contains empty pattern', () {
+      final Runtime runtime = getRuntime('main = str.contains("Hello", "")');
+      checkResult(runtime, true);
+    });
+
+    test('str.replace empty pattern', () {
+      final Runtime runtime = getRuntime(
+        'main = str.replace("abc", "", "x")',
+      );
+      checkResult(runtime, '"xaxbxcx"');
+    });
+
+    test('str.indexOf empty pattern', () {
+      final Runtime runtime = getRuntime('main = str.indexOf("Hello", "")');
+      checkResult(runtime, 0);
+    });
+
+    test('str.take beyond length throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = str.take("Hi", 10)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+
+    test('str.drop beyond length throws', () {
+      try {
+        final Runtime runtime = getRuntime('main = str.drop("Hi", 10)');
+        runtime.executeMain();
+        fail('Should fail');
+      } catch (e) {
+        expect(e, isA<RangeError>());
+      }
+    });
+  });
+
+  group('Function Composition', () {
+    test('nested core function calls', () {
+      final Runtime runtime = getRuntime('main = num.abs(num.negative(5))');
+      checkResult(runtime, 5);
+    });
+
+    test('composed arithmetic', () {
+      final Runtime runtime = getRuntime(
+        'main = num.pow(num.add(1, 2), num.sub(5, 2))',
+      );
+      checkResult(runtime, 27);
+    });
+
+    test('chained string operations', () {
+      final Runtime runtime = getRuntime(
+        'main = str.uppercase(str.reverse("hello"))',
+      );
+      checkResult(runtime, '"OLLEH"');
+    });
+
+    test('composed list and arithmetic', () {
+      final Runtime runtime = getRuntime(
+        'main = num.add(list.first([10, 20]), list.last([30, 40]))',
+      );
+      checkResult(runtime, 50);
+    });
+
+    test('multi-function program', () {
+      final Runtime runtime = getRuntime('''
+square(n) = n * n
+cube(n) = n * square(n)
+main = cube(3)
+''');
+      checkResult(runtime, 27);
+    });
+
+    test('function chain with three levels', () {
+      final Runtime runtime = getRuntime('''
+inc(n) = n + 1
+double(n) = n * 2
+apply(f, g, v) = f(g(v))
+main = apply(double, inc, 3)
+''');
+      checkResult(runtime, 8);
+    });
+  });
+
+  group('Multiple Custom Functions', () {
+    test('custom functions calling each other', () {
+      final Runtime runtime = getRuntime('''
+add1(n) = n + 1
+add2(n) = add1(add1(n))
+add4(n) = add2(add2(n))
+main = add4(0)
+''');
+      checkResult(runtime, 4);
+    });
+
+    test('conditional with custom functions', () {
+      final Runtime runtime = getRuntime('''
+classify(n) = if (n > 0) "positive" else if (n < 0) "negative" else "zero"
+main = classify(-5)
+''');
+      checkResult(runtime, '"negative"');
+    });
+
+    test('conditional zero case', () {
+      final Runtime runtime = getRuntime('''
+classify(n) = if (n > 0) "positive" else if (n < 0) "negative" else "zero"
+main = classify(0)
+''');
+      checkResult(runtime, '"zero"');
+    });
+
+    test('custom function with list operations', () {
+      final Runtime runtime = getRuntime('''
+sumList(xs) = list.reduce(xs, 0, num.add)
+average(xs) = sumList(xs) / list.length(xs)
+main = average([10, 20, 30])
+''');
+      checkResult(runtime, 20.0);
+    });
+
+    test('parameterless custom function', () {
+      final Runtime runtime = getRuntime('''
+pi = 3.14159
+circleArea(r) = pi() * r * r
+main = circleArea(1)
+''');
+      checkResult(runtime, 3.14159);
+    });
+  });
 }
