@@ -1,7 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
-import '../utils/test_utils.dart';
+import '../helpers/assertion_helpers.dart';
+import '../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Json', () {
@@ -87,7 +88,9 @@ void main() {
       final Runtime runtime = getRuntime(
         "main = json.decode('{\"a\": {\"b\": 1}}')",
       );
-      checkResult(runtime, {'"a"': {'"b"': 1}});
+      checkResult(runtime, {
+        '"a"': {'"b"': 1},
+      });
     });
 
     test('json.encode then decode roundtrip', () {

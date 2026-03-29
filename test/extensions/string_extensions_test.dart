@@ -220,7 +220,17 @@ void main() {
 
       test('isBinaryOperator', () {
         const List<String> binaryOps = [
-          '-', '+', '=', '>', '<', '|', '&', '!', '/', '*', '%',
+          '-',
+          '+',
+          '=',
+          '>',
+          '<',
+          '|',
+          '&',
+          '!',
+          '/',
+          '*',
+          '%',
         ];
         for (final String op in binaryOps) {
           expect(true, equals(op.isBinaryOperator));

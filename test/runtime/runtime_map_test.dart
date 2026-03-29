@@ -1,7 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
-import '../utils/test_utils.dart';
+import '../helpers/assertion_helpers.dart';
+import '../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Map', () {
@@ -258,7 +259,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('map.containsKey throws for wrong type', () {
-      final Runtime runtime = getRuntime('main = map.containsKey("hello", "a")');
+      final Runtime runtime = getRuntime(
+        'main = map.containsKey("hello", "a")',
+      );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 

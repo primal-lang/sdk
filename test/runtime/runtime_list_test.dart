@@ -1,7 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
-import '../utils/test_utils.dart';
+import '../helpers/assertion_helpers.dart';
+import '../helpers/pipeline_helpers.dart';
 
 void main() {
   group('List', () {
@@ -599,14 +600,19 @@ main = foo([2])
       final Runtime runtime = getRuntime(
         'main = [{"a": 1}, {"b": 2}]',
       );
-      checkResult(runtime, [{'"a"': 1}, {'"b"': 2}]);
+      checkResult(runtime, [
+        {'"a"': 1},
+        {'"b"': 2},
+      ]);
     });
 
     test('map with list value', () {
       final Runtime runtime = getRuntime(
         'main = {"nums": [1, 2, 3]}',
       );
-      checkResult(runtime, {'"nums"': [1, 2, 3]});
+      checkResult(runtime, {
+        '"nums"': [1, 2, 3],
+      });
     });
 
     test('deeply nested list', () {
@@ -667,7 +673,9 @@ main = foo([2])
     });
 
     test('list.sort throws for wrong type', () {
-      final Runtime runtime = getRuntime('main = list.sort("hello", num.compare)');
+      final Runtime runtime = getRuntime(
+        'main = list.sort("hello", num.compare)',
+      );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 

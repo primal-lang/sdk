@@ -3,7 +3,10 @@ import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
-import '../utils/test_utils.dart';
+import '../helpers/assertion_helpers.dart';
+import '../helpers/pipeline_helpers.dart';
+import '../helpers/resource_helpers.dart';
+import '../helpers/token_factories.dart';
 
 void main() {
   group('Syntactic Analyzer', () {

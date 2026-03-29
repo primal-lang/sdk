@@ -8,7 +8,14 @@ class Scanner extends Analyzer<String, List<Character>> {
   @override
   List<Character> analyze() {
     final List<Character> result = [];
-    final List<String> rows = input.split('\n');
+    final String normalized = input
+        .replaceAll('\r\n', '\n')
+        .replaceAll('\r', '\n');
+    final List<String> rows = normalized.split('\n');
+
+    if (rows.isNotEmpty && rows.last.isEmpty) {
+      rows.removeLast();
+    }
 
     for (int i = 0; i < rows.length; i++) {
       if ((i == 0) && rows[i].startsWith('#!')) {

@@ -1,7 +1,7 @@
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:test/test.dart';
-import '../utils/test_utils.dart';
+import '../helpers/pipeline_helpers.dart';
 
 void main() {
   test('Duplicated parameter', () {

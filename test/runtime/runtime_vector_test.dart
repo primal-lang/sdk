@@ -1,7 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
-import '../utils/test_utils.dart';
+import '../helpers/assertion_helpers.dart';
+import '../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Vector', () {
@@ -68,7 +69,10 @@ void main() {
       final Runtime runtime = getRuntime(
         'main = vector.add(vector.new([1, 2]), vector.new([4, 5, 6]))',
       );
-      expect(runtime.executeMain, throwsA(isA<IterablesWithDifferentLengthError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
     });
 
     test('vector.sub 1', () {
@@ -89,7 +93,10 @@ void main() {
       final Runtime runtime = getRuntime(
         'main = vector.sub(vector.new([1, 2]), vector.new([4, 5, 6]))',
       );
-      expect(runtime.executeMain, throwsA(isA<IterablesWithDifferentLengthError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
     });
 
     test('vector.angle 1', () {

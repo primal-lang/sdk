@@ -1,6 +1,8 @@
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
-import '../utils/test_utils.dart';
+import '../helpers/assertion_helpers.dart';
+import '../helpers/pipeline_helpers.dart';
+import '../helpers/resource_helpers.dart';
 
 void main() {
   group('Samples', () {
@@ -102,7 +104,10 @@ void main() {
       final Runtime runtime = getRuntime(
         loadFile('web_samples/matrix_multiply.prm'),
       );
-      checkResult(runtime, [[19, 22], [43, 50]]);
+      checkResult(runtime, [
+        [19, 22],
+        [43, 50],
+      ]);
     });
 
     test('pi_estimate', () {

@@ -79,16 +79,19 @@ void main() {
       expect(scope.data, isEmpty);
     });
 
-    test('mismatched parameter/argument counts throws InvalidArgumentCountError', () {
-      expect(
-        () => Scope.from(
-          functionName: 'f',
-          parameters: [Parameter.number('x'), Parameter.number('y')],
-          arguments: [const NumberNode(1)],
-        ),
-        throwsA(isA<InvalidArgumentCountError>()),
-      );
-    });
+    test(
+      'mismatched parameter/argument counts throws InvalidArgumentCountError',
+      () {
+        expect(
+          () => Scope.from(
+            functionName: 'f',
+            parameters: [Parameter.number('x'), Parameter.number('y')],
+            arguments: [const NumberNode(1)],
+          ),
+          throwsA(isA<InvalidArgumentCountError>()),
+        );
+      },
+    );
 
     test('too many arguments throws InvalidArgumentCountError', () {
       expect(

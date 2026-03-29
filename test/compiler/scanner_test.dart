@@ -4,12 +4,9 @@ import 'package:test/test.dart';
 
 void main() {
   group('Scanner', () {
-    test('Empty input returns single trailing newline', () {
+    test('Empty input returns empty list', () {
       final List<Character> result = const Scanner('').analyze();
-      expect(result.length, equals(1));
-      expect(result[0].value, equals('\n'));
-      expect(result[0].location.row, equals(1));
-      expect(result[0].location.column, equals(1));
+      expect(result.length, equals(0));
     });
 
     test('Single character has correct value and location', () {
@@ -49,8 +46,9 @@ void main() {
     });
 
     test('Shebang line is skipped', () {
-      final List<Character> result =
-          const Scanner('#!/usr/bin/env primal\nmain = 42').analyze();
+      final List<Character> result = const Scanner(
+        '#!/usr/bin/env primal\nmain = 42',
+      ).analyze();
       // First character should be from the second line
       expect(result[0].value, equals('m'));
       expect(result[0].location.row, equals(2));
@@ -58,14 +56,16 @@ void main() {
     });
 
     test('Shebang only skips first line', () {
-      final List<Character> result =
-          const Scanner('main = 1\n#!/usr/bin/env primal').analyze();
+      final List<Character> result = const Scanner(
+        'main = 1\n#!/usr/bin/env primal',
+      ).analyze();
       // First line is processed normally
       expect(result[0].value, equals('m'));
       expect(result[0].location.row, equals(1));
       // Second line starting with #! is NOT skipped
-      final List<Character> row2Chars =
-          result.where((c) => c.location.row == 2 && c.value != '\n').toList();
+      final List<Character> row2Chars = result
+          .where((c) => c.location.row == 2 && c.value != '\n')
+          .toList();
       expect(row2Chars[0].value, equals('#'));
       expect(row2Chars[1].value, equals('!'));
     });
@@ -81,11 +81,14 @@ void main() {
     });
 
     test('Whitespace characters are handled', () {
-      // \r is treated as a regular character within a row
+      // \r is normalized to \n, splitting into two rows
       final List<Character> result = const Scanner('\r\t ').analyze();
-      expect(result[0].value, equals('\r'));
+      expect(result[0].value, equals('\n'));
+      expect(result[0].location.row, equals(1));
       expect(result[1].value, equals('\t'));
+      expect(result[1].location.row, equals(2));
       expect(result[2].value, equals(' '));
+      expect(result[2].location.row, equals(2));
     });
 
     test('Unicode characters are handled', () {

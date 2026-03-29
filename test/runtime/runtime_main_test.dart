@@ -1,6 +1,6 @@
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
-import '../utils/test_utils.dart';
+import '../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Main', () {
