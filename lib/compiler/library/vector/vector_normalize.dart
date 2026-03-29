@@ -5,19 +5,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class VectorNormalize extends NativeFunctionNode {
   VectorNormalize()
-      : super(
-          name: 'vector.normalize',
-          parameters: [
-            Parameter.vector('a'),
-          ],
-        );
+    : super(
+        name: 'vector.normalize',
+        parameters: [
+          Parameter.vector('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -38,9 +38,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       );
       final List list = a.native();
 
-      return VectorNode(list
-          .map((element) => NumberNode(element / magnitude.value))
-          .toList());
+      return VectorNode(
+        list.map((element) => NumberNode(element / magnitude.value)).toList(),
+      );
     } else {
       throw InvalidArgumentTypesError(
         function: name,

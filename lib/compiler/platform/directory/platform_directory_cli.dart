@@ -37,8 +37,10 @@ class PlatformDirectoryCli extends PlatformDirectoryBase {
       destination.createSync(recursive: true);
 
       source.listSync().forEach((entity) {
-        final String newPath =
-            entity.path.replaceAll(source.path, destination.path);
+        final String newPath = entity.path.replaceAll(
+          source.path,
+          destination.path,
+        );
 
         if (entity is File) {
           entity.copySync(newPath);

@@ -1,6 +1,6 @@
 /*
-  Input: a string containing opening and closing parenthesis
-  Output: true if the parenthesis are balanced, false otherwise
+  Input: a string containing opening and closing parentheses
+  Output: true if the parentheses are balanced, false otherwise
 */
 
 balancedParenthesis(list) = balancedParenthesis.helper(list, stack.new([]))

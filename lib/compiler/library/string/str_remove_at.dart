@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class StrRemoveAt extends NativeFunctionNode {
   StrRemoveAt()
-      : super(
-          name: 'str.removeAt',
-          parameters: [
-            Parameter.string('a'),
-            Parameter.number('b'),
-          ],
-        );
+    : super(
+        name: 'str.removeAt',
+        parameters: [
+          Parameter.string('a'),
+          Parameter.number('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -33,8 +33,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is StringNode) && (b is NumberNode)) {
-      return StringNode(a.value.substring(0, b.value.toInt()) +
-          a.value.substring(b.value.toInt() + 1));
+      return StringNode(
+        a.value.substring(0, b.value.toInt()) +
+            a.value.substring(b.value.toInt() + 1),
+      );
     } else {
       throw InvalidArgumentTypesError(
         function: name,

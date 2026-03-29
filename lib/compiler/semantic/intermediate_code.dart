@@ -13,7 +13,7 @@ class IntermediateCode {
   });
 
   factory IntermediateCode.empty() => IntermediateCode(
-        functions: Mapper.toMap(StandardLibrary.get()),
-        warnings: [],
-      );
+    functions: Mapper.toMap(StandardLibrary.get()),
+    warnings: [],
+  );
 }

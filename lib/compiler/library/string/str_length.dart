@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class StrLength extends NativeFunctionNode {
   StrLength()
-      : super(
-          name: 'str.length',
-          parameters: [
-            Parameter.string('a'),
-          ],
-        );
+    : super(
+        name: 'str.length',
+        parameters: [
+          Parameter.string('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

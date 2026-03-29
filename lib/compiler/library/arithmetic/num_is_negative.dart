@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class NumIsNegative extends NativeFunctionNode {
   NumIsNegative()
-      : super(
-          name: 'num.isNegative',
-          parameters: [
-            Parameter.number('a'),
-          ],
-        );
+    : super(
+        name: 'num.isNegative',
+        parameters: [
+          Parameter.number('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

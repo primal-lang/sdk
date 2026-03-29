@@ -12,10 +12,10 @@ class FunctionDefinition {
   });
 
   FunctionDefinition withParameter(String parameter) => FunctionDefinition(
-        name: name,
-        parameters: [...parameters, parameter],
-        expression: expression,
-      );
+    name: name,
+    parameters: [...parameters, parameter],
+    expression: expression,
+  );
 
   FunctionDefinition withExpression(Expression expression) =>
       FunctionDefinition(

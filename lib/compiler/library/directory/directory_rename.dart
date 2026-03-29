@@ -6,20 +6,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryRename extends NativeFunctionNode {
   DirectoryRename()
-      : super(
-          name: 'directory.rename',
-          parameters: [
-            Parameter.directory('a'),
-            Parameter.string('b'),
-          ],
-        );
+    : super(
+        name: 'directory.rename',
+        parameters: [
+          Parameter.directory('a'),
+          Parameter.string('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -35,8 +35,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is DirectoryNode) && (b is StringNode)) {
-      final bool renamed =
-          PlatformInterface().directory.rename(a.value, b.value);
+      final bool renamed = PlatformInterface().directory.rename(
+        a.value,
+        b.value,
+      );
 
       return BooleanNode(renamed);
     } else {

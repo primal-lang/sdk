@@ -14,8 +14,9 @@ void main() {
 
       final RegExp regex = RegExp(r"test\('.*?', \(\) \{");
       final Iterable<RegExpMatch> matches = regex.allMatches(content);
-      final List<String> list =
-          matches.map((match) => match.group(0) ?? '').toList();
+      final List<String> list = matches
+          .map((match) => match.group(0) ?? '')
+          .toList();
 
       final List<String> found = [];
 
@@ -56,8 +57,9 @@ void main() {
     });
 
     test('try/catch 2', () {
-      final Runtime runtime =
-          getRuntime('main = try(error.throw(0, "Does not compute"), 42)');
+      final Runtime runtime = getRuntime(
+        'main = try(error.throw(0, "Does not compute"), 42)',
+      );
       checkResult(runtime, 42);
     });
   });
@@ -65,8 +67,9 @@ void main() {
   group('Error', () {
     test('throw', () {
       try {
-        final Runtime runtime =
-            getRuntime('main = error.throw(-1, "Segmentation fault")');
+        final Runtime runtime = getRuntime(
+          'main = error.throw(-1, "Segmentation fault")',
+        );
         runtime.executeMain();
         fail('Should fail');
       } catch (e) {
@@ -149,8 +152,9 @@ void main() {
     });
 
     test('== 11', () {
-      final Runtime runtime =
-          getRuntime('main = [1, 2, 3] == [4 - 3, 1 + 1, 3 * 1]');
+      final Runtime runtime = getRuntime(
+        'main = [1, 2, 3] == [4 - 3, 1 + 1, 3 * 1]',
+      );
       checkResult(runtime, true);
     });
 
@@ -171,25 +175,29 @@ void main() {
 
     test('== 15', () {
       final Runtime runtime = getRuntime(
-          'main = {"a": 1, "b": 2, "c": 3} == {"a": 1, "b": 2, "c": 3}');
+        'main = {"a": 1, "b": 2, "c": 3} == {"a": 1, "b": 2, "c": 3}',
+      );
       checkResult(runtime, true);
     });
 
     test('== 16', () {
       final Runtime runtime = getRuntime(
-          'main = {"a": 1, "b": 2, "c": 3} == {"a": 3 - 2, "b": 1 + 1, "c": 3 * 1}');
+        'main = {"a": 1, "b": 2, "c": 3} == {"a": 3 - 2, "b": 1 + 1, "c": 3 * 1}',
+      );
       checkResult(runtime, true);
     });
 
     test('== 17', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-01T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-01T00:00:00")',
+      );
       checkResult(runtime, true);
     });
 
     test('== 18', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-02T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-02T00:00:00")',
+      );
       checkResult(runtime, false);
     });
 
@@ -199,92 +207,107 @@ void main() {
     });
 
     test('== 20', () {
-      final Runtime runtime =
-          getRuntime('main = set.new([1, 2, 3]) == set.new([1, 2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = set.new([1, 2, 3]) == set.new([1, 2, 3])',
+      );
       checkResult(runtime, true);
     });
 
     test('== 21', () {
-      final Runtime runtime =
-          getRuntime('main = set.new([1, 2]) == set.new([2])');
+      final Runtime runtime = getRuntime(
+        'main = set.new([1, 2]) == set.new([2])',
+      );
       checkResult(runtime, false);
     });
 
     test('== 22', () {
-      final Runtime runtime =
-          getRuntime('main = stack.new([]) == stack.new([])');
+      final Runtime runtime = getRuntime(
+        'main = stack.new([]) == stack.new([])',
+      );
       checkResult(runtime, true);
     });
 
     test('== 23', () {
-      final Runtime runtime =
-          getRuntime('main = stack.new([1, 2, 3]) == stack.new([1, 2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = stack.new([1, 2, 3]) == stack.new([1, 2, 3])',
+      );
       checkResult(runtime, true);
     });
 
     test('== 24', () {
-      final Runtime runtime =
-          getRuntime('main = stack.new([1, 2]) == stack.new([2])');
+      final Runtime runtime = getRuntime(
+        'main = stack.new([1, 2]) == stack.new([2])',
+      );
       checkResult(runtime, false);
     });
 
     test('== 25', () {
-      final Runtime runtime =
-          getRuntime('main = queue.new([]) == queue.new([])');
+      final Runtime runtime = getRuntime(
+        'main = queue.new([]) == queue.new([])',
+      );
       checkResult(runtime, true);
     });
 
     test('== 26', () {
-      final Runtime runtime =
-          getRuntime('main = queue.new([1, 2, 3]) == queue.new([1, 2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = queue.new([1, 2, 3]) == queue.new([1, 2, 3])',
+      );
       checkResult(runtime, true);
     });
 
     test('== 27', () {
-      final Runtime runtime =
-          getRuntime('main = queue.new([1, 2]) == queue.new([2])');
+      final Runtime runtime = getRuntime(
+        'main = queue.new([1, 2]) == queue.new([2])',
+      );
       checkResult(runtime, false);
     });
 
     test('== 28', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([]) == vector.new([])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([]) == vector.new([])',
+      );
       checkResult(runtime, true);
     });
 
     test('== 29', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([1, 2, 3]) == vector.new([1, 2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([1, 2, 3]) == vector.new([1, 2, 3])',
+      );
       checkResult(runtime, true);
     });
 
     test('== 30', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([1, 2]) == vector.new([2])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([1, 2]) == vector.new([2])',
+      );
       checkResult(runtime, false);
     });
 
     test('== 31', () {
-      final Runtime runtime =
-          getRuntime('main = file.fromPath(".") == file.fromPath(".")');
+      final Runtime runtime = getRuntime(
+        'main = file.fromPath(".") == file.fromPath(".")',
+      );
       checkResult(runtime, true);
     });
 
     test('== 32', () {
-      final Runtime runtime =
-          getRuntime('main = file.fromPath(".") == file.fromPath("..")');
+      final Runtime runtime = getRuntime(
+        'main = file.fromPath(".") == file.fromPath("..")',
+      );
       checkResult(runtime, false);
     });
 
     test('== 33', () {
       final Runtime runtime = getRuntime(
-          'main = directory.fromPath(".") == directory.fromPath(".")');
+        'main = directory.fromPath(".") == directory.fromPath(".")',
+      );
       checkResult(runtime, true);
     });
 
     test('== 34', () {
       final Runtime runtime = getRuntime(
-          'main = directory.fromPath(".") == directory.fromPath("..")');
+        'main = directory.fromPath(".") == directory.fromPath("..")',
+      );
       checkResult(runtime, false);
     });
 
@@ -345,13 +368,15 @@ void main() {
 
     test('!= 12', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-01T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-01T00:00:00")',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 13', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-02T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-02T00:00:00")',
+      );
       checkResult(runtime, true);
     });
 
@@ -361,92 +386,107 @@ void main() {
     });
 
     test('!= 15', () {
-      final Runtime runtime =
-          getRuntime('main = set.new([1, 2, 3]) != set.new([1, 2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = set.new([1, 2, 3]) != set.new([1, 2, 3])',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 16', () {
-      final Runtime runtime =
-          getRuntime('main = set.new([1, 2]) != set.new([2])');
+      final Runtime runtime = getRuntime(
+        'main = set.new([1, 2]) != set.new([2])',
+      );
       checkResult(runtime, true);
     });
 
     test('!= 17', () {
-      final Runtime runtime =
-          getRuntime('main = stack.new([]) != stack.new([])');
+      final Runtime runtime = getRuntime(
+        'main = stack.new([]) != stack.new([])',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 18', () {
-      final Runtime runtime =
-          getRuntime('main = stack.new([1, 2, 3]) != stack.new([1, 2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = stack.new([1, 2, 3]) != stack.new([1, 2, 3])',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 19', () {
-      final Runtime runtime =
-          getRuntime('main = stack.new([1, 2]) != stack.new([2])');
+      final Runtime runtime = getRuntime(
+        'main = stack.new([1, 2]) != stack.new([2])',
+      );
       checkResult(runtime, true);
     });
 
     test('!= 20', () {
-      final Runtime runtime =
-          getRuntime('main = queue.new([]) != queue.new([])');
+      final Runtime runtime = getRuntime(
+        'main = queue.new([]) != queue.new([])',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 21', () {
-      final Runtime runtime =
-          getRuntime('main = queue.new([1, 2, 3]) != queue.new([1, 2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = queue.new([1, 2, 3]) != queue.new([1, 2, 3])',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 22', () {
-      final Runtime runtime =
-          getRuntime('main = queue.new([1, 2]) != queue.new([2])');
+      final Runtime runtime = getRuntime(
+        'main = queue.new([1, 2]) != queue.new([2])',
+      );
       checkResult(runtime, true);
     });
 
     test('!= 23', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([]) != vector.new([])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([]) != vector.new([])',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 24', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([1, 2, 3]) != vector.new([1, 2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([1, 2, 3]) != vector.new([1, 2, 3])',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 25', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([1, 2]) != vector.new([2])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([1, 2]) != vector.new([2])',
+      );
       checkResult(runtime, true);
     });
 
     test('!= 26', () {
-      final Runtime runtime =
-          getRuntime('main = file.fromPath(".") != file.fromPath(".")');
+      final Runtime runtime = getRuntime(
+        'main = file.fromPath(".") != file.fromPath(".")',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 27', () {
-      final Runtime runtime =
-          getRuntime('main = file.fromPath(".") != file.fromPath("..")');
+      final Runtime runtime = getRuntime(
+        'main = file.fromPath(".") != file.fromPath("..")',
+      );
       checkResult(runtime, true);
     });
 
     test('!= 28', () {
       final Runtime runtime = getRuntime(
-          'main = directory.fromPath(".") != directory.fromPath(".")');
+        'main = directory.fromPath(".") != directory.fromPath(".")',
+      );
       checkResult(runtime, false);
     });
 
     test('!= 29', () {
       final Runtime runtime = getRuntime(
-          'main = directory.fromPath(".") != directory.fromPath("..")');
+        'main = directory.fromPath(".") != directory.fromPath("..")',
+      );
       checkResult(runtime, true);
     });
 
@@ -472,13 +512,15 @@ void main() {
 
     test('> 5', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") > time.fromIso("2024-09-02T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") > time.fromIso("2024-09-02T00:00:00")',
+      );
       checkResult(runtime, false);
     });
 
     test('> 6', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-02T00:00:00") > time.fromIso("2024-09-01T00:00:00")');
+        'main = time.fromIso("2024-09-02T00:00:00") > time.fromIso("2024-09-01T00:00:00")',
+      );
       checkResult(runtime, true);
     });
 
@@ -504,13 +546,15 @@ void main() {
 
     test('< 5', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") < time.fromIso("2024-09-02T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") < time.fromIso("2024-09-02T00:00:00")',
+      );
       checkResult(runtime, true);
     });
 
     test('< 6', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-02T00:00:00") < time.fromIso("2024-09-01T00:00:00")');
+        'main = time.fromIso("2024-09-02T00:00:00") < time.fromIso("2024-09-01T00:00:00")',
+      );
       checkResult(runtime, false);
     });
 
@@ -546,19 +590,22 @@ void main() {
 
     test('>= 7', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") >= time.fromIso("2024-09-01T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") >= time.fromIso("2024-09-01T00:00:00")',
+      );
       checkResult(runtime, true);
     });
 
     test('>= 8', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-02T00:00:00") >= time.fromIso("2024-09-01T00:00:00")');
+        'main = time.fromIso("2024-09-02T00:00:00") >= time.fromIso("2024-09-01T00:00:00")',
+      );
       checkResult(runtime, true);
     });
 
     test('>= 9', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") >= time.fromIso("2024-09-02T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") >= time.fromIso("2024-09-02T00:00:00")',
+      );
       checkResult(runtime, false);
     });
 
@@ -594,19 +641,22 @@ void main() {
 
     test('<= 7', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") <= time.fromIso("2024-09-01T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") <= time.fromIso("2024-09-01T00:00:00")',
+      );
       checkResult(runtime, true);
     });
 
     test('<= 8', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-01T00:00:00") <= time.fromIso("2024-09-02T00:00:00")');
+        'main = time.fromIso("2024-09-01T00:00:00") <= time.fromIso("2024-09-02T00:00:00")',
+      );
       checkResult(runtime, true);
     });
 
     test('<= 9', () {
       final Runtime runtime = getRuntime(
-          'main = time.fromIso("2024-09-02T00:00:00") <= time.fromIso("2024-09-01T00:00:00")');
+        'main = time.fromIso("2024-09-02T00:00:00") <= time.fromIso("2024-09-01T00:00:00")',
+      );
       checkResult(runtime, false);
     });
 
@@ -626,14 +676,16 @@ void main() {
     });
 
     test('+ 4', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([]) + vector.new([])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([]) + vector.new([])',
+      );
       checkResult(runtime, []);
     });
 
     test('+ 5', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([1, 2]) + vector.new([3, 4])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([1, 2]) + vector.new([3, 4])',
+      );
       checkResult(runtime, [4, 6]);
     });
 
@@ -673,20 +725,23 @@ void main() {
     });
 
     test('+ 13', () {
-      final Runtime runtime =
-          getRuntime('main = set.new([1, 2]) + set.new([3])');
+      final Runtime runtime = getRuntime(
+        'main = set.new([1, 2]) + set.new([3])',
+      );
       checkResult(runtime, {1, 2, 3});
     });
 
     test('+ 14', () {
-      final Runtime runtime =
-          getRuntime('main = set.new([1]) + set.new([2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = set.new([1]) + set.new([2, 3])',
+      );
       checkResult(runtime, {1, 2, 3});
     });
 
     test('+ 15', () {
-      final Runtime runtime =
-          getRuntime('main = set.new([1, 2]) + set.new([2, 3])');
+      final Runtime runtime = getRuntime(
+        'main = set.new([1, 2]) + set.new([2, 3])',
+      );
       checkResult(runtime, {1, 2, 3});
     });
 
@@ -706,14 +761,16 @@ void main() {
     });
 
     test('- 4', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([]) - vector.new([])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([]) - vector.new([])',
+      );
       checkResult(runtime, []);
     });
 
     test('- 5', () {
-      final Runtime runtime =
-          getRuntime('main = vector.new([1, 2]) - vector.new([3, 4])');
+      final Runtime runtime = getRuntime(
+        'main = vector.new([1, 2]) - vector.new([3, 4])',
+      );
       checkResult(runtime, [-2, -2]);
     });
 
@@ -763,8 +820,9 @@ void main() {
     });
 
     test('& 5', () {
-      final Runtime runtime =
-          getRuntime('main = false & error.throw(-1, "Error")');
+      final Runtime runtime = getRuntime(
+        'main = false & error.throw(-1, "Error")',
+      );
       checkResult(runtime, false);
     });
 
@@ -789,8 +847,9 @@ void main() {
     });
 
     test('| 5', () {
-      final Runtime runtime =
-          getRuntime('main = true | error.throw(-1, "Error")');
+      final Runtime runtime = getRuntime(
+        'main = true | error.throw(-1, "Error")',
+      );
       checkResult(runtime, true);
     });
 
@@ -1099,14 +1158,16 @@ void main() {
     });
 
     test('num.asDegrees 2', () {
-      final Runtime runtime =
-          getRuntime('main = num.asDegrees(0.52359877559829887307)');
+      final Runtime runtime = getRuntime(
+        'main = num.asDegrees(0.52359877559829887307)',
+      );
       expect(num.parse(runtime.executeMain()), closeTo(30, 0.0001));
     });
 
     test('num.asDegrees 3', () {
-      final Runtime runtime =
-          getRuntime('main = num.asDegrees(3.141592653589793)');
+      final Runtime runtime = getRuntime(
+        'main = num.asDegrees(3.141592653589793)',
+      );
       expect(num.parse(runtime.executeMain()), closeTo(180, 0.0001));
     });
 
@@ -1280,8 +1341,9 @@ void main() {
     });
 
     test('str.startsWith 2', () {
-      final Runtime runtime =
-          getRuntime('main = str.startsWith("hola", "hoy")');
+      final Runtime runtime = getRuntime(
+        'main = str.startsWith("hola", "hoy")',
+      );
       checkResult(runtime, false);
     });
 
@@ -1296,20 +1358,23 @@ void main() {
     });
 
     test('str.replace 1', () {
-      final Runtime runtime =
-          getRuntime('main = str.replace("banana", "na", "to")');
+      final Runtime runtime = getRuntime(
+        'main = str.replace("banana", "na", "to")',
+      );
       checkResult(runtime, '"batoto"');
     });
 
     test('str.replace 2', () {
-      final Runtime runtime =
-          getRuntime('main = str.replace("banana", "bon", "to")');
+      final Runtime runtime = getRuntime(
+        'main = str.replace("banana", "bon", "to")',
+      );
       checkResult(runtime, '"banana"');
     });
 
     test('str.replace 3', () {
-      final Runtime runtime =
-          getRuntime('main = str.replace("aaa123BBB", "[a-z]", "x")');
+      final Runtime runtime = getRuntime(
+        'main = str.replace("aaa123BBB", "[a-z]", "x")',
+      );
       checkResult(runtime, '"xxx123BBB"');
     });
 
@@ -1329,8 +1394,9 @@ void main() {
     });
 
     test('str.match', () {
-      final Runtime runtime =
-          getRuntime('main = str.match("identifier42", "[a-zA-Z]+[0-9]+")');
+      final Runtime runtime = getRuntime(
+        'main = str.match("identifier42", "[a-zA-Z]+[0-9]+")',
+      );
       checkResult(runtime, true);
     });
 
@@ -1340,8 +1406,9 @@ void main() {
     });
 
     test('str.concat', () {
-      final Runtime runtime =
-          getRuntime('main = str.concat("Hello", ", world!")');
+      final Runtime runtime = getRuntime(
+        'main = str.concat("Hello", ", world!")',
+      );
       checkResult(runtime, '"Hello, world!"');
     });
 
@@ -1411,8 +1478,9 @@ void main() {
     });
 
     test('str.contains 2', () {
-      final Runtime runtime =
-          getRuntime('main = str.contains("Hello", "hell")');
+      final Runtime runtime = getRuntime(
+        'main = str.contains("Hello", "hell")',
+      );
       checkResult(runtime, false);
     });
 
@@ -1477,20 +1545,23 @@ void main() {
     });
 
     test('str.padRight 1', () {
-      final Runtime runtime =
-          getRuntime('main = str.padRight("12345", 0, "0")');
+      final Runtime runtime = getRuntime(
+        'main = str.padRight("12345", 0, "0")',
+      );
       checkResult(runtime, '"12345"');
     });
 
     test('str.padRight 2', () {
-      final Runtime runtime =
-          getRuntime('main = str.padRight("12345", 5, "0")');
+      final Runtime runtime = getRuntime(
+        'main = str.padRight("12345", 5, "0")',
+      );
       checkResult(runtime, '"12345"');
     });
 
     test('str.padRight 3', () {
-      final Runtime runtime =
-          getRuntime('main = str.padRight("12345", 8, "0")');
+      final Runtime runtime = getRuntime(
+        'main = str.padRight("12345", 8, "0")',
+      );
       checkResult(runtime, '"12345000"');
     });
 
@@ -1501,8 +1572,16 @@ void main() {
 
     test('str.split 2', () {
       final Runtime runtime = getRuntime('main = str.split("aa,bb,cc", "")');
-      checkResult(
-          runtime, ['"a"', '"a"', '","', '"b"', '"b"', '","', '"c"', '"c"']);
+      checkResult(runtime, [
+        '"a"',
+        '"a"',
+        '","',
+        '"b"',
+        '"b"',
+        '","',
+        '"c"',
+        '"c"',
+      ]);
     });
 
     test('str.split 3', () {
@@ -1511,14 +1590,16 @@ void main() {
     });
 
     test('str.compare 1', () {
-      final Runtime runtime =
-          getRuntime('main = str.compare("hello", "mountain")');
+      final Runtime runtime = getRuntime(
+        'main = str.compare("hello", "mountain")',
+      );
       checkResult(runtime, -1);
     });
 
     test('str.compare 2', () {
-      final Runtime runtime =
-          getRuntime('main = str.compare("table", "table")');
+      final Runtime runtime = getRuntime(
+        'main = str.compare("table", "table")',
+      );
       checkResult(runtime, 0);
     });
 
@@ -1542,7 +1623,7 @@ void main() {
     test('List constructor 3', () {
       final Runtime runtime = getRuntime('main = [[1]]');
       checkResult(runtime, [
-        [1]
+        [1],
       ]);
     });
 
@@ -1554,7 +1635,7 @@ void main() {
     test('List constructor 5', () {
       final Runtime runtime = getRuntime('main = [[1 + 2]]');
       checkResult(runtime, [
-        [3]
+        [3],
       ]);
     });
 
@@ -1569,14 +1650,16 @@ void main() {
     });
 
     test('List indexing 2', () {
-      final Runtime runtime =
-          getRuntime('main = [[1, 2, 3], [4, 5, 6], [7, 8, 9]][1]');
+      final Runtime runtime = getRuntime(
+        'main = [[1, 2, 3], [4, 5, 6], [7, 8, 9]][1]',
+      );
       checkResult(runtime, [4, 5, 6]);
     });
 
     test('List indexing 3', () {
-      final Runtime runtime =
-          getRuntime('main = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]][1])[0]');
+      final Runtime runtime = getRuntime(
+        'main = ([[1, 2, 3], [4, 5, 6], [7, 8, 9]][1])[0]',
+      );
       checkResult(runtime, 4);
     });
 
@@ -1640,14 +1723,16 @@ main = foo([2])
     });
 
     test('list.set 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.set([1, 2, 3, 4, 5], 2, 42)');
+      final Runtime runtime = getRuntime(
+        'main = list.set([1, 2, 3, 4, 5], 2, 42)',
+      );
       checkResult(runtime, [1, 2, 42, 3, 4, 5]);
     });
 
     test('list.join 1', () {
-      final Runtime runtime =
-          getRuntime('main = list.join(["Hello", "world!"], ", ")');
+      final Runtime runtime = getRuntime(
+        'main = list.join(["Hello", "world!"], ", ")',
+      );
       checkResult(runtime, '"Hello, world!"');
     });
 
@@ -1717,8 +1802,9 @@ main = foo([2])
     });
 
     test('list.contains 3', () {
-      final Runtime runtime =
-          getRuntime('main = list.contains([1, 2 + 2, 3], 4)');
+      final Runtime runtime = getRuntime(
+        'main = list.contains([1, 2 + 2, 3], 4)',
+      );
       checkResult(runtime, true);
     });
 
@@ -1753,50 +1839,58 @@ main = foo([2])
     });
 
     test('list.take 1', () {
-      final Runtime runtime =
-          getRuntime('main = list.take([1, 2, 3, 4, 5], 0)');
+      final Runtime runtime = getRuntime(
+        'main = list.take([1, 2, 3, 4, 5], 0)',
+      );
       checkResult(runtime, []);
     });
 
     test('list.take 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.take([1, 2, 3, 4, 5], 4)');
+      final Runtime runtime = getRuntime(
+        'main = list.take([1, 2, 3, 4, 5], 4)',
+      );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
     test('list.drop 1', () {
-      final Runtime runtime =
-          getRuntime('main = list.drop([1, 2, 3, 4, 5], 0)');
+      final Runtime runtime = getRuntime(
+        'main = list.drop([1, 2, 3, 4, 5], 0)',
+      );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
     test('list.drop 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.drop([1, 2, 3, 4, 5], 2)');
+      final Runtime runtime = getRuntime(
+        'main = list.drop([1, 2, 3, 4, 5], 2)',
+      );
       checkResult(runtime, [3, 4, 5]);
     });
 
     test('list.remove 1', () {
-      final Runtime runtime =
-          getRuntime('main = list.remove([1, 2, 3, 4, 5], 0)');
+      final Runtime runtime = getRuntime(
+        'main = list.remove([1, 2, 3, 4, 5], 0)',
+      );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
     test('list.remove 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.remove([1, 2, 3, 4, 5], 2)');
+      final Runtime runtime = getRuntime(
+        'main = list.remove([1, 2, 3, 4, 5], 2)',
+      );
       checkResult(runtime, [1, 3, 4, 5]);
     });
 
     test('list.remove 3', () {
-      final Runtime runtime =
-          getRuntime('main = list.remove([1, 2, 2, 4, 5], 2)');
+      final Runtime runtime = getRuntime(
+        'main = list.remove([1, 2, 2, 4, 5], 2)',
+      );
       checkResult(runtime, [1, 4, 5]);
     });
 
     test('list.removeAt', () {
-      final Runtime runtime =
-          getRuntime('main = list.removeAt([1, 2, 3, 4, 5], 2)');
+      final Runtime runtime = getRuntime(
+        'main = list.removeAt([1, 2, 3, 4, 5], 2)',
+      );
       checkResult(runtime, [1, 2, 4, 5]);
     });
 
@@ -1826,14 +1920,16 @@ main = foo([2])
     });
 
     test('list.swap', () {
-      final Runtime runtime =
-          getRuntime('main = list.swap([1, 2, 3, 4, 5], 1, 3)');
+      final Runtime runtime = getRuntime(
+        'main = list.swap([1, 2, 3, 4, 5], 1, 3)',
+      );
       checkResult(runtime, [1, 4, 3, 2, 5]);
     });
 
     test('list.sublist', () {
-      final Runtime runtime =
-          getRuntime('main = list.sublist([1, 2, 3, 4, 5], 1, 3)');
+      final Runtime runtime = getRuntime(
+        'main = list.sublist([1, 2, 3, 4, 5], 1, 3)',
+      );
       checkResult(runtime, [2, 3]);
     });
 
@@ -1844,7 +1940,8 @@ main = foo([2])
 
     test('list.map 2', () {
       final Runtime runtime = getRuntime(
-          'main = list.map([1, -2 - 6, 3 * -3, -4, num.negative(7)], num.abs)');
+        'main = list.map([1, -2 - 6, 3 * -3, -4, num.negative(7)], num.abs)',
+      );
       checkResult(runtime, [1, 8, 9, 4, 7]);
     });
 
@@ -1855,13 +1952,15 @@ main = foo([2])
 
     test('list.filter 2', () {
       final Runtime runtime = getRuntime(
-          'main = list.filter([-3, -2, -1, 0, 1, 2, 3], num.isEven)');
+        'main = list.filter([-3, -2, -1, 0, 1, 2, 3], num.isEven)',
+      );
       checkResult(runtime, [-2, 0, 2]);
     });
 
     test('list.filter 3', () {
-      final Runtime runtime =
-          getRuntime('main = list.filter([-3, -2, -1, 1, 2, 3], num.isZero)');
+      final Runtime runtime = getRuntime(
+        'main = list.filter([-3, -2, -1, 1, 2, 3], num.isZero)',
+      );
       checkResult(runtime, []);
     });
 
@@ -1871,8 +1970,9 @@ main = foo([2])
     });
 
     test('list.reduce 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.reduce([1, 2, 3, 4, 5], 10, num.add)');
+      final Runtime runtime = getRuntime(
+        'main = list.reduce([1, 2, 3, 4, 5], 10, num.add)',
+      );
       checkResult(runtime, 25);
     });
 
@@ -1882,14 +1982,16 @@ main = foo([2])
     });
 
     test('list.all 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.all([2, 4, 5], num.isEven)');
+      final Runtime runtime = getRuntime(
+        'main = list.all([2, 4, 5], num.isEven)',
+      );
       checkResult(runtime, false);
     });
 
     test('list.all 3', () {
-      final Runtime runtime =
-          getRuntime('main = list.all([2, 4, 6], num.isEven)');
+      final Runtime runtime = getRuntime(
+        'main = list.all([2, 4, 6], num.isEven)',
+      );
       checkResult(runtime, true);
     });
 
@@ -1899,14 +2001,16 @@ main = foo([2])
     });
 
     test('list.none 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.none([1, 2, 3], num.isEven)');
+      final Runtime runtime = getRuntime(
+        'main = list.none([1, 2, 3], num.isEven)',
+      );
       checkResult(runtime, false);
     });
 
     test('list.none 3', () {
-      final Runtime runtime =
-          getRuntime('main = list.none([1, 3, 7], num.isEven)');
+      final Runtime runtime = getRuntime(
+        'main = list.none([1, 3, 7], num.isEven)',
+      );
       checkResult(runtime, true);
     });
 
@@ -1916,14 +2020,16 @@ main = foo([2])
     });
 
     test('list.any 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.any([1, 3, 5], num.isEven)');
+      final Runtime runtime = getRuntime(
+        'main = list.any([1, 3, 5], num.isEven)',
+      );
       checkResult(runtime, false);
     });
 
     test('list.any 3', () {
-      final Runtime runtime =
-          getRuntime('main = list.any([1, 2, 3], num.isEven)');
+      final Runtime runtime = getRuntime(
+        'main = list.any([1, 2, 3], num.isEven)',
+      );
       checkResult(runtime, true);
     });
 
@@ -1933,26 +2039,30 @@ main = foo([2])
     });
 
     test('list.zip 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.zip([1, 3, 5], [2, 4], num.add)');
+      final Runtime runtime = getRuntime(
+        'main = list.zip([1, 3, 5], [2, 4], num.add)',
+      );
       checkResult(runtime, [3, 7, 5]);
     });
 
     test('list.zip 3', () {
-      final Runtime runtime =
-          getRuntime('main = list.zip([1, 3], [2, 4, 6], num.add)');
+      final Runtime runtime = getRuntime(
+        'main = list.zip([1, 3], [2, 4, 6], num.add)',
+      );
       checkResult(runtime, [3, 7, 6]);
     });
 
     test('list.zip 4', () {
-      final Runtime runtime =
-          getRuntime('main = list.zip([1, 3, 5], [2, 4, 6], num.add)');
+      final Runtime runtime = getRuntime(
+        'main = list.zip([1, 3, 5], [2, 4, 6], num.add)',
+      );
       checkResult(runtime, [3, 7, 11]);
     });
 
     test('list.zip 5', () {
-      final Runtime runtime =
-          getRuntime('main = list.zip([1 + 1 + 1, 3, 5], [2, 4, 6], num.add)');
+      final Runtime runtime = getRuntime(
+        'main = list.zip([1 + 1 + 1, 3, 5], [2, 4, 6], num.add)',
+      );
       checkResult(runtime, [5, 7, 11]);
     });
 
@@ -1962,16 +2072,23 @@ main = foo([2])
     });
 
     test('list.sort 2', () {
-      final Runtime runtime =
-          getRuntime('main = list.sort([3, 1, 5, 2, 4], num.compare)');
+      final Runtime runtime = getRuntime(
+        'main = list.sort([3, 1, 5, 2, 4], num.compare)',
+      );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
     test('list.sort 3', () {
       final Runtime runtime = getRuntime(
-          'main = list.sort(["Peter", "Alice", "John", "Bob", "Daniel"], str.compare)');
-      checkResult(
-          runtime, ['"Alice"', '"Bob"', '"Daniel"', '"John"', '"Peter"']);
+        'main = list.sort(["Peter", "Alice", "John", "Bob", "Daniel"], str.compare)',
+      );
+      checkResult(runtime, [
+        '"Alice"',
+        '"Bob"',
+        '"Daniel"',
+        '"John"',
+        '"Peter"',
+      ]);
     });
   });
 
@@ -1987,47 +2104,59 @@ main = foo([2])
     });
 
     test('vector.magnitude 1', () {
-      final Runtime runtime =
-          getRuntime('main = vector.magnitude(vector.new([]))');
+      final Runtime runtime = getRuntime(
+        'main = vector.magnitude(vector.new([]))',
+      );
       checkResult(runtime, 0.0);
     });
 
     test('vector.magnitude 2', () {
-      final Runtime runtime =
-          getRuntime('main = vector.magnitude(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = vector.magnitude(vector.new([1, 2, 3]))',
+      );
       expect(
-          num.parse(runtime.executeMain()), closeTo(3.7416573867739413, 0.001));
+        num.parse(runtime.executeMain()),
+        closeTo(3.7416573867739413, 0.001),
+      );
     });
 
     test('vector.normalize 1', () {
-      final Runtime runtime =
-          getRuntime('main = vector.normalize(vector.new([]))');
+      final Runtime runtime = getRuntime(
+        'main = vector.normalize(vector.new([]))',
+      );
       checkResult(runtime, []);
     });
 
     test('vector.normalize 2', () {
-      final Runtime runtime =
-          getRuntime('main = vector.normalize(vector.new([1, 2, 3]))');
-      checkResult(runtime,
-          [0.2672612419124244, 0.5345224838248488, 0.8017837257372732]);
+      final Runtime runtime = getRuntime(
+        'main = vector.normalize(vector.new([1, 2, 3]))',
+      );
+      checkResult(runtime, [
+        0.2672612419124244,
+        0.5345224838248488,
+        0.8017837257372732,
+      ]);
     });
 
     test('vector.add 1', () {
-      final Runtime runtime =
-          getRuntime('main = vector.add(vector.new([]), vector.new([]))');
+      final Runtime runtime = getRuntime(
+        'main = vector.add(vector.new([]), vector.new([]))',
+      );
       checkResult(runtime, []);
     });
 
     test('vector.add 2', () {
       final Runtime runtime = getRuntime(
-          'main = vector.add(vector.new([1, 2]), vector.new([3, 4]))');
+        'main = vector.add(vector.new([1, 2]), vector.new([3, 4]))',
+      );
       checkResult(runtime, [4, 6]);
     });
 
     test('vector.add 3', () {
       try {
         final Runtime runtime = getRuntime(
-            'main = vector.add(vector.new([1, 2]), vector.new([4, 5, 6]))');
+          'main = vector.add(vector.new([1, 2]), vector.new([4, 5, 6]))',
+        );
         runtime.executeMain();
         fail('Should fail');
       } catch (e) {
@@ -2036,21 +2165,24 @@ main = foo([2])
     });
 
     test('vector.sub 1', () {
-      final Runtime runtime =
-          getRuntime('main = vector.sub(vector.new([]), vector.new([]))');
+      final Runtime runtime = getRuntime(
+        'main = vector.sub(vector.new([]), vector.new([]))',
+      );
       checkResult(runtime, []);
     });
 
     test('vector.sub 2', () {
       final Runtime runtime = getRuntime(
-          'main = vector.sub(vector.new([1, 2]), vector.new([3, 4]))');
+        'main = vector.sub(vector.new([1, 2]), vector.new([3, 4]))',
+      );
       checkResult(runtime, [-2, -2]);
     });
 
     test('vector.sub 3', () {
       try {
         final Runtime runtime = getRuntime(
-            'main = vector.sub(vector.new([1, 2]), vector.new([4, 5, 6]))');
+          'main = vector.sub(vector.new([1, 2]), vector.new([4, 5, 6]))',
+        );
         runtime.executeMain();
         fail('Should fail');
       } catch (e) {
@@ -2060,8 +2192,9 @@ main = foo([2])
 
     test('vector.angle 1', () {
       try {
-        final Runtime runtime =
-            getRuntime('main = vector.angle(vector.new([]), vector.new([]))');
+        final Runtime runtime = getRuntime(
+          'main = vector.angle(vector.new([]), vector.new([]))',
+        );
         runtime.executeMain();
         fail('Should fail');
       } catch (e) {
@@ -2071,16 +2204,22 @@ main = foo([2])
 
     test('vector.angle 2', () {
       final Runtime runtime = getRuntime(
-          'main = vector.angle(vector.new([1, 2]), vector.new([3, 4]))');
-      expect(num.parse(runtime.executeMain()),
-          closeTo(0.17985349979247847, 0.000001));
+        'main = vector.angle(vector.new([1, 2]), vector.new([3, 4]))',
+      );
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(0.17985349979247847, 0.000001),
+      );
     });
 
     test('vector.angle 3', () {
       final Runtime runtime = getRuntime(
-          'main = vector.angle(vector.new([3, 4, 0]), vector.new([4, 3, 0]))');
+        'main = vector.angle(vector.new([3, 4, 0]), vector.new([4, 3, 0]))',
+      );
       expect(
-          num.parse(runtime.executeMain()), closeTo(0.28379410920832, 0.0001));
+        num.parse(runtime.executeMain()),
+        closeTo(0.28379410920832, 0.0001),
+      );
     });
   });
 
@@ -2121,26 +2260,30 @@ main = foo([2])
     });
 
     test('set.remove 2', () {
-      final Runtime runtime =
-          getRuntime('main = set.remove(set.new([1, 2]), 3)');
+      final Runtime runtime = getRuntime(
+        'main = set.remove(set.new([1, 2]), 3)',
+      );
       checkResult(runtime, {1, 2});
     });
 
     test('set.remove 3', () {
-      final Runtime runtime =
-          getRuntime('main = set.remove(set.new([1, 2]), 2)');
+      final Runtime runtime = getRuntime(
+        'main = set.remove(set.new([1, 2]), 2)',
+      );
       checkResult(runtime, {1});
     });
 
     test('set.contains 1', () {
-      final Runtime runtime =
-          getRuntime('main = set.contains(set.new([1, 2, 3]), 2)');
+      final Runtime runtime = getRuntime(
+        'main = set.contains(set.new([1, 2, 3]), 2)',
+      );
       checkResult(runtime, true);
     });
 
     test('set.contains 2', () {
-      final Runtime runtime =
-          getRuntime('main = set.contains(set.new([1, 2]), 3)');
+      final Runtime runtime = getRuntime(
+        'main = set.contains(set.new([1, 2]), 3)',
+      );
       checkResult(runtime, false);
     });
 
@@ -2150,8 +2293,9 @@ main = foo([2])
     });
 
     test('set.isEmpty 2', () {
-      final Runtime runtime =
-          getRuntime('main = set.isEmpty(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = set.isEmpty(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -2161,8 +2305,9 @@ main = foo([2])
     });
 
     test('set.isNotEmpty 2', () {
-      final Runtime runtime =
-          getRuntime('main = set.isNotEmpty(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = set.isNotEmpty(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, true);
     });
 
@@ -2172,56 +2317,65 @@ main = foo([2])
     });
 
     test('set.length 2', () {
-      final Runtime runtime =
-          getRuntime('main = set.length(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = set.length(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, 3);
     });
 
     test('set.union 1', () {
-      final Runtime runtime =
-          getRuntime('main = set.union(set.new([]), set.new([]))');
+      final Runtime runtime = getRuntime(
+        'main = set.union(set.new([]), set.new([]))',
+      );
       checkResult(runtime, {});
     });
 
     test('set.union 2', () {
-      final Runtime runtime =
-          getRuntime('main = set.union(set.new([1, 2]), set.new([3]))');
+      final Runtime runtime = getRuntime(
+        'main = set.union(set.new([1, 2]), set.new([3]))',
+      );
       checkResult(runtime, {1, 2, 3});
     });
 
     test('set.union 3', () {
-      final Runtime runtime =
-          getRuntime('main = set.union(set.new([1]), set.new([2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = set.union(set.new([1]), set.new([2, 3]))',
+      );
       checkResult(runtime, {1, 2, 3});
     });
 
     test('set.union 4', () {
-      final Runtime runtime =
-          getRuntime('main = set.union(set.new([1, 2]), set.new([2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = set.union(set.new([1, 2]), set.new([2, 3]))',
+      );
       checkResult(runtime, {1, 2, 3});
     });
 
     test('set.intersection 1', () {
-      final Runtime runtime =
-          getRuntime('main = set.intersection(set.new([]), set.new([]))');
+      final Runtime runtime = getRuntime(
+        'main = set.intersection(set.new([]), set.new([]))',
+      );
       checkResult(runtime, {});
     });
 
     test('set.intersection 2', () {
-      final Runtime runtime =
-          getRuntime('main = set.intersection(set.new([1]), set.new([2]))');
+      final Runtime runtime = getRuntime(
+        'main = set.intersection(set.new([1]), set.new([2]))',
+      );
       checkResult(runtime, {});
     });
 
     test('set.intersection 3', () {
       final Runtime runtime = getRuntime(
-          'main = set.intersection(set.new([1, 2]), set.new([2, 3]))');
+        'main = set.intersection(set.new([1, 2]), set.new([2, 3]))',
+      );
       checkResult(runtime, {2});
     });
 
     test('set.intersection 4', () {
       final Runtime runtime = getRuntime(
-          'main = set.intersection(set.new([2, 3]), set.new([1, 2]))');
+        'main = set.intersection(set.new([2, 3]), set.new([1, 2]))',
+      );
       checkResult(runtime, {2});
     });
 
@@ -2232,7 +2386,7 @@ foo(values) = [set.add(values, 1)]
 main = foo(set.new([2, 3]))
 ''');
       checkResult(runtime, [
-        {2, 3, 1}
+        {2, 3, 1},
       ]);
     });
   });
@@ -2254,8 +2408,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('stack.push 2', () {
-      final Runtime runtime =
-          getRuntime('main = stack.push(stack.new([1, 2]), 3)');
+      final Runtime runtime = getRuntime(
+        'main = stack.push(stack.new([1, 2]), 3)',
+      );
       checkResult(runtime, [1, 2, 3]);
     });
 
@@ -2270,8 +2425,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('stack.pop 2', () {
-      final Runtime runtime =
-          getRuntime('main = stack.pop(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = stack.pop(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, [1, 2]);
     });
 
@@ -2291,8 +2447,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('stack.peek 2', () {
-      final Runtime runtime =
-          getRuntime('main = stack.peek(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = stack.peek(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, 3);
     });
 
@@ -2307,20 +2464,23 @@ main = foo(set.new([2, 3]))
     });
 
     test('stack.isEmpty 2', () {
-      final Runtime runtime =
-          getRuntime('main = stack.isEmpty(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = stack.isEmpty(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('stack.isNotEmpty 1', () {
-      final Runtime runtime =
-          getRuntime('main = stack.isNotEmpty(stack.new([]))');
+      final Runtime runtime = getRuntime(
+        'main = stack.isNotEmpty(stack.new([]))',
+      );
       checkResult(runtime, false);
     });
 
     test('stack.isNotEmpty 2', () {
-      final Runtime runtime =
-          getRuntime('main = stack.isNotEmpty(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = stack.isNotEmpty(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, true);
     });
 
@@ -2330,8 +2490,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('stack.length 2', () {
-      final Runtime runtime =
-          getRuntime('main = stack.length(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = stack.length(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, 3);
     });
 
@@ -2341,8 +2502,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('stack.reverse 2', () {
-      final Runtime runtime =
-          getRuntime('main = stack.reverse(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = stack.reverse(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, [3, 2, 1]);
     });
   });
@@ -2359,21 +2521,24 @@ main = foo(set.new([2, 3]))
     });
 
     test('queue.enqueue 1', () {
-      final Runtime runtime =
-          getRuntime('main = queue.enqueue(queue.new([]), 1)');
+      final Runtime runtime = getRuntime(
+        'main = queue.enqueue(queue.new([]), 1)',
+      );
       checkResult(runtime, [1]);
     });
 
     test('queue.enqueue 2', () {
-      final Runtime runtime =
-          getRuntime('main = queue.enqueue(queue.new([1, 2]), 3)');
+      final Runtime runtime = getRuntime(
+        'main = queue.enqueue(queue.new([1, 2]), 3)',
+      );
       checkResult(runtime, [1, 2, 3]);
     });
 
     test('queue.dequeue 1', () {
       try {
-        final Runtime runtime =
-            getRuntime('main = queue.dequeue(queue.new([]))');
+        final Runtime runtime = getRuntime(
+          'main = queue.dequeue(queue.new([]))',
+        );
         runtime.executeMain();
         fail('Should fail');
       } catch (e) {
@@ -2382,14 +2547,16 @@ main = foo(set.new([2, 3]))
     });
 
     test('queue.dequeue 2', () {
-      final Runtime runtime =
-          getRuntime('main = queue.dequeue(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = queue.dequeue(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, [2, 3]);
     });
 
     test('queue.dequeue 3', () {
-      final Runtime runtime =
-          getRuntime('main = queue.dequeue(queue.new([1]))');
+      final Runtime runtime = getRuntime(
+        'main = queue.dequeue(queue.new([1]))',
+      );
       checkResult(runtime, []);
     });
 
@@ -2404,8 +2571,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('queue.peek 2', () {
-      final Runtime runtime =
-          getRuntime('main = queue.peek(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = queue.peek(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, 1);
     });
 
@@ -2420,20 +2588,23 @@ main = foo(set.new([2, 3]))
     });
 
     test('queue.isEmpty 2', () {
-      final Runtime runtime =
-          getRuntime('main = queue.isEmpty(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = queue.isEmpty(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('queue.isNotEmpty 1', () {
-      final Runtime runtime =
-          getRuntime('main = queue.isNotEmpty(queue.new([]))');
+      final Runtime runtime = getRuntime(
+        'main = queue.isNotEmpty(queue.new([]))',
+      );
       checkResult(runtime, false);
     });
 
     test('queue.isNotEmpty 2', () {
-      final Runtime runtime =
-          getRuntime('main = queue.isNotEmpty(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = queue.isNotEmpty(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, true);
     });
 
@@ -2443,8 +2614,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('queue.length 2', () {
-      final Runtime runtime =
-          getRuntime('main = queue.length(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = queue.length(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, 3);
     });
 
@@ -2454,8 +2626,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('queue.reverse 2', () {
-      final Runtime runtime =
-          getRuntime('main = queue.reverse(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = queue.reverse(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, [3, 2, 1]);
     });
   });
@@ -2474,7 +2647,7 @@ main = foo(set.new([2, 3]))
     test('Map constructor 3', () {
       final Runtime runtime = getRuntime('main = {"foo": {"bar": 2}}');
       checkResult(runtime, {
-        '"foo"': {'"bar"': 2}
+        '"foo"': {'"bar"': 2},
       });
     });
 
@@ -2484,27 +2657,34 @@ main = foo(set.new([2, 3]))
     });
 
     test('Map constructor 5', () {
-      final Runtime runtime =
-          getRuntime('main = {"name": "John", "age": 42, "married": true}');
-      checkResult(
-          runtime, {'"name"': '"John"', '"age"': 42, '"married"': true});
+      final Runtime runtime = getRuntime(
+        'main = {"name": "John", "age": 42, "married": true}',
+      );
+      checkResult(runtime, {
+        '"name"': '"John"',
+        '"age"': 42,
+        '"married"': true,
+      });
     });
 
     test('Map indexing 1', () {
       final Runtime runtime = getRuntime(
-          'main = {"name": "John", "age": 42, "married": true}["age"]');
+        'main = {"name": "John", "age": 42, "married": true}["age"]',
+      );
       checkResult(runtime, 42);
     });
 
     test('Map indexing 2', () {
       final Runtime runtime = getRuntime(
-          'main = {"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"]');
+        'main = {"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"]',
+      );
       checkResult(runtime, [42, 99, 201]);
     });
 
     test('Map indexing 3', () {
       final Runtime runtime = getRuntime(
-          'main = ({"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"])[1]');
+        'main = ({"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"])[1]',
+      );
       checkResult(runtime, 99);
     });
 
@@ -2518,19 +2698,24 @@ foo(values) = {
 
 main = foo({"name": "John", "age": 42, "married": true})
 ''');
-      checkResult(
-          runtime, {'"name"': '"John"', '"age"': 42, '"married"': true});
+      checkResult(runtime, {
+        '"name"': '"John"',
+        '"age"': 42,
+        '"married"': true,
+      });
     });
 
     test('map.at 1', () {
       final Runtime runtime = getRuntime(
-          'main = map.at({"name": "John", "age": 42, "married": true}, "age")');
+        'main = map.at({"name": "John", "age": 42, "married": true}, "age")',
+      );
       checkResult(runtime, 42);
     });
 
     test('map.at 2', () {
       final Runtime runtime = getRuntime(
-          'main = map.at({"name": "John", "age": 42 + 1, "married": true}, "age")');
+        'main = map.at({"name": "John", "age": 42 + 1, "married": true}, "age")',
+      );
       checkResult(runtime, 43);
     });
 
@@ -2541,9 +2726,13 @@ main = foo({"name": "John", "age": 42, "married": true})
 
     test('map.set 2', () {
       final Runtime runtime = getRuntime(
-          'main = map.set({"name": "John", "age": 42, "married": true}, "age", 30)');
-      checkResult(
-          runtime, {'"name"': '"John"', '"age"': 30, '"married"': true});
+        'main = map.set({"name": "John", "age": 42, "married": true}, "age", 30)',
+      );
+      checkResult(runtime, {
+        '"name"': '"John"',
+        '"age"': 30,
+        '"married"': true,
+      });
     });
 
     test('map.keys 1', () {
@@ -2553,7 +2742,8 @@ main = foo({"name": "John", "age": 42, "married": true})
 
     test('map.keys 2', () {
       final Runtime runtime = getRuntime(
-          'main = map.keys({"name": "John", "age": 42, "married": true, 3: 2})');
+        'main = map.keys({"name": "John", "age": 42, "married": true, 3: 2})',
+      );
       checkResult(runtime, ['"name"', '"age"', '"married"', 3]);
     });
 
@@ -2564,13 +2754,14 @@ main = foo({"name": "John", "age": 42, "married": true})
 
     test('map.values 2', () {
       final Runtime runtime = getRuntime(
-          'main = map.values({"name": "John", "age": 42, "married": true, 3: 2, "foo": [1, 2, 3]})');
+        'main = map.values({"name": "John", "age": 42, "married": true, 3: 2, "foo": [1, 2, 3]})',
+      );
       checkResult(runtime, [
         '"John"',
         42,
         true,
         2,
-        [1, 2, 3]
+        [1, 2, 3],
       ]);
     });
 
@@ -2580,20 +2771,23 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('map.contains 2', () {
-      final Runtime runtime =
-          getRuntime('main = map.containsKey({"name": "John"}, "name")');
+      final Runtime runtime = getRuntime(
+        'main = map.containsKey({"name": "John"}, "name")',
+      );
       checkResult(runtime, true);
     });
 
     test('map.contains 3', () {
-      final Runtime runtime =
-          getRuntime('main = map.containsKey({("na" + "me"): "John"}, "name")');
+      final Runtime runtime = getRuntime(
+        'main = map.containsKey({("na" + "me"): "John"}, "name")',
+      );
       checkResult(runtime, true);
     });
 
     test('map.contains 4', () {
-      final Runtime runtime =
-          getRuntime('main = map.containsKey({"name": "John"}, "age")');
+      final Runtime runtime = getRuntime(
+        'main = map.containsKey({"name": "John"}, "age")',
+      );
       checkResult(runtime, false);
     });
 
@@ -2603,8 +2797,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('map.isEmpty 2', () {
-      final Runtime runtime =
-          getRuntime('main = map.isEmpty({"name": "John"})');
+      final Runtime runtime = getRuntime(
+        'main = map.isEmpty({"name": "John"})',
+      );
       checkResult(runtime, false);
     });
 
@@ -2614,22 +2809,28 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('map.isNotEmpty 2', () {
-      final Runtime runtime =
-          getRuntime('main = map.isNotEmpty({"name": "John"})');
+      final Runtime runtime = getRuntime(
+        'main = map.isNotEmpty({"name": "John"})',
+      );
       checkResult(runtime, true);
     });
 
     test('map.removeAt 1', () {
       final Runtime runtime = getRuntime(
-          'main = map.removeAt({"name": "John", "age": 42, "married": true}, "age")');
+        'main = map.removeAt({"name": "John", "age": 42, "married": true}, "age")',
+      );
       checkResult(runtime, {'"name"': '"John"', '"married"': true});
     });
 
     test('map.removeAt 2', () {
       final Runtime runtime = getRuntime(
-          'main = map.removeAt({"name": "John", "age": 42, "married": true}, "foo")');
-      checkResult(
-          runtime, {'"name"': '"John"', '"age"': 42, '"married"': true});
+        'main = map.removeAt({"name": "John", "age": 42, "married": true}, "foo")',
+      );
+      checkResult(runtime, {
+        '"name"': '"John"',
+        '"age"': 42,
+        '"married"': true,
+      });
     });
 
     test('map.length 1', () {
@@ -2639,7 +2840,8 @@ main = foo({"name": "John", "age": 42, "married": true})
 
     test('map.length 2', () {
       final Runtime runtime = getRuntime(
-          'main = map.length({"name": "John", "age": 42, "married": true})');
+        'main = map.length({"name": "John", "age": 42, "married": true})',
+      );
       checkResult(runtime, 3);
     });
   });
@@ -2776,20 +2978,23 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('to.list 2', () {
-      final Runtime runtime =
-          getRuntime('main = to.list(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = to.list(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, [1, 2, 3]);
     });
 
     test('to.list 3', () {
-      final Runtime runtime =
-          getRuntime('main = to.list(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = to.list(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, [1, 2, 3]);
     });
 
     test('to.list 4', () {
-      final Runtime runtime =
-          getRuntime('main = to.list(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = to.list(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, [1, 2, 3]);
     });
   });
@@ -2826,26 +3031,30 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.number 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.number(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.number(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.number 8', () {
-      final Runtime runtime =
-          getRuntime('main = is.number(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.number(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.number 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.number(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.number(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.number 10', () {
-      final Runtime runtime =
-          getRuntime('main = is.number(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.number(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -2860,14 +3069,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.number 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.number(file.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.number(file.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.number 14', () {
-      final Runtime runtime =
-          getRuntime('main = is.number(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.number(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -2952,26 +3163,30 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.string 6', () {
-      final Runtime runtime =
-          getRuntime('main = is.string(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.string(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.string 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.string(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.string(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.string 8', () {
-      final Runtime runtime =
-          getRuntime('main = is.string(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.string(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.string 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.string(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.string(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -2986,14 +3201,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.string 12', () {
-      final Runtime runtime =
-          getRuntime('main = is.string(file.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.string(file.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.string 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.string(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.string(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3023,26 +3240,30 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.boolean 6', () {
-      final Runtime runtime =
-          getRuntime('main = is.boolean(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.boolean(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.boolean 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.boolean(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.boolean(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.boolean 8', () {
-      final Runtime runtime =
-          getRuntime('main = is.boolean(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.boolean(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.boolean 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.boolean(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.boolean(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3057,14 +3278,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.boolean 12', () {
-      final Runtime runtime =
-          getRuntime('main = is.boolean(file.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.boolean(file.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.boolean 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.boolean(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.boolean(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3099,8 +3322,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.list 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.list(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.list(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3110,14 +3334,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.list 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.list(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.list(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.list 10', () {
-      final Runtime runtime =
-          getRuntime('main = is.list(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.list(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3132,8 +3358,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.list 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.list(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.list(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3173,8 +3400,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.map 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.map(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.map(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3209,8 +3437,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.map 14', () {
-      final Runtime runtime =
-          getRuntime('main = is.map(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.map(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3245,26 +3474,30 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.vector 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.vector(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.vector(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, true);
     });
 
     test('is.vector 8', () {
-      final Runtime runtime =
-          getRuntime('main = is.vector(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.vector(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.vector 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.vector(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.vector(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.vector 10', () {
-      final Runtime runtime =
-          getRuntime('main = is.vector(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.vector(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3279,14 +3512,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.vector 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.vector(file.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.vector(file.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.vector 14', () {
-      final Runtime runtime =
-          getRuntime('main = is.vector(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.vector(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3321,8 +3556,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.set 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.set(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.set(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3352,8 +3588,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.set 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.set(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.set(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3393,8 +3630,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.stack 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.stack(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.stack(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3409,14 +3647,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.stack 10', () {
-      final Runtime runtime =
-          getRuntime('main = is.stack(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.stack(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, true);
     });
 
     test('is.stack 11', () {
-      final Runtime runtime =
-          getRuntime('main = is.stack(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.stack(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3436,8 +3676,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.stack 15', () {
-      final Runtime runtime =
-          getRuntime('main = is.stack(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.stack(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3472,8 +3713,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.queue 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.queue(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.queue(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3488,8 +3730,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.queue 10', () {
-      final Runtime runtime =
-          getRuntime('main = is.queue(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.queue(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3499,8 +3742,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.queue 12', () {
-      final Runtime runtime =
-          getRuntime('main = is.queue(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.queue(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, true);
     });
 
@@ -3520,8 +3764,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.queue 16', () {
-      final Runtime runtime =
-          getRuntime('main = is.queue(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.queue(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3551,26 +3796,30 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.function 6', () {
-      final Runtime runtime =
-          getRuntime('main = is.function(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.function(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.function 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.function(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.function(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.function 8', () {
-      final Runtime runtime =
-          getRuntime('main = is.function(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.function(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.function 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.function(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.function(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3585,14 +3834,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.function 12', () {
-      final Runtime runtime =
-          getRuntime('main = is.function(file.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.function(file.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.function 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.function(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.function(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3622,26 +3873,30 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.timestamp 6', () {
-      final Runtime runtime =
-          getRuntime('main = is.timestamp(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.timestamp(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.timestamp 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.timestamp(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.timestamp(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.timestamp 8', () {
-      final Runtime runtime =
-          getRuntime('main = is.timestamp(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.timestamp(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.timestamp 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.timestamp(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.timestamp(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3656,14 +3911,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.timestamp 12', () {
-      final Runtime runtime =
-          getRuntime('main = is.timestamp(file.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.timestamp(file.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.timestamp 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.timestamp(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.timestamp(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3693,8 +3950,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.file 6', () {
-      final Runtime runtime =
-          getRuntime('main = is.file(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.file(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3704,14 +3962,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.file 8', () {
-      final Runtime runtime =
-          getRuntime('main = is.file(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.file(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.file 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.file(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.file(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3731,8 +3991,9 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.file 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.file(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.file(directory.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3762,26 +4023,30 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.directory 6', () {
-      final Runtime runtime =
-          getRuntime('main = is.directory(vector.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.directory(vector.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.directory 7', () {
-      final Runtime runtime =
-          getRuntime('main = is.directory(set.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.directory(set.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.directory 8', () {
-      final Runtime runtime =
-          getRuntime('main = is.directory(stack.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.directory(stack.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.directory 9', () {
-      final Runtime runtime =
-          getRuntime('main = is.directory(queue.new([1, 2, 3]))');
+      final Runtime runtime = getRuntime(
+        'main = is.directory(queue.new([1, 2, 3]))',
+      );
       checkResult(runtime, false);
     });
 
@@ -3796,28 +4061,32 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('is.directory 12', () {
-      final Runtime runtime =
-          getRuntime('main = is.directory(file.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.directory(file.fromPath("."))',
+      );
       checkResult(runtime, false);
     });
 
     test('is.directory 13', () {
-      final Runtime runtime =
-          getRuntime('main = is.directory(directory.fromPath("."))');
+      final Runtime runtime = getRuntime(
+        'main = is.directory(directory.fromPath("."))',
+      );
       checkResult(runtime, true);
     });
   });
 
   group('Samples', () {
     test('balanced_parenthesis', () {
-      final Runtime runtime =
-          getRuntime(loadFile('web_samples/balanced_parenthesis.prm'));
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/balanced_parentheses.prm'),
+      );
       checkResult(runtime, true);
     });
 
     test('binary_search', () {
-      final Runtime runtime =
-          getRuntime(loadFile('web_samples/binary_search.prm'));
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/binary_search.prm'),
+      );
       checkResult(runtime, false);
     });
 
@@ -3847,14 +4116,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('moving_averages', () {
-      final Runtime runtime =
-          getRuntime(loadFile('web_samples/moving_averages.prm'));
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/moving_averages.prm'),
+      );
       checkResult(runtime, [55, 41, 67, 58, 66, 58, 54, 34]);
     });
 
     test('is_palindrome', () {
-      final Runtime runtime =
-          getRuntime(loadFile('web_samples/is_palindrome.prm'));
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/is_palindrome.prm'),
+      );
       checkResult(runtime, true);
     });
 
@@ -3869,14 +4140,16 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('reverse_list', () {
-      final Runtime runtime =
-          getRuntime(loadFile('web_samples/reverse_list.prm'));
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/reverse_list.prm'),
+      );
       checkResult(runtime, [5, 4, 3, 2, 1]);
     });
 
     test('sum_of_digits', () {
-      final Runtime runtime =
-          getRuntime(loadFile('web_samples/sum_of_digits.prm'));
+      final Runtime runtime = getRuntime(
+        loadFile('web_samples/sum_of_digits.prm'),
+      );
       checkResult(runtime, 45);
     });
 
@@ -3929,20 +4202,24 @@ main = foo
     test('Print function 3', () {
       final Runtime runtime = getRuntime('main = [num.add, num.abs]');
       checkResult(
-          runtime, '["num.add(a: Number, b: Number)", "num.abs(a: Number)"]');
+        runtime,
+        '["num.add(a: Number, b: Number)", "num.abs(a: Number)"]',
+      );
     });
   });
 
   group('Console', () {
     test('console.write', () {
-      final Runtime runtime =
-          getRuntime('main = console.write("Enter in function")');
+      final Runtime runtime = getRuntime(
+        'main = console.write("Enter in function")',
+      );
       checkResult(runtime, '"Enter in function"');
     });
 
     test('console.writeLn', () {
-      final Runtime runtime =
-          getRuntime('main = console.writeLn("Enter in function")');
+      final Runtime runtime = getRuntime(
+        'main = console.writeLn("Enter in function")',
+      );
       checkResult(runtime, '"Enter in function"');
     });
   });
@@ -3959,19 +4236,21 @@ main = foo
     });
 
     test('json.decode 3', () {
-      final Runtime runtime =
-          getRuntime("main = json.decode('[1, \"Hello\", true]')");
+      final Runtime runtime = getRuntime(
+        "main = json.decode('[1, \"Hello\", true]')",
+      );
       checkResult(runtime, [1, '"Hello"', true]);
     });
 
     test('json.decode 4', () {
       final Runtime runtime = getRuntime(
-          "main = json.decode('{\"name\": \"John\", \"age\": 42, \"married\": true, \"numbers\": [1, 2, 3]}')");
+        "main = json.decode('{\"name\": \"John\", \"age\": 42, \"married\": true, \"numbers\": [1, 2, 3]}')",
+      );
       checkResult(runtime, {
         '"name"': '"John"',
         '"age"': 42,
         '"married"': true,
-        '"numbers"': [1, 2, 3]
+        '"numbers"': [1, 2, 3],
       });
     });
 
@@ -3986,8 +4265,9 @@ main = foo
     });
 
     test('json.encode 3', () {
-      final Runtime runtime =
-          getRuntime('main = json.encode([1, "Hello", true])');
+      final Runtime runtime = getRuntime(
+        'main = json.encode([1, "Hello", true])',
+      );
       checkResult(runtime, '"[1,"Hello",true]"');
     });
 
@@ -4003,9 +4283,12 @@ main = foo
 
     test('json.encode 6', () {
       final Runtime runtime = getRuntime(
-          'main = json.encode({"name": "John", "age": 42, "married": true, "numbers": [1, 2, 3]})');
-      checkResult(runtime,
-          '"{"name":"John","age":42,"married":true,"numbers":[1,2,3]}"');
+        'main = json.encode({"name": "John", "age": 42, "married": true, "numbers": [1, 2, 3]})',
+      );
+      checkResult(
+        runtime,
+        '"{"name":"John","age":42,"married":true,"numbers":[1,2,3]}"',
+      );
     });
   });
 
@@ -4032,26 +4315,34 @@ main = foo
 
     test('hash.sha256 1', () {
       final Runtime runtime = getRuntime('main = hash.sha256("")');
-      checkResult(runtime,
-          '"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"');
+      checkResult(
+        runtime,
+        '"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"',
+      );
     });
 
     test('hash.sha256 2', () {
       final Runtime runtime = getRuntime('main = hash.sha256("Hello")');
-      checkResult(runtime,
-          '"185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969"');
+      checkResult(
+        runtime,
+        '"185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969"',
+      );
     });
 
     test('hash.sha512 1', () {
       final Runtime runtime = getRuntime('main = hash.sha512("")');
-      checkResult(runtime,
-          '"cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"');
+      checkResult(
+        runtime,
+        '"cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"',
+      );
     });
 
     test('hash.sha512 2', () {
       final Runtime runtime = getRuntime('main = hash.sha512("Hello")');
-      checkResult(runtime,
-          '"3615f80c9d293ed7402687f94b22d58e529b8cc7916f8fac7fddf7fbd5af4cf777d3d795a7a00a16bf7e7f3fb9561ee9baae480da9fe7a18769e71886b03f315"');
+      checkResult(
+        runtime,
+        '"3615f80c9d293ed7402687f94b22d58e529b8cc7916f8fac7fddf7fbd5af4cf777d3d795a7a00a16bf7e7f3fb9561ee9baae480da9fe7a18769e71886b03f315"',
+      );
     });
   });
 
@@ -4068,8 +4359,9 @@ main = foo
 
     test('time.fromIso', () {
       final DateTime now = DateTime.now();
-      final Runtime runtime =
-          getRuntime('main = time.fromIso("${now.toIso8601String()}")');
+      final Runtime runtime = getRuntime(
+        'main = time.fromIso("${now.toIso8601String()}")',
+      );
       checkDates(runtime, now);
     });
 
@@ -4118,25 +4410,30 @@ main = foo
     test('time.epoch', () {
       final DateTime now = DateTime.now();
       final Runtime runtime = getRuntime('main = time.epoch(time.now())');
-      expect(num.parse(runtime.executeMain()),
-          closeTo(now.millisecondsSinceEpoch, 500));
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(now.millisecondsSinceEpoch, 500),
+      );
     });
 
     test('time.compare 1', () {
       final Runtime runtime = getRuntime(
-          'main = time.compare(time.fromIso("2024-09-01T00:00:00"), time.fromIso("2024-09-02T00:00:00"))');
+        'main = time.compare(time.fromIso("2024-09-01T00:00:00"), time.fromIso("2024-09-02T00:00:00"))',
+      );
       checkResult(runtime, -1);
     });
 
     test('time.compare 2', () {
       final Runtime runtime = getRuntime(
-          'main = time.compare(time.fromIso("2024-09-01T00:00:00"), time.fromIso("2024-09-01T00:00:00"))');
+        'main = time.compare(time.fromIso("2024-09-01T00:00:00"), time.fromIso("2024-09-01T00:00:00"))',
+      );
       checkResult(runtime, 0);
     });
 
     test('time.compare 3', () {
       final Runtime runtime = getRuntime(
-          'main = time.compare(time.fromIso("2024-09-02T00:00:00"), time.fromIso("2024-09-01T00:00:00"))');
+        'main = time.compare(time.fromIso("2024-09-02T00:00:00"), time.fromIso("2024-09-01T00:00:00"))',
+      );
       checkResult(runtime, 1);
     });
   });
@@ -4156,26 +4453,30 @@ main = foo
 
   group('File', () {
     test('file.fromPath', () {
-      final Runtime runtime =
-          getRuntime('main = file.fromPath("test/resources/files/file1.txt")');
+      final Runtime runtime = getRuntime(
+        'main = file.fromPath("test/resources/files/file1.txt")',
+      );
       checkResult(runtime, '"$resourcesPath/files/file1.txt"');
     });
 
     test('file.exists 1', () {
       final Runtime runtime = getRuntime(
-          'main = file.exists(file.fromPath("test/resources/files/file1.txt"))');
+        'main = file.exists(file.fromPath("test/resources/files/file1.txt"))',
+      );
       checkResult(runtime, true);
     });
 
     test('file.exists 2', () {
       final Runtime runtime = getRuntime(
-          'main = file.exists(file.fromPath("test/resources/files/file0.txt"))');
+        'main = file.exists(file.fromPath("test/resources/files/file0.txt"))',
+      );
       checkResult(runtime, false);
     });
 
     test('file.read', () {
       final Runtime runtime = getRuntime(
-          'main = file.read(file.fromPath("test/resources/files/file1.txt"))');
+        'main = file.read(file.fromPath("test/resources/files/file1.txt"))',
+      );
       checkResult(runtime, '"Hello, world!"');
     });
 
@@ -4190,49 +4491,57 @@ main = testFile(file.fromPath("test/resources/files/temp/file_temp.txt"), "$valu
 
     test('file.length', () {
       final Runtime runtime = getRuntime(
-          'main = file.length(file.fromPath("test/resources/files/file1.txt"))');
+        'main = file.length(file.fromPath("test/resources/files/file1.txt"))',
+      );
       checkResult(runtime, 13);
     });
 
     test('file.create', () {
       final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
-          'main = file.create(file.fromPath("test/resources/files/temp/file$id.txt"))');
+        'main = file.create(file.fromPath("test/resources/files/temp/file$id.txt"))',
+      );
       final dynamic result = runtime.executeMain();
       expect(result, 'true');
-      final bool fileExists =
-          File('$resourcesPath/files/temp/file$id.txt').existsSync();
+      final bool fileExists = File(
+        '$resourcesPath/files/temp/file$id.txt',
+      ).existsSync();
       expect(true, fileExists);
     });
 
     test('file.delete 1', () {
       final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
-          'main = file.delete(file.fromPath("test/resources/files/temp/file$id.txt"))');
+        'main = file.delete(file.fromPath("test/resources/files/temp/file$id.txt"))',
+      );
       checkResult(runtime, true);
     });
 
     test('file.delete 2', () {
       final Runtime runtime = getRuntime(
-          'main = file.delete(file.fromPath("test/resources/files/temp2/file1.txt"))');
+        'main = file.delete(file.fromPath("test/resources/files/temp2/file1.txt"))',
+      );
       checkResult(runtime, false);
     });
 
     test('file.path', () {
       final Runtime runtime = getRuntime(
-          'main = file.path(file.fromPath("test/resources/files/file1.txt"))');
+        'main = file.path(file.fromPath("test/resources/files/file1.txt"))',
+      );
       checkResult(runtime, '"$resourcesPath/files/file1.txt"');
     });
 
     test('file.name', () {
       final Runtime runtime = getRuntime(
-          'main = file.name(file.fromPath("test/resources/files/file1.txt"))');
+        'main = file.name(file.fromPath("test/resources/files/file1.txt"))',
+      );
       checkResult(runtime, '"file1.txt"');
     });
 
     test('file.extension', () {
       final Runtime runtime = getRuntime(
-          'main = file.extension(file.fromPath("test/resources/files/file1.txt"))');
+        'main = file.extension(file.fromPath("test/resources/files/file1.txt"))',
+      );
       checkResult(runtime, '"txt"');
     });
 
@@ -4256,57 +4565,66 @@ main = file.move(file1(), file2())
 
     test('file.parent', () {
       final Runtime runtime = getRuntime(
-          'main = file.parent(file.fromPath("test/resources/files/file1.txt"))');
+        'main = file.parent(file.fromPath("test/resources/files/file1.txt"))',
+      );
       checkResult(runtime, '"$resourcesPath/files"');
     });
 
     test('file.rename', () {
       final Runtime runtime = getRuntime(
-          'main = file.rename(file.fromPath("test/resources/files/temp/file2.txt"), "file3.txt")');
+        'main = file.rename(file.fromPath("test/resources/files/temp/file2.txt"), "file3.txt")',
+      );
       checkResult(runtime, true);
     });
   });
 
   group('Directory', () {
     test('directory.fromPath', () {
-      final Runtime runtime =
-          getRuntime('main = directory.fromPath("test/resources/files")');
+      final Runtime runtime = getRuntime(
+        'main = directory.fromPath("test/resources/files")',
+      );
       checkResult(runtime, '"$resourcesPath/files"');
     });
 
     test('directory.exists 1', () {
       final Runtime runtime = getRuntime(
-          'main = directory.exists(directory.fromPath("test/resources/files"))');
+        'main = directory.exists(directory.fromPath("test/resources/files"))',
+      );
       checkResult(runtime, true);
     });
 
     test('directory.exists 2', () {
       final Runtime runtime = getRuntime(
-          'main = directory.exists(directory.fromPath("test/resources/filesX"))');
+        'main = directory.exists(directory.fromPath("test/resources/filesX"))',
+      );
       checkResult(runtime, false);
     });
 
     test('directory.create', () {
       final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
-          'main = directory.create(directory.fromPath("test/resources/files/temp$id"))');
+        'main = directory.create(directory.fromPath("test/resources/files/temp$id"))',
+      );
       final dynamic result = runtime.executeMain();
       expect(result, 'true');
-      final bool fileExists =
-          Directory('$resourcesPath/files/temp$id').existsSync();
+      final bool fileExists = Directory(
+        '$resourcesPath/files/temp$id',
+      ).existsSync();
       expect(true, fileExists);
     });
 
     test('directory.delete 1', () {
       final String id = DateTime.now().day.toString();
       final Runtime runtime = getRuntime(
-          'main = directory.delete(directory.fromPath("test/resources/files/temp$id"))');
+        'main = directory.delete(directory.fromPath("test/resources/files/temp$id"))',
+      );
       checkResult(runtime, true);
     });
 
     test('directory.delete 2', () {
       final Runtime runtime = getRuntime(
-          'main = directory.delete(directory.fromPath("test/resources/files/tempX"))');
+        'main = directory.delete(directory.fromPath("test/resources/files/tempX"))',
+      );
       checkResult(runtime, false);
     });
 
@@ -4330,31 +4648,36 @@ main = directory.move(directory1(), directory2())
 
     test('directory.rename', () {
       final Runtime runtime = getRuntime(
-          'main = directory.rename(directory.fromPath("test/resources/files/temp_extra"), "temp_new")');
+        'main = directory.rename(directory.fromPath("test/resources/files/temp_extra"), "temp_new")',
+      );
       checkResult(runtime, true);
     });
 
     test('directory.path', () {
       final Runtime runtime = getRuntime(
-          'main = directory.path(directory.fromPath("test/resources/files/temp"))');
+        'main = directory.path(directory.fromPath("test/resources/files/temp"))',
+      );
       checkResult(runtime, '"$resourcesPath/files/temp"');
     });
 
     test('directory.name', () {
       final Runtime runtime = getRuntime(
-          'main = directory.name(directory.fromPath("test/resources/files/temp"))');
+        'main = directory.name(directory.fromPath("test/resources/files/temp"))',
+      );
       checkResult(runtime, '"temp"');
     });
 
     test('directory.parent', () {
       final Runtime runtime = getRuntime(
-          'main = directory.parent(directory.fromPath("test/resources/files/temp"))');
+        'main = directory.parent(directory.fromPath("test/resources/files/temp"))',
+      );
       checkResult(runtime, '"$resourcesPath/files"');
     });
 
     test('directory.list', () {
       final Runtime runtime = getRuntime(
-          'main = directory.list(directory.fromPath("test/resources/files/temp"))');
+        'main = directory.list(directory.fromPath("test/resources/files/temp"))',
+      );
       checkResult(runtime, [
         '"$resourcesPath/files/temp/file_temp.txt"',
         '"$resourcesPath/files/temp/file3.txt"',
@@ -4365,7 +4688,8 @@ main = directory.move(directory1(), directory2())
   group('Main', () {
     test('main', () {
       final Runtime runtime = getRuntime(
-          'main(a, b, c) = to.string(a) + to.string(b) + to.string(c)');
+        'main(a, b, c) = to.string(a) + to.string(b) + to.string(c)',
+      );
       expect(runtime.executeMain(['aaa', 'bbb', 'ccc']), '"aaabbbccc"');
     });
   });

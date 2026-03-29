@@ -3,19 +3,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class IsBoolean extends NativeFunctionNode {
   IsBoolean()
-      : super(
-          name: 'is.boolean',
-          parameters: [
-            Parameter.any('a'),
-          ],
-        );
+    : super(
+        name: 'is.boolean',
+        parameters: [
+          Parameter.any('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

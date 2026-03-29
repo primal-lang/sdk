@@ -62,8 +62,9 @@ void main() {
     });
 
     test('Literal double quoted string definition', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('greeting = "Hello, world!"');
+      final List<FunctionDefinition> functions = getFunctions(
+        'greeting = "Hello, world!"',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'greeting',
@@ -74,8 +75,9 @@ void main() {
     });
 
     test('Literal single quoted string definition', () {
-      final List<FunctionDefinition> functions =
-          getFunctions("greeting = 'Goodbye, world!'");
+      final List<FunctionDefinition> functions = getFunctions(
+        "greeting = 'Goodbye, world!'",
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'greeting',
@@ -108,8 +110,9 @@ void main() {
     });
 
     test('Literal list definition', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('list = [1, 2, 3]');
+      final List<FunctionDefinition> functions = getFunctions(
+        'list = [1, 2, 3]',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'list',
@@ -127,8 +130,9 @@ void main() {
     });
 
     test('Indexing list ', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('list = [1, 2, 3][1]');
+      final List<FunctionDefinition> functions = getFunctions(
+        'list = [1, 2, 3][1]',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'list',
@@ -152,8 +156,9 @@ void main() {
     });
 
     test('Literal map definition', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('map = {1: "one", 2: "two", 3: "three"}');
+      final List<FunctionDefinition> functions = getFunctions(
+        'map = {1: "one", 2: "two", 3: "three"}',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'map',
@@ -177,8 +182,9 @@ void main() {
     });
 
     test('Indexing map ', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('map = {1: "one", 2: "two", 3: "three"}[1]');
+      final List<FunctionDefinition> functions = getFunctions(
+        'map = {1: "one", 2: "two", 3: "three"}[1]',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'map',
@@ -230,8 +236,9 @@ void main() {
     });
 
     test('Function with several parameters', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('test(a, b, c) = true');
+      final List<FunctionDefinition> functions = getFunctions(
+        'test(a, b, c) = true',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
@@ -242,8 +249,9 @@ void main() {
     });
 
     test('Complex function 1', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('isEven(x) = (x % 2) == 0');
+      final List<FunctionDefinition> functions = getFunctions(
+        'isEven(x) = (x % 2) == 0',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'isEven',
@@ -266,8 +274,9 @@ void main() {
     });
 
     test('Complex function 2', () {
-      final List<FunctionDefinition> functions =
-          getFunctions('isOdd(x) = !isEven(x)');
+      final List<FunctionDefinition> functions = getFunctions(
+        'isOdd(x) = !isEven(x)',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'isOdd',
@@ -289,7 +298,8 @@ void main() {
 
     test('Complex function 3', () {
       final List<FunctionDefinition> functions = getFunctions(
-          'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)');
+        'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'factorial',
@@ -311,11 +321,13 @@ void main() {
                   IdentifierExpression(identifierToken('n', 1, 35)),
                   CallExpression(
                     callee: IdentifierExpression(
-                        identifierToken('factorial', 1, 39)),
+                      identifierToken('factorial', 1, 39),
+                    ),
                     arguments: [
                       CallExpression(
-                        callee:
-                            IdentifierExpression(identifierToken('-', 1, 51)),
+                        callee: IdentifierExpression(
+                          identifierToken('-', 1, 51),
+                        ),
                         arguments: [
                           IdentifierExpression(identifierToken('n', 1, 49)),
                           NumberExpression(numberToken(1, 1, 53)),

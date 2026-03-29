@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class TimeToIso extends NativeFunctionNode {
   TimeToIso()
-      : super(
-          name: 'time.toIso',
-          parameters: [
-            Parameter.timestamp('a'),
-          ],
-        );
+    : super(
+        name: 'time.toIso',
+        parameters: [
+          Parameter.timestamp('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

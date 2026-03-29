@@ -3,19 +3,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class IsSet extends NativeFunctionNode {
   IsSet()
-      : super(
-          name: 'is.set',
-          parameters: [
-            Parameter.any('a'),
-          ],
-        );
+    : super(
+        name: 'is.set',
+        parameters: [
+          Parameter.any('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

@@ -105,10 +105,13 @@ void main() {
     });
 
     test('Expression 19', () {
-      final Expression expression =
-          getExpression('{"name": "John", "age": 42, "married": true}');
-      expect(expression.toString(),
-          '{"name": "John", "age": 42, "married": true}');
+      final Expression expression = getExpression(
+        '{"name": "John", "age": 42, "married": true}',
+      );
+      expect(
+        expression.toString(),
+        '{"name": "John", "age": 42, "married": true}',
+      );
     });
 
     test('Expression 20', () {
@@ -117,17 +120,23 @@ void main() {
     });
 
     test('Expression 21', () {
-      final Expression expression =
-          getExpression('([1, true, "test", foo][1])[2]');
-      expect(expression.toString(),
-          'element.at(element.at([1, true, "test", foo], 1), 2)');
+      final Expression expression = getExpression(
+        '([1, true, "test", foo][1])[2]',
+      );
+      expect(
+        expression.toString(),
+        'element.at(element.at([1, true, "test", foo], 1), 2)',
+      );
     });
 
     test('Expression 22', () {
-      final Expression expression =
-          getExpression('{"name": "John", "age": 42, "married": true}["test"]');
-      expect(expression.toString(),
-          'element.at({"name": "John", "age": 42, "married": true}, "test")');
+      final Expression expression = getExpression(
+        '{"name": "John", "age": 42, "married": true}["test"]',
+      );
+      expect(
+        expression.toString(),
+        'element.at({"name": "John", "age": 42, "married": true}, "test")',
+      );
     });
 
     test('Expression 23', () {
@@ -225,8 +234,9 @@ void main() {
 
     // Nested if/else
     test('Expression 41', () {
-      final Expression expression =
-          getExpression('if (true) if (false) 1 else 2 else 3');
+      final Expression expression = getExpression(
+        'if (true) if (false) 1 else 2 else 3',
+      );
       expect(expression.toString(), 'if(true, if(false, 1, 2), 3)');
     });
 
@@ -236,8 +246,7 @@ void main() {
     });
 
     test('Expression 43', () {
-      final Expression expression =
-          getExpression('foo(if (true) 1 else 2)');
+      final Expression expression = getExpression('foo(if (true) 1 else 2)');
       expect(expression.toString(), 'foo(if(true, 1, 2))');
     });
 
@@ -289,8 +298,7 @@ void main() {
     });
 
     test('Expression 53', () {
-      final Expression expression =
-          getExpression('{1: "one", true: "yes"}');
+      final Expression expression = getExpression('{1: "one", true: "yes"}');
       expect(expression.toString(), '{1: "one", true: "yes"}');
     });
 

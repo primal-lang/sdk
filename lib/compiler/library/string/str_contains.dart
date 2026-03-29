@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class StrContains extends NativeFunctionNode {
   StrContains()
-      : super(
-          name: 'str.contains',
-          parameters: [
-            Parameter.string('a'),
-            Parameter.string('b'),
-          ],
-        );
+    : super(
+        name: 'str.contains',
+        parameters: [
+          Parameter.string('a'),
+          Parameter.string('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

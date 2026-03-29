@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListFilled extends NativeFunctionNode {
   ListFilled()
-      : super(
-          name: 'list.filled',
-          parameters: [
-            Parameter.number('a'),
-            Parameter.any('b'),
-          ],
-        );
+    : super(
+        name: 'list.filled',
+        parameters: [
+          Parameter.number('a'),
+          Parameter.any('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

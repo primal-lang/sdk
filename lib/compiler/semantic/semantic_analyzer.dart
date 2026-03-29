@@ -42,15 +42,18 @@ class SemanticAnalyzer
   }
 
   List<CustomFunctionNode> getCustomFunctions(
-      List<FunctionDefinition> functions) {
+    List<FunctionDefinition> functions,
+  ) {
     final List<CustomFunctionNode> result = [];
 
     for (final FunctionDefinition function in functions) {
-      result.add(CustomFunctionNode(
-        name: function.name,
-        parameters: function.parameters.map(Parameter.any).toList(),
-        node: function.expression!.toNode(),
-      ));
+      result.add(
+        CustomFunctionNode(
+          name: function.name,
+          parameters: function.parameters.map(Parameter.any).toList(),
+          node: function.expression!.toNode(),
+        ),
+      );
     }
 
     return result;
@@ -122,18 +125,22 @@ class SemanticAnalyzer
 
       for (final Parameter parameter in function.parameters) {
         if (!usedParameters.contains(parameter.name)) {
-          warnings.add(UnusedParameterWarning(
-            function: function.name,
-            parameter: parameter.name,
-          ));
+          warnings.add(
+            UnusedParameterWarning(
+              function: function.name,
+              parameter: parameter.name,
+            ),
+          );
         }
       }
 
-      result.add(CustomFunctionNode(
-        name: function.name,
-        parameters: function.parameters,
-        node: node,
-      ));
+      result.add(
+        CustomFunctionNode(
+          name: function.name,
+          parameters: function.parameters,
+          node: node,
+        ),
+      );
     }
 
     return result;
@@ -175,12 +182,14 @@ class SemanticAnalyzer
       final List<Node> newArguments = [];
 
       for (final Node node in node.arguments) {
-        newArguments.add(checkNode(
-          node: node,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        ));
+        newArguments.add(
+          checkNode(
+            node: node,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            allFunctions: allFunctions,
+          ),
+        );
       }
 
       return CallNode(
@@ -191,12 +200,14 @@ class SemanticAnalyzer
       final List<Node> elements = [];
 
       for (final Node node in node.value) {
-        elements.add(checkNode(
-          node: node,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        ));
+        elements.add(
+          checkNode(
+            node: node,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            allFunctions: allFunctions,
+          ),
+        );
       }
 
       return ListNode(elements);

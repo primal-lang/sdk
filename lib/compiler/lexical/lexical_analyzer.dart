@@ -528,9 +528,9 @@ class Lexeme extends Localized {
   });
 
   Lexeme add(Character character) => Lexeme(
-        value: value + character.value,
-        location: location,
-      );
+    value: value + character.value,
+    location: location,
+  );
 
   @override
   String toString() => '"$value" at $location';

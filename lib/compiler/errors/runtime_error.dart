@@ -11,7 +11,8 @@ class InvalidArgumentTypesError extends RuntimeError {
     required List<Type> expected,
     required List<Type> actual,
   }) : super(
-            'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
+         'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})',
+       );
 }
 
 class InvalidArgumentCountError extends RuntimeError {
@@ -20,7 +21,8 @@ class InvalidArgumentCountError extends RuntimeError {
     required int expected,
     required int actual,
   }) : super(
-            'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
+         'Invalid argument count for function "$function". Expected: $expected. Actual: $actual',
+       );
 }
 
 class IterablesWithDifferentLengthError extends RuntimeError {
@@ -32,7 +34,7 @@ class IterablesWithDifferentLengthError extends RuntimeError {
 
 class InvalidLiteralValueError extends RuntimeError {
   const InvalidLiteralValueError(String value)
-      : super('Invalid literal value: "$value"');
+    : super('Invalid literal value: "$value"');
 }
 
 class InvalidValueError extends RuntimeError {
@@ -41,25 +43,25 @@ class InvalidValueError extends RuntimeError {
 
 class InvalidMapIndexError extends RuntimeError {
   const InvalidMapIndexError(String index)
-      : super('No element present in map for key: "$index"');
+    : super('No element present in map for key: "$index"');
 }
 
 class ElementNotFoundError extends RuntimeError {
   const ElementNotFoundError(String index)
-      : super('Element not found at index: "$index"');
+    : super('Element not found at index: "$index"');
 }
 
 class NotFoundInScopeError extends RuntimeError {
   const NotFoundInScopeError(String variable)
-      : super('Variable "$variable" not found in scope');
+    : super('Variable "$variable" not found in scope');
 }
 
 class InvalidFunctionError extends RuntimeError {
   const InvalidFunctionError(String variable)
-      : super('"$variable" is not a function');
+    : super('"$variable" is not a function');
 }
 
 class UnimplementedFunctionWebError extends RuntimeError {
   const UnimplementedFunctionWebError(String function)
-      : super('Function "$function" is not implemented on the web platform');
+    : super('Function "$function" is not implemented on the web platform');
 }

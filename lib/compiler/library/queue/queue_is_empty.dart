@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class QueueIsEmpty extends NativeFunctionNode {
   QueueIsEmpty()
-      : super(
-          name: 'queue.isEmpty',
-          parameters: [
-            Parameter.stack('a'),
-          ],
-        );
+    : super(
+        name: 'queue.isEmpty',
+        parameters: [
+          Parameter.stack('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

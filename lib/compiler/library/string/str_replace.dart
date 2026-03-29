@@ -4,21 +4,21 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class StrReplace extends NativeFunctionNode {
   StrReplace()
-      : super(
-          name: 'str.replace',
-          parameters: [
-            Parameter.string('a'),
-            Parameter.string('b'),
-            Parameter.string('c'),
-          ],
-        );
+    : super(
+        name: 'str.replace',
+        parameters: [
+          Parameter.string('a'),
+          Parameter.string('b'),
+          Parameter.string('c'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

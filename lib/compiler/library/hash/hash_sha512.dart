@@ -7,19 +7,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class HashSha512 extends NativeFunctionNode {
   HashSha512()
-      : super(
-          name: 'hash.sha512',
-          parameters: [
-            Parameter.string('a'),
-          ],
-        );
+    : super(
+        name: 'hash.sha512',
+        parameters: [
+          Parameter.string('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

@@ -14,7 +14,7 @@ void main() {
         '6',
         '7',
         '8',
-        '9'
+        '9',
       ];
 
       for (final String digit in digits) {

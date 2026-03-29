@@ -4,21 +4,21 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListSet extends NativeFunctionNode {
   ListSet()
-      : super(
-          name: 'list.set',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.number('b'),
-            Parameter.any('c'),
-          ],
-        );
+    : super(
+        name: 'list.set',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.number('b'),
+          Parameter.any('c'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class TimeMinute extends NativeFunctionNode {
   TimeMinute()
-      : super(
-          name: 'time.minute',
-          parameters: [
-            Parameter.timestamp('a'),
-          ],
-        );
+    : super(
+        name: 'time.minute',
+        parameters: [
+          Parameter.timestamp('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

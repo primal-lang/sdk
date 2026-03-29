@@ -5,20 +5,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListContains extends NativeFunctionNode {
   ListContains()
-      : super(
-          name: 'list.contains',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.any('b'),
-          ],
-        );
+    : super(
+        name: 'list.contains',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.any('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

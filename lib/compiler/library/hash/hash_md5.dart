@@ -7,19 +7,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class HashMd5 extends NativeFunctionNode {
   HashMd5()
-      : super(
-          name: 'hash.md5',
-          parameters: [
-            Parameter.string('a'),
-          ],
-        );
+    : super(
+        name: 'hash.md5',
+        parameters: [
+          Parameter.string('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

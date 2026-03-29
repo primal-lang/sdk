@@ -5,19 +5,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class NumCos extends NativeFunctionNode {
   NumCos()
-      : super(
-          name: 'num.cos',
-          parameters: [
-            Parameter.number('a'),
-          ],
-        );
+    : super(
+        name: 'num.cos',
+        parameters: [
+          Parameter.number('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

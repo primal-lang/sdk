@@ -35,8 +35,9 @@ class Compiler {
     final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
     final List<Token> tokens = lexicalAnalyzer.analyze();
 
-    final ExpressionParser expressionParser =
-        ExpressionParser(ListIterator(tokens));
+    final ExpressionParser expressionParser = ExpressionParser(
+      ListIterator(tokens),
+    );
 
     return expressionParser.expression();
   }

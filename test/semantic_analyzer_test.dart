@@ -41,8 +41,9 @@ void main() {
   });
 
   test('Unused parameter', () {
-    final IntermediateCode code =
-        getIntermediateCode('isBiggerThan10(x, y) = x > 10');
+    final IntermediateCode code = getIntermediateCode(
+      'isBiggerThan10(x, y) = x > 10',
+    );
     expect(code.warnings.length, equals(1));
   });
 
@@ -58,7 +59,8 @@ void main() {
   test('Invalid number of arguments', () {
     try {
       getIntermediateCode(
-          'isBiggerThan10(x) = x > 10\nmain = isBiggerThan10(20, 5)');
+        'isBiggerThan10(x) = x > 10\nmain = isBiggerThan10(20, 5)',
+      );
       fail('Should fail');
     } catch (e) {
       expect(e, isA<InvalidNumberOfArgumentsError>());

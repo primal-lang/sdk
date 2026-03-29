@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class NumFloor extends NativeFunctionNode {
   NumFloor()
-      : super(
-          name: 'num.floor',
-          parameters: [
-            Parameter.number('a'),
-          ],
-        );
+    : super(
+        name: 'num.floor',
+        parameters: [
+          Parameter.number('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

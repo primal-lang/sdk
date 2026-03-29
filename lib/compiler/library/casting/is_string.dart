@@ -3,19 +3,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class IsString extends NativeFunctionNode {
   IsString()
-      : super(
-          name: 'is.string',
-          parameters: [
-            Parameter.any('a'),
-          ],
-        );
+    : super(
+        name: 'is.string',
+        parameters: [
+          Parameter.any('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

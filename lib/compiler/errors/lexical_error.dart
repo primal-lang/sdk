@@ -7,6 +7,7 @@ class LexicalError extends CompilationError {
 
 class InvalidCharacterError extends LexicalError {
   const InvalidCharacterError(Character character, [String? expected])
-      : super(
-            'Invalid character $character${(expected != null) ? '. Expected: $expected' : ''}');
+    : super(
+        'Invalid character $character${(expected != null) ? '. Expected: $expected' : ''}',
+      );
 }

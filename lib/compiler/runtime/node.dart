@@ -171,8 +171,9 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
 
   @override
   Node substitute(Bindings bindings) {
-    final Iterable<MapEntry<Node, Node>> entries = value.entries.map((e) =>
-        MapEntry(e.key.substitute(bindings), e.value.substitute(bindings)));
+    final Iterable<MapEntry<Node, Node>> entries = value.entries.map(
+      (e) => MapEntry(e.key.substitute(bindings), e.value.substitute(bindings)),
+    );
 
     return MapNode(Map.fromEntries(entries));
   }
@@ -247,9 +248,9 @@ class CallNode extends Node {
 
   @override
   Node substitute(Bindings bindings) => CallNode(
-        callee: callee.substitute(bindings),
-        arguments: arguments.map((e) => e.substitute(bindings)).toList(),
-      );
+    callee: callee.substitute(bindings),
+    arguments: arguments.map((e) => e.substitute(bindings)).toList(),
+  );
 
   @override
   Node evaluate() {
@@ -342,8 +343,9 @@ abstract class NativeFunctionNode extends FunctionNode {
 
   @override
   Node substitute(Bindings bindings) {
-    final List<Node> arguments =
-        parameters.map((e) => bindings.get(e.name)).toList();
+    final List<Node> arguments = parameters
+        .map((e) => bindings.get(e.name))
+        .toList();
 
     return node(arguments);
   }

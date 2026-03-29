@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class MapRemoveAt extends NativeFunctionNode {
   MapRemoveAt()
-      : super(
-          name: 'map.removeAt',
-          parameters: [
-            Parameter.map('a'),
-            Parameter.number('b'),
-          ],
-        );
+    : super(
+        name: 'map.removeAt',
+        parameters: [
+          Parameter.map('a'),
+          Parameter.number('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

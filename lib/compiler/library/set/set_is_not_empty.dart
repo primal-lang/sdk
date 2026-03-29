@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class SetIsNotEmpty extends NativeFunctionNode {
   SetIsNotEmpty()
-      : super(
-          name: 'set.isNotEmpty',
-          parameters: [
-            Parameter.set('a'),
-          ],
-        );
+    : super(
+        name: 'set.isNotEmpty',
+        parameters: [
+          Parameter.set('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

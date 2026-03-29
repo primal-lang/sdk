@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class SetIntersection extends NativeFunctionNode {
   SetIntersection()
-      : super(
-          name: 'set.intersection',
-          parameters: [
-            Parameter.set('a'),
-            Parameter.set('b'),
-          ],
-        );
+    : super(
+        name: 'set.intersection',
+        parameters: [
+          Parameter.set('a'),
+          Parameter.set('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

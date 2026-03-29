@@ -163,10 +163,12 @@ class ExpressionParser {
           (exp is StringExpression) ||
           (exp is ListExpression) ||
           (exp is MapExpression)) {
-        final Token operator = IdentifierToken(Lexeme(
-          value: 'element.at',
-          location: previous.location,
-        ));
+        final Token operator = IdentifierToken(
+          Lexeme(
+            value: 'element.at',
+            location: previous.location,
+          ),
+        );
         final Expression index = expression();
         consume(CloseBracketToken, ']');
         exp = CallExpression.fromBinaryOperation(

@@ -1,5 +1,5 @@
 /*
-  Input: an positive integer
+  Input: a positive integer
   Output: the list of all the divisors of that number
 */
 

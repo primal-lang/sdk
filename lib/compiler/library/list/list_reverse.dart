@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListReverse extends NativeFunctionNode {
   ListReverse()
-      : super(
-          name: 'list.reverse',
-          parameters: [
-            Parameter.list('a'),
-          ],
-        );
+    : super(
+        name: 'list.reverse',
+        parameters: [
+          Parameter.list('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

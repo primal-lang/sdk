@@ -118,32 +118,40 @@ void checkResult(Runtime runtime, Object result) {
 }
 
 void checkDates(Runtime runtime, DateTime result) {
-  expect(runtime.executeMain().substring(0, 14),
-      equals('"${result.toIso8601String().substring(0, 13)}'));
+  expect(
+    runtime.executeMain().substring(0, 14),
+    equals('"${result.toIso8601String().substring(0, 13)}'),
+  );
 }
 
-StringToken stringToken(String value, int row, int column) =>
-    StringToken(Lexeme(
-      value: value,
-      location: Location(row: row, column: column),
-    ));
+StringToken stringToken(String value, int row, int column) => StringToken(
+  Lexeme(
+    value: value,
+    location: Location(row: row, column: column),
+  ),
+);
 
-NumberToken numberToken(num value, int row, int column) => NumberToken(Lexeme(
-      value: value.toString(),
-      location: Location(row: row, column: column),
-    ));
+NumberToken numberToken(num value, int row, int column) => NumberToken(
+  Lexeme(
+    value: value.toString(),
+    location: Location(row: row, column: column),
+  ),
+);
 
-BooleanToken booleanToken(bool value, int row, int column) =>
-    BooleanToken(Lexeme(
-      value: value.toString(),
-      location: Location(row: row, column: column),
-    ));
+BooleanToken booleanToken(bool value, int row, int column) => BooleanToken(
+  Lexeme(
+    value: value.toString(),
+    location: Location(row: row, column: column),
+  ),
+);
 
 IdentifierToken identifierToken(String value, int row, int column) =>
-    IdentifierToken(Lexeme(
-      value: value,
-      location: Location(row: row, column: column),
-    ));
+    IdentifierToken(
+      Lexeme(
+        value: value,
+        location: Location(row: row, column: column),
+      ),
+    );
 
 String loadFile(String path) {
   final File file = File('./test/resources/$path');

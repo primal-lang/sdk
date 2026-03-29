@@ -15,26 +15,31 @@ class Scanner extends Analyzer<String, List<Character>> {
         continue;
       }
 
-      final List<String> columns =
-          rows[i].runes.map(String.fromCharCode).toList();
+      final List<String> columns = rows[i].runes
+          .map(String.fromCharCode)
+          .toList();
 
       for (int j = 0; j < columns.length; j++) {
-        result.add(Character(
-          value: columns[j],
-          location: Location(
-            row: i + 1,
-            column: j + 1,
+        result.add(
+          Character(
+            value: columns[j],
+            location: Location(
+              row: i + 1,
+              column: j + 1,
+            ),
           ),
-        ));
+        );
       }
 
-      result.add(Character(
-        value: '\n',
-        location: Location(
-          row: i + 1,
-          column: columns.length + 1,
+      result.add(
+        Character(
+          value: '\n',
+          location: Location(
+            row: i + 1,
+            column: columns.length + 1,
+          ),
         ),
-      ));
+      );
     }
 
     return result;

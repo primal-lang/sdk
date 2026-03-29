@@ -10,9 +10,9 @@ class Character extends Localized {
   });
 
   Lexeme get lexeme => Lexeme(
-        value: value,
-        location: location,
-      );
+    value: value,
+    location: location,
+  );
 
   @override
   String toString() => '"$value" at $location';

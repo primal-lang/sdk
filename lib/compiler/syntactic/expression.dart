@@ -22,10 +22,10 @@ abstract class LiteralExpression<T> extends Expression {
 
 class BooleanExpression extends LiteralExpression<bool> {
   BooleanExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
+    : super(
+        location: token.location,
+        value: token.value,
+      );
 
   @override
   Node toNode() => BooleanNode(value);
@@ -33,10 +33,10 @@ class BooleanExpression extends LiteralExpression<bool> {
 
 class NumberExpression extends LiteralExpression<num> {
   NumberExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
+    : super(
+        location: token.location,
+        value: token.value,
+      );
 
   @override
   Node toNode() => NumberNode(value);
@@ -44,10 +44,10 @@ class NumberExpression extends LiteralExpression<num> {
 
 class StringExpression extends LiteralExpression<String> {
   StringExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
+    : super(
+        location: token.location,
+        value: token.value,
+      );
 
   @override
   String toString() => '"$value"';
@@ -74,8 +74,9 @@ class MapExpression extends LiteralExpression<Map<Expression, Expression>> {
 
   @override
   Node toNode() {
-    final Iterable<MapEntry<Node, Node>> entries =
-        value.entries.map((e) => MapEntry(e.key.toNode(), e.value.toNode()));
+    final Iterable<MapEntry<Node, Node>> entries = value.entries.map(
+      (e) => MapEntry(e.key.toNode(), e.value.toNode()),
+    );
 
     return MapNode(Map.fromEntries(entries));
   }
@@ -83,10 +84,10 @@ class MapExpression extends LiteralExpression<Map<Expression, Expression>> {
 
 class IdentifierExpression extends LiteralExpression<String> {
   IdentifierExpression(Token token)
-      : super(
-          location: token.location,
-          value: token.value,
-        );
+    : super(
+        location: token.location,
+        value: token.value,
+      );
 
   @override
   Node toNode() => FreeVariableNode(value);
@@ -106,37 +107,34 @@ class CallExpression extends Expression {
     required Expression condition,
     required Expression ifTrue,
     required Expression ifFalse,
-  }) =>
-      CallExpression(
-        callee: IdentifierExpression(operator),
-        arguments: [condition, ifTrue, ifFalse],
-      );
+  }) => CallExpression(
+    callee: IdentifierExpression(operator),
+    arguments: [condition, ifTrue, ifFalse],
+  );
 
   factory CallExpression.fromUnaryOperation({
     required Token operator,
     required Expression expression,
-  }) =>
-      CallExpression(
-        callee: IdentifierExpression(operator),
-        arguments: [expression],
-      );
+  }) => CallExpression(
+    callee: IdentifierExpression(operator),
+    arguments: [expression],
+  );
 
   factory CallExpression.fromBinaryOperation({
     required Token operator,
     required Expression left,
     required Expression right,
-  }) =>
-      CallExpression(
-        callee: IdentifierExpression(operator),
-        arguments: [left, right],
-      );
+  }) => CallExpression(
+    callee: IdentifierExpression(operator),
+    arguments: [left, right],
+  );
 
   @override
   String toString() => '$callee(${arguments.join(', ')})';
 
   @override
   Node toNode() => CallNode(
-        callee: callee.toNode(),
-        arguments: arguments.map((e) => e.toNode()).toList(),
-      );
+    callee: callee.toNode(),
+    arguments: arguments.map((e) => e.toNode()).toList(),
+  );
 }

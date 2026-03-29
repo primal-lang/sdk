@@ -10,46 +10,54 @@ void main() {
     test('Double quoted string', () {
       final List<Token> tokens = getTokens('"This is a double quoted string"');
       checkTokens(tokens, [
-        StringToken(const Lexeme(
-          value: 'This is a double quoted string',
-          location: Location(
-            row: 1,
-            column: 1,
+        StringToken(
+          const Lexeme(
+            value: 'This is a double quoted string',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Single quoted string', () {
       final List<Token> tokens = getTokens("'This is a single single string'");
       checkTokens(tokens, [
-        StringToken(const Lexeme(
-          value: 'This is a single single string',
-          location: Location(
-            row: 1,
-            column: 1,
+        StringToken(
+          const Lexeme(
+            value: 'This is a single single string',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Valid number', () {
       final List<Token> tokens = getTokens('42 1.23');
       checkTokens(tokens, [
-        NumberToken(const Lexeme(
-          value: '42',
-          location: Location(
-            row: 1,
-            column: 1,
+        NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '1.23',
-          location: Location(
-            row: 1,
-            column: 4,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '1.23',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
@@ -72,609 +80,746 @@ void main() {
     test('Valid boolean true', () {
       final List<Token> tokens = getTokens('true');
       checkTokens(tokens, [
-        BooleanToken(const Lexeme(
-          value: 'true',
-          location: Location(
-            row: 1,
-            column: 1,
+        BooleanToken(
+          const Lexeme(
+            value: 'true',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Valid boolean false', () {
       final List<Token> tokens = getTokens('false');
       checkTokens(tokens, [
-        BooleanToken(const Lexeme(
-          value: 'false',
-          location: Location(
-            row: 1,
-            column: 1,
+        BooleanToken(
+          const Lexeme(
+            value: 'false',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Valid empty list', () {
       final List<Token> tokens = getTokens('[]');
       checkTokens(tokens, [
-        OpenBracketToken(const Lexeme(
-          value: '[',
-          location: Location(
-            row: 1,
-            column: 1,
+        OpenBracketToken(
+          const Lexeme(
+            value: '[',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        CloseBracketToken(const Lexeme(
-          value: ']',
-          location: Location(
-            row: 1,
-            column: 2,
+        ),
+        CloseBracketToken(
+          const Lexeme(
+            value: ']',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Valid non empty list', () {
       final List<Token> tokens = getTokens('[1, true, "test"]');
       checkTokens(tokens, [
-        OpenBracketToken(const Lexeme(
-          value: '[',
-          location: Location(
-            row: 1,
-            column: 1,
+        OpenBracketToken(
+          const Lexeme(
+            value: '[',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '1',
-          location: Location(
-            row: 1,
-            column: 2,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '1',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
           ),
-        )),
-        CommaToken(const Lexeme(
-          value: ',',
-          location: Location(
-            row: 1,
-            column: 3,
+        ),
+        CommaToken(
+          const Lexeme(
+            value: ',',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
           ),
-        )),
-        BooleanToken(const Lexeme(
-          value: 'true',
-          location: Location(
-            row: 1,
-            column: 5,
+        ),
+        BooleanToken(
+          const Lexeme(
+            value: 'true',
+            location: Location(
+              row: 1,
+              column: 5,
+            ),
           ),
-        )),
-        CommaToken(const Lexeme(
-          value: ',',
-          location: Location(
-            row: 1,
-            column: 9,
+        ),
+        CommaToken(
+          const Lexeme(
+            value: ',',
+            location: Location(
+              row: 1,
+              column: 9,
+            ),
           ),
-        )),
-        StringToken(const Lexeme(
-          value: 'test',
-          location: Location(
-            row: 1,
-            column: 11,
+        ),
+        StringToken(
+          const Lexeme(
+            value: 'test',
+            location: Location(
+              row: 1,
+              column: 11,
+            ),
           ),
-        )),
-        CloseBracketToken(const Lexeme(
-          value: ']',
-          location: Location(
-            row: 1,
-            column: 17,
+        ),
+        CloseBracketToken(
+          const Lexeme(
+            value: ']',
+            location: Location(
+              row: 1,
+              column: 17,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Indexing list', () {
       final List<Token> tokens = getTokens('[1, 2, 3][1]');
       checkTokens(tokens, [
-        OpenBracketToken(const Lexeme(
-          value: '[',
-          location: Location(
-            row: 1,
-            column: 1,
+        OpenBracketToken(
+          const Lexeme(
+            value: '[',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '1',
-          location: Location(
-            row: 1,
-            column: 2,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '1',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
           ),
-        )),
-        CommaToken(const Lexeme(
-          value: ',',
-          location: Location(
-            row: 1,
-            column: 3,
+        ),
+        CommaToken(
+          const Lexeme(
+            value: ',',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '2',
-          location: Location(
-            row: 1,
-            column: 5,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '2',
+            location: Location(
+              row: 1,
+              column: 5,
+            ),
           ),
-        )),
-        CommaToken(const Lexeme(
-          value: ',',
-          location: Location(
-            row: 1,
-            column: 6,
+        ),
+        CommaToken(
+          const Lexeme(
+            value: ',',
+            location: Location(
+              row: 1,
+              column: 6,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '3',
-          location: Location(
-            row: 1,
-            column: 8,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '3',
+            location: Location(
+              row: 1,
+              column: 8,
+            ),
           ),
-        )),
-        CloseBracketToken(const Lexeme(
-          value: ']',
-          location: Location(
-            row: 1,
-            column: 9,
+        ),
+        CloseBracketToken(
+          const Lexeme(
+            value: ']',
+            location: Location(
+              row: 1,
+              column: 9,
+            ),
           ),
-        )),
-        OpenBracketToken(const Lexeme(
-          value: '[',
-          location: Location(
-            row: 1,
-            column: 10,
+        ),
+        OpenBracketToken(
+          const Lexeme(
+            value: '[',
+            location: Location(
+              row: 1,
+              column: 10,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '1',
-          location: Location(
-            row: 1,
-            column: 11,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '1',
+            location: Location(
+              row: 1,
+              column: 11,
+            ),
           ),
-        )),
-        CloseBracketToken(const Lexeme(
-          value: ']',
-          location: Location(
-            row: 1,
-            column: 12,
+        ),
+        CloseBracketToken(
+          const Lexeme(
+            value: ']',
+            location: Location(
+              row: 1,
+              column: 12,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Valid empty map', () {
       final List<Token> tokens = getTokens('{}');
       checkTokens(tokens, [
-        OpenBracesToken(const Lexeme(
-          value: '{',
-          location: Location(
-            row: 1,
-            column: 1,
+        OpenBracesToken(
+          const Lexeme(
+            value: '{',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        CloseBracesToken(const Lexeme(
-          value: '}',
-          location: Location(
-            row: 1,
-            column: 2,
+        ),
+        CloseBracesToken(
+          const Lexeme(
+            value: '}',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Valid non empty map', () {
       final List<Token> tokens = getTokens('{"name": "John", "age": 42}');
       checkTokens(tokens, [
-        OpenBracesToken(const Lexeme(
-          value: '{',
-          location: Location(
-            row: 1,
-            column: 1,
+        OpenBracesToken(
+          const Lexeme(
+            value: '{',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        StringToken(const Lexeme(
-          value: 'name',
-          location: Location(
-            row: 1,
-            column: 2,
+        ),
+        StringToken(
+          const Lexeme(
+            value: 'name',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
           ),
-        )),
-        ColonToken(const Lexeme(
-          value: ':',
-          location: Location(
-            row: 1,
-            column: 8,
+        ),
+        ColonToken(
+          const Lexeme(
+            value: ':',
+            location: Location(
+              row: 1,
+              column: 8,
+            ),
           ),
-        )),
-        StringToken(const Lexeme(
-          value: 'John',
-          location: Location(
-            row: 1,
-            column: 10,
+        ),
+        StringToken(
+          const Lexeme(
+            value: 'John',
+            location: Location(
+              row: 1,
+              column: 10,
+            ),
           ),
-        )),
-        CommaToken(const Lexeme(
-          value: ',',
-          location: Location(
-            row: 1,
-            column: 16,
+        ),
+        CommaToken(
+          const Lexeme(
+            value: ',',
+            location: Location(
+              row: 1,
+              column: 16,
+            ),
           ),
-        )),
-        StringToken(const Lexeme(
-          value: 'age',
-          location: Location(
-            row: 1,
-            column: 18,
+        ),
+        StringToken(
+          const Lexeme(
+            value: 'age',
+            location: Location(
+              row: 1,
+              column: 18,
+            ),
           ),
-        )),
-        ColonToken(const Lexeme(
-          value: ':',
-          location: Location(
-            row: 1,
-            column: 23,
+        ),
+        ColonToken(
+          const Lexeme(
+            value: ':',
+            location: Location(
+              row: 1,
+              column: 23,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '42',
-          location: Location(
-            row: 1,
-            column: 25,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(
+              row: 1,
+              column: 25,
+            ),
           ),
-        )),
-        CloseBracesToken(const Lexeme(
-          value: '}',
-          location: Location(
-            row: 1,
-            column: 27,
+        ),
+        CloseBracesToken(
+          const Lexeme(
+            value: '}',
+            location: Location(
+              row: 1,
+              column: 27,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Indexing map', () {
       final List<Token> tokens = getTokens('{}["name"]');
       checkTokens(tokens, [
-        OpenBracesToken(const Lexeme(
-          value: '{',
-          location: Location(
-            row: 1,
-            column: 1,
+        OpenBracesToken(
+          const Lexeme(
+            value: '{',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        CloseBracesToken(const Lexeme(
-          value: '}',
-          location: Location(
-            row: 1,
-            column: 2,
+        ),
+        CloseBracesToken(
+          const Lexeme(
+            value: '}',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
           ),
-        )),
-        OpenBracketToken(const Lexeme(
-          value: '[',
-          location: Location(
-            row: 1,
-            column: 3,
+        ),
+        OpenBracketToken(
+          const Lexeme(
+            value: '[',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
           ),
-        )),
-        StringToken(const Lexeme(
-          value: 'name',
-          location: Location(
-            row: 1,
-            column: 4,
+        ),
+        StringToken(
+          const Lexeme(
+            value: 'name',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
           ),
-        )),
-        CloseBracketToken(const Lexeme(
-          value: ']',
-          location: Location(
-            row: 1,
-            column: 10,
+        ),
+        CloseBracketToken(
+          const Lexeme(
+            value: ']',
+            location: Location(
+              row: 1,
+              column: 10,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Identifier with letters', () {
       final List<Token> tokens = getTokens('isEven');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'isEven',
-          location: Location(
-            row: 1,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'isEven',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Identifier with numbers', () {
       final List<Token> tokens = getTokens('isBiggerThan10');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'isBiggerThan10',
-          location: Location(
-            row: 1,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'isBiggerThan10',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Identifier with underscore', () {
       final List<Token> tokens = getTokens('is_even');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'is_even',
-          location: Location(
-            row: 1,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'is_even',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Identifier with dot', () {
       final List<Token> tokens = getTokens('is.even');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'is.even',
-          location: Location(
-            row: 1,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'is.even',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Identifier complex', () {
       final List<Token> tokens = getTokens('isToday_butNot.31st');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'isToday_butNot.31st',
-          location: Location(
-            row: 1,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'isToday_butNot.31st',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Condition', () {
       final List<Token> tokens = getTokens('if test foo else bar');
       checkTokens(tokens, [
-        IfToken(const Lexeme(
-          value: 'if',
-          location: Location(
-            row: 1,
-            column: 1,
+        IfToken(
+          const Lexeme(
+            value: 'if',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        IdentifierToken(const Lexeme(
-          value: 'test',
-          location: Location(
-            row: 1,
-            column: 4,
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'test',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
           ),
-        )),
-        IdentifierToken(const Lexeme(
-          value: 'foo',
-          location: Location(
-            row: 1,
-            column: 9,
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'foo',
+            location: Location(
+              row: 1,
+              column: 9,
+            ),
           ),
-        )),
-        ElseToken(const Lexeme(
-          value: 'else',
-          location: Location(
-            row: 1,
-            column: 13,
+        ),
+        ElseToken(
+          const Lexeme(
+            value: 'else',
+            location: Location(
+              row: 1,
+              column: 13,
+            ),
           ),
-        )),
-        IdentifierToken(const Lexeme(
-          value: 'bar',
-          location: Location(
-            row: 1,
-            column: 18,
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'bar',
+            location: Location(
+              row: 1,
+              column: 18,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Arithmetic operators', () {
       final List<Token> tokens = getTokens('- + / * %');
       checkTokens(tokens, [
-        MinusToken(const Lexeme(
-          value: '-',
-          location: Location(
-            row: 1,
-            column: 1,
+        MinusToken(
+          const Lexeme(
+            value: '-',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        PlusToken(const Lexeme(
-          value: '+',
-          location: Location(
-            row: 1,
-            column: 3,
+        ),
+        PlusToken(
+          const Lexeme(
+            value: '+',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
           ),
-        )),
-        ForwardSlashToken(const Lexeme(
-          value: '/',
-          location: Location(
-            row: 1,
-            column: 5,
+        ),
+        ForwardSlashToken(
+          const Lexeme(
+            value: '/',
+            location: Location(
+              row: 1,
+              column: 5,
+            ),
           ),
-        )),
-        AsteriskToken(const Lexeme(
-          value: '*',
-          location: Location(
-            row: 1,
-            column: 7,
+        ),
+        AsteriskToken(
+          const Lexeme(
+            value: '*',
+            location: Location(
+              row: 1,
+              column: 7,
+            ),
           ),
-        )),
-        PercentToken(const Lexeme(
-          value: '%',
-          location: Location(
-            row: 1,
-            column: 9,
+        ),
+        PercentToken(
+          const Lexeme(
+            value: '%',
+            location: Location(
+              row: 1,
+              column: 9,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Logical operators', () {
       final List<Token> tokens = getTokens('| & !');
       checkTokens(tokens, [
-        PipeToken(const Lexeme(
-          value: '|',
-          location: Location(
-            row: 1,
-            column: 1,
+        PipeToken(
+          const Lexeme(
+            value: '|',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        AmpersandToken(const Lexeme(
-          value: '&',
-          location: Location(
-            row: 1,
-            column: 3,
+        ),
+        AmpersandToken(
+          const Lexeme(
+            value: '&',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
           ),
-        )),
-        BangToken(const Lexeme(
-          value: '!',
-          location: Location(
-            row: 1,
-            column: 5,
+        ),
+        BangToken(
+          const Lexeme(
+            value: '!',
+            location: Location(
+              row: 1,
+              column: 5,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Comparison operators', () {
       final List<Token> tokens = getTokens('== != > >= < <=');
       checkTokens(tokens, [
-        EqualToken(const Lexeme(
-          value: '==',
-          location: Location(
-            row: 1,
-            column: 1,
+        EqualToken(
+          const Lexeme(
+            value: '==',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        NotEqualToken(const Lexeme(
-          value: '!=',
-          location: Location(
-            row: 1,
-            column: 4,
+        ),
+        NotEqualToken(
+          const Lexeme(
+            value: '!=',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
           ),
-        )),
-        GreaterThanToken(const Lexeme(
-          value: '>',
-          location: Location(
-            row: 1,
-            column: 7,
+        ),
+        GreaterThanToken(
+          const Lexeme(
+            value: '>',
+            location: Location(
+              row: 1,
+              column: 7,
+            ),
           ),
-        )),
-        GreaterEqualThanToken(const Lexeme(
-          value: '>=',
-          location: Location(
-            row: 1,
-            column: 9,
+        ),
+        GreaterEqualThanToken(
+          const Lexeme(
+            value: '>=',
+            location: Location(
+              row: 1,
+              column: 9,
+            ),
           ),
-        )),
-        LessThanToken(const Lexeme(
-          value: '<',
-          location: Location(
-            row: 1,
-            column: 12,
+        ),
+        LessThanToken(
+          const Lexeme(
+            value: '<',
+            location: Location(
+              row: 1,
+              column: 12,
+            ),
           ),
-        )),
-        LessEqualThanToken(const Lexeme(
-          value: '<=',
-          location: Location(
-            row: 1,
-            column: 14,
+        ),
+        LessEqualThanToken(
+          const Lexeme(
+            value: '<=',
+            location: Location(
+              row: 1,
+              column: 14,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Assignment', () {
       final List<Token> tokens = getTokens('=');
       checkTokens(tokens, [
-        AssignToken(const Lexeme(
-          value: '=',
-          location: Location(
-            row: 1,
-            column: 1,
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Comma', () {
       final List<Token> tokens = getTokens(',');
       checkTokens(tokens, [
-        CommaToken(const Lexeme(
-          value: ',',
-          location: Location(
-            row: 1,
-            column: 1,
+        CommaToken(
+          const Lexeme(
+            value: ',',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Open parenthesis', () {
       final List<Token> tokens = getTokens('(');
       checkTokens(tokens, [
-        OpenParenthesisToken(const Lexeme(
-          value: '(',
-          location: Location(
-            row: 1,
-            column: 1,
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Close parenthesis', () {
       final List<Token> tokens = getTokens(')');
       checkTokens(tokens, [
-        CloseParenthesisToken(const Lexeme(
-          value: ')',
-          location: Location(
-            row: 1,
-            column: 1,
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Single line comments', () {
-      final List<Token> tokens =
-          getTokens('// Comment 1\npi = 3.14 // Comment 2\n// Comment 3');
+      final List<Token> tokens = getTokens(
+        '// Comment 1\npi = 3.14 // Comment 2\n// Comment 3',
+      );
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'pi',
-          location: Location(
-            row: 2,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'pi',
+            location: Location(
+              row: 2,
+              column: 1,
+            ),
           ),
-        )),
-        AssignToken(const Lexeme(
-          value: '=',
-          location: Location(
-            row: 2,
-            column: 4,
+        ),
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 2,
+              column: 4,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '3.14',
-          location: Location(
-            row: 2,
-            column: 6,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '3.14',
+            location: Location(
+              row: 2,
+              column: 6,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
@@ -688,54 +833,66 @@ void main() {
 pi = 3.14
 ''');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'pi',
-          location: Location(
-            row: 7,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'pi',
+            location: Location(
+              row: 7,
+              column: 1,
+            ),
           ),
-        )),
-        AssignToken(const Lexeme(
-          value: '=',
-          location: Location(
-            row: 7,
-            column: 4,
+        ),
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 7,
+              column: 4,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '3.14',
-          location: Location(
-            row: 7,
-            column: 6,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '3.14',
+            location: Location(
+              row: 7,
+              column: 6,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Constant declaration', () {
       final List<Token> tokens = getTokens('pi = 3.14');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'pi',
-          location: Location(
-            row: 1,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'pi',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        AssignToken(const Lexeme(
-          value: '=',
-          location: Location(
-            row: 1,
-            column: 4,
+        ),
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '3.14',
-          location: Location(
-            row: 1,
-            column: 6,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '3.14',
+            location: Location(
+              row: 1,
+              column: 6,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
@@ -778,110 +935,138 @@ pi = 3.14
     test('Main function definition', () {
       final List<Token> tokens = getTokens('main = isEven(4)');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'main',
-          location: Location(
-            row: 1,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'main',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        AssignToken(const Lexeme(
-          value: '=',
-          location: Location(
-            row: 1,
-            column: 6,
+        ),
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 1,
+              column: 6,
+            ),
           ),
-        )),
-        IdentifierToken(const Lexeme(
-          value: 'isEven',
-          location: Location(
-            row: 1,
-            column: 8,
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'isEven',
+            location: Location(
+              row: 1,
+              column: 8,
+            ),
           ),
-        )),
-        OpenParenthesisToken(const Lexeme(
-          value: '(',
-          location: Location(
-            row: 1,
-            column: 14,
+        ),
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 1,
+              column: 14,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '4',
-          location: Location(
-            row: 1,
-            column: 15,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '4',
+            location: Location(
+              row: 1,
+              column: 15,
+            ),
           ),
-        )),
-        CloseParenthesisToken(const Lexeme(
-          value: ')',
-          location: Location(
-            row: 1,
-            column: 16,
+        ),
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 1,
+              column: 16,
+            ),
           ),
-        )),
+        ),
       ]);
     });
 
     test('Function definition', () {
       final List<Token> tokens = getTokens('isZero(x) = x == 0');
       checkTokens(tokens, [
-        IdentifierToken(const Lexeme(
-          value: 'isZero',
-          location: Location(
-            row: 1,
-            column: 1,
+        IdentifierToken(
+          const Lexeme(
+            value: 'isZero',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
           ),
-        )),
-        OpenParenthesisToken(const Lexeme(
-          value: '(',
-          location: Location(
-            row: 1,
-            column: 7,
+        ),
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 1,
+              column: 7,
+            ),
           ),
-        )),
-        IdentifierToken(const Lexeme(
-          value: 'x',
-          location: Location(
-            row: 1,
-            column: 8,
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 8,
+            ),
           ),
-        )),
-        CloseParenthesisToken(const Lexeme(
-          value: ')',
-          location: Location(
-            row: 1,
-            column: 9,
+        ),
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 1,
+              column: 9,
+            ),
           ),
-        )),
-        AssignToken(const Lexeme(
-          value: '=',
-          location: Location(
-            row: 1,
-            column: 11,
+        ),
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 1,
+              column: 11,
+            ),
           ),
-        )),
-        IdentifierToken(const Lexeme(
-          value: 'x',
-          location: Location(
-            row: 1,
-            column: 13,
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 13,
+            ),
           ),
-        )),
-        EqualToken(const Lexeme(
-          value: '==',
-          location: Location(
-            row: 1,
-            column: 15,
+        ),
+        EqualToken(
+          const Lexeme(
+            value: '==',
+            location: Location(
+              row: 1,
+              column: 15,
+            ),
           ),
-        )),
-        NumberToken(const Lexeme(
-          value: '0',
-          location: Location(
-            row: 1,
-            column: 18,
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '0',
+            location: Location(
+              row: 1,
+              column: 18,
+            ),
           ),
-        )),
+        ),
       ]);
     });
   });

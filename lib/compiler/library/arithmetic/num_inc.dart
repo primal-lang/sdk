@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class NumInc extends NativeFunctionNode {
   NumInc()
-      : super(
-          name: 'num.inc',
-          parameters: [
-            Parameter.number('a'),
-          ],
-        );
+    : super(
+        name: 'num.inc',
+        parameters: [
+          Parameter.number('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
