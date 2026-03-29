@@ -1,41 +1,41 @@
-import 'package:js/js.dart';
+import 'dart:js_interop';
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 
 @JS('compileInput')
-external set compileInput(Function v);
+external set compileInput(JSFunction v);
 
 @JS('compileExpression')
-external set compileExpression(Function v);
+external set compileExpression(JSFunction v);
 
 @JS('runtimeWarnings')
-external set runtimeWarnings(Function v);
+external set runtimeWarnings(JSFunction v);
 
 @JS('runtimeHasMain')
-external set runtimeHasMain(Function v);
+external set runtimeHasMain(JSFunction v);
 
 @JS('runtimeExecuteMain')
-external set runtimeExecuteMain(Function v);
+external set runtimeExecuteMain(JSFunction v);
 
 @JS('runtimeReduce')
-external set runtimeReduce(Function v);
+external set runtimeReduce(JSFunction v);
 
 @JS('intermediateCodeEmpty')
-external set intermediateCodeEmpty(Function v);
+external set intermediateCodeEmpty(JSFunction v);
 
 void main(List<String> args) {
   const Compiler compiler = Compiler();
-  compileInput = allowInterop(compiler.compile);
-  compileExpression = allowInterop(compiler.expression);
+  compileInput = compiler.compile.toJS;
+  compileExpression = compiler.expression.toJS;
 
-  runtimeWarnings = allowInterop(runtimeWarningsHelper);
-  runtimeHasMain = allowInterop(runtimeHasMainHelper);
-  runtimeExecuteMain = allowInterop(runtimeExecuteMainHelper);
-  runtimeReduce = allowInterop(runtimeReduceHelper);
+  runtimeWarnings = runtimeWarningsHelper.toJS;
+  runtimeHasMain = runtimeHasMainHelper.toJS;
+  runtimeExecuteMain = runtimeExecuteMainHelper.toJS;
+  runtimeReduce = runtimeReduceHelper.toJS;
 
-  intermediateCodeEmpty = allowInterop(IntermediateCode.empty);
+  intermediateCodeEmpty = IntermediateCode.empty.toJS;
 }
 
 List<String> runtimeWarningsHelper(IntermediateCode code) {
