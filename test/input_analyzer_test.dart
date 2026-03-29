@@ -186,18 +186,22 @@ void main() {
         expect(true, equals('123abc'.isLetter));
       });
 
-      test('isBoolean matches substrings', () {
-        expect(true, equals('falsehood'.isBoolean));
-        expect(true, equals('untrue'.isBoolean));
+      test('isBoolean requires exact match', () {
+        expect(false, equals('falsehood'.isBoolean));
+        expect(false, equals('untrue'.isBoolean));
+        expect(true, equals('true'.isBoolean));
+        expect(true, equals('false'.isBoolean));
       });
 
-      test('isIf matches substrings', () {
-        expect(true, equals('iffy'.isIf));
-        expect(true, equals('elif'.isIf));
+      test('isIf requires exact match', () {
+        expect(false, equals('iffy'.isIf));
+        expect(false, equals('elif'.isIf));
+        expect(true, equals('if'.isIf));
       });
 
-      test('isElse matches substrings', () {
-        expect(true, equals('elsewhere'.isElse));
+      test('isElse requires exact match', () {
+        expect(false, equals('elsewhere'.isElse));
+        expect(true, equals('else'.isElse));
       });
     });
 

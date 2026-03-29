@@ -53,11 +53,11 @@ extension StringExtensions on String {
 
   bool get isCloseBraces => RegExp(r'\}').hasMatch(this);
 
-  bool get isBoolean => RegExp(r'true|false').hasMatch(this);
+  bool get isBoolean => this == 'true' || this == 'false';
 
-  bool get isIf => RegExp(r'if').hasMatch(this);
+  bool get isIf => this == 'if';
 
-  bool get isElse => RegExp(r'else').hasMatch(this);
+  bool get isElse => this == 'else';
 
   bool get isOperandDelimiter =>
       isWhitespace ||
