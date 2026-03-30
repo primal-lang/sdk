@@ -108,7 +108,7 @@ void main() {
     test('Invalid input throws error', () {
       expect(
         () => compiler.expression('= = ='),
-        throwsA(isA<Exception>()),
+        throwsA(isA<SyntacticError>()),
       );
     });
   });
