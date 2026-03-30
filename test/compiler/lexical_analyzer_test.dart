@@ -1630,5 +1630,93 @@ pi = 3.14
         ),
       ]);
     });
+
+    // --- Edge cases: invalid character in specific lexer states ---
+
+    test('Invalid character in DecimalState', () {
+      expect(() => getTokens('42.1@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character in IdentifierState', () {
+      expect(() => getTokens('foo@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after minus', () {
+      expect(() => getTokens('-@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after plus', () {
+      expect(() => getTokens('+@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after equals', () {
+      expect(() => getTokens('=@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after greater', () {
+      expect(() => getTokens('>@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after less', () {
+      expect(() => getTokens('<@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after pipe', () {
+      expect(() => getTokens('|@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after ampersand', () {
+      expect(() => getTokens('&@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after bang', () {
+      expect(() => getTokens('!@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after forward slash', () {
+      expect(() => getTokens('/@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after asterisk', () {
+      expect(() => getTokens('*@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after percent', () {
+      expect(() => getTokens('%@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after colon', () {
+      expect(() => getTokens(':@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after close parenthesis', () {
+      expect(() => getTokens(')@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after open bracket', () {
+      expect(() => getTokens('[@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after close bracket', () {
+      expect(() => getTokens(']@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after open braces', () {
+      expect(() => getTokens('{@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Invalid character after close braces', () {
+      expect(() => getTokens('}@'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    // --- Edge cases: Lexeme toString ---
+
+    test('Lexeme toString returns formatted string', () {
+      const lexeme = Lexeme(
+        value: 'test',
+        location: Location(row: 1, column: 1),
+      );
+      expect(lexeme.toString(), equals('"test" at [1, 1]'));
+    });
   });
 }

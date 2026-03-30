@@ -430,5 +430,19 @@ void main() {
         throwsA(isA<InvalidTokenError>()),
       );
     });
+
+    test('non-identifier call throws InvalidTokenError', () {
+      expect(
+        () => getExpression('5(1)'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
+    test('non-indexable bracket access throws InvalidTokenError', () {
+      expect(
+        () => getExpression('5[0]'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
   });
 }

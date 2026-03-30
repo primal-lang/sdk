@@ -29,6 +29,22 @@ void main() {
         ),
       );
     });
+
+    test('outWrite calls print without error', () {
+      expect(() => console.outWrite('test'), returnsNormally);
+    });
+
+    test('outWriteLn calls print without error', () {
+      expect(() => console.outWriteLn('test'), returnsNormally);
+    });
+
+    test('errorWrite calls print without error', () {
+      expect(() => console.errorWrite('test'), returnsNormally);
+    });
+
+    test('errorWriteLn calls print without error', () {
+      expect(() => console.errorWriteLn('test'), returnsNormally);
+    });
   });
 
   group('PlatformFileWeb', () {

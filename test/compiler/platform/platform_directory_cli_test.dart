@@ -108,6 +108,19 @@ void main() {
       expect(File('${dest.path}/file.txt').readAsStringSync(), equals('data'));
     });
 
+    test('copy recursively copies subdirectories', () {
+      final source = Directory('${tempDir.path}/src2')..createSync();
+      final subDir = Directory('${source.path}/sub')..createSync();
+      File('${subDir.path}/nested.txt').writeAsStringSync('nested');
+      final dest = Directory('${tempDir.path}/dst2');
+
+      expect(platform.copy(source, dest), isTrue);
+      expect(
+        File('${dest.path}/sub/nested.txt').readAsStringSync(),
+        equals('nested'),
+      );
+    });
+
     test('move moves a directory', () {
       final source = Directory('${tempDir.path}/mv_src')..createSync();
       File('${source.path}/f.txt').createSync();

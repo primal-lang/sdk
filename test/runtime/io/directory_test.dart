@@ -115,5 +115,14 @@ main = directory.move(directory1(), directory2())
         '"$resourcesPath/files/temp/file3.txt"',
       ]);
     });
+
+    test('directory.list includes subdirectories', () {
+      final Runtime runtime = getRuntime(
+        'main = list.length(directory.list(directory.fromPath("test/resources/files")))',
+      );
+      final String result = runtime.executeMain();
+      final int count = int.parse(result);
+      expect(count, greaterThanOrEqualTo(2));
+    });
   });
 }

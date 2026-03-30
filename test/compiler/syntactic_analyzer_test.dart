@@ -52,6 +52,13 @@ void main() {
       );
     });
 
+    test('Non-identifier after comma in parameter list', () {
+      expect(
+        () => getFunctions('f(x, 5) = x'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
     test('Literal double quoted string definition', () {
       final List<FunctionDefinition> functions = getFunctions(
         'greeting = "Hello, world!"',

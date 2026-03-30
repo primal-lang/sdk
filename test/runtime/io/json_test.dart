@@ -143,5 +143,13 @@ void main() {
         );
       },
     );
+
+    test('json.decode with null value throws InvalidValueError', () {
+      final Runtime runtime = getRuntime('main = json.decode("null")');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidValueError>()),
+      );
+    });
   });
 }

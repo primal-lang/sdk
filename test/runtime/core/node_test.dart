@@ -1,5 +1,8 @@
 @Tags(['runtime'])
+@TestOn('vm')
 library;
+
+import 'dart:io';
 
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
@@ -406,6 +409,115 @@ void main() {
       final DateTime dt = DateTime(2024, 6, 15);
       final TimestampNode node = TimestampNode(dt);
       expect(node.native(), dt);
+    });
+  });
+
+  group('FileNode', () {
+    test('type is FileType', () {
+      final FileNode node = FileNode(File('dummy'));
+      expect(node.type, isA<FileType>());
+    });
+  });
+
+  group('DirectoryNode', () {
+    test('type is DirectoryType', () {
+      final DirectoryNode node = DirectoryNode(Directory('dummy'));
+      expect(node.type, isA<DirectoryType>());
+    });
+  });
+
+  group('VectorNode', () {
+    test('substitute() substitutes inner elements', () {
+      const VectorNode node = VectorNode([
+        BoundedVariableNode('x'),
+        NumberNode(2),
+      ]);
+      const Bindings bindings = Bindings({'x': NumberNode(99)});
+      final Node result = node.substitute(bindings);
+      expect(result, isA<VectorNode>());
+      expect((result as VectorNode).native(), [99, 2]);
+    });
+  });
+
+  group('StackNode', () {
+    test('native() returns list of native values', () {
+      const StackNode node = StackNode([NumberNode(1), NumberNode(2)]);
+      expect(node.native(), [1, 2]);
+    });
+
+    test('type is StackType', () {
+      const StackNode node = StackNode([]);
+      expect(node.type, isA<StackType>());
+    });
+
+    test('substitute() substitutes inner elements', () {
+      const StackNode node = StackNode([
+        BoundedVariableNode('x'),
+        NumberNode(2),
+      ]);
+      const Bindings bindings = Bindings({'x': NumberNode(99)});
+      final Node result = node.substitute(bindings);
+      expect(result, isA<StackNode>());
+      expect((result as StackNode).native(), [99, 2]);
+    });
+  });
+
+  group('QueueNode', () {
+    test('native() returns list of native values', () {
+      const QueueNode node = QueueNode([NumberNode(1), NumberNode(2)]);
+      expect(node.native(), [1, 2]);
+    });
+
+    test('type is QueueType', () {
+      const QueueNode node = QueueNode([]);
+      expect(node.type, isA<QueueType>());
+    });
+
+    test('substitute() substitutes inner elements', () {
+      const QueueNode node = QueueNode([
+        BoundedVariableNode('x'),
+        NumberNode(2),
+      ]);
+      const Bindings bindings = Bindings({'x': NumberNode(99)});
+      final Node result = node.substitute(bindings);
+      expect(result, isA<QueueNode>());
+      expect((result as QueueNode).native(), [99, 2]);
+    });
+  });
+
+  group('FunctionNode evaluate', () {
+    test('evaluate returns itself', () {
+      final FunctionNode node = FunctionNode(
+        name: 'f',
+        parameters: [Parameter.number('x')],
+      );
+      expect(node.evaluate(), same(node));
+    });
+  });
+
+  group('CallNode', () {
+    test('getFunctionNode with non-function callee throws', () {
+      const CallNode call = CallNode(
+        callee: NumberNode(42),
+        arguments: [],
+      );
+      expect(call.evaluate, throwsA(isA<InvalidFunctionError>()));
+    });
+
+    test('type is FunctionCallType', () {
+      const CallNode call = CallNode(
+        callee: NumberNode(42),
+        arguments: [],
+      );
+      expect(call.type, isA<FunctionCallType>());
+    });
+
+    test('toString() shows callee and arguments', () {
+      const CallNode call = CallNode(
+        callee: NumberNode(42),
+        arguments: [NumberNode(1)],
+      );
+      expect(call.toString(), '42(1)');
     });
   });
 }
