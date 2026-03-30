@@ -6,7 +6,6 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 
 ## Table of Contents
 
-2. [Regex for Single-Character Comparisons](#2-regex-for-single-character-comparisons)
 3. [No String Escape Sequences](#3-no-string-escape-sequences)
 4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
 5. [Single-Character Tokens Pay Unnecessary Lookahead Cost](#5-single-character-tokens-pay-unnecessary-lookahead-cost)
@@ -15,66 +14,6 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 8. [Token Class Boilerplate](#8-token-class-boilerplate)
 9. [ResultState Always Wraps a List but Only Ever Contains One Token](#9-resultstate-always-wraps-a-list-but-only-ever-contains-one-token)
 10. [Delimiter Predicate Inconsistencies](#10-delimiter-predicate-inconsistencies)
-
----
-
-## 2. Regex for Single-Character Comparisons
-
-### The Issue
-
-Every character classification predicate in `lib/extensions/string_extensions.dart` creates a **new `RegExp` object on each call**:
-
-```dart
-bool get isMinus => RegExp(r'-').hasMatch(this);
-bool get isDigit => RegExp(r'\d').hasMatch(this);
-bool get isWhitespace => RegExp(r'\s').hasMatch(this);
-// ... 27 such predicates
-```
-
-There are 27 primitive RegExp predicates. The composite predicates (`isOperandDelimiter`, `isOperatorDelimiter`, etc.) call multiple primitives, compounding the cost.
-
-This is the **hot path of the lexer** -- every single character in the input goes through `InitState.process()`, which evaluates a cascade of `if/else if` branches, each triggering one or more RegExp compilations. For a single character reaching the bottom of the `InitState` cascade (e.g., `}`), that's 24 RegExp compilations just to dispatch. Then the resulting state (e.g., `CloseBracesState`) evaluates `isCloseBracesDelimiter` on the next character, which itself calls up to 9 more RegExp predicates.
-
-A character like `}` followed by whitespace would cause **33 RegExp object creations** to produce a single `CloseBracesToken`.
-
-### Proposed Fix
-
-Replace all RegExp predicates with direct character comparisons or `codeUnitAt` range checks. For single-character predicates, use `==`:
-
-```dart
-bool get isMinus => this == '-';
-bool get isPlus => this == '+';
-bool get isEquals => this == '=';
-// etc.
-```
-
-For character class predicates, use code unit ranges:
-
-```dart
-bool get isDigit {
-  final c = codeUnitAt(0);
-  return c >= 0x30 && c <= 0x39; // '0' to '9'
-}
-
-bool get isLetter {
-  final c = codeUnitAt(0);
-  return (c >= 0x41 && c <= 0x5A) || (c >= 0x61 && c <= 0x7A); // A-Z, a-z
-}
-
-bool get isWhitespace => this == ' ' || this == '\t' || this == '\n' || this == '\r';
-
-bool get isNewLine => this == '\n';
-```
-
-These are functionally equivalent (the input is always a single-character string from the scanner) and avoid all RegExp overhead.
-
-### Files to Modify
-
-- `lib/extensions/string_extensions.dart` -- replace all 27 RegExp predicates with direct comparisons
-
-### Priority
-
-**Medium** -- This is a pure performance improvement. It makes the lexer significantly faster but doesn't change behavior.
 
 ---
 

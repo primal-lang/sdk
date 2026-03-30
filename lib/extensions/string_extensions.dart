@@ -3,55 +3,56 @@ extension StringExtensions on String {
 
   bool get isLetter => RegExp(r'[a-zA-Z]').hasMatch(this);
 
-  bool get isWhitespace => RegExp(r'\s').hasMatch(this);
+  bool get isWhitespace =>
+      this == ' ' || this == '\t' || this == '\n' || this == '\r';
 
-  bool get isNewLine => RegExp(r'\n').hasMatch(this);
+  bool get isNewLine => this == '\n';
 
-  bool get isDoubleQuote => RegExp(r'"').hasMatch(this);
+  bool get isDoubleQuote => this == '"';
 
-  bool get isSingleQuote => RegExp(r"'").hasMatch(this);
+  bool get isSingleQuote => this == "'";
 
-  bool get isMinus => RegExp(r'-').hasMatch(this);
+  bool get isMinus => this == '-';
 
-  bool get isPlus => RegExp(r'\+').hasMatch(this);
+  bool get isPlus => this == '+';
 
-  bool get isEquals => RegExp(r'=').hasMatch(this);
+  bool get isEquals => this == '=';
 
-  bool get isGreater => RegExp(r'>').hasMatch(this);
+  bool get isGreater => this == '>';
 
-  bool get isLess => RegExp(r'<').hasMatch(this);
+  bool get isLess => this == '<';
 
-  bool get isPipe => RegExp(r'\|').hasMatch(this);
+  bool get isPipe => this == '|';
 
-  bool get isAmpersand => RegExp(r'&').hasMatch(this);
+  bool get isAmpersand => this == '&';
 
-  bool get isBang => RegExp(r'!').hasMatch(this);
+  bool get isBang => this == '!';
 
-  bool get isForwardSlash => RegExp(r'/').hasMatch(this);
+  bool get isForwardSlash => this == '/';
 
-  bool get isAsterisk => RegExp(r'\*').hasMatch(this);
+  bool get isAsterisk => this == '*';
 
-  bool get isPercent => RegExp(r'%').hasMatch(this);
+  bool get isPercent => this == '%';
 
-  bool get isUnderscore => RegExp(r'_').hasMatch(this);
+  bool get isUnderscore => this == '_';
 
-  bool get isDot => RegExp(r'\.').hasMatch(this);
+  bool get isDot => this == '.';
 
-  bool get isComma => RegExp(r',').hasMatch(this);
+  bool get isComma => this == ',';
 
-  bool get isColon => RegExp(r':').hasMatch(this);
+  bool get isColon => this == ':';
 
-  bool get isOpenParenthesis => RegExp(r'\(').hasMatch(this);
+  bool get isOpenParenthesis => this == '(';
 
-  bool get isCloseParenthesis => RegExp(r'\)').hasMatch(this);
+  bool get isCloseParenthesis => this == ')';
 
-  bool get isOpenBracket => RegExp(r'\[').hasMatch(this);
+  bool get isOpenBracket => this == '[';
 
-  bool get isCloseBracket => RegExp(r'\]').hasMatch(this);
+  bool get isCloseBracket => this == ']';
 
-  bool get isOpenBraces => RegExp(r'\{').hasMatch(this);
+  bool get isOpenBraces => this == '{';
 
-  bool get isCloseBraces => RegExp(r'\}').hasMatch(this);
+  bool get isCloseBraces => this == '}';
 
   bool get isBoolean => this == 'true' || this == 'false';
 
