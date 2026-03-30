@@ -2022,5 +2022,579 @@ pi = 3.14
         checkTokens(tokens, []);
       });
     });
+
+    // --- Edge cases: single-character delimiter tokens ---
+
+    group('Single-character delimiter tokens', () {
+      test('Adjacent parentheses', () {
+        final List<Token> tokens = getTokens('()');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Adjacent brackets', () {
+        final List<Token> tokens = getTokens('[]');
+        checkTokens(tokens, [
+          OpenBracketToken(
+            const Lexeme(
+              value: '[',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Adjacent braces', () {
+        final List<Token> tokens = getTokens('{}');
+        checkTokens(tokens, [
+          OpenBracesToken(
+            const Lexeme(
+              value: '{',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseBracesToken(
+            const Lexeme(
+              value: '}',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Nested parentheses', () {
+        final List<Token> tokens = getTokens('(())');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Mixed delimiters without whitespace', () {
+        final List<Token> tokens = getTokens('([{)]}');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenBracketToken(
+            const Lexeme(
+              value: '[',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          OpenBracesToken(
+            const Lexeme(
+              value: '{',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          CloseBracesToken(
+            const Lexeme(
+              value: '}',
+              location: Location(row: 1, column: 6),
+            ),
+          ),
+        ]);
+      });
+
+      test('Multiple commas', () {
+        final List<Token> tokens = getTokens(',,,');
+        checkTokens(tokens, [
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+        ]);
+      });
+
+      test('Multiple colons', () {
+        final List<Token> tokens = getTokens(':::');
+        checkTokens(tokens, [
+          ColonToken(
+            const Lexeme(
+              value: ':',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          ColonToken(
+            const Lexeme(
+              value: ':',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          ColonToken(
+            const Lexeme(
+              value: ':',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+        ]);
+      });
+
+      test('Open parenthesis followed by operator', () {
+        final List<Token> tokens = getTokens('(+');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          PlusToken(
+            const Lexeme(
+              value: '+',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Close parenthesis followed by operator', () {
+        final List<Token> tokens = getTokens(')+');
+        checkTokens(tokens, [
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          PlusToken(
+            const Lexeme(
+              value: '+',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Comma followed by close parenthesis', () {
+        final List<Token> tokens = getTokens(',)');
+        checkTokens(tokens, [
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Colon followed by close braces', () {
+        final List<Token> tokens = getTokens(':}');
+        checkTokens(tokens, [
+          ColonToken(
+            const Lexeme(
+              value: ':',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseBracesToken(
+            const Lexeme(
+              value: '}',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Open bracket followed by close bracket (empty list)', () {
+        final List<Token> tokens = getTokens('[]');
+        checkTokens(tokens, [
+          OpenBracketToken(
+            const Lexeme(
+              value: '[',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Single-char delimiters with numbers', () {
+        final List<Token> tokens = getTokens('(1,2,3)');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '1',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '2',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '3',
+              location: Location(row: 1, column: 6),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 7),
+            ),
+          ),
+        ]);
+      });
+
+      test('Map literal structure', () {
+        final List<Token> tokens = getTokens('{a:1}');
+        checkTokens(tokens, [
+          OpenBracesToken(
+            const Lexeme(
+              value: '{',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'a',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          ColonToken(
+            const Lexeme(
+              value: ':',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '1',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          CloseBracesToken(
+            const Lexeme(
+              value: '}',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+        ]);
+      });
+
+      test('List with nested list', () {
+        final List<Token> tokens = getTokens('[[]]');
+        checkTokens(tokens, [
+          OpenBracketToken(
+            const Lexeme(
+              value: '[',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenBracketToken(
+            const Lexeme(
+              value: '[',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Single-char delimiters at end of input', () {
+        final List<Token> tokens = getTokensDirect('x(');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Comma at end of input', () {
+        final List<Token> tokens = getTokensDirect('x,');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Colon at end of input', () {
+        final List<Token> tokens = getTokensDirect('x:');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          ColonToken(
+            const Lexeme(
+              value: ':',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('All single-char delimiters in sequence', () {
+        final List<Token> tokens = getTokens('()[]{},:');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          OpenBracketToken(
+            const Lexeme(
+              value: '[',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          OpenBracesToken(
+            const Lexeme(
+              value: '{',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          CloseBracesToken(
+            const Lexeme(
+              value: '}',
+              location: Location(row: 1, column: 6),
+            ),
+          ),
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 7),
+            ),
+          ),
+          ColonToken(
+            const Lexeme(
+              value: ':',
+              location: Location(row: 1, column: 8),
+            ),
+          ),
+        ]);
+      });
+
+      test('Delimiter followed by string', () {
+        final List<Token> tokens = getTokens('("hello")');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          StringToken(
+            const Lexeme(
+              value: 'hello',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 9),
+            ),
+          ),
+        ]);
+      });
+
+      test('Delimiter followed by unary minus', () {
+        final List<Token> tokens = getTokens('(-1)');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          MinusToken(
+            const Lexeme(
+              value: '-',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '1',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Delimiter followed by bang', () {
+        final List<Token> tokens = getTokens('(!true)');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          BangToken(
+            const Lexeme(
+              value: '!',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          BooleanToken(
+            const Lexeme(
+              value: 'true',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 7),
+            ),
+          ),
+        ]);
+      });
+    });
   });
 }
