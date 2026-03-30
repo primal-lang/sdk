@@ -9,7 +9,6 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 3. [No String Escape Sequences](#3-no-string-escape-sequences)
 4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
 5. [Single-Character Tokens Pay Unnecessary Lookahead Cost](#5-single-character-tokens-pay-unnecessary-lookahead-cost)
-6. [Operators Cannot Be Directly Adjacent to Unary Operators](#6-operators-cannot-be-directly-adjacent-to-unary-operators)
 
 ---
 
@@ -289,74 +288,5 @@ The tradeoff is that invalid sequences like `(@` would no longer be caught at th
 ### Priority
 
 **Low** -- This is an optimization that trades strictness for simplicity. The current approach is defensible.
-
-Update the file `docs/compiler/lexical.md` if necessary.
-
----
-
-## 6. Operators Cannot Be Directly Adjacent to Unary Operators
-
-### The Issue
-
-`isOperatorDelimiter` (`lib/extensions/string_extensions.dart:74-82`) defines what can legally follow an operator:
-
-```dart
-bool get isOperatorDelimiter =>
-    isWhitespace ||
-    isDigit ||
-    isLetter ||
-    isDoubleQuote ||
-    isSingleQuote ||
-    isOpenParenthesis ||
-    isOpenBracket ||
-    isOpenBraces;
-```
-
-Notably absent: `isMinus` and `isBang` (the two unary operators). This means:
-
-- `1+-2` **fails** -- PlusState sees `-`, which is not in `isOperatorDelimiter`, throws `InvalidCharacterError`
-- `1+!x` **fails** -- same reason
-- `!!x` **fails** -- BangState sees `!`, which is not in `isOperatorDelimiter`
-
-Users must write `1 + -2`, `1 + !x`, or `! !x` instead (or use parentheses: `1+(-2)`).
-
-In contrast, `isCommaDelimiter`, `isColonDelimiter`, and `isOpenParenthesisDelimiter` **do** include `isUnaryOperator`, so `f(-x)`, `f(a, -b)`, and `{x: -1}` all work without spaces.
-
-This is a **language design decision**, not a bug. Many languages (C, Java, JavaScript, Python) allow `1+-2`. Some (like Go) are stricter. The current behavior is consistent and documented in the delimiter predicates, but it is restrictive compared to most languages.
-
-### Proposed Fix (If Desired)
-
-Add `isUnaryOperator` to `isOperatorDelimiter`:
-
-```dart
-bool get isOperatorDelimiter =>
-    isWhitespace ||
-    isDigit ||
-    isLetter ||
-    isDoubleQuote ||
-    isSingleQuote ||
-    isOpenParenthesis ||
-    isOpenBracket ||
-    isOpenBraces ||
-    isUnaryOperator;  // <-- add this
-```
-
-This would allow `1+-2`, `1+!x`, and `!!x` to be lexed. The parser would then handle disambiguation (is the `-` in `1+-2` a binary minus or unary minus?). This is how most languages handle it -- the lexer just tokenizes, and the parser uses context to determine unary vs. binary.
-
-### Impact Analysis
-
-Adding `isUnaryOperator` to `isOperatorDelimiter` means that after any operator, `-` and `!` become legal next characters. This affects all 11 operator states: `MinusState`, `PlusState`, `EqualsState`, `GreaterState`, `LessState`, `PipeState`, `AmpersandState`, `BangState`, `ForwardSlashState`, `AsteriskState`, `PercentState`.
-
-The parser would need to handle expressions like `1 + -2` as `1 + (unary- 2)`. This may already work if the parser supports unary prefix operators -- but this needs verification.
-
-### Files to Modify
-
-- `lib/extensions/string_extensions.dart` -- add `isUnaryOperator` to `isOperatorDelimiter`
-- Parser files (verify the parser handles the resulting token sequences correctly)
-- `test/compiler/lexical_analyzer_test.dart` -- add tests for `1+-2`, `1+!x`, `!!x`
-
-### Priority
-
-**Low** -- This is a language design decision. The current behavior is consistent and documented; changing it affects the language semantics.
 
 Update the file `docs/compiler/lexical.md` if necessary.
