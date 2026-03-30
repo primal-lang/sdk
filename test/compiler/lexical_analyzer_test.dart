@@ -1709,6 +1709,81 @@ pi = 3.14
       expect(() => getTokens('}@'), throwsA(isA<InvalidCharacterError>()));
     });
 
+    test('Close bracket followed by colon', () {
+      final List<Token> tokens = getTokens('[0]:');
+      checkTokens(tokens, [
+        OpenBracketToken(
+          const Lexeme(
+            value: '[',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '0',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+        CloseBracketToken(
+          const Lexeme(
+            value: ']',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
+        ColonToken(
+          const Lexeme(
+            value: ':',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Close braces followed by colon', () {
+      final List<Token> tokens = getTokens('{}:');
+      checkTokens(tokens, [
+        OpenBracesToken(
+          const Lexeme(
+            value: '{',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        CloseBracesToken(
+          const Lexeme(
+            value: '}',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+        ColonToken(
+          const Lexeme(
+            value: ':',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
+      ]);
+    });
+
     // --- Edge cases: Lexeme toString ---
 
     test('Lexeme toString returns formatted string', () {

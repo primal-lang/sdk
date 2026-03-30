@@ -10,7 +10,6 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
 5. [Single-Character Tokens Pay Unnecessary Lookahead Cost](#5-single-character-tokens-pay-unnecessary-lookahead-cost)
 6. [Operators Cannot Be Directly Adjacent to Unary Operators](#6-operators-cannot-be-directly-adjacent-to-unary-operators)
-10. [Delimiter Predicate Inconsistencies](#10-delimiter-predicate-inconsistencies)
 
 ---
 
@@ -353,85 +352,3 @@ The parser would need to handle expressions like `1 + -2` as `1 + (unary- 2)`. T
 ### Priority
 
 **Low** -- This is a language design decision. The current behavior is consistent and documented; changing it affects the language semantics.
-
----
-
-## 10. Delimiter Predicate Inconsistencies
-
-### The Issue
-
-The 10 delimiter predicates in `lib/extensions/string_extensions.dart` are hand-written boolean combinations, each defining which character classes can legally follow a specific token type. Analysis reveals several asymmetries that appear unintentional:
-
-#### Inconsistency A: `isColon` missing from close bracket and close braces
-
-| Predicate                     | Includes `isColon`? |
-| ----------------------------- | ------------------- |
-| `isCloseParenthesisDelimiter` | Yes (line 120)      |
-| `isCloseBracketDelimiter`     | **No**              |
-| `isCloseBracesDelimiter`      | **No**              |
-
-This means `)` can be followed by `:` but `]` and `}` cannot. In a language with type annotations or ternary-like syntax, `]:` or `}:` could be valid sequences. The asymmetry suggests `isColon` was added to `isCloseParenthesisDelimiter` but missed in the other two.
-
-#### Inconsistency B: `isOpenParenthesis` missing from close braces
-
-| Predicate                     | Includes `isOpenParenthesis`? |
-| ----------------------------- | ----------------------------- |
-| `isCloseParenthesisDelimiter` | Yes (line 122)                |
-| `isCloseBracketDelimiter`     | Yes (line 144)                |
-| `isCloseBracesDelimiter`      | **No**                        |
-
-This means `)(` and `](` are valid, but `}(` is not. If Primal allows expressions like `{...}(args)` (e.g., calling a lambda returned from a map/block), this would fail.
-
-#### Full Comparison Matrix
-
-Comparing the three close-delimiter predicates side by side:
-
-| Character class    | `)`   | `]`   | `}`   |
-| ------------------ | ----- | ----- | ----- |
-| isWhitespace       | Y     | Y     | Y     |
-| isComma            | Y     | Y     | Y     |
-| isColon            | **Y** | **N** | **N** |
-| isLetter           | Y     | Y     | Y     |
-| isOpenParenthesis  | Y     | Y     | **N** |
-| isCloseParenthesis | Y     | Y     | Y     |
-| isOpenBracket      | Y     | Y     | Y     |
-| isCloseBracket     | Y     | Y     | Y     |
-| isCloseBraces      | N     | Y     | Y     |
-| isBinaryOperator   | Y     | Y     | Y     |
-
-### Proposed Fix
-
-Add the missing character classes to restore symmetry:
-
-1. Add `isColon` to `isCloseBracketDelimiter` and `isCloseBracesDelimiter`
-2. Add `isOpenParenthesis` to `isCloseBracesDelimiter`
-
-Before making these changes, verify with the language specification / test suite that these sequences should indeed be valid. If `]:` and `}(` are intentionally disallowed, the asymmetry is by design and should be documented.
-
-### Files to Modify
-
-- `lib/extensions/string_extensions.dart` -- add missing predicates to `isCloseBracketDelimiter` and `isCloseBracesDelimiter`
-- `test/compiler/lexical_analyzer_test.dart` -- add tests for `]:`, `}:`, `}(`
-
-### Priority
-
-**Low** -- These may be intentional restrictions. Needs language-level decision before changing.
-
----
-
-## Implementation Order
-
-If all issues are to be addressed, the recommended order is:
-
-| Order | Issue                         | Rationale                                          |
-| ----- | ----------------------------- | -------------------------------------------------- |
-| 1     | #3 Escape sequences           | New functionality, explicitly requested            |
-| 2     | #4 Unterminated errors        | Directly related to string handling changes in #3  |
-| 3     | #2 Regex performance          | Standalone, no dependencies, high impact           |
-| 4     | #1 End-of-input flush         | Small, standalone                                  |
-| 5     | #9 ResultState single token   | Small mechanical refactor                          |
-| 6     | #10 Delimiter inconsistencies | Requires language-level decisions                  |
-| 7     | #5 Single-char lookahead      | Requires decision on strictness tradeoff           |
-| 8     | #6 Operator adjacency         | Requires language-level decisions + parser changes |
-| 9     | #7 Lexeme O(n^2)              | Low priority, only matters for very long tokens    |
-| 10    | #8 Token boilerplate          | Large refactor, low value                          |

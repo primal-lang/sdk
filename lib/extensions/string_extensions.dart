@@ -142,6 +142,7 @@ extension StringExtensions on String {
   bool get isCloseBracketDelimiter =>
       isWhitespace ||
       isComma ||
+      isColon ||
       isLetter ||
       isOpenParenthesis ||
       isCloseParenthesis ||
@@ -165,6 +166,7 @@ extension StringExtensions on String {
   bool get isCloseBracesDelimiter =>
       isWhitespace ||
       isComma ||
+      isColon ||
       isLetter ||
       isCloseParenthesis ||
       isOpenBracket ||
