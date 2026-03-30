@@ -10,7 +10,6 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
 5. [Single-Character Tokens Pay Unnecessary Lookahead Cost](#5-single-character-tokens-pay-unnecessary-lookahead-cost)
 6. [Operators Cannot Be Directly Adjacent to Unary Operators](#6-operators-cannot-be-directly-adjacent-to-unary-operators)
-8. [Token Class Boilerplate](#8-token-class-boilerplate)
 9. [ResultState Always Wraps a List but Only Ever Contains One Token](#9-resultstate-always-wraps-a-list-but-only-ever-contains-one-token)
 10. [Delimiter Predicate Inconsistencies](#10-delimiter-predicate-inconsistencies)
 
@@ -355,79 +354,6 @@ The parser would need to handle expressions like `1 + -2` as `1 + (unary- 2)`. T
 ### Priority
 
 **Low** -- This is a language design decision. The current behavior is consistent and documented; changing it affects the language semantics.
-
----
-
-## 8. Token Class Boilerplate
-
-### The Issue
-
-`lib/compiler/lexical/token.dart` contains ~25 token subclasses, each with an identical constructor pattern:
-
-```dart
-class MinusToken extends Token<String> {
-  MinusToken(Lexeme lexeme)
-    : super(
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-}
-
-class PlusToken extends Token<String> {
-  PlusToken(Lexeme lexeme)
-    : super(
-        value: lexeme.value,
-        location: lexeme.location,
-      );
-}
-// ... 20+ more identical patterns
-```
-
-Every `Token<String>` subclass has the exact same constructor body. The only thing that differs is the class name. This is 230+ lines of highly repetitive code.
-
-### Why It Exists
-
-In Dart, the idiomatic way to do type discrimination in `switch`/`is` checks is via subclasses. The parser uses `is MinusToken`, `is PlusToken`, etc. to match tokens. This requires distinct types, hence the subclasses.
-
-### Proposed Fix (If Desired)
-
-**Option A: Shared mixin for the constructor**
-
-```dart
-mixin LexemeToken on Token<String> {
-  // Can't easily share the constructor in Dart, but could reduce the body
-}
-```
-
-Unfortunately, Dart doesn't allow mixins to define constructors, so this doesn't help much.
-
-**Option B: Factory + enum**
-
-```dart
-enum TokenType {
-  minus, plus, asterisk, forwardSlash, percent, pipe, ampersand,
-  bang, equal, notEqual, greaterThan, greaterEqualThan, lessThan, lessEqualThan,
-  assign, comma, colon, openParenthesis, closeParenthesis,
-  openBracket, closeBracket, openBraces, closeBraces,
-  identifier, string, number, boolean, ifKeyword, elseKeyword,
-}
-
-class Token extends Localized {
-  final TokenType type;
-  final dynamic value;
-  // ...
-}
-```
-
-This replaces 25 classes with 1 class + 1 enum. Pattern matching changes from `is MinusToken` to `token.type == TokenType.minus`. This is a significant refactor that touches the parser and all downstream code.
-
-**Option C: Keep as-is**
-
-The boilerplate is verbose but clear, type-safe, and idiomatic Dart. Adding a new token type is mechanical (copy, rename, done). The compiler catches type errors. This is arguably the right tradeoff for a hand-rolled compiler.
-
-### Priority
-
-**Low** -- This is an aesthetic/maintenance concern. The current approach is idiomatic and type-safe. A refactor would be large and touch many files.
 
 ---
 
