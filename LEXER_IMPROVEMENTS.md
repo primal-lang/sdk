@@ -10,7 +10,6 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
 5. [Single-Character Tokens Pay Unnecessary Lookahead Cost](#5-single-character-tokens-pay-unnecessary-lookahead-cost)
 6. [Operators Cannot Be Directly Adjacent to Unary Operators](#6-operators-cannot-be-directly-adjacent-to-unary-operators)
-9. [ResultState Always Wraps a List but Only Ever Contains One Token](#9-resultstate-always-wraps-a-list-but-only-ever-contains-one-token)
 10. [Delimiter Predicate Inconsistencies](#10-delimiter-predicate-inconsistencies)
 
 ---
@@ -354,67 +353,6 @@ The parser would need to handle expressions like `1 + -2` as `1 + (unary- 2)`. T
 ### Priority
 
 **Low** -- This is a language design decision. The current behavior is consistent and documented; changing it affects the language semantics.
-
----
-
-## 9. ResultState Always Wraps a List but Only Ever Contains One Token
-
-### The Issue
-
-`ResultState` (`lib/compiler/lexical/lexical_analyzer.dart:518-520`) is typed as:
-
-```dart
-class ResultState extends State<void, List<Token>> {
-  const ResultState(super.iterator, super.output);
-}
-```
-
-Every usage creates a single-element list:
-
-```dart
-return ResultState(iterator, [MinusToken(output)]);
-return ResultState(iterator, [NumberToken(output)]);
-// etc. -- always exactly one token in the list
-```
-
-And the main loop always uses `addAll`:
-
-```dart
-result.addAll(state.output);  // always adding a 1-element list
-```
-
-The `List<Token>` wrapper adds allocation overhead (one extra list per token) and obscures the fact that states always produce exactly one token.
-
-### Proposed Fix
-
-Change `ResultState` to carry a single `Token`:
-
-```dart
-class ResultState extends State<void, Token> {
-  const ResultState(super.iterator, super.output);
-}
-```
-
-Update the main loop:
-
-```dart
-if (state is ResultState) {
-  result.add(state.output);
-  state = InitState(iterator);
-}
-```
-
-Update all ~30 call sites from `ResultState(iterator, [SomeToken(output)])` to `ResultState(iterator, SomeToken(output))`.
-
-This is a straightforward mechanical refactor with no behavioral change.
-
-### Files to Modify
-
-- `lib/compiler/lexical/lexical_analyzer.dart` -- change `ResultState` type, update main loop, update all ~30 `ResultState(...)` calls
-
-### Priority
-
-**Low** -- Minor cleanup. No behavioral change, small performance improvement (fewer list allocations).
 
 ---
 
