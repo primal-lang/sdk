@@ -1,5 +1,6 @@
 import 'package:primal/compiler/platform/base/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
+import 'package:primal/compiler/platform/console/platform_console_base.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 
 class Console {
@@ -7,26 +8,34 @@ class Console {
   static const String red = '\x1b[31m';
   static const yellow = '\x1b[93m';
 
-  void prompt(Function(String) handler) {
-    while (true) {
-      try {
-        PlatformInterface().console.outWrite('> ');
-        final String input = PlatformInterface().console.readLine();
+  final PlatformConsoleBase _platformConsole;
 
-        if (input.isNotEmpty) {
-          handler(input);
-        }
-      } catch (e) {
-        error(e);
-      }
+  Console([PlatformConsoleBase? platformConsole])
+    : _platformConsole = platformConsole ?? PlatformInterface().console;
+
+  void prompt(void Function(String) handler) {
+    while (true) {
+      promptOnce(handler);
     }
   }
 
-  void print(String message) => PlatformInterface().console.outWriteLn(message);
+  void promptOnce(void Function(String) handler) {
+    try {
+      _platformConsole.outWrite('> ');
+      final String input = _platformConsole.readLine();
+
+      if (input.isNotEmpty) {
+        handler(input);
+      }
+    } catch (e) {
+      error(e);
+    }
+  }
+
+  void print(String message) => _platformConsole.outWriteLn(message);
 
   void warning(GenericWarning warning) =>
-      PlatformInterface().console.errorWriteLn('$yellow$warning$reset');
+      _platformConsole.errorWriteLn('$yellow$warning$reset');
 
-  void error(Object error) =>
-      PlatformInterface().console.errorWriteLn('$red$error$reset');
+  void error(Object error) => _platformConsole.errorWriteLn('$red$error$reset');
 }

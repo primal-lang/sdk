@@ -6,17 +6,25 @@ import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
 
-void main(List<String> args) {
-  final Console console = Console();
+void main(List<String> args) => runCli(args);
+
+void runCli(
+  List<String> args, {
+  Console? console,
+  Compiler compiler = const Compiler(),
+  String Function(String filePath)? readFile,
+}) {
+  final Console currentConsole = console ?? Console();
+  final String Function(String filePath) sourceReader =
+      readFile ?? FileReader.read;
 
   try {
-    const Compiler compiler = Compiler();
     final IntermediateCode intermediateCode = args.isNotEmpty
-        ? compiler.compile(FileReader.read(args[0]))
+        ? compiler.compile(sourceReader(args[0]))
         : IntermediateCode.empty();
 
     for (final GenericWarning warning in intermediateCode.warnings) {
-      console.warning(warning);
+      currentConsole.warning(warning);
     }
 
     final Runtime runtime = Runtime(intermediateCode);
@@ -25,14 +33,14 @@ void main(List<String> args) {
       final String result = runtime.executeMain(
         (args.length > 1) ? args.sublist(1) : [],
       );
-      console.print(result);
+      currentConsole.print(result);
     } else {
-      console.prompt((input) {
+      currentConsole.prompt((input) {
         final Expression expression = compiler.expression(input);
-        console.print(runtime.evaluate(expression));
+        currentConsole.print(runtime.evaluate(expression));
       });
     }
   } catch (e) {
-    console.error(e);
+    currentConsole.error(e);
   }
 }
