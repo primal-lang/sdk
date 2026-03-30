@@ -2,6 +2,7 @@
 @TestOn('vm')
 library;
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:primal/compiler/errors/runtime_error.dart';
@@ -10,6 +11,21 @@ import 'package:primal/compiler/platform/directory/platform_directory_web.dart';
 import 'package:primal/compiler/platform/environment/platform_environment_web.dart';
 import 'package:primal/compiler/platform/file/platform_file_web.dart';
 import 'package:test/test.dart';
+
+List<String> capturePrints(void Function() action) {
+  final List<String> prints = <String>[];
+
+  runZoned(
+    action,
+    zoneSpecification: ZoneSpecification(
+      print: (_, __, ___, String line) {
+        prints.add(line);
+      },
+    ),
+  );
+
+  return prints;
+}
 
 void main() {
   group('PlatformConsoleWeb', () {
@@ -30,20 +46,34 @@ void main() {
       );
     });
 
-    test('outWrite calls print without error', () {
-      expect(() => console.outWrite('test'), returnsNormally);
+    test('outWrite delegates to print', () {
+      final List<String> prints = capturePrints(() => console.outWrite('test'));
+
+      expect(prints, equals(['test']));
     });
 
-    test('outWriteLn calls print without error', () {
-      expect(() => console.outWriteLn('test'), returnsNormally);
+    test('outWriteLn delegates to print', () {
+      final List<String> prints = capturePrints(
+        () => console.outWriteLn('test'),
+      );
+
+      expect(prints, equals(['test']));
     });
 
-    test('errorWrite calls print without error', () {
-      expect(() => console.errorWrite('test'), returnsNormally);
+    test('errorWrite delegates to print', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWrite('test'),
+      );
+
+      expect(prints, equals(['test']));
     });
 
-    test('errorWriteLn calls print without error', () {
-      expect(() => console.errorWriteLn('test'), returnsNormally);
+    test('errorWriteLn delegates to print', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWriteLn('test'),
+      );
+
+      expect(prints, equals(['test']));
     });
   });
 

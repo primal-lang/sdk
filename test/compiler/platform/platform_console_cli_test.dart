@@ -5,43 +5,71 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:primal/compiler/platform/console/platform_console_cli.dart';
 import 'package:test/test.dart';
 
 void main() {
-  late PlatformConsoleCli console;
-
-  setUp(() {
-    console = PlatformConsoleCli();
-  });
-
   group('PlatformConsoleCli', () {
-    test('outWrite writes to stdout', () {
-      // Smoke test: just verify it doesn't throw
-      expect(() => console.outWrite('test'), returnsNormally);
+    Future<ProcessResult> runConsoleWrite(String mode, [String content = '']) {
+      return Process.run(Platform.resolvedExecutable, [
+        'run',
+        'test/helpers/platform_console_write_runner.dart',
+        mode,
+        content,
+      ]);
+    }
+
+    test('outWrite writes to stdout', () async {
+      final ProcessResult result = await runConsoleWrite('outWrite', 'test');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('test'));
+      expect(result.stderr.toString(), isEmpty);
     });
 
-    test('outWriteLn writes line to stdout', () {
-      expect(() => console.outWriteLn('test'), returnsNormally);
+    test('outWriteLn writes line to stdout', () async {
+      final ProcessResult result = await runConsoleWrite('outWriteLn', 'test');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('test\n'));
+      expect(result.stderr.toString(), isEmpty);
     });
 
-    test('errorWrite writes to stderr', () {
-      expect(() => console.errorWrite('test'), returnsNormally);
+    test('errorWrite writes to stderr', () async {
+      final ProcessResult result = await runConsoleWrite('errorWrite', 'test');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('test'));
     });
 
-    test('errorWriteLn writes line to stderr', () {
-      expect(() => console.errorWriteLn('test'), returnsNormally);
-    });
-
-    test('outWrite handles empty string', () {
-      expect(() => console.outWrite(''), returnsNormally);
-    });
-
-    test('errorWriteLn handles special characters', () {
-      expect(
-        () => console.errorWriteLn('unicode: \u00e9\u00f1'),
-        returnsNormally,
+    test('errorWriteLn writes line to stderr', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'errorWriteLn',
+        'test',
       );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('test\n'));
+    });
+
+    test('outWrite handles empty string', () async {
+      final ProcessResult result = await runConsoleWrite('outWrite', '');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('errorWriteLn handles special characters', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'errorWriteLn',
+        'unicode: \u00e9\u00f1',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('unicode: \u00e9\u00f1\n'));
     });
 
     test('readLine reads from stdin', () async {
