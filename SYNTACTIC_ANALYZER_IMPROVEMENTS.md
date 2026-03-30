@@ -129,6 +129,8 @@ New precedence (lowest to highest):
 8. `call` (function application, indexing)
 9. `primary` (literals, identifiers, grouping)
 
+Update the file `docs/compiler/syntactic.md` if necessary.
+
 ---
 
 ## Issue 2: AND and OR Have Same Precedence
@@ -233,6 +235,8 @@ New precedence for logical operators:
 
 Expression `a | b & c` now correctly parses as `a | (b & c)`.
 
+Update the file `docs/compiler/syntactic.md` if necessary.
+
 ---
 
 ## Issue 3: Chained Indexing Doesn't Work
@@ -324,6 +328,8 @@ The following expressions now work:
 - `a[0][1][2]` - arbitrary depth indexing
 - `matrix[i][j]` - 2D array access
 
+Update the file `docs/compiler/syntactic.md` if necessary.
+
 ---
 
 ## Issue 4: Mixed Call/Index Chains Don't Work
@@ -367,6 +373,8 @@ All these expressions now work:
 - `f()[0]()` - call, index, call
 - `getMatrix()[i][j]` - call then double index
 - `callbacks[0]()` - index then call
+
+Update the file `docs/compiler/syntactic.md` if necessary.
 
 ---
 
@@ -434,6 +442,8 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
 Both syntaxes now work:
 - `f = 1` - nullary function (no parentheses)
 - `f() = 1` - zero-parameter function (explicit empty parens)
+
+Update the file `docs/compiler/syntactic.md` if necessary.
 
 ---
 
@@ -535,6 +545,8 @@ These expressions now parse correctly:
 - `[1, 2, 3,]` - list with trailing comma
 - `{a: 1, b: 2,}` - map with trailing comma
 - `f(x, y,)` - function call with trailing comma
+
+Update the file `docs/compiler/syntactic.md` if necessary.
 
 ---
 
@@ -644,6 +656,8 @@ Using a list of pairs is simpler and defers duplicate key detection to semantic 
 - Map literals preserve order and can have duplicate keys at parse time
 - Duplicate key detection moves to semantic analysis (where it belongs)
 - No need to implement equality on all Expression classes
+
+Update the file `docs/compiler/syntactic.md` if necessary.
 
 ---
 

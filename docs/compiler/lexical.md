@@ -14,7 +14,11 @@ The `analyze()` method drives the state machine:
 4. When a state returns `ResultState`, its tokens are collected into the result list and the machine resets to `InitState`.
 5. The loop ends when the iterator is exhausted.
 
-`ResultState` carries a `List<Token>` (in practice always a single token). The reset-to-`InitState` cycle ensures every token is produced independently.
+`ResultState` carries a single `Token`. The reset-to-`InitState` cycle ensures every token is produced independently.
+
+## End-of-Input Handling
+
+When the iterator is exhausted, the main loop checks if the machine is in a state that can produce a valid token without further input. If the final state is `IntegerState`, `DecimalState`, or `IdentifierState`, the accumulated lexeme is converted to the appropriate token (applying keyword detection for identifiers). This allows tokens at the very end of the source to be recognized without a trailing delimiter.
 
 ## Lookahead Pattern
 
@@ -53,7 +57,7 @@ Additional internal states not reachable from `InitState`:
 | `SingleLineCommentState`       | `ForwardSlashState`          | Consumes until newline                         |
 | `StartMultiLineCommentState`   | `ForwardSlashState`          | Consumes until `*` is found                    |
 | `ClosingMultiLineCommentState` | `StartMultiLineCommentState` | Checks for `/` to close the comment            |
-| `ResultState`                  | Any token-producing state    | Carries completed tokens back to the main loop |
+| `ResultState`                  | Any token-producing state    | Carries the completed token back to the main loop |
 
 Multi-character tokens are accumulated via a `Lexeme` object that tracks the starting location and collects characters with `.add(Character)`, returning a new immutable `Lexeme` each time.
 

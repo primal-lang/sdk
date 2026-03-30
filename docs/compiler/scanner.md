@@ -10,7 +10,7 @@ The scanner is the first stage of the compiler pipeline. It converts a raw input
 
 ## Splitting Strategy
 
-The scanner splits the input by `\n` into rows, then iterates rune-by-rune within each row using Unicode rune iteration. Each rune is wrapped in a `Character(value, location)`.
+The scanner first normalizes line endings by converting `\r\n` and `\r` to `\n`, then splits into rows. If the final row is empty (trailing newline in source), it is removed before processing. The scanner then iterates rune-by-rune within each row using Unicode rune iteration. Each rune is wrapped in a `Character(value, location)`.
 
 ## Location Tracking
 

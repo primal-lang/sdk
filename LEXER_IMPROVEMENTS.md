@@ -172,6 +172,8 @@ The StringToken's value contains an actual newline character, not the two-charac
 
 **High** -- This is new functionality the user explicitly wants.
 
+Update the file `docs/compiler/lexical.md` if necessary.
+
 ---
 
 ## 4. Unterminated Strings and Comments Give Poor Errors
@@ -242,6 +244,8 @@ test('Unterminated double quoted string', () {
 
 **Medium** -- This is a significant UX improvement for error diagnostics. Unterminated strings are a common mistake.
 
+Update the file `docs/compiler/lexical.md` if necessary.
+
 ---
 
 ## 5. Single-Character Tokens Pay Unnecessary Lookahead Cost
@@ -285,6 +289,8 @@ The tradeoff is that invalid sequences like `(@` would no longer be caught at th
 ### Priority
 
 **Low** -- This is an optimization that trades strictness for simplicity. The current approach is defensible.
+
+Update the file `docs/compiler/lexical.md` if necessary.
 
 ---
 
@@ -352,3 +358,5 @@ The parser would need to handle expressions like `1 + -2` as `1 + (unary- 2)`. T
 ### Priority
 
 **Low** -- This is a language design decision. The current behavior is consistent and documented; changing it affects the language semantics.
+
+Update the file `docs/compiler/lexical.md` if necessary.
