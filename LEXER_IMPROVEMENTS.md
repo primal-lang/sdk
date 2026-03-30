@@ -10,9 +10,9 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
 5. [Single-Character Tokens Pay Unnecessary Lookahead Cost](#5-single-character-tokens-pay-unnecessary-lookahead-cost)
 6. [Operators Cannot Be Directly Adjacent to Unary Operators](#6-operators-cannot-be-directly-adjacent-to-unary-operators)
-7. [Token Class Boilerplate](#8-token-class-boilerplate)
-8. [ResultState Always Wraps a List but Only Ever Contains One Token](#9-resultstate-always-wraps-a-list-but-only-ever-contains-one-token)
-9. [Delimiter Predicate Inconsistencies](#10-delimiter-predicate-inconsistencies)
+8. [Token Class Boilerplate](#8-token-class-boilerplate)
+9. [ResultState Always Wraps a List but Only Ever Contains One Token](#9-resultstate-always-wraps-a-list-but-only-ever-contains-one-token)
+10. [Delimiter Predicate Inconsistencies](#10-delimiter-predicate-inconsistencies)
 
 ---
 
