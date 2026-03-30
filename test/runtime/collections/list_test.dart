@@ -541,14 +541,40 @@ main = foo([2])
       expect(runtime.executeMain, throwsA(isA<RangeError>()));
     });
 
-    test('list.first throws StateError on empty list', () {
+    test('list.first throws EmptyCollectionError for empty list', () {
       final Runtime runtime = getRuntime('main = list.first([])');
-      expect(runtime.executeMain, throwsA(isA<StateError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<EmptyCollectionError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('empty'),
+              contains('list'),
+              contains('list.first'),
+            ),
+          ),
+        ),
+      );
     });
 
-    test('list.last throws StateError on empty list', () {
+    test('list.last throws EmptyCollectionError for empty list', () {
       final Runtime runtime = getRuntime('main = list.last([])');
-      expect(runtime.executeMain, throwsA(isA<StateError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<EmptyCollectionError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('empty'),
+              contains('list'),
+              contains('list.last'),
+            ),
+          ),
+        ),
+      );
     });
 
     test(

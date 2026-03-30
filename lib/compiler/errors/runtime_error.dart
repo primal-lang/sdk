@@ -65,3 +65,12 @@ class UnimplementedFunctionWebError extends RuntimeError {
   const UnimplementedFunctionWebError(String function)
     : super('Function "$function" is not implemented on the web platform');
 }
+
+class EmptyCollectionError extends RuntimeError {
+  EmptyCollectionError({
+    required String function,
+    required String collectionType,
+  }) : super(
+         'Cannot get element from empty $collectionType in function "$function"',
+       );
+}

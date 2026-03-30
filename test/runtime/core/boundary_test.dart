@@ -1,6 +1,7 @@
 @Tags(['runtime'])
 library;
 
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
@@ -10,12 +11,12 @@ void main() {
   group('Empty Collection Operations', () {
     test('list.first empty throws', () {
       final Runtime runtime = getRuntime('main = list.first([])');
-      expect(runtime.executeMain, throwsA(isA<StateError>()));
+      expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
     test('list.last empty throws', () {
       final Runtime runtime = getRuntime('main = list.last([])');
-      expect(runtime.executeMain, throwsA(isA<StateError>()));
+      expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
     test('list.init empty returns empty', () {
@@ -25,12 +26,12 @@ void main() {
 
     test('str.first empty throws', () {
       final Runtime runtime = getRuntime('main = str.first("")');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
     test('str.last empty throws', () {
       final Runtime runtime = getRuntime('main = str.last("")');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
     test('str.init empty returns empty', () {

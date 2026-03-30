@@ -447,5 +447,41 @@ void main() {
         );
       },
     );
+
+    test('str.first throws EmptyCollectionError for empty string', () {
+      final Runtime runtime = getRuntime('main = str.first("")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<EmptyCollectionError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('empty'),
+              contains('string'),
+              contains('str.first'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('str.last throws EmptyCollectionError for empty string', () {
+      final Runtime runtime = getRuntime('main = str.last("")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<EmptyCollectionError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('empty'),
+              contains('string'),
+              contains('str.last'),
+            ),
+          ),
+        ),
+      );
+    });
   });
 }

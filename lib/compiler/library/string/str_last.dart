@@ -31,6 +31,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
+      if (a.value.isEmpty) {
+        throw EmptyCollectionError(function: name, collectionType: 'string');
+      }
       return StringNode(a.value[a.value.length - 1]);
     } else {
       throw InvalidArgumentTypesError(

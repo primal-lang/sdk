@@ -31,6 +31,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is ListNode) {
+      if (a.value.isEmpty) {
+        throw EmptyCollectionError(function: name, collectionType: 'list');
+      }
       return a.value.first;
     } else {
       throw InvalidArgumentTypesError(
