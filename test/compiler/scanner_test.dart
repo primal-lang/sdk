@@ -115,6 +115,16 @@ void main() {
       expect(result[2].location.column, equals(3));
     });
 
+    test('Grapheme clusters are single characters', () {
+      final List<Character> result = const Scanner('a👨‍👩‍👧b').analyze();
+      expect(result[0].value, equals('a'));
+      expect(result[0].location.column, equals(1));
+      expect(result[1].value, equals('👨‍👩‍👧'));
+      expect(result[1].location.column, equals(2));
+      expect(result[2].value, equals('b'));
+      expect(result[2].location.column, equals(3));
+    });
+
     test('Each row gets a trailing newline character', () {
       final List<Character> result = const Scanner('ab\ncd').analyze();
       // Row 1: 'a', 'b', '\n' (trailing)

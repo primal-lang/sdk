@@ -1,3 +1,4 @@
+import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
@@ -34,17 +35,18 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
     if ((a is StringNode) && (b is NumberNode)) {
       final int count = b.value.toInt();
+      final Characters chars = a.value.characters;
       if (count < 0) {
         throw NegativeIndexError(function: name, index: count);
       }
-      if (count > a.value.length) {
+      if (count > chars.length) {
         throw IndexOutOfBoundsError(
           function: name,
           index: count,
-          length: a.value.length,
+          length: chars.length,
         );
       }
-      return StringNode(a.value.substring(count, a.value.length));
+      return StringNode(chars.skip(count).toString());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

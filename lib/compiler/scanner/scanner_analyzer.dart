@@ -1,3 +1,4 @@
+import 'package:characters/characters.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/scanner/character.dart';
@@ -22,9 +23,7 @@ class Scanner extends Analyzer<String, List<Character>> {
         continue;
       }
 
-      final List<String> columns = rows[i].runes
-          .map(String.fromCharCode)
-          .toList();
+      final List<String> columns = rows[i].characters.toList();
 
       for (int j = 0; j < columns.length; j++) {
         result.add(

@@ -1,3 +1,4 @@
+import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
@@ -33,6 +34,11 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is StringNode) && (b is StringNode)) {
+      if (b.value.isEmpty) {
+        return ListNode(
+          a.value.characters.map(StringNode.new).toList(),
+        );
+      }
       return ListNode(
         a.value.split(b.value).map(StringNode.new).toList(),
       );

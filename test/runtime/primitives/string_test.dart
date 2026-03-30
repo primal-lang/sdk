@@ -294,6 +294,60 @@ void main() {
       final Runtime runtime = getRuntime('main = str.compare("monkey", "cat")');
       checkResult(runtime, 1);
     });
+
+    test('str.length counts graphemes', () {
+      final Runtime runtime = getRuntime('main = str.length("👨‍👩‍👧")');
+      checkResult(runtime, 1);
+    });
+
+    test('str.at with grapheme', () {
+      final Runtime runtime = getRuntime('main = str.at("a👨‍👩‍👧b", 1)');
+      checkResult(runtime, '"👨‍👩‍👧"');
+    });
+
+    test('str.first with grapheme', () {
+      final Runtime runtime = getRuntime('main = str.first("👨‍👩‍👧abc")');
+      checkResult(runtime, '"👨‍👩‍👧"');
+    });
+
+    test('str.last with grapheme', () {
+      final Runtime runtime = getRuntime('main = str.last("abc👨‍👩‍👧")');
+      checkResult(runtime, '"👨‍👩‍👧"');
+    });
+
+    test('str.reverse preserves graphemes', () {
+      final Runtime runtime = getRuntime('main = str.reverse("a👨‍👩‍👧b")');
+      checkResult(runtime, '"b👨‍👩‍👧a"');
+    });
+
+    test('str.take with grapheme', () {
+      final Runtime runtime = getRuntime('main = str.take("a👨‍👩‍👧b", 2)');
+      checkResult(runtime, '"a👨‍👩‍👧"');
+    });
+
+    test('str.drop with grapheme', () {
+      final Runtime runtime = getRuntime('main = str.drop("a👨‍👩‍👧b", 1)');
+      checkResult(runtime, '"👨‍👩‍👧b"');
+    });
+
+    test('str.substring with grapheme', () {
+      final Runtime runtime = getRuntime(
+        'main = str.substring("a👨‍👩‍👧b", 1, 2)',
+      );
+      checkResult(runtime, '"👨‍👩‍👧"');
+    });
+
+    test('str.indexOf with grapheme', () {
+      final Runtime runtime = getRuntime(
+        'main = str.indexOf("a👨‍👩‍👧b", "b")',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('str.split with empty delimiter preserves graphemes', () {
+      final Runtime runtime = getRuntime('main = str.split("a👨‍👩‍👧b", "")');
+      checkResult(runtime, ['"a"', '"👨‍👩‍👧"', '"b"']);
+    });
   });
 
   group('String Edge Cases', () {

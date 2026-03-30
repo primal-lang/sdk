@@ -1,3 +1,4 @@
+import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
@@ -34,7 +35,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       if (a.value.isEmpty) {
         throw EmptyCollectionError(function: name, collectionType: 'string');
       }
-      return StringNode(a.value[0]);
+      return StringNode(a.value.characters.first);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

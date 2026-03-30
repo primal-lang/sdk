@@ -9,6 +9,7 @@ environment:
 dependencies:
   path: ^1.9.1
   crypto: ^3.0.7
+  characters: ^1.4.1
 
 dev_dependencies:
   test: ^1.31.0

@@ -1,3 +1,4 @@
+import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
@@ -31,7 +32,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      return StringNode(a.value.split('').reversed.toList().join(''));
+      return StringNode(a.value.characters.toList().reversed.join());
     } else {
       throw InvalidArgumentTypesError(
         function: name,
