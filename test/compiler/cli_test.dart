@@ -3,100 +3,85 @@
 library;
 
 import 'dart:io';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
+import '../helpers/temp_helpers.dart';
 
 void main() {
   group('CLI', () {
+    late Directory tempDir;
+
+    setUp(() {
+      tempDir = createTempTestDirectory('primal_cli_test_');
+    });
+
+    File writeProgram(String name, String source) {
+      final File file = File(path.join(tempDir.path, name));
+      file.parent.createSync(recursive: true);
+      file.writeAsStringSync(source);
+
+      return file;
+    }
+
+    Future<ProcessResult> runCli(List<String> args) {
+      return Process.run(
+        Platform.resolvedExecutable,
+        ['run', 'lib/main/main_cli.dart', ...args],
+        environment: {
+          'HOME': tempDir.path,
+          'XDG_CONFIG_HOME': tempDir.path,
+        },
+      );
+    }
+
     test('executes a file and returns result', () async {
-      final result = await Process.run('dart', [
-        'run',
-        'lib/main/main_cli.dart',
-        'example/factorial.prm',
-      ]);
+      final ProcessResult result = await runCli(['example/factorial.prm']);
 
       expect(result.exitCode, equals(0));
       expect(result.stdout.toString().trim(), isNotEmpty);
     });
 
     test('returns exit code 0 for valid program', () async {
-      final tmpFile = File('.test_cli_tmp.prm');
-      tmpFile.writeAsStringSync('main = 42');
+      final File tmpFile = writeProgram('main.prm', 'main = 42');
+      final ProcessResult result = await runCli([tmpFile.path]);
 
-      try {
-        final result = await Process.run('dart', [
-          'run',
-          'lib/main/main_cli.dart',
-          tmpFile.path,
-        ]);
-
-        expect(result.exitCode, equals(0));
-        expect(result.stdout.toString().trim(), equals('42'));
-      } finally {
-        tmpFile.deleteSync();
-      }
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString().trim(), equals('42'));
     });
 
     test('passes arguments to main function', () async {
-      final tmpFile = File('.test_cli_args.prm');
-      tmpFile.writeAsStringSync('main(x) = x');
+      final File tmpFile = writeProgram('args.prm', 'main(x) = x');
+      final ProcessResult result = await runCli([tmpFile.path, 'hello']);
 
-      try {
-        final result = await Process.run('dart', [
-          'run',
-          'lib/main/main_cli.dart',
-          tmpFile.path,
-          'hello',
-        ]);
-
-        expect(result.exitCode, equals(0));
-        expect(result.stdout.toString().trim(), equals('"hello"'));
-      } finally {
-        tmpFile.deleteSync();
-      }
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString().trim(), equals('"hello"'));
     });
 
     test('reports compilation error on stderr', () async {
-      final tmpFile = File('.test_cli_err.prm');
-      tmpFile.writeAsStringSync('main = undefined_function(1)');
+      final File tmpFile = writeProgram(
+        'compile_error.prm',
+        'main = undefined_function(1)',
+      );
+      final ProcessResult result = await runCli([tmpFile.path]);
 
-      try {
-        final result = await Process.run('dart', [
-          'run',
-          'lib/main/main_cli.dart',
-          tmpFile.path,
-        ]);
-
-        expect(result.stderr.toString(), contains('Compilation error'));
-      } finally {
-        tmpFile.deleteSync();
-      }
+      expect(result.stderr.toString(), contains('Compilation error'));
     });
 
     test('reports warnings on stderr for unused parameters', () async {
-      final tmpFile = File('.test_cli_warn.prm');
-      tmpFile.writeAsStringSync('f(x, y) = x\nmain = f(1, 2)');
+      final File tmpFile = writeProgram(
+        'warning.prm',
+        'f(x, y) = x\nmain = f(1, 2)',
+      );
+      final ProcessResult result = await runCli([tmpFile.path]);
 
-      try {
-        final result = await Process.run('dart', [
-          'run',
-          'lib/main/main_cli.dart',
-          tmpFile.path,
-        ]);
-
-        expect(result.exitCode, equals(0));
-        expect(result.stderr.toString(), contains('Warning'));
-        expect(result.stdout.toString().trim(), equals('1'));
-      } finally {
-        tmpFile.deleteSync();
-      }
+      expect(result.exitCode, equals(0));
+      expect(result.stderr.toString(), contains('Warning'));
+      expect(result.stdout.toString().trim(), equals('1'));
     });
 
     test('reports error for nonexistent file', () async {
-      final result = await Process.run('dart', [
-        'run',
-        'lib/main/main_cli.dart',
-        'nonexistent_file.prm',
-      ]);
+      final String missingFile = path.join(tempDir.path, 'missing.prm');
+      final ProcessResult result = await runCli([missingFile]);
 
       expect(result.stderr.toString(), isNotEmpty);
     });

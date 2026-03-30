@@ -3,126 +3,187 @@
 library;
 
 import 'dart:io';
+import 'package:path/path.dart' as path;
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';
-import '../../helpers/resource_helpers.dart';
+import '../../helpers/temp_helpers.dart';
 
 void main() {
   group('Directory', () {
+    late Directory tempDir;
+    late Directory existingDirectory;
+    late File childFile;
+    late Directory childDirectory;
+
+    setUp(() {
+      tempDir = createTempTestDirectory('primal_directory_test_');
+      existingDirectory = Directory(path.join(tempDir.path, 'source'));
+      existingDirectory.createSync(recursive: true);
+
+      childFile = File(path.join(existingDirectory.path, 'file1.txt'));
+      childFile.writeAsStringSync('Hello, world!');
+
+      childDirectory = Directory(path.join(existingDirectory.path, 'nested'));
+      childDirectory.createSync();
+    });
+
     test('directory.fromPath', () {
       final Runtime runtime = getRuntime(
-        'main = directory.fromPath("test/resources/files")',
+        'main = directory.fromPath(${primalString(existingDirectory.path)})',
       );
-      checkResult(runtime, '"$resourcesPath/files"');
+      checkResult(runtime, primalString(existingDirectory.absolute.path));
     });
 
     test('directory.exists returns true for existing directory', () {
       final Runtime runtime = getRuntime(
-        'main = directory.exists(directory.fromPath("test/resources/files"))',
+        'main = directory.exists(directory.fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(runtime, true);
     });
 
     test('directory.exists returns false for non-existing directory', () {
+      final Directory missingDirectory = Directory(
+        path.join(tempDir.path, 'missing'),
+      );
       final Runtime runtime = getRuntime(
-        'main = directory.exists(directory.fromPath("test/resources/filesX"))',
+        'main = directory.exists(directory.fromPath(${primalString(missingDirectory.path)}))',
       );
       checkResult(runtime, false);
     });
 
     test('directory.create', () {
-      final String id = DateTime.now().day.toString();
-      final Runtime runtime = getRuntime(
-        'main = directory.create(directory.fromPath("test/resources/files/temp$id"))',
+      final Directory createdDirectory = Directory(
+        path.join(tempDir.path, 'created', 'child'),
       );
-      final dynamic result = runtime.executeMain();
-      expect(result, 'true');
-      final bool fileExists = Directory(
-        '$resourcesPath/files/temp$id',
-      ).existsSync();
-      expect(true, fileExists);
+      final Runtime runtime = getRuntime(
+        'main = directory.create(directory.fromPath(${primalString(createdDirectory.path)}))',
+      );
+      checkResult(runtime, true);
+      expect(createdDirectory.existsSync(), isTrue);
     });
 
     test('directory.delete returns true for existing directory', () {
-      final String id = DateTime.now().day.toString();
+      final Directory deletableDirectory = Directory(
+        path.join(tempDir.path, 'delete-me'),
+      );
+      deletableDirectory.createSync();
       final Runtime runtime = getRuntime(
-        'main = directory.delete(directory.fromPath("test/resources/files/temp$id"))',
+        'main = directory.delete(directory.fromPath(${primalString(deletableDirectory.path)}))',
       );
       checkResult(runtime, true);
+      expect(deletableDirectory.existsSync(), isFalse);
     });
 
     test('directory.delete returns false for non-existing directory', () {
+      final Directory missingDirectory = Directory(
+        path.join(tempDir.path, 'missing'),
+      );
       final Runtime runtime = getRuntime(
-        'main = directory.delete(directory.fromPath("test/resources/files/tempX"))',
+        'main = directory.delete(directory.fromPath(${primalString(missingDirectory.path)}))',
       );
       checkResult(runtime, false);
     });
 
     test('directory.copy', () {
-      final Runtime runtime = getRuntime('''
-directory1 = directory.fromPath("test/resources/files/temp")
-directory2 = directory.fromPath("test/resources/files/temp_new")
-main = directory.copy(directory1(), directory2())
-''');
+      final Directory destinationDirectory = Directory(
+        path.join(tempDir.path, 'copy'),
+      );
+      final Runtime runtime = getRuntime(
+        'main = directory.copy(directory.fromPath(${primalString(existingDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+      );
       checkResult(runtime, true);
+      expect(
+        File(path.join(destinationDirectory.path, 'file1.txt')).existsSync(),
+        isTrue,
+      );
+      expect(
+        Directory(path.join(destinationDirectory.path, 'nested')).existsSync(),
+        isTrue,
+      );
     });
 
     test('directory.move', () {
-      final Runtime runtime = getRuntime('''
-directory1 = directory.fromPath("test/resources/files/temp_new")
-directory2 = directory.fromPath("test/resources/files/temp_extra")
-main = directory.move(directory1(), directory2())
-''');
+      final Directory sourceDirectory = Directory(
+        path.join(tempDir.path, 'move-source'),
+      );
+      sourceDirectory.createSync();
+      File(path.join(sourceDirectory.path, 'file.txt')).writeAsStringSync(
+        'move',
+      );
+
+      final Directory destinationDirectory = Directory(
+        path.join(tempDir.path, 'move-target'),
+      );
+      final Runtime runtime = getRuntime(
+        'main = directory.move(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+      );
       checkResult(runtime, true);
+      expect(sourceDirectory.existsSync(), isFalse);
+      expect(destinationDirectory.existsSync(), isTrue);
     });
 
     test('directory.rename', () {
+      final Directory sourceDirectory = Directory(
+        path.join(tempDir.path, 'rename-me'),
+      );
+      sourceDirectory.createSync();
       final Runtime runtime = getRuntime(
-        'main = directory.rename(directory.fromPath("test/resources/files/temp_extra"), "temp_new")',
+        'main = directory.rename(directory.fromPath(${primalString(sourceDirectory.path)}), ${primalString('renamed')})',
       );
       checkResult(runtime, true);
+      expect(
+        Directory(path.join(tempDir.path, 'renamed')).existsSync(),
+        isTrue,
+      );
     });
 
     test('directory.path', () {
       final Runtime runtime = getRuntime(
-        'main = directory.path(directory.fromPath("test/resources/files/temp"))',
+        'main = directory.path(directory.fromPath(${primalString(existingDirectory.path)}))',
       );
-      checkResult(runtime, '"$resourcesPath/files/temp"');
+      checkResult(runtime, primalString(existingDirectory.absolute.path));
     });
 
     test('directory.name', () {
       final Runtime runtime = getRuntime(
-        'main = directory.name(directory.fromPath("test/resources/files/temp"))',
+        'main = directory.name(directory.fromPath(${primalString(existingDirectory.path)}))',
       );
-      checkResult(runtime, '"temp"');
+      checkResult(runtime, primalString('source'));
     });
 
     test('directory.parent', () {
       final Runtime runtime = getRuntime(
-        'main = directory.parent(directory.fromPath("test/resources/files/temp"))',
+        'main = directory.parent(directory.fromPath(${primalString(existingDirectory.path)}))',
       );
-      checkResult(runtime, '"$resourcesPath/files"');
+      checkResult(
+        runtime,
+        primalString(existingDirectory.parent.absolute.path),
+      );
     });
 
-    test('directory.list', () {
-      final Runtime runtime = getRuntime(
-        'main = directory.list(directory.fromPath("test/resources/files/temp"))',
-      );
-      checkResult(runtime, [
-        '"$resourcesPath/files/temp/file_temp.txt"',
-        '"$resourcesPath/files/temp/file3.txt"',
-      ]);
-    });
+    test(
+      'directory.list returns files and directories without order assumptions',
+      () {
+        final Runtime runtime = getRuntime(
+          'main = directory.list(directory.fromPath(${primalString(existingDirectory.path)}))',
+        );
+        final List<dynamic> children =
+            runtime.mainExpression([]).toNode().evaluate().native()
+                as List<dynamic>;
+        final List<String> paths = children
+            .map((child) => (child as FileSystemEntity).absolute.path)
+            .toList();
 
-    test('directory.list includes subdirectories', () {
-      final Runtime runtime = getRuntime(
-        'main = list.length(directory.list(directory.fromPath("test/resources/files")))',
-      );
-      final String result = runtime.executeMain();
-      final int count = int.parse(result);
-      expect(count, greaterThanOrEqualTo(2));
-    });
+        expect(
+          paths,
+          unorderedEquals([
+            childFile.absolute.path,
+            childDirectory.absolute.path,
+          ]),
+        );
+      },
+    );
   });
 }
