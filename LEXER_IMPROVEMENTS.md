@@ -10,10 +10,9 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
 5. [Single-Character Tokens Pay Unnecessary Lookahead Cost](#5-single-character-tokens-pay-unnecessary-lookahead-cost)
 6. [Operators Cannot Be Directly Adjacent to Unary Operators](#6-operators-cannot-be-directly-adjacent-to-unary-operators)
-7. [O(n^2) String Building in Lexeme](#7-on2-string-building-in-lexeme)
-8. [Token Class Boilerplate](#8-token-class-boilerplate)
-9. [ResultState Always Wraps a List but Only Ever Contains One Token](#9-resultstate-always-wraps-a-list-but-only-ever-contains-one-token)
-10. [Delimiter Predicate Inconsistencies](#10-delimiter-predicate-inconsistencies)
+7. [Token Class Boilerplate](#8-token-class-boilerplate)
+8. [ResultState Always Wraps a List but Only Ever Contains One Token](#9-resultstate-always-wraps-a-list-but-only-ever-contains-one-token)
+9. [Delimiter Predicate Inconsistencies](#10-delimiter-predicate-inconsistencies)
 
 ---
 
@@ -356,65 +355,6 @@ The parser would need to handle expressions like `1 + -2` as `1 + (unary- 2)`. T
 ### Priority
 
 **Low** -- This is a language design decision. The current behavior is consistent and documented; changing it affects the language semantics.
-
----
-
-## 7. O(n^2) String Building in Lexeme
-
-### The Issue
-
-`Lexeme.add()` (`lib/compiler/lexical/lexical_analyzer.dart:530-533`) creates a new string via concatenation on every character:
-
-```dart
-Lexeme add(Character character) => Lexeme(
-  value: value + character.value,
-  location: location,
-);
-```
-
-For a token of length `n`, this performs `n` string concatenations. Each concatenation copies the existing string plus the new character, resulting in total work proportional to `1 + 2 + 3 + ... + n = O(n^2)`.
-
-For typical tokens (identifiers, keywords, operators), `n` is small (1-20 characters) and this is not a practical concern. For long strings (e.g., a 10,000-character string literal), this becomes `O(10^8)` character copies.
-
-### The Tradeoff
-
-The current design maintains **immutability**: each `Lexeme.add()` returns a new `Lexeme`, and no state is mutated. This aligns with the `const` constructor pattern used throughout the state machine. Switching to a `StringBuffer` would require:
-
-- Making `Lexeme` mutable (or wrapping a mutable buffer)
-- Losing `const` constructors
-- Changing the state machine's functional style to a more imperative one
-
-### Proposed Fix (If Desired)
-
-Replace `String value` in `Lexeme` with a `StringBuffer`:
-
-```dart
-class Lexeme extends Localized {
-  final StringBuffer _buffer;
-
-  Lexeme({required String value, required super.location})
-    : _buffer = StringBuffer(value);
-
-  String get value => _buffer.toString();
-
-  Lexeme add(Character character) {
-    _buffer.write(character.value);
-    return this;  // mutates in place instead of creating new Lexeme
-  }
-}
-```
-
-This makes `add()` O(1) amortized, bringing total token construction from O(n^2) to O(n). The tradeoff is that `Lexeme` is no longer immutable, and `const` constructors are lost.
-
-A middle ground: keep the current approach for the general case (most tokens are short) and only optimize if profiling shows string tokenization is a bottleneck.
-
-### Files to Modify
-
-- `lib/compiler/lexical/lexical_analyzer.dart` -- modify `Lexeme` class
-
-### Priority
-
-**Low** -- Not a practical issue for typical source files. Only relevant for very long string literals.
 
 ---
 
