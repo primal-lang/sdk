@@ -536,9 +536,39 @@ main = foo([2])
   });
 
   group('List Error Cases', () {
-    test('list.at throws RangeError for out-of-bounds index', () {
+    test('list.at throws IndexOutOfBoundsError for out-of-bounds index', () {
       final Runtime runtime = getRuntime('main = list.at([1, 2, 3], 10)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('10'),
+              contains('length: 3'),
+              contains('list.at'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.at throws NegativeIndexError for negative index', () {
+      final Runtime runtime = getRuntime('main = list.at([1, 2, 3], -1)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.at'),
+            ),
+          ),
+        ),
+      );
     });
 
     test('list.first throws EmptyCollectionError for empty list', () {

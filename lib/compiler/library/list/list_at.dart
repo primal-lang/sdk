@@ -33,7 +33,18 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is ListNode) && (b is NumberNode)) {
-      return a.value[b.value.toInt()];
+      final int index = b.value.toInt();
+      if (index < 0) {
+        throw NegativeIndexError(function: name, index: index);
+      }
+      if (index >= a.value.length) {
+        throw IndexOutOfBoundsError(
+          function: name,
+          index: index,
+          length: a.value.length,
+        );
+      }
+      return a.value[index];
     } else {
       throw InvalidArgumentTypesError(
         function: name,

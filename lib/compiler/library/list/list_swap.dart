@@ -35,16 +35,38 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node c = arguments[2].evaluate();
 
     if ((a is ListNode) && (b is NumberNode) && (c is NumberNode)) {
+      final int indexB = b.value.toInt();
+      final int indexC = c.value.toInt();
+      if (indexB < 0) {
+        throw NegativeIndexError(function: name, index: indexB);
+      }
+      if (indexC < 0) {
+        throw NegativeIndexError(function: name, index: indexC);
+      }
+      if (indexB >= a.value.length) {
+        throw IndexOutOfBoundsError(
+          function: name,
+          index: indexB,
+          length: a.value.length,
+        );
+      }
+      if (indexC >= a.value.length) {
+        throw IndexOutOfBoundsError(
+          function: name,
+          index: indexC,
+          length: a.value.length,
+        );
+      }
       final List<Node> result = [];
-      final Node valueAtB = a.value[b.value.toInt()];
-      final Node valueAtC = a.value[c.value.toInt()];
+      final Node valueAtB = a.value[indexB];
+      final Node valueAtC = a.value[indexC];
 
       for (int i = 0; i < a.value.length; i++) {
         final Node element = a.value[i];
 
-        if (i == b.value.toInt()) {
+        if (i == indexB) {
           result.add(valueAtC);
-        } else if (i == c.value.toInt()) {
+        } else if (i == indexC) {
           result.add(valueAtB);
         } else {
           result.add(element);

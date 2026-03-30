@@ -74,3 +74,22 @@ class EmptyCollectionError extends RuntimeError {
          'Cannot get element from empty $collectionType in function "$function"',
        );
 }
+
+class IndexOutOfBoundsError extends RuntimeError {
+  IndexOutOfBoundsError({
+    required String function,
+    required int index,
+    required int length,
+  }) : super(
+         'Index $index is out of bounds for $function (length: $length)',
+       );
+}
+
+class NegativeIndexError extends RuntimeError {
+  NegativeIndexError({
+    required String function,
+    required int index,
+  }) : super(
+         'Negative index $index is not allowed for $function',
+       );
+}

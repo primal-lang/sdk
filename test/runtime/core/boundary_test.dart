@@ -41,63 +41,63 @@ void main() {
 
     test('list.at empty throws', () {
       final Runtime runtime = getRuntime('main = list.at([], 0)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('str.at empty throws', () {
       final Runtime runtime = getRuntime('main = str.at("", 0)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
   });
 
   group('Out of Bounds', () {
     test('list indexing out of bounds', () {
       final Runtime runtime = getRuntime('main = [1, 2, 3][5]');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('string indexing out of bounds', () {
       final Runtime runtime = getRuntime('main = "Hello"[10]');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('list.at out of bounds', () {
       final Runtime runtime = getRuntime('main = list.at([1, 2], 5)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('str.at out of bounds', () {
       final Runtime runtime = getRuntime('main = str.at("Hi", 5)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('list.removeAt out of bounds', () {
       final Runtime runtime = getRuntime(
         'main = list.removeAt([1, 2], 5)',
       );
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('list.swap out of bounds', () {
       final Runtime runtime = getRuntime('main = list.swap([1], 0, 5)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('list.sublist out of bounds', () {
       final Runtime runtime = getRuntime('main = list.sublist([1, 2], 0, 10)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('str.substring out of bounds', () {
       final Runtime runtime = getRuntime(
         'main = str.substring("Hi", 0, 10)',
       );
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('list negative index', () {
       final Runtime runtime = getRuntime('main = list.at([1, 2, 3], -1)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
   });
 

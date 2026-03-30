@@ -343,14 +343,40 @@ void main() {
       checkResult(runtime, 0);
     });
 
-    test('str.take beyond length throws', () {
+    test('str.take throws IndexOutOfBoundsError when count exceeds length', () {
       final Runtime runtime = getRuntime('main = str.take("Hi", 10)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('10'),
+              contains('length: 2'),
+              contains('str.take'),
+            ),
+          ),
+        ),
+      );
     });
 
-    test('str.drop beyond length throws', () {
+    test('str.drop throws IndexOutOfBoundsError when count exceeds length', () {
       final Runtime runtime = getRuntime('main = str.drop("Hi", 10)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('10'),
+              contains('length: 2'),
+              contains('str.drop'),
+            ),
+          ),
+        ),
+      );
     });
   });
 
@@ -397,14 +423,39 @@ void main() {
   });
 
   group('String Error Cases', () {
-    test('str.at throws RangeError for out-of-bounds index', () {
+    test('str.at throws IndexOutOfBoundsError for out-of-bounds index', () {
       final Runtime runtime = getRuntime('main = str.at("Hello", 10)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('10'),
+              contains('length: 5'),
+              contains('str.at'),
+            ),
+          ),
+        ),
+      );
     });
 
-    test('str.at throws RangeError for negative index', () {
+    test('str.at throws NegativeIndexError for negative index', () {
       final Runtime runtime = getRuntime('main = str.at("Hello", -1)');
-      expect(runtime.executeMain, throwsA(isA<RangeError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('str.at'),
+            ),
+          ),
+        ),
+      );
     });
 
     test(
