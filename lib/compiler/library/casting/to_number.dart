@@ -31,7 +31,11 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      return NumberNode(num.parse(a.value));
+      try {
+        return NumberNode(num.parse(a.value));
+      } on FormatException {
+        throw ParseError(function: name, input: a.value, targetType: 'number');
+      }
     } else if (a is NumberNode) {
       return a;
     } else {

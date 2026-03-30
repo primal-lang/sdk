@@ -32,7 +32,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      final dynamic json = jsonDecode(a.value);
+      final dynamic json;
+      try {
+        json = jsonDecode(a.value);
+      } on FormatException catch (e) {
+        throw JsonParseError(input: a.value, details: e.message);
+      }
 
       return getValue(json);
     } else {

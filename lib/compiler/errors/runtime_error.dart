@@ -110,3 +110,25 @@ class InvalidNumericOperationError extends RuntimeError {
          'Invalid numeric operation in "$function": $reason',
        );
 }
+
+class ParseError extends RuntimeError {
+  ParseError({
+    required String function,
+    required String input,
+    required String targetType,
+  }) : super(
+         'Cannot parse "$input" as $targetType in "$function"',
+       );
+}
+
+class JsonParseError extends RuntimeError {
+  JsonParseError({
+    required String input,
+    required String details,
+  }) : super(
+         'Invalid JSON: $details. Input: "${_truncate(input)}"',
+       );
+
+  static String _truncate(String s) =>
+      s.length > 50 ? '${s.substring(0, 50)}...' : s;
+}

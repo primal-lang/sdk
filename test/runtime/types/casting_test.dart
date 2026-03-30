@@ -258,14 +258,75 @@ void main() {
   });
 
   group('Casting Edge Cases', () {
-    test('to.number non-numeric string throws', () {
+    test('to.number throws ParseError for non-numeric string', () {
       final Runtime runtime = getRuntime('main = to.number("hello")');
-      expect(runtime.executeMain, throwsA(isA<FormatException>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('hello'),
+              contains('number'),
+              contains('to.number'),
+            ),
+          ),
+        ),
+      );
     });
 
-    test('to.integer non-numeric string throws', () {
+    test('to.integer throws ParseError for non-numeric string', () {
       final Runtime runtime = getRuntime('main = to.integer("hello")');
-      expect(runtime.executeMain, throwsA(isA<FormatException>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('hello'),
+              contains('integer'),
+              contains('to.integer'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('to.integer throws ParseError for decimal string', () {
+      final Runtime runtime = getRuntime('main = to.integer("3.14")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('3.14'),
+              contains('integer'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('to.decimal throws ParseError for non-numeric string', () {
+      final Runtime runtime = getRuntime('main = to.decimal("hello")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('hello'),
+              contains('decimal'),
+              contains('to.decimal'),
+            ),
+          ),
+        ),
+      );
     });
 
     test('to.list with number throws', () {
@@ -281,11 +342,6 @@ void main() {
     test('to.boolean with map throws', () {
       final Runtime runtime = getRuntime('main = to.boolean({})');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
-    });
-
-    test('to.decimal non-numeric string throws', () {
-      final Runtime runtime = getRuntime('main = to.decimal("hello")');
-      expect(runtime.executeMain, throwsA(isA<FormatException>()));
     });
 
     test('to.list with list', () {

@@ -77,9 +77,21 @@ void main() {
   });
 
   group('JSON Edge Cases', () {
-    test('json.decode invalid string throws', () {
+    test('json.decode throws JsonParseError for invalid JSON string', () {
       final Runtime runtime = getRuntime('main = json.decode("not json")');
-      expect(runtime.executeMain, throwsA(isA<FormatException>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<JsonParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('Invalid JSON'),
+              contains('not json'),
+            ),
+          ),
+        ),
+      );
     });
 
     test('json.decode empty object', () {
@@ -117,19 +129,31 @@ void main() {
   });
 
   group('JSON Error Cases', () {
-    test('json.decode throws FormatException for invalid JSON string', () {
+    test('json.decode throws JsonParseError for malformed object', () {
       final Runtime runtime = getRuntime('main = json.decode("{invalid}")');
       expect(
         runtime.executeMain,
-        throwsA(isA<FormatException>()),
+        throwsA(
+          isA<JsonParseError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Invalid JSON'),
+          ),
+        ),
       );
     });
 
-    test('json.decode throws FormatException for incomplete JSON', () {
-      final Runtime runtime = getRuntime('main = json.decode("[1, 2,")');
+    test('json.decode throws JsonParseError for incomplete array', () {
+      final Runtime runtime = getRuntime(r'main = json.decode("[1, 2,")');
       expect(
         runtime.executeMain,
-        throwsA(isA<FormatException>()),
+        throwsA(
+          isA<JsonParseError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Invalid JSON'),
+          ),
+        ),
       );
     });
 

@@ -153,19 +153,55 @@ void main() {
   });
 
   group('Type Conversion Errors', () {
-    test('to.number with non-numeric string throws FormatException', () {
+    test('to.number throws ParseError for invalid input', () {
       final Runtime runtime = getRuntime('main = to.number("abc")');
-      expect(runtime.executeMain, throwsA(isA<FormatException>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('abc'),
+              contains('number'),
+            ),
+          ),
+        ),
+      );
     });
 
-    test('to.integer with non-numeric string throws FormatException', () {
+    test('to.integer throws ParseError for invalid input', () {
       final Runtime runtime = getRuntime('main = to.integer("abc")');
-      expect(runtime.executeMain, throwsA(isA<FormatException>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('abc'),
+              contains('integer'),
+            ),
+          ),
+        ),
+      );
     });
 
-    test('to.decimal with non-numeric string throws FormatException', () {
+    test('to.decimal throws ParseError for invalid input', () {
       final Runtime runtime = getRuntime('main = to.decimal("abc")');
-      expect(runtime.executeMain, throwsA(isA<FormatException>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('abc'),
+              contains('decimal'),
+            ),
+          ),
+        ),
+      );
     });
   });
 
