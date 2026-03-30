@@ -25,17 +25,17 @@ States:
 
 The expression parser is a **recursive descent parser** with the following precedence levels (lowest to highest):
 
-| Precedence | Rule           | Operators / Forms                                  |
-| ---------- | -------------- | -------------------------------------------------- |
-| 1          | `ifExpression` | `if (cond) expr else expr`                         |
-| 2          | `equality`     | `==`, `!=`                                         |
-| 3          | `comparison`   | `>`, `>=`, `<`, `<=`                               |
-| 4          | `logic`        | `\|` (or), `&` (and)                               |
-| 5          | `term`         | `+`, `-`                                           |
-| 6          | `factor`       | `*`, `/`, `%`                                      |
-| 7          | `unary`        | `!`, `-` (negation)                                |
-| 8          | `call`         | function application `f(args)`, indexing `a[i]`    |
-| 9          | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}` |
+| Precedence | Rule           | Operators / Forms                                                        |
+| ---------- | -------------- | ------------------------------------------------------------------------ |
+| 1          | `ifExpression` | `if (cond) expr else expr`                                               |
+| 2          | `equality`     | `==`, `!=`                                                               |
+| 3          | `comparison`   | `>`, `>=`, `<`, `<=`                                                     |
+| 4          | `logic`        | `\|` (or), `&` (and)                                                     |
+| 5          | `term`         | `+`, `-`                                                                 |
+| 6          | `factor`       | `*`, `/`, `%`                                                            |
+| 7          | `unary`        | `!`, `-` (negation)                                                      |
+| 8          | `call`         | function application `f(args)`, chained calls `f(x)(y)`, indexing `a[i]` |
+| 9          | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}`                       |
 
 ## Expression Tree
 
@@ -45,8 +45,39 @@ All expressions extend `Expression` (which has a `Location`):
   - `BooleanExpression`, `NumberExpression`, `StringExpression`
   - `ListExpression` (contains `List<Expression>`)
   - `MapExpression` (contains `Map<Expression, Expression>`)
-- `IdentifierExpression` - a named reference (variable or function)
+- `IdentifierExpression` (extends `LiteralExpression<String>`) - a named reference (variable or function)
 - `CallExpression` - function application (callee expression + argument list)
   - Also used to represent binary and unary operators via factory constructors (`fromBinaryOperation`, `fromUnaryOperation`, `fromIf`)
 
 Operators and `if` expressions are desugared into `CallExpression` nodes at parse time, unifying all computation as function application.
+
+## Desugaring
+
+The parser desugars several syntactic forms into `CallExpression` nodes:
+
+| Syntax            | Desugared Form     |
+| ----------------- | ------------------ |
+| `a + b`           | `+(a, b)`          |
+| `a == b`          | `==(a, b)`         |
+| `!x`              | `!(x)`             |
+| `-x`              | `-(0, x)`          |
+| `a[i]`            | `element.at(a, i)` |
+| `if (c) t else f` | `if(c, t, f)`      |
+
+Note: Unary negation is converted to binary subtraction from zero.
+
+## Bridge to Runtime
+
+Each `Expression` subclass implements a `toNode()` method that converts the parse tree into runtime nodes:
+
+| Expression             | Runtime Node       |
+| ---------------------- | ------------------ |
+| `BooleanExpression`    | `BooleanNode`      |
+| `NumberExpression`     | `NumberNode`       |
+| `StringExpression`     | `StringNode`       |
+| `ListExpression`       | `ListNode`         |
+| `MapExpression`        | `MapNode`          |
+| `IdentifierExpression` | `FreeVariableNode` |
+| `CallExpression`       | `CallNode`         |
+
+This conversion happens during semantic analysis when building the runtime representation.
