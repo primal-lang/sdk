@@ -416,10 +416,44 @@ void main() {
   });
 
   group('Numeric Edge Cases', () {
-    test('num.sqrt negative throws', () {
+    test('num.sqrt throws InvalidNumericOperationError for negative input', () {
       final Runtime runtime = getRuntime('main = num.sqrt(-1)');
-      expect(runtime.executeMain, throwsA(isA<UnsupportedError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidNumericOperationError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('num.sqrt'),
+              contains('square root'),
+              contains('negative'),
+              contains('-1'),
+            ),
+          ),
+        ),
+      );
     });
+
+    test(
+      'num.sqrt throws InvalidNumericOperationError for negative decimal',
+      () {
+        final Runtime runtime = getRuntime('main = num.sqrt(-4.5)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('num.sqrt'),
+                contains('negative'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
 
     test('num.round negative half', () {
       final Runtime runtime = getRuntime('main = num.round(-0.5)');

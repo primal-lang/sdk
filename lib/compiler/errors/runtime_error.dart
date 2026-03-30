@@ -101,3 +101,12 @@ class DivisionByZeroError extends RuntimeError {
          'Division by zero is not allowed in "$function"',
        );
 }
+
+class InvalidNumericOperationError extends RuntimeError {
+  InvalidNumericOperationError({
+    required String function,
+    required String reason,
+  }) : super(
+         'Invalid numeric operation in "$function": $reason',
+       );
+}

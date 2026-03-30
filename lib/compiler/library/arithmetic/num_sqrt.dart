@@ -32,6 +32,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is NumberNode) {
+      if (a.value < 0) {
+        throw InvalidNumericOperationError(
+          function: name,
+          reason: 'cannot compute square root of negative number ${a.value}',
+        );
+      }
       final num value = sqrt(a.value);
       final num result = (value == value.toInt()) ? value.toInt() : value;
       return NumberNode(result);
