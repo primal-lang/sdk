@@ -1,6 +1,7 @@
 @Tags(['runtime'])
 library;
 
+import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
@@ -132,6 +133,88 @@ void main() {
         loadFile('web_samples/to_roman_numerals.prm'),
       );
       checkResult(runtime, '"MCMLXXXIV"');
+    });
+  });
+
+  group('Sample Error Cases', () {
+    test('factorial with negative input throws CustomError', () {
+      final Runtime runtime = getRuntime(
+        'factorial(n) = if (n < 0) error.throw(0, "Cannot calculate factorial of a negative number") else if (n == 0) 1 else n * factorial(n - 1)\nmain = factorial(-1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('negative'),
+          ),
+        ),
+      );
+    });
+
+    test('fibonacci with negative input throws CustomError', () {
+      final Runtime runtime = getRuntime(
+        'fibonacci(n) = if (n < 0) error.throw(-1, "Cannot calculate Fibonacci with a negative number") else if (n == 0) [] else fibonacci(n - 1) + fibonacci.helper(n)\nfibonacci.helper(n) = if ((n == 1) | (n == 2)) 1 else fibonacci.helper(n - 1) + fibonacci.helper(n - 2)\nmain = fibonacci(-1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('negative'),
+          ),
+        ),
+      );
+    });
+
+    test('findMax with empty list throws CustomError', () {
+      final Runtime runtime = getRuntime(
+        'findMax(list) = if (list.isEmpty(list)) error.throw(-1, "Cannot find max number in an empty list") else list.reduce(list.rest(list), list.first(list), num.max)\nmain = findMax([])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('empty'),
+          ),
+        ),
+      );
+    });
+
+    test('power with negative exponent throws CustomError', () {
+      final Runtime runtime = getRuntime(
+        'power(base, exp) = if (exp < 0) error.throw(0, "Cannot calculate power with a negative exponent") else if (exp == 0) 1 else base * power(base, exp - 1)\nmain = power(2, -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('negative'),
+          ),
+        ),
+      );
+    });
+
+    test('sumOfDigits with negative input throws CustomError', () {
+      final Runtime runtime = getRuntime(
+        'sumOfDigits(n) = if (n < 0) error.throw(0, "Cannot calculate sum of digits of a negative number") else if (n == 0) 0 else n % 10 + sumOfDigits(to.integer(n / 10))\nmain = sumOfDigits(-5)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('negative'),
+          ),
+        ),
+      );
     });
   });
 }

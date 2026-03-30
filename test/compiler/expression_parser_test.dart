@@ -1,6 +1,7 @@
 @Tags(['compiler'])
 library;
 
+import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/expression_parser.dart';
@@ -356,6 +357,78 @@ void main() {
     test('Expression 63', () {
       final Expression expression = getExpression('a > b & c < d');
       expect(expression.toString(), '<(>(a, &(b, c)), d)');
+    });
+  });
+
+  group('Expression parser errors', () {
+    test('missing closing parenthesis throws', () {
+      expect(
+        () => getExpression('(1 + 2'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('missing closing bracket throws', () {
+      expect(
+        () => getExpression('[1, 2'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('missing closing brace throws', () {
+      expect(
+        () => getExpression('{"a": 1'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('missing map colon throws ExpectedTokenError', () {
+      expect(
+        () => getExpression('{"a" 1}'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('incomplete binary expression throws', () {
+      expect(
+        () => getExpression('1 +'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('missing if condition closing paren throws', () {
+      expect(
+        () => getExpression('if (true 1 else 2'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('missing else keyword throws', () {
+      expect(
+        () => getExpression('if (true) 1 2'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('missing function call closing paren throws', () {
+      expect(
+        () => getExpression('foo(1, 2'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('close paren as primary throws InvalidTokenError', () {
+      expect(
+        () => getExpression(')'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
+    test('close bracket as primary throws InvalidTokenError', () {
+      expect(
+        () => getExpression(']'),
+        throwsA(isA<InvalidTokenError>()),
+      );
     });
   });
 }
