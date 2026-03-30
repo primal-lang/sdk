@@ -1,0 +1,15 @@
+- read and understand
+* @docs/compiler/syntactic.md
+* @lib/compiler/syntactic/
+
+then:
+- what do you think about the syntactic analyzer?
+- is it good, bad, normal?                                         
+- does it have any flaws, mistakes, inconsistencies, etc?
+- how can we improve it?  
+                                                       
+ask me if you have any questions
+
+-------
+
+create a detailed plan for all the issues you found. be as detailed as possible in your explanation about the issue and how you are planning to solve it/ implement it write the detailed plan in a file in the root of the project

@@ -1,0 +1,6 @@
+look at all the errors declared in: @lib/compiler/errors
+
+are there tests where we need to catch an error that is not thrown by the sdk?
+are there tests that are checked in a way that doesn't rely on a primal error?
+
+explore ALL the tests in @test
