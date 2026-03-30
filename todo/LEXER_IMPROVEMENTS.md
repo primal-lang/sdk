@@ -7,7 +7,6 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 ## Table of Contents
 
 3. [No String Escape Sequences](#3-no-string-escape-sequences)
-4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
 
 ---
 
@@ -169,77 +168,5 @@ The StringToken's value contains an actual newline character, not the two-charac
 ### Priority
 
 **High** -- This is new functionality the user explicitly wants.
-
-Update the file `docs/compiler/lexical.md` if necessary.
-
----
-
-## 4. Unterminated Strings and Comments Give Poor Errors
-
-### The Issue
-
-When a string or multi-line comment is never closed, the state machine keeps consuming characters until the iterator is exhausted. At that point, `iterator.hasNext` returns false and the main loop exits normally. The in-progress state is silently abandoned -- no token is emitted and **no error is thrown**.
-
-Current behavior:
-
-- `"hello` -> returns empty token list (confirmed by test at line 1138)
-- `'hello` -> returns empty token list (confirmed by test at line 1143)
-- `/* comment` -> returns empty token list (confirmed by test at line 1559)
-
-This is problematic because:
-
-1. The user gets no diagnostic at all -- the compiler silently produces fewer tokens than expected
-2. The error will surface later as a confusing parse error in the syntactic analyzer, far from the actual problem
-3. For multi-line comments, the entire rest of the file is silently consumed with no indication
-
-### Proposed Fix
-
-After the main `while` loop in `LexicalAnalyzer.analyze()`, check the final state and throw descriptive errors:
-
-```dart
-if (state is StringDoubleQuoteState || state is StringDoubleQuoteEscapeState) {
-  throw UnterminatedStringError(state.output.location);
-} else if (state is StringSingleQuoteState || state is StringSingleQuoteEscapeState) {
-  throw UnterminatedStringError(state.output.location);
-} else if (state is StartMultiLineCommentState || state is ClosingMultiLineCommentState) {
-  throw UnterminatedCommentError();
-}
-```
-
-Add two new error classes in `lib/compiler/errors/lexical_error.dart`:
-
-```dart
-class UnterminatedStringError extends LexicalError {
-  const UnterminatedStringError(Location location)
-    : super('Unterminated string starting at $location');
-}
-
-class UnterminatedCommentError extends LexicalError {
-  const UnterminatedCommentError()
-    : super('Unterminated multi-line comment');
-}
-```
-
-The `Location` in `UnterminatedStringError` points to the opening quote, helping the user find where the string starts. For comments, the `ForwardSlashState` already consumed the `/*` so we don't have a stored location, but "unterminated multi-line comment" is clear enough.
-
-### Impact on Existing Tests
-
-The existing tests at lines 1138-1145 and 1559 expect empty token lists for unterminated strings/comments. These tests would need to be updated to expect the new errors:
-
-```dart
-test('Unterminated double quoted string', () {
-  expect(() => getTokens('"hello'), throwsA(isA<UnterminatedStringError>()));
-});
-```
-
-### Files to Modify
-
-- `lib/compiler/errors/lexical_error.dart` -- add `UnterminatedStringError`, `UnterminatedCommentError`
-- `lib/compiler/lexical/lexical_analyzer.dart` -- add post-loop state checks in `analyze()`
-- `test/compiler/lexical_analyzer_test.dart` -- update existing unterminated tests to expect errors
-
-### Priority
-
-**Medium** -- This is a significant UX improvement for error diagnostics. Unterminated strings are a common mistake.
 
 Update the file `docs/compiler/lexical.md` if necessary.

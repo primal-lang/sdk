@@ -122,6 +122,11 @@ When a state encounters an unexpected character, it throws `InvalidCharacterErro
 
 All other states throw a generic `InvalidCharacterError` with just the offending character.
 
+After the main loop completes, the analyzer checks for unterminated constructs:
+
+- **Unterminated strings**: If the final state is `StringDoubleQuoteState` or `StringSingleQuoteState`, throws `UnterminatedStringError` with the location of the opening quote.
+- **Unterminated comments**: If the final state is `StartMultiLineCommentState` or `ClosingMultiLineCommentState`, throws `UnterminatedCommentError`.
+
 ## Token Types
 
 All tokens extend `Token<T>` and carry a typed value plus location:

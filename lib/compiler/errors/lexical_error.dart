@@ -1,4 +1,5 @@
 import 'package:primal/compiler/errors/generic_error.dart';
+import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/scanner/character.dart';
 
 class LexicalError extends CompilationError {
@@ -10,4 +11,13 @@ class InvalidCharacterError extends LexicalError {
     : super(
         'Invalid character $character${(expected != null) ? '. Expected: $expected' : ''}',
       );
+}
+
+class UnterminatedStringError extends LexicalError {
+  const UnterminatedStringError(Location location)
+    : super('Unterminated string starting at $location');
+}
+
+class UnterminatedCommentError extends LexicalError {
+  const UnterminatedCommentError() : super('Unterminated multi-line comment');
 }

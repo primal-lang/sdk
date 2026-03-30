@@ -1137,13 +1137,17 @@ pi = 3.14
     });
 
     test('Unterminated double quoted string', () {
-      final List<Token> tokens = getTokens('"hello');
-      checkTokens(tokens, []);
+      expect(
+        () => getTokens('"hello'),
+        throwsA(isA<UnterminatedStringError>()),
+      );
     });
 
     test('Unterminated single quoted string', () {
-      final List<Token> tokens = getTokens("'hello");
-      checkTokens(tokens, []);
+      expect(
+        () => getTokens("'hello"),
+        throwsA(isA<UnterminatedStringError>()),
+      );
     });
 
     // --- Edge cases: numbers ---
@@ -1675,8 +1679,10 @@ pi = 3.14
     });
 
     test('Unterminated multi-line comment', () {
-      final List<Token> tokens = getTokens('/* comment');
-      checkTokens(tokens, []);
+      expect(
+        () => getTokens('/* comment'),
+        throwsA(isA<UnterminatedCommentError>()),
+      );
     });
 
     // --- Edge cases: delimiters ---

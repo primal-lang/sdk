@@ -40,6 +40,13 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       } else {
         result.add(IdentifierToken(lexeme));
       }
+    } else if (state is StringDoubleQuoteState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringSingleQuoteState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StartMultiLineCommentState ||
+        state is ClosingMultiLineCommentState) {
+      throw const UnterminatedCommentError();
     }
 
     return result;
