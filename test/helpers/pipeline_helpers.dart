@@ -1,5 +1,6 @@
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/scanner/character.dart';
 import 'package:primal/compiler/scanner/scanner_analyzer.dart';
@@ -11,6 +12,21 @@ import 'package:primal/compiler/syntactic/syntactic_analyzer.dart';
 List<Token> getTokens(String source) {
   final Scanner scanner = Scanner(source);
   final List<Character> characters = scanner.analyze();
+  final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
+
+  return lexicalAnalyzer.analyze();
+}
+
+List<Token> getTokensDirect(String source) {
+  final List<Character> characters = [];
+  for (int i = 0; i < source.length; i++) {
+    characters.add(
+      Character(
+        value: source[i],
+        location: Location(row: 1, column: i + 1),
+      ),
+    );
+  }
   final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
 
   return lexicalAnalyzer.analyze();

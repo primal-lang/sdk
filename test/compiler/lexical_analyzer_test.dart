@@ -1718,5 +1718,116 @@ pi = 3.14
       );
       expect(lexeme.toString(), equals('"test" at [1, 1]'));
     });
+
+    // --- End-of-input flush ---
+
+    group('End-of-input flush', () {
+      test('Integer at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('123');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '123',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Decimal at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('3.14');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '3.14',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('foo');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'foo',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Boolean true at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('true');
+        checkTokens(tokens, [
+          BooleanToken(
+            const Lexeme(
+              value: 'true',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Boolean false at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('false');
+        checkTokens(tokens, [
+          BooleanToken(
+            const Lexeme(
+              value: 'false',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('If keyword at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('if');
+        checkTokens(tokens, [
+          IfToken(
+            const Lexeme(
+              value: 'if',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Else keyword at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('else');
+        checkTokens(tokens, [
+          ElseToken(
+            const Lexeme(
+              value: 'else',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Token before integer at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('(42');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '42',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Empty input direct (no false flush)', () {
+        final List<Token> tokens = getTokensDirect('');
+        checkTokens(tokens, []);
+      });
+    });
   });
 }

@@ -25,6 +25,23 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       }
     }
 
+    if (state is IntegerState) {
+      result.add(NumberToken(state.output));
+    } else if (state is DecimalState) {
+      result.add(NumberToken(state.output));
+    } else if (state is IdentifierState) {
+      final Lexeme lexeme = state.output;
+      if (lexeme.value.isBoolean) {
+        result.add(BooleanToken(lexeme));
+      } else if (lexeme.value.isIf) {
+        result.add(IfToken(lexeme));
+      } else if (lexeme.value.isElse) {
+        result.add(ElseToken(lexeme));
+      } else {
+        result.add(IdentifierToken(lexeme));
+      }
+    }
+
     return result;
   }
 }
