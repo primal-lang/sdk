@@ -46,7 +46,7 @@ abstract class LiteralNode<T> implements Node {
     } else if (value is Map<Node, Node>) {
       return MapNode(value);
     } else {
-      throw InvalidLiteralValueError(value);
+      throw InvalidLiteralValueError(value.toString());
     }
   }
 }

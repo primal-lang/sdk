@@ -45,8 +45,11 @@ void main() {
       expect(node, isA<MapNode>());
     });
 
-    test('unsupported type throws', () {
-      expect(() => LiteralNode.from(Object()), throwsA(isA<TypeError>()));
+    test('unsupported type throws InvalidLiteralValueError', () {
+      expect(
+        () => LiteralNode.from(DateTime(2024)),
+        throwsA(isA<InvalidLiteralValueError>()),
+      );
     });
   });
 

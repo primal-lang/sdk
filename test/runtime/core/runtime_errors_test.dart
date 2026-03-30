@@ -239,6 +239,16 @@ void main() {
     });
   });
 
+  group('Runtime Format Errors', () {
+    test('format with unsupported type throws InvalidValueError', () {
+      final Runtime runtime = getRuntime('main = 1');
+      expect(
+        () => runtime.format(Object()),
+        throwsA(isA<InvalidValueError>()),
+      );
+    });
+  });
+
   group('Cross-Type Comparison Errors', () {
     test('list equals string throws InvalidArgumentTypesError', () {
       final Runtime runtime = getRuntime('main = [1, 2] == "hello"');
