@@ -80,7 +80,8 @@ extension StringExtensions on String {
       isSingleQuote ||
       isOpenParenthesis ||
       isOpenBracket ||
-      isOpenBraces;
+      isOpenBraces ||
+      isUnaryOperator;
 
   bool get isCommaDelimiter =>
       isWhitespace ||

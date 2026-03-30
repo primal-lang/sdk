@@ -1381,6 +1381,123 @@ pi = 3.14
       ]);
     });
 
+    test('Binary operator followed by unary minus', () {
+      final List<Token> tokens = getTokens('1+-2');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        PlusToken(
+          const Lexeme(
+            value: '+',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+        MinusToken(
+          const Lexeme(
+            value: '-',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '2',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Binary operator followed by unary bang', () {
+      final List<Token> tokens = getTokens('1+!x');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        PlusToken(
+          const Lexeme(
+            value: '+',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+        BangToken(
+          const Lexeme(
+            value: '!',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Double unary bang', () {
+      final List<Token> tokens = getTokens('!!x');
+      checkTokens(tokens, [
+        BangToken(
+          const Lexeme(
+            value: '!',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        BangToken(
+          const Lexeme(
+            value: '!',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
+      ]);
+    });
+
     // --- Edge cases: whitespace and empty input ---
 
     test('Empty input', () {
