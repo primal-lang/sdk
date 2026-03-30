@@ -96,21 +96,21 @@ class InitState extends State<Character, void> {
     } else if (input.value.isPercent) {
       return PercentState(iterator, input.lexeme);
     } else if (input.value.isComma) {
-      return CommaState(iterator, input.lexeme);
+      return ResultState(iterator, CommaToken(input.lexeme));
     } else if (input.value.isColon) {
-      return ColonState(iterator, input.lexeme);
+      return ResultState(iterator, ColonToken(input.lexeme));
     } else if (input.value.isOpenParenthesis) {
-      return OpenParenthesisState(iterator, input.lexeme);
+      return ResultState(iterator, OpenParenthesisToken(input.lexeme));
     } else if (input.value.isCloseParenthesis) {
-      return CloseParenthesisState(iterator, input.lexeme);
+      return ResultState(iterator, CloseParenthesisToken(input.lexeme));
     } else if (input.value.isOpenBracket) {
-      return OpenBracketState(iterator, input.lexeme);
+      return ResultState(iterator, OpenBracketToken(input.lexeme));
     } else if (input.value.isCloseBracket) {
-      return CloseBracketState(iterator, input.lexeme);
+      return ResultState(iterator, CloseBracketToken(input.lexeme));
     } else if (input.value.isOpenBraces) {
-      return OpenBracesState(iterator, input.lexeme);
+      return ResultState(iterator, OpenBracesToken(input.lexeme));
     } else if (input.value.isCloseBraces) {
-      return CloseBracesState(iterator, input.lexeme);
+      return ResultState(iterator, CloseBracesToken(input.lexeme));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -416,118 +416,6 @@ class ClosingMultiLineCommentState extends State<Character, void> {
       return StartMultiLineCommentState(iterator);
     } else {
       return InitState(iterator);
-    }
-  }
-}
-
-class CommaState extends State<Character, Lexeme> {
-  const CommaState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isCommaDelimiter) {
-      iterator.back();
-      return ResultState(iterator, CommaToken(output));
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class ColonState extends State<Character, Lexeme> {
-  const ColonState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isColonDelimiter) {
-      iterator.back();
-      return ResultState(iterator, ColonToken(output));
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class OpenParenthesisState extends State<Character, Lexeme> {
-  const OpenParenthesisState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isOpenParenthesisDelimiter) {
-      iterator.back();
-      return ResultState(iterator, OpenParenthesisToken(output));
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class CloseParenthesisState extends State<Character, Lexeme> {
-  const CloseParenthesisState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isCloseParenthesisDelimiter) {
-      iterator.back();
-      return ResultState(iterator, CloseParenthesisToken(output));
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class OpenBracketState extends State<Character, Lexeme> {
-  const OpenBracketState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isOpenBracketDelimiter) {
-      iterator.back();
-      return ResultState(iterator, OpenBracketToken(output));
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class CloseBracketState extends State<Character, Lexeme> {
-  const CloseBracketState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isCloseBracketDelimiter) {
-      iterator.back();
-      return ResultState(iterator, CloseBracketToken(output));
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class OpenBracesState extends State<Character, Lexeme> {
-  const OpenBracesState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isOpenBracesDelimiter) {
-      iterator.back();
-      return ResultState(iterator, OpenBracesToken(output));
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class CloseBracesState extends State<Character, Lexeme> {
-  const CloseBracesState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isCloseBracesDelimiter) {
-      iterator.back();
-      return ResultState(iterator, CloseBracesToken(output));
-    } else {
-      throw InvalidCharacterError(input);
     }
   }
 }

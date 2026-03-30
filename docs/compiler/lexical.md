@@ -2,7 +2,7 @@
 
 **Files**: `lib/compiler/lexical/lexical_analyzer.dart`, `lib/compiler/lexical/token.dart`
 
-The lexical analyzer consumes the character list and produces a list of typed tokens. It is implemented as a **state machine** with 20+ state classes, each responsible for recognizing a specific kind of lexeme.
+The lexical analyzer consumes the character list and produces a list of typed tokens. It is implemented as a **state machine** with state classes responsible for recognizing specific kinds of lexemes.
 
 ## Main Loop
 
@@ -45,7 +45,7 @@ The analyzer starts in `InitState` and transitions based on the current characte
 | `/`                                               | `ForwardSlashState` (division or comment) |
 | `*`                                               | `AsteriskState`                           |
 | `%`                                               | `PercentState`                            |
-| Delimiters `(`, `)`, `[`, `]`, `{`, `}`, `,`, `:` | Corresponding delimiter states            |
+| Delimiters `(`, `)`, `[`, `]`, `{`, `}`, `,`, `:` | Emit token directly via `ResultState`     |
 | Whitespace / newline                              | Skipped, returns to `InitState`           |
 
 Additional internal states not reachable from `InitState`:
@@ -99,20 +99,12 @@ This means keywords are identifiers that are reclassified at the boundary.
 
 Different token types use distinct delimiter predicates to determine what can legally follow them:
 
-| Predicate                     | Used by                                                                                                                                                                 |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `isOperandDelimiter`          | `IntegerState`, `DecimalState`, `IdentifierState`                                                                                                                       |
-| `isOperatorDelimiter`         | `MinusState`, `PlusState`, `EqualsState`, `GreaterState`, `LessState`, `PipeState`, `AmpersandState`, `BangState`, `ForwardSlashState`, `AsteriskState`, `PercentState` |
-| `isCommaDelimiter`            | `CommaState`                                                                                                                                                            |
-| `isColonDelimiter`            | `ColonState`                                                                                                                                                            |
-| `isOpenParenthesisDelimiter`  | `OpenParenthesisState`                                                                                                                                                  |
-| `isCloseParenthesisDelimiter` | `CloseParenthesisState`                                                                                                                                                 |
-| `isOpenBracketDelimiter`      | `OpenBracketState`                                                                                                                                                      |
-| `isCloseBracketDelimiter`     | `CloseBracketState`                                                                                                                                                     |
-| `isOpenBracesDelimiter`       | `OpenBracesState`                                                                                                                                                       |
-| `isCloseBracesDelimiter`      | `CloseBracesState`                                                                                                                                                      |
+| Predicate             | Used by                                                                                                                                                                 |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isOperandDelimiter`  | `IntegerState`, `DecimalState`, `IdentifierState`                                                                                                                       |
+| `isOperatorDelimiter` | `MinusState`, `PlusState`, `EqualsState`, `GreaterState`, `LessState`, `PipeState`, `AmpersandState`, `BangState`, `ForwardSlashState`, `AsteriskState`, `PercentState` |
 
-These predicates define the legal character classes that can follow each token, providing early error detection at the lexical level.
+Single-character delimiters (`(`, `)`, `[`, `]`, `{`, `}`, `,`, `:`) are emitted directly from `InitState` without lookahead validation. Invalid sequences following these tokens are caught by the parser rather than the lexer.
 
 ## Comments
 

@@ -8,7 +8,6 @@ This document details 10 issues found in the lexical analyzer (9 from code revie
 
 3. [No String Escape Sequences](#3-no-string-escape-sequences)
 4. [Unterminated Strings and Comments Give Poor Errors](#4-unterminated-strings-and-comments-give-poor-errors)
-5. [Single-Character Tokens Pay Unnecessary Lookahead Cost](#5-single-character-tokens-pay-unnecessary-lookahead-cost)
 
 ---
 
@@ -242,51 +241,5 @@ test('Unterminated double quoted string', () {
 ### Priority
 
 **Medium** -- This is a significant UX improvement for error diagnostics. Unterminated strings are a common mistake.
-
-Update the file `docs/compiler/lexical.md` if necessary.
-
----
-
-## 5. Single-Character Tokens Pay Unnecessary Lookahead Cost
-
-### The Issue
-
-Tokens that are inherently single characters -- `(`, `)`, `[`, `]`, `{`, `}`, `,`, `:` -- still go through the full lookahead pattern. For example, `(` in the source:
-
-1. `InitState` sees `(`, creates `OpenParenthesisState`
-2. `OpenParenthesisState.process()` consumes the **next** character
-3. Checks if it satisfies `isOpenParenthesisDelimiter`
-4. If yes, calls `iterator.back()` to un-consume it
-5. Returns `ResultState` with `OpenParenthesisToken`
-
-This means every single-character token costs an extra character read + back + delimiter predicate evaluation. For the 8 single-character token types, this is unnecessary work.
-
-### The Counter-Argument
-
-The lookahead provides **validation**: it catches sequences like `(@` early with a helpful `InvalidCharacterError` rather than deferring the error to the parser. This is a legitimate design tradeoff -- stricter lexing means better error messages at the cost of extra work.
-
-### Proposed Fix (If Desired)
-
-Emit single-character tokens directly from `InitState` without entering a dedicated state:
-
-```dart
-} else if (input.value.isOpenParenthesis) {
-  return ResultState(iterator, [OpenParenthesisToken(input.lexeme)]);
-}
-```
-
-This removes the dedicated `OpenParenthesisState`, `CloseParenthesisState`, `OpenBracketState`, `CloseBracketState`, `OpenBracesState`, `CloseBracesState`, `CommaState`, and `ColonState` -- 8 classes totaling ~90 lines of code.
-
-The tradeoff is that invalid sequences like `(@` would no longer be caught at the lexer level. They would instead be caught by the parser, which may produce less precise error messages.
-
-### Files to Modify
-
-- `lib/compiler/lexical/lexical_analyzer.dart` -- modify `InitState.process()` to emit directly for 8 token types, remove 8 state classes
-- `lib/extensions/string_extensions.dart` -- the 8 delimiter predicates (`isCommaDelimiter`, `isColonDelimiter`, `isOpenParenthesisDelimiter`, etc.) could be removed
-- `test/compiler/lexical_analyzer_test.dart` -- update any tests that depend on lexer-level delimiter validation
-
-### Priority
-
-**Low** -- This is an optimization that trades strictness for simplicity. The current approach is defensible.
 
 Update the file `docs/compiler/lexical.md` if necessary.

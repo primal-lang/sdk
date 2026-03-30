@@ -2,6 +2,7 @@
 library;
 
 import 'package:primal/compiler/errors/lexical_error.dart';
+import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
@@ -909,14 +910,14 @@ pi = 3.14
     test('Invalid function definition 3', () {
       expect(
         () => getFunctions('isEvent(,) = true'),
-        throwsA(isA<InvalidCharacterError>()),
+        throwsA(isA<InvalidTokenError>()),
       );
     });
 
     test('Invalid function definition 4', () {
       expect(
         () => getFunctions('isEvent(x,) = true'),
-        throwsA(isA<InvalidCharacterError>()),
+        throwsA(isA<InvalidTokenError>()),
       );
     });
 
