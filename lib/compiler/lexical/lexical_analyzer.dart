@@ -44,6 +44,10 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       throw UnterminatedStringError(state.output.location);
     } else if (state is StringSingleQuoteState) {
       throw UnterminatedStringError(state.output.location);
+    } else if (state is StringDoubleQuoteEscapeState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringSingleQuoteEscapeState) {
+      throw UnterminatedStringError(state.output.location);
     } else if (state is StartMultiLineCommentState ||
         state is ClosingMultiLineCommentState) {
       throw const UnterminatedCommentError();
@@ -131,6 +135,8 @@ class StringDoubleQuoteState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isDoubleQuote) {
       return ResultState(iterator, StringToken(output));
+    } else if (input.value.isBackslash) {
+      return StringDoubleQuoteEscapeState(iterator, output);
     } else {
       return StringDoubleQuoteState(iterator, output.add(input));
     }
@@ -144,8 +150,52 @@ class StringSingleQuoteState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isSingleQuote) {
       return ResultState(iterator, StringToken(output));
+    } else if (input.value.isBackslash) {
+      return StringSingleQuoteEscapeState(iterator, output);
     } else {
       return StringSingleQuoteState(iterator, output.add(input));
+    }
+  }
+}
+
+class StringDoubleQuoteEscapeState extends State<Character, Lexeme> {
+  const StringDoubleQuoteEscapeState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value == 'n') {
+      return StringDoubleQuoteState(iterator, output.addValue('\n'));
+    } else if (input.value == 't') {
+      return StringDoubleQuoteState(iterator, output.addValue('\t'));
+    } else if (input.value.isBackslash) {
+      return StringDoubleQuoteState(iterator, output.addValue('\\'));
+    } else if (input.value.isDoubleQuote) {
+      return StringDoubleQuoteState(iterator, output.addValue('"'));
+    } else if (input.value.isSingleQuote) {
+      return StringDoubleQuoteState(iterator, output.addValue("'"));
+    } else {
+      throw InvalidEscapeSequenceError(input);
+    }
+  }
+}
+
+class StringSingleQuoteEscapeState extends State<Character, Lexeme> {
+  const StringSingleQuoteEscapeState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value == 'n') {
+      return StringSingleQuoteState(iterator, output.addValue('\n'));
+    } else if (input.value == 't') {
+      return StringSingleQuoteState(iterator, output.addValue('\t'));
+    } else if (input.value.isBackslash) {
+      return StringSingleQuoteState(iterator, output.addValue('\\'));
+    } else if (input.value.isDoubleQuote) {
+      return StringSingleQuoteState(iterator, output.addValue('"'));
+    } else if (input.value.isSingleQuote) {
+      return StringSingleQuoteState(iterator, output.addValue("'"));
+    } else {
+      throw InvalidEscapeSequenceError(input);
     }
   }
 }
@@ -441,6 +491,11 @@ class Lexeme extends Localized {
 
   Lexeme add(Character character) => Lexeme(
     value: value + character.value,
+    location: location,
+  );
+
+  Lexeme addValue(String value) => Lexeme(
+    value: this.value + value,
     location: location,
   );
 

@@ -50,16 +50,36 @@ The analyzer starts in `InitState` and transitions based on the current characte
 
 Additional internal states not reachable from `InitState`:
 
-| State                          | Reachable from               | Purpose                                        |
-| ------------------------------ | ---------------------------- | ---------------------------------------------- |
-| `DecimalInitState`             | `IntegerState`               | Entered after `.`; requires at least one digit |
-| `DecimalState`                 | `DecimalInitState`           | Accumulates remaining decimal digits           |
-| `SingleLineCommentState`       | `ForwardSlashState`          | Consumes until newline                         |
-| `StartMultiLineCommentState`   | `ForwardSlashState`          | Consumes until `*` is found                    |
-| `ClosingMultiLineCommentState` | `StartMultiLineCommentState` | Checks for `/` to close the comment            |
+| State                          | Reachable from               | Purpose                                           |
+| ------------------------------ | ---------------------------- | ------------------------------------------------- |
+| `DecimalInitState`             | `IntegerState`               | Entered after `.`; requires at least one digit    |
+| `DecimalState`                 | `DecimalInitState`           | Accumulates remaining decimal digits              |
+| `StringDoubleQuoteEscapeState` | `StringDoubleQuoteState`     | Processes escape sequence in double-quoted string |
+| `StringSingleQuoteEscapeState` | `StringSingleQuoteState`     | Processes escape sequence in single-quoted string |
+| `SingleLineCommentState`       | `ForwardSlashState`          | Consumes until newline                            |
+| `StartMultiLineCommentState`   | `ForwardSlashState`          | Consumes until `*` is found                       |
+| `ClosingMultiLineCommentState` | `StartMultiLineCommentState` | Checks for `/` to close the comment               |
 | `ResultState`                  | Any token-producing state    | Carries the completed token back to the main loop |
 
 Multi-character tokens are accumulated via a `Lexeme` object that tracks the starting location and collects characters with `.add(Character)`, returning a new immutable `Lexeme` each time.
+
+## String Escape Sequences
+
+Both double-quoted and single-quoted strings support escape sequences. When a backslash (`\`) is encountered inside a string, the lexer transitions to an escape state (`StringDoubleQuoteEscapeState` or `StringSingleQuoteEscapeState`) which interprets the following character:
+
+| Source | Resolved | Meaning           |
+| ------ | -------- | ----------------- |
+| `\\`   | `\`      | Literal backslash |
+| `\"`   | `"`      | Double quote      |
+| `\'`   | `'`      | Single quote      |
+| `\n`   | newline  | Line feed         |
+| `\t`   | tab      | Horizontal tab    |
+
+Both quote escapes are supported in both string types for consistency. This allows `"it\'s"` and `'say \"hi\"'` to work as expected.
+
+The escape state uses `Lexeme.addValue(String)` to append the resolved character (which may differ from the input character) and returns to the parent string state.
+
+If an unrecognized escape sequence is encountered (e.g., `\z`), the lexer throws `InvalidEscapeSequenceError`.
 
 ## Number Parsing
 
@@ -122,9 +142,11 @@ When a state encounters an unexpected character, it throws `InvalidCharacterErro
 
 All other states throw a generic `InvalidCharacterError` with just the offending character.
 
+The escape states (`StringDoubleQuoteEscapeState` and `StringSingleQuoteEscapeState`) throw `InvalidEscapeSequenceError` when an unrecognized escape sequence is encountered (e.g., `\z`).
+
 After the main loop completes, the analyzer checks for unterminated constructs:
 
-- **Unterminated strings**: If the final state is `StringDoubleQuoteState` or `StringSingleQuoteState`, throws `UnterminatedStringError` with the location of the opening quote.
+- **Unterminated strings**: If the final state is `StringDoubleQuoteState`, `StringSingleQuoteState`, `StringDoubleQuoteEscapeState`, or `StringSingleQuoteEscapeState`, throws `UnterminatedStringError` with the location of the opening quote.
 - **Unterminated comments**: If the final state is `StartMultiLineCommentState` or `ClosingMultiLineCommentState`, throws `UnterminatedCommentError`.
 
 ## Token Types

@@ -2602,5 +2602,157 @@ pi = 3.14
         ]);
       });
     });
+
+    // --- String escape sequences ---
+
+    group('String escape sequences', () {
+      test('Double quoted string with newline escape', () {
+        final List<Token> tokens = getTokens('"hello\\nworld"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'hello\nworld',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Single quoted string with tab escape', () {
+        final List<Token> tokens = getTokens("'hello\\tworld'");
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'hello\tworld',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Double quoted string with backslash escape', () {
+        final List<Token> tokens = getTokens('"path\\\\to"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'path\\to',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Escaped double quote inside double quoted string', () {
+        final List<Token> tokens = getTokens('"say \\"hi\\""');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'say "hi"',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Escaped single quote inside single quoted string', () {
+        final List<Token> tokens = getTokens("'it\\'s'");
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: "it's",
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Multiple escapes in one string', () {
+        final List<Token> tokens = getTokens('"a\\nb\\tc"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'a\nb\tc',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Escape at start of string', () {
+        final List<Token> tokens = getTokens('"\\nhello"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '\nhello',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Escape at end of string', () {
+        final List<Token> tokens = getTokens('"hello\\n"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'hello\n',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Invalid escape sequence in double quoted string', () {
+        expect(
+          () => getTokens('"hello\\z"'),
+          throwsA(isA<InvalidEscapeSequenceError>()),
+        );
+      });
+
+      test('Invalid escape sequence in single quoted string', () {
+        expect(
+          () => getTokens("'hello\\z'"),
+          throwsA(isA<InvalidEscapeSequenceError>()),
+        );
+      });
+
+      test('Escaped single quote in double quoted string', () {
+        final List<Token> tokens = getTokens(r'''"it\'s"''');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: "it's",
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Escaped double quote in single quoted string', () {
+        final List<Token> tokens = getTokens("'say \\\"hi\\\"'");
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'say "hi"',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Unterminated string ending with backslash (double quote)', () {
+        expect(
+          () => getTokensDirect('"hello\\'),
+          throwsA(isA<UnterminatedStringError>()),
+        );
+      });
+
+      test('Unterminated string ending with backslash (single quote)', () {
+        expect(
+          () => getTokensDirect("'hello\\"),
+          throwsA(isA<UnterminatedStringError>()),
+        );
+      });
+    });
   });
 }

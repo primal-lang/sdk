@@ -21,3 +21,10 @@ class UnterminatedStringError extends LexicalError {
 class UnterminatedCommentError extends LexicalError {
   const UnterminatedCommentError() : super('Unterminated multi-line comment');
 }
+
+class InvalidEscapeSequenceError extends LexicalError {
+  InvalidEscapeSequenceError(Character character)
+    : super(
+        "Invalid escape sequence '\\${character.value}' at ${character.location}",
+      );
+}

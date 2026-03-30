@@ -30,6 +30,8 @@ extension StringExtensions on String {
 
   bool get isForwardSlash => this == '/';
 
+  bool get isBackslash => this == '\\';
+
   bool get isAsterisk => this == '*';
 
   bool get isPercent => this == '%';
