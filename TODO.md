@@ -1,3 +1,0 @@
-# TODO
-
-- Handle `UnsupportedError`
