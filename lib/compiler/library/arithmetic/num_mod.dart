@@ -33,6 +33,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is NumberNode) && (b is NumberNode)) {
+      if (b.value == 0) {
+        throw DivisionByZeroError(function: name);
+      }
       return NumberNode(a.value % b.value);
     } else {
       throw InvalidArgumentTypesError(

@@ -93,3 +93,11 @@ class NegativeIndexError extends RuntimeError {
          'Negative index $index is not allowed for $function',
        );
 }
+
+class DivisionByZeroError extends RuntimeError {
+  DivisionByZeroError({
+    required String function,
+  }) : super(
+         'Division by zero is not allowed in "$function"',
+       );
+}

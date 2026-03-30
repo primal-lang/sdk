@@ -375,9 +375,21 @@ void main() {
       checkResult(runtime, double.negativeInfinity);
     });
 
-    test('modulo by zero', () {
+    test('modulo by zero throws DivisionByZeroError', () {
       final Runtime runtime = getRuntime('main = 5 % 0');
-      expect(runtime.executeMain, throwsA(isA<UnsupportedError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('Division by zero'),
+              contains('%'),
+            ),
+          ),
+        ),
+      );
     });
 
     test('num.div by zero', () {
@@ -385,9 +397,21 @@ void main() {
       checkResult(runtime, double.infinity);
     });
 
-    test('num.mod by zero', () {
+    test('num.mod by zero throws DivisionByZeroError', () {
       final Runtime runtime = getRuntime('main = num.mod(5, 0)');
-      expect(runtime.executeMain, throwsA(isA<UnsupportedError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('Division by zero'),
+              contains('num.mod'),
+            ),
+          ),
+        ),
+      );
     });
   });
 

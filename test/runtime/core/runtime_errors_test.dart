@@ -20,18 +20,18 @@ void main() {
       checkResult(runtime, double.negativeInfinity);
     });
 
-    test('integer modulo by zero throws', () {
+    test('modulo by zero throws DivisionByZeroError', () {
       final Runtime runtime = getRuntime('main = 1 % 0');
       expect(
         runtime.executeMain,
-        // ignore: deprecated_member_use
-        throwsA(isA<IntegerDivisionByZeroException>()),
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Division by zero'),
+          ),
+        ),
       );
-    });
-
-    test('decimal modulo by zero produces NaN', () {
-      final Runtime runtime = getRuntime('main = 1.0 % 0');
-      expect(runtime.executeMain(), 'NaN');
     });
 
     test('zero divided by zero produces NaN', () {
