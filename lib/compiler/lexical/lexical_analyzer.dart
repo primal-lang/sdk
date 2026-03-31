@@ -1,7 +1,7 @@
 import 'package:primal/compiler/errors/lexical_error.dart';
+import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/analyzer.dart';
-import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/state.dart';
 import 'package:primal/compiler/scanner/character.dart';
 import 'package:primal/extensions/string_extensions.dart';
@@ -479,26 +479,4 @@ class ClosingMultiLineCommentState extends State<Character, void> {
 
 class ResultState extends State<void, Token> {
   const ResultState(super.iterator, super.output);
-}
-
-class Lexeme extends Localized {
-  final String value;
-
-  const Lexeme({
-    required this.value,
-    required super.location,
-  });
-
-  Lexeme add(Character character) => Lexeme(
-    value: value + character.value,
-    location: location,
-  );
-
-  Lexeme addValue(String value) => Lexeme(
-    value: this.value + value,
-    location: location,
-  );
-
-  @override
-  String toString() => '"$value" at $location';
 }

@@ -1,4 +1,4 @@
-import 'package:primal/compiler/lexical/lexical_analyzer.dart';
+import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/models/location.dart';
 
 class Token<T> extends Localized {
@@ -8,6 +8,17 @@ class Token<T> extends Localized {
     required this.value,
     required super.location,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Token<T> &&
+          runtimeType == other.runtimeType &&
+          value == other.value &&
+          location == other.location;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, value, location);
 
   @override
   String toString() => '"$value" at $location';

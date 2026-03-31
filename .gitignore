@@ -10,3 +10,4 @@ scripts/
 coverage/
 example/test/
 test/resources/files/temp*
+.codex

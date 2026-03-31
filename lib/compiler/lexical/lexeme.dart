@@ -1,23 +1,28 @@
-import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/scanner/character.dart';
 
-class Character extends Localized {
+class Lexeme extends Localized {
   final String value;
 
-  const Character({
+  const Lexeme({
     required this.value,
     required super.location,
   });
 
-  Lexeme get lexeme => Lexeme(
-    value: value,
+  Lexeme add(Character character) => Lexeme(
+    value: value + character.value,
+    location: location,
+  );
+
+  Lexeme addValue(String value) => Lexeme(
+    value: this.value + value,
     location: location,
   );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Character && value == other.value && location == other.location;
+      other is Lexeme && value == other.value && location == other.location;
 
   @override
   int get hashCode => Object.hash(value, location);

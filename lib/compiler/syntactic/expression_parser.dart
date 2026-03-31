@@ -1,5 +1,5 @@
 import 'package:primal/compiler/errors/syntactic_error.dart';
-import 'package:primal/compiler/lexical/lexical_analyzer.dart';
+import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/utils/list_iterator.dart';
