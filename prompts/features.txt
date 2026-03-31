@@ -1,0 +1,16 @@
+read all the documentation in "docs" and the code in "lib"
+propose new features to add to the language. some examples:
+- add anonymous functions (lambda functions)
+- add curryfication
+- add "let" expression
+- add try/catch
+- add imports
+- add string interpolation
+- add pattern matching
+- add transpilation to other languages
+- add type inference
+- add static typing
+
+come up with new features thare are not in that list (you can
+propose similar features if you want)
+ask me if you have questions
