@@ -30,7 +30,7 @@ The analyzer starts in `InitState` and transitions based on the current characte
 
 | Character class                                   | Target state                              |
 | ------------------------------------------------- | ----------------------------------------- |
-| Letter                                            | `IdentifierState`                         |
+| ASCII letter (`a-z`, `A-Z`)                       | `IdentifierState`                         |
 | Digit                                             | `IntegerState`                            |
 | `"`                                               | `StringDoubleQuoteState`                  |
 | `'`                                               | `StringSingleQuoteState`                  |
