@@ -10,7 +10,7 @@ The scanner is the first stage of the compiler pipeline. It converts a raw input
 
 ## Splitting Strategy
 
-The scanner first normalizes line endings by converting `\r\n` and `\r` to `\n`, then splits into rows. If the final row is empty (trailing newline in source), it is removed before processing. The scanner then iterates by grapheme cluster within each row using `package:characters`. This ensures that multi-codepoint sequences like emoji (e.g., `👨‍👩‍👧`) are treated as single characters with correct column positions. Each grapheme is wrapped in a `Character(value, location)`.
+The scanner first normalizes line endings by converting `\r\n` and `\r` to `\n`, then splits into rows. If the final row is empty (trailing newline in source), it is removed before processing. The scanner then iterates by grapheme cluster within each row using `package:characters`. This ensures that multi-codepoint sequences like emoji (e.g., `👨‍👩‍👧`) are treated as single characters with correct column positions. Each grapheme is wrapped in a `Character(value, location)`. Tab characters are treated as single characters occupying one column, not expanded to spaces.
 
 ## Location Tracking
 
@@ -26,4 +26,4 @@ A `\n` character is appended after every non-skipped row, including the last. Th
 
 ## Output
 
-The output preserves every character from the source (including whitespace), with location information used later for error reporting. `Character` provides a `get lexeme` getter that converts it to a `Lexeme`, bridging directly into the lexical analyzer.
+The output preserves every character from the source (including whitespace), with location information used later for error reporting. `Character` provides a `get lexeme` getter that converts it to a `Lexeme`, bridging directly into the lexical analyzer. Both `Character` and `Location` support value equality (`==` and `hashCode`), making them suitable for use in tests and collections.
