@@ -4,6 +4,35 @@
 
 The syntactic analyzer (parser) converts the token list into a list of `FunctionDefinition` objects, each containing a name, parameter list, and an expression tree.
 
+## Grammar
+
+### Program Structure
+
+```
+program            → functionDefinition*
+functionDefinition → IDENTIFIER "=" expression | IDENTIFIER "(" parameters ")" "=" expression
+parameters         → IDENTIFIER ( "," IDENTIFIER )*
+```
+
+### Expressions
+
+```
+expression         → ifExpression
+ifExpression       → "if" "(" expression ")" expression "else" expression | equality
+equality           → comparison ( ( "!=" | "==" ) comparison )*
+comparison         → logic ( ( ">" | ">=" | "<" | "<=" ) logic )*
+logic              → term ( ( "|" | "&" ) term )*
+term               → factor ( ( "-" | "+" ) factor )*
+factor             → unary ( ( "/" | "*" | "%" ) unary )*
+unary              → ( "!" | "-" ) unary | call
+call               → primary ( "(" arguments? ")" )* | primary "[" expression "]"
+primary            → BOOLEAN | NUMBER | STRING | IDENTIFIER | "(" expression ")" | "[" elements? "]" | "{" pairs? "}"
+arguments          → expression ( "," expression )*
+elements           → expression ( "," expression )*
+pairs              → pair ( "," pair )*
+pair               → expression ":" expression
+```
+
 ## Function Definition Parsing
 
 A state machine parses top-level function definitions:
