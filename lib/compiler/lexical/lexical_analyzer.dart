@@ -36,8 +36,14 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
     }
 
     if (state is IntegerState) {
+      if (state.lastWasUnderscore) {
+        throw const LexicalError('Trailing underscore in number literal');
+      }
       result.add(NumberToken(state.output));
     } else if (state is DecimalState) {
+      if (state.lastWasUnderscore) {
+        throw const LexicalError('Trailing underscore in number literal');
+      }
       result.add(NumberToken(state.output));
     } else if (state is IdentifierState) {
       final Lexeme lexeme = state.output;
@@ -340,19 +346,40 @@ class StringBracedEscapeState extends StringRelatedState {
 }
 
 class IntegerState extends State<Character, Lexeme> {
-  const IntegerState(super.iterator, super.output);
+  final bool lastWasUnderscore;
+
+  const IntegerState(
+    super.iterator,
+    super.output, {
+    this.lastWasUnderscore = false,
+  });
 
   @override
   State process(Character input) {
     if (input.value.isDigit) {
-      return IntegerState(iterator, output.add(input));
+      return IntegerState(
+        iterator,
+        output.add(input),
+        lastWasUnderscore: false,
+      );
+    } else if (input.value.isUnderscore) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return IntegerState(iterator, output, lastWasUnderscore: true);
     } else if (input.value.isDot) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
       return DecimalInitState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
       iterator.back();
       return ResultState(iterator, NumberToken(output));
     } else {
-      throw InvalidCharacterError(input, 'digit or dot');
+      throw InvalidCharacterError(input, 'digit, underscore, or dot');
     }
   }
 }
@@ -371,17 +398,35 @@ class DecimalInitState extends State<Character, Lexeme> {
 }
 
 class DecimalState extends State<Character, Lexeme> {
-  const DecimalState(super.iterator, super.output);
+  final bool lastWasUnderscore;
+
+  const DecimalState(
+    super.iterator,
+    super.output, {
+    this.lastWasUnderscore = false,
+  });
 
   @override
   State process(Character input) {
     if (input.value.isDigit) {
-      return DecimalState(iterator, output.add(input));
+      return DecimalState(
+        iterator,
+        output.add(input),
+        lastWasUnderscore: false,
+      );
+    } else if (input.value.isUnderscore) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return DecimalState(iterator, output, lastWasUnderscore: true);
     } else if (input.value.isOperandDelimiter) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
       iterator.back();
       return ResultState(iterator, NumberToken(output));
     } else {
-      throw InvalidCharacterError(input, 'digit');
+      throw InvalidCharacterError(input, 'digit or underscore');
     }
   }
 }

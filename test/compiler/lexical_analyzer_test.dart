@@ -1205,6 +1205,166 @@ pi = 3.14
       expect(() => getTokens('42.x'), throwsA(isA<InvalidCharacterError>()));
     });
 
+    // --- Underscore separators in numbers ---
+
+    test('Integer with underscore separator', () {
+      final List<Token> tokens = getTokens('1_000');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1000',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Integer with multiple underscore separators', () {
+      final List<Token> tokens = getTokens('1_000_000');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1000000',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Decimal with underscore separator in integer part', () {
+      final List<Token> tokens = getTokens('1_000.5');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1000.5',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Decimal with underscore separator in fractional part', () {
+      final List<Token> tokens = getTokens('3.14_159');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '3.14159',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Decimal with underscore separators in both parts', () {
+      final List<Token> tokens = getTokens('1_000.123_456');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1000.123456',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Single digit groups with underscores', () {
+      final List<Token> tokens = getTokens('1_2_3');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '123',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Integer with trailing underscore', () {
+      expect(() => getTokens('123_ '), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Integer with trailing underscore at end of input', () {
+      expect(() => getTokensDirect('123_'), throwsA(isA<LexicalError>()));
+    });
+
+    test('Decimal with trailing underscore', () {
+      expect(() => getTokens('3.14_ '), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Decimal with trailing underscore at end of input', () {
+      expect(() => getTokensDirect('3.14_'), throwsA(isA<LexicalError>()));
+    });
+
+    test('Integer with consecutive underscores', () {
+      expect(() => getTokens('1__2'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Decimal with consecutive underscores', () {
+      expect(
+        () => getTokens('3.14__15'),
+        throwsA(isA<InvalidCharacterError>()),
+      );
+    });
+
+    test('Underscore immediately after decimal point', () {
+      expect(() => getTokens('3._14'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Underscore before decimal point', () {
+      expect(() => getTokens('3_.14'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Integer with underscore in expression', () {
+      final List<Token> tokens = getTokens('1_000+2_000');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1000',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        PlusToken(
+          const Lexeme(
+            value: '+',
+            location: Location(
+              row: 1,
+              column: 6,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '2000',
+            location: Location(
+              row: 1,
+              column: 7,
+            ),
+          ),
+        ),
+      ]);
+    });
+
     // --- Edge cases: identifiers and keywords ---
     // These tests expose a bug: isBoolean/isIf/isElse in string_extensions.dart
     // use hasMatch (substring match) instead of exact match, so identifiers
