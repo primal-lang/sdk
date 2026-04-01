@@ -45,6 +45,13 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
         throw const LexicalError('Trailing underscore in number literal');
       }
       result.add(NumberToken(state.output));
+    } else if (state is ExponentState) {
+      if (state.lastWasUnderscore) {
+        throw const LexicalError('Trailing underscore in number literal');
+      }
+      result.add(NumberToken(state.output));
+    } else if (state is ExponentInitState || state is ExponentSignState) {
+      throw const LexicalError('Incomplete exponent in number literal');
     } else if (state is IdentifierState) {
       final Lexeme lexeme = state.output;
       if (lexeme.value.isBoolean) {
@@ -372,6 +379,11 @@ class IntegerState extends State<Character, Lexeme> {
         throw InvalidCharacterError(input, 'digit');
       }
       return DecimalInitState(iterator, output.add(input));
+    } else if (input.value.isExponent) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return ExponentInitState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
       if (lastWasUnderscore) {
         throw InvalidCharacterError(input, 'digit');
@@ -419,6 +431,11 @@ class DecimalState extends State<Character, Lexeme> {
         throw InvalidCharacterError(input, 'digit');
       }
       return DecimalState(iterator, output, lastWasUnderscore: true);
+    } else if (input.value.isExponent) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return ExponentInitState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
       if (lastWasUnderscore) {
         throw InvalidCharacterError(input, 'digit');
@@ -427,6 +444,68 @@ class DecimalState extends State<Character, Lexeme> {
       return ResultState(iterator, NumberToken(output));
     } else {
       throw InvalidCharacterError(input, 'digit or underscore');
+    }
+  }
+}
+
+class ExponentInitState extends State<Character, Lexeme> {
+  const ExponentInitState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value.isDigit) {
+      return ExponentState(iterator, output.add(input));
+    } else if (input.value.isPlus || input.value.isMinus) {
+      return ExponentSignState(iterator, output.add(input));
+    } else {
+      throw InvalidCharacterError(input, 'digit or sign');
+    }
+  }
+}
+
+class ExponentSignState extends State<Character, Lexeme> {
+  const ExponentSignState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value.isDigit) {
+      return ExponentState(iterator, output.add(input));
+    } else {
+      throw InvalidCharacterError(input, 'digit');
+    }
+  }
+}
+
+class ExponentState extends State<Character, Lexeme> {
+  final bool lastWasUnderscore;
+
+  const ExponentState(
+    super.iterator,
+    super.output, {
+    this.lastWasUnderscore = false,
+  });
+
+  @override
+  State process(Character input) {
+    if (input.value.isDigit) {
+      return ExponentState(
+        iterator,
+        output.add(input),
+        lastWasUnderscore: false,
+      );
+    } else if (input.value.isUnderscore) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return ExponentState(iterator, output, lastWasUnderscore: true);
+    } else if (input.value.isOperandDelimiter) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      iterator.back();
+      return ResultState(iterator, NumberToken(output));
+    } else {
+      throw InvalidCharacterError(input, 'digit');
     }
   }
 }

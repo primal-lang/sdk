@@ -42,6 +42,8 @@ extension StringExtensions on String {
 
   bool get isDot => this == '.';
 
+  bool get isExponent => this == 'e' || this == 'E';
+
   bool get isComma => this == ',';
 
   bool get isColon => this == ':';

@@ -74,6 +74,158 @@ void main() {
       expect(() => getTokens('1..2'), throwsA(isA<InvalidCharacterError>()));
     });
 
+    test('Scientific notation - integer with positive exponent', () {
+      final List<Token> tokens = getTokens('1e10');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1e10',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Scientific notation - uppercase E', () {
+      final List<Token> tokens = getTokens('1E10');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1E10',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Scientific notation - explicit positive exponent', () {
+      final List<Token> tokens = getTokens('1e+10');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1e+10',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Scientific notation - negative exponent', () {
+      final List<Token> tokens = getTokens('1e-10');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1e-10',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Scientific notation - decimal with exponent', () {
+      final List<Token> tokens = getTokens('1.5e10');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1.5e10',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Scientific notation - decimal with negative exponent', () {
+      final List<Token> tokens = getTokens('1.5e-3');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1.5e-3',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Scientific notation - with underscores in mantissa', () {
+      final List<Token> tokens = getTokens('1_000e10');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1000e10',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Scientific notation - with underscores in exponent', () {
+      final List<Token> tokens = getTokens('1e1_0');
+      checkTokens(tokens, [
+        NumberToken(
+          const Lexeme(
+            value: '1e10',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Scientific notation - incomplete exponent', () {
+      expect(() => getTokens('1e'), throwsA(isA<LexicalError>()));
+    });
+
+    test('Scientific notation - incomplete exponent with sign', () {
+      expect(() => getTokens('1e+'), throwsA(isA<LexicalError>()));
+    });
+
+    test('Scientific notation - invalid character after e', () {
+      expect(() => getTokens('1ea'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Scientific notation - underscore after e', () {
+      expect(() => getTokens('1e_5'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Scientific notation - underscore after sign', () {
+      expect(() => getTokens('1e+_5'), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Scientific notation - trailing underscore in exponent', () {
+      expect(() => getTokens('1e5_ '), throwsA(isA<InvalidCharacterError>()));
+    });
+
+    test('Scientific notation - trailing underscore in exponent at EOI', () {
+      expect(() => getTokens('1e5_'), throwsA(isA<LexicalError>()));
+    });
+
+    test('Scientific notation - consecutive underscores in exponent', () {
+      expect(() => getTokens('1e1__0'), throwsA(isA<InvalidCharacterError>()));
+    });
+
     test('Valid boolean true', () {
       final List<Token> tokens = getTokens('true');
       checkTokens(tokens, [
