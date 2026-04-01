@@ -10,55 +10,6 @@ This document details issues found in the syntactic analyzer and the plan to fix
 
 ---
 
-## Issue 4: Mixed Call/Index Chains Don't Work
-
-### Problem Description
-
-This is related to Issue 3. The current `if`/`else if` structure means:
-
-```dart
-if (check(OpenParenthesisToken)) {
-  while (match([OpenParenthesisToken])) {
-    // handle calls
-  }
-} else if (match([OpenBracketToken])) {
-  // handle ONE index
-}
-```
-
-After handling calls, we never check for `[`. After handling one index, we never check for `(` or another `[`. So:
-
-- `f()[0]` - call a function, then index the result: **FAILS**
-- `a[0]()` - index into array, then call the result: **FAILS**
-- `f()[0]()` - call, index, call: **FAILS**
-- `matrix[0][1]` - chained indexing: **FAILS** (same as Issue 3)
-
-### Solution
-
-The fix from Issue 3 (unified loop) also fixes this issue. By using a `while(true)` loop that checks for both `(` and `[` on each iteration, we can handle any sequence of calls and indexing.
-
-### Implementation
-
-Same as Issue 3. The rewritten `call()` function handles both scenarios in a single loop.
-
-### Result
-
-All these expressions now work:
-
-- `f()` - simple call
-- `a[0]` - simple index
-- `f()[0]` - call then index
-- `a[0]()` - index then call
-- `f()[0]()` - call, index, call
-- `getMatrix()[i][j]` - call then double index
-- `callbacks[0]()` - index then call
-
-Update and/or add tests if necessary.
-
-Update the file `docs/compiler/syntactic.md` if necessary.
-
----
-
 ## Issue 5: Zero-Parameter Functions Fail
 
 ### Problem Description

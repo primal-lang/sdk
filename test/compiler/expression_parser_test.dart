@@ -404,6 +404,27 @@ void main() {
       final Expression expression = getExpression('a[0]()');
       expect(expression.toString(), 'element.at(a, 0)()');
     });
+
+    // Mixed call/index chains
+    test('Expression 72', () {
+      final Expression expression = getExpression('f()[0]()');
+      expect(expression.toString(), 'element.at(f(), 0)()');
+    });
+
+    test('Expression 73', () {
+      final Expression expression = getExpression('f()()[0]');
+      expect(expression.toString(), 'element.at(f()(), 0)');
+    });
+
+    test('Expression 74', () {
+      final Expression expression = getExpression('a[0][1]()');
+      expect(expression.toString(), 'element.at(element.at(a, 0), 1)()');
+    });
+
+    test('Expression 75', () {
+      final Expression expression = getExpression('f()[0]()[1]');
+      expect(expression.toString(), 'element.at(element.at(f(), 0)(), 1)');
+    });
   });
 
   group('Expression parser errors', () {
