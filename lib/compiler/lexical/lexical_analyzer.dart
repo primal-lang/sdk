@@ -8,6 +8,15 @@ import 'package:primal/compiler/scanner/character.dart';
 import 'package:primal/extensions/string_extensions.dart';
 import 'package:primal/utils/list_iterator.dart';
 
+enum QuoteType { single, double }
+
+extension QuoteTypeExtension on QuoteType {
+  bool isTerminator(String char) => switch (this) {
+    QuoteType.single => char.isSingleQuote,
+    QuoteType.double => char.isDoubleQuote,
+  };
+}
+
 class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
   const LexicalAnalyzer(super.input);
 
@@ -41,25 +50,15 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       } else {
         result.add(IdentifierToken(lexeme));
       }
-    } else if (state is StringDoubleQuoteState) {
+    } else if (state is StringState) {
       throw UnterminatedStringError(state.output.location);
-    } else if (state is StringSingleQuoteState) {
+    } else if (state is StringEscapeState) {
       throw UnterminatedStringError(state.output.location);
-    } else if (state is StringDoubleQuoteEscapeState) {
+    } else if (state is StringHexEscapeState) {
       throw UnterminatedStringError(state.output.location);
-    } else if (state is StringSingleQuoteEscapeState) {
+    } else if (state is StringUnicodeEscapeState) {
       throw UnterminatedStringError(state.output.location);
-    } else if (state is StringDoubleQuoteHexEscapeState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringDoubleQuoteUnicodeEscapeState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringDoubleQuoteBracedEscapeState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringSingleQuoteHexEscapeState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringSingleQuoteUnicodeEscapeState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringSingleQuoteBracedEscapeState) {
+    } else if (state is StringBracedEscapeState) {
       throw UnterminatedStringError(state.output.location);
     } else if (state is StartMultiLineCommentState ||
         state is ClosingMultiLineCommentState) {
@@ -78,20 +77,16 @@ class InitState extends State<Character, void> {
     if (input.value.isWhitespace) {
       return this;
     } else if (input.value.isDoubleQuote) {
-      return StringDoubleQuoteState(
+      return StringState(
         iterator,
-        Lexeme(
-          value: '',
-          location: input.location,
-        ),
+        Lexeme(value: '', location: input.location),
+        QuoteType.double,
       );
     } else if (input.value.isSingleQuote) {
-      return StringSingleQuoteState(
+      return StringState(
         iterator,
-        Lexeme(
-          value: '',
-          location: input.location,
-        ),
+        Lexeme(value: '', location: input.location),
+        QuoteType.single,
       );
     } else if (input.value.isDigit) {
       return IntegerState(iterator, input.lexeme);
@@ -141,63 +136,54 @@ class InitState extends State<Character, void> {
   }
 }
 
-class StringDoubleQuoteState extends State<Character, Lexeme> {
-  const StringDoubleQuoteState(super.iterator, super.output);
+class StringState extends State<Character, Lexeme> {
+  final QuoteType quoteType;
+
+  const StringState(super.iterator, super.output, this.quoteType);
 
   @override
   State process(Character input) {
-    if (input.value.isDoubleQuote) {
+    if (quoteType.isTerminator(input.value)) {
       return ResultState(iterator, StringToken(output));
     } else if (input.value.isBackslash) {
-      return StringDoubleQuoteEscapeState(iterator, output);
+      return StringEscapeState(iterator, output, quoteType);
     } else {
-      return StringDoubleQuoteState(iterator, output.add(input));
+      return StringState(iterator, output.add(input), quoteType);
     }
   }
 }
 
-class StringSingleQuoteState extends State<Character, Lexeme> {
-  const StringSingleQuoteState(super.iterator, super.output);
+class StringEscapeState extends State<Character, Lexeme> {
+  final QuoteType quoteType;
 
-  @override
-  State process(Character input) {
-    if (input.value.isSingleQuote) {
-      return ResultState(iterator, StringToken(output));
-    } else if (input.value.isBackslash) {
-      return StringSingleQuoteEscapeState(iterator, output);
-    } else {
-      return StringSingleQuoteState(iterator, output.add(input));
-    }
-  }
-}
-
-class StringDoubleQuoteEscapeState extends State<Character, Lexeme> {
-  const StringDoubleQuoteEscapeState(super.iterator, super.output);
+  const StringEscapeState(super.iterator, super.output, this.quoteType);
 
   @override
   State process(Character input) {
     if (input.value == 'n') {
-      return StringDoubleQuoteState(iterator, output.addValue('\n'));
+      return StringState(iterator, output.addValue('\n'), quoteType);
     } else if (input.value == 't') {
-      return StringDoubleQuoteState(iterator, output.addValue('\t'));
+      return StringState(iterator, output.addValue('\t'), quoteType);
     } else if (input.value.isBackslash) {
-      return StringDoubleQuoteState(iterator, output.addValue('\\'));
+      return StringState(iterator, output.addValue('\\'), quoteType);
     } else if (input.value.isDoubleQuote) {
-      return StringDoubleQuoteState(iterator, output.addValue('"'));
+      return StringState(iterator, output.addValue('"'), quoteType);
     } else if (input.value.isSingleQuote) {
-      return StringDoubleQuoteState(iterator, output.addValue("'"));
+      return StringState(iterator, output.addValue("'"), quoteType);
     } else if (input.value == 'x') {
-      return StringDoubleQuoteHexEscapeState(
+      return StringHexEscapeState(
         iterator,
         output,
+        quoteType,
         2,
         '',
         input.location,
       );
     } else if (input.value == 'u') {
-      return StringDoubleQuoteUnicodeEscapeState(
+      return StringUnicodeEscapeState(
         iterator,
         output,
+        quoteType,
         input.location,
       );
     } else {
@@ -206,49 +192,16 @@ class StringDoubleQuoteEscapeState extends State<Character, Lexeme> {
   }
 }
 
-class StringSingleQuoteEscapeState extends State<Character, Lexeme> {
-  const StringSingleQuoteEscapeState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value == 'n') {
-      return StringSingleQuoteState(iterator, output.addValue('\n'));
-    } else if (input.value == 't') {
-      return StringSingleQuoteState(iterator, output.addValue('\t'));
-    } else if (input.value.isBackslash) {
-      return StringSingleQuoteState(iterator, output.addValue('\\'));
-    } else if (input.value.isDoubleQuote) {
-      return StringSingleQuoteState(iterator, output.addValue('"'));
-    } else if (input.value.isSingleQuote) {
-      return StringSingleQuoteState(iterator, output.addValue("'"));
-    } else if (input.value == 'x') {
-      return StringSingleQuoteHexEscapeState(
-        iterator,
-        output,
-        2,
-        '',
-        input.location,
-      );
-    } else if (input.value == 'u') {
-      return StringSingleQuoteUnicodeEscapeState(
-        iterator,
-        output,
-        input.location,
-      );
-    } else {
-      throw InvalidEscapeSequenceError(input);
-    }
-  }
-}
-
-class StringDoubleQuoteHexEscapeState extends State<Character, Lexeme> {
+class StringHexEscapeState extends State<Character, Lexeme> {
+  final QuoteType quoteType;
   final int requiredDigits;
   final String hexAccum;
   final Location escapeStart;
 
-  const StringDoubleQuoteHexEscapeState(
+  const StringHexEscapeState(
     super.iterator,
     super.output,
+    this.quoteType,
     this.requiredDigits,
     this.hexAccum,
     this.escapeStart,
@@ -268,15 +221,17 @@ class StringDoubleQuoteHexEscapeState extends State<Character, Lexeme> {
 
     if (newHex.length == requiredDigits) {
       final int codePoint = int.parse(newHex, radix: 16);
-      return StringDoubleQuoteState(
+      return StringState(
         iterator,
         output.addValue(String.fromCharCode(codePoint)),
+        quoteType,
       );
     }
 
-    return StringDoubleQuoteHexEscapeState(
+    return StringHexEscapeState(
       iterator,
       output,
+      quoteType,
       requiredDigits,
       newHex,
       escapeStart,
@@ -284,28 +239,32 @@ class StringDoubleQuoteHexEscapeState extends State<Character, Lexeme> {
   }
 }
 
-class StringDoubleQuoteUnicodeEscapeState extends State<Character, Lexeme> {
+class StringUnicodeEscapeState extends State<Character, Lexeme> {
+  final QuoteType quoteType;
   final Location escapeStart;
 
-  const StringDoubleQuoteUnicodeEscapeState(
+  const StringUnicodeEscapeState(
     super.iterator,
     super.output,
+    this.quoteType,
     this.escapeStart,
   );
 
   @override
   State process(Character input) {
     if (input.value == '{') {
-      return StringDoubleQuoteBracedEscapeState(
+      return StringBracedEscapeState(
         iterator,
         output,
+        quoteType,
         '',
         escapeStart,
       );
     } else if (input.value.isHexDigit) {
-      return StringDoubleQuoteHexEscapeState(
+      return StringHexEscapeState(
         iterator,
         output,
+        quoteType,
         4,
         input.value,
         escapeStart,
@@ -316,13 +275,15 @@ class StringDoubleQuoteUnicodeEscapeState extends State<Character, Lexeme> {
   }
 }
 
-class StringDoubleQuoteBracedEscapeState extends State<Character, Lexeme> {
+class StringBracedEscapeState extends State<Character, Lexeme> {
+  final QuoteType quoteType;
   final String hexAccum;
   final Location escapeStart;
 
-  const StringDoubleQuoteBracedEscapeState(
+  const StringBracedEscapeState(
     super.iterator,
     super.output,
+    this.quoteType,
     this.hexAccum,
     this.escapeStart,
   );
@@ -337,9 +298,10 @@ class StringDoubleQuoteBracedEscapeState extends State<Character, Lexeme> {
       if (codePoint > 0x10FFFF) {
         throw InvalidCodePointError(codePoint, escapeStart);
       }
-      return StringDoubleQuoteState(
+      return StringState(
         iterator,
         output.addValue(String.fromCharCode(codePoint)),
+        quoteType,
       );
     } else if (input.value.isHexDigit) {
       if (hexAccum.length >= 6) {
@@ -348,131 +310,10 @@ class StringDoubleQuoteBracedEscapeState extends State<Character, Lexeme> {
           escapeStart,
         );
       }
-      return StringDoubleQuoteBracedEscapeState(
+      return StringBracedEscapeState(
         iterator,
         output,
-        hexAccum + input.value,
-        escapeStart,
-      );
-    } else {
-      throw InvalidBracedEscapeError(
-        "Invalid character '${input.value}' in \\u{} escape",
-        escapeStart,
-      );
-    }
-  }
-}
-
-class StringSingleQuoteHexEscapeState extends State<Character, Lexeme> {
-  final int requiredDigits;
-  final String hexAccum;
-  final Location escapeStart;
-
-  const StringSingleQuoteHexEscapeState(
-    super.iterator,
-    super.output,
-    this.requiredDigits,
-    this.hexAccum,
-    this.escapeStart,
-  );
-
-  @override
-  State process(Character input) {
-    if (!input.value.isHexDigit) {
-      throw InvalidHexEscapeError(
-        input,
-        requiredDigits == 2 ? 'x' : 'u',
-        requiredDigits,
-      );
-    }
-
-    final String newHex = hexAccum + input.value;
-
-    if (newHex.length == requiredDigits) {
-      final int codePoint = int.parse(newHex, radix: 16);
-      return StringSingleQuoteState(
-        iterator,
-        output.addValue(String.fromCharCode(codePoint)),
-      );
-    }
-
-    return StringSingleQuoteHexEscapeState(
-      iterator,
-      output,
-      requiredDigits,
-      newHex,
-      escapeStart,
-    );
-  }
-}
-
-class StringSingleQuoteUnicodeEscapeState extends State<Character, Lexeme> {
-  final Location escapeStart;
-
-  const StringSingleQuoteUnicodeEscapeState(
-    super.iterator,
-    super.output,
-    this.escapeStart,
-  );
-
-  @override
-  State process(Character input) {
-    if (input.value == '{') {
-      return StringSingleQuoteBracedEscapeState(
-        iterator,
-        output,
-        '',
-        escapeStart,
-      );
-    } else if (input.value.isHexDigit) {
-      return StringSingleQuoteHexEscapeState(
-        iterator,
-        output,
-        4,
-        input.value,
-        escapeStart,
-      );
-    } else {
-      throw InvalidHexEscapeError(input, 'u', 4);
-    }
-  }
-}
-
-class StringSingleQuoteBracedEscapeState extends State<Character, Lexeme> {
-  final String hexAccum;
-  final Location escapeStart;
-
-  const StringSingleQuoteBracedEscapeState(
-    super.iterator,
-    super.output,
-    this.hexAccum,
-    this.escapeStart,
-  );
-
-  @override
-  State process(Character input) {
-    if (input.value == '}') {
-      if (hexAccum.isEmpty) {
-        throw InvalidBracedEscapeError('Empty \\u{} escape', escapeStart);
-      }
-      final int codePoint = int.parse(hexAccum, radix: 16);
-      if (codePoint > 0x10FFFF) {
-        throw InvalidCodePointError(codePoint, escapeStart);
-      }
-      return StringSingleQuoteState(
-        iterator,
-        output.addValue(String.fromCharCode(codePoint)),
-      );
-    } else if (input.value.isHexDigit) {
-      if (hexAccum.length >= 6) {
-        throw InvalidBracedEscapeError(
-          'Too many digits in \\u{} escape (max 6)',
-          escapeStart,
-        );
-      }
-      return StringSingleQuoteBracedEscapeState(
-        iterator,
-        output,
+        quoteType,
         hexAccum + input.value,
         escapeStart,
       );
