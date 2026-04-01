@@ -2754,5 +2754,310 @@ pi = 3.14
         );
       });
     });
+
+    // --- Unicode escape sequences ---
+
+    group('Unicode escape sequences', () {
+      // Valid \xXX escapes
+      test('\\xXX escape for A', () {
+        final List<Token> tokens = getTokens('"\\x41"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'A',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\xXX escape for null character', () {
+        final List<Token> tokens = getTokens('"\\x00"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '\x00',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\xXX escape lowercase hex', () {
+        final List<Token> tokens = getTokens('"\\x6a"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'j',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      // Valid \uXXXX escapes
+      test('\\uXXXX escape for A', () {
+        final List<Token> tokens = getTokens('"\\u0041"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'A',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\uXXXX escape for Greek alpha', () {
+        final List<Token> tokens = getTokens('"\\u03B1"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'α',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\uXXXX escape for null character', () {
+        final List<Token> tokens = getTokens('"\\u0000"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '\u0000',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      // Valid \u{...} escapes
+      test('\\u{...} escape short form', () {
+        final List<Token> tokens = getTokens('"\\u{41}"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'A',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\u{...} escape with leading zeros', () {
+        final List<Token> tokens = getTokens('"\\u{0041}"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'A',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\u{...} escape for Greek alpha', () {
+        final List<Token> tokens = getTokens('"\\u{3B1}"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'α',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\u{...} escape for emoji', () {
+        final List<Token> tokens = getTokens('"\\u{1F600}"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '😀',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\u{...} escape for max code point', () {
+        final List<Token> tokens = getTokens('"\\u{10FFFF}"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '\u{10FFFF}',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      // Mixed escapes
+      test('Multiple \\uXXXX escapes', () {
+        final List<Token> tokens = getTokens('"\\u0041\\u0042"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'AB',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\u{...} escape mixed with text', () {
+        final List<Token> tokens = getTokens('"\\u{48}ello"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'Hello',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\xXX escape for quotes', () {
+        final List<Token> tokens = getTokens('"Say \\x22hi\\x22"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'Say "hi"',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      // Single quoted strings with unicode escapes
+      test('\\xXX escape in single quoted string', () {
+        final List<Token> tokens = getTokens("'\\x41'");
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'A',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\uXXXX escape in single quoted string', () {
+        final List<Token> tokens = getTokens("'\\u0041'");
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'A',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('\\u{...} escape in single quoted string', () {
+        final List<Token> tokens = getTokens("'\\u{1F600}'");
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '😀',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      // Invalid escapes
+      test('\\u with only 2 digits', () {
+        expect(
+          () => getTokens('"\\u41"'),
+          throwsA(isA<InvalidHexEscapeError>()),
+        );
+      });
+
+      test('\\uXXXX with non-hex character', () {
+        expect(
+          () => getTokens('"\\uGGGG"'),
+          throwsA(isA<InvalidHexEscapeError>()),
+        );
+      });
+
+      test('\\x with only 1 digit', () {
+        expect(
+          () => getTokens('"\\x4"'),
+          throwsA(isA<InvalidHexEscapeError>()),
+        );
+      });
+
+      test('\\xXX with non-hex character', () {
+        expect(
+          () => getTokens('"\\xGG"'),
+          throwsA(isA<InvalidHexEscapeError>()),
+        );
+      });
+
+      test('\\u{} empty braces', () {
+        expect(
+          () => getTokens('"\\u{}"'),
+          throwsA(isA<InvalidBracedEscapeError>()),
+        );
+      });
+
+      test('\\u{...} with non-hex character', () {
+        expect(
+          () => getTokens('"\\u{GGGG}"'),
+          throwsA(isA<InvalidBracedEscapeError>()),
+        );
+      });
+
+      test('\\u{...} with too many digits', () {
+        expect(
+          () => getTokens('"\\u{1234567}"'),
+          throwsA(isA<InvalidBracedEscapeError>()),
+        );
+      });
+
+      test('\\u{...} exceeds max code point', () {
+        expect(
+          () => getTokens('"\\u{110000}"'),
+          throwsA(isA<InvalidCodePointError>()),
+        );
+      });
+
+      test('\\u{...} missing closing brace', () {
+        expect(
+          () => getTokens('"\\u{41"'),
+          throwsA(isA<InvalidBracedEscapeError>()),
+        );
+      });
+
+      test('Unterminated string in \\uXXXX escape', () {
+        expect(
+          () => getTokensDirect('"\\u004'),
+          throwsA(isA<UnterminatedStringError>()),
+        );
+      });
+
+      test('Unterminated string in \\xXX escape', () {
+        expect(
+          () => getTokensDirect('"\\x4'),
+          throwsA(isA<UnterminatedStringError>()),
+        );
+      });
+
+      test('Unterminated string in \\u{...} escape', () {
+        expect(
+          () => getTokensDirect('"\\u{41'),
+          throwsA(isA<UnterminatedStringError>()),
+        );
+      });
+
+      test('Unterminated string after \\u', () {
+        expect(
+          () => getTokensDirect('"\\u'),
+          throwsA(isA<UnterminatedStringError>()),
+        );
+      });
+    });
   });
 }

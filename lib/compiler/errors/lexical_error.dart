@@ -28,3 +28,24 @@ class InvalidEscapeSequenceError extends LexicalError {
         "Invalid escape sequence '\\${character.value}' at ${character.location}",
       );
 }
+
+class InvalidHexEscapeError extends LexicalError {
+  InvalidHexEscapeError(Character character, String escapeType, int expected)
+    : super(
+        'Invalid hex escape: expected $expected hex digits after '
+        "'\\$escapeType', got '${character.value}' at ${character.location}",
+      );
+}
+
+class InvalidBracedEscapeError extends LexicalError {
+  const InvalidBracedEscapeError(String message, Location location)
+    : super('$message at $location');
+}
+
+class InvalidCodePointError extends LexicalError {
+  InvalidCodePointError(int codePoint, Location location)
+    : super(
+        'Invalid code point U+${codePoint.toRadixString(16).toUpperCase().padLeft(4, '0')}: '
+        'exceeds maximum U+10FFFF at $location',
+      );
+}

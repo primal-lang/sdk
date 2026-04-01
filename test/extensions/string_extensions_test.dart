@@ -25,6 +25,37 @@ void main() {
       }
     });
 
+    test('isHexDigit', () {
+      const List<String> hexDigits = [
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+      ];
+
+      for (final String hexDigit in hexDigits) {
+        expect(true, equals(hexDigit.isHexDigit));
+      }
+    });
+
     test('isLetter', () {
       const List<String> letters = [
         'a',
@@ -118,6 +149,17 @@ void main() {
         expect(false, equals('.'.isDigit));
       });
 
+      test('isHexDigit returns false for non-hex characters', () {
+        expect(false, equals('g'.isHexDigit));
+        expect(false, equals('G'.isHexDigit));
+        expect(false, equals('z'.isHexDigit));
+        expect(false, equals('Z'.isHexDigit));
+        expect(false, equals(' '.isHexDigit));
+        expect(false, equals('+'.isHexDigit));
+        expect(false, equals('.'.isHexDigit));
+        expect(false, equals('@'.isHexDigit));
+      });
+
       test('isLetter returns false for non-letters', () {
         expect(false, equals('0'.isLetter));
         expect(false, equals('9'.isLetter));
@@ -183,6 +225,14 @@ void main() {
     group('Multi-character strings', () {
       test('isDigit matches within multi-char strings', () {
         expect(true, equals('abc123'.isDigit));
+      });
+
+      test('isHexDigit matches within multi-char strings', () {
+        expect(true, equals('ghij0'.isHexDigit));
+        expect(true, equals('xyz9'.isHexDigit));
+        expect(true, equals('!@#a'.isHexDigit));
+        expect(true, equals('!@#F'.isHexDigit));
+        expect(false, equals('ghij'.isHexDigit));
       });
 
       test('isLetter matches within multi-char strings', () {
@@ -286,6 +336,7 @@ void main() {
     group('Edge cases', () {
       test('empty string returns false for all checks', () {
         expect(false, equals(''.isDigit));
+        expect(false, equals(''.isHexDigit));
         expect(false, equals(''.isLetter));
         expect(false, equals(''.isWhitespace));
         expect(false, equals(''.isNewLine));

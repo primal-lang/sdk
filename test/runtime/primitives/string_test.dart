@@ -476,6 +476,102 @@ void main() {
     });
   });
 
+  group('Unicode Escape Sequences', () {
+    test('\\xXX escape produces correct character', () {
+      final Runtime runtime = getRuntime('main = "\\x48\\x69"');
+      checkResult(runtime, '"Hi"');
+    });
+
+    test('\\xXX escape for special characters', () {
+      final Runtime runtime = getRuntime('main = "Say \\x22hello\\x22"');
+      checkResult(runtime, '"Say "hello""');
+    });
+
+    test('\\uXXXX escape produces correct character', () {
+      final Runtime runtime = getRuntime(
+        'main = "\\u0048\\u0065\\u006C\\u006C\\u006F"',
+      );
+      checkResult(runtime, '"Hello"');
+    });
+
+    test('\\uXXXX escape for Greek letter', () {
+      final Runtime runtime = getRuntime('main = "\\u03B1"');
+      checkResult(runtime, '"α"');
+    });
+
+    test('\\u{...} escape short form', () {
+      final Runtime runtime = getRuntime('main = "\\u{48}ello"');
+      checkResult(runtime, '"Hello"');
+    });
+
+    test('\\u{...} escape for emoji', () {
+      final Runtime runtime = getRuntime('main = "\\u{1F600}"');
+      checkResult(runtime, '"😀"');
+    });
+
+    test('\\u{...} escape for max code point', () {
+      final Runtime runtime = getRuntime('main = "\\u{10FFFF}"');
+      checkResult(runtime, '"\u{10FFFF}"');
+    });
+
+    test('Mixed unicode escapes in one string', () {
+      final Runtime runtime = getRuntime('main = "\\x41\\u0042\\u{43}"');
+      checkResult(runtime, '"ABC"');
+    });
+
+    test('Unicode escapes in single quoted string', () {
+      final Runtime runtime = getRuntime("main = '\\u{1F600}'");
+      checkResult(runtime, '"😀"');
+    });
+
+    test('Unicode escape with str.length', () {
+      final Runtime runtime = getRuntime('main = str.length("\\u{1F600}")');
+      checkResult(runtime, 1);
+    });
+
+    test('Unicode escape with str.first', () {
+      final Runtime runtime = getRuntime('main = str.first("\\u{1F600}abc")');
+      checkResult(runtime, '"😀"');
+    });
+
+    test('Unicode escape with str.reverse', () {
+      final Runtime runtime = getRuntime('main = str.reverse("a\\u{1F600}b")');
+      checkResult(runtime, '"b😀a"');
+    });
+
+    test('Unicode escape with string comparison', () {
+      final Runtime runtime = getRuntime('main = "\\u{41}" == "A"');
+      checkResult(runtime, true);
+    });
+
+    test('Unicode escape with string concatenation', () {
+      final Runtime runtime = getRuntime(
+        'main = str.concat("\\u{48}", "\\u{69}")',
+      );
+      checkResult(runtime, '"Hi"');
+    });
+
+    test('Unicode escape in list', () {
+      final Runtime runtime = getRuntime('main = ["\\u{41}", "\\u{42}"]');
+      checkResult(runtime, ['"A"', '"B"']);
+    });
+
+    test('Unicode escape in map key', () {
+      final Runtime runtime = getRuntime('main = {"\\u{6B}": 1}["k"]');
+      checkResult(runtime, 1);
+    });
+
+    test('Unicode escape in map value', () {
+      final Runtime runtime = getRuntime('main = {"k": "\\u{76}"}["k"]');
+      checkResult(runtime, '"v"');
+    });
+
+    test('Combining unicode escapes with regular escapes', () {
+      final Runtime runtime = getRuntime('main = "\\n\\u{41}\\t"');
+      checkResult(runtime, '"\nA\t"');
+    });
+  });
+
   group('String Error Cases', () {
     test('str.at throws IndexOutOfBoundsError for out-of-bounds index', () {
       final Runtime runtime = getRuntime('main = str.at("Hello", 10)');

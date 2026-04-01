@@ -2,6 +2,7 @@ import 'package:primal/compiler/errors/lexical_error.dart';
 import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/analyzer.dart';
+import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/state.dart';
 import 'package:primal/compiler/scanner/character.dart';
 import 'package:primal/extensions/string_extensions.dart';
@@ -47,6 +48,18 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
     } else if (state is StringDoubleQuoteEscapeState) {
       throw UnterminatedStringError(state.output.location);
     } else if (state is StringSingleQuoteEscapeState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringDoubleQuoteHexEscapeState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringDoubleQuoteUnicodeEscapeState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringDoubleQuoteBracedEscapeState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringSingleQuoteHexEscapeState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringSingleQuoteUnicodeEscapeState) {
+      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringSingleQuoteBracedEscapeState) {
       throw UnterminatedStringError(state.output.location);
     } else if (state is StartMultiLineCommentState ||
         state is ClosingMultiLineCommentState) {
@@ -173,6 +186,20 @@ class StringDoubleQuoteEscapeState extends State<Character, Lexeme> {
       return StringDoubleQuoteState(iterator, output.addValue('"'));
     } else if (input.value.isSingleQuote) {
       return StringDoubleQuoteState(iterator, output.addValue("'"));
+    } else if (input.value == 'x') {
+      return StringDoubleQuoteHexEscapeState(
+        iterator,
+        output,
+        2,
+        '',
+        input.location,
+      );
+    } else if (input.value == 'u') {
+      return StringDoubleQuoteUnicodeEscapeState(
+        iterator,
+        output,
+        input.location,
+      );
     } else {
       throw InvalidEscapeSequenceError(input);
     }
@@ -194,8 +221,266 @@ class StringSingleQuoteEscapeState extends State<Character, Lexeme> {
       return StringSingleQuoteState(iterator, output.addValue('"'));
     } else if (input.value.isSingleQuote) {
       return StringSingleQuoteState(iterator, output.addValue("'"));
+    } else if (input.value == 'x') {
+      return StringSingleQuoteHexEscapeState(
+        iterator,
+        output,
+        2,
+        '',
+        input.location,
+      );
+    } else if (input.value == 'u') {
+      return StringSingleQuoteUnicodeEscapeState(
+        iterator,
+        output,
+        input.location,
+      );
     } else {
       throw InvalidEscapeSequenceError(input);
+    }
+  }
+}
+
+class StringDoubleQuoteHexEscapeState extends State<Character, Lexeme> {
+  final int requiredDigits;
+  final String hexAccum;
+  final Location escapeStart;
+
+  const StringDoubleQuoteHexEscapeState(
+    super.iterator,
+    super.output,
+    this.requiredDigits,
+    this.hexAccum,
+    this.escapeStart,
+  );
+
+  @override
+  State process(Character input) {
+    if (!input.value.isHexDigit) {
+      throw InvalidHexEscapeError(
+        input,
+        requiredDigits == 2 ? 'x' : 'u',
+        requiredDigits,
+      );
+    }
+
+    final String newHex = hexAccum + input.value;
+
+    if (newHex.length == requiredDigits) {
+      final int codePoint = int.parse(newHex, radix: 16);
+      return StringDoubleQuoteState(
+        iterator,
+        output.addValue(String.fromCharCode(codePoint)),
+      );
+    }
+
+    return StringDoubleQuoteHexEscapeState(
+      iterator,
+      output,
+      requiredDigits,
+      newHex,
+      escapeStart,
+    );
+  }
+}
+
+class StringDoubleQuoteUnicodeEscapeState extends State<Character, Lexeme> {
+  final Location escapeStart;
+
+  const StringDoubleQuoteUnicodeEscapeState(
+    super.iterator,
+    super.output,
+    this.escapeStart,
+  );
+
+  @override
+  State process(Character input) {
+    if (input.value == '{') {
+      return StringDoubleQuoteBracedEscapeState(
+        iterator,
+        output,
+        '',
+        escapeStart,
+      );
+    } else if (input.value.isHexDigit) {
+      return StringDoubleQuoteHexEscapeState(
+        iterator,
+        output,
+        4,
+        input.value,
+        escapeStart,
+      );
+    } else {
+      throw InvalidHexEscapeError(input, 'u', 4);
+    }
+  }
+}
+
+class StringDoubleQuoteBracedEscapeState extends State<Character, Lexeme> {
+  final String hexAccum;
+  final Location escapeStart;
+
+  const StringDoubleQuoteBracedEscapeState(
+    super.iterator,
+    super.output,
+    this.hexAccum,
+    this.escapeStart,
+  );
+
+  @override
+  State process(Character input) {
+    if (input.value == '}') {
+      if (hexAccum.isEmpty) {
+        throw InvalidBracedEscapeError('Empty \\u{} escape', escapeStart);
+      }
+      final int codePoint = int.parse(hexAccum, radix: 16);
+      if (codePoint > 0x10FFFF) {
+        throw InvalidCodePointError(codePoint, escapeStart);
+      }
+      return StringDoubleQuoteState(
+        iterator,
+        output.addValue(String.fromCharCode(codePoint)),
+      );
+    } else if (input.value.isHexDigit) {
+      if (hexAccum.length >= 6) {
+        throw InvalidBracedEscapeError(
+          'Too many digits in \\u{} escape (max 6)',
+          escapeStart,
+        );
+      }
+      return StringDoubleQuoteBracedEscapeState(
+        iterator,
+        output,
+        hexAccum + input.value,
+        escapeStart,
+      );
+    } else {
+      throw InvalidBracedEscapeError(
+        "Invalid character '${input.value}' in \\u{} escape",
+        escapeStart,
+      );
+    }
+  }
+}
+
+class StringSingleQuoteHexEscapeState extends State<Character, Lexeme> {
+  final int requiredDigits;
+  final String hexAccum;
+  final Location escapeStart;
+
+  const StringSingleQuoteHexEscapeState(
+    super.iterator,
+    super.output,
+    this.requiredDigits,
+    this.hexAccum,
+    this.escapeStart,
+  );
+
+  @override
+  State process(Character input) {
+    if (!input.value.isHexDigit) {
+      throw InvalidHexEscapeError(
+        input,
+        requiredDigits == 2 ? 'x' : 'u',
+        requiredDigits,
+      );
+    }
+
+    final String newHex = hexAccum + input.value;
+
+    if (newHex.length == requiredDigits) {
+      final int codePoint = int.parse(newHex, radix: 16);
+      return StringSingleQuoteState(
+        iterator,
+        output.addValue(String.fromCharCode(codePoint)),
+      );
+    }
+
+    return StringSingleQuoteHexEscapeState(
+      iterator,
+      output,
+      requiredDigits,
+      newHex,
+      escapeStart,
+    );
+  }
+}
+
+class StringSingleQuoteUnicodeEscapeState extends State<Character, Lexeme> {
+  final Location escapeStart;
+
+  const StringSingleQuoteUnicodeEscapeState(
+    super.iterator,
+    super.output,
+    this.escapeStart,
+  );
+
+  @override
+  State process(Character input) {
+    if (input.value == '{') {
+      return StringSingleQuoteBracedEscapeState(
+        iterator,
+        output,
+        '',
+        escapeStart,
+      );
+    } else if (input.value.isHexDigit) {
+      return StringSingleQuoteHexEscapeState(
+        iterator,
+        output,
+        4,
+        input.value,
+        escapeStart,
+      );
+    } else {
+      throw InvalidHexEscapeError(input, 'u', 4);
+    }
+  }
+}
+
+class StringSingleQuoteBracedEscapeState extends State<Character, Lexeme> {
+  final String hexAccum;
+  final Location escapeStart;
+
+  const StringSingleQuoteBracedEscapeState(
+    super.iterator,
+    super.output,
+    this.hexAccum,
+    this.escapeStart,
+  );
+
+  @override
+  State process(Character input) {
+    if (input.value == '}') {
+      if (hexAccum.isEmpty) {
+        throw InvalidBracedEscapeError('Empty \\u{} escape', escapeStart);
+      }
+      final int codePoint = int.parse(hexAccum, radix: 16);
+      if (codePoint > 0x10FFFF) {
+        throw InvalidCodePointError(codePoint, escapeStart);
+      }
+      return StringSingleQuoteState(
+        iterator,
+        output.addValue(String.fromCharCode(codePoint)),
+      );
+    } else if (input.value.isHexDigit) {
+      if (hexAccum.length >= 6) {
+        throw InvalidBracedEscapeError(
+          'Too many digits in \\u{} escape (max 6)',
+          escapeStart,
+        );
+      }
+      return StringSingleQuoteBracedEscapeState(
+        iterator,
+        output,
+        hexAccum + input.value,
+        escapeStart,
+      );
+    } else {
+      throw InvalidBracedEscapeError(
+        "Invalid character '${input.value}' in \\u{} escape",
+        escapeStart,
+      );
     }
   }
 }

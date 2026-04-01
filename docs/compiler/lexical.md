@@ -50,16 +50,22 @@ The analyzer starts in `InitState` and transitions based on the current characte
 
 Additional internal states not reachable from `InitState`:
 
-| State                          | Reachable from               | Purpose                                           |
-| ------------------------------ | ---------------------------- | ------------------------------------------------- |
-| `DecimalInitState`             | `IntegerState`               | Entered after `.`; requires at least one digit    |
-| `DecimalState`                 | `DecimalInitState`           | Accumulates remaining decimal digits              |
-| `StringDoubleQuoteEscapeState` | `StringDoubleQuoteState`     | Processes escape sequence in double-quoted string |
-| `StringSingleQuoteEscapeState` | `StringSingleQuoteState`     | Processes escape sequence in single-quoted string |
-| `SingleLineCommentState`       | `ForwardSlashState`          | Consumes until newline                            |
-| `StartMultiLineCommentState`   | `ForwardSlashState`          | Consumes until `*` is found                       |
-| `ClosingMultiLineCommentState` | `StartMultiLineCommentState` | Checks for `/` to close the comment               |
-| `ResultState`                  | Any token-producing state    | Carries the completed token back to the main loop |
+| State                              | Reachable from                     | Purpose                                           |
+| ---------------------------------- | ---------------------------------- | ------------------------------------------------- |
+| `DecimalInitState`                 | `IntegerState`                     | Entered after `.`; requires at least one digit    |
+| `DecimalState`                     | `DecimalInitState`                 | Accumulates remaining decimal digits              |
+| `StringDoubleQuoteEscapeState`     | `StringDoubleQuoteState`           | Processes escape sequence in double-quoted string |
+| `StringSingleQuoteEscapeState`     | `StringSingleQuoteState`           | Processes escape sequence in single-quoted string |
+| `StringDoubleQuoteHexEscapeState`  | `StringDoubleQuoteEscapeState`     | Accumulates hex digits for `\xXX` or `\uXXXX`     |
+| `StringDoubleQuoteUnicodeEscapeState` | `StringDoubleQuoteEscapeState`  | Dispatches `\u` to fixed or braced format         |
+| `StringDoubleQuoteBracedEscapeState` | `StringDoubleQuoteUnicodeEscapeState` | Accumulates hex digits for `\u{...}`          |
+| `StringSingleQuoteHexEscapeState`  | `StringSingleQuoteEscapeState`     | Accumulates hex digits for `\xXX` or `\uXXXX`     |
+| `StringSingleQuoteUnicodeEscapeState` | `StringSingleQuoteEscapeState`  | Dispatches `\u` to fixed or braced format         |
+| `StringSingleQuoteBracedEscapeState` | `StringSingleQuoteUnicodeEscapeState` | Accumulates hex digits for `\u{...}`          |
+| `SingleLineCommentState`           | `ForwardSlashState`                | Consumes until newline                            |
+| `StartMultiLineCommentState`       | `ForwardSlashState`                | Consumes until `*` is found                       |
+| `ClosingMultiLineCommentState`     | `StartMultiLineCommentState`       | Checks for `/` to close the comment               |
+| `ResultState`                      | Any token-producing state          | Carries the completed token back to the main loop |
 
 Multi-character tokens are accumulated via a `Lexeme` object that tracks the starting location and collects characters with `.add(Character)`, returning a new immutable `Lexeme` each time.
 
@@ -76,6 +82,30 @@ Both double-quoted and single-quoted strings support escape sequences. When a ba
 | `\t`   | tab      | Horizontal tab    |
 
 Both quote escapes are supported in both string types for consistency. This allows `"it\'s"` and `'say \"hi\"'` to work as expected.
+
+### Unicode Escape Sequences
+
+Three Unicode escape formats are supported:
+
+| Format | Digits | Range | Example |
+| ------ | ------ | ----- | ------- |
+| `\xXX` | 2 hex (fixed) | U+0000 - U+00FF | `\x41` → "A" |
+| `\uXXXX` | 4 hex (fixed) | U+0000 - U+FFFF | `\u03B1` → "α" |
+| `\u{X...}` | 1-6 hex (variable) | U+0000 - U+10FFFF | `\u{1F600}` → "😀" |
+
+The braced format (`\u{...}`) follows JavaScript ES6 and Rust conventions, allowing any valid Unicode code point with 1-6 hex digits.
+
+**Examples:**
+- `"\x48\x69"` → "Hi"
+- `"\u0048\u0065\u006C\u006C\u006F"` → "Hello"
+- `"\u{1F600}"` → "😀"
+
+**Error conditions:**
+- Non-hex character in escape: `InvalidHexEscapeError`
+- Empty braces (`\u{}`): `InvalidBracedEscapeError`
+- Too many digits in braces (>6): `InvalidBracedEscapeError`
+- Invalid character in braces: `InvalidBracedEscapeError`
+- Code point exceeds U+10FFFF: `InvalidCodePointError`
 
 The escape state uses `Lexeme.addValue(String)` to append the resolved character (which may differ from the input character) and returns to the parent string state.
 

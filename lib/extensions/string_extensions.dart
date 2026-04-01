@@ -1,6 +1,8 @@
 extension StringExtensions on String {
   bool get isDigit => RegExp(r'\d').hasMatch(this);
 
+  bool get isHexDigit => RegExp(r'[0-9a-fA-F]').hasMatch(this);
+
   bool get isLetter => RegExp(r'[a-zA-Z]').hasMatch(this);
 
   bool get isWhitespace =>
