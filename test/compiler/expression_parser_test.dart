@@ -65,7 +65,7 @@ void main() {
 
     test('Expression 10', () {
       final Expression expression = getExpression('true | 4 < false & "test"');
-      expect(expression.toString(), '<(|(true, 4), &(false, "test"))');
+      expect(expression.toString(), '&(|(true, <(4, false)), "test")');
     });
 
     test('Expression 11', () {
@@ -356,7 +356,23 @@ void main() {
 
     test('Expression 63', () {
       final Expression expression = getExpression('a > b & c < d');
-      expect(expression.toString(), '<(>(a, &(b, c)), d)');
+      expect(expression.toString(), '&(>(a, b), <(c, d))');
+    });
+
+    // Comparison vs logic precedence
+    test('Expression 64', () {
+      final Expression expression = getExpression('a > b & c > d');
+      expect(expression.toString(), '&(>(a, b), >(c, d))');
+    });
+
+    test('Expression 65', () {
+      final Expression expression = getExpression('a < b | c < d');
+      expect(expression.toString(), '|(<(a, b), <(c, d))');
+    });
+
+    test('Expression 66', () {
+      final Expression expression = getExpression('a >= b | c <= d & e > f');
+      expect(expression.toString(), '&(|(>=(a, b), <=(c, d)), >(e, f))');
     });
   });
 

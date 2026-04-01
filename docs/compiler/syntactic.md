@@ -19,9 +19,9 @@ parameters         → IDENTIFIER ( "," IDENTIFIER )*
 ```
 expression         → ifExpression
 ifExpression       → "if" "(" expression ")" expression "else" expression | equality
-equality           → comparison ( ( "!=" | "==" ) comparison )*
-comparison         → logic ( ( ">" | ">=" | "<" | "<=" ) logic )*
-logic              → term ( ( "|" | "&" ) term )*
+equality           → logic ( ( "!=" | "==" ) logic )*
+logic              → comparison ( ( "|" | "&" ) comparison )*
+comparison         → term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term               → factor ( ( "-" | "+" ) factor )*
 factor             → unary ( ( "/" | "*" | "%" ) unary )*
 unary              → ( "!" | "-" ) unary | call
@@ -58,8 +58,8 @@ The expression parser is a **recursive descent parser** with the following prece
 | ---------- | -------------- | ------------------------------------------------------------------------ |
 | 1          | `ifExpression` | `if (cond) expr else expr`                                               |
 | 2          | `equality`     | `==`, `!=`                                                               |
-| 3          | `comparison`   | `>`, `>=`, `<`, `<=`                                                     |
-| 4          | `logic`        | `\|` (or), `&` (and)                                                     |
+| 3          | `logic`        | `\|` (or), `&` (and)                                                     |
+| 4          | `comparison`   | `>`, `>=`, `<`, `<=`                                                     |
 | 5          | `term`         | `+`, `-`                                                                 |
 | 6          | `factor`       | `*`, `/`, `%`                                                            |
 | 7          | `unary`        | `!`, `-` (negation)                                                      |

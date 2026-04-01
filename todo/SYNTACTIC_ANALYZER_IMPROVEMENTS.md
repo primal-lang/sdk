@@ -3,133 +3,10 @@
 This document details issues found in the syntactic analyzer and the plan to fix them.
 
 **Files involved:**
+
 - `lib/compiler/syntactic/expression_parser.dart`
 - `lib/compiler/syntactic/syntactic_analyzer.dart`
 - `lib/compiler/syntactic/expression.dart`
-
----
-
-## Issue 1: Operator Precedence - Logic vs Comparison
-
-### Problem Description
-
-In most programming languages, comparison operators (`>`, `<`, `>=`, `<=`) have **higher** precedence than logical operators (`&`, `|`). This allows natural expressions like:
-
-```
-a > b & c > d
-```
-
-to be parsed as:
-
-```
-(a > b) & (c > d)
-```
-
-However, the current implementation has the **opposite** precedence. The call chain in `expression_parser.dart` is:
-
-```
-expression() → ifExpression() → equality() → comparison() → logic() → term() → ...
-```
-
-In recursive descent parsing, functions called **later** in the chain have **higher** precedence (they bind tighter). Currently:
-
-| Function     | Calls        | Precedence |
-|--------------|--------------|------------|
-| `equality()` | `comparison()` | Lower |
-| `comparison()` | `logic()` | ↓ |
-| `logic()` | `term()` | Higher |
-
-This means `logic` binds tighter than `comparison`, so:
-
-```
-a > b & c > d
-```
-
-parses as:
-
-```
-a > (b & c) > d
-```
-
-which is almost certainly not what users expect.
-
-### Solution
-
-Swap the positions of `comparison()` and `logic()` in the call chain:
-
-**Current chain:**
-```
-equality() → comparison() → logic() → term()
-```
-
-**Fixed chain:**
-```
-equality() → logic() → comparison() → term()
-```
-
-### Implementation
-
-In `lib/compiler/syntactic/expression_parser.dart`:
-
-1. **Modify `equality()` (line 35-50):** Change the call from `comparison()` to `logic()`.
-
-   ```dart
-   Expression equality() {
-     Expression expression = logic();  // Changed from comparison()
-
-     while (match([NotEqualToken, EqualToken])) {
-       final Token operator = previous;
-       final Expression right = logic();  // Changed from comparison()
-       // ...
-     }
-     return expression;
-   }
-   ```
-
-2. **Modify `logic()` (line 74-89):** Change the call from `term()` to `comparison()`.
-
-   ```dart
-   Expression logic() {
-     Expression expression = comparison();  // Changed from term()
-
-     while (match([PipeToken, AmpersandToken])) {
-       final Token operator = previous;
-       final Expression right = comparison();  // Changed from term()
-       // ...
-     }
-     return expression;
-   }
-   ```
-
-3. **Modify `comparison()` (line 52-72):** Change the call from `logic()` to `term()`.
-
-   ```dart
-   Expression comparison() {
-     Expression expression = term();  // Changed from logic()
-
-     while (match([GreaterThanToken, GreaterEqualThanToken, LessThanToken, LessEqualThanToken])) {
-       final Token operator = previous;
-       final Expression right = term();  // Changed from logic()
-       // ...
-     }
-     return expression;
-   }
-   ```
-
-### Result
-
-New precedence (lowest to highest):
-1. `if` expression
-2. `equality` (`==`, `!=`)
-3. `logic` (`|`, `&`)
-4. `comparison` (`>`, `>=`, `<`, `<=`)
-5. `term` (`+`, `-`)
-6. `factor` (`*`, `/`, `%`)
-7. `unary` (`!`, `-`)
-8. `call` (function application, indexing)
-9. `primary` (literals, identifiers, grouping)
-
-Update the file `docs/compiler/syntactic.md` if necessary.
 
 ---
 
@@ -230,10 +107,13 @@ In `lib/compiler/syntactic/expression_parser.dart`:
 ### Result
 
 New precedence for logical operators:
+
 - `|` (or): lower precedence
 - `&` (and): higher precedence
 
 Expression `a | b & c` now correctly parses as `a | (b & c)`.
+
+Update and/or add new tests if necessary to verify correct precedence.
 
 Update the file `docs/compiler/syntactic.md` if necessary.
 
@@ -324,6 +204,7 @@ Expression call() {
 ### Result
 
 The following expressions now work:
+
 - `a[0][1]` - chained indexing
 - `a[0][1][2]` - arbitrary depth indexing
 - `matrix[i][j]` - 2D array access
@@ -366,6 +247,7 @@ Same as Issue 3. The rewritten `call()` function handles both scenarios in a sin
 ### Result
 
 All these expressions now work:
+
 - `f()` - simple call
 - `a[0]` - simple index
 - `f()[0]` - call then index
@@ -440,6 +322,7 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
 ### Result
 
 Both syntaxes now work:
+
 - `f = 1` - nullary function (no parentheses)
 - `f() = 1` - zero-parameter function (explicit empty parens)
 
@@ -542,6 +425,7 @@ After matching a comma, check if the next token is the closing delimiter before 
 ### Result
 
 These expressions now parse correctly:
+
 - `[1, 2, 3,]` - list with trailing comma
 - `{a: 1, b: 2,}` - map with trailing comma
 - `f(x, y,)` - function call with trailing comma
@@ -673,11 +557,11 @@ I recommend implementing these fixes in the following order:
 
 ### Files to Modify
 
-| File | Issues |
-|------|--------|
-| `lib/compiler/syntactic/syntactic_analyzer.dart` | Issue 5 |
-| `lib/compiler/syntactic/expression_parser.dart` | Issues 1, 2, 3, 4, 6, 7 |
-| `lib/compiler/syntactic/expression.dart` | Issue 7 |
+| File                                             | Issues                  |
+| ------------------------------------------------ | ----------------------- |
+| `lib/compiler/syntactic/syntactic_analyzer.dart` | Issue 5                 |
+| `lib/compiler/syntactic/expression_parser.dart`  | Issues 1, 2, 3, 4, 6, 7 |
+| `lib/compiler/syntactic/expression.dart`         | Issue 7                 |
 
 ### Testing Considerations
 

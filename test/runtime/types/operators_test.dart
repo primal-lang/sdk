@@ -807,6 +807,21 @@ void main() {
       final Runtime runtime = getRuntime('main = ((2 + 3) * (4 - 1))');
       checkResult(runtime, 15);
     });
+
+    test('comparison before logic and', () {
+      final Runtime runtime = getRuntime('main = 1 > 0 & 2 > 1');
+      checkResult(runtime, true);
+    });
+
+    test('comparison before logic or', () {
+      final Runtime runtime = getRuntime('main = 1 > 0 | 0 > 1');
+      checkResult(runtime, true);
+    });
+
+    test('comparison before logic mixed', () {
+      final Runtime runtime = getRuntime('main = 1 < 0 | 2 > 1 & 3 > 2');
+      checkResult(runtime, true);
+    });
   });
 
   group('Cross-Type Equality', () {
