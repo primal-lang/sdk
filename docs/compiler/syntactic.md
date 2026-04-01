@@ -75,7 +75,7 @@ All expressions extend `Expression` (which has a `Location`):
 - `LiteralExpression<T>` - base for all literal values
   - `BooleanExpression`, `NumberExpression`, `StringExpression`
   - `ListExpression` (contains `List<Expression>`)
-  - `MapExpression` (contains `Map<Expression, Expression>`)
+  - `MapExpression` (contains `List<MapEntryExpression>`)
 - `IdentifierExpression` (extends `LiteralExpression<String>`) - a named reference (variable or function)
 - `CallExpression` - function application (callee expression + argument list)
   - Also used to represent binary and unary operators via factory constructors (`fromBinaryOperation`, `fromUnaryOperation`, `fromIf`)

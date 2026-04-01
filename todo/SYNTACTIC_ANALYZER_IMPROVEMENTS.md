@@ -10,119 +10,6 @@ This document details issues found in the syntactic analyzer and the plan to fix
 
 ---
 
-## Issue 7: Expression as Map Keys (Design Smell)
-
-### Problem Description
-
-`MapExpression` in `expression.dart` uses `Map<Expression, Expression>`:
-
-```dart
-class MapExpression extends LiteralExpression<Map<Expression, Expression>> {
-  // ...
-}
-```
-
-And in `map()` parsing:
-
-```dart
-final Map<Expression, Expression> pairs = {};
-// ...
-pairs[key] = value;  // Expression as key
-```
-
-The problem is that `Expression` (and its subclasses) don't implement `==` and `hashCode`. Dart's default object equality is identity-based, so:
-
-```
-{1: "a", 1: "b"}
-```
-
-would create **two separate entries** instead of detecting a duplicate key, because the two `NumberExpression(1)` instances are different objects.
-
-### Solution
-
-There are two approaches:
-
-**Option A: Use a List of pairs instead of a Map**
-
-This avoids the equality problem entirely and preserves insertion order. Duplicate detection can be done at a later compilation phase (semantic analysis).
-
-**Option B: Implement equality on Expression classes**
-
-Add `==` and `hashCode` to all `Expression` subclasses based on their values.
-
-### Recommended Approach: Option A
-
-Using a list of pairs is simpler and defers duplicate key detection to semantic analysis, which is the appropriate phase for such validation.
-
-### Implementation (Option A)
-
-1. **Create a `MapEntry` class or use a record** in `lib/compiler/syntactic/expression.dart`:
-
-   ```dart
-   class MapEntryExpression {
-     final Expression key;
-     final Expression value;
-
-     const MapEntryExpression({required this.key, required this.value});
-   }
-   ```
-
-2. **Modify `MapExpression`:**
-
-   ```dart
-   class MapExpression extends LiteralExpression<List<MapEntryExpression>> {
-     const MapExpression({
-       required super.location,
-       required super.value,
-     });
-
-     @override
-     Node toNode() {
-       final Map<Node, Node> nodeMap = {};
-       for (final entry in value) {
-         nodeMap[entry.key.toNode()] = entry.value.toNode();
-       }
-       return MapNode(nodeMap);
-     }
-   }
-   ```
-
-3. **Modify `map()` in `expression_parser.dart`:**
-
-   ```dart
-   Expression map(Token token) {
-     final List<MapEntryExpression> pairs = [];
-
-     if (!check(CloseBracesToken)) {
-       do {
-         final Expression key = expression();
-         consume(ColonToken, ':');
-         final Expression value = expression();
-         pairs.add(MapEntryExpression(key: key, value: value));
-       } while (match([CommaToken]) && !check(CloseBracesToken));
-     }
-
-     consume(CloseBracesToken, '}');
-
-     return MapExpression(
-       location: token.location,
-       value: pairs,
-     );
-   }
-   ```
-
-### Result
-
-- Map literals preserve order and can have duplicate keys at parse time
-- Duplicate key detection moves to semantic analysis (where it belongs)
-- No need to implement equality on all Expression classes
-
-Update and/or add tests if necessary.
-
-Update the file `docs/compiler/syntactic.md` if necessary.
-
----
-
 ## Summary: Implementation Order
 
 I recommend implementing these fixes in the following order:
@@ -131,15 +18,15 @@ I recommend implementing these fixes in the following order:
 2. **Issue 6** (trailing commas) - Simple, isolated changes
 3. **Issue 3 & 4** (call/index chaining) - Rewrite `call()` function
 4. **Issue 1 & 2** (operator precedence) - Reorder and split precedence functions
-5. **Issue 7** (map keys) - Requires changes to data structures
+5. ~~**Issue 7** (map keys) - Requires changes to data structures~~ **DONE** - Implemented using `List<MapEntryExpression>`
 
 ### Files to Modify
 
-| File                                             | Issues                  |
-| ------------------------------------------------ | ----------------------- |
-| `lib/compiler/syntactic/syntactic_analyzer.dart` | Issue 5                 |
-| `lib/compiler/syntactic/expression_parser.dart`  | Issues 1, 2, 3, 4, 6, 7 |
-| `lib/compiler/syntactic/expression.dart`         | Issue 7                 |
+| File                                             | Issues                       |
+| ------------------------------------------------ | ---------------------------- |
+| `lib/compiler/syntactic/syntactic_analyzer.dart` | Issue 5                      |
+| `lib/compiler/syntactic/expression_parser.dart`  | Issues 1, 2, 3, 4, 6, ~~7~~  |
+| `lib/compiler/syntactic/expression.dart`         | ~~Issue 7~~ (done)           |
 
 ### Testing Considerations
 
@@ -161,4 +48,4 @@ After implementing these changes, update `docs/compiler/syntactic.md` to reflect
 2. Split of `logic` into `logicOr` and `logicAnd`
 3. Support for zero-parameter function syntax
 4. Support for trailing commas
-5. Changed internal representation of map literals (if Option A is chosen)
+5. ~~Changed internal representation of map literals (if Option A is chosen)~~ **DONE** - `MapExpression` now uses `List<MapEntryExpression>`

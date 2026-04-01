@@ -163,17 +163,20 @@ void main() {
           parameters: [],
           expression: MapExpression(
             location: const Location(row: 1, column: 7),
-            value: {
-              NumberExpression(numberToken(1, 1, 8)): StringExpression(
-                stringToken('one', 1, 12),
+            value: [
+              MapEntryExpression(
+                key: NumberExpression(numberToken(1, 1, 8)),
+                value: StringExpression(stringToken('one', 1, 11)),
               ),
-              NumberExpression(numberToken(2, 1, 19)): StringExpression(
-                stringToken('two', 1, 23),
+              MapEntryExpression(
+                key: NumberExpression(numberToken(2, 1, 18)),
+                value: StringExpression(stringToken('two', 1, 21)),
               ),
-              NumberExpression(numberToken(3, 1, 30)): StringExpression(
-                stringToken('three', 1, 34),
+              MapEntryExpression(
+                key: NumberExpression(numberToken(3, 1, 28)),
+                value: StringExpression(stringToken('three', 1, 31)),
               ),
-            },
+            ],
           ),
         ),
       ]);
@@ -192,17 +195,20 @@ void main() {
             arguments: [
               MapExpression(
                 location: const Location(row: 1, column: 7),
-                value: {
-                  NumberExpression(numberToken(1, 1, 8)): StringExpression(
-                    stringToken('one', 1, 12),
+                value: [
+                  MapEntryExpression(
+                    key: NumberExpression(numberToken(1, 1, 8)),
+                    value: StringExpression(stringToken('one', 1, 11)),
                   ),
-                  NumberExpression(numberToken(2, 1, 19)): StringExpression(
-                    stringToken('two', 1, 23),
+                  MapEntryExpression(
+                    key: NumberExpression(numberToken(2, 1, 18)),
+                    value: StringExpression(stringToken('two', 1, 21)),
                   ),
-                  NumberExpression(numberToken(3, 1, 30)): StringExpression(
-                    stringToken('three', 1, 34),
+                  MapEntryExpression(
+                    key: NumberExpression(numberToken(3, 1, 28)),
+                    value: StringExpression(stringToken('three', 1, 31)),
                   ),
-                },
+                ],
               ),
               NumberExpression(numberToken(1, 1, 40)),
             ],
@@ -754,7 +760,7 @@ void main() {
           parameters: [],
           expression: MapExpression(
             location: Location(row: 1, column: 8),
-            value: {},
+            value: [],
           ),
         ),
       ]);

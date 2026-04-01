@@ -257,14 +257,14 @@ class ExpressionParser {
   }
 
   Expression map(Token token) {
-    final Map<Expression, Expression> pairs = {};
+    final List<MapEntryExpression> pairs = [];
 
     if (!check(CloseBracesToken)) {
       do {
         final Expression key = expression();
         consume(ColonToken, ':');
         final Expression value = expression();
-        pairs[key] = value;
+        pairs.add(MapEntryExpression(key: key, value: value));
       } while (match([CommaToken]));
     }
 

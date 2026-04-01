@@ -66,19 +66,32 @@ class ListExpression extends LiteralExpression<List<Expression>> {
   Node toNode() => ListNode(value.map((e) => e.toNode()).toList());
 }
 
-class MapExpression extends LiteralExpression<Map<Expression, Expression>> {
+class MapEntryExpression {
+  final Expression key;
+  final Expression value;
+
+  const MapEntryExpression({required this.key, required this.value});
+}
+
+class MapExpression extends LiteralExpression<List<MapEntryExpression>> {
   const MapExpression({
     required super.location,
     required super.value,
   });
 
   @override
-  Node toNode() {
-    final Iterable<MapEntry<Node, Node>> entries = value.entries.map(
-      (e) => MapEntry(e.key.toNode(), e.value.toNode()),
-    );
+  String toString() {
+    final entries = value.map((e) => '${e.key}: ${e.value}').join(', ');
+    return '{$entries}';
+  }
 
-    return MapNode(Map.fromEntries(entries));
+  @override
+  Node toNode() {
+    final Map<Node, Node> nodeMap = {};
+    for (final entry in value) {
+      nodeMap[entry.key.toNode()] = entry.value.toNode();
+    }
+    return MapNode(nodeMap);
   }
 }
 
