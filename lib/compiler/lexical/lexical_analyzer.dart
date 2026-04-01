@@ -50,16 +50,8 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       } else {
         result.add(IdentifierToken(lexeme));
       }
-    } else if (state is StringState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringEscapeState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringHexEscapeState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringUnicodeEscapeState) {
-      throw UnterminatedStringError(state.output.location);
-    } else if (state is StringBracedEscapeState) {
-      throw UnterminatedStringError(state.output.location);
+    } else if (state is StringRelatedState) {
+      throw UnterminatedStringError(state.stringStartLocation);
     } else if (state is StartMultiLineCommentState ||
         state is ClosingMultiLineCommentState) {
       throw const UnterminatedCommentError();
@@ -67,6 +59,12 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
 
     return result;
   }
+}
+
+abstract class StringRelatedState extends State<Character, Lexeme> {
+  const StringRelatedState(super.iterator, super.output);
+
+  Location get stringStartLocation;
 }
 
 class InitState extends State<Character, void> {
@@ -136,10 +134,13 @@ class InitState extends State<Character, void> {
   }
 }
 
-class StringState extends State<Character, Lexeme> {
+class StringState extends StringRelatedState {
   final QuoteType quoteType;
 
   const StringState(super.iterator, super.output, this.quoteType);
+
+  @override
+  Location get stringStartLocation => output.location;
 
   @override
   State process(Character input) {
@@ -153,10 +154,13 @@ class StringState extends State<Character, Lexeme> {
   }
 }
 
-class StringEscapeState extends State<Character, Lexeme> {
+class StringEscapeState extends StringRelatedState {
   final QuoteType quoteType;
 
   const StringEscapeState(super.iterator, super.output, this.quoteType);
+
+  @override
+  Location get stringStartLocation => output.location;
 
   @override
   State process(Character input) {
@@ -192,7 +196,7 @@ class StringEscapeState extends State<Character, Lexeme> {
   }
 }
 
-class StringHexEscapeState extends State<Character, Lexeme> {
+class StringHexEscapeState extends StringRelatedState {
   final QuoteType quoteType;
   final int requiredDigits;
   final String hexAccum;
@@ -206,6 +210,9 @@ class StringHexEscapeState extends State<Character, Lexeme> {
     this.hexAccum,
     this.escapeStart,
   );
+
+  @override
+  Location get stringStartLocation => output.location;
 
   @override
   State process(Character input) {
@@ -239,7 +246,7 @@ class StringHexEscapeState extends State<Character, Lexeme> {
   }
 }
 
-class StringUnicodeEscapeState extends State<Character, Lexeme> {
+class StringUnicodeEscapeState extends StringRelatedState {
   final QuoteType quoteType;
   final Location escapeStart;
 
@@ -249,6 +256,9 @@ class StringUnicodeEscapeState extends State<Character, Lexeme> {
     this.quoteType,
     this.escapeStart,
   );
+
+  @override
+  Location get stringStartLocation => output.location;
 
   @override
   State process(Character input) {
@@ -275,7 +285,7 @@ class StringUnicodeEscapeState extends State<Character, Lexeme> {
   }
 }
 
-class StringBracedEscapeState extends State<Character, Lexeme> {
+class StringBracedEscapeState extends StringRelatedState {
   final QuoteType quoteType;
   final String hexAccum;
   final Location escapeStart;
@@ -287,6 +297,9 @@ class StringBracedEscapeState extends State<Character, Lexeme> {
     this.hexAccum,
     this.escapeStart,
   );
+
+  @override
+  Location get stringStartLocation => output.location;
 
   @override
   State process(Character input) {
