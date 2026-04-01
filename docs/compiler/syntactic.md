@@ -19,8 +19,9 @@ parameters         → IDENTIFIER ( "," IDENTIFIER )*
 ```
 expression         → ifExpression
 ifExpression       → "if" "(" expression ")" expression "else" expression | equality
-equality           → logic ( ( "!=" | "==" ) logic )*
-logic              → comparison ( ( "|" | "&" ) comparison )*
+equality           → logicOr ( ( "!=" | "==" ) logicOr )*
+logicOr            → logicAnd ( "|" logicAnd )*
+logicAnd           → comparison ( "&" comparison )*
 comparison         → term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term               → factor ( ( "-" | "+" ) factor )*
 factor             → unary ( ( "/" | "*" | "%" ) unary )*
@@ -58,13 +59,14 @@ The expression parser is a **recursive descent parser** with the following prece
 | ---------- | -------------- | ------------------------------------------------------------------------ |
 | 1          | `ifExpression` | `if (cond) expr else expr`                                               |
 | 2          | `equality`     | `==`, `!=`                                                               |
-| 3          | `logic`        | `\|` (or), `&` (and)                                                     |
-| 4          | `comparison`   | `>`, `>=`, `<`, `<=`                                                     |
-| 5          | `term`         | `+`, `-`                                                                 |
-| 6          | `factor`       | `*`, `/`, `%`                                                            |
-| 7          | `unary`        | `!`, `-` (negation)                                                      |
-| 8          | `call`         | function application `f(args)`, chained calls `f(x)(y)`, indexing `a[i]` |
-| 9          | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}`                       |
+| 3          | `logicOr`      | `\|` (or)                                                                |
+| 4          | `logicAnd`     | `&` (and)                                                                |
+| 5          | `comparison`   | `>`, `>=`, `<`, `<=`                                                     |
+| 6          | `term`         | `+`, `-`                                                                 |
+| 7          | `factor`       | `*`, `/`, `%`                                                            |
+| 8          | `unary`        | `!`, `-` (negation)                                                      |
+| 9          | `call`         | function application `f(args)`, chained calls `f(x)(y)`, indexing `a[i]` |
+| 10         | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}`                       |
 
 ## Expression Tree
 

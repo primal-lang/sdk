@@ -65,7 +65,7 @@ void main() {
 
     test('Expression 10', () {
       final Expression expression = getExpression('true | 4 < false & "test"');
-      expect(expression.toString(), '&(|(true, <(4, false)), "test")');
+      expect(expression.toString(), '|(true, &(<(4, false), "test"))');
     });
 
     test('Expression 11', () {
@@ -372,7 +372,13 @@ void main() {
 
     test('Expression 66', () {
       final Expression expression = getExpression('a >= b | c <= d & e > f');
-      expect(expression.toString(), '&(|(>=(a, b), <=(c, d)), >(e, f))');
+      expect(expression.toString(), '|(>=(a, b), &(<=(c, d), >(e, f)))');
+    });
+
+    // AND has higher precedence than OR
+    test('Expression 67', () {
+      final Expression expression = getExpression('a | b & c');
+      expect(expression.toString(), '|(a, &(b, c))');
     });
   });
 

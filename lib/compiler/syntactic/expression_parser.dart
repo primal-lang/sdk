@@ -33,11 +33,45 @@ class ExpressionParser {
   }
 
   Expression equality() {
-    Expression expression = logic();
+    Expression expression = logicOr();
 
     while (match([NotEqualToken, EqualToken])) {
       final Token operator = previous;
-      final Expression right = logic();
+      final Expression right = logicOr();
+
+      expression = CallExpression.fromBinaryOperation(
+        operator: operator,
+        left: expression,
+        right: right,
+      );
+    }
+
+    return expression;
+  }
+
+  Expression logicOr() {
+    Expression expression = logicAnd();
+
+    while (match([PipeToken])) {
+      final Token operator = previous;
+      final Expression right = logicAnd();
+
+      expression = CallExpression.fromBinaryOperation(
+        operator: operator,
+        left: expression,
+        right: right,
+      );
+    }
+
+    return expression;
+  }
+
+  Expression logicAnd() {
+    Expression expression = comparison();
+
+    while (match([AmpersandToken])) {
+      final Token operator = previous;
+      final Expression right = comparison();
 
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
@@ -60,23 +94,6 @@ class ExpressionParser {
     ])) {
       final Token operator = previous;
       final Expression right = term();
-
-      expression = CallExpression.fromBinaryOperation(
-        operator: operator,
-        left: expression,
-        right: right,
-      );
-    }
-
-    return expression;
-  }
-
-  Expression logic() {
-    Expression expression = comparison();
-
-    while (match([PipeToken, AmpersandToken])) {
-      final Token operator = previous;
-      final Expression right = comparison();
 
       expression = CallExpression.fromBinaryOperation(
         operator: operator,
