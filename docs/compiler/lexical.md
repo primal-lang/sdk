@@ -1,6 +1,6 @@
 # Lexical Analysis
 
-**Files**: `lib/compiler/lexical/lexical_analyzer.dart`, `lib/compiler/lexical/token.dart`
+**Files**: `lib/compiler/lexical/lexical_analyzer.dart`, `lib/compiler/lexical/token.dart`, `lib/compiler/lexical/lexeme.dart`
 
 The lexical analyzer consumes the character list and produces a list of typed tokens. It is implemented as a **state machine** with state classes responsible for recognizing specific kinds of lexemes.
 
@@ -18,7 +18,9 @@ The `analyze()` method drives the state machine:
 
 ## End-of-Input Handling
 
-When the iterator is exhausted, the main loop checks if the machine is in a state that can produce a valid token without further input. If the final state is `IntegerState`, `DecimalState`, or `IdentifierState`, the accumulated lexeme is converted to the appropriate token (applying keyword detection for identifiers). This allows tokens at the very end of the source to be recognized without a trailing delimiter.
+When the iterator is exhausted, the main loop checks if the machine is in a state that can produce a valid token without further input. If the final state is `IntegerState`, `DecimalState`, `ExponentState`, or `IdentifierState`, the accumulated lexeme is converted to the appropriate token (applying keyword detection for identifiers). This allows tokens at the very end of the source to be recognized without a trailing delimiter.
+
+If the final state is `ExponentInitState` or `ExponentSignState`, the lexer throws a `LexicalError` because the exponent is incomplete (e.g., `1e` or `1e+` without digits).
 
 ## Lookahead Pattern
 
@@ -30,10 +32,10 @@ The analyzer starts in `InitState` and transitions based on the current characte
 
 | Character class                                   | Target state                              |
 | ------------------------------------------------- | ----------------------------------------- |
-| ASCII letter (`a-z`, `A-Z`)                       | `IdentifierState`                         |
+| ASCII letter (`a-z`, `A-Z`)                       | `IdentifierState` (see below)             |
 | Digit                                             | `IntegerState`                            |
-| `"`                                               | `StringDoubleQuoteState`                  |
-| `'`                                               | `StringSingleQuoteState`                  |
+| `"`                                               | `StringState` (with `QuoteType.double`)   |
+| `'`                                               | `StringState` (with `QuoteType.single`)   |
 | `+`                                               | `PlusState`                               |
 | `-`                                               | `MinusState`                              |
 | `=`                                               | `EqualsState`                             |
@@ -50,28 +52,29 @@ The analyzer starts in `InitState` and transitions based on the current characte
 
 Additional internal states not reachable from `InitState`:
 
-| State                              | Reachable from                     | Purpose                                           |
-| ---------------------------------- | ---------------------------------- | ------------------------------------------------- |
-| `DecimalInitState`                 | `IntegerState`                     | Entered after `.`; requires at least one digit    |
-| `DecimalState`                     | `DecimalInitState`                 | Accumulates remaining decimal digits              |
-| `StringDoubleQuoteEscapeState`     | `StringDoubleQuoteState`           | Processes escape sequence in double-quoted string |
-| `StringSingleQuoteEscapeState`     | `StringSingleQuoteState`           | Processes escape sequence in single-quoted string |
-| `StringDoubleQuoteHexEscapeState`  | `StringDoubleQuoteEscapeState`     | Accumulates hex digits for `\xXX` or `\uXXXX`     |
-| `StringDoubleQuoteUnicodeEscapeState` | `StringDoubleQuoteEscapeState`  | Dispatches `\u` to fixed or braced format         |
-| `StringDoubleQuoteBracedEscapeState` | `StringDoubleQuoteUnicodeEscapeState` | Accumulates hex digits for `\u{...}`          |
-| `StringSingleQuoteHexEscapeState`  | `StringSingleQuoteEscapeState`     | Accumulates hex digits for `\xXX` or `\uXXXX`     |
-| `StringSingleQuoteUnicodeEscapeState` | `StringSingleQuoteEscapeState`  | Dispatches `\u` to fixed or braced format         |
-| `StringSingleQuoteBracedEscapeState` | `StringSingleQuoteUnicodeEscapeState` | Accumulates hex digits for `\u{...}`          |
-| `SingleLineCommentState`           | `ForwardSlashState`                | Consumes until newline                            |
-| `StartMultiLineCommentState`       | `ForwardSlashState`                | Consumes until `*` is found                       |
-| `ClosingMultiLineCommentState`     | `StartMultiLineCommentState`       | Checks for `/` to close the comment               |
-| `ResultState`                      | Any token-producing state          | Carries the completed token back to the main loop |
+| State                       | Reachable from            | Purpose                                           |
+| --------------------------- | ------------------------- | ------------------------------------------------- |
+| `DecimalInitState`          | `IntegerState`            | Entered after `.`; requires at least one digit    |
+| `DecimalState`              | `DecimalInitState`        | Accumulates remaining decimal digits              |
+| `ExponentInitState`         | `IntegerState`, `DecimalState` | Entered after `e`/`E`; expects digit or sign |
+| `ExponentSignState`         | `ExponentInitState`       | Entered after `+`/`-`; requires at least one digit |
+| `ExponentState`             | `ExponentInitState`, `ExponentSignState` | Accumulates exponent digits        |
+| `StringEscapeState`         | `StringState`             | Processes escape sequence in string               |
+| `StringHexEscapeState`      | `StringEscapeState`       | Accumulates hex digits for `\xXX` or `\uXXXX`     |
+| `StringUnicodeEscapeState`  | `StringEscapeState`       | Dispatches `\u` to fixed or braced format         |
+| `StringBracedEscapeState`   | `StringUnicodeEscapeState`| Accumulates hex digits for `\u{...}`              |
+| `SingleLineCommentState`    | `ForwardSlashState`       | Consumes until newline                            |
+| `StartMultiLineCommentState`| `ForwardSlashState`       | Consumes until `*` is found                       |
+| `ClosingMultiLineCommentState` | `StartMultiLineCommentState` | Checks for `/` to close the comment          |
+| `ResultState`               | Any token-producing state | Carries the completed token back to the main loop |
+
+All string states (including `StringState`, `StringEscapeState`, and related escape states) extend `StringRelatedState`, which provides a `stringStartLocation` property used for unterminated string error reporting.
 
 Multi-character tokens are accumulated via a `Lexeme` object that tracks the starting location and collects characters with `.add(Character)`, returning a new immutable `Lexeme` each time.
 
 ## String Escape Sequences
 
-Both double-quoted and single-quoted strings support escape sequences. When a backslash (`\`) is encountered inside a string, the lexer transitions to an escape state (`StringDoubleQuoteEscapeState` or `StringSingleQuoteEscapeState`) which interprets the following character:
+Both double-quoted and single-quoted strings support escape sequences. When a backslash (`\`) is encountered inside a string, the lexer transitions to `StringEscapeState` which interprets the following character:
 
 | Source | Resolved | Meaning           |
 | ------ | -------- | ----------------- |
@@ -113,13 +116,25 @@ If an unrecognized escape sequence is encountered (e.g., `\z`), the lexer throws
 
 ## Number Parsing
 
-Numbers are parsed through a three-state pipeline:
+Numbers are parsed through a six-state pipeline supporting integers, decimals, scientific notation, and underscore separators:
 
-1. **`IntegerState`** — accumulates digits. On encountering a `.`, transitions to `DecimalInitState`.
+1. **`IntegerState`** — accumulates digits. On encountering a `.`, transitions to `DecimalInitState`. On encountering `e` or `E`, transitions to `ExponentInitState`.
 2. **`DecimalInitState`** — requires at least one digit after the dot. If the next character is not a digit, throws `InvalidCharacterError`.
-3. **`DecimalState`** — accumulates remaining decimal digits until a delimiter is reached.
+3. **`DecimalState`** — accumulates remaining decimal digits. On encountering `e` or `E`, transitions to `ExponentInitState`.
+4. **`ExponentInitState`** — expects a digit or sign (`+`/`-`). On sign, transitions to `ExponentSignState`. On digit, transitions to `ExponentState`.
+5. **`ExponentSignState`** — requires at least one digit after the sign.
+6. **`ExponentState`** — accumulates exponent digits until a delimiter is reached.
 
-Both integer and decimal numbers emit a `NumberToken`, which parses the accumulated lexeme to a Dart `num`.
+All integer, decimal, and exponent states emit a `NumberToken`, which parses the accumulated lexeme to a Dart `num`.
+
+### Underscore Separators
+
+Numeric literals support underscore separators for readability (e.g., `1_000_000`, `3.141_592`, `1e1_0`). The following rules apply:
+
+- Underscores are allowed between digits
+- Consecutive underscores are not allowed (throws `InvalidCharacterError`)
+- Trailing underscores are not allowed (throws `LexicalError`)
+- Underscores are not stored in the lexeme; they are skipped during accumulation
 
 ## Two-Character Operators
 
@@ -134,9 +149,17 @@ Four states peek at the next character to distinguish single-character tokens fr
 
 In all cases the lookahead pattern applies: if the next character is not `=`, `iterator.back()` un-consumes it.
 
-## Keyword Detection
+## Identifiers and Keywords
 
-Keywords are not recognized by dedicated `InitState` branches. Instead, `IdentifierState` accumulates all letter/identifier characters and checks the final lexeme value:
+Identifiers must start with an ASCII letter (`a-z`, `A-Z`) and may continue with any combination of:
+- Letters (`a-z`, `A-Z`)
+- Digits (`0-9`)
+- Dots (`.`)
+- Underscores (`_`)
+
+This allows dotted names like `math.pi` or `list.head` to be parsed as single identifier tokens.
+
+Keywords are not recognized by dedicated `InitState` branches. Instead, `IdentifierState` accumulates all identifier characters and checks the final lexeme value:
 
 - `isBoolean` → `BooleanToken`
 - `isIf` → `IfToken`
@@ -151,7 +174,7 @@ Different token types use distinct delimiter predicates to determine what can le
 
 | Predicate             | Used by                                                                                                                                                                 |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `isOperandDelimiter`  | `IntegerState`, `DecimalState`, `IdentifierState`                                                                                                                       |
+| `isOperandDelimiter`  | `IntegerState`, `DecimalState`, `ExponentState`, `IdentifierState`                                                                                                      |
 | `isOperatorDelimiter` | `MinusState`, `PlusState`, `EqualsState`, `GreaterState`, `LessState`, `PipeState`, `AmpersandState`, `BangState`, `ForwardSlashState`, `AsteriskState`, `PercentState` |
 
 Single-character delimiters (`(`, `)`, `[`, `]`, `{`, `}`, `,`, `:`) are emitted directly from `InitState` without lookahead validation. Invalid sequences following these tokens are caught by the parser rather than the lexer.
@@ -167,17 +190,22 @@ Both comment styles are recognized and discarded (they produce no tokens):
 
 When a state encounters an unexpected character, it throws `InvalidCharacterError`. Some states provide an expected-character hint for better diagnostics:
 
-- `IntegerState` expects `'digit or dot'`
-- `DecimalInitState` and `DecimalState` expect `'digit'`
+- `IntegerState` expects `'digit, underscore, or dot'`
+- `DecimalInitState` expects `'digit'`
+- `DecimalState` expects `'digit or underscore'`
+- `ExponentInitState` expects `'digit or sign'`
+- `ExponentSignState` and `ExponentState` expect `'digit'`
 
 All other states throw a generic `InvalidCharacterError` with just the offending character.
 
-The escape states (`StringDoubleQuoteEscapeState` and `StringSingleQuoteEscapeState`) throw `InvalidEscapeSequenceError` when an unrecognized escape sequence is encountered (e.g., `\z`).
+The escape state (`StringEscapeState`) throws `InvalidEscapeSequenceError` when an unrecognized escape sequence is encountered (e.g., `\z`).
 
-After the main loop completes, the analyzer checks for unterminated constructs:
+After the main loop completes, the analyzer checks for unterminated or incomplete constructs:
 
-- **Unterminated strings**: If the final state is `StringDoubleQuoteState`, `StringSingleQuoteState`, `StringDoubleQuoteEscapeState`, or `StringSingleQuoteEscapeState`, throws `UnterminatedStringError` with the location of the opening quote.
+- **Unterminated strings**: If the final state is any `StringRelatedState` subclass, throws `UnterminatedStringError` with the location of the opening quote.
 - **Unterminated comments**: If the final state is `StartMultiLineCommentState` or `ClosingMultiLineCommentState`, throws `UnterminatedCommentError`.
+- **Incomplete exponents**: If the final state is `ExponentInitState` or `ExponentSignState`, throws `LexicalError('Incomplete exponent in number literal')`.
+- **Trailing underscores**: If the final state is `IntegerState`, `DecimalState`, or `ExponentState` with `lastWasUnderscore` set, throws `LexicalError('Trailing underscore in number literal')`.
 
 ## Token Types
 
