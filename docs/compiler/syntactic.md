@@ -26,7 +26,7 @@ comparison         → term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term               → factor ( ( "-" | "+" ) factor )*
 factor             → unary ( ( "/" | "*" | "%" ) unary )*
 unary              → ( "!" | "-" ) unary | call
-call               → primary ( "(" arguments? ")" )* | primary "[" expression "]"
+call               → primary ( "(" arguments? ")" | "[" expression "]" )*
 primary            → BOOLEAN | NUMBER | STRING | IDENTIFIER | "(" expression ")" | "[" elements? "]" | "{" pairs? "}"
 arguments          → expression ( "," expression )*
 elements           → expression ( "," expression )*

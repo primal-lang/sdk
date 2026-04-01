@@ -10,100 +10,6 @@ This document details issues found in the syntactic analyzer and the plan to fix
 
 ---
 
-## Issue 3: Chained Indexing Doesn't Work
-
-### Problem Description
-
-In `call()` (lines 149-185), the indexing branch uses a simple `if` instead of a `while` loop:
-
-```dart
-Expression call() {
-  Expression exp = primary();
-
-  if (check(OpenParenthesisToken)) {
-    while (match([OpenParenthesisToken])) {  // Loop for calls
-      // ...
-    }
-  } else if (match([OpenBracketToken])) {  // NO loop for indexing!
-    // ... handles only ONE index operation
-  }
-
-  return exp;
-}
-```
-
-This means:
-
-```
-a[0][1]
-```
-
-will parse `a[0]` but then stop, leaving `[1]` unparsed (causing an error or incorrect behavior).
-
-### Solution
-
-Restructure `call()` to handle both function calls and indexing in a unified loop that can handle any combination.
-
-### Implementation
-
-Rewrite `call()` in `lib/compiler/syntactic/expression_parser.dart`:
-
-```dart
-Expression call() {
-  Expression exp = primary();
-
-  while (true) {
-    if (match([OpenParenthesisToken])) {
-      // Function call
-      if ((exp is IdentifierExpression) || (exp is CallExpression)) {
-        exp = finishCall(exp);
-      } else {
-        throw InvalidTokenError(previous);  // Use previous since we already consumed '('
-      }
-    } else if (match([OpenBracketToken])) {
-      // Indexing
-      if ((exp is IdentifierExpression) ||
-          (exp is CallExpression) ||
-          (exp is StringExpression) ||
-          (exp is ListExpression) ||
-          (exp is MapExpression)) {
-        final Token operator = IdentifierToken(
-          Lexeme(
-            value: 'element.at',
-            location: previous.location,
-          ),
-        );
-        final Expression index = expression();
-        consume(CloseBracketToken, ']');
-        exp = CallExpression.fromBinaryOperation(
-          operator: operator,
-          left: exp,
-          right: index,
-        );
-      } else {
-        throw InvalidTokenError(previous);
-      }
-    } else {
-      break;  // No more calls or indexing
-    }
-  }
-
-  return exp;
-}
-```
-
-### Result
-
-The following expressions now work:
-
-- `a[0][1]` - chained indexing
-- `a[0][1][2]` - arbitrary depth indexing
-- `matrix[i][j]` - 2D array access
-
-Update the file `docs/compiler/syntactic.md` if necessary.
-
----
-
 ## Issue 4: Mixed Call/Index Chains Don't Work
 
 ### Problem Description
@@ -146,6 +52,8 @@ All these expressions now work:
 - `f()[0]()` - call, index, call
 - `getMatrix()[i][j]` - call then double index
 - `callbacks[0]()` - index then call
+
+Update and/or add tests if necessary.
 
 Update the file `docs/compiler/syntactic.md` if necessary.
 
@@ -216,6 +124,8 @@ Both syntaxes now work:
 
 - `f = 1` - nullary function (no parentheses)
 - `f() = 1` - zero-parameter function (explicit empty parens)
+
+Update and/or add tests if necessary.
 
 Update the file `docs/compiler/syntactic.md` if necessary.
 
@@ -320,6 +230,8 @@ These expressions now parse correctly:
 - `[1, 2, 3,]` - list with trailing comma
 - `{a: 1, b: 2,}` - map with trailing comma
 - `f(x, y,)` - function call with trailing comma
+
+Update and/or add tests if necessary.
 
 Update the file `docs/compiler/syntactic.md` if necessary.
 
@@ -431,6 +343,8 @@ Using a list of pairs is simpler and defers duplicate key detection to semantic 
 - Map literals preserve order and can have duplicate keys at parse time
 - Duplicate key detection moves to semantic analysis (where it belongs)
 - No need to implement equality on all Expression classes
+
+Update and/or add tests if necessary.
 
 Update the file `docs/compiler/syntactic.md` if necessary.
 

@@ -380,6 +380,30 @@ void main() {
       final Expression expression = getExpression('a | b & c');
       expect(expression.toString(), '|(a, &(b, c))');
     });
+
+    // Chained indexing
+    test('Expression 68', () {
+      final Expression expression = getExpression('a[0][1]');
+      expect(expression.toString(), 'element.at(element.at(a, 0), 1)');
+    });
+
+    test('Expression 69', () {
+      final Expression expression = getExpression('a[0][1][2]');
+      expect(
+        expression.toString(),
+        'element.at(element.at(element.at(a, 0), 1), 2)',
+      );
+    });
+
+    test('Expression 70', () {
+      final Expression expression = getExpression('foo()[0][1]');
+      expect(expression.toString(), 'element.at(element.at(foo(), 0), 1)');
+    });
+
+    test('Expression 71', () {
+      final Expression expression = getExpression('a[0]()');
+      expect(expression.toString(), 'element.at(a, 0)()');
+    });
   });
 
   group('Expression parser errors', () {
