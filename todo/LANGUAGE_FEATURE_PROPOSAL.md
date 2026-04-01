@@ -1,22 +1,3 @@
-### 9. Function Composition Operators `>>` and `<<`
-
-These are useful, but they should come after placeholders and pipelines.
-
-#### Syntax
-
-```primal
-sanitize = str.trim >> str.lowercase
-project = parse << str.trim
-```
-
-#### Semantics
-
-- `f >> g` means `x => g(f(x))`
-- `f << g` means `x => f(g(x))`
-- V1 should define these for unary functions only
-
-This fits naturally after placeholder partial application exists.
-
 ## Cross-Cutting Language Rules
 
 ### Scope Model
