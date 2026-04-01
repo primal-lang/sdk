@@ -8,6 +8,19 @@ import 'package:primal/compiler/scanner/character.dart';
 import 'package:primal/extensions/string_extensions.dart';
 import 'package:primal/utils/list_iterator.dart';
 
+Token _identifierOrKeywordToken(Lexeme lexeme) {
+  if (lexeme.value.isBoolean) {
+    return BooleanToken(lexeme);
+  }
+  if (lexeme.value.isIf) {
+    return IfToken(lexeme);
+  }
+  if (lexeme.value.isElse) {
+    return ElseToken(lexeme);
+  }
+  return IdentifierToken(lexeme);
+}
+
 enum QuoteType { single, double }
 
 extension QuoteTypeExtension on QuoteType {
@@ -53,16 +66,7 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
     } else if (state is ExponentInitState || state is ExponentSignState) {
       throw const LexicalError('Incomplete exponent in number literal');
     } else if (state is IdentifierState) {
-      final Lexeme lexeme = state.output;
-      if (lexeme.value.isBoolean) {
-        result.add(BooleanToken(lexeme));
-      } else if (lexeme.value.isIf) {
-        result.add(IfToken(lexeme));
-      } else if (lexeme.value.isElse) {
-        result.add(ElseToken(lexeme));
-      } else {
-        result.add(IdentifierToken(lexeme));
-      }
+      result.add(_identifierOrKeywordToken(state.output));
     } else if (state is StringRelatedState) {
       throw UnterminatedStringError(state.stringStartLocation);
     } else if (state is StartMultiLineCommentState ||
@@ -519,16 +523,7 @@ class IdentifierState extends State<Character, Lexeme> {
       return IdentifierState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
       iterator.back();
-
-      if (output.value.isBoolean) {
-        return ResultState(iterator, BooleanToken(output));
-      } else if (output.value.isIf) {
-        return ResultState(iterator, IfToken(output));
-      } else if (output.value.isElse) {
-        return ResultState(iterator, ElseToken(output));
-      } else {
-        return ResultState(iterator, IdentifierToken(output));
-      }
+      return ResultState(iterator, _identifierOrKeywordToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
