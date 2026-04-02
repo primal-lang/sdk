@@ -1997,6 +1997,54 @@ pi = 3.14
       );
     });
 
+    test('Multi-line comment with consecutive asterisks', () {
+      final List<Token> tokens = getTokens('x /* **/ = 1');
+      checkTokens(tokens, [
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 1,
+              column: 10,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '1',
+            location: Location(
+              row: 1,
+              column: 12,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Multi-line comment closing with ***/', () {
+      final List<Token> tokens = getTokens('/***/x');
+      checkTokens(tokens, [
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 6,
+            ),
+          ),
+        ),
+      ]);
+    });
+
     // --- Edge cases: delimiters ---
 
     test('Colon', () {

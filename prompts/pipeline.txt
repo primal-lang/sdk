@@ -4,10 +4,10 @@
 
 then:
 - what do you think about the syntactic analyzer?
-- is it good, bad, normal?                                         
+- is it good, bad, normal? 
 - does it have any flaws, mistakes, inconsistencies, etc?
-- how can we improve it?  
-                                                       
+- how can we improve it?
+
 ask me if you have any questions
 
 -------

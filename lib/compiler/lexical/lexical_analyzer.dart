@@ -727,10 +727,12 @@ class ClosingMultiLineCommentState extends State<Character, void> {
 
   @override
   State process(Character input) {
-    if (!input.value.isForwardSlash) {
-      return StartMultiLineCommentState(iterator);
-    } else {
+    if (input.value.isForwardSlash) {
       return InitState(iterator);
+    } else if (input.value.isAsterisk) {
+      return this;
+    } else {
+      return StartMultiLineCommentState(iterator);
     }
   }
 }
