@@ -1,60 +1,3 @@
-## Issue 2: Fragile Type Checking with `runtimeType`
-
-**Severity**: Medium
-**Files**: `lib/compiler/syntactic/expression_parser.dart`
-
-### Problem
-
-The `check()` method uses `runtimeType ==` which doesn't work with inheritance:
-
-```dart
-// Current code (line 307-313)
-bool check(Type type) {
-  if (iterator.isAtEnd) {
-    return false;
-  } else {
-    return peek.runtimeType == type;
-  }
-}
-```
-
-If a token type is ever subclassed, `check()` will fail to match the subclass.
-
-### Plan
-
-1. Replace `runtimeType ==` with a type-safe approach
-2. Options:
-   - **Option A**: Use a switch/case on the type parameter (Dart 3 patterns)
-   - **Option B**: Add a `TokenType` enum to tokens and compare that
-   - **Option C**: Keep current approach but document the limitation
-
-### Implementation (Option A - Recommended)
-
-Since Dart doesn't allow `is` with a `Type` variable, and the current approach works for non-inherited tokens, the pragmatic fix is to document the limitation and ensure tokens are not subclassed.
-
-Alternatively, refactor `match()` to use explicit type checks:
-
-```dart
-bool matchAny(List<bool Function(Token)> checks) {
-  for (final check in checks) {
-    if (!iterator.isAtEnd && check(peek)) {
-      advance();
-      return true;
-    }
-  }
-  return false;
-}
-
-// Usage:
-while (matchAny([(t) => t is NotEqualToken, (t) => t is EqualToken])) {
-  ...
-}
-```
-
-This is more verbose but type-safe. Evaluate trade-off before implementing.
-
----
-
 ## Issue 3: Inconsistent Token Creation for `[]` Indexing
 
 **Severity**: Low
@@ -86,7 +29,7 @@ This inconsistency means:
 
 ```dart
 // In call() method, around line 199
-} else if (match([OpenBracketToken])) {
+} else if (match([(t) => t is OpenBracketToken])) {
   if ((exp is IdentifierExpression) ||
       (exp is CallExpression) ||
       (exp is StringExpression) ||
@@ -99,7 +42,7 @@ This inconsistency means:
       ),
     );
     final Expression idx = expression();
-    consume(CloseBracketToken, ']');
+    consume((t) => t is CloseBracketToken, ']');
     exp = CallExpression.fromBinaryOperation(
       operator: operator,
       left: exp,
@@ -308,28 +251,3 @@ class FunctionDefinition {
   ...
 }
 ```
-
----
-
-## Implementation Order
-
-Recommended order based on severity and dependencies:
-
-1. **Issue 1** (Bug) - Empty parameter lists - High priority, user-facing bug
-2. **Issue 4** (UX) - Error messages - Improves debugging experience
-3. **Issue 3** (Consistency) - Token type for `[]` - Simple fix, low risk
-4. **Issue 2** (Robustness) - Type checking - Evaluate trade-offs first
-5. **Issue 5** (Design) - Nullable expression - Optional, lower priority
-
----
-
-## Testing Checklist
-
-After implementing fixes, ensure these test cases pass:
-
-- [ ] `foo() = 5` parses (empty parameter list with parens)
-- [ ] `foo = 5` parses (nullary without parens)
-- [ ] `foo(x, y, z) = x` parses (multiple parameters)
-- [ ] `arr[0]` and `arr @ 0` produce identical AST structures
-- [ ] Error messages are specific and helpful
-- [ ] All existing tests still pass

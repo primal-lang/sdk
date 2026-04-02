@@ -12,13 +12,13 @@ class ExpressionParser {
   Expression expression() => ifExpression();
 
   Expression ifExpression() {
-    if (match([IfToken])) {
+    if (match([(t) => t is IfToken])) {
       final Token operator = previous;
-      consume(OpenParenthesisToken, '(');
+      consume((t) => t is OpenParenthesisToken, '(');
       final Expression condition = expression();
-      consume(CloseParenthesisToken, ')');
+      consume((t) => t is CloseParenthesisToken, ')');
       final Expression ifTrue = expression();
-      consume(ElseToken, 'else');
+      consume((t) => t is ElseToken, 'else');
       final Expression ifFalse = expression();
 
       return CallExpression.fromIf(
@@ -35,7 +35,7 @@ class ExpressionParser {
   Expression equality() {
     Expression expression = logicOr();
 
-    while (match([NotEqualToken, EqualToken])) {
+    while (match([(t) => t is NotEqualToken, (t) => t is EqualToken])) {
       final Token operator = previous;
       final Expression right = logicOr();
 
@@ -52,7 +52,7 @@ class ExpressionParser {
   Expression logicOr() {
     Expression expression = logicAnd();
 
-    while (match([PipeToken])) {
+    while (match([(t) => t is PipeToken])) {
       final Token operator = previous;
       final Expression right = logicAnd();
 
@@ -69,7 +69,7 @@ class ExpressionParser {
   Expression logicAnd() {
     Expression expression = comparison();
 
-    while (match([AmpersandToken])) {
+    while (match([(t) => t is AmpersandToken])) {
       final Token operator = previous;
       final Expression right = comparison();
 
@@ -87,10 +87,10 @@ class ExpressionParser {
     Expression expression = term();
 
     while (match([
-      GreaterThanToken,
-      GreaterEqualThanToken,
-      LessThanToken,
-      LessEqualThanToken,
+      (t) => t is GreaterThanToken,
+      (t) => t is GreaterEqualThanToken,
+      (t) => t is LessThanToken,
+      (t) => t is LessEqualThanToken,
     ])) {
       final Token operator = previous;
       final Expression right = term();
@@ -108,7 +108,7 @@ class ExpressionParser {
   Expression term() {
     Expression expression = factor();
 
-    while (match([MinusToken, PlusToken])) {
+    while (match([(t) => t is MinusToken, (t) => t is PlusToken])) {
       final Token operator = previous;
       final Expression right = factor();
 
@@ -125,7 +125,11 @@ class ExpressionParser {
   Expression factor() {
     Expression expression = index();
 
-    while (match([ForwardSlashToken, AsteriskToken, PercentToken])) {
+    while (match([
+      (t) => t is ForwardSlashToken,
+      (t) => t is AsteriskToken,
+      (t) => t is PercentToken,
+    ])) {
       final Token operator = previous;
       final Expression right = index();
 
@@ -142,7 +146,7 @@ class ExpressionParser {
   Expression index() {
     Expression expression = unary();
 
-    while (match([AtToken])) {
+    while (match([(t) => t is AtToken])) {
       final Token operator = previous;
       final Expression right = unary();
 
@@ -157,7 +161,7 @@ class ExpressionParser {
   }
 
   Expression unary() {
-    if (match([BangToken, MinusToken])) {
+    if (match([(t) => t is BangToken, (t) => t is MinusToken])) {
       final Token operator = previous;
       final Expression right = unary();
 
@@ -184,13 +188,13 @@ class ExpressionParser {
     Expression exp = primary();
 
     while (true) {
-      if (match([OpenParenthesisToken])) {
+      if (match([(t) => t is OpenParenthesisToken])) {
         if ((exp is IdentifierExpression) || (exp is CallExpression)) {
           exp = finishCall(exp);
         } else {
           throw InvalidTokenError(previous);
         }
-      } else if (match([OpenBracketToken])) {
+      } else if (match([(t) => t is OpenBracketToken])) {
         if ((exp is IdentifierExpression) ||
             (exp is CallExpression) ||
             (exp is StringExpression) ||
@@ -203,7 +207,7 @@ class ExpressionParser {
             ),
           );
           final Expression idx = expression();
-          consume(CloseBracketToken, ']');
+          consume((t) => t is CloseBracketToken, ']');
           exp = CallExpression.fromBinaryOperation(
             operator: operator,
             left: exp,
@@ -223,33 +227,33 @@ class ExpressionParser {
   Expression finishCall(Expression callee) {
     final List<Expression> arguments = [];
 
-    if (!check(CloseParenthesisToken)) {
+    if (!check((t) => t is CloseParenthesisToken)) {
       do {
         arguments.add(expression());
-      } while (match([CommaToken]));
+      } while (match([(t) => t is CommaToken]));
     }
 
-    consume(CloseParenthesisToken, ')');
+    consume((t) => t is CloseParenthesisToken, ')');
 
     return CallExpression(callee: callee, arguments: arguments);
   }
 
   Expression primary() {
-    if (match([BooleanToken])) {
+    if (match([(t) => t is BooleanToken])) {
       return BooleanExpression(previous);
-    } else if (match([NumberToken])) {
+    } else if (match([(t) => t is NumberToken])) {
       return NumberExpression(previous);
-    } else if (match([StringToken])) {
+    } else if (match([(t) => t is StringToken])) {
       return StringExpression(previous);
-    } else if (match([IdentifierToken])) {
+    } else if (match([(t) => t is IdentifierToken])) {
       return IdentifierExpression(previous);
-    } else if (match([OpenParenthesisToken])) {
+    } else if (match([(t) => t is OpenParenthesisToken])) {
       final Expression expr = expression();
-      consume(CloseParenthesisToken, ')');
+      consume((t) => t is CloseParenthesisToken, ')');
       return expr;
-    } else if (match([OpenBracketToken])) {
+    } else if (match([(t) => t is OpenBracketToken])) {
       return list(previous);
-    } else if (match([OpenBracesToken])) {
+    } else if (match([(t) => t is OpenBracesToken])) {
       return map(previous);
     }
 
@@ -259,13 +263,13 @@ class ExpressionParser {
   Expression list(Token token) {
     final List<Expression> elements = [];
 
-    if (!check(CloseBracketToken)) {
+    if (!check((t) => t is CloseBracketToken)) {
       do {
         elements.add(expression());
-      } while (match([CommaToken]));
+      } while (match([(t) => t is CommaToken]));
     }
 
-    consume(CloseBracketToken, ']');
+    consume((t) => t is CloseBracketToken, ']');
 
     return ListExpression(
       location: token.location,
@@ -276,16 +280,16 @@ class ExpressionParser {
   Expression map(Token token) {
     final List<MapEntryExpression> pairs = [];
 
-    if (!check(CloseBracesToken)) {
+    if (!check((t) => t is CloseBracesToken)) {
       do {
         final Expression key = expression();
-        consume(ColonToken, ':');
+        consume((t) => t is ColonToken, ':');
         final Expression value = expression();
         pairs.add(MapEntryExpression(key: key, value: value));
-      } while (match([CommaToken]));
+      } while (match([(t) => t is CommaToken]));
     }
 
-    consume(CloseBracesToken, '}');
+    consume((t) => t is CloseBracesToken, '}');
 
     return MapExpression(
       location: token.location,
@@ -293,9 +297,9 @@ class ExpressionParser {
     );
   }
 
-  bool match(List<Type> types) {
-    for (final Type type in types) {
-      if (check(type)) {
+  bool match(List<bool Function(Token)> predicates) {
+    for (final predicate in predicates) {
+      if (check(predicate)) {
         advance();
         return true;
       }
@@ -304,16 +308,16 @@ class ExpressionParser {
     return false;
   }
 
-  bool check(Type type) {
+  bool check(bool Function(Token) predicate) {
     if (iterator.isAtEnd) {
       return false;
-    } else {
-      return peek.runtimeType == type;
     }
+
+    return predicate(peek);
   }
 
-  Token consume(Type type, String expected) {
-    if (check(type)) {
+  Token consume(bool Function(Token) predicate, String expected) {
+    if (check(predicate)) {
       return advance();
     }
 
