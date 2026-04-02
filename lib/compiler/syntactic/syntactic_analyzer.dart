@@ -75,8 +75,10 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
         iterator,
         output.withParameter(input.value),
       );
+    } else if (input is CloseParenthesisToken) {
+      return FunctionParametrizedState(iterator, output);
     } else {
-      throw InvalidTokenError(input, 'parameters list');
+      throw InvalidTokenError(input, 'identifier or )');
     }
   }
 }

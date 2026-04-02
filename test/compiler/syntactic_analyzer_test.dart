@@ -24,11 +24,17 @@ void main() {
       );
     });
 
-    test('Invalid function definition 3', () {
-      expect(
-        () => getFunctions('isEven() = true'),
-        throwsA(isA<InvalidTokenError>()),
+    test('Function with empty parameter list', () {
+      final List<FunctionDefinition> functions = getFunctions(
+        'isEven() = true',
       );
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'isEven',
+          parameters: [],
+          expression: BooleanExpression(booleanToken(true, 1, 12)),
+        ),
+      ]);
     });
 
     test('Invalid function definition 4', () {
