@@ -112,6 +112,14 @@ class PercentToken extends Token<String> {
       );
 }
 
+class AtToken extends Token<String> {
+  AtToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+
 class PipeToken extends Token<String> {
   PipeToken(Lexeme lexeme)
     : super(

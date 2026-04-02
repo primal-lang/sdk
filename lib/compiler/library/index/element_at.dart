@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/node.dart';
 class ElementAt extends NativeFunctionNode {
   ElementAt()
     : super(
-        name: 'element.at',
+        name: '@',
         parameters: [
           Parameter.any('a'),
           Parameter.any('b'),

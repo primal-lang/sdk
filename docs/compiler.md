@@ -82,7 +82,7 @@ The standard library provides 230+ built-in functions, organized by namespace:
 | Casting      | 22    | `is.boolean`, `to.string`, `to.integer`                 |
 | Operators    | 14    | `operator.add`, `operator.eq`, `operator.not`           |
 | Control flow | 2     | `if`, `try`                                             |
-| Other        | 3     | `element.at`, `env.get`, `throw`                        |
+| Other        | 3     | `@`, `env.get`, `throw`                                 |
 
 ### Implementation Pattern
 

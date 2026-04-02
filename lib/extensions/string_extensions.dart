@@ -38,6 +38,8 @@ extension StringExtensions on String {
 
   bool get isPercent => this == '%';
 
+  bool get isAt => this == '@';
+
   bool get isUnderscore => this == '_';
 
   bool get isDot => this == '.';
@@ -102,7 +104,8 @@ extension StringExtensions on String {
       isBang ||
       isForwardSlash ||
       isAsterisk ||
-      isPercent;
+      isPercent ||
+      isAt;
 
   bool get isUnaryOperator => isMinus || isBang;
 }

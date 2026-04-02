@@ -129,6 +129,8 @@ class InitState extends State<Character, void> {
       return AsteriskState(iterator, input.lexeme);
     } else if (input.value.isPercent) {
       return PercentState(iterator, input.lexeme);
+    } else if (input.value.isAt) {
+      return ResultState(iterator, AtToken(input.lexeme));
     } else if (input.value.isComma) {
       return ResultState(iterator, CommaToken(input.lexeme));
     } else if (input.value.isColon) {

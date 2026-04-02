@@ -123,9 +123,26 @@ class ExpressionParser {
   }
 
   Expression factor() {
-    Expression expression = unary();
+    Expression expression = index();
 
     while (match([ForwardSlashToken, AsteriskToken, PercentToken])) {
+      final Token operator = previous;
+      final Expression right = index();
+
+      expression = CallExpression.fromBinaryOperation(
+        operator: operator,
+        left: expression,
+        right: right,
+      );
+    }
+
+    return expression;
+  }
+
+  Expression index() {
+    Expression expression = unary();
+
+    while (match([AtToken])) {
       final Token operator = previous;
       final Expression right = unary();
 
@@ -181,16 +198,16 @@ class ExpressionParser {
             (exp is MapExpression)) {
           final Token operator = IdentifierToken(
             Lexeme(
-              value: 'element.at',
+              value: '@',
               location: previous.location,
             ),
           );
-          final Expression index = expression();
+          final Expression idx = expression();
           consume(CloseBracketToken, ']');
           exp = CallExpression.fromBinaryOperation(
             operator: operator,
             left: exp,
-            right: index,
+            right: idx,
           );
         } else {
           throw InvalidTokenError(previous);

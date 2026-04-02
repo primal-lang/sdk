@@ -120,7 +120,7 @@ void main() {
 
     test('Expression 20', () {
       final Expression expression = getExpression('[1, true, "test", foo][1]');
-      expect(expression.toString(), 'element.at([1, true, "test", foo], 1)');
+      expect(expression.toString(), '@([1, true, "test", foo], 1)');
     });
 
     test('Expression 21', () {
@@ -129,7 +129,7 @@ void main() {
       );
       expect(
         expression.toString(),
-        'element.at(element.at([1, true, "test", foo], 1), 2)',
+        '@(@([1, true, "test", foo], 1), 2)',
       );
     });
 
@@ -139,13 +139,13 @@ void main() {
       );
       expect(
         expression.toString(),
-        'element.at({"name": "John", "age": 42, "married": true}, "test")',
+        '@({"name": "John", "age": 42, "married": true}, "test")',
       );
     });
 
     test('Expression 23', () {
       final Expression expression = getExpression('"Hello"[1]');
-      expect(expression.toString(), 'element.at("Hello", 1)');
+      expect(expression.toString(), '@("Hello", 1)');
     });
 
     // Primitive literals
@@ -319,22 +319,22 @@ void main() {
     // Indexing edge cases
     test('Expression 56', () {
       final Expression expression = getExpression('arr[0]');
-      expect(expression.toString(), 'element.at(arr, 0)');
+      expect(expression.toString(), '@(arr, 0)');
     });
 
     test('Expression 57', () {
       final Expression expression = getExpression('arr[1 + 2]');
-      expect(expression.toString(), 'element.at(arr, +(1, 2))');
+      expect(expression.toString(), '@(arr, +(1, 2))');
     });
 
     test('Expression 58', () {
       final Expression expression = getExpression('(foo())[0]');
-      expect(expression.toString(), 'element.at(foo(), 0)');
+      expect(expression.toString(), '@(foo(), 0)');
     });
 
     test('Expression 59', () {
       final Expression expression = getExpression('(a[0])[1]');
-      expect(expression.toString(), 'element.at(element.at(a, 0), 1)');
+      expect(expression.toString(), '@(@(a, 0), 1)');
     });
 
     // Deeply nested grouping
@@ -384,46 +384,77 @@ void main() {
     // Chained indexing
     test('Expression 68', () {
       final Expression expression = getExpression('a[0][1]');
-      expect(expression.toString(), 'element.at(element.at(a, 0), 1)');
+      expect(expression.toString(), '@(@(a, 0), 1)');
     });
 
     test('Expression 69', () {
       final Expression expression = getExpression('a[0][1][2]');
       expect(
         expression.toString(),
-        'element.at(element.at(element.at(a, 0), 1), 2)',
+        '@(@(@(a, 0), 1), 2)',
       );
     });
 
     test('Expression 70', () {
       final Expression expression = getExpression('foo()[0][1]');
-      expect(expression.toString(), 'element.at(element.at(foo(), 0), 1)');
+      expect(expression.toString(), '@(@(foo(), 0), 1)');
     });
 
     test('Expression 71', () {
       final Expression expression = getExpression('a[0]()');
-      expect(expression.toString(), 'element.at(a, 0)()');
+      expect(expression.toString(), '@(a, 0)()');
     });
 
     // Mixed call/index chains
     test('Expression 72', () {
       final Expression expression = getExpression('f()[0]()');
-      expect(expression.toString(), 'element.at(f(), 0)()');
+      expect(expression.toString(), '@(f(), 0)()');
     });
 
     test('Expression 73', () {
       final Expression expression = getExpression('f()()[0]');
-      expect(expression.toString(), 'element.at(f()(), 0)');
+      expect(expression.toString(), '@(f()(), 0)');
     });
 
     test('Expression 74', () {
       final Expression expression = getExpression('a[0][1]()');
-      expect(expression.toString(), 'element.at(element.at(a, 0), 1)()');
+      expect(expression.toString(), '@(@(a, 0), 1)()');
     });
 
     test('Expression 75', () {
       final Expression expression = getExpression('f()[0]()[1]');
-      expect(expression.toString(), 'element.at(element.at(f(), 0)(), 1)');
+      expect(expression.toString(), '@(@(f(), 0)(), 1)');
+    });
+
+    // @ operator tests
+    test('@ operator basic', () {
+      final Expression expression = getExpression('a @ 1');
+      expect(expression.toString(), '@(a, 1)');
+    });
+
+    test('@ operator precedence with multiplication', () {
+      final Expression expression = getExpression('a * b @ c');
+      expect(expression.toString(), '*(a, @(b, c))');
+    });
+
+    test('@ operator precedence with addition', () {
+      final Expression expression = getExpression('a @ 1 + 2');
+      expect(expression.toString(), '+(@(a, 1), 2)');
+    });
+
+    test('@ operator with unary minus', () {
+      final Expression expression = getExpression('-a @ b');
+      expect(expression.toString(), '@(-(0, a), b)');
+    });
+
+    test('@ operator chained', () {
+      final Expression expression = getExpression('a @ 0 @ 1');
+      expect(expression.toString(), '@(@(a, 0), 1)');
+    });
+
+    test('@ operator with parentheses', () {
+      final Expression expression = getExpression('(a @ b) * c');
+      expect(expression.toString(), '*(@(a, b), c)');
     });
   });
 

@@ -784,6 +784,54 @@ void main() {
       ]);
     });
 
+    test('At token', () {
+      final List<Token> tokens = getTokens('@');
+      checkTokens(tokens, [
+        AtToken(
+          const Lexeme(
+            value: '@',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('At token in expression', () {
+      final List<Token> tokens = getTokens('a @ 1');
+      checkTokens(tokens, [
+        IdentifierToken(
+          const Lexeme(
+            value: 'a',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        AtToken(
+          const Lexeme(
+            value: '@',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '1',
+            location: Location(
+              row: 1,
+              column: 5,
+            ),
+          ),
+        ),
+      ]);
+    });
+
     test('Logical operators', () {
       final List<Token> tokens = getTokens('| & !');
       checkTokens(tokens, [
@@ -2064,10 +2112,6 @@ pi = 3.14
 
     // --- Edge cases: invalid characters ---
 
-    test('Invalid character @', () {
-      expect(() => getTokens('@'), throwsA(isA<InvalidCharacterError>()));
-    });
-
     test('Invalid character #', () {
       expect(() => getTokens('#'), throwsA(isA<InvalidCharacterError>()));
     });
@@ -2118,79 +2162,79 @@ pi = 3.14
     // --- Edge cases: invalid character in specific lexer states ---
 
     test('Invalid character in DecimalState', () {
-      expect(() => getTokens('42.1@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('42.1#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character in IdentifierState', () {
-      expect(() => getTokens('foo@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('foo#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after minus', () {
-      expect(() => getTokens('-@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('-#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after plus', () {
-      expect(() => getTokens('+@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('+#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after equals', () {
-      expect(() => getTokens('=@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('=#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after greater', () {
-      expect(() => getTokens('>@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('>#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after less', () {
-      expect(() => getTokens('<@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('<#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after pipe', () {
-      expect(() => getTokens('|@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('|#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after ampersand', () {
-      expect(() => getTokens('&@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('&#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after bang', () {
-      expect(() => getTokens('!@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('!#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after forward slash', () {
-      expect(() => getTokens('/@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('/#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after asterisk', () {
-      expect(() => getTokens('*@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('*#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after percent', () {
-      expect(() => getTokens('%@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('%#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after colon', () {
-      expect(() => getTokens(':@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens(':#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after close parenthesis', () {
-      expect(() => getTokens(')@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens(')#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after open bracket', () {
-      expect(() => getTokens('[@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('[#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after close bracket', () {
-      expect(() => getTokens(']@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens(']#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after open braces', () {
-      expect(() => getTokens('{@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('{#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Invalid character after close braces', () {
-      expect(() => getTokens('}@'), throwsA(isA<InvalidCharacterError>()));
+      expect(() => getTokens('}#'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Close bracket followed by colon', () {

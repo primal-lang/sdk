@@ -136,7 +136,7 @@ void main() {
           name: 'list',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('element.at', 1, 17)),
+            callee: IdentifierExpression(identifierToken('@', 1, 17)),
             arguments: [
               ListExpression(
                 location: const Location(row: 1, column: 8),
@@ -191,7 +191,7 @@ void main() {
           name: 'map',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('element.at', 1, 39)),
+            callee: IdentifierExpression(identifierToken('@', 1, 39)),
             arguments: [
               MapExpression(
                 location: const Location(row: 1, column: 7),
@@ -802,7 +802,7 @@ void main() {
           name: 'test',
           parameters: ['list'],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('element.at', 1, 18)),
+            callee: IdentifierExpression(identifierToken('@', 1, 18)),
             arguments: [
               IdentifierExpression(identifierToken('list', 1, 14)),
               NumberExpression(numberToken(0, 1, 19)),
@@ -821,7 +821,7 @@ void main() {
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('element.at', 1, 13)),
+            callee: IdentifierExpression(identifierToken('@', 1, 13)),
             arguments: [
               StringExpression(stringToken('abc', 1, 8)),
               NumberExpression(numberToken(1, 1, 14)),
@@ -840,7 +840,7 @@ void main() {
           name: 'test',
           parameters: ['list'],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('element.at', 1, 18)),
+            callee: IdentifierExpression(identifierToken('@', 1, 18)),
             arguments: [
               IdentifierExpression(identifierToken('list', 1, 14)),
               CallExpression(

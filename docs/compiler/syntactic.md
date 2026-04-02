@@ -24,7 +24,8 @@ logicOr            → logicAnd ( "|" logicAnd )*
 logicAnd           → comparison ( "&" comparison )*
 comparison         → term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term               → factor ( ( "-" | "+" ) factor )*
-factor             → unary ( ( "/" | "*" | "%" ) unary )*
+factor             → index ( ( "/" | "*" | "%" ) index )*
+index              → unary ( "@" unary )*
 unary              → ( "!" | "-" ) unary | call
 call               → primary ( "(" arguments? ")" | "[" expression "]" )*
 primary            → BOOLEAN | NUMBER | STRING | IDENTIFIER | "(" expression ")" | "[" elements? "]" | "{" pairs? "}"
@@ -64,9 +65,10 @@ The expression parser is a **recursive descent parser** with the following prece
 | 5          | `comparison`   | `>`, `>=`, `<`, `<=`                                                     |
 | 6          | `term`         | `+`, `-`                                                                 |
 | 7          | `factor`       | `*`, `/`, `%`                                                            |
-| 8          | `unary`        | `!`, `-` (negation)                                                      |
-| 9          | `call`         | function application `f(args)`, chained calls `f(x)(y)`, indexing `a[i]` |
-| 10         | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}`                       |
+| 8          | `index`        | `@` (element access)                                                     |
+| 9          | `unary`        | `!`, `-` (negation)                                                      |
+| 10         | `call`         | function application `f(args)`, chained calls `f(x)(y)`, indexing `a[i]` |
+| 11         | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}`                       |
 
 ## Expression Tree
 
@@ -92,7 +94,8 @@ The parser desugars several syntactic forms into `CallExpression` nodes:
 | `a == b`          | `==(a, b)`         |
 | `!x`              | `!(x)`             |
 | `-x`              | `-(0, x)`          |
-| `a[i]`            | `element.at(a, i)` |
+| `a @ i`           | `@(a, i)`          |
+| `a[i]`            | `@(a, i)`          |
 | `if (c) t else f` | `if(c, t, f)`      |
 
 Note: Unary negation is converted to binary subtraction from zero.

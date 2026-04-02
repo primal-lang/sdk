@@ -8,42 +8,42 @@ import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';
 
 void main() {
-  group('element.at', () {
+  group('@', () {
     test('returns list element at index', () {
-      final Runtime runtime = getRuntime('main = element.at([10, 20, 30], 1)');
+      final Runtime runtime = getRuntime('main = [10, 20, 30] @ 1');
       checkResult(runtime, 20);
     });
 
     test('returns first list element', () {
-      final Runtime runtime = getRuntime('main = element.at([10, 20, 30], 0)');
+      final Runtime runtime = getRuntime('main = [10, 20, 30] @ 0');
       checkResult(runtime, 10);
     });
 
     test('returns last list element', () {
-      final Runtime runtime = getRuntime('main = element.at([10, 20, 30], 2)');
+      final Runtime runtime = getRuntime('main = [10, 20, 30] @ 2');
       checkResult(runtime, 30);
     });
 
     test('returns map value by key', () {
       final Runtime runtime = getRuntime(
-        'main = element.at({"a": 1, "b": 2}, "a")',
+        'main = {"a": 1, "b": 2} @ "a"',
       );
       checkResult(runtime, 1);
     });
 
     test('returns string character at index', () {
-      final Runtime runtime = getRuntime('main = element.at("hello", 0)');
+      final Runtime runtime = getRuntime('main = "hello" @ 0');
       checkResult(runtime, '"h"');
     });
 
     test('returns string character at middle index', () {
-      final Runtime runtime = getRuntime('main = element.at("hello", 2)');
+      final Runtime runtime = getRuntime('main = "hello" @ 2');
       checkResult(runtime, '"l"');
     });
 
     test('throws ElementNotFoundError for missing map key', () {
       final Runtime runtime = getRuntime(
-        'main = element.at({"a": 1}, "z")',
+        'main = {"a": 1} @ "z"',
       );
       expect(
         runtime.executeMain,
@@ -52,11 +52,32 @@ void main() {
     });
 
     test('throws InvalidArgumentTypesError for invalid types', () {
-      final Runtime runtime = getRuntime('main = element.at(42, 0)');
+      final Runtime runtime = getRuntime('main = 42 @ 0');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
       );
+    });
+
+    // @ infix operator tests (additional)
+    test('@ operator chained', () {
+      final Runtime runtime = getRuntime('main = [[1, 2], [3, 4]] @ 1 @ 0');
+      checkResult(runtime, 3);
+    });
+
+    test('bracket syntax returns list element', () {
+      final Runtime runtime = getRuntime('main = [10, 20, 30][1]');
+      checkResult(runtime, 20);
+    });
+
+    test('bracket syntax returns map value', () {
+      final Runtime runtime = getRuntime('main = {"a": 1, "b": 2}["a"]');
+      checkResult(runtime, 1);
+    });
+
+    test('bracket syntax returns string character', () {
+      final Runtime runtime = getRuntime('main = "hello"[0]');
+      checkResult(runtime, '"h"');
     });
   });
 }
