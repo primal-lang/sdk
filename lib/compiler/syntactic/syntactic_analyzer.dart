@@ -39,14 +39,17 @@ class InitState extends State<Token, void> {
   @override
   State process(Token input) {
     if (input is IdentifierToken) {
-      return FunctionNameState(iterator, FunctionDefinition(name: input.value));
+      return FunctionNameState(
+        iterator,
+        FunctionDefinitionBuilder(name: input.value),
+      );
     } else {
       throw InvalidTokenError(input, 'identifier');
     }
   }
 }
 
-class FunctionNameState extends State<Token, FunctionDefinition> {
+class FunctionNameState extends State<Token, FunctionDefinitionBuilder> {
   const FunctionNameState(super.iterator, super.output);
 
   @override
@@ -55,7 +58,7 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
       final ExpressionParser expressionParser = ExpressionParser(iterator);
       return ResultState(
         iterator,
-        output.withExpression(expressionParser.expression()),
+        output.build(expressionParser.expression()),
       );
     } else if (input is OpenParenthesisToken) {
       return FunctionWithParametersState(iterator, output);
@@ -65,7 +68,8 @@ class FunctionNameState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionWithParametersState extends State<Token, FunctionDefinition> {
+class FunctionWithParametersState
+    extends State<Token, FunctionDefinitionBuilder> {
   const FunctionWithParametersState(super.iterator, super.output);
 
   @override
@@ -83,7 +87,8 @@ class FunctionWithParametersState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionWithNewParametersState extends State<Token, FunctionDefinition> {
+class FunctionWithNewParametersState
+    extends State<Token, FunctionDefinitionBuilder> {
   const FunctionWithNewParametersState(super.iterator, super.output);
 
   @override
@@ -98,7 +103,8 @@ class FunctionWithNewParametersState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionWithNextParametersState extends State<Token, FunctionDefinition> {
+class FunctionWithNextParametersState
+    extends State<Token, FunctionDefinitionBuilder> {
   const FunctionWithNextParametersState(super.iterator, super.output);
 
   @override
@@ -114,7 +120,8 @@ class FunctionWithNextParametersState extends State<Token, FunctionDefinition> {
   }
 }
 
-class FunctionParametrizedState extends State<Token, FunctionDefinition> {
+class FunctionParametrizedState
+    extends State<Token, FunctionDefinitionBuilder> {
   const FunctionParametrizedState(super.iterator, super.output);
 
   @override
@@ -123,7 +130,7 @@ class FunctionParametrizedState extends State<Token, FunctionDefinition> {
       final ExpressionParser expressionParser = ExpressionParser(iterator);
       return ResultState(
         iterator,
-        output.withExpression(expressionParser.expression()),
+        output.build(expressionParser.expression()),
       );
     } else {
       throw InvalidTokenError(input, "'='");

@@ -80,7 +80,7 @@ void checkFunctions(
       expect(actualParameters[j], equals(expectedParameters[j]));
     }
 
-    checkExpressions(actual[i].expression!, expected[i].expression!);
+    checkExpressions(actual[i].expression, expected[i].expression);
   }
 }
 

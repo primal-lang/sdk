@@ -51,7 +51,7 @@ class SemanticAnalyzer
         CustomFunctionNode(
           name: function.name,
           parameters: function.parameters.map(Parameter.any).toList(),
-          node: function.expression!.toNode(),
+          node: function.expression.toNode(),
         ),
       );
     }
