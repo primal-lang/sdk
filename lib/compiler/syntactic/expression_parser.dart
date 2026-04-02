@@ -192,7 +192,10 @@ class ExpressionParser {
         if ((exp is IdentifierExpression) || (exp is CallExpression)) {
           exp = finishCall(exp);
         } else {
-          throw InvalidTokenError(previous);
+          throw InvalidTokenError(
+            previous,
+            'callable expression (identifier or function call) before',
+          );
         }
       } else if (match([(t) => t is OpenBracketToken])) {
         if ((exp is IdentifierExpression) ||
@@ -214,7 +217,10 @@ class ExpressionParser {
             right: idx,
           );
         } else {
-          throw InvalidTokenError(previous);
+          throw InvalidTokenError(
+            previous,
+            'indexable expression (identifier, function call, string, list, or map) before',
+          );
         }
       } else {
         break;
