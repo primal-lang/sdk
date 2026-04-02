@@ -200,7 +200,7 @@ class ExpressionParser {
             (exp is StringExpression) ||
             (exp is ListExpression) ||
             (exp is MapExpression)) {
-          final Token operator = IdentifierToken(
+          final Token operator = AtToken(
             Lexeme(
               value: '@',
               location: previous.location,
