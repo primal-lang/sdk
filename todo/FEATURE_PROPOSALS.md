@@ -1,23 +1,6 @@
-# Feature Proposals for Primal
-
-This document collects proposed additions to the Primal language after reviewing the current documentation and implementation.
-
-Primal today is:
-
-- expression-oriented
-- dynamically typed
-- single-file
-- centered on top-level named functions
-- evaluated through substitution and runtime reduction
-- already rich in native library functions
-
-That shape matters. Some proposals below are natural syntax sugar over the current model, while others would require broader parser, semantic, or runtime changes.
-
-For each feature, the goal is not only to suggest surface syntax, but to explain why it fits Primal and what it would imply for the existing compiler/runtime.
-
----
-
 ## 1. Function Composition Operator
+
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** Medium
 
 Compose functions with `>>` (left-to-right) or `<<` (right-to-left):
 
@@ -42,6 +25,8 @@ main = doubleSquare(3)   // returns 36
 
 ## 2. Partial Application
 
+**Current Fit:** Medium-Low | **Complexity:** High | **Impact:** High
+
 Apply some arguments now, get a function that expects the rest:
 
 ```
@@ -63,6 +48,8 @@ main = addFive(3)   // returns 8
 ---
 
 ## 3. Where Clauses
+
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** High
 
 Allow local definitions after the main expression:
 
@@ -88,6 +75,8 @@ quadratic(a, b, c) = [root1, root2] where
 ---
 
 ## 4. Guards in Function Definitions
+
+**Current Fit:** High | **Complexity:** Medium | **Impact:** High
 
 Allow multiple conditional bodies for one function:
 
@@ -117,6 +106,8 @@ grade(score)
 
 ## 5. List Comprehensions
 
+**Current Fit:** Medium-Low | **Complexity:** High | **Impact:** High
+
 Declarative list construction:
 
 ```
@@ -137,6 +128,8 @@ pairs = [[x, y] | x <- [1, 2], y <- ["a", "b"]]
 ---
 
 ## 6. Tuples
+
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** Medium
 
 Add fixed-size heterogeneous collections:
 
@@ -161,6 +154,8 @@ name = tuple.at(person, 0)
 
 ## 7. Symbols / Atoms
 
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** Medium
+
 Add lightweight identifier-like literals:
 
 ```
@@ -182,6 +177,8 @@ config = { :host: "localhost", :port: 8080 }
 ---
 
 ## 8. Regular Expression Literals
+
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** Medium
 
 Add first-class regex syntax:
 
@@ -205,6 +202,8 @@ replaced = regex.replace("hello123", /\d+/, "XXX")
 
 ## 9. Binary, Hex, and Octal Number Literals
 
+**Current Fit:** High | **Complexity:** Low | **Impact:** Medium
+
 Add alternate numeric literal forms:
 
 ```
@@ -225,6 +224,8 @@ octal = 0o77
 ---
 
 ## 10. Default Parameter Values
+
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** High
 
 Allow omitted arguments to fall back to defaults:
 
@@ -248,6 +249,8 @@ alt = greet("Alice", "Hi")
 
 ## 11. Named Arguments
 
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** Medium
+
 Allow passing arguments by parameter name:
 
 ```
@@ -270,6 +273,8 @@ user = createUser(age: 30, name: "Bob", active: true)
 
 ## 12. Memoization
 
+**Current Fit:** Medium | **Complexity:** Medium-High | **Impact:** Medium
+
 Allow explicit caching of pure function results:
 
 ```
@@ -291,6 +296,8 @@ main = fib(50)
 ---
 
 ## 13. Sequence / Do Expressions
+
+**Current Fit:** Medium-Low | **Complexity:** High | **Impact:** High
 
 Allow evaluating expressions in order and returning the last one:
 
@@ -316,6 +323,8 @@ end
 
 ## 14. Lazy Sequences / Generators
 
+**Current Fit:** Medium-Low | **Complexity:** High | **Impact:** Medium
+
 Add a first-class lazy sequence type:
 
 ```
@@ -336,6 +345,8 @@ main = seq.toList(first10)
 ---
 
 ## 15. Record Types
+
+**Current Fit:** Medium-Low | **Complexity:** High | **Impact:** High
 
 Add named-field structures:
 
@@ -360,6 +371,8 @@ older = alice with { age: 31 }
 
 ## 16. Boolean Alias and Fallback Operators
 
+**Current Fit:** High for aliases, Medium for fallback | **Complexity:** Low-Medium | **Impact:** Medium
+
 Add more familiar boolean spellings and a dedicated fallback operator:
 
 ```
@@ -379,6 +392,8 @@ name = userName ?? "anonymous"
 ---
 
 ## 17. Assert / Contract Expressions
+
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** Medium
 
 Add explicit assertions and preconditions:
 
@@ -404,6 +419,8 @@ divide(a, b)
 
 ## 18. User-Defined Infix Operators
 
+**Current Fit:** Low | **Complexity:** High | **Impact:** Low-Medium
+
 Allow users to define custom infix operators:
 
 ```
@@ -423,6 +440,8 @@ combined = [1, 2] <+> [3, 4]
 ---
 
 ## 19. Multiline / Raw Strings
+
+**Current Fit:** High | **Complexity:** Low | **Impact:** High
 
 Add triple-quoted multiline strings and raw strings:
 
@@ -449,6 +468,8 @@ pattern = r"\d+\.\d+"
 
 ## 20. Doc Comments
 
+**Current Fit:** High | **Complexity:** Low-Medium | **Impact:** Medium
+
 Attach structured comments to function definitions:
 
 ```primal
@@ -472,6 +493,8 @@ factorial(n) = if (n <= 1) 1 else n * factorial(n - 1)
 
 ## 21. Tail Call Optimization
 
+**Current Fit:** Medium-Low | **Complexity:** High | **Impact:** High
+
 Optimize tail-recursive functions to avoid stack overflow:
 
 ```
@@ -492,6 +515,8 @@ factorial(n) = factorialHelper(n, 1) where
 ---
 
 ## 22. Maybe / Option Type
+
+**Current Fit:** Medium | **Complexity:** Medium-High | **Impact:** High
 
 Add explicit values for present or absent results:
 
@@ -514,6 +539,8 @@ value = maybe.unwrapOr(safeHead([]), 0)
 ---
 
 ## 23. Bitwise Operators
+
+**Current Fit:** High as library, Medium as syntax | **Complexity:** Low-Medium | **Impact:** Medium
 
 Add bitwise operations and shifts:
 
@@ -539,6 +566,8 @@ f = bit.shiftRight(20, 2)
 
 ## 24. Type Aliases
 
+**Current Fit:** Low in current dynamic model | **Complexity:** Medium | **Impact:** Low-Medium
+
 Add named aliases for documentation and tooling:
 
 ```
@@ -560,6 +589,8 @@ type Person = Record
 
 ## 25. Module-Level Constants
 
+**Current Fit:** High | **Complexity:** Low-Medium | **Impact:** Medium
+
 Add explicit constant declarations:
 
 ```
@@ -579,6 +610,8 @@ const APP_NAME = "Primal"
 ---
 
 ## 26. Unicode Identifiers
+
+**Current Fit:** High | **Complexity:** Low-Medium | **Impact:** Medium
 
 Allow identifiers beyond ASCII:
 
@@ -600,6 +633,8 @@ café = "Unicode"
 ---
 
 ## 27. Result Type
+
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** High
 
 Add explicit success/error values:
 
@@ -626,6 +661,8 @@ port = result.unwrapOr(safePort("abc"), 8080)
 
 ## 28. Variadic Parameters
 
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** Medium
+
 Allow functions to accept a variable number of arguments:
 
 ```
@@ -645,6 +682,8 @@ sum(nums...) = list.reduce(nums, 0, num.add)
 ---
 
 ## 29. Overloading by Arity
+
+**Current Fit:** High | **Complexity:** Medium | **Impact:** High
 
 Allow multiple functions with the same name when parameter counts differ:
 
@@ -667,6 +706,8 @@ range(start, end, step) = ...
 
 ## 30. Safe Indexing and Lookup
 
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** High
+
 Allow collection access that does not throw on missing elements:
 
 ```
@@ -688,6 +729,8 @@ letter = name?[2]
 
 ## 31. Compile-Time Constant Evaluation
 
+**Current Fit:** Medium | **Complexity:** Medium | **Impact:** Medium-High
+
 Precompute obviously pure constant expressions:
 
 ```
@@ -703,85 +746,3 @@ const UNIT_X = vector.normalize(vector.new([1, 0, 0]))
 - A whitelist of pure built-ins is safer than trying to infer purity from all functions immediately.
 - This could be implemented in semantic analysis or as a later optimization pass.
 - Even a small first version would be useful for numeric, string, list, and vector literals built from pure operations.
-
----
-
-## Best Near-Term Candidates
-
-If the goal is to add high-value features without forcing a major runtime redesign, the strongest near-term candidates are:
-
-1. Guards in function definitions
-2. Binary, hex, and octal literals
-3. Default parameter values
-4. Multiline and raw strings
-5. Doc comments
-6. Unicode identifiers
-7. Overloading by arity
-
-These all fit the current compiler architecture reasonably well and improve day-to-day ergonomics immediately.
-
----
-
-## Features That Need Larger Runtime Changes
-
-These are attractive, but they depend on broader shifts in scope handling, callable values, or runtime representation:
-
-1. Partial application
-2. Where clauses
-3. List comprehensions
-4. Sequence / do expressions
-5. Lazy sequences
-6. Record types
-7. Tail call optimization
-8. Maybe / Option
-9. Result
-10. Safe indexing and lookup
-
-They are still strong proposals, but they should likely be grouped into a deliberate "local scopes and richer values" milestone.
-
----
-
-## Implementation Fit Summary
-
-| Feature                              | Current Fit                           | Complexity  | Impact      |
-| ------------------------------------ | ------------------------------------- | ----------- | ----------- |
-| Function composition operator        | Medium                                | Medium      | Medium      |
-| Partial application                  | Medium-Low                            | High        | High        |
-| Where clauses                        | Medium                                | Medium      | High        |
-| Guards in function definitions       | High                                  | Medium      | High        |
-| List comprehensions                  | Medium-Low                            | High        | High        |
-| Tuples                               | Medium                                | Medium      | Medium      |
-| Symbols / atoms                      | Medium                                | Medium      | Medium      |
-| Regular expression literals          | Medium                                | Medium      | Medium      |
-| Binary, hex, and octal literals      | High                                  | Low         | Medium      |
-| Default parameter values             | Medium                                | Medium      | High        |
-| Named arguments                      | Medium                                | Medium      | Medium      |
-| Memoization                          | Medium                                | Medium-High | Medium      |
-| Sequence / do expressions            | Medium-Low                            | High        | High        |
-| Lazy sequences / generators          | Medium-Low                            | High        | Medium      |
-| Record types                         | Medium-Low                            | High        | High        |
-| Boolean alias and fallback operators | High for aliases, Medium for fallback | Low-Medium  | Medium      |
-| Assert / contract expressions        | Medium                                | Medium      | Medium      |
-| User-defined infix operators         | Low                                   | High        | Low-Medium  |
-| Multiline / raw strings              | High                                  | Low         | High        |
-| Doc comments                         | High                                  | Low-Medium  | Medium      |
-| Tail call optimization               | Medium-Low                            | High        | High        |
-| Maybe / Option type                  | Medium                                | Medium-High | High        |
-| Bitwise operators                    | High as library, Medium as syntax     | Low-Medium  | Medium      |
-| Type aliases                         | Low in current dynamic model          | Medium      | Low-Medium  |
-| Module-level constants               | High                                  | Low-Medium  | Medium      |
-| Unicode identifiers                  | High                                  | Low-Medium  | Medium      |
-| Result type                          | Medium                                | Medium      | High        |
-| Variadic parameters                  | Medium                                | Medium      | Medium      |
-| Overloading by arity                 | High                                  | Medium      | High        |
-| Safe indexing and lookup             | Medium                                | Medium      | High        |
-| Compile-time constant evaluation     | Medium                                | Medium      | Medium-High |
-
----
-
-## Questions for Prioritization
-
-1. Should the next milestone focus on syntax ergonomics, or on deeper runtime capabilities like local scopes and richer value types?
-2. Does Primal want to remain strictly minimal and dynamic, or should it start reserving syntax for longer-term features like records, aliases, and structured error values?
-3. Which features should be implemented as pure syntax sugar first, and which ones are important enough to justify runtime changes?
-4. Is the first high-impact milestone "better function definitions" (guards, defaults, arity overloading), "better literals and text" (raw strings, regex literals, number bases), or "better control flow and safety" (Option, Result, safe access, assertions)?
