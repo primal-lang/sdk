@@ -134,6 +134,8 @@ Raised during compilation and abort the pipeline:
 | Semantic  | `UndefinedIdentifierError`      | Reference to unknown variable/function |
 | Semantic  | `UndefinedFunctionError`        | Call to unknown function               |
 | Semantic  | `InvalidNumberOfArgumentsError` | Wrong argument count in a call         |
+| Semantic  | `NotCallableError`              | Calling a non-callable literal         |
+| Semantic  | `NotIndexableError`             | Indexing a non-indexable literal       |
 
 ### Runtime Errors
 

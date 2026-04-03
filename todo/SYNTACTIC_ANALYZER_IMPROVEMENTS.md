@@ -134,6 +134,10 @@ test('ResultState.next throws StateError', () {
 | `lib/compiler/syntactic/syntactic_analyzer.dart` | Override `next` in `ResultState` to throw |
 | `test/compiler/syntactic_analyzer_test.dart`     | Add test for `ResultState.next` throwing  |
 
+Update any document in @docs/ if necessary.
+
+Plan for adding/updating any test if necessary to cover all the new changes.
+
 ---
 
 ## Issue #4: `previous` Assumes Non-Null
@@ -299,6 +303,10 @@ Note: These tests require making `previous` accessible for testing, or testing t
 | ----------------------------------------------- | ----------------------------------- |
 | `lib/compiler/syntactic/expression_parser.dart` | Add null check to `previous` getter |
 | `test/compiler/expression_parser_test.dart`     | Add edge case tests                 |
+
+Update any document in @docs/ if necessary.
+
+Plan for adding/updating any test if necessary to cover all the new changes.
 
 ---
 
@@ -522,6 +530,10 @@ test('Expression parsing performance', () {
 | `lib/compiler/syntactic/expression_parser.dart` | Add static predicates, update `match()` calls |
 | `test/compiler/expression_parser_test.dart`     | (Optional) Add performance test               |
 
+Update any document in @docs/ if necessary.
+
+Plan for adding/updating any test if necessary to cover all the new changes.
+
 ---
 
 ## Issue #8: `MapEntryExpression` Lacks Location Info
@@ -701,61 +713,6 @@ test('MapEntryExpression has correct location', () {
 | `test/compiler/syntactic_analyzer_test.dart`    | Update all `MapEntryExpression` constructions          |
 | `test/compiler/expression_parser_test.dart`     | Update map-related tests if needed                     |
 
----
+Update any document in @docs/ if necessary.
 
-## Summary: Implementation Order
-
-Recommended order of implementation (least to most disruptive):
-
-| Order | Issue                              | Risk     | Effort | Files Changed |
-| ----- | ---------------------------------- | -------- | ------ | ------------- |
-| 1     | #3: `ResultState.next` throws      | Very Low | Low    | 2             |
-| 2     | #4: `previous` null check          | Very Low | Low    | 2             |
-| 3     | #7: Static predicates              | Very Low | Medium | 2             |
-| 4     | #8: `MapEntryExpression` location  | Low      | Medium | 4             |
-| 5     | #2: Remove type checks from parser | Medium   | High   | 4+            |
-
-Issues #3, #4, and #7 are pure improvements with no behavioral changes.
-
-Issue #8 is a data model change that requires updating tests but doesn't change parser behavior.
-
-Issue #2 is the most significant change, as it moves validation from syntactic to semantic analysis. This should be done last after the other improvements are stable.
-
----
-
-## Test Plan Summary
-
-### New Tests to Add
-
-| Test File                      | Test Description                                                 |
-| ------------------------------ | ---------------------------------------------------------------- |
-| `syntactic_analyzer_test.dart` | `ResultState.next` throws `StateError`                           |
-| `expression_parser_test.dart`  | `previous` before advance throws `StateError`                    |
-| `expression_parser_test.dart`  | `previous` after advance returns correct token                   |
-| `expression_parser_test.dart`  | (Optional) Performance benchmark                                 |
-| `syntactic_analyzer_test.dart` | `MapEntryExpression` has correct location                        |
-| `expression_parser_test.dart`  | `5(1)` parses as `CallExpression` with `NumberExpression` callee |
-| `expression_parser_test.dart`  | `5[0]` parses as index operation on `NumberExpression`           |
-| `semantic_analyzer_test.dart`  | Calling a number produces semantic error                         |
-| `semantic_analyzer_test.dart`  | Indexing a boolean produces semantic error                       |
-
-### Tests to Modify
-
-| Test File                      | Current Test                                              | Change Required                             |
-| ------------------------------ | --------------------------------------------------------- | ------------------------------------------- |
-| `expression_parser_test.dart`  | `'non-identifier call throws InvalidTokenError'`          | Remove or change to expect successful parse |
-| `expression_parser_test.dart`  | `'non-indexable bracket access throws InvalidTokenError'` | Remove or change to expect successful parse |
-| `syntactic_analyzer_test.dart` | All `MapEntryExpression` constructions                    | Add `location` parameter                    |
-
----
-
-## Conclusion
-
-These five issues range from minor (lambda allocation) to architectural (mixing syntactic and semantic concerns). Addressing them will:
-
-1. **Improve correctness** - Better separation of concerns, explicit error handling
-2. **Improve maintainability** - Self-documenting code, explicit invariants
-3. **Improve error messages** - Better source location reporting
-4. **Improve performance** - Reduced allocations (minor impact, but good practice)
-
-The recommended implementation order minimizes risk by starting with isolated changes and building toward the larger architectural refactoring.
+Plan for adding/updating any test if necessary to cover all the new changes.
