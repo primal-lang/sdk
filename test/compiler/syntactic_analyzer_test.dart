@@ -242,6 +242,16 @@ void main() {
       expect(entry.location, equals(const Location(row: 1, column: 8)));
     });
 
+    test('MapEntryExpression extends Localized', () {
+      final List<FunctionDefinition> functions = getFunctions(
+        'map = {"key": "value"}',
+      );
+      final MapExpression mapExpr = functions[0].expression as MapExpression;
+      final MapEntryExpression entry = mapExpr.value[0];
+
+      expect(entry, isA<Localized>());
+    });
+
     test('Function with no parameters', () {
       final List<FunctionDefinition> functions = getFunctions('test = true');
       checkFunctions(functions, [

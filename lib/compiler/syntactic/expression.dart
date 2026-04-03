@@ -66,13 +66,12 @@ class ListExpression extends LiteralExpression<List<Expression>> {
   Node toNode() => ListNode(value.map((e) => e.toNode()).toList());
 }
 
-class MapEntryExpression {
-  final Location location;
+class MapEntryExpression extends Localized {
   final Expression key;
   final Expression value;
 
   const MapEntryExpression({
-    required this.location,
+    required super.location,
     required this.key,
     required this.value,
   });

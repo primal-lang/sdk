@@ -78,6 +78,7 @@ All expressions extend `Expression` (which has a `Location`):
   - `BooleanExpression`, `NumberExpression`, `StringExpression`
   - `ListExpression` (contains `List<Expression>`)
   - `MapExpression` (contains `List<MapEntryExpression>`)
+    - `MapEntryExpression` extends `Localized` (not `Expression`, as map entries only appear within map literals)
 - `IdentifierExpression` (extends `LiteralExpression<String>`) - a named reference (variable or function)
 - `CallExpression` - function application (callee expression + argument list)
   - Also used to represent binary and unary operators via factory constructors (`fromBinaryOperation`, `fromUnaryOperation`, `fromIf`)
