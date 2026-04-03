@@ -205,43 +205,12 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
   }) {
+    // `callee` holds the checked/transformed callee for the output CallNode.
+    // Literal checks below use `node.callee` (the original) to detect shape errors.
     Node callee = node.callee;
 
-    // Check for non-callable literals (e.g., 5(1))
-    if (_isNonCallableLiteral(callee)) {
-      throw NotCallableError(
-        value: callee.toString(),
-        type: _literalTypeName(callee),
-      );
-    }
-
-    // Note: Arity checking only works for direct calls (e.g., foo(1, 2)).
-    // Indirect calls (e.g., f()(x)) cannot be statically checked without
-    // return type information and are validated at runtime instead.
-
-    // Check for @ operator with non-indexable first argument (e.g., 5[0])
-    if (callee is IdentifierNode &&
-        callee.value == '@' &&
-        node.arguments.isNotEmpty) {
-      final Node target = node.arguments[0];
-      if (_isNonIndexableLiteral(target)) {
-        throw NotIndexableError(
-          value: target.toString(),
-          type: _literalTypeName(target),
-        );
-      }
-    }
-
-    if (callee is IdentifierNode) {
-      callee = _checkCalleeIdentifier(
-        node: node,
-        callee: callee,
-        currentFunction: currentFunction,
-        availableParameters: availableParameters,
-        usedParameters: usedParameters,
-        allFunctions: allFunctions,
-      );
-    } else if (callee is CallNode) {
+    // First, recursively check callee if it's a CallNode to surface nested errors
+    if (callee is CallNode) {
       callee = checkNode(
         node: callee,
         currentFunction: currentFunction,
@@ -251,6 +220,7 @@ class SemanticAnalyzer
       );
     }
 
+    // Next, recursively check all arguments to surface nested errors
     final List<Node> newArguments = node.arguments
         .map(
           (argument) => checkNode(
@@ -262,6 +232,43 @@ class SemanticAnalyzer
           ),
         )
         .toList();
+
+    // Check for non-callable literals (e.g., 5(1))
+    if (_isNonCallableLiteral(node.callee)) {
+      throw NotCallableError(
+        value: node.callee.toString(),
+        type: _literalTypeName(node.callee),
+      );
+    }
+
+    // Note: Arity checking only works for direct calls (e.g., foo(1, 2)).
+    // Indirect calls (e.g., f()(x)) cannot be statically checked without
+    // return type information and are validated at runtime instead.
+
+    // Check for @ operator with non-indexable first argument (e.g., 5[0])
+    if (node.callee is IdentifierNode &&
+        (node.callee as IdentifierNode).value == '@' &&
+        newArguments.isNotEmpty) {
+      final Node target = newArguments[0];
+      if (_isNonIndexableLiteral(target)) {
+        throw NotIndexableError(
+          value: node.arguments[0].toString(),
+          type: _literalTypeName(target),
+        );
+      }
+    }
+
+    // Finally, check callee identifier for validity and arity
+    if (node.callee is IdentifierNode) {
+      callee = _checkCalleeIdentifier(
+        node: node,
+        callee: node.callee as IdentifierNode,
+        currentFunction: currentFunction,
+        availableParameters: availableParameters,
+        usedParameters: usedParameters,
+        allFunctions: allFunctions,
+      );
+    }
 
     return CallNode(
       callee: callee,

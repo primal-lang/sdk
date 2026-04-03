@@ -20,5 +20,15 @@ read all the documentation in "docs" and the code in "lib" propose new features 
 - list comprehensions
 - tuples
 - regular expression
+- Binary, Hex, and Octal Number Literals
+- Default Parameter Values
+- Named Arguments
+- Memoization
+- Sequence / Do Expressions
+- Lazy Sequences / Generators
+- Record Types
+- Boolean Alias and Fallback Operators
+- Assert / Contract Expressions
+18
 
 come up with new features thare are not in that list (you can propose similar features if you want). ask me if you have questions
