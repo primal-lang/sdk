@@ -1,5 +1,7 @@
 Is the runtime following the beta-reduction: substitute and reduce?
 
+---
+
 - High: semantic resolution is only half-done. Known function names
 survive analysis as plain IdentifierNodes instead of becoming
 resolved references in the IR lib/compiler/semantic/
@@ -9,3 +11,47 @@ lib/compiler/runtime/runtime.dart:12. That is acceptable for a
 tiny interpreter, but architecturally it means the analyzer
 validates one representation and the runtime still depends on
 mutable name lookup.
+
+---
+
+## Finding 8: The analyzer currently uses runtime nodes as semantic output, which keeps it small but limits future growth
+
+Severity: medium
+
+`IntermediateCode` stores a map of runtime `FunctionNode` values:
+
+- `lib/compiler/semantic/intermediate_code.dart:6-18`
+
+That keeps the pipeline small:
+
+- parse
+- semantically check
+- run
+
+But it also means semantic analysis has no distinct output layer with room for:
+
+- locations
+- resolved function references
+- richer binding metadata
+- optimization-friendly structure
+- multiple diagnostics attached to nodes
+
+### Why this matters
+
+This is the architectural reason several other issues exist:
+
+- no locations
+- unresolved function identifiers
+- weak future extensibility
+
+### Recommended fix
+
+If the language stays small, this may be acceptable.
+
+If you want the compiler to grow, the best long-term move is to separate:
+
+- syntactic AST
+- semantic/bound AST or semantic IR
+- runtime/evaluation nodes
+
+That would make the pipeline clearer and reduce leakage between phases.
