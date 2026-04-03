@@ -4,25 +4,38 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/lowerer.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 
 class Runtime {
   final IntermediateCode intermediateCode;
+  final Map<String, FunctionNode> _loweredFunctions;
 
-  // TODO(momo): pass it as a parameter
   static Scope<FunctionNode> SCOPE = const Scope();
 
-  Runtime(this.intermediateCode) {
-    SCOPE = Scope(intermediateCode.functions);
+  Runtime(this.intermediateCode)
+    : _loweredFunctions = _lowerFunctions(intermediateCode) {
+    SCOPE = Scope(_loweredFunctions);
   }
 
-  bool get hasMain => intermediateCode.functions.containsKey('main');
+  static Map<String, FunctionNode> _lowerFunctions(IntermediateCode code) {
+    const Lowerer lowerer = Lowerer();
+    final Map<String, FunctionNode> result = {...code.standardLibrary};
+
+    for (final function in code.customFunctions.values) {
+      result[function.name] = lowerer.lowerFunction(function);
+    }
+
+    return result;
+  }
+
+  bool get hasMain => intermediateCode.containsFunction('main');
 
   Expression mainExpression(List<String> arguments) {
     const Compiler compiler = Compiler();
 
-    final FunctionNode? main = intermediateCode.functions['main'];
+    final FunctionNode? main = _loweredFunctions['main'];
 
     if ((main != null) && main.parameters.isNotEmpty) {
       return compiler.expression(
@@ -42,7 +55,7 @@ class Runtime {
   String evaluate(Expression expression) {
     final Node validated = SemanticAnalyzer.validateExpression(
       expression.toNode(),
-      intermediateCode.functions,
+      _loweredFunctions,
     );
     final Node result = validated.evaluate();
 

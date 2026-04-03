@@ -207,8 +207,6 @@ class IdentifierNode extends Node {
 
   const IdentifierNode(this.value);
 
-  // TODO(momo): create function pointer in semantic analyzer to avoid
-  // using the scope here
   @override
   FunctionNode evaluate() {
     final Node node = Runtime.SCOPE.get(value);

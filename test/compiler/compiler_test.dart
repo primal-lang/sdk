@@ -14,15 +14,15 @@ void main() {
   group('Compiler.compile()', () {
     test('Simple program returns IntermediateCode with main', () {
       final IntermediateCode code = compiler.compile('main = 42');
-      expect(code.functions.containsKey('main'), isTrue);
+      expect(code.containsFunction('main'), isTrue);
     });
 
     test('Function definitions create correct functions', () {
       final IntermediateCode code = compiler.compile(
         'double(x) = x * 2\nmain = double(5)',
       );
-      expect(code.functions.containsKey('double'), isTrue);
-      expect(code.functions.containsKey('main'), isTrue);
+      expect(code.containsFunction('double'), isTrue);
+      expect(code.containsFunction('main'), isTrue);
     });
 
     test('Invalid syntax throws a compilation error', () {
@@ -48,7 +48,7 @@ void main() {
 
     test('Program without main compiles successfully', () {
       final IntermediateCode code = compiler.compile('f(x) = x * 2');
-      expect(code.functions.containsKey('f'), isTrue);
+      expect(code.containsFunction('f'), isTrue);
     });
   });
 

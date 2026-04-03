@@ -1,6 +1,6 @@
 # Compiler Architecture
 
-The Primal compiler is a four-stage pipeline that transforms source code into an executable intermediate representation. It is implemented in Dart and supports both CLI and web targets.
+The Primal compiler is a five-stage pipeline that transforms source code into an executable representation. It is implemented in Dart and supports both CLI and web targets.
 
 ```
 Source Code
@@ -15,13 +15,16 @@ Source Code
  Syntactic Analyzer .. Function definitions with ASTs     → compiler/syntactic.md
     |
     v
- Semantic Analyzer ... Validated, scope-resolved functions → compiler/semantic.md
+ Semantic Analyzer ... Semantic IR with locations         → compiler/semantic.md
     |
     v
- Runtime ............. Evaluation via node substitution    → compiler/runtime.md
+ Lowerer ............. Runtime nodes for evaluation       → compiler/semantic.md
+    |
+    v
+ Runtime ............. Evaluation via node substitution   → compiler/runtime.md
 ```
 
-The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateCode` is then handed to the `Runtime` for execution.
+The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateCode` contains semantic IR (with source locations and resolved references). The `Runtime` then lowers this to runtime nodes for execution.
 
 Each pipeline stage is documented in its own file under [`compiler/`](compiler/).
 

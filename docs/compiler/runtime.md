@@ -2,7 +2,15 @@
 
 **Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/node.dart`, `lib/compiler/runtime/bindings.dart`, `lib/compiler/runtime/scope.dart`
 
-The runtime evaluates intermediate code through **node substitution and reduction**.
+The runtime evaluates compiled code through **node substitution and reduction**. It receives `IntermediateCode` from the semantic analyzer and lowers semantic IR to runtime nodes for execution.
+
+## Initialization
+
+When a `Runtime` is created with `IntermediateCode`:
+
+1. The `Lowerer` converts each `SemanticFunction` to a `CustomFunctionNode`.
+2. Standard library functions (already `FunctionNode`) are included as-is.
+3. All functions are stored in the global `SCOPE` for identifier resolution.
 
 ## Node Hierarchy
 
@@ -47,3 +55,13 @@ This is a substitution-based evaluation model consistent with lambda calculus re
 ## Scope
 
 `Scope` (`lib/compiler/runtime/scope.dart`) is a global map from function names to `FunctionNode` definitions, stored as `Runtime.SCOPE`. `IdentifierNode`s in function bodies are resolved against this scope at evaluation time.
+
+## Separation from Semantic Analysis
+
+The runtime layer is intentionally minimal:
+
+- It receives **lowered** nodes (no source locations or resolved references).
+- Semantic validation happens earlier in the pipeline.
+- Runtime errors (type mismatches, missing keys) are detected during evaluation.
+
+This separation keeps the runtime focused on evaluation while semantic analysis handles validation and source tracking.

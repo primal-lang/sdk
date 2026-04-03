@@ -101,18 +101,20 @@ The parser desugars several syntactic forms into `CallExpression` nodes:
 
 Note: Unary negation is converted to binary subtraction from zero. The synthetic `0` uses the same source location as the `-` operator, since it represents the implicit zero at that position.
 
-## Bridge to Runtime
+## Bridge to Semantic Analysis
 
-Each `Expression` subclass implements a `toNode()` method that converts the parse tree into runtime nodes:
+The semantic analyzer converts expressions directly to semantic IR nodes, preserving source locations:
 
-| Expression             | Runtime Node     |
-| ---------------------- | ---------------- |
-| `BooleanExpression`    | `BooleanNode`    |
-| `NumberExpression`     | `NumberNode`     |
-| `StringExpression`     | `StringNode`     |
-| `ListExpression`       | `ListNode`       |
-| `MapExpression`        | `MapNode`        |
-| `IdentifierExpression` | `IdentifierNode` |
-| `CallExpression`       | `CallNode`       |
+| Expression             | Semantic Node              |
+| ---------------------- | -------------------------- |
+| `BooleanExpression`    | `SemanticBooleanNode`      |
+| `NumberExpression`     | `SemanticNumberNode`       |
+| `StringExpression`     | `SemanticStringNode`       |
+| `ListExpression`       | `SemanticListNode`         |
+| `MapExpression`        | `SemanticMapNode`          |
+| `IdentifierExpression` | `SemanticIdentifierNode` or `SemanticBoundVariableNode` |
+| `CallExpression`       | `SemanticCallNode`         |
 
-This conversion happens during semantic analysis when building the runtime representation.
+The semantic IR is then lowered to runtime nodes (`BooleanNode`, `NumberNode`, etc.) for evaluation. See [semantic.md](semantic.md) for details.
+
+Note: `Expression.toNode()` methods still exist for legacy compatibility (used by `Runtime.evaluate()` for ad-hoc expressions), but the main compilation pipeline uses direct conversion to semantic IR.
