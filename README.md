@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
-<a href="https://github.com/primal-lang/sdk/releases/tag/v0.4.0"><img src="https://img.shields.io/badge/Latest-0.4.0-blue" /></a>
+<a href="https://github.com/primal-lang/sdk/releases/tag/v0.4.2"><img src="https://img.shields.io/badge/Latest-0.4.2-blue" /></a>
 </p>
 
 # Primal
@@ -37,14 +37,14 @@ The language is designed primarily for educational purposes. It aims to teach pr
 
 The language has the following characteristics:
 
-* Lazy evaluated
-* Dynamically typed
-* Immutable
-* Single threaded
-* Interpreted
-* Expression oriented
-* Garbage collected
-* Interactive
+- Lazy evaluated
+- Dynamically typed
+- Immutable
+- Single threaded
+- Interpreted
+- Expression oriented
+- Garbage collected
+- Interactive
 
 ## Getting started
 
@@ -68,13 +68,13 @@ The syntax is designed to be simple and easy to read and consists of function de
 
 A function declaration is composed of:
 
-* **Name:** which must match the regular expression `[a-zA-Z][\w\.]*`
-* **Parameters (optional):** a list of identifiers, each matching the regular expression `[a-zA-Z][\w\.]*`
-* **Body:** an expression which consists of combinations of:
-    - Constants: `"Hello"`, `42`, `true`, `[1, 2, 3]`, etc
-    - Operations: `foo + 3`, `!foo`, `foo >= bar`, etc
-    - Function calls: `foo(x)`, `bar(10)`, etc
-    - Conditionals: `if (foo) bar else baz`
+- **Name:** which must match the regular expression `[a-zA-Z][\w\.]*`
+- **Parameters (optional):** a list of identifiers, each matching the regular expression `[a-zA-Z][\w\.]*`
+- **Body:** an expression which consists of combinations of:
+  - Constants: `"Hello"`, `42`, `true`, `[1, 2, 3]`, etc
+  - Operations: `foo + 3`, `!foo`, `foo >= bar`, etc
+  - Function calls: `foo(x)`, `bar(10)`, etc
+  - Conditionals: `if (foo) bar else baz`
 
 Here is an example of a function with parameters:
 
@@ -85,7 +85,7 @@ cube(n) = pow(n, 3)
 And here is an example of a function without parameters:
 
 ```javascript
-pi = 3.14159
+pi = 3.14159;
 ```
 
 ## Main function
@@ -101,19 +101,20 @@ If the main function is not present, the program will still run, but no computat
 This approach offers flexibility and ease of use but relies on runtime checks to catch type-related issues, which can lead to errors that are only caught during execution.
 
 These are the available types at runtime:
-* Boolean
-* Number
-* String
-* Timestamp
-* List
-* Map
-* Set
-* Stack
-* Queue
-* Vector
-* File
-* Directory
-* Function
+
+- Boolean
+- Number
+- String
+- Timestamp
+- List
+- Map
+- Set
+- Stack
+- Queue
+- Vector
+- File
+- Directory
+- Function
 
 ## Runtime
 

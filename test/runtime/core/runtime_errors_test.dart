@@ -1,7 +1,9 @@
 @Tags(['runtime'])
 library;
 
+import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:test/test.dart';
@@ -331,5 +333,69 @@ main = getVal(true)[0]
         );
       },
     );
+  });
+
+  group('Runtime.evaluate() Semantic Validation', () {
+    const Compiler compiler = Compiler();
+
+    test('undefined function throws UndefinedFunctionError', () {
+      final Runtime runtime = getRuntime('main = 1');
+      expect(
+        () => runtime.evaluate(compiler.expression('foo()')),
+        throwsA(
+          isA<UndefinedFunctionError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('foo'),
+          ),
+        ),
+      );
+    });
+
+    test('wrong arity throws InvalidNumberOfArgumentsError', () {
+      final Runtime runtime = getRuntime('main = 1');
+      expect(
+        () => runtime.evaluate(compiler.expression('num.add(1)')),
+        throwsA(
+          isA<InvalidNumberOfArgumentsError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('num.add'),
+              contains('expected 2'),
+              contains('got 1'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('non-callable literal throws NotCallableError', () {
+      final Runtime runtime = getRuntime('main = 1');
+      expect(
+        () => runtime.evaluate(compiler.expression('5(1)')),
+        throwsA(
+          isA<NotCallableError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('number'),
+          ),
+        ),
+      );
+    });
+
+    test('non-indexable literal throws NotIndexableError', () {
+      final Runtime runtime = getRuntime('main = 1');
+      expect(
+        () => runtime.evaluate(compiler.expression('5[0]')),
+        throwsA(
+          isA<NotIndexableError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('number'),
+          ),
+        ),
+      );
+    });
   });
 }

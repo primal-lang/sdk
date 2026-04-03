@@ -4,6 +4,7 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/scope.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 
 class Runtime {
@@ -39,10 +40,13 @@ class Runtime {
   }
 
   String evaluate(Expression expression) {
-    // TODO(momo): evaluate expression semantically before executing it
-    final Node node = expression.toNode().evaluate();
+    final Node validated = SemanticAnalyzer.validateExpression(
+      expression.toNode(),
+      intermediateCode.functions,
+    );
+    final Node result = validated.evaluate();
 
-    return format(node.native()).toString();
+    return format(result.native()).toString();
   }
 
   dynamic format(dynamic value) {

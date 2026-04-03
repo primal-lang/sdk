@@ -25,26 +25,40 @@ class DuplicatedParameterError extends SemanticError {
 }
 
 class UndefinedIdentifierError extends SemanticError {
-  const UndefinedIdentifierError(String identifier)
-    : super('Undefined identifier "$identifier"');
+  const UndefinedIdentifierError({
+    required String identifier,
+    required String inFunction,
+  }) : super('Undefined identifier "$identifier" in function "$inFunction"');
 }
 
 class UndefinedFunctionError extends SemanticError {
-  const UndefinedFunctionError(String function)
-    : super('Undefined function "$function"');
+  const UndefinedFunctionError({
+    required String function,
+    required String inFunction,
+  }) : super('Undefined function "$function" in function "$inFunction"');
 }
 
 class InvalidNumberOfArgumentsError extends SemanticError {
-  const InvalidNumberOfArgumentsError(String function)
-    : super('Invalid number of arguments calling function "$function"');
+  const InvalidNumberOfArgumentsError({
+    required String function,
+    required int expected,
+    required int actual,
+  }) : super(
+         'Invalid number of arguments calling function "$function": '
+         'expected $expected, got $actual',
+       );
 }
 
 class NotCallableError extends SemanticError {
-  const NotCallableError(String value)
-    : super('Cannot call literal value "$value"');
+  const NotCallableError({
+    required String value,
+    required String type,
+  }) : super('Cannot call $type literal "$value"');
 }
 
 class NotIndexableError extends SemanticError {
-  const NotIndexableError(String value)
-    : super('Cannot index literal value "$value"');
+  const NotIndexableError({
+    required String value,
+    required String type,
+  }) : super('Cannot index $type literal "$value"');
 }
