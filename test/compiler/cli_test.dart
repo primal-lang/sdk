@@ -35,7 +35,9 @@ void main() {
     }
 
     test('executes a file and returns result', () async {
-      final ProcessResult result = await runCli(['example/factorial.prm']);
+      final ProcessResult result = await runCli([
+        'test/resources/samples/factorial.prm',
+      ]);
 
       expect(result.exitCode, equals(0));
       expect(result.stdout.toString().trim(), isNotEmpty);

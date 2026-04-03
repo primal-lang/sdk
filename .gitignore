@@ -8,6 +8,5 @@ bin/aot/
 bin/web/
 coverage/
 output/
-example/test/
 test/resources/files/temp*
 .codex
