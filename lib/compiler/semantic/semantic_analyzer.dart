@@ -107,6 +107,7 @@ class SemanticAnalyzer
 
       final Node node = checkNode(
         node: function.node,
+        currentFunction: function.name,
         availableParameters: function.parameters.map((e) => e.name).toList(),
         usedParameters: usedParameters,
         allFunctions: allFunctions,
@@ -137,6 +138,7 @@ class SemanticAnalyzer
 
   Node checkNode({
     required Node node,
+    required String currentFunction,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
@@ -144,6 +146,7 @@ class SemanticAnalyzer
     if (node is IdentifierNode) {
       return checkVariableIdentifier(
         node: node,
+        currentFunction: currentFunction,
         availableParameters: availableParameters,
         usedParameters: usedParameters,
         allFunctions: allFunctions,
@@ -153,7 +156,10 @@ class SemanticAnalyzer
 
       // Check for non-callable literals (e.g., 5(1))
       if (_isNonCallableLiteral(callee)) {
-        throw NotCallableError(callee.toString());
+        throw NotCallableError(
+          value: callee.toString(),
+          type: _literalTypeName(callee),
+        );
       }
 
       // Note: Arity checking only works for direct calls (e.g., foo(1, 2)).
@@ -166,7 +172,10 @@ class SemanticAnalyzer
           node.arguments.isNotEmpty) {
         final Node target = node.arguments[0];
         if (_isNonIndexableLiteral(target)) {
-          throw NotIndexableError(target.toString());
+          throw NotIndexableError(
+            value: target.toString(),
+            type: _literalTypeName(target),
+          );
         }
       }
 
@@ -174,6 +183,7 @@ class SemanticAnalyzer
         callee = checkCalleeIdentifier(
           node: node,
           callee: callee,
+          currentFunction: currentFunction,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,
@@ -181,6 +191,7 @@ class SemanticAnalyzer
       } else if (callee is CallNode) {
         callee = checkNode(
           node: callee,
+          currentFunction: currentFunction,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,
@@ -193,6 +204,7 @@ class SemanticAnalyzer
         newArguments.add(
           checkNode(
             node: argument,
+            currentFunction: currentFunction,
             availableParameters: availableParameters,
             usedParameters: usedParameters,
             allFunctions: allFunctions,
@@ -211,6 +223,7 @@ class SemanticAnalyzer
         elements.add(
           checkNode(
             node: element,
+            currentFunction: currentFunction,
             availableParameters: availableParameters,
             usedParameters: usedParameters,
             allFunctions: allFunctions,
@@ -225,6 +238,7 @@ class SemanticAnalyzer
       for (final MapEntry<Node, Node> entry in node.value.entries) {
         final Node key = checkNode(
           node: entry.key,
+          currentFunction: currentFunction,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,
@@ -232,6 +246,7 @@ class SemanticAnalyzer
 
         final Node value = checkNode(
           node: entry.value,
+          currentFunction: currentFunction,
           availableParameters: availableParameters,
           usedParameters: usedParameters,
           allFunctions: allFunctions,
@@ -255,6 +270,7 @@ class SemanticAnalyzer
 
   Node checkVariableIdentifier({
     required IdentifierNode node,
+    required String currentFunction,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
@@ -266,13 +282,17 @@ class SemanticAnalyzer
     } else if (allFunctions.containsKey(node.value)) {
       return node;
     } else {
-      throw UndefinedIdentifierError(node.value);
+      throw UndefinedIdentifierError(
+        identifier: node.value,
+        inFunction: currentFunction,
+      );
     }
   }
 
   Node checkCalleeIdentifier({
     required CallNode node,
     required IdentifierNode callee,
+    required String currentFunction,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
@@ -287,12 +307,19 @@ class SemanticAnalyzer
       final FunctionNode function = allFunctions[functionName]!;
 
       if (function.parameters.length != node.arguments.length) {
-        throw InvalidNumberOfArgumentsError(functionName);
+        throw InvalidNumberOfArgumentsError(
+          function: functionName,
+          expected: function.parameters.length,
+          actual: node.arguments.length,
+        );
       }
 
       return callee;
     } else {
-      throw UndefinedFunctionError(functionName);
+      throw UndefinedFunctionError(
+        function: functionName,
+        inFunction: currentFunction,
+      );
     }
   }
 
@@ -306,5 +333,20 @@ class SemanticAnalyzer
 
   bool _isNonIndexableLiteral(Node node) {
     return node is NumberNode || node is BooleanNode;
+  }
+
+  String _literalTypeName(Node node) {
+    if (node is NumberNode) {
+      return 'number';
+    } else if (node is BooleanNode) {
+      return 'boolean';
+    } else if (node is StringNode) {
+      return 'string';
+    } else if (node is ListNode) {
+      return 'list';
+    } else if (node is MapNode) {
+      return 'map';
+    }
+    return 'unknown';
   }
 }

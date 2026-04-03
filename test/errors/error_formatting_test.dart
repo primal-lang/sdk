@@ -179,35 +179,49 @@ void main() {
   });
 
   group('UndefinedIdentifierError', () {
-    test('toString() includes identifier name', () {
-      const error = UndefinedIdentifierError('myVar');
+    test('toString() includes identifier name and function context', () {
+      const error = UndefinedIdentifierError(
+        identifier: 'myVar',
+        inFunction: 'calculate',
+      );
 
       expect(
         error.toString(),
-        equals('Compilation error: Undefined identifier "myVar"'),
+        equals(
+          'Compilation error: Undefined identifier "myVar" in function "calculate"',
+        ),
       );
     });
   });
 
   group('UndefinedFunctionError', () {
-    test('toString() includes function name', () {
-      const error = UndefinedFunctionError('compute');
+    test('toString() includes function name and context', () {
+      const error = UndefinedFunctionError(
+        function: 'compute',
+        inFunction: 'main',
+      );
 
       expect(
         error.toString(),
-        equals('Compilation error: Undefined function "compute"'),
+        equals(
+          'Compilation error: Undefined function "compute" in function "main"',
+        ),
       );
     });
   });
 
   group('InvalidNumberOfArgumentsError', () {
-    test('toString() includes function name', () {
-      const error = InvalidNumberOfArgumentsError('process');
+    test('toString() includes function name and argument counts', () {
+      const error = InvalidNumberOfArgumentsError(
+        function: 'process',
+        expected: 2,
+        actual: 3,
+      );
 
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid number of arguments calling function "process"',
+          'Compilation error: Invalid number of arguments calling function "process": expected 2, got 3',
         ),
       );
     });
