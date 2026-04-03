@@ -13,6 +13,24 @@ class SemanticAnalyzer
     extends Analyzer<List<FunctionDefinition>, IntermediateCode> {
   const SemanticAnalyzer(super.input);
 
+  /// Validates an expression node against available functions.
+  /// Used by [Runtime.evaluate] to ensure ad-hoc expressions undergo
+  /// the same semantic checks as compiled top-level functions.
+  static Node validateExpression(
+    Node node,
+    Map<String, FunctionNode> functions,
+  ) {
+    const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
+
+    return analyzer.checkNode(
+      node: node,
+      currentFunction: '<expression>',
+      availableParameters: {},
+      usedParameters: {},
+      allFunctions: functions,
+    );
+  }
+
   @override
   IntermediateCode analyze() {
     final List<GenericWarning> warnings = [];

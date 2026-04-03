@@ -35,6 +35,13 @@ read all the documentation in "docs" and the code in "lib" propose new features 
 - Tail Call Optimization
 - Maybe / Option Type
 - Bitwise Operators
-24
+- Type Aliases
+- Module-Level Constants
+- Unicode Identifiers
+- Result Type
+- Variadic Parameters
+- Overloading by Arity
+- Safe Indexing and Lookup
+- Compile-Time Constant Evaluation
 
 come up with new features thare are not in that list (you can propose similar features if you want). ask me if you have questions
