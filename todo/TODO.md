@@ -2,8 +2,7 @@
 
 - scanner: DONE
 - lexical: DONE
-
-- syntactic: PROGRESS
+- syntactic: DONE
 
 - semantic: TODO
 - runtime: TODO
