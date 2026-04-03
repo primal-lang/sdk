@@ -4,11 +4,11 @@
 
 ### Throw
 
-- **Signature:** `error.throw(a: Any): Error`
-- **Input:** One argument of any type
-- **Output:** An error that wraps the provided argument
+- **Signature:** `error.throw(a: Any, b: String): Error`
+- **Input:** An error code and a message string
+- **Output:** An error that wraps the provided code and message
 - **Example:**
 
 ```
-error.throw("something went wrong") // throws an error
+error.throw(404, "not found") // throws an error with code 404 and message "not found"
 ```

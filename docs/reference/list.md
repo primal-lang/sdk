@@ -26,7 +26,7 @@
 
 ### Filled
 
-- **Signature:** `list.filled(b: Number, c: Any): List`
+- **Signature:** `list.filled(a: Number, b: Any): List`
 - **Input:** A number and a value
 - **Output:** A list with the value repeated the specified number of times
 - **Example:**
