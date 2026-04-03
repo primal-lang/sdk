@@ -1,9 +1,9 @@
 - read and understand
-* @docs/compiler/syntactic.md
-* @lib/compiler/syntactic/
+* @docs/compiler/semantic.md
+* @lib/compiler/semantic/
 
 then:
-- what do you think about the syntactic analyzer?
+- what do you think about the semantic analyzer?
 - is it good, bad, normal? 
 - does it have any flaws, mistakes, inconsistencies, etc?
 - how can we improve it?

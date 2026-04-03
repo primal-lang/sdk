@@ -17,10 +17,11 @@ class SemanticAnalyzer
   IntermediateCode analyze() {
     final List<GenericWarning> warnings = [];
 
+    final List<FunctionNode> standardLibrary = StandardLibrary.get();
     final List<CustomFunctionNode> customFunctions = getCustomFunctions(input);
     final List<FunctionNode> allFunctions = [
       ...customFunctions,
-      ...StandardLibrary.get(),
+      ...standardLibrary,
     ];
 
     checkDuplicatedFunctions(allFunctions);
@@ -35,7 +36,7 @@ class SemanticAnalyzer
     return IntermediateCode(
       functions: Mapper.toMap([
         ...checkedFunctions,
-        ...StandardLibrary.get(),
+        ...standardLibrary,
       ]),
       warnings: warnings,
     );
@@ -60,50 +61,38 @@ class SemanticAnalyzer
   }
 
   void checkDuplicatedFunctions(List<FunctionNode> functions) {
-    for (int i = 0; i < functions.length - 1; i++) {
-      final FunctionNode function1 = functions[i];
+    final Map<String, FunctionNode> seen = {};
 
-      for (int j = i + 1; j < functions.length; j++) {
-        final FunctionNode function2 = functions[j];
+    for (final FunctionNode function in functions) {
+      final String name = function.name;
 
-        if (function1.equalSignature(function2)) {
-          throw DuplicatedFunctionError(
-            function1: function1,
-            function2: function2,
-          );
-        }
+      if (seen.containsKey(name)) {
+        throw DuplicatedFunctionError(
+          function1: seen[name]!,
+          function2: function,
+        );
       }
+
+      seen[name] = function;
     }
   }
 
   void checkDuplicatedParameters(List<FunctionNode> functions) {
     for (final FunctionNode function in functions) {
-      final Map<String, int> parameters = parametersCount(function);
+      final Set<String> seen = {};
 
-      for (final MapEntry<String, int> entry in parameters.entries) {
-        if (entry.value > 1) {
+      for (final Parameter parameter in function.parameters) {
+        if (seen.contains(parameter.name)) {
           throw DuplicatedParameterError(
             function: function.name,
-            parameter: entry.key,
+            parameter: parameter.name,
             parameters: function.parameters.map((e) => e.name).toList(),
           );
         }
+
+        seen.add(parameter.name);
       }
     }
-  }
-
-  Map<String, int> parametersCount(FunctionNode function) {
-    final Map<String, int> result = {};
-
-    for (final Parameter parameter in function.parameters) {
-      if (result.containsKey(parameter.name)) {
-        result[parameter.name] = result[parameter.name]! + 1;
-      } else {
-        result[parameter.name] = 1;
-      }
-    }
-
-    return result;
   }
 
   List<CustomFunctionNode> checkCustomFunctions({
@@ -167,6 +156,10 @@ class SemanticAnalyzer
         throw NotCallableError(callee.toString());
       }
 
+      // Note: Arity checking only works for direct calls (e.g., foo(1, 2)).
+      // Indirect calls (e.g., f()(x)) cannot be statically checked without
+      // return type information and are validated at runtime instead.
+
       // Check for @ operator with non-indexable first argument (e.g., 5[0])
       if (callee is IdentifierNode &&
           callee.value == '@' &&
@@ -196,10 +189,10 @@ class SemanticAnalyzer
 
       final List<Node> newArguments = [];
 
-      for (final Node node in node.arguments) {
+      for (final Node argument in node.arguments) {
         newArguments.add(
           checkNode(
-            node: node,
+            node: argument,
             availableParameters: availableParameters,
             usedParameters: usedParameters,
             allFunctions: allFunctions,
