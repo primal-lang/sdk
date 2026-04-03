@@ -17,7 +17,7 @@ class RuntimeFacade {
     : _runtime = Runtime(_runtimeInput);
 
   factory RuntimeFacade(IntermediateCode code) {
-    final input = const RuntimeInputBuilder().build(code);
+    final RuntimeInput input = const RuntimeInputBuilder().build(code);
     return RuntimeFacade._internal(code, input);
   }
 

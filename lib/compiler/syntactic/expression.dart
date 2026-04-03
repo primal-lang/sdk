@@ -70,7 +70,7 @@ class MapExpression extends LiteralExpression<List<MapEntryExpression>> {
 
   @override
   String toString() {
-    final entries = value.map((e) => '${e.key}: ${e.value}').join(', ');
+    final String entries = value.map((e) => '${e.key}: ${e.value}').join(', ');
     return '{$entries}';
   }
 }

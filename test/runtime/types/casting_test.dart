@@ -149,7 +149,7 @@ void main() {
   });
 
   // Table of type expressions used across all is.* tests.
-  final typeExpressions = {
+  final Map<String, String> typeExpressions = {
     'integer': '42',
     'decimal': '12.5',
     'string': '"Hello"',
@@ -167,7 +167,7 @@ void main() {
   };
 
   // Each entry: function name -> set of type keys that should return true.
-  final isChecks = <String, Set<String>>{
+  final Map<String, Set<String>> isChecks = {
     'is.number': {'integer', 'decimal'},
     'is.string': {'string'},
     'is.boolean': {'boolean'},
@@ -183,15 +183,16 @@ void main() {
     'is.directory': {'directory'},
   };
 
-  for (final entry in isChecks.entries) {
-    final fn = entry.key;
-    final trueTypes = entry.value;
+  for (final MapEntry<String, Set<String>> entry in isChecks.entries) {
+    final String fn = entry.key;
+    final Set<String> trueTypes = entry.value;
 
     group(fn, () {
-      for (final typeEntry in typeExpressions.entries) {
-        final typeName = typeEntry.key;
-        final expr = typeEntry.value;
-        final expected = trueTypes.contains(typeName);
+      for (final MapEntry<String, String> typeEntry
+          in typeExpressions.entries) {
+        final String typeName = typeEntry.key;
+        final String expr = typeEntry.value;
+        final bool expected = trueTypes.contains(typeName);
 
         test('returns $expected for $typeName', () {
           final RuntimeFacade runtime = getRuntime('main = $fn($expr)');

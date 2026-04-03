@@ -3,6 +3,7 @@ library;
 
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/semantic/runtime_facade.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:test/test.dart';
 import '../helpers/pipeline_helpers.dart';
 
@@ -47,19 +48,19 @@ void main() {
     group('evaluate', () {
       test('evaluates simple expression', () {
         final RuntimeFacade runtime = RuntimeFacade(IntermediateCode.empty());
-        final expression = getExpression('1 + 2');
+        final Expression expression = getExpression('1 + 2');
         expect(runtime.evaluate(expression), '3');
       });
 
       test('evaluates expression using custom functions', () {
         final RuntimeFacade runtime = getRuntime('double(x) = x * 2');
-        final expression = getExpression('double(5)');
+        final Expression expression = getExpression('double(5)');
         expect(runtime.evaluate(expression), '10');
       });
 
       test('evaluates nested expressions', () {
         final RuntimeFacade runtime = RuntimeFacade(IntermediateCode.empty());
-        final expression = getExpression('(1 + 2) * (3 + 4)');
+        final Expression expression = getExpression('(1 + 2) * (3 + 4)');
         expect(runtime.evaluate(expression), '21');
       });
     });
@@ -67,13 +68,13 @@ void main() {
     group('mainExpression', () {
       test('returns main() call for parameterless main', () {
         final RuntimeFacade runtime = getRuntime('main = 42');
-        final expression = runtime.mainExpression([]);
+        final Expression expression = runtime.mainExpression([]);
         expect(expression.toString(), 'main()');
       });
 
       test('returns main call with arguments for parameterized main', () {
         final RuntimeFacade runtime = getRuntime('main(a, b) = a + b');
-        final expression = runtime.mainExpression(['x', 'y']);
+        final Expression expression = runtime.mainExpression(['x', 'y']);
         expect(expression.toString(), 'main("x", "y")');
       });
     });

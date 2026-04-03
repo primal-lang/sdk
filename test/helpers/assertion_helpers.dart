@@ -94,8 +94,8 @@ void checkResult(RuntimeFacade runtime, Object result) {
 /// This catches cases where toString() representations collide across types
 /// (e.g. NumberNode(1) vs StringNode("1")).
 void checkTypedResult<T extends Node>(RuntimeFacade runtime, Object result) {
-  final expression = runtime.mainExpression([]);
-  final node = const Lowerer().lowerExpression(expression).evaluate();
+  final Expression expression = runtime.mainExpression([]);
+  final Node node = const Lowerer().lowerExpression(expression).evaluate();
   expect(
     node,
     isA<T>(),

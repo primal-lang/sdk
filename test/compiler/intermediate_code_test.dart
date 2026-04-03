@@ -13,7 +13,7 @@ import '../helpers/pipeline_helpers.dart';
 void main() {
   group('IntermediateCode', () {
     test('empty() contains standard library functions', () {
-      final code = IntermediateCode.empty();
+      final IntermediateCode code = IntermediateCode.empty();
 
       expect(code.standardLibrary, isNotEmpty);
       expect(code.customFunctions, isEmpty);
@@ -21,7 +21,7 @@ void main() {
     });
 
     test('empty() includes core library functions', () {
-      final code = IntermediateCode.empty();
+      final IntermediateCode code = IntermediateCode.empty();
 
       expect(code.standardLibrary.containsKey('num.add'), isTrue);
       expect(code.standardLibrary.containsKey('str.length'), isTrue);
@@ -29,7 +29,9 @@ void main() {
     });
 
     test('compiled program includes user-defined functions', () {
-      final code = getIntermediateCode('double(x) = x * 2\nmain = double(5)');
+      final IntermediateCode code = getIntermediateCode(
+        'double(x) = x * 2\nmain = double(5)',
+      );
 
       expect(code.customFunctions.containsKey('double'), isTrue);
       expect(code.customFunctions.containsKey('main'), isTrue);
@@ -38,7 +40,7 @@ void main() {
     test(
       'compiled program preserves standard library alongside user functions',
       () {
-        final code = getIntermediateCode('main = 42');
+        final IntermediateCode code = getIntermediateCode('main = 42');
 
         expect(code.customFunctions.containsKey('main'), isTrue);
         expect(code.standardLibrary.containsKey('num.add'), isTrue);
@@ -46,14 +48,18 @@ void main() {
     );
 
     test('user function has correct parameter count', () {
-      final code = getIntermediateCode('add(x, y) = x + y\nmain = add(1, 2)');
-      final addFn = code.customFunctions['add']!;
+      final IntermediateCode code = getIntermediateCode(
+        'add(x, y) = x + y\nmain = add(1, 2)',
+      );
+      final SemanticFunction addFn = code.customFunctions['add']!;
 
       expect(addFn.parameters.length, equals(2));
     });
 
     test('warnings list populated for unused parameters', () {
-      final code = getIntermediateCode('f(x, y) = x\nmain = f(1, 2)');
+      final IntermediateCode code = getIntermediateCode(
+        'f(x, y) = x\nmain = f(1, 2)',
+      );
 
       expect(code.warnings.length, equals(1));
       expect(code.warnings.first, isA<UnusedParameterWarning>());
@@ -64,67 +70,73 @@ void main() {
     });
 
     test('warnings list empty when all parameters are used', () {
-      final code = getIntermediateCode('add(x, y) = x + y\nmain = add(1, 2)');
+      final IntermediateCode code = getIntermediateCode(
+        'add(x, y) = x + y\nmain = add(1, 2)',
+      );
 
       expect(code.warnings, isEmpty);
     });
 
     test('multiple unused parameters generate multiple warnings', () {
-      final code = getIntermediateCode('f(x, y, z) = 42\nmain = f(1, 2, 3)');
+      final IntermediateCode code = getIntermediateCode(
+        'f(x, y, z) = 42\nmain = f(1, 2, 3)',
+      );
 
       expect(code.warnings.length, equals(3));
     });
 
     test('custom function is a SemanticFunction', () {
-      final code = getIntermediateCode('main = 42');
-      final mainFn = code.customFunctions['main']!;
+      final IntermediateCode code = getIntermediateCode('main = 42');
+      final SemanticFunction mainFn = code.customFunctions['main']!;
 
       expect(mainFn, isA<SemanticFunction>());
     });
 
     test('lowered custom function is a CustomFunctionNode', () {
-      final code = getIntermediateCode('main = 42');
-      final mainFn = code.customFunctions['main']!;
-      const lowerer = Lowerer();
-      final lowered = lowerer.lowerFunction(mainFn);
+      final IntermediateCode code = getIntermediateCode('main = 42');
+      final SemanticFunction mainFn = code.customFunctions['main']!;
+      const Lowerer lowerer = Lowerer();
+      final CustomFunctionNode lowered = lowerer.lowerFunction(mainFn);
 
       expect(lowered, isA<CustomFunctionNode>());
     });
 
     test('standard library function node is a NativeFunctionNode', () {
-      final code = getIntermediateCode('main = 42');
-      final numAdd = code.standardLibrary['num.add']!;
+      final IntermediateCode code = getIntermediateCode('main = 42');
+      final FunctionNode numAdd = code.standardLibrary['num.add']!;
 
       expect(numAdd, isA<NativeFunctionNode>());
     });
 
     test('parameterless function has empty parameter list', () {
-      final code = getIntermediateCode('main = 42');
-      final mainFn = code.customFunctions['main']!;
+      final IntermediateCode code = getIntermediateCode('main = 42');
+      final SemanticFunction mainFn = code.customFunctions['main']!;
 
       expect(mainFn.parameters, isEmpty);
     });
 
     test('containsFunction returns true for custom functions', () {
-      final code = getIntermediateCode('main = 42');
+      final IntermediateCode code = getIntermediateCode('main = 42');
 
       expect(code.containsFunction('main'), isTrue);
     });
 
     test('containsFunction returns true for standard library functions', () {
-      final code = getIntermediateCode('main = 42');
+      final IntermediateCode code = getIntermediateCode('main = 42');
 
       expect(code.containsFunction('num.add'), isTrue);
     });
 
     test('containsFunction returns false for unknown functions', () {
-      final code = getIntermediateCode('main = 42');
+      final IntermediateCode code = getIntermediateCode('main = 42');
 
       expect(code.containsFunction('unknown'), isFalse);
     });
 
     test('allFunctionNames includes both custom and standard library', () {
-      final code = getIntermediateCode('double(x) = x * 2\nmain = double(5)');
+      final IntermediateCode code = getIntermediateCode(
+        'double(x) = x * 2\nmain = double(5)',
+      );
 
       expect(code.allFunctionNames.contains('double'), isTrue);
       expect(code.allFunctionNames.contains('main'), isTrue);

@@ -38,19 +38,19 @@ int _nextCodeId = 0;
 int _nextExpressionId = 0;
 
 int _storeCode(IntermediateCode code) {
-  final id = _nextCodeId++;
+  final int id = _nextCodeId++;
   _codeRegistry[id] = code;
   return id;
 }
 
 int _storeExpression(Expression expression) {
-  final id = _nextExpressionId++;
+  final int id = _nextExpressionId++;
   _expressionRegistry[id] = expression;
   return id;
 }
 
 IntermediateCode _getCode(int id) {
-  final code = _codeRegistry[id];
+  final IntermediateCode? code = _codeRegistry[id];
   if (code == null) {
     throw StateError('Invalid code ID: $id');
   }
@@ -58,7 +58,7 @@ IntermediateCode _getCode(int id) {
 }
 
 Expression _getExpression(int id) {
-  final expression = _expressionRegistry[id];
+  final Expression? expression = _expressionRegistry[id];
   if (expression == null) {
     throw StateError('Invalid expression ID: $id');
   }
@@ -69,42 +69,44 @@ void main(List<String> args) {
   const Compiler compiler = Compiler();
 
   compileInput = (JSString source) {
-    final code = compiler.compile(source.toDart);
+    final IntermediateCode code = compiler.compile(source.toDart);
     return _storeCode(code).toJS;
   }.toJS;
 
   compileExpression = (JSString source) {
-    final expression = compiler.expression(source.toDart);
+    final Expression expression = compiler.expression(source.toDart);
     return _storeExpression(expression).toJS;
   }.toJS;
 
   runtimeWarnings = (JSNumber codeId) {
-    final code = _getCode(codeId.toDartInt);
-    final warnings = code.warnings.map((e) => e.toString().toJS).toList();
+    final IntermediateCode code = _getCode(codeId.toDartInt);
+    final List<JSString> warnings = code.warnings
+        .map((e) => e.toString().toJS)
+        .toList();
     return warnings.toJS;
   }.toJS;
 
   runtimeHasMain = (JSNumber codeId) {
-    final code = _getCode(codeId.toDartInt);
-    final runtime = RuntimeFacade(code);
+    final IntermediateCode code = _getCode(codeId.toDartInt);
+    final RuntimeFacade runtime = RuntimeFacade(code);
     return runtime.hasMain.toJS;
   }.toJS;
 
   runtimeExecuteMain = (JSNumber codeId) {
-    final code = _getCode(codeId.toDartInt);
-    final runtime = RuntimeFacade(code);
+    final IntermediateCode code = _getCode(codeId.toDartInt);
+    final RuntimeFacade runtime = RuntimeFacade(code);
     return runtime.executeMain().toJS;
   }.toJS;
 
   runtimeReduce = (JSNumber codeId, JSNumber expressionId) {
-    final code = _getCode(codeId.toDartInt);
-    final expression = _getExpression(expressionId.toDartInt);
-    final runtime = RuntimeFacade(code);
+    final IntermediateCode code = _getCode(codeId.toDartInt);
+    final Expression expression = _getExpression(expressionId.toDartInt);
+    final RuntimeFacade runtime = RuntimeFacade(code);
     return runtime.evaluate(expression).toJS;
   }.toJS;
 
   intermediateCodeEmpty = () {
-    final code = IntermediateCode.empty();
+    final IntermediateCode code = IntermediateCode.empty();
     return _storeCode(code).toJS;
   }.toJS;
 

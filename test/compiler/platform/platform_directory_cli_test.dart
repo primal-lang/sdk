@@ -23,7 +23,7 @@ void main() {
 
   group('PlatformDirectoryCli', () {
     test('fromPath creates a Directory object', () {
-      final dir = platform.fromPath(tempDir.path);
+      final Directory dir = platform.fromPath(tempDir.path);
 
       expect(dir, isA<Directory>());
       expect(dir.path, equals(tempDir.path));
@@ -34,34 +34,34 @@ void main() {
     });
 
     test('exists returns false for nonexistent directory', () {
-      final dir = Directory('${tempDir.path}/nope');
+      final Directory dir = Directory('${tempDir.path}/nope');
 
       expect(platform.exists(dir), isFalse);
     });
 
     test('create creates a directory', () {
-      final dir = Directory('${tempDir.path}/newdir');
+      final Directory dir = Directory('${tempDir.path}/newdir');
 
       expect(platform.create(dir), isTrue);
       expect(dir.existsSync(), isTrue);
     });
 
     test('create creates nested directories', () {
-      final dir = Directory('${tempDir.path}/a/b/c');
+      final Directory dir = Directory('${tempDir.path}/a/b/c');
 
       expect(platform.create(dir), isTrue);
       expect(dir.existsSync(), isTrue);
     });
 
     test('delete removes a directory', () {
-      final dir = Directory('${tempDir.path}/todelete')..createSync();
+      final Directory dir = Directory('${tempDir.path}/todelete')..createSync();
 
       expect(platform.delete(dir), isTrue);
       expect(dir.existsSync(), isFalse);
     });
 
     test('delete returns false for nonexistent directory', () {
-      final dir = Directory('${tempDir.path}/nope');
+      final Directory dir = Directory('${tempDir.path}/nope');
 
       expect(platform.delete(dir), isFalse);
     });
@@ -71,19 +71,19 @@ void main() {
     });
 
     test('name returns directory name', () {
-      final dir = Directory('${tempDir.path}/mydir')..createSync();
+      final Directory dir = Directory('${tempDir.path}/mydir')..createSync();
 
       expect(platform.name(dir), equals('mydir'));
     });
 
     test('parent returns parent directory', () {
-      final dir = Directory('${tempDir.path}/child')..createSync();
+      final Directory dir = Directory('${tempDir.path}/child')..createSync();
 
       expect(platform.parent(dir).path, equals(tempDir.path));
     });
 
     test('rename renames a directory', () {
-      final dir = Directory('${tempDir.path}/old')..createSync();
+      final Directory dir = Directory('${tempDir.path}/old')..createSync();
 
       expect(platform.rename(dir, 'new'), isTrue);
       expect(Directory('${tempDir.path}/new').existsSync(), isTrue);
@@ -94,25 +94,25 @@ void main() {
       File('${tempDir.path}/a.txt').createSync();
       File('${tempDir.path}/b.txt').createSync();
 
-      final contents = platform.list(tempDir);
+      final List<FileSystemEntity> contents = platform.list(tempDir);
 
       expect(contents.length, equals(2));
     });
 
     test('copy copies directory with contents', () {
-      final source = Directory('${tempDir.path}/src')..createSync();
+      final Directory source = Directory('${tempDir.path}/src')..createSync();
       File('${source.path}/file.txt').writeAsStringSync('data');
-      final dest = Directory('${tempDir.path}/dst');
+      final Directory dest = Directory('${tempDir.path}/dst');
 
       expect(platform.copy(source, dest), isTrue);
       expect(File('${dest.path}/file.txt').readAsStringSync(), equals('data'));
     });
 
     test('copy recursively copies subdirectories', () {
-      final source = Directory('${tempDir.path}/src2')..createSync();
-      final subDir = Directory('${source.path}/sub')..createSync();
+      final Directory source = Directory('${tempDir.path}/src2')..createSync();
+      final Directory subDir = Directory('${source.path}/sub')..createSync();
       File('${subDir.path}/nested.txt').writeAsStringSync('nested');
-      final dest = Directory('${tempDir.path}/dst2');
+      final Directory dest = Directory('${tempDir.path}/dst2');
 
       expect(platform.copy(source, dest), isTrue);
       expect(
@@ -122,9 +122,10 @@ void main() {
     });
 
     test('move moves a directory', () {
-      final source = Directory('${tempDir.path}/mv_src')..createSync();
+      final Directory source = Directory('${tempDir.path}/mv_src')
+        ..createSync();
       File('${source.path}/f.txt').createSync();
-      final dest = Directory('${tempDir.path}/mv_dst');
+      final Directory dest = Directory('${tempDir.path}/mv_dst');
 
       expect(platform.move(source, dest), isTrue);
       expect(dest.existsSync(), isTrue);

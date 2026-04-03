@@ -13,7 +13,7 @@ void main() {
         location: Location(row: 1, column: 1),
       );
 
-      final result = lexeme.add('d');
+      final Lexeme result = lexeme.add('d');
 
       expect(result.value, equals('abcd'));
     });
@@ -25,7 +25,7 @@ void main() {
         location: originalLocation,
       );
 
-      final result = lexeme.add('!');
+      final Lexeme result = lexeme.add('!');
 
       expect(result.location, equals(originalLocation));
     });
@@ -36,7 +36,7 @@ void main() {
         location: Location(row: 1, column: 1),
       );
 
-      final result = lexeme.add('a').add('b').add('c');
+      final Lexeme result = lexeme.add('a').add('b').add('c');
 
       expect(result.value, equals('abc'));
     });
@@ -47,7 +47,7 @@ void main() {
         location: Location(row: 1, column: 1),
       );
 
-      final modified = original.add('!');
+      final Lexeme modified = original.add('!');
 
       expect(original.value, equals('test'));
       expect(modified.value, equals('test!'));
@@ -60,7 +60,7 @@ void main() {
         location: Location(row: 1, column: 1),
       );
 
-      final result = lexeme.add('');
+      final Lexeme result = lexeme.add('');
 
       expect(result.value, equals('hello'));
     });
@@ -71,7 +71,7 @@ void main() {
         location: Location(row: 1, column: 1),
       );
 
-      final result = lexeme.add('fix');
+      final Lexeme result = lexeme.add('fix');
 
       expect(result.value, equals('prefix'));
     });

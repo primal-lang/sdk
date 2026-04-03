@@ -32,16 +32,18 @@ void main() {
   group('Lowerer.lowerExpression', () {
     group('BooleanExpression', () {
       test('lowers true', () {
-        final expression = BooleanExpression(boolToken(true));
-        final node = lowerer.lowerExpression(expression);
+        final BooleanExpression expression = BooleanExpression(boolToken(true));
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<BooleanNode>());
         expect((node as BooleanNode).value, isTrue);
       });
 
       test('lowers false', () {
-        final expression = BooleanExpression(boolToken(false));
-        final node = lowerer.lowerExpression(expression);
+        final BooleanExpression expression = BooleanExpression(
+          boolToken(false),
+        );
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<BooleanNode>());
         expect((node as BooleanNode).value, isFalse);
@@ -50,16 +52,16 @@ void main() {
 
     group('NumberExpression', () {
       test('lowers integer', () {
-        final expression = NumberExpression(numToken(42));
-        final node = lowerer.lowerExpression(expression);
+        final NumberExpression expression = NumberExpression(numToken(42));
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<NumberNode>());
         expect((node as NumberNode).value, equals(42));
       });
 
       test('lowers decimal', () {
-        final expression = NumberExpression(numToken(3.14));
-        final node = lowerer.lowerExpression(expression);
+        final NumberExpression expression = NumberExpression(numToken(3.14));
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<NumberNode>());
         expect((node as NumberNode).value, equals(3.14));
@@ -68,16 +70,16 @@ void main() {
 
     group('StringExpression', () {
       test('lowers string', () {
-        final expression = StringExpression(strToken('hello'));
-        final node = lowerer.lowerExpression(expression);
+        final StringExpression expression = StringExpression(strToken('hello'));
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<StringNode>());
         expect((node as StringNode).value, equals('hello'));
       });
 
       test('lowers empty string', () {
-        final expression = StringExpression(strToken(''));
-        final node = lowerer.lowerExpression(expression);
+        final StringExpression expression = StringExpression(strToken(''));
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<StringNode>());
         expect((node as StringNode).value, equals(''));
@@ -86,8 +88,10 @@ void main() {
 
     group('IdentifierExpression', () {
       test('lowers identifier', () {
-        final expression = IdentifierExpression(idToken('myVar'));
-        final node = lowerer.lowerExpression(expression);
+        final IdentifierExpression expression = IdentifierExpression(
+          idToken('myVar'),
+        );
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<IdentifierNode>());
         expect((node as IdentifierNode).value, equals('myVar'));
@@ -96,18 +100,18 @@ void main() {
 
     group('ListExpression', () {
       test('lowers empty list', () {
-        const expression = ListExpression(
+        const ListExpression expression = ListExpression(
           location: defaultLocation,
           value: [],
         );
-        final node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<ListNode>());
         expect((node as ListNode).value, isEmpty);
       });
 
       test('lowers list with elements', () {
-        final expression = ListExpression(
+        final ListExpression expression = ListExpression(
           location: defaultLocation,
           value: [
             NumberExpression(numToken(1)),
@@ -115,10 +119,10 @@ void main() {
             NumberExpression(numToken(3)),
           ],
         );
-        final node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<ListNode>());
-        final list = node as ListNode;
+        final ListNode list = node as ListNode;
         expect(list.value.length, equals(3));
         expect((list.value[0] as NumberNode).value, equals(1));
         expect((list.value[1] as NumberNode).value, equals(2));
@@ -126,7 +130,7 @@ void main() {
       });
 
       test('lowers nested list', () {
-        final expression = ListExpression(
+        final ListExpression expression = ListExpression(
           location: defaultLocation,
           value: [
             ListExpression(
@@ -135,31 +139,31 @@ void main() {
             ),
           ],
         );
-        final node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<ListNode>());
-        final outer = node as ListNode;
+        final ListNode outer = node as ListNode;
         expect(outer.value.length, equals(1));
         expect(outer.value[0], isA<ListNode>());
-        final inner = outer.value[0] as ListNode;
+        final ListNode inner = outer.value[0] as ListNode;
         expect((inner.value[0] as NumberNode).value, equals(1));
       });
     });
 
     group('MapExpression', () {
       test('lowers empty map', () {
-        const expression = MapExpression(
+        const MapExpression expression = MapExpression(
           location: defaultLocation,
           value: [],
         );
-        final node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<MapNode>());
         expect((node as MapNode).value, isEmpty);
       });
 
       test('lowers map with entries', () {
-        final expression = MapExpression(
+        final MapExpression expression = MapExpression(
           location: defaultLocation,
           value: [
             MapEntryExpression(
@@ -174,48 +178,48 @@ void main() {
             ),
           ],
         );
-        final node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<MapNode>());
-        final map = node as MapNode;
+        final MapNode map = node as MapNode;
         expect(map.value.length, equals(2));
       });
     });
 
     group('CallExpression', () {
       test('lowers call with no arguments', () {
-        final expression = CallExpression(
+        final CallExpression expression = CallExpression(
           callee: IdentifierExpression(idToken('foo')),
           arguments: [],
         );
-        final node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<CallNode>());
-        final call = node as CallNode;
+        final CallNode call = node as CallNode;
         expect(call.callee, isA<IdentifierNode>());
         expect((call.callee as IdentifierNode).value, equals('foo'));
         expect(call.arguments, isEmpty);
       });
 
       test('lowers call with arguments', () {
-        final expression = CallExpression(
+        final CallExpression expression = CallExpression(
           callee: IdentifierExpression(idToken('add')),
           arguments: [
             NumberExpression(numToken(1)),
             NumberExpression(numToken(2)),
           ],
         );
-        final node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<CallNode>());
-        final call = node as CallNode;
+        final CallNode call = node as CallNode;
         expect(call.arguments.length, equals(2));
         expect((call.arguments[0] as NumberNode).value, equals(1));
         expect((call.arguments[1] as NumberNode).value, equals(2));
       });
 
       test('lowers nested call', () {
-        final expression = CallExpression(
+        final CallExpression expression = CallExpression(
           callee: IdentifierExpression(idToken('outer')),
           arguments: [
             CallExpression(
@@ -224,13 +228,13 @@ void main() {
             ),
           ],
         );
-        final node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerExpression(expression);
 
         expect(node, isA<CallNode>());
-        final outer = node as CallNode;
+        final CallNode outer = node as CallNode;
         expect(outer.arguments.length, equals(1));
         expect(outer.arguments[0], isA<CallNode>());
-        final inner = outer.arguments[0] as CallNode;
+        final CallNode inner = outer.arguments[0] as CallNode;
         expect((inner.callee as IdentifierNode).value, equals('inner'));
       });
     });
