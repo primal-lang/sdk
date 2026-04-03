@@ -161,6 +161,10 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
   }) => switch (node) {
+    // BoundVariableNode must come before IdentifierNode since it extends it
+    BoundVariableNode() => throw StateError(
+      'BoundVariableNode should not exist before semantic analysis',
+    ),
     IdentifierNode() => _checkIdentifier(
       node: node,
       currentFunction: currentFunction,
