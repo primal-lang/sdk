@@ -1,9 +1,9 @@
 - read and understand
-* @docs/compiler/semantic.md
-* @lib/compiler/semantic/
+* @docs/compiler/runtime.md
+* @lib/compiler/runtime/
 
 then:
-- what do you think about the semantic analyzer?
+- what do you think about the runtime?
 - is it good, bad, normal? 
 - does it have any flaws, mistakes, inconsistencies, etc?
 - how can we improve it?
