@@ -78,7 +78,7 @@ All expressions extend `Expression` (which has a `Location`):
   - `BooleanExpression`, `NumberExpression`, `StringExpression`
   - `ListExpression` (contains `List<Expression>`)
   - `MapExpression` (contains `List<MapEntryExpression>`)
-    - `MapEntryExpression` extends `Localized` (not `Expression`, as map entries only appear within map literals)
+    - `MapEntryExpression` extends `Located` (not `Expression`, as map entries only appear within map literals)
 - `IdentifierExpression` (extends `LiteralExpression<String>`) - a named reference (variable or function)
 - `CallExpression` - function application (callee expression + argument list)
   - Also used to represent binary and unary operators via factory constructors (`fromBinaryOperation`, `fromUnaryOperation`, `fromIf`)
@@ -89,15 +89,15 @@ Operators and `if` expressions are desugared into `CallExpression` nodes at pars
 
 The parser desugars several syntactic forms into `CallExpression` nodes:
 
-| Syntax            | Desugared Form     |
-| ----------------- | ------------------ |
-| `a + b`           | `+(a, b)`          |
-| `a == b`          | `==(a, b)`         |
-| `!x`              | `!(x)`             |
-| `-x`              | `-(0, x)`          |
-| `a @ i`           | `@(a, i)`          |
-| `a[i]`            | `@(a, i)`          |
-| `if (c) t else f` | `if(c, t, f)`      |
+| Syntax            | Desugared Form |
+| ----------------- | -------------- |
+| `a + b`           | `+(a, b)`      |
+| `a == b`          | `==(a, b)`     |
+| `!x`              | `!(x)`         |
+| `-x`              | `-(0, x)`      |
+| `a @ i`           | `@(a, i)`      |
+| `a[i]`            | `@(a, i)`      |
+| `if (c) t else f` | `if(c, t, f)`  |
 
 Note: Unary negation is converted to binary subtraction from zero. The synthetic `0` uses the same source location as the `-` operator, since it represents the implicit zero at that position.
 
@@ -105,14 +105,14 @@ Note: Unary negation is converted to binary subtraction from zero. The synthetic
 
 Each `Expression` subclass implements a `toNode()` method that converts the parse tree into runtime nodes:
 
-| Expression             | Runtime Node       |
-| ---------------------- | ------------------ |
-| `BooleanExpression`    | `BooleanNode`      |
-| `NumberExpression`     | `NumberNode`       |
-| `StringExpression`     | `StringNode`       |
-| `ListExpression`       | `ListNode`         |
-| `MapExpression`        | `MapNode`          |
-| `IdentifierExpression` | `FreeVariableNode` |
-| `CallExpression`       | `CallNode`         |
+| Expression             | Runtime Node     |
+| ---------------------- | ---------------- |
+| `BooleanExpression`    | `BooleanNode`    |
+| `NumberExpression`     | `NumberNode`     |
+| `StringExpression`     | `StringNode`     |
+| `ListExpression`       | `ListNode`       |
+| `MapExpression`        | `MapNode`        |
+| `IdentifierExpression` | `IdentifierNode` |
+| `CallExpression`       | `CallNode`       |
 
 This conversion happens during semantic analysis when building the runtime representation.

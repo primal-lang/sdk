@@ -4,7 +4,7 @@ import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/state.dart';
-import 'package:primal/compiler/scanner/character.dart';
+import 'package:primal/compiler/reader/character.dart';
 import 'package:primal/extensions/string_extensions.dart';
 import 'package:primal/utils/list_iterator.dart';
 
@@ -582,7 +582,7 @@ class GreaterState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, GreaterEqualThanToken(output.add(input)));
+      return ResultState(iterator, GreaterOrEqualToken(output.add(input)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, GreaterThanToken(output));
@@ -598,7 +598,7 @@ class LessState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, LessEqualThanToken(output.add(input)));
+      return ResultState(iterator, LessOrEqualToken(output.add(input)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, LessThanToken(output));

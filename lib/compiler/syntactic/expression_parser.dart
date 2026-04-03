@@ -17,9 +17,9 @@ class ExpressionParser {
   static bool _isPipe(Token t) => t is PipeToken;
   static bool _isAmpersand(Token t) => t is AmpersandToken;
   static bool _isGreaterThan(Token t) => t is GreaterThanToken;
-  static bool _isGreaterEqualThan(Token t) => t is GreaterEqualThanToken;
+  static bool _isGreaterOrEqual(Token t) => t is GreaterOrEqualToken;
   static bool _isLessThan(Token t) => t is LessThanToken;
-  static bool _isLessEqualThan(Token t) => t is LessEqualThanToken;
+  static bool _isLessOrEqual(Token t) => t is LessOrEqualToken;
   static bool _isMinus(Token t) => t is MinusToken;
   static bool _isPlus(Token t) => t is PlusToken;
   static bool _isForwardSlash(Token t) => t is ForwardSlashToken;
@@ -47,9 +47,9 @@ class ExpressionParser {
   ];
   static final List<bool Function(Token)> _comparisonPredicates = [
     _isGreaterThan,
-    _isGreaterEqualThan,
+    _isGreaterOrEqual,
     _isLessThan,
-    _isLessEqualThan,
+    _isLessOrEqual,
   ];
   static final List<bool Function(Token)> _termPredicates = [_isMinus, _isPlus];
   static final List<bool Function(Token)> _factorPredicates = [

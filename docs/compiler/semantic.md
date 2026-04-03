@@ -7,9 +7,9 @@ The semantic analyzer validates the parsed function definitions and produces `In
 1. **Function extraction** - converts each `FunctionDefinition` into a `CustomFunctionNode` with typed parameters.
 2. **Duplicate function detection** - reports an error if two functions share the same name.
 3. **Duplicate parameter detection** - reports an error if a function has repeated parameter names.
-4. **Identifier resolution** - for every `FreeVariableNode` in a function body:
-   - If it matches a parameter name, it is converted to a `BoundedVariableNode`.
-   - If it matches a known function name (custom or standard library), it remains a `FreeVariableNode` (resolved at runtime via scope).
+4. **Identifier resolution** - for every `IdentifierNode` in a function body:
+   - If it matches a parameter name, it is converted to a `BoundVariableNode`.
+   - If it matches a known function name (custom or standard library), it remains a `IdentifierNode` (resolved at runtime via scope).
    - Otherwise, an `UndefinedIdentifierError` is raised.
 5. **Call validation** - for every `CallNode`, the argument count is checked against the callee's parameter count.
 6. **Literal validation** - rejects attempts to call non-callable literals (numbers, booleans, strings, lists, maps) or index non-indexable literals (numbers, booleans).

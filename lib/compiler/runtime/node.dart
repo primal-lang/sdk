@@ -202,10 +202,10 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
   }
 }
 
-class FreeVariableNode extends Node {
+class IdentifierNode extends Node {
   final String value;
 
-  const FreeVariableNode(this.value);
+  const IdentifierNode(this.value);
 
   // TODO(momo): create function pointer in semantic analyzer to avoid
   // using the scope here
@@ -230,8 +230,8 @@ class FreeVariableNode extends Node {
   dynamic native() => evaluate().native();
 }
 
-class BoundedVariableNode extends FreeVariableNode {
-  const BoundedVariableNode(super.value);
+class BoundVariableNode extends IdentifierNode {
+  const BoundVariableNode(super.value);
 
   @override
   Node substitute(Bindings bindings) => bindings.get(value);
@@ -262,7 +262,7 @@ class CallNode extends Node {
   FunctionNode getFunctionNode(Node callee) {
     if (callee is CallNode) {
       return getFunctionNode(callee.evaluate());
-    } else if (callee is FreeVariableNode) {
+    } else if (callee is IdentifierNode) {
       return callee.evaluate();
     } else if (callee is FunctionNode) {
       return callee;

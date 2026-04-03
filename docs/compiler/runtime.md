@@ -21,8 +21,8 @@ All runtime values are nodes. The base `Node` class defines:
 
 **Variable nodes**:
 
-- `FreeVariableNode(name)` - resolved at runtime by looking up `name` in the global scope.
-- `BoundedVariableNode(name)` - replaced during substitution via bindings.
+- `IdentifierNode(name)` - resolved at runtime by looking up `name` in the global scope.
+- `BoundVariableNode(name)` - replaced during substitution via bindings.
 
 **Call node**:
 `CallNode(callee, arguments)` - on evaluation, evaluates the callee to a `FunctionNode`, then calls `apply()` with the arguments.
@@ -39,11 +39,11 @@ Function application follows these steps:
 
 1. Evaluate the callee expression to get a `FunctionNode`.
 2. Create `Bindings` from the function's parameters and the provided arguments.
-3. Substitute all `BoundedVariableNode`s in the function body with their bound values.
+3. Substitute all `BoundVariableNode`s in the function body with their bound values.
 4. Evaluate the resulting node.
 
 This is a substitution-based evaluation model consistent with lambda calculus reduction.
 
 ## Scope
 
-`Scope` (`lib/compiler/runtime/scope.dart`) is a global map from function names to `FunctionNode` definitions, stored as `Runtime.SCOPE`. Free variables in function bodies are resolved against this scope at evaluation time.
+`Scope` (`lib/compiler/runtime/scope.dart`) is a global map from function names to `FunctionNode` definitions, stored as `Runtime.SCOPE`. `IdentifierNode`s in function bodies are resolved against this scope at evaluation time.

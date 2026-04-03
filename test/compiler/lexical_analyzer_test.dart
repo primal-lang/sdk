@@ -895,7 +895,7 @@ void main() {
             ),
           ),
         ),
-        GreaterEqualThanToken(
+        GreaterOrEqualToken(
           const Lexeme(
             value: '>=',
             location: Location(
@@ -913,7 +913,7 @@ void main() {
             ),
           ),
         ),
-        LessEqualThanToken(
+        LessOrEqualToken(
           const Lexeme(
             value: '<=',
             location: Location(

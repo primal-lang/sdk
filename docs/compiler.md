@@ -6,7 +6,7 @@ The Primal compiler is a four-stage pipeline that transforms source code into an
 Source Code
     |
     v
- Scanner ............. Characters with locations          → compiler/scanner.md
+ SourceReader ........ Characters with locations          → compiler/source_reader.md
     |
     v
  Lexical Analyzer .... Tokens (keywords, literals, ...)   → compiler/lexical.md
@@ -226,7 +226,7 @@ Supporting infrastructure used across compiler stages:
 - **`FileReader`** - reads source files from disk (CLI only).
 - **`Console`** - wraps platform console with colored output helpers (`warning()`, `error()`).
 - **`Mapper`** - converts a `List<FunctionNode>` into a `Map<String, FunctionNode>` keyed by function name.
-- **String extensions** - character classification methods (`isDigit`, `isLetter`, `isWhitespace`, `isOperator`, `isDelimiter`, etc.) used extensively by the scanner and lexer.
+- **String extensions** - character classification methods (`isDigit`, `isLetter`, `isWhitespace`, `isOperator`, `isDelimiter`, etc.) used extensively by the reader and lexer.
 
 ---
 

@@ -1,7 +1,7 @@
 import 'package:primal/compiler/models/location.dart';
-import 'package:primal/compiler/scanner/character.dart';
+import 'package:primal/compiler/reader/character.dart';
 
-class Lexeme extends Localized {
+class Lexeme extends Located {
   final String value;
 
   const Lexeme({

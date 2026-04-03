@@ -1,6 +1,6 @@
 import 'package:primal/compiler/errors/generic_error.dart';
 import 'package:primal/compiler/models/location.dart';
-import 'package:primal/compiler/scanner/character.dart';
+import 'package:primal/compiler/reader/character.dart';
 
 class LexicalError extends CompilationError {
   const LexicalError(super.message);

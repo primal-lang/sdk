@@ -30,12 +30,12 @@ void main() {
     });
   });
 
-  group('Localized', () {
+  group('Located', () {
     test('stores location', () {
       const Location loc = Location(row: 2, column: 4);
-      const Localized localized = Localized(location: loc);
-      expect(localized.location.row, 2);
-      expect(localized.location.column, 4);
+      const Located located = Located(location: loc);
+      expect(located.location.row, 2);
+      expect(located.location.column, 4);
     });
   });
 }

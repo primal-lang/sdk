@@ -143,8 +143,8 @@ Four states peek at the next character to distinguish single-character tokens fr
 | State          | If next is `=`                 | Otherwise (delimiter)    |
 | -------------- | ------------------------------ | ------------------------ |
 | `EqualsState`  | `EqualToken` (`==`)            | `AssignToken` (`=`)      |
-| `GreaterState` | `GreaterEqualThanToken` (`>=`) | `GreaterThanToken` (`>`) |
-| `LessState`    | `LessEqualThanToken` (`<=`)    | `LessThanToken` (`<`)    |
+| `GreaterState` | `GreaterOrEqualToken` (`>=`) | `GreaterThanToken` (`>`) |
+| `LessState`    | `LessOrEqualToken` (`<=`)    | `LessThanToken` (`<`)    |
 | `BangState`    | `NotEqualToken` (`!=`)         | `BangToken` (`!`)        |
 
 In all cases the lookahead pattern applies: if the next character is not `=`, `iterator.back()` un-consumes it.
@@ -217,7 +217,7 @@ All tokens extend `Token<T>` and carry a typed value plus location:
 | Identifiers | `IdentifierToken`                                                                                                                                                                                                                 | `String`                |
 | Keywords    | `IfToken`, `ElseToken`                                                                                                                                                                                                            | `String`                |
 | Assignment  | `AssignToken` (`=`)                                                                                                                                                                                                               | `String`                |
-| Binary ops  | `PlusToken`, `MinusToken`, `AsteriskToken`, `ForwardSlashToken`, `PercentToken`, `PipeToken`, `AmpersandToken`, `EqualToken`, `NotEqualToken`, `GreaterThanToken`, `GreaterEqualThanToken`, `LessThanToken`, `LessEqualThanToken` | `String`                |
+| Binary ops  | `PlusToken`, `MinusToken`, `AsteriskToken`, `ForwardSlashToken`, `PercentToken`, `PipeToken`, `AmpersandToken`, `EqualToken`, `NotEqualToken`, `GreaterThanToken`, `GreaterOrEqualToken`, `LessThanToken`, `LessOrEqualToken` | `String`                |
 | Unary ops   | `BangToken`                                                                                                                                                                                                                       | `String`                |
 | Delimiters  | `OpenParenthesisToken`, `CloseParenthesisToken`, `OpenBracketToken`, `CloseBracketToken`, `OpenBracesToken`, `CloseBracesToken`, `CommaToken`, `ColonToken`                                                                       | `String`                |
 

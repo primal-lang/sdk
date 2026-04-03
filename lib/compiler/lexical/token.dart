@@ -1,7 +1,7 @@
 import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/models/location.dart';
 
-class Token<T> extends Localized {
+class Token<T> extends Located {
   final T value;
 
   const Token({
@@ -168,8 +168,8 @@ class GreaterThanToken extends Token<String> {
       );
 }
 
-class GreaterEqualThanToken extends Token<String> {
-  GreaterEqualThanToken(Lexeme lexeme)
+class GreaterOrEqualToken extends Token<String> {
+  GreaterOrEqualToken(Lexeme lexeme)
     : super(
         value: lexeme.value,
         location: lexeme.location,
@@ -184,8 +184,8 @@ class LessThanToken extends Token<String> {
       );
 }
 
-class LessEqualThanToken extends Token<String> {
-  LessEqualThanToken(Lexeme lexeme)
+class LessOrEqualToken extends Token<String> {
+  LessOrEqualToken(Lexeme lexeme)
     : super(
         value: lexeme.value,
         location: lexeme.location,

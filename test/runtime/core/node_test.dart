@@ -206,7 +206,7 @@ void main() {
 
     test('substitute() substitutes inner elements', () {
       const ListNode node = ListNode([
-        BoundedVariableNode('x'),
+        BoundVariableNode('x'),
         NumberNode(2),
       ]);
       const Bindings bindings = Bindings({'x': NumberNode(99)});
@@ -248,7 +248,7 @@ void main() {
 
     test('substitute() substitutes keys and values', () {
       const MapNode node = MapNode({
-        StringNode('key'): BoundedVariableNode('x'),
+        StringNode('key'): BoundVariableNode('x'),
       });
       const Bindings bindings = Bindings({'x': NumberNode(42)});
       final Node result = node.substitute(bindings);
@@ -279,7 +279,7 @@ void main() {
 
     test('substitute() substitutes inner elements', () {
       const SetNode node = SetNode({
-        BoundedVariableNode('x'),
+        BoundVariableNode('x'),
         NumberNode(2),
       });
       const Bindings bindings = Bindings({'x': NumberNode(99)});
@@ -301,9 +301,9 @@ void main() {
     });
   });
 
-  group('BoundedVariableNode', () {
+  group('BoundVariableNode', () {
     test('substitute() returns bound value', () {
-      const BoundedVariableNode node = BoundedVariableNode('x');
+      const BoundVariableNode node = BoundVariableNode('x');
       const Bindings bindings = Bindings({'x': NumberNode(42)});
       final Node result = node.substitute(bindings);
       expect(result, isA<NumberNode>());
@@ -311,7 +311,7 @@ void main() {
     });
 
     test('substitute() with string binding', () {
-      const BoundedVariableNode node = BoundedVariableNode('name');
+      const BoundVariableNode node = BoundVariableNode('name');
       const Bindings bindings = Bindings({'name': StringNode('hello')});
       final Node result = node.substitute(bindings);
       expect(result, isA<StringNode>());
@@ -319,7 +319,7 @@ void main() {
     });
 
     test('substitute() with missing binding throws', () {
-      const BoundedVariableNode node = BoundedVariableNode('y');
+      const BoundVariableNode node = BoundVariableNode('y');
       const Bindings bindings = Bindings({'x': NumberNode(1)});
       expect(
         () => node.substitute(bindings),
@@ -328,12 +328,12 @@ void main() {
     });
 
     test('type is AnyType', () {
-      const BoundedVariableNode node = BoundedVariableNode('x');
+      const BoundVariableNode node = BoundVariableNode('x');
       expect(node.type, isA<AnyType>());
     });
 
     test('toString() returns variable name', () {
-      const BoundedVariableNode node = BoundedVariableNode('myVar');
+      const BoundVariableNode node = BoundVariableNode('myVar');
       expect(node.toString(), 'myVar');
     });
   });
@@ -432,7 +432,7 @@ void main() {
   group('VectorNode', () {
     test('substitute() substitutes inner elements', () {
       const VectorNode node = VectorNode([
-        BoundedVariableNode('x'),
+        BoundVariableNode('x'),
         NumberNode(2),
       ]);
       const Bindings bindings = Bindings({'x': NumberNode(99)});
@@ -455,7 +455,7 @@ void main() {
 
     test('substitute() substitutes inner elements', () {
       const StackNode node = StackNode([
-        BoundedVariableNode('x'),
+        BoundVariableNode('x'),
         NumberNode(2),
       ]);
       const Bindings bindings = Bindings({'x': NumberNode(99)});
@@ -478,7 +478,7 @@ void main() {
 
     test('substitute() substitutes inner elements', () {
       const QueueNode node = QueueNode([
-        BoundedVariableNode('x'),
+        BoundVariableNode('x'),
         NumberNode(2),
       ]);
       const Bindings bindings = Bindings({'x': NumberNode(99)});

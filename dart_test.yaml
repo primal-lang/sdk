@@ -2,7 +2,7 @@ timeout: 120s
 
 tags:
   compiler:
-    description: "Compiler pipeline tests (scanner, lexer, parser, semantic)"
+    description: "Compiler pipeline tests (reader, lexer, parser, semantic)"
   runtime:
     description: "Runtime execution tests (standard library, evaluation)"
   io:

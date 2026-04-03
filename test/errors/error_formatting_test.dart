@@ -9,8 +9,8 @@ import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
+import 'package:primal/compiler/reader/character.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/scanner/character.dart';
 import 'package:test/test.dart';
 
 import '../helpers/token_factories.dart';

@@ -2,7 +2,7 @@ import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-abstract class Expression extends Localized {
+abstract class Expression extends Located {
   const Expression({required super.location});
 
   Node toNode();
@@ -66,7 +66,7 @@ class ListExpression extends LiteralExpression<List<Expression>> {
   Node toNode() => ListNode(value.map((e) => e.toNode()).toList());
 }
 
-class MapEntryExpression extends Localized {
+class MapEntryExpression extends Located {
   final Expression key;
   final Expression value;
 
@@ -107,7 +107,7 @@ class IdentifierExpression extends LiteralExpression<String> {
       );
 
   @override
-  Node toNode() => FreeVariableNode(value);
+  Node toNode() => IdentifierNode(value);
 }
 
 class CallExpression extends Expression {

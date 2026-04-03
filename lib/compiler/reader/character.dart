@@ -1,7 +1,7 @@
 import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/models/location.dart';
 
-class Character extends Localized {
+class Character extends Located {
   final String value;
 
   const Character({

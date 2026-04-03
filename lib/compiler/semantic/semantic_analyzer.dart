@@ -152,7 +152,7 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
   }) {
-    if (node is FreeVariableNode) {
+    if (node is IdentifierNode) {
       return checkVariableIdentifier(
         node: node,
         availableParameters: availableParameters,
@@ -168,7 +168,7 @@ class SemanticAnalyzer
       }
 
       // Check for @ operator with non-indexable first argument (e.g., 5[0])
-      if (callee is FreeVariableNode &&
+      if (callee is IdentifierNode &&
           callee.value == '@' &&
           node.arguments.isNotEmpty) {
         final Node target = node.arguments[0];
@@ -177,7 +177,7 @@ class SemanticAnalyzer
         }
       }
 
-      if (callee is FreeVariableNode) {
+      if (callee is IdentifierNode) {
         callee = checkCalleeIdentifier(
           node: node,
           callee: callee,
@@ -254,7 +254,7 @@ class SemanticAnalyzer
   }
 
   Node checkVariableIdentifier({
-    required FreeVariableNode node,
+    required IdentifierNode node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
@@ -262,7 +262,7 @@ class SemanticAnalyzer
     if (availableParameters.contains(node.value)) {
       usedParameters.add(node.value);
 
-      return BoundedVariableNode(node.value);
+      return BoundVariableNode(node.value);
     } else if (allFunctions.containsKey(node.value)) {
       return node;
     } else {
@@ -272,7 +272,7 @@ class SemanticAnalyzer
 
   Node checkCalleeIdentifier({
     required CallNode node,
-    required FreeVariableNode callee,
+    required IdentifierNode callee,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
@@ -282,7 +282,7 @@ class SemanticAnalyzer
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
 
-      return BoundedVariableNode(functionName);
+      return BoundVariableNode(functionName);
     } else if (allFunctions.containsKey(functionName)) {
       final FunctionNode function = allFunctions[functionName]!;
 

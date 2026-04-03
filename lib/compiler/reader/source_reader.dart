@@ -1,10 +1,10 @@
 import 'package:characters/characters.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/location.dart';
-import 'package:primal/compiler/scanner/character.dart';
+import 'package:primal/compiler/reader/character.dart';
 
-class Scanner extends Analyzer<String, List<Character>> {
-  const Scanner(super.input);
+class SourceReader extends Analyzer<String, List<Character>> {
+  const SourceReader(super.input);
 
   @override
   List<Character> analyze() {
