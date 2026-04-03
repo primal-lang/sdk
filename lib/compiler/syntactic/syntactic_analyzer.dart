@@ -25,7 +25,7 @@ class SyntacticAnalyzer
       }
     }
 
-    if (!(state is InitState)) {
+    if (state is! InitState) {
       throw const UnexpectedEndOfFileError();
     }
 

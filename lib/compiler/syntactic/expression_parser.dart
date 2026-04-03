@@ -40,14 +40,11 @@ class ExpressionParser {
   static bool _isString(Token t) => t is StringToken;
   static bool _isIdentifier(Token t) => t is IdentifierToken;
 
-  // Static predicate lists - allocated once
-  static final List<bool Function(Token)> _ifPredicates = [_isIf];
+  // Static predicate lists - allocated once (multi-element only)
   static final List<bool Function(Token)> _equalityPredicates = [
     _isNotEqual,
     _isEqual,
   ];
-  static final List<bool Function(Token)> _logicOrPredicates = [_isPipe];
-  static final List<bool Function(Token)> _logicAndPredicates = [_isAmpersand];
   static final List<bool Function(Token)> _comparisonPredicates = [
     _isGreaterThan,
     _isGreaterEqualThan,
@@ -60,30 +57,15 @@ class ExpressionParser {
     _isAsterisk,
     _isPercent,
   ];
-  static final List<bool Function(Token)> _indexPredicates = [_isAt];
   static final List<bool Function(Token)> _unaryPredicates = [
     _isBang,
     _isMinus,
-  ];
-  static final List<bool Function(Token)> _openParenPredicates = [_isOpenParen];
-  static final List<bool Function(Token)> _openBracketPredicates = [
-    _isOpenBracket,
-  ];
-  static final List<bool Function(Token)> _commaPredicates = [_isComma];
-  static final List<bool Function(Token)> _booleanPredicates = [_isBoolean];
-  static final List<bool Function(Token)> _numberPredicates = [_isNumber];
-  static final List<bool Function(Token)> _stringPredicates = [_isString];
-  static final List<bool Function(Token)> _identifierPredicates = [
-    _isIdentifier,
-  ];
-  static final List<bool Function(Token)> _openBracesPredicates = [
-    _isOpenBraces,
   ];
 
   Expression expression() => ifExpression();
 
   Expression ifExpression() {
-    if (match(_ifPredicates)) {
+    if (matchSingle(_isIf)) {
       final Token operator = previous;
       consume(_isOpenParen, '(');
       final Expression condition = expression();
@@ -123,7 +105,7 @@ class ExpressionParser {
   Expression logicOr() {
     Expression expression = logicAnd();
 
-    while (match(_logicOrPredicates)) {
+    while (matchSingle(_isPipe)) {
       final Token operator = previous;
       final Expression right = logicAnd();
 
@@ -140,7 +122,7 @@ class ExpressionParser {
   Expression logicAnd() {
     Expression expression = comparison();
 
-    while (match(_logicAndPredicates)) {
+    while (matchSingle(_isAmpersand)) {
       final Token operator = previous;
       final Expression right = comparison();
 
@@ -208,7 +190,7 @@ class ExpressionParser {
   Expression index() {
     Expression expression = unary();
 
-    while (match(_indexPredicates)) {
+    while (matchSingle(_isAt)) {
       final Token operator = previous;
       final Expression right = unary();
 
@@ -250,9 +232,9 @@ class ExpressionParser {
     Expression exp = primary();
 
     while (true) {
-      if (match(_openParenPredicates)) {
+      if (matchSingle(_isOpenParen)) {
         exp = finishCall(exp);
-      } else if (match(_openBracketPredicates)) {
+      } else if (matchSingle(_isOpenBracket)) {
         final Token operator = AtToken(
           Lexeme(
             value: '@',
@@ -280,7 +262,7 @@ class ExpressionParser {
     if (!check(_isCloseParen)) {
       do {
         arguments.add(expression());
-      } while (match(_commaPredicates));
+      } while (matchSingle(_isComma));
     }
 
     consume(_isCloseParen, ')');
@@ -289,21 +271,21 @@ class ExpressionParser {
   }
 
   Expression primary() {
-    if (match(_booleanPredicates)) {
+    if (matchSingle(_isBoolean)) {
       return BooleanExpression(previous);
-    } else if (match(_numberPredicates)) {
+    } else if (matchSingle(_isNumber)) {
       return NumberExpression(previous);
-    } else if (match(_stringPredicates)) {
+    } else if (matchSingle(_isString)) {
       return StringExpression(previous);
-    } else if (match(_identifierPredicates)) {
+    } else if (matchSingle(_isIdentifier)) {
       return IdentifierExpression(previous);
-    } else if (match(_openParenPredicates)) {
+    } else if (matchSingle(_isOpenParen)) {
       final Expression expr = expression();
       consume(_isCloseParen, ')');
       return expr;
-    } else if (match(_openBracketPredicates)) {
+    } else if (matchSingle(_isOpenBracket)) {
       return list(previous);
-    } else if (match(_openBracesPredicates)) {
+    } else if (matchSingle(_isOpenBraces)) {
       return map(previous);
     }
 
@@ -316,7 +298,7 @@ class ExpressionParser {
     if (!check(_isCloseBracket)) {
       do {
         elements.add(expression());
-      } while (match(_commaPredicates));
+      } while (matchSingle(_isComma));
     }
 
     consume(_isCloseBracket, ']');
@@ -338,7 +320,7 @@ class ExpressionParser {
         pairs.add(
           MapEntryExpression(location: key.location, key: key, value: value),
         );
-      } while (match(_commaPredicates));
+      } while (matchSingle(_isComma));
     }
 
     consume(_isCloseBraces, '}');
@@ -357,6 +339,14 @@ class ExpressionParser {
       }
     }
 
+    return false;
+  }
+
+  bool matchSingle(bool Function(Token) predicate) {
+    if (check(predicate)) {
+      advance();
+      return true;
+    }
     return false;
   }
 

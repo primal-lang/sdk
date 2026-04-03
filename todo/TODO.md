@@ -10,8 +10,6 @@
 
 ---
 
-- Check if delta review is executed
-
 - Could we rename classes entities?
 
 - Check things that are implemented in the lexical analyzer but are not yet implemented in the syntactic analyzer (e.g. 10_000_000, 1e+10, etc)
