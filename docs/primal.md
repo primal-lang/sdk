@@ -103,7 +103,6 @@ System:
 - Directory
 - Timestamp
 - Function
-- Runtime
 
 ## Runtime
 
