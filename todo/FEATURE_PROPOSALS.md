@@ -23,6 +23,7 @@ This document contains proposed features for the Primal programming language tha
    - [Finger Trees](#8-finger-trees)
    - [Tries / Prefix Trees](#9-tries--prefix-trees)
    - [Persistent Vectors](#10-persistent-vectors)
+   - [Bytes / Binary Data](#45-bytes--binary-data)
 
 2. [Functional Programming Patterns](#functional-programming-patterns)
    - [Lenses / Optics](#11-lenses--optics)
@@ -57,11 +58,14 @@ This document contains proposed features for the Primal programming language tha
    - [Debug / Trace Expressions](#34-debug--trace-expressions)
    - [First-Class Environments](#35-first-class-environments)
    - [Keyword Arguments as Values](#36-keyword-arguments-as-values)
+   - [Namespace Blocks](#46-namespace-blocks)
+   - [Function Introspection](#47-function-introspection)
 
 6. [Testing & Verification](#testing--verification)
    - [Property-Based Testing](#37-property-based-testing)
    - [Soft Invariants / Contracts](#38-soft-invariants--contracts)
    - [Snapshot Testing](#39-snapshot-testing)
+   - [Doctests / Executable Examples](#48-doctests--executable-examples)
 
 7. [Syntax Sugar & Ergonomics](#syntax-sugar--ergonomics)
    - [Case Expressions](#40-case-expressions)
@@ -69,6 +73,8 @@ This document contains proposed features for the Primal programming language tha
    - [With Expressions](#42-with-expressions)
    - [Placeholder Arguments](#43-placeholder-arguments)
    - [Method Chaining Syntax](#44-method-chaining-syntax)
+   - [From-End Indexing](#49-from-end-indexing)
+   - [Native Set / Vector Literal Syntax](#50-native-set--vector-literal-syntax)
 
 ---
 
@@ -740,6 +746,62 @@ pvec.isEmpty(pv2)
 
 ---
 
+### 45. Bytes / Binary Data
+
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Medium** |
+| Impact     | **High**   |
+
+**Description:**
+A first-class `Bytes` type for raw binary data. Primal already touches files, hashing, JSON, and string-to-byte conversion, but today those workflows are forced through strings or plain lists of numbers. A dedicated binary type would make text-vs-binary boundaries explicit and prevent accidental misuse.
+
+**Proposed Syntax:**
+
+```primal
+// Creation
+b1 = bytes.new([72, 105, 33])
+b2 = bytes.hex("486921")
+b3 = bytes.utf8("Hi!")
+
+// Access
+bytes.length(b1)                          // 3
+bytes.at(b1, 0)                           // 72
+bytes.slice(b1, 1, 3)                     // bytes for "i!"
+bytes.set(b1, 0, 104)                     // immutable update
+
+// Conversion
+bytes.toList(b1)                          // [72, 105, 33]
+bytes.toHex(b1)                           // "486921"
+bytes.toBase64(b1)                        // "SGkh"
+bytes.decodeUtf8(b3)                      // "Hi!"
+
+// Interop with existing libraries
+file.writeBytes(file.fromPath("out.bin"), b1)
+image = file.readBytes(file.fromPath("logo.png"))
+hash.sha256(image)
+json.decodeBytes(bytes.utf8("{\"ok\": true}"))
+```
+
+**Use Cases:**
+
+- Binary file I/O
+- Hashing and signatures
+- Network protocols and serialization
+- Explicit UTF-8 boundaries
+- Image, audio, and blob processing
+
+**Implementation Notes:**
+
+- Add `BytesNode` and `BytesType`.
+- Store bytes as a compact byte array rather than `List<Number>`.
+- Extend `file.*`, `hash.*`, and possibly `json.*` to accept bytes directly.
+- Keep `String` as Unicode text and `Bytes` as raw data; implicit conversion between them should be avoided.
+- This fits the current runtime well because it is a new value kind, not a new control-flow model.
+
+---
+
 ## Functional Programming Patterns
 
 ### 11. Lenses / Optics
@@ -902,60 +964,64 @@ transducer.mapIndexed((i, x) -> [i, x])          // with index
 
 ### 13. Trampolining
 
-| Property   | Rating   |
-| ---------- | -------- |
-| Fit        | **High** |
-| Complexity | **Low**  |
-| Impact     | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Medium** |
+| Impact     | **High**   |
 
 **Description:**
-Built-in support for converting recursive functions to iterative execution, preventing stack overflow for deep recursion.
+Built-in support for stack-safe recursion. This is especially important in Primal because recursion is the main looping mechanism, the runtime is substitution-based, and there is currently no tail-call optimization guarantee.
 
 **Proposed Syntax:**
 
 ```primal
-// Without trampolining - stack overflow for large n
-factorial(n) = if (n <= 1) 1 else n * factorial(n - 1)
-
-// With trampolining - safe for any n
-factorialT(n, acc) =
-  if (n <= 1)
+// Bounce values represent "call this next" without consuming the host stack.
+sumListT(xs, acc) =
+  if (list.isEmpty(xs))
     trampoline.done(acc)
   else
-    trampoline.bounce(() -> factorialT(n - 1, n * acc))
+    trampoline.bounce(
+      sumListT,
+      [list.rest(xs), acc + list.first(xs)]
+    )
 
-factorial(n) = trampoline.run(factorialT(n, 1))
+sumList(xs) = trampoline.run(sumListT(xs, 0))
 
-// Mutual recursion with trampolining
-isEven(n) =
-  if (n == 0) trampoline.done(true)
-  else trampoline.bounce(() -> isOdd(n - 1))
+// Mutual recursion
+isEvenT(n) =
+  if (n == 0)
+    trampoline.done(true)
+  else
+    trampoline.bounce(isOddT, [n - 1])
 
-isOdd(n) =
-  if (n == 0) trampoline.done(false)
-  else trampoline.bounce(() -> isEven(n - 1))
+isOddT(n) =
+  if (n == 0)
+    trampoline.done(false)
+  else
+    trampoline.bounce(isEvenT, [n - 1])
 
-checkEven(n) = trampoline.run(isEven(num.abs(n)))
+isEven(n) = trampoline.run(isEvenT(num.abs(n)))
 
-// Automatic trampolining (syntax sugar)
-@trampolined
-sumList(lst, acc) =
-  if (list.isEmpty(lst)) acc
-  else sumList(list.rest(lst), acc + list.first(lst))
+// Optional syntax sugar layered on top later
+@trampoline
+countDown(n, acc) =
+  if (n == 0) acc else countDown(n - 1, acc + 1)
 ```
 
 **Use Cases:**
 
-- Deep recursive algorithms
-- Tree traversals on large trees
-- Parsing deeply nested structures
-- Any recursive algorithm that might overflow
+- Large list and tree traversals
+- Deep mutually recursive evaluators or parsers
+- Educational examples that should not fail on host stack limits
+- A bridge to full tail-call optimization later
 
 **Implementation Notes:**
 
-- Trampoline = loop that handles `Done` or `Bounce` values
-- Simple to implement: `Bounce` wraps thunk, `Done` wraps result
-- Could integrate with tail-call optimization detection
+- The MVP does not need anonymous functions; `trampoline.bounce(fn, args)` is enough.
+- `trampoline.run` can be implemented as a simple loop that repeatedly applies bounced calls until it sees `done`.
+- This is a good fit for the current runtime because function values already exist and calls are explicit `Node`s.
+- Automatic trampolining or `@trampoline`-style syntax should be considered a second phase, after the core value-based API exists.
 
 ---
 
@@ -2328,73 +2394,64 @@ type Ascii = {s: String | all(s, (c) -> ord(c) < 128)}
 | ---------- | ---------- |
 | Fit        | **High**   |
 | Complexity | **Low**    |
-| Impact     | **Medium** |
+| Impact     | **High**   |
 
 **Description:**
-Interned identifiers that are equal if they have the same name. Lighter than strings for use as keys and tags.
+Interned symbolic values used for tags, map keys, and lightweight enum-like constants. They are cheaper and clearer than raw strings for identifiers that are meant to be stable program values rather than user-facing text.
+
+Because `:` already separates key/value pairs in Primal map literals, the most implementation-friendly literal form is a dedicated sigil such as `#ok` rather than `:ok`.
 
 **Proposed Syntax:**
 
 ```primal
-// Symbol literal with colon prefix
-status = :ok
-error = :error
-direction = :north
+// Symbol literals
+status = #ok
+error = #error
+direction = #north
 
-// Symbols are interned (same name = same identity)
-:ok == :ok                                // true (identity comparison)
+// Equality
+#ok == #ok                                // true
+#ok == #error                             // false
 
-// Common uses
-
-// As map keys (more efficient than string keys)
+// As map keys
 response = {
-  :status: 200,
-  :body: "Hello",
-  :headers: {:content_type: "text/plain"}
+  #status: 200,
+  #body: "Hello",
+  #headers: {#contentType: "text/plain"}
 }
-response[:status]                         // 200
+response[#status]                         // 200
 
-// As enum-like values
-handleDirection(dir) = match dir with
-  | :north -> [0, 1]
-  | :south -> [0, -1]
-  | :east -> [1, 0]
-  | :west -> [-1, 0]
+// As tags in tagged data
+result1 = [#ok, 42]
+result2 = [#error, "not found"]
 
-// As tags in tagged unions
-result1 = [:ok, 42]
-result2 = [:error, "not found"]
-
-processResult(r) = match r with
-  | [:ok, value] -> "Success: " + to.string(value)
-  | [:error, msg] -> "Error: " + msg
+describe(result) = case result of
+  | [#ok, value] -> "Success: " + to.string(value)
+  | [#error, msg] -> "Error: " + msg
+  | _ -> "unknown"
 
 // Symbol functions
-symbol.name(:hello)                       // "hello"
-symbol.fromString("hello")                // :hello
-is.symbol(:ok)                            // true
+symbol.name(#hello)                       // "hello"
+symbol.fromString("hello")                // #hello
+is.symbol(#ok)                            // true
 is.symbol("ok")                           // false
-
-// Dynamic symbol creation
-sym = symbol.fromString("dynamic_" + to.string(id))
-
-// Keyword arguments (symbols as parameter names)
-createUser(:name, "Alice", :age, 30, :active, true)
 ```
 
 **Use Cases:**
 
-- Map keys
-- Pattern matching tags
-- Enum-like constants
-- Message passing
-- Keyword arguments
+- Tagged union payloads
+- Stable map keys
+- Lightweight protocol messages
+- Enum-like state values
+- Interop with future keyword-argument or pattern-matching features
 
 **Implementation Notes:**
 
-- Global symbol table (interning)
-- O(1) equality comparison
-- Minimal memory per unique symbol
+- Add `SymbolNode` and `SymbolType`, or a dedicated interned representation distinct from `StringNode`.
+- The lexer only needs a small extension for `#identifier`.
+- Symbols should print without quotes so they remain visually distinct from strings in the REPL.
+- Interning makes equality cheap and deterministic, but Primal should still define symbol equality as value equality, not exposed pointer identity.
+- This proposal composes especially well with `case` expressions and future `Result`/`Option`-style tagged values.
 
 ---
 
@@ -2566,71 +2623,28 @@ method jsonEncode(value: Map) = "{" + ... + "}"
 | Impact     | **High** |
 
 **Description:**
-Non-invasive debugging that prints intermediate values without changing program behavior.
+Expression-returning debug helpers that print or validate values without changing program behavior. This is a particularly good fit for Primal because everything is an expression and the CLI already has a `--debug` mode.
 
 **Proposed Syntax:**
 
 ```primal
-// Basic trace: prints and returns value
-x = trace(expensive_computation())
-// Prints: "trace: 42"
-// x = 42
+x = debug.trace(expensiveComputation())
+y = debug.trace("after filter", list.filter(data, isValid))
 
-// Trace with label
-y = trace("result", some_function())
-// Prints: "result: [1, 2, 3]"
+safeHead(xs) =
+  debug.assert(
+    list.isNotEmpty(xs),
+    list.first(xs),
+    "expected a non-empty list"
+  )
 
-// Trace expression and result
-z = traceExpr(a + b * c)
-// Prints: "a + b * c = 14"
+measured = debug.timed("loadUsers", loadUsers())
+debug.type(measured)                      // "List", "Number", "Function", ...
 
-// Trace function calls (shows args and result)
-@traced
-factorial(n) = if (n <= 1) 1 else n * factorial(n - 1)
+traceStep(x) = debug.trace("step", x)
+result = list.map([1, 2, 3], traceStep)
 
-factorial(5)
-// Prints:
-// factorial(5)
-//   factorial(4)
-//     factorial(3)
-//       factorial(2)
-//         factorial(1)
-//         => 1
-//       => 2
-//     => 6
-//   => 24
-// => 120
-
-// Conditional trace
-traceWhen(condition, "label", value)
-// Only prints when condition is true
-
-// Trace to custom output
-traceTo(logger, "event", value)
-
-// Assert with message (throws if false)
-assert(x > 0, "x must be positive")
-
-// Debug breakpoint (in REPL/debug mode)
-debug()                                   // pauses execution
-debugWith(x, y, z)                        // pauses with bindings
-
-// Inspect type at runtime
-traceType(value)
-// Prints: "type: List<Number>"
-
-// Timing
-timed("operation", () -> expensive())
-// Prints: "operation: 1234ms"
-// Returns result of expensive()
-
-// Count evaluations
-counted("loop", () -> iteration())
-// After execution, prints: "loop: 1000 times"
-
-// Stack trace on error
-withStackTrace(computation())
-// On error, prints full call stack
+debug.traceWhen(isVerbose, "payload", payload)
 ```
 
 **Use Cases:**
@@ -2642,9 +2656,11 @@ withStackTrace(computation())
 
 **Implementation Notes:**
 
-- `trace` returns its argument unchanged
-- Should have minimal/no overhead when disabled
-- Integration with REPL
+- The MVP should be library functions rather than decorators, breakpoints, or statement-like forms.
+- `debug.trace` must evaluate its value exactly once and return it unchanged.
+- `debug.assert` should throw a regular runtime error so it composes naturally with `try`.
+- `debug.timed` can piggyback on the existing CLI debug mode but should also work as a normal runtime function.
+- Rich call-stack tracing can come later once the runtime carries more source-location metadata through evaluation.
 
 ---
 
@@ -2794,6 +2810,107 @@ configure(host: "localhost", port: 8080)
 - Keywords as special map type
 - Compile-time or runtime checking
 - Integration with partial application
+
+---
+
+### 46. Namespace Blocks
+
+| Property   | Rating   |
+| ---------- | -------- |
+| Fit        | **High** |
+| Complexity | **Low**  |
+| Impact     | **High** |
+
+**Description:**
+A lightweight way to group functions under a dotted prefix without introducing a full module or import system. This is especially aligned with Primal because dotted identifiers already exist (`list.map`, `str.uppercase`) and the language currently lives in a single-file global namespace.
+
+**Proposed Syntax:**
+
+```primal
+namespace math {
+  square(x) = x * x
+  cube(x) = x * square(x)
+}
+
+math.square(4)                            // 16
+math.cube(3)                              // 27
+
+namespace http.headers {
+  contentType = "content-type"
+  isJson(value) = value == "application/json"
+}
+
+http.headers.contentType
+http.headers.isJson("application/json")
+
+namespace stats {
+  mean(xs) =
+    num.div(list.reduce(xs, 0, num.add), list.length(xs))
+}
+```
+
+**Use Cases:**
+
+- Organizing larger single-file programs
+- Grouping domain-specific helpers
+- Avoiding accidental global name collisions
+- Making user code feel consistent with the standard library
+
+**Implementation Notes:**
+
+- This can be a purely syntactic expansion: `namespace math { square(x) = ... }` becomes `math.square(x) = ...`.
+- Unqualified references inside the block can resolve to the same namespace first, then to globals.
+- Nested namespace blocks compose naturally because dotted identifiers are already legal names.
+- This adds structure without forcing a full module system, so it fits Primal's current single-file philosophy very well.
+
+---
+
+### 47. Function Introspection
+
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
+| Impact     | **Medium** |
+
+**Description:**
+Expose metadata about function values. Primal already has first-class functions, but once a function is passed around there is very little users can ask about it. Introspection would make higher-order code, debugging, and tooling much nicer.
+
+**Proposed Syntax:**
+
+```primal
+f = num.add
+
+function.name(f)                          // "num.add"
+function.arity(f)                         // 2
+function.parameters(f)                    // ["a", "b"]
+function.isNative(f)                      // true
+function.signature(f)                     // "num.add(a: Number, b: Number)"
+
+greet(name) = "Hello, " + name
+
+function.name(greet)                      // "greet"
+function.arity(greet)                     // 1
+function.parameters(greet)                // ["name"]
+function.isNative(greet)                  // false
+
+list.map([num.add, num.sub, greet], function.name)
+```
+
+**Use Cases:**
+
+- REPL tooling
+- Debug output
+- Higher-order libraries
+- Documentation generation
+- Better error messages around callables
+
+**Implementation Notes:**
+
+- `FunctionNode` already stores `name` and `parameters`, so most of this proposal is exposing existing runtime metadata.
+- `function.signature` can reuse the formatting already present in `FunctionNode.toString()`.
+- Later extensions could add documentation text, source location, or namespace data.
+- This is a very high-leverage addition for relatively little implementation work.
 
 ---
 
@@ -3058,6 +3175,50 @@ snapshot.read("name")                     // get stored value
 
 ---
 
+### 48. Doctests / Executable Examples
+
+| Property   | Rating   |
+| ---------- | -------- |
+| Fit        | **High** |
+| Complexity | **Low**  |
+| Impact     | **High** |
+
+**Description:**
+Executable examples embedded directly next to code or in markdown docs. This fits Primal especially well because the language is educational, REPL-friendly, and expression-oriented.
+
+**Proposed Syntax:**
+
+```primal
+//> square(3) => 9
+//> square(0) => 0
+square(n) = n * n
+
+//> classify(0) => "zero"
+//> classify(5) => "positive"
+//> classify(-2) => "negative"
+classify(n) =
+  if (n == 0) "zero" else if (n > 0) "positive" else "negative"
+
+// Expected error
+//> list.first([]) !! Runtime error: Cannot get element from empty list
+```
+
+**Use Cases:**
+
+- Tutorial and reference documentation
+- Preventing examples from going stale
+- Lightweight regression testing
+- REPL transcripts that remain correct over time
+
+**Implementation Notes:**
+
+- The runner can reuse the existing compiler and REPL formatting logic.
+- `expr => expected` compares formatted results, while `expr !! error` expects a failure message or substring.
+- A CLI mode such as `primal doctest file.pri` or `primal doctest docs/**/*.md` would be enough for an MVP.
+- This complements property-based and snapshot testing rather than replacing them.
+
+---
+
 ## Syntax Sugar & Ergonomics
 
 ### 40. Case Expressions
@@ -3069,59 +3230,38 @@ snapshot.read("name")                     // get stored value
 | Impact     | **High** |
 
 **Description:**
-Multi-way conditionals that are more readable than nested if-else chains.
+Multi-way conditional expressions that are more readable than deeply nested `if ... else ...` chains. This proposal has a very attractive MVP because the simplest form can desugar directly to nested `if` calls.
 
 **Proposed Syntax:**
 
 ```primal
-// Basic case expression
+// Condition-only form
 grade(score) = case
   | score >= 90 -> "A"
   | score >= 80 -> "B"
   | score >= 70 -> "C"
-  | score >= 60 -> "D"
-  | otherwise   -> "F"
+  | else -> "F"
 
-// Case on specific value
+// Subject form
 describe(n) = case n of
   | 0 -> "zero"
   | 1 -> "one"
   | 2 -> "two"
   | _ -> "many"
 
-// Case with guards
+// Another condition-only example
 classify(x, y) = case
   | x == 0 & y == 0 -> "origin"
   | x == 0          -> "y-axis"
   | y == 0          -> "x-axis"
-  | x == y          -> "diagonal"
-  | otherwise       -> "general"
+  | x > 0 & y > 0 -> "quadrant I"
+  | else          -> "other"
 
-// Case with pattern matching (if pattern matching exists)
-listCase(lst) = case lst of
-  | []           -> "empty"
-  | [x]          -> "singleton: " + to.string(x)
-  | [x, y]       -> "pair"
-  | [x, y, ...rest] -> "at least three"
-
-// Case with binding
+// Future-friendly tagged-data form
 parseResult(r) = case r of
-  | [:ok, value]    -> "Success: " + to.string(value)
-  | [:error, msg]   -> "Error: " + msg
-  | [:pending]      -> "Still waiting..."
-
-// Nested case
-processInput(input) = case input of
-  | {:type: "number", :value: v} -> case
-    | v > 0     -> "positive"
-    | v < 0     -> "negative"
-    | otherwise -> "zero"
-  | {:type: "string", :value: v} -> "text: " + v
-
-// Case as expression (returns value)
-result = case computeSomething() of
-  | [:success, x] -> x
-  | [:failure, _] -> defaultValue
+  | [#ok, value] -> value
+  | [#error, _] -> defaultValue
+  | _ -> defaultValue
 ```
 
 **Use Cases:**
@@ -3133,9 +3273,10 @@ result = case computeSomething() of
 
 **Implementation Notes:**
 
-- Desugar to nested if-else
-- Pattern matching integration
-- Exhaustiveness checking (optional)
+- The condition-only form can desugar directly to nested `if(condition) then else ...`.
+- The `case value of` form can start as chained equality tests before full pattern matching exists.
+- Default arms should use `_` or `else`; they should be required unless the compiler can prove exhaustiveness.
+- Destructuring and real pattern matching should be treated as a second phase, not part of the MVP.
 
 ---
 
@@ -3219,11 +3360,11 @@ data
 | Property   | Rating     |
 | ---------- | ---------- |
 | Fit        | **High**   |
-| Complexity | **Low**    |
-| Impact     | **Medium** |
+| Complexity | **Medium** |
+| Impact     | **High**   |
 
 **Description:**
-Scoped bindings that are only available within an expression. Cleaner than nested lets.
+Local sequential bindings inside an expression. This is one of the most useful missing pieces in an expression-oriented language because it removes repetition without forcing helper values into the global namespace.
 
 **Proposed Syntax:**
 
@@ -3235,60 +3376,32 @@ result = with {
   z = x + y
 } in x * y * z
 
-// Equivalent to nested lets but cleaner
-// let x = 10 in let y = 20 in let z = x + y in x * y * z
-
-// With destructuring
-result = with {
-  {name:, age:} = person
-  greeting = "Hello, " + name
-} in greeting + " (age " + to.string(age) + ")"
-
-// Mutually dependent (in order)
-result = with {
-  a = 1
-  b = a + 1        // can reference a
-  c = a + b        // can reference a and b
-} in [a, b, c]
-
-// With function definitions
-result = with {
-  square(x) = x * x
-  cube(x) = x * square(x)
-} in cube(3)
-
-// Resource-like with (cleanup after)
-result = withResource {
-  file = file.open("data.txt")
-} do {
-  file.read(file)
-} finally {
-  file.close(file)
-}
-
 // With for computed temporary values
 quadraticRoots(a, b, c) = with {
-  discriminant = b*b - 4*a*c
+  discriminant = b * b - 4 * a * c
   sqrtD = num.sqrt(discriminant)
   denom = 2 * a
 } in [(-b + sqrtD) / denom, (-b - sqrtD) / denom]
 
-// Inline with (for simple cases)
-result = (with x = 10 in x * x)
+distance2D(point) = with {
+  x = point[0]
+  y = point[1]
+} in num.sqrt(x * x + y * y)
 ```
 
 **Use Cases:**
 
 - Complex calculations with intermediates
 - Avoiding repeated expressions
-- Scoped helper functions
+- Keeping helper names out of the global scope
 - Readable complex expressions
 
 **Implementation Notes:**
 
-- Desugar to let bindings
-- Sequential binding semantics
-- Block-level scoping
+- The MVP should support sequential value bindings only.
+- Each binding is visible to later bindings and to the final body.
+- This is not just parser sugar in the current compiler; it needs an internal local-binding form or an equivalent semantic transformation.
+- Local helper functions and destructuring can be layered on later, but the first version should stay small and predictable.
 
 ---
 
@@ -3297,54 +3410,27 @@ result = (with x = 10 in x * x)
 | Property   | Rating   |
 | ---------- | -------- |
 | Fit        | **High** |
-| Complexity | **Low**  |
+| Complexity | **Medium** |
 | Impact     | **High** |
 
 **Description:**
-Shorthand for creating anonymous functions using placeholders like `_` for arguments.
+A compact shorthand for anonymous functions. This is excellent syntax once Primal has anonymous functions or an equivalent internal lambda form, but it should be treated as sugar rather than a standalone feature.
 
 **Proposed Syntax:**
 
 ```primal
-// Instead of: (x) -> x + 1
 list.map(numbers, _ + 1)
-
-// Instead of: (x) -> x * 2
-list.map(numbers, _ * 2)
-
-// Instead of: (x) -> num.isEven(x)
 list.filter(numbers, num.isEven(_))
 
-// Multiple placeholders (different args)
-// Instead of: (a, b) -> a + b
 list.reduce(numbers, 0, _1 + _2)
-
-// Instead of: (a, b) -> a > b
-list.sort(items, _1 > _2)
-
-// Placeholder in nested calls
-list.map(users, _.name)                   // extract name field
-list.map(users, str.uppercase(_.name))
-
-// Placeholder with methods (if method syntax exists)
-list.map(strings, _.uppercase())
+list.sort(names, str.compare(_1, _2))
+list.zip(as, bs, [_1, _2])
 
 // Multiple uses of same placeholder = same argument
-// _ + _ means (x) -> x + x, NOT (x, y) -> x + y
-list.map(numbers, _ + _)                  // doubles
+list.map(numbers, _ * _)                  // x -> x * x
 
-// Use _1, _2 for distinct arguments
-list.zipWith(as, bs, _1 + _2)             // (a, b) -> a + b
-
-// Placeholder in conditions
-list.filter(users, _.age > 18)
-
-// Not using placeholder = partial application
-list.map(numbers, num.add(5, _))          // add 5 to each
-
-// Nested placeholders (innermost scope)
-list.map(lists, list.map(_, _ * 2))
-// = list.map(lists, (l) -> list.map(l, (x) -> x * 2))
+// Explicit argument positions for multi-argument cases
+list.reduce(numbers, 1, _1 * _2)
 ```
 
 **Use Cases:**
@@ -3356,9 +3442,10 @@ list.map(lists, list.map(_, _ * 2))
 
 **Implementation Notes:**
 
-- Parse `_` specially in expression position
-- Wrap in minimal lambda
-- Handle multiple placeholders
+- `_` creates a single-argument anonymous function; `_1`, `_2`, ... create explicit positional arguments.
+- Placeholder scope should be the smallest enclosing placeholder expression.
+- This proposal is best shipped after anonymous functions; otherwise it becomes a one-off syntax feature with no general lambda model.
+- The parser should reject ambiguous cases rather than guessing what the user meant.
 
 ---
 
@@ -3367,101 +3454,159 @@ list.map(lists, list.map(_, _ * 2))
 | Property   | Rating     |
 | ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **Low**    |
+| Complexity | **Medium** |
 | Impact     | **High**   |
 
 **Description:**
-Allow calling functions in method style for better readability of transformation chains.
+Fluent call chains can make transformation pipelines easier to read, but this feature is less trivial in Primal than it first appears. The current language already uses dots inside identifiers (`list.map`, `str.uppercase`), so `x.f(y)` is not just a small parser rewrite.
 
 **Proposed Syntax:**
 
 ```primal
-// Instead of: list.map(list.filter(numbers, isEven), double)
 numbers.filter(isEven).map(double)
 
-// Translation rule: x.f(args) = f(x, args)
-// So: numbers.filter(isEven) = list.filter(numbers, isEven)
-
-// Chaining example
-result = users
-  .filter(_.active)
-  .map(_.name)
-  .sort(str.compare)
+result = numbers
+  .filter(num.isEven)
+  .map(num.inc)
   .take(10)
-  .join(", ")
 
-// Works with any function where first arg matches
+// Standard-library aliases
 "hello".uppercase()                       // str.uppercase("hello")
 "hello".length()                          // str.length("hello")
 42.abs()                                  // num.abs(42)
 [1, 2, 3].reverse()                       // list.reverse([1, 2, 3])
 
-// Chaining with additional args
-"hello world".split(" ")                  // str.split("hello world", " ")
-[1, 2, 3].at(1)                           // list.at([1, 2, 3], 1)
-
-// Mixed style (both work)
-str.uppercase("hello")                    // traditional
-"hello".uppercase()                       // method style
-
-// Custom functions work too
-myProcess(data, options)                  // traditional
-data.myProcess(options)                   // method style
-
-// Helps with deeply nested transformations
-// Before:
-result = json.encode(
-  list.map(
-    list.filter(data, isValid),
-    transform
-  )
-)
-
-// After:
-result = data
-  .filter(isValid)
-  .map(transform)
-  .json.encode()                          // or: |> json.encode
+// Mixed style
+list.map(numbers, double)                 // traditional
+numbers.map(double)                       // chained
 ```
 
 **Use Cases:**
 
 - Data transformation pipelines
 - Fluent interfaces
-- Readable chains
-- Familiar to OOP developers
+- More linear reading order
+- Lower cognitive load for nested calls
 
 **Implementation Notes:**
 
-- Purely syntactic transformation
-- `x.f(args)` → `f(x, args)`
-- No method resolution, just function call
+- This requires either:
+  - removing `.` from ordinary identifiers and introducing real postfix access parsing, or
+  - special parser logic that distinguishes `list.map` as a single identifier from `value.map(...)` as chaining syntax.
+- Bare method names like `map` and `uppercase` also require a resolution strategy from receiver type to namespace (`List -> list.*`, `String -> str.*`, `Number -> num.*`).
+- Because of this, a pipeline operator may be a simpler first step than full method chaining.
+- If adopted, the first version should probably target standard-library receivers only, not arbitrary user-defined dispatch.
+
+---
+
+### 49. From-End Indexing
+
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
+| Impact     | **Medium** |
+
+**Description:**
+Negative indexes count backward from the end for strings and lists. This is unusually well aligned with the current parser because `xs[-1]` already parses today; only runtime semantics reject it.
+
+**Proposed Syntax:**
+
+```primal
+[10, 20, 30][-1]                         // 30
+[10, 20, 30][-2]                         // 20
+"hello"[-1]                              // "o"
+"hello"[-5]                              // "h"
+
+last(xs) = xs[-1]
+secondLast(xs) = xs[-2]
+```
+
+**Use Cases:**
+
+- Last-element access
+- Tail-oriented string work
+- Cleaner indexing in small scripts
+- Removing the need for repeated `length - 1` calculations
+
+**Implementation Notes:**
+
+- For lists and strings, negative index `-1` maps to `length - 1`.
+- `-length` is the first element; smaller values remain out of bounds.
+- The `@` / `[]` runtime function already centralizes indexing, so this is mostly a change in `element_at`.
+- This keeps the surface area small by improving an existing form rather than inventing a new one.
+
+---
+
+### 50. Native Set / Vector Literal Syntax
+
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
+| Impact     | **Medium** |
+
+**Description:**
+Literal syntax for `Set` and `Vector` values. Both runtime types already exist, but users currently have to call `set.new([...])` and `vector.new([...])`. Literal sugar would make them feel like first-class language constructs.
+
+**Proposed Syntax:**
+
+```primal
+// Set literals
+s1 = set{1, 2, 3}
+s2 = set{1, 2, 2, 3}                     // duplicates collapsed
+s3 = set{}
+
+// Vector literals
+v1 = vec[1, 2, 3]
+v2 = vec[3, 4]
+
+set.contains(s1, 2)                      // true
+vector.magnitude(v2)                     // 5
+vector.add(vec[1, 2], vec[3, 4])         // vec[4, 6]
+```
+
+**Use Cases:**
+
+- Mathematical code
+- Geometry and graphics
+- Membership-heavy logic
+- Cleaner examples and teaching material
+
+**Implementation Notes:**
+
+- `set{...}` can desugar to `set.new([...])`.
+- `vec[...]` can desugar to `vector.new([...])`.
+- This proposal is cheap because `SetNode` and `VectorNode` already exist in the runtime.
+- Prefix forms avoid conflicts with existing map `{...}` and list `[...]` literals, and they are simpler than introducing `<...>` tokenization.
 
 ---
 
 ## Summary
 
-This document proposes 44 new features for the Primal programming language, organized into 7 categories:
+This document proposes 50 new features for the Primal programming language, organized into 7 categories:
 
 | Category                | Count | High Impact                          |
 | ----------------------- | ----- | ------------------------------------ |
-| Data Types & Structures | 10    | Matrices, Graphs, Trees              |
-| Functional Patterns     | 8     | Lenses, Transducers, Trampolining    |
+| Data Types & Structures | 11    | Matrices, Trees, Bytes               |
+| Functional Patterns     | 8     | Trampolining, Lenses, Transducers    |
 | Effects & Control Flow  | 6     | Validation, Async, Algebraic Effects |
 | Type System             | 6     | Newtypes, Row Polymorphism           |
-| Language Primitives     | 6     | Symbols, Debug/Trace                 |
-| Testing & Verification  | 3     | Property-Based Testing               |
-| Syntax Sugar            | 5     | Placeholder Args, Method Chaining    |
+| Language Primitives     | 8     | Namespace Blocks, Symbols, Debug/Trace |
+| Testing & Verification  | 4     | Property-Based Testing, Doctests     |
+| Syntax Sugar            | 7     | Case Expressions, With Expressions, From-End Indexing |
 
 **Recommended Priority (High Fit + High Impact + Low/Medium Complexity):**
 
-1. Debug/Trace Expressions - immediate developer productivity
-2. Validation Type - essential for real applications
-3. Trampolining - enables deep recursion safely
-4. Placeholder Arguments - major ergonomic improvement
-5. Case Expressions - cleaner conditionals
-6. Symbols/Atoms - efficient tags and keys
-7. NonEmpty Collections - type safety
-8. Method Chaining - readability
-9. Property-Based Testing - testing quality
-10. Lenses - functional data manipulation
+1. Namespace Blocks - near-zero runtime cost and solves real organization pain
+2. Debug/Trace Expressions - immediate developer productivity
+3. Bytes / Binary Data - fills a real gap around files, hashing, and I/O
+4. Validation Type - essential for real applications
+5. Case Expressions - cleaner conditionals with a straightforward desugaring story
+6. With Expressions - local bindings without polluting the global namespace
+7. Trampolining - enables deep recursion safely
+8. Symbols/Atoms - efficient tags and keys, especially for tagged data
+9. From-End Indexing - high-value improvement to an existing form
+10. Doctests / Executable Examples - especially strong for Primal's educational focus
+
+`Placeholder Arguments` and `Method Chaining` remain attractive, but they both become much cleaner once Primal also has anonymous functions and/or a pipeline operator.
