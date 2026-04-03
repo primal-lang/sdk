@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListDrop extends NativeFunctionNode {
   ListDrop()
-      : super(
-          name: 'list.drop',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.number('b'),
-          ],
-        );
+    : super(
+        name: 'list.drop',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.number('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

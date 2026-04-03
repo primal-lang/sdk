@@ -11,7 +11,8 @@ class InvalidArgumentTypesError extends RuntimeError {
     required List<Type> expected,
     required List<Type> actual,
   }) : super(
-            'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})');
+         'Invalid argument types for function "$function". Expected: (${expected.join(', ')}). Actual: (${actual.join(', ')})',
+       );
 }
 
 class InvalidArgumentCountError extends RuntimeError {
@@ -20,7 +21,8 @@ class InvalidArgumentCountError extends RuntimeError {
     required int expected,
     required int actual,
   }) : super(
-            'Invalid argument count for function "$function". Expected: $expected. Actual: $actual');
+         'Invalid argument count for function "$function". Expected: $expected. Actual: $actual',
+       );
 }
 
 class IterablesWithDifferentLengthError extends RuntimeError {
@@ -32,7 +34,7 @@ class IterablesWithDifferentLengthError extends RuntimeError {
 
 class InvalidLiteralValueError extends RuntimeError {
   const InvalidLiteralValueError(String value)
-      : super('Invalid literal value: "$value"');
+    : super('Invalid literal value: "$value"');
 }
 
 class InvalidValueError extends RuntimeError {
@@ -41,25 +43,92 @@ class InvalidValueError extends RuntimeError {
 
 class InvalidMapIndexError extends RuntimeError {
   const InvalidMapIndexError(String index)
-      : super('No element present in map for key: "$index"');
+    : super('No element present in map for key: "$index"');
 }
 
 class ElementNotFoundError extends RuntimeError {
   const ElementNotFoundError(String index)
-      : super('Element not found at index: "$index"');
+    : super('Element not found at index: "$index"');
 }
 
 class NotFoundInScopeError extends RuntimeError {
   const NotFoundInScopeError(String variable)
-      : super('Variable "$variable" not found in scope');
+    : super('Variable "$variable" not found in scope');
 }
 
 class InvalidFunctionError extends RuntimeError {
   const InvalidFunctionError(String variable)
-      : super('"$variable" is not a function');
+    : super('"$variable" is not a function');
 }
 
 class UnimplementedFunctionWebError extends RuntimeError {
   const UnimplementedFunctionWebError(String function)
-      : super('Function "$function" is not implemented on the web platform');
+    : super('Function "$function" is not implemented on the web platform');
+}
+
+class EmptyCollectionError extends RuntimeError {
+  EmptyCollectionError({
+    required String function,
+    required String collectionType,
+  }) : super(
+         'Cannot get element from empty $collectionType in function "$function"',
+       );
+}
+
+class IndexOutOfBoundsError extends RuntimeError {
+  IndexOutOfBoundsError({
+    required String function,
+    required int index,
+    required int length,
+  }) : super(
+         'Index $index is out of bounds for $function (length: $length)',
+       );
+}
+
+class NegativeIndexError extends RuntimeError {
+  NegativeIndexError({
+    required String function,
+    required int index,
+  }) : super(
+         'Negative index $index is not allowed for $function',
+       );
+}
+
+class DivisionByZeroError extends RuntimeError {
+  DivisionByZeroError({
+    required String function,
+  }) : super(
+         'Division by zero is not allowed in "$function"',
+       );
+}
+
+class InvalidNumericOperationError extends RuntimeError {
+  InvalidNumericOperationError({
+    required String function,
+    required String reason,
+  }) : super(
+         'Invalid numeric operation in "$function": $reason',
+       );
+}
+
+class ParseError extends RuntimeError {
+  ParseError({
+    required String function,
+    required String input,
+    required String targetType,
+  }) : super(
+         'Cannot parse "$input" as $targetType in "$function"',
+       );
+}
+
+class JsonParseError extends RuntimeError {
+  JsonParseError({
+    required String input,
+    required String details,
+  }) : super(
+         'Invalid JSON: $details. Input: "${_truncate(input)}"',
+       );
+
+  static String _truncate(String s) =>
+      s.length > 50 ? '${s.substring(0, 50)}...' : s;
 }

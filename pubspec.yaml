@@ -4,12 +4,13 @@ publish_to: none
 version: 0.4.0
 
 environment:
-  sdk: '>=3.5.3 <4.0.0'
+  sdk: ">=3.11.4 <4.0.0"
 
 dependencies:
-  path: ^1.9.0
-  crypto: ^3.0.5
+  path: ^1.9.1
+  crypto: ^3.0.7
+  characters: ^1.4.1
 
 dev_dependencies:
-  test: ^1.25.8
-  flutter_lints: ^4.0.0
+  test: ^1.31.0
+  flutter_lints: ^6.0.0

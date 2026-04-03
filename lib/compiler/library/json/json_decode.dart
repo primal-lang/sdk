@@ -5,19 +5,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class JsonDecode extends NativeFunctionNode {
   JsonDecode()
-      : super(
-          name: 'json.decode',
-          parameters: [
-            Parameter.string('a'),
-          ],
-        );
+    : super(
+        name: 'json.decode',
+        parameters: [
+          Parameter.string('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -32,7 +32,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      final dynamic json = jsonDecode(a.value);
+      final dynamic json;
+      try {
+        json = jsonDecode(a.value);
+      } on FormatException catch (e) {
+        throw JsonParseError(input: a.value, details: e.message);
+      }
 
       return getValue(json);
     } else {

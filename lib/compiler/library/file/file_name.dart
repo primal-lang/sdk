@@ -6,19 +6,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class FileName extends NativeFunctionNode {
   FileName()
-      : super(
-          name: 'file.name',
-          parameters: [
-            Parameter.file('a'),
-          ],
-        );
+    : super(
+        name: 'file.name',
+        parameters: [
+          Parameter.file('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

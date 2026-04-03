@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class NumMod extends NativeFunctionNode {
   NumMod()
-      : super(
-          name: 'num.mod',
-          parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
-          ],
-        );
+    : super(
+        name: 'num.mod',
+        parameters: [
+          Parameter.number('a'),
+          Parameter.number('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -33,6 +33,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is NumberNode) && (b is NumberNode)) {
+      if (b.value == 0) {
+        throw DivisionByZeroError(function: name);
+      }
       return NumberNode(a.value % b.value);
     } else {
       throw InvalidArgumentTypesError(

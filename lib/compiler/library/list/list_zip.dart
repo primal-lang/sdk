@@ -5,21 +5,21 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListZip extends NativeFunctionNode {
   ListZip()
-      : super(
-          name: 'list.zip',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.list('b'),
-            Parameter.function('c'),
-          ],
-        );
+    : super(
+        name: 'list.zip',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.list('b'),
+          Parameter.function('c'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

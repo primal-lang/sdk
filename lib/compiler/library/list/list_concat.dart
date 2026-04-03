@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListConcat extends NativeFunctionNode {
   ListConcat()
-      : super(
-          name: 'list.concat',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.list('b'),
-          ],
-        );
+    : super(
+        name: 'list.concat',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.list('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

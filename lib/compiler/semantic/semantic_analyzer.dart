@@ -42,15 +42,18 @@ class SemanticAnalyzer
   }
 
   List<CustomFunctionNode> getCustomFunctions(
-      List<FunctionDefinition> functions) {
+    List<FunctionDefinition> functions,
+  ) {
     final List<CustomFunctionNode> result = [];
 
     for (final FunctionDefinition function in functions) {
-      result.add(CustomFunctionNode(
-        name: function.name,
-        parameters: function.parameters.map(Parameter.any).toList(),
-        node: function.expression!.toNode(),
-      ));
+      result.add(
+        CustomFunctionNode(
+          name: function.name,
+          parameters: function.parameters.map(Parameter.any).toList(),
+          node: function.expression.toNode(),
+        ),
+      );
     }
 
     return result;
@@ -122,18 +125,22 @@ class SemanticAnalyzer
 
       for (final Parameter parameter in function.parameters) {
         if (!usedParameters.contains(parameter.name)) {
-          warnings.add(UnusedParameterWarning(
-            function: function.name,
-            parameter: parameter.name,
-          ));
+          warnings.add(
+            UnusedParameterWarning(
+              function: function.name,
+              parameter: parameter.name,
+            ),
+          );
         }
       }
 
-      result.add(CustomFunctionNode(
-        name: function.name,
-        parameters: function.parameters,
-        node: node,
-      ));
+      result.add(
+        CustomFunctionNode(
+          name: function.name,
+          parameters: function.parameters,
+          node: node,
+        ),
+      );
     }
 
     return result;
@@ -145,7 +152,7 @@ class SemanticAnalyzer
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
   }) {
-    if (node is FreeVariableNode) {
+    if (node is IdentifierNode) {
       return checkVariableIdentifier(
         node: node,
         availableParameters: availableParameters,
@@ -155,7 +162,22 @@ class SemanticAnalyzer
     } else if (node is CallNode) {
       Node callee = node.callee;
 
-      if (callee is FreeVariableNode) {
+      // Check for non-callable literals (e.g., 5(1))
+      if (_isNonCallableLiteral(callee)) {
+        throw NotCallableError(callee.toString());
+      }
+
+      // Check for @ operator with non-indexable first argument (e.g., 5[0])
+      if (callee is IdentifierNode &&
+          callee.value == '@' &&
+          node.arguments.isNotEmpty) {
+        final Node target = node.arguments[0];
+        if (_isNonIndexableLiteral(target)) {
+          throw NotIndexableError(target.toString());
+        }
+      }
+
+      if (callee is IdentifierNode) {
         callee = checkCalleeIdentifier(
           node: node,
           callee: callee,
@@ -175,12 +197,14 @@ class SemanticAnalyzer
       final List<Node> newArguments = [];
 
       for (final Node node in node.arguments) {
-        newArguments.add(checkNode(
-          node: node,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        ));
+        newArguments.add(
+          checkNode(
+            node: node,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            allFunctions: allFunctions,
+          ),
+        );
       }
 
       return CallNode(
@@ -191,12 +215,14 @@ class SemanticAnalyzer
       final List<Node> elements = [];
 
       for (final Node node in node.value) {
-        elements.add(checkNode(
-          node: node,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        ));
+        elements.add(
+          checkNode(
+            node: node,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            allFunctions: allFunctions,
+          ),
+        );
       }
 
       return ListNode(elements);
@@ -228,7 +254,7 @@ class SemanticAnalyzer
   }
 
   Node checkVariableIdentifier({
-    required FreeVariableNode node,
+    required IdentifierNode node,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
@@ -236,7 +262,7 @@ class SemanticAnalyzer
     if (availableParameters.contains(node.value)) {
       usedParameters.add(node.value);
 
-      return BoundedVariableNode(node.value);
+      return BoundVariableNode(node.value);
     } else if (allFunctions.containsKey(node.value)) {
       return node;
     } else {
@@ -246,7 +272,7 @@ class SemanticAnalyzer
 
   Node checkCalleeIdentifier({
     required CallNode node,
-    required FreeVariableNode callee,
+    required IdentifierNode callee,
     required List<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
@@ -256,7 +282,7 @@ class SemanticAnalyzer
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
 
-      return BoundedVariableNode(functionName);
+      return BoundVariableNode(functionName);
     } else if (allFunctions.containsKey(functionName)) {
       final FunctionNode function = allFunctions[functionName]!;
 
@@ -268,5 +294,17 @@ class SemanticAnalyzer
     } else {
       throw UndefinedFunctionError(functionName);
     }
+  }
+
+  bool _isNonCallableLiteral(Node node) {
+    return node is NumberNode ||
+        node is BooleanNode ||
+        node is StringNode ||
+        node is ListNode ||
+        node is MapNode;
+  }
+
+  bool _isNonIndexableLiteral(Node node) {
+    return node is NumberNode || node is BooleanNode;
   }
 }

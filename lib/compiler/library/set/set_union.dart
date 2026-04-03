@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class SetUnion extends NativeFunctionNode {
   SetUnion()
-      : super(
-          name: 'set.union',
-          parameters: [
-            Parameter.set('a'),
-            Parameter.set('b'),
-          ],
-        );
+    : super(
+        name: 'set.union',
+        parameters: [
+          Parameter.set('a'),
+          Parameter.set('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 
   static SetNode execute({
     required FunctionNode function,

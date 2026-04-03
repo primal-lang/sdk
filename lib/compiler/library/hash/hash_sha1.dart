@@ -7,19 +7,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class HashSha1 extends NativeFunctionNode {
   HashSha1()
-      : super(
-          name: 'hash.sha1',
-          parameters: [
-            Parameter.string('a'),
-          ],
-        );
+    : super(
+        name: 'hash.sha1',
+        parameters: [
+          Parameter.string('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

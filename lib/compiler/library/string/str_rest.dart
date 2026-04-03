@@ -1,22 +1,23 @@
+import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrRest extends NativeFunctionNode {
   StrRest()
-      : super(
-          name: 'str.rest',
-          parameters: [
-            Parameter.string('a'),
-          ],
-        );
+    : super(
+        name: 'str.rest',
+        parameters: [
+          Parameter.string('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -31,7 +32,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      return StringNode(a.value.isNotEmpty ? a.value.substring(1) : '');
+      return StringNode(
+        a.value.isNotEmpty ? a.value.characters.skip(1).toString() : '',
+      );
     } else {
       throw InvalidArgumentTypesError(
         function: name,

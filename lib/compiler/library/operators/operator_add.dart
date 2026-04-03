@@ -7,20 +7,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class OperatorAdd extends NativeFunctionNode {
   OperatorAdd()
-      : super(
-          name: '+',
-          parameters: [
-            Parameter.any('a'),
-            Parameter.any('b'),
-          ],
-        );
+    : super(
+        name: '+',
+        parameters: [
+          Parameter.any('a'),
+          Parameter.any('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

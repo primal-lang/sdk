@@ -11,7 +11,7 @@ binarySearch(list, element) =
 
 binarySearch.helper(list, element, index) =
     if (element == list[index])
-     true
+        true
     else if (element < list[index])
         binarySearch(list.sublist(list, 0, index), element)
     else

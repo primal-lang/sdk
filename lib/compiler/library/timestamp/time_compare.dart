@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class TimeCompare extends NativeFunctionNode {
   TimeCompare()
-      : super(
-          name: 'time.compare',
-          parameters: [
-            Parameter.timestamp('a'),
-            Parameter.timestamp('b'),
-          ],
-        );
+    : super(
+        name: 'time.compare',
+        parameters: [
+          Parameter.timestamp('a'),
+          Parameter.timestamp('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

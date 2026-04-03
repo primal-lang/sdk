@@ -10,7 +10,8 @@ class DuplicatedFunctionError extends SemanticError {
     required FunctionNode function1,
     required FunctionNode function2,
   }) : super(
-            'Duplicated function "${function1.name}" with parameters (${function1.parameters.join(', ')}) and (${function2.parameters.join(', ')})');
+         'Duplicated function "${function1.name}" with parameters (${function1.parameters.join(', ')}) and (${function2.parameters.join(', ')})',
+       );
 }
 
 class DuplicatedParameterError extends SemanticError {
@@ -19,20 +20,31 @@ class DuplicatedParameterError extends SemanticError {
     required String parameter,
     required List<String> parameters,
   }) : super(
-            'Duplicated parameter "$parameter" in function "$function(${parameters.join(', ')})"');
+         'Duplicated parameter "$parameter" in function "$function(${parameters.join(', ')})"',
+       );
 }
 
 class UndefinedIdentifierError extends SemanticError {
   const UndefinedIdentifierError(String identifier)
-      : super('Undefined identifier "$identifier"');
+    : super('Undefined identifier "$identifier"');
 }
 
 class UndefinedFunctionError extends SemanticError {
   const UndefinedFunctionError(String function)
-      : super('Undefined function "$function"');
+    : super('Undefined function "$function"');
 }
 
 class InvalidNumberOfArgumentsError extends SemanticError {
   const InvalidNumberOfArgumentsError(String function)
-      : super('Invalid number of arguments calling function "$function"');
+    : super('Invalid number of arguments calling function "$function"');
+}
+
+class NotCallableError extends SemanticError {
+  const NotCallableError(String value)
+    : super('Cannot call literal value "$value"');
+}
+
+class NotIndexableError extends SemanticError {
+  const NotIndexableError(String value)
+    : super('Cannot index literal value "$value"');
 }

@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class TimeEpoch extends NativeFunctionNode {
   TimeEpoch()
-      : super(
-          name: 'time.epoch',
-          parameters: [
-            Parameter.timestamp('a'),
-          ],
-        );
+    : super(
+        name: 'time.epoch',
+        parameters: [
+          Parameter.timestamp('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

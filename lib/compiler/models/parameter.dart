@@ -10,74 +10,74 @@ class Parameter {
   });
 
   factory Parameter.boolean(String name) => Parameter._(
-        name: name,
-        type: const BooleanType(),
-      );
+    name: name,
+    type: const BooleanType(),
+  );
 
   factory Parameter.number(String name) => Parameter._(
-        name: name,
-        type: const NumberType(),
-      );
+    name: name,
+    type: const NumberType(),
+  );
 
   factory Parameter.string(String name) => Parameter._(
-        name: name,
-        type: const StringType(),
-      );
+    name: name,
+    type: const StringType(),
+  );
 
   factory Parameter.file(String name) => Parameter._(
-        name: name,
-        type: const FileType(),
-      );
+    name: name,
+    type: const FileType(),
+  );
 
   factory Parameter.directory(String name) => Parameter._(
-        name: name,
-        type: const DirectoryType(),
-      );
+    name: name,
+    type: const DirectoryType(),
+  );
 
   factory Parameter.timestamp(String name) => Parameter._(
-        name: name,
-        type: const TimestampType(),
-      );
+    name: name,
+    type: const TimestampType(),
+  );
 
   factory Parameter.list(String name) => Parameter._(
-        name: name,
-        type: const ListType(),
-      );
+    name: name,
+    type: const ListType(),
+  );
 
   factory Parameter.vector(String name) => Parameter._(
-        name: name,
-        type: const VectorType(),
-      );
+    name: name,
+    type: const VectorType(),
+  );
 
   factory Parameter.set(String name) => Parameter._(
-        name: name,
-        type: const SetType(),
-      );
+    name: name,
+    type: const SetType(),
+  );
 
   factory Parameter.stack(String name) => Parameter._(
-        name: name,
-        type: const StackType(),
-      );
+    name: name,
+    type: const StackType(),
+  );
 
   factory Parameter.queue(String name) => Parameter._(
-        name: name,
-        type: const QueueType(),
-      );
+    name: name,
+    type: const QueueType(),
+  );
 
   factory Parameter.map(String name) => Parameter._(
-        name: name,
-        type: const MapType(),
-      );
+    name: name,
+    type: const MapType(),
+  );
 
   factory Parameter.function(String name) => Parameter._(
-        name: name,
-        type: const FunctionType(),
-      );
+    name: name,
+    type: const FunctionType(),
+  );
 
   factory Parameter.any(String name) => Parameter._(
-        name: name,
-        type: const AnyType(),
-      );
+    name: name,
+    type: const AnyType(),
+  );
 
   @override
   String toString() => name;

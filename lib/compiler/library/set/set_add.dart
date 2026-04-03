@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class SetAdd extends NativeFunctionNode {
   SetAdd()
-      : super(
-          name: 'set.add',
-          parameters: [
-            Parameter.set('a'),
-            Parameter.any('b'),
-          ],
-        );
+    : super(
+        name: 'set.add',
+        parameters: [
+          Parameter.set('a'),
+          Parameter.any('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 
   static SetNode execute({
     required FunctionNode function,

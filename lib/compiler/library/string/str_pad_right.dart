@@ -1,24 +1,25 @@
+import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrPadRight extends NativeFunctionNode {
   StrPadRight()
-      : super(
-          name: 'str.padRight',
-          parameters: [
-            Parameter.string('a'),
-            Parameter.number('b'),
-            Parameter.string('c'),
-          ],
-        );
+    : super(
+        name: 'str.padRight',
+        parameters: [
+          Parameter.string('a'),
+          Parameter.number('b'),
+          Parameter.string('c'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -35,7 +36,13 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node c = arguments[2].evaluate();
 
     if ((a is StringNode) && (b is NumberNode) && (c is StringNode)) {
-      return StringNode(a.value.padRight(b.value.toInt(), c.value));
+      final int targetWidth = b.value.toInt();
+      final int currentLength = a.value.characters.length;
+      if (currentLength >= targetWidth) {
+        return StringNode(a.value);
+      }
+      final int padCount = targetWidth - currentLength;
+      return StringNode(a.value + c.value * padCount);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

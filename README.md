@@ -1,5 +1,6 @@
 <p align="center">
   <a href="https://primal-lang.org"><img src="https://primal-lang.org/img/rounded.png" alt="Primal" height="170"></a>
+</p>
 
 <p align="center">
 <a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
@@ -11,6 +12,7 @@
 - [Overview](#overview)
 - [Goal](#goal)
 - [Technical envelope](#technical-envelope)
+- [Getting started](#getting-started)
 - [Philosophy](#philosophy)
 - [Syntax](#syntax)
 - [Main function](#main-function)
@@ -37,15 +39,26 @@ The language has the following characteristics:
 
 * Lazy evaluated
 * Dynamically typed
+* Immutable
 * Single threaded
-* Expression oriented
 * Interpreted
-* Interactive
+* Expression oriented
 * Garbage collected
+* Interactive
+
+## Getting started
+
+Pre-built binaries are available for Linux, macOS, and Windows. Download the appropriate release from the [GitHub releases](https://github.com/primal-lang/sdk/releases) page, extract it, and add the `bin` folder to your PATH. Then run the interpreter with a source file as an argument:
+
+```bash
+primal program.prm
+```
+
+If no source file is provided, the interpreter starts in interactive mode.
 
 ## Philosophy
 
-Everything in `Primal` is a function, which can be composed to create more complex functions. Functions cannot be overloaded (i.e. only one function with a given name can exist in a program). The full list of functions can be found in the  [reference](https://primal-lang.org/reference) page.
+Everything in `Primal` is a function, which can be composed to create more complex functions. Functions cannot be overloaded (i.e. only one function with a given name can exist in a program). The full list of functions can be found in the [reference](https://primal-lang.org/reference) page.
 
 Being a functional language, `Primal` does not have loop constructions. Instead, it uses recursion to perform repetitive tasks, allowing for a more declarative style of programming.
 
@@ -56,8 +69,8 @@ The syntax is designed to be simple and easy to read and consists of function de
 A function declaration is composed of:
 
 * **Name:** which must match the regular expression `[a-zA-Z][\w\.]*`
-* **Parameters (optional):** a list of identifiers, each matching the regular expression `[a-zA-Z][\w\.]`
-* **Body:** an expression which consist of combinations of:
+* **Parameters (optional):** a list of identifiers, each matching the regular expression `[a-zA-Z][\w\.]*`
+* **Body:** an expression which consists of combinations of:
     - Constants: `"Hello"`, `42`, `true`, `[1, 2, 3]`, etc
     - Operations: `foo + 3`, `!foo`, `foo >= bar`, etc
     - Function calls: `foo(x)`, `bar(10)`, etc
@@ -104,6 +117,10 @@ These are the available types at runtime:
 
 ## Runtime
 
-`Primal` is an interpreted language. The compiler translates the source code into an intermediate representation that is then executed by the interpreter. The interpreter is responsible for executing the intermediate representation and producing the output of the program.
+`Primal` is an interpreted language. The source code is first parsed into an intermediate representation, which is then evaluated by the interpreter to produce the output of the program.
 
-This allows for fast development and testing cycles since changes to the source code can be quickly compiled and executed without the need for a separate build step.
+This allows for fast development and testing cycles since changes to the source code can be immediately executed without the need for a separate build step.
+
+The interpreter manages memory automatically through garbage collection, freeing developers from manual memory management.
+
+When running in interactive mode (i.e. when no main function is defined), the interpreter provides a REPL (Read-Eval-Print Loop) where users can type expressions at a prompt and see their results immediately.

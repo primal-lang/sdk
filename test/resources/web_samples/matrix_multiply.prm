@@ -1,0 +1,30 @@
+/*
+  Input: two matrices (lists of lists of numbers)
+  Output: the product of the two matrices
+*/
+
+matMul(a, b) = matMul.rows(a, b, 0)
+
+matMul.rows(a, b, i) =
+    if (i >= list.length(a))
+        []
+    else
+        list.insertStart(matMul.rows(a, b, i + 1), matMul.row(a[i], b))
+
+matMul.row(aRow, b) = matMul.cols(aRow, b, 0)
+
+matMul.cols(aRow, b, j) =
+    if (j >= list.length(b[0]))
+        []
+    else
+        matMul.dot(aRow, b, j, 0, 0) + matMul.cols(aRow, b, j + 1)
+
+matMul.dot(aRow, b, j, k, sum) =
+    if (k >= list.length(aRow))
+        sum
+    else
+        matMul.dot(aRow, b, j, k + 1, sum + aRow[k] * matMul.cell(b[k], j))
+
+matMul.cell(row, j) = row[j]
+
+main = matMul([[1, 2], [3, 4]], [[5, 6], [7, 8]])

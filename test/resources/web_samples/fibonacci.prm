@@ -3,7 +3,7 @@
   Output: the first n numbers in the Fibonacci sequence
 */
 
-fibonacci(n) = if (n < -1)
+fibonacci(n) = if (n < 0)
                    error.throw(-1, 'Cannot calculate Fibonacci with a negative number')
                else if (n == 0)
                    []

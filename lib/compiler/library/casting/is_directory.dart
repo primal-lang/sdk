@@ -3,19 +3,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class IsDirectory extends NativeFunctionNode {
   IsDirectory()
-      : super(
-          name: 'is.directory',
-          parameters: [
-            Parameter.any('a'),
-          ],
-        );
+    : super(
+        name: 'is.directory',
+        parameters: [
+          Parameter.any('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

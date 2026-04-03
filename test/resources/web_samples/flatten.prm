@@ -1,0 +1,14 @@
+/*
+  Input: a list that may contain nested lists
+  Output: a single flat list with all elements
+*/
+
+flatten(list) =
+    if (list.isEmpty(list))
+        []
+    else if (is.list(list.first(list)))
+        flatten(list.first(list)) + flatten(list.rest(list))
+    else
+        list.first(list) + flatten(list.rest(list))
+
+main = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])

@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListSort extends NativeFunctionNode {
   ListSort()
-      : super(
-          name: 'list.sort',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.function('b'),
-          ],
-        );
+    : super(
+        name: 'list.sort',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.function('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

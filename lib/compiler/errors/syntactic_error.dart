@@ -7,13 +7,14 @@ class SyntacticError extends CompilationError {
 
 class InvalidTokenError extends SyntacticError {
   const InvalidTokenError(Token token, [String? expected])
-      : super(
-            'Invalid token $token${(expected != null) ? '. Expected: $expected' : ''}');
+    : super(
+        'Invalid token $token${(expected != null) ? '. Expected: $expected' : ''}',
+      );
 }
 
 class ExpectedTokenError extends SyntacticError {
   const ExpectedTokenError(Token token, String expected)
-      : super('Invalid token $token. Expected: $expected');
+    : super('Invalid token $token. Expected: $expected');
 }
 
 class UnexpectedEndOfFileError extends SyntacticError {

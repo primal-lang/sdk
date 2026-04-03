@@ -1,23 +1,24 @@
+import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrIndexOf extends NativeFunctionNode {
   StrIndexOf()
-      : super(
-          name: 'str.indexOf',
-          parameters: [
-            Parameter.string('a'),
-            Parameter.string('b'),
-          ],
-        );
+    : super(
+        name: 'str.indexOf',
+        parameters: [
+          Parameter.string('a'),
+          Parameter.string('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -33,7 +34,15 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is StringNode) && (b is StringNode)) {
-      return NumberNode(a.value.indexOf(b.value));
+      final int codeUnitIndex = a.value.indexOf(b.value);
+      if (codeUnitIndex == -1) {
+        return const NumberNode(-1);
+      }
+      final int graphemeIndex = a.value
+          .substring(0, codeUnitIndex)
+          .characters
+          .length;
+      return NumberNode(graphemeIndex);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

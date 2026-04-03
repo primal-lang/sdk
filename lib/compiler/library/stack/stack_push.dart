@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class StackPush extends NativeFunctionNode {
   StackPush()
-      : super(
-          name: 'stack.push',
-          parameters: [
-            Parameter.stack('a'),
-            Parameter.any('b'),
-          ],
-        );
+    : super(
+        name: 'stack.push',
+        parameters: [
+          Parameter.stack('a'),
+          Parameter.any('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

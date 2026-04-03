@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListFirst extends NativeFunctionNode {
   ListFirst()
-      : super(
-          name: 'list.first',
-          parameters: [
-            Parameter.list('a'),
-          ],
-        );
+    : super(
+        name: 'list.first',
+        parameters: [
+          Parameter.list('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -31,6 +31,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is ListNode) {
+      if (a.value.isEmpty) {
+        throw EmptyCollectionError(function: name, collectionType: 'list');
+      }
       return a.value.first;
     } else {
       throw InvalidArgumentTypesError(

@@ -4,21 +4,21 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListSet extends NativeFunctionNode {
   ListSet()
-      : super(
-          name: 'list.set',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.number('b'),
-            Parameter.any('c'),
-          ],
-        );
+    : super(
+        name: 'list.set',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.number('b'),
+          Parameter.any('c'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -35,8 +35,19 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node c = arguments[2];
 
     if ((a is ListNode) && (b is NumberNode)) {
-      final List<Node> head = a.value.sublist(0, b.value.toInt());
-      final List<Node> rest = a.value.sublist(b.value.toInt(), a.value.length);
+      final int index = b.value.toInt();
+      if (index < 0) {
+        throw NegativeIndexError(function: name, index: index);
+      }
+      if (index > a.value.length) {
+        throw IndexOutOfBoundsError(
+          function: name,
+          index: index,
+          length: a.value.length,
+        );
+      }
+      final List<Node> head = a.value.sublist(0, index);
+      final List<Node> rest = a.value.sublist(index, a.value.length);
 
       return ListNode([...head, c.evaluate(), ...rest]);
     } else {

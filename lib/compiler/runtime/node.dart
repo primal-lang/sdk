@@ -46,7 +46,7 @@ abstract class LiteralNode<T> implements Node {
     } else if (value is Map<Node, Node>) {
       return MapNode(value);
     } else {
-      throw InvalidLiteralValueError(value);
+      throw InvalidLiteralValueError(value.toString());
     }
   }
 }
@@ -171,8 +171,9 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
 
   @override
   Node substitute(Bindings bindings) {
-    final Iterable<MapEntry<Node, Node>> entries = value.entries.map((e) =>
-        MapEntry(e.key.substitute(bindings), e.value.substitute(bindings)));
+    final Iterable<MapEntry<Node, Node>> entries = value.entries.map(
+      (e) => MapEntry(e.key.substitute(bindings), e.value.substitute(bindings)),
+    );
 
     return MapNode(Map.fromEntries(entries));
   }
@@ -201,10 +202,10 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
   }
 }
 
-class FreeVariableNode extends Node {
+class IdentifierNode extends Node {
   final String value;
 
-  const FreeVariableNode(this.value);
+  const IdentifierNode(this.value);
 
   // TODO(momo): create function pointer in semantic analyzer to avoid
   // using the scope here
@@ -229,8 +230,8 @@ class FreeVariableNode extends Node {
   dynamic native() => evaluate().native();
 }
 
-class BoundedVariableNode extends FreeVariableNode {
-  const BoundedVariableNode(super.value);
+class BoundVariableNode extends IdentifierNode {
+  const BoundVariableNode(super.value);
 
   @override
   Node substitute(Bindings bindings) => bindings.get(value);
@@ -247,9 +248,9 @@ class CallNode extends Node {
 
   @override
   Node substitute(Bindings bindings) => CallNode(
-        callee: callee.substitute(bindings),
-        arguments: arguments.map((e) => e.substitute(bindings)).toList(),
-      );
+    callee: callee.substitute(bindings),
+    arguments: arguments.map((e) => e.substitute(bindings)).toList(),
+  );
 
   @override
   Node evaluate() {
@@ -261,7 +262,7 @@ class CallNode extends Node {
   FunctionNode getFunctionNode(Node callee) {
     if (callee is CallNode) {
       return getFunctionNode(callee.evaluate());
-    } else if (callee is FreeVariableNode) {
+    } else if (callee is IdentifierNode) {
       return callee.evaluate();
     } else if (callee is FunctionNode) {
       return callee;
@@ -342,8 +343,9 @@ abstract class NativeFunctionNode extends FunctionNode {
 
   @override
   Node substitute(Bindings bindings) {
-    final List<Node> arguments =
-        parameters.map((e) => bindings.get(e.name)).toList();
+    final List<Node> arguments = parameters
+        .map((e) => bindings.get(e.name))
+        .toList();
 
     return node(arguments);
   }

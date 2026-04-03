@@ -3,9 +3,11 @@
   Output: the result of base to the exponent power
 */
 
-power(base, exp) = if (exp == 0)
+power(base, exp) = if (exp < 0)
+                       error.throw(0, "Cannot calculate power with a negative exponent")
+                   else if (exp == 0)
                        1
                    else
-                      base * power(base, exp - 1)
+                       base * power(base, exp - 1)
 
 main = power(2, 10)

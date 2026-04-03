@@ -1,0 +1,30 @@
+/*
+  Input: a list of numbers
+  Output: the list sorted in ascending order using the quicksort algorithm
+*/
+
+quicksort(list) =
+    if (list.isEmpty(list))
+        []
+    else
+        quicksort(smaller(list.rest(list), list.first(list)))
+        + list.first(list)
+        + quicksort(greaterEq(list.rest(list), list.first(list)))
+
+smaller(list, pivot) =
+    if (list.isEmpty(list))
+        []
+    else if (list.first(list) < pivot)
+        list.first(list) + smaller(list.rest(list), pivot)
+    else
+        smaller(list.rest(list), pivot)
+
+greaterEq(list, pivot) =
+    if (list.isEmpty(list))
+        []
+    else if (list.first(list) >= pivot)
+        list.first(list) + greaterEq(list.rest(list), pivot)
+    else
+        greaterEq(list.rest(list), pivot)
+
+main = quicksort([38, 27, 43, 3, 9])

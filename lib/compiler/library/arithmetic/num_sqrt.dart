@@ -5,19 +5,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class NumSqrt extends NativeFunctionNode {
   NumSqrt()
-      : super(
-          name: 'num.sqrt',
-          parameters: [
-            Parameter.number('a'),
-          ],
-        );
+    : super(
+        name: 'num.sqrt',
+        parameters: [
+          Parameter.number('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -32,6 +32,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is NumberNode) {
+      if (a.value < 0) {
+        throw InvalidNumericOperationError(
+          function: name,
+          reason: 'cannot compute square root of negative number ${a.value}',
+        );
+      }
       final num value = sqrt(a.value);
       final num result = (value == value.toInt()) ? value.toInt() : value;
       return NumberNode(result);

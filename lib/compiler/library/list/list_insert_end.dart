@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListInsertEnd extends NativeFunctionNode {
   ListInsertEnd()
-      : super(
-          name: 'list.insertEnd',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.any('b'),
-          ],
-        );
+    : super(
+        name: 'list.insertEnd',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.any('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

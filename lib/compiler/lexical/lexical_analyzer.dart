@@ -1,11 +1,34 @@
 import 'package:primal/compiler/errors/lexical_error.dart';
+import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/state.dart';
-import 'package:primal/compiler/scanner/character.dart';
+import 'package:primal/compiler/reader/character.dart';
 import 'package:primal/extensions/string_extensions.dart';
 import 'package:primal/utils/list_iterator.dart';
+
+Token _identifierOrKeywordToken(Lexeme lexeme) {
+  if (lexeme.value.isBoolean) {
+    return BooleanToken(lexeme);
+  }
+  if (lexeme.value.isIf) {
+    return IfToken(lexeme);
+  }
+  if (lexeme.value.isElse) {
+    return ElseToken(lexeme);
+  }
+  return IdentifierToken(lexeme);
+}
+
+enum QuoteType { single, double }
+
+extension QuoteTypeExtension on QuoteType {
+  bool isTerminator(String char) => switch (this) {
+    QuoteType.single => char.isSingleQuote,
+    QuoteType.double => char.isDoubleQuote,
+  };
+}
 
 class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
   const LexicalAnalyzer(super.input);
@@ -20,13 +43,45 @@ class LexicalAnalyzer extends Analyzer<List<Character>, List<Token>> {
       state = state.next;
 
       if (state is ResultState) {
-        result.addAll(state.output);
+        result.add(state.output);
         state = InitState(iterator);
       }
     }
 
+    if (state is IntegerState) {
+      if (state.lastWasUnderscore) {
+        throw const LexicalError('Trailing underscore in number literal');
+      }
+      result.add(NumberToken(state.output));
+    } else if (state is DecimalState) {
+      if (state.lastWasUnderscore) {
+        throw const LexicalError('Trailing underscore in number literal');
+      }
+      result.add(NumberToken(state.output));
+    } else if (state is ExponentState) {
+      if (state.lastWasUnderscore) {
+        throw const LexicalError('Trailing underscore in number literal');
+      }
+      result.add(NumberToken(state.output));
+    } else if (state is ExponentInitState || state is ExponentSignState) {
+      throw const LexicalError('Incomplete exponent in number literal');
+    } else if (state is IdentifierState) {
+      result.add(_identifierOrKeywordToken(state.output));
+    } else if (state is StringRelatedState) {
+      throw UnterminatedStringError(state.stringStartLocation);
+    } else if (state is StartMultiLineCommentState ||
+        state is ClosingMultiLineCommentState) {
+      throw const UnterminatedCommentError();
+    }
+
     return result;
   }
+}
+
+abstract class StringRelatedState extends State<Character, Lexeme> {
+  const StringRelatedState(super.iterator, super.output);
+
+  Location get stringStartLocation;
 }
 
 class InitState extends State<Character, void> {
@@ -37,20 +92,16 @@ class InitState extends State<Character, void> {
     if (input.value.isWhitespace) {
       return this;
     } else if (input.value.isDoubleQuote) {
-      return StringDoubleQuoteState(
+      return StringState(
         iterator,
-        Lexeme(
-          value: '',
-          location: input.location,
-        ),
+        Lexeme(value: '', location: input.location),
+        QuoteType.double,
       );
     } else if (input.value.isSingleQuote) {
-      return StringSingleQuoteState(
+      return StringState(
         iterator,
-        Lexeme(
-          value: '',
-          location: input.location,
-        ),
+        Lexeme(value: '', location: input.location),
+        QuoteType.single,
       );
     } else if (input.value.isDigit) {
       return IntegerState(iterator, input.lexeme);
@@ -78,68 +129,275 @@ class InitState extends State<Character, void> {
       return AsteriskState(iterator, input.lexeme);
     } else if (input.value.isPercent) {
       return PercentState(iterator, input.lexeme);
+    } else if (input.value.isAt) {
+      return ResultState(iterator, AtToken(input.lexeme));
     } else if (input.value.isComma) {
-      return CommaState(iterator, input.lexeme);
+      return ResultState(iterator, CommaToken(input.lexeme));
     } else if (input.value.isColon) {
-      return ColonState(iterator, input.lexeme);
+      return ResultState(iterator, ColonToken(input.lexeme));
     } else if (input.value.isOpenParenthesis) {
-      return OpenParenthesisState(iterator, input.lexeme);
+      return ResultState(iterator, OpenParenthesisToken(input.lexeme));
     } else if (input.value.isCloseParenthesis) {
-      return CloseParenthesisState(iterator, input.lexeme);
+      return ResultState(iterator, CloseParenthesisToken(input.lexeme));
     } else if (input.value.isOpenBracket) {
-      return OpenBracketState(iterator, input.lexeme);
+      return ResultState(iterator, OpenBracketToken(input.lexeme));
     } else if (input.value.isCloseBracket) {
-      return CloseBracketState(iterator, input.lexeme);
+      return ResultState(iterator, CloseBracketToken(input.lexeme));
     } else if (input.value.isOpenBraces) {
-      return OpenBracesState(iterator, input.lexeme);
+      return ResultState(iterator, OpenBracesToken(input.lexeme));
     } else if (input.value.isCloseBraces) {
-      return CloseBracesState(iterator, input.lexeme);
+      return ResultState(iterator, CloseBracesToken(input.lexeme));
     } else {
       throw InvalidCharacterError(input);
     }
   }
 }
 
-class StringDoubleQuoteState extends State<Character, Lexeme> {
-  const StringDoubleQuoteState(super.iterator, super.output);
+class StringState extends StringRelatedState {
+  final QuoteType quoteType;
+
+  const StringState(super.iterator, super.output, this.quoteType);
+
+  @override
+  Location get stringStartLocation => output.location;
 
   @override
   State process(Character input) {
-    if (input.value.isDoubleQuote) {
-      return ResultState(iterator, [StringToken(output)]);
+    if (quoteType.isTerminator(input.value)) {
+      return ResultState(iterator, StringToken(output));
+    } else if (input.value.isBackslash) {
+      return StringEscapeState(iterator, output, quoteType);
     } else {
-      return StringDoubleQuoteState(iterator, output.add(input));
+      return StringState(iterator, output.add(input), quoteType);
     }
   }
 }
 
-class StringSingleQuoteState extends State<Character, Lexeme> {
-  const StringSingleQuoteState(super.iterator, super.output);
+class StringEscapeState extends StringRelatedState {
+  final QuoteType quoteType;
+
+  const StringEscapeState(super.iterator, super.output, this.quoteType);
+
+  @override
+  Location get stringStartLocation => output.location;
 
   @override
   State process(Character input) {
-    if (input.value.isSingleQuote) {
-      return ResultState(iterator, [StringToken(output)]);
+    if (input.value == 'n') {
+      return StringState(iterator, output.addValue('\n'), quoteType);
+    } else if (input.value == 't') {
+      return StringState(iterator, output.addValue('\t'), quoteType);
+    } else if (input.value.isBackslash) {
+      return StringState(iterator, output.addValue('\\'), quoteType);
+    } else if (input.value.isDoubleQuote) {
+      return StringState(iterator, output.addValue('"'), quoteType);
+    } else if (input.value.isSingleQuote) {
+      return StringState(iterator, output.addValue("'"), quoteType);
+    } else if (input.value == 'x') {
+      return StringHexEscapeState(
+        iterator,
+        output,
+        quoteType,
+        2,
+        '',
+        input.location,
+      );
+    } else if (input.value == 'u') {
+      return StringUnicodeEscapeState(
+        iterator,
+        output,
+        quoteType,
+        input.location,
+      );
     } else {
-      return StringSingleQuoteState(iterator, output.add(input));
+      throw InvalidEscapeSequenceError(input);
+    }
+  }
+}
+
+class StringHexEscapeState extends StringRelatedState {
+  final QuoteType quoteType;
+  final int requiredDigits;
+  final String hexAccum;
+  final Location escapeStart;
+
+  const StringHexEscapeState(
+    super.iterator,
+    super.output,
+    this.quoteType,
+    this.requiredDigits,
+    this.hexAccum,
+    this.escapeStart,
+  );
+
+  @override
+  Location get stringStartLocation => output.location;
+
+  @override
+  State process(Character input) {
+    if (!input.value.isHexDigit) {
+      throw InvalidHexEscapeError(
+        input,
+        requiredDigits == 2 ? 'x' : 'u',
+        requiredDigits,
+      );
+    }
+
+    final String newHex = hexAccum + input.value;
+
+    if (newHex.length == requiredDigits) {
+      final int codePoint = int.parse(newHex, radix: 16);
+      return StringState(
+        iterator,
+        output.addValue(String.fromCharCode(codePoint)),
+        quoteType,
+      );
+    }
+
+    return StringHexEscapeState(
+      iterator,
+      output,
+      quoteType,
+      requiredDigits,
+      newHex,
+      escapeStart,
+    );
+  }
+}
+
+class StringUnicodeEscapeState extends StringRelatedState {
+  final QuoteType quoteType;
+  final Location escapeStart;
+
+  const StringUnicodeEscapeState(
+    super.iterator,
+    super.output,
+    this.quoteType,
+    this.escapeStart,
+  );
+
+  @override
+  Location get stringStartLocation => output.location;
+
+  @override
+  State process(Character input) {
+    if (input.value == '{') {
+      return StringBracedEscapeState(
+        iterator,
+        output,
+        quoteType,
+        '',
+        escapeStart,
+      );
+    } else if (input.value.isHexDigit) {
+      return StringHexEscapeState(
+        iterator,
+        output,
+        quoteType,
+        4,
+        input.value,
+        escapeStart,
+      );
+    } else {
+      throw InvalidHexEscapeError(input, 'u', 4);
+    }
+  }
+}
+
+class StringBracedEscapeState extends StringRelatedState {
+  final QuoteType quoteType;
+  final String hexAccum;
+  final Location escapeStart;
+
+  const StringBracedEscapeState(
+    super.iterator,
+    super.output,
+    this.quoteType,
+    this.hexAccum,
+    this.escapeStart,
+  );
+
+  @override
+  Location get stringStartLocation => output.location;
+
+  @override
+  State process(Character input) {
+    if (input.value == '}') {
+      if (hexAccum.isEmpty) {
+        throw InvalidBracedEscapeError('Empty \\u{} escape', escapeStart);
+      }
+      final int codePoint = int.parse(hexAccum, radix: 16);
+      if (codePoint > 0x10FFFF) {
+        throw InvalidCodePointError(codePoint, escapeStart);
+      }
+      return StringState(
+        iterator,
+        output.addValue(String.fromCharCode(codePoint)),
+        quoteType,
+      );
+    } else if (input.value.isHexDigit) {
+      if (hexAccum.length >= 6) {
+        throw InvalidBracedEscapeError(
+          'Too many digits in \\u{} escape (max 6)',
+          escapeStart,
+        );
+      }
+      return StringBracedEscapeState(
+        iterator,
+        output,
+        quoteType,
+        hexAccum + input.value,
+        escapeStart,
+      );
+    } else {
+      throw InvalidBracedEscapeError(
+        "Invalid character '${input.value}' in \\u{} escape",
+        escapeStart,
+      );
     }
   }
 }
 
 class IntegerState extends State<Character, Lexeme> {
-  const IntegerState(super.iterator, super.output);
+  final bool lastWasUnderscore;
+
+  const IntegerState(
+    super.iterator,
+    super.output, {
+    this.lastWasUnderscore = false,
+  });
 
   @override
   State process(Character input) {
     if (input.value.isDigit) {
-      return IntegerState(iterator, output.add(input));
+      return IntegerState(
+        iterator,
+        output.add(input),
+        lastWasUnderscore: false,
+      );
+    } else if (input.value.isUnderscore) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return IntegerState(iterator, output, lastWasUnderscore: true);
     } else if (input.value.isDot) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
       return DecimalInitState(iterator, output.add(input));
+    } else if (input.value.isExponent) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return ExponentInitState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
       iterator.back();
-      return ResultState(iterator, [NumberToken(output)]);
+      return ResultState(iterator, NumberToken(output));
     } else {
-      throw InvalidCharacterError(input, 'digit or dot');
+      throw InvalidCharacterError(input, 'digit, underscore, or dot');
     }
   }
 }
@@ -158,15 +416,100 @@ class DecimalInitState extends State<Character, Lexeme> {
 }
 
 class DecimalState extends State<Character, Lexeme> {
-  const DecimalState(super.iterator, super.output);
+  final bool lastWasUnderscore;
+
+  const DecimalState(
+    super.iterator,
+    super.output, {
+    this.lastWasUnderscore = false,
+  });
 
   @override
   State process(Character input) {
     if (input.value.isDigit) {
-      return DecimalState(iterator, output.add(input));
+      return DecimalState(
+        iterator,
+        output.add(input),
+        lastWasUnderscore: false,
+      );
+    } else if (input.value.isUnderscore) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return DecimalState(iterator, output, lastWasUnderscore: true);
+    } else if (input.value.isExponent) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return ExponentInitState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
       iterator.back();
-      return ResultState(iterator, [NumberToken(output)]);
+      return ResultState(iterator, NumberToken(output));
+    } else {
+      throw InvalidCharacterError(input, 'digit or underscore');
+    }
+  }
+}
+
+class ExponentInitState extends State<Character, Lexeme> {
+  const ExponentInitState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value.isDigit) {
+      return ExponentState(iterator, output.add(input));
+    } else if (input.value.isPlus || input.value.isMinus) {
+      return ExponentSignState(iterator, output.add(input));
+    } else {
+      throw InvalidCharacterError(input, 'digit or sign');
+    }
+  }
+}
+
+class ExponentSignState extends State<Character, Lexeme> {
+  const ExponentSignState(super.iterator, super.output);
+
+  @override
+  State process(Character input) {
+    if (input.value.isDigit) {
+      return ExponentState(iterator, output.add(input));
+    } else {
+      throw InvalidCharacterError(input, 'digit');
+    }
+  }
+}
+
+class ExponentState extends State<Character, Lexeme> {
+  final bool lastWasUnderscore;
+
+  const ExponentState(
+    super.iterator,
+    super.output, {
+    this.lastWasUnderscore = false,
+  });
+
+  @override
+  State process(Character input) {
+    if (input.value.isDigit) {
+      return ExponentState(
+        iterator,
+        output.add(input),
+        lastWasUnderscore: false,
+      );
+    } else if (input.value.isUnderscore) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      return ExponentState(iterator, output, lastWasUnderscore: true);
+    } else if (input.value.isOperandDelimiter) {
+      if (lastWasUnderscore) {
+        throw InvalidCharacterError(input, 'digit');
+      }
+      iterator.back();
+      return ResultState(iterator, NumberToken(output));
     } else {
       throw InvalidCharacterError(input, 'digit');
     }
@@ -182,16 +525,7 @@ class IdentifierState extends State<Character, Lexeme> {
       return IdentifierState(iterator, output.add(input));
     } else if (input.value.isOperandDelimiter) {
       iterator.back();
-
-      if (output.value.isBoolean) {
-        return ResultState(iterator, [BooleanToken(output)]);
-      } else if (output.value.isIf) {
-        return ResultState(iterator, [IfToken(output)]);
-      } else if (output.value.isElse) {
-        return ResultState(iterator, [ElseToken(output)]);
-      } else {
-        return ResultState(iterator, [IdentifierToken(output)]);
-      }
+      return ResultState(iterator, _identifierOrKeywordToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -205,7 +539,7 @@ class MinusState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [MinusToken(output)]);
+      return ResultState(iterator, MinusToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -219,7 +553,7 @@ class PlusState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [PlusToken(output)]);
+      return ResultState(iterator, PlusToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -232,10 +566,10 @@ class EqualsState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, [EqualToken(output.add(input))]);
+      return ResultState(iterator, EqualToken(output.add(input)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [AssignToken(output)]);
+      return ResultState(iterator, AssignToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -248,10 +582,10 @@ class GreaterState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, [GreaterEqualThanToken(output.add(input))]);
+      return ResultState(iterator, GreaterOrEqualToken(output.add(input)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [GreaterThanToken(output)]);
+      return ResultState(iterator, GreaterThanToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -264,10 +598,10 @@ class LessState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, [LessEqualThanToken(output.add(input))]);
+      return ResultState(iterator, LessOrEqualToken(output.add(input)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [LessThanToken(output)]);
+      return ResultState(iterator, LessThanToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -281,7 +615,7 @@ class PipeState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [PipeToken(output)]);
+      return ResultState(iterator, PipeToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -295,7 +629,7 @@ class AmpersandState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [AmpersandToken(output)]);
+      return ResultState(iterator, AmpersandToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -308,10 +642,10 @@ class BangState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, [NotEqualToken(output.add(input))]);
+      return ResultState(iterator, NotEqualToken(output.add(input)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [BangToken(output)]);
+      return ResultState(iterator, BangToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -325,7 +659,7 @@ class ForwardSlashState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [ForwardSlashToken(output)]);
+      return ResultState(iterator, ForwardSlashToken(output));
     } else if (input.value.isForwardSlash) {
       return SingleLineCommentState(iterator);
     } else if (input.value.isAsterisk) {
@@ -343,7 +677,7 @@ class AsteriskState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [AsteriskToken(output)]);
+      return ResultState(iterator, AsteriskToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -357,7 +691,7 @@ class PercentState extends State<Character, Lexeme> {
   State process(Character input) {
     if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(iterator, [PercentToken(output)]);
+      return ResultState(iterator, PercentToken(output));
     } else {
       throw InvalidCharacterError(input);
     }
@@ -395,143 +729,16 @@ class ClosingMultiLineCommentState extends State<Character, void> {
 
   @override
   State process(Character input) {
-    if (!input.value.isForwardSlash) {
-      return StartMultiLineCommentState(iterator);
-    } else {
+    if (input.value.isForwardSlash) {
       return InitState(iterator);
-    }
-  }
-}
-
-class CommaState extends State<Character, Lexeme> {
-  const CommaState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isCommaDelimiter) {
-      iterator.back();
-      return ResultState(iterator, [CommaToken(output)]);
+    } else if (input.value.isAsterisk) {
+      return this;
     } else {
-      throw InvalidCharacterError(input);
+      return StartMultiLineCommentState(iterator);
     }
   }
 }
 
-class ColonState extends State<Character, Lexeme> {
-  const ColonState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isColonDelimiter) {
-      iterator.back();
-      return ResultState(iterator, [ColonToken(output)]);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class OpenParenthesisState extends State<Character, Lexeme> {
-  const OpenParenthesisState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isOpenParenthesisDelimiter) {
-      iterator.back();
-      return ResultState(iterator, [OpenParenthesisToken(output)]);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class CloseParenthesisState extends State<Character, Lexeme> {
-  const CloseParenthesisState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isCloseParenthesisDelimiter) {
-      iterator.back();
-      return ResultState(iterator, [CloseParenthesisToken(output)]);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class OpenBracketState extends State<Character, Lexeme> {
-  const OpenBracketState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isOpenBracketDelimiter) {
-      iterator.back();
-      return ResultState(iterator, [OpenBracketToken(output)]);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class CloseBracketState extends State<Character, Lexeme> {
-  const CloseBracketState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isCloseBracketDelimiter) {
-      iterator.back();
-      return ResultState(iterator, [CloseBracketToken(output)]);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class OpenBracesState extends State<Character, Lexeme> {
-  const OpenBracesState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isOpenBracesDelimiter) {
-      iterator.back();
-      return ResultState(iterator, [OpenBracesToken(output)]);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class CloseBracesState extends State<Character, Lexeme> {
-  const CloseBracesState(super.iterator, super.output);
-
-  @override
-  State process(Character input) {
-    if (input.value.isCloseBracesDelimiter) {
-      iterator.back();
-      return ResultState(iterator, [CloseBracesToken(output)]);
-    } else {
-      throw InvalidCharacterError(input);
-    }
-  }
-}
-
-class ResultState extends State<void, List<Token>> {
+class ResultState extends State<void, Token> {
   const ResultState(super.iterator, super.output);
-}
-
-class Lexeme extends Localized {
-  final String value;
-
-  const Lexeme({
-    required this.value,
-    required super.location,
-  });
-
-  Lexeme add(Character character) => Lexeme(
-        value: value + character.value,
-        location: location,
-      );
-
-  @override
-  String toString() => '"$value" at $location';
 }

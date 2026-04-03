@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ListAt extends NativeFunctionNode {
   ListAt()
-      : super(
-          name: 'list.at',
-          parameters: [
-            Parameter.list('a'),
-            Parameter.number('b'),
-          ],
-        );
+    : super(
+        name: 'list.at',
+        parameters: [
+          Parameter.list('a'),
+          Parameter.number('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -33,7 +33,18 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is ListNode) && (b is NumberNode)) {
-      return a.value[b.value.toInt()];
+      final int index = b.value.toInt();
+      if (index < 0) {
+        throw NegativeIndexError(function: name, index: index);
+      }
+      if (index >= a.value.length) {
+        throw IndexOutOfBoundsError(
+          function: name,
+          index: index,
+          length: a.value.length,
+        );
+      }
+      return a.value[index];
     } else {
       throw InvalidArgumentTypesError(
         function: name,

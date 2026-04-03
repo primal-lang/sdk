@@ -6,20 +6,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryMove extends NativeFunctionNode {
   DirectoryMove()
-      : super(
-          name: 'directory.move',
-          parameters: [
-            Parameter.directory('a'),
-            Parameter.directory('b'),
-          ],
-        );
+    : super(
+        name: 'directory.move',
+        parameters: [
+          Parameter.directory('a'),
+          Parameter.directory('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

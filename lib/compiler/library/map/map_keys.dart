@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class MapKeys extends NativeFunctionNode {
   MapKeys()
-      : super(
-          name: 'map.keys',
-          parameters: [
-            Parameter.map('a'),
-          ],
-        );
+    : super(
+        name: 'map.keys',
+        parameters: [
+          Parameter.map('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

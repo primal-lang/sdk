@@ -1,0 +1,53 @@
+import 'package:characters/characters.dart';
+import 'package:primal/compiler/models/analyzer.dart';
+import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/reader/character.dart';
+
+class SourceReader extends Analyzer<String, List<Character>> {
+  const SourceReader(super.input);
+
+  @override
+  List<Character> analyze() {
+    final List<Character> result = [];
+    final String normalized = input
+        .replaceAll('\r\n', '\n')
+        .replaceAll('\r', '\n');
+    final List<String> rows = normalized.split('\n');
+
+    if (rows.isNotEmpty && rows.last.isEmpty) {
+      rows.removeLast();
+    }
+
+    for (int i = 0; i < rows.length; i++) {
+      if ((i == 0) && rows[i].startsWith('#!')) {
+        continue;
+      }
+
+      final List<String> columns = rows[i].characters.toList();
+
+      for (int j = 0; j < columns.length; j++) {
+        result.add(
+          Character(
+            value: columns[j],
+            location: Location(
+              row: i + 1,
+              column: j + 1,
+            ),
+          ),
+        );
+      }
+
+      result.add(
+        Character(
+          value: '\n',
+          location: Location(
+            row: i + 1,
+            column: columns.length + 1,
+          ),
+        ),
+      );
+    }
+
+    return result;
+  }
+}

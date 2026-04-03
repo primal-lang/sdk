@@ -5,19 +5,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class VectorMagnitude extends NativeFunctionNode {
   VectorMagnitude()
-      : super(
-          name: 'vector.magnitude',
-          parameters: [
-            Parameter.vector('a'),
-          ],
-        );
+    : super(
+        name: 'vector.magnitude',
+        parameters: [
+          Parameter.vector('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 
   static NumberNode execute({
     required FunctionNode function,

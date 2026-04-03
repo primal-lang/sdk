@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class OperatorAnd extends NativeFunctionNode {
   OperatorAnd()
-      : super(
-          name: '&',
-          parameters: [
-            Parameter.boolean('a'),
-            Parameter.boolean('b'),
-          ],
-        );
+    : super(
+        name: '&',
+        parameters: [
+          Parameter.boolean('a'),
+          Parameter.boolean('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -29,7 +29,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
   @override
   Node evaluate() => BoolAnd.execute(
-        function: this,
-        arguments: arguments,
-      );
+    function: this,
+    arguments: arguments,
+  );
 }

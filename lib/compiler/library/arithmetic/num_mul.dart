@@ -4,20 +4,20 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class NumMul extends NativeFunctionNode {
   NumMul()
-      : super(
-          name: 'num.mul',
-          parameters: [
-            Parameter.number('a'),
-            Parameter.number('b'),
-          ],
-        );
+    : super(
+        name: 'num.mul',
+        parameters: [
+          Parameter.number('a'),
+          Parameter.number('b'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

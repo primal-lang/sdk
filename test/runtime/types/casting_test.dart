@@ -1,0 +1,352 @@
+@Tags(['runtime'])
+library;
+
+import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:test/test.dart';
+import '../../helpers/assertion_helpers.dart';
+import '../../helpers/pipeline_helpers.dart';
+
+void main() {
+  group('To', () {
+    test('to.number converts string to number', () {
+      final Runtime runtime = getRuntime('main = to.number("12.5")');
+      checkResult(runtime, 12.5);
+    });
+
+    test('to.number returns number unchanged', () {
+      final Runtime runtime = getRuntime('main = to.number(12.5)');
+      checkResult(runtime, 12.5);
+    });
+
+    test('to.number throws for boolean argument', () {
+      final Runtime runtime = getRuntime('main = to.number(true)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.integer converts string to integer', () {
+      final Runtime runtime = getRuntime('main = to.integer("12")');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer returns integer unchanged', () {
+      final Runtime runtime = getRuntime('main = to.integer(12)');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer truncates decimal below .5', () {
+      final Runtime runtime = getRuntime('main = to.integer(12.4)');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer truncates decimal at .5', () {
+      final Runtime runtime = getRuntime('main = to.integer(12.5)');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer truncates decimal above .5', () {
+      final Runtime runtime = getRuntime('main = to.integer(12.6)');
+      checkResult(runtime, 12);
+    });
+
+    test('to.integer throws for boolean argument', () {
+      final Runtime runtime = getRuntime('main = to.integer(true)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.decimal converts string to decimal', () {
+      final Runtime runtime = getRuntime('main = to.decimal("12")');
+      checkResult(runtime, 12.0);
+    });
+
+    test('to.decimal converts integer to decimal', () {
+      final Runtime runtime = getRuntime('main = to.decimal(12)');
+      checkResult(runtime, 12.0);
+    });
+
+    test('to.decimal throws for boolean argument', () {
+      final Runtime runtime = getRuntime('main = to.decimal(true)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.string returns string unchanged', () {
+      final Runtime runtime = getRuntime('main = to.string("12")');
+      checkResult(runtime, '"12"');
+    });
+
+    test('to.string converts number to string', () {
+      final Runtime runtime = getRuntime('main = to.string(12)');
+      checkResult(runtime, '"12"');
+    });
+
+    test('to.string converts boolean to string', () {
+      final Runtime runtime = getRuntime('main = to.string(true)');
+      checkResult(runtime, '"true"');
+    });
+
+    test('to.boolean returns true for non-empty string', () {
+      final Runtime runtime = getRuntime('main = to.boolean("hello")');
+      checkResult(runtime, true);
+    });
+
+    test('to.boolean returns false for empty string', () {
+      final Runtime runtime = getRuntime('main = to.boolean("")');
+      checkResult(runtime, false);
+    });
+
+    test('to.boolean returns false for zero', () {
+      final Runtime runtime = getRuntime('main = to.boolean(0)');
+      checkResult(runtime, false);
+    });
+
+    test('to.boolean returns true for positive number', () {
+      final Runtime runtime = getRuntime('main = to.boolean(12)');
+      checkResult(runtime, true);
+    });
+
+    test('to.boolean returns true for negative number', () {
+      final Runtime runtime = getRuntime('main = to.boolean(-1)');
+      checkResult(runtime, true);
+    });
+
+    test('to.boolean returns true unchanged', () {
+      final Runtime runtime = getRuntime('main = to.boolean(true)');
+      checkResult(runtime, true);
+    });
+
+    test('to.boolean returns false unchanged', () {
+      final Runtime runtime = getRuntime('main = to.boolean(false)');
+      checkResult(runtime, false);
+    });
+
+    test('to.list converts set to list', () {
+      final Runtime runtime = getRuntime('main = to.list(set.new([1, 2, 3]))');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('to.list converts vector to list', () {
+      final Runtime runtime = getRuntime(
+        'main = to.list(vector.new([1, 2, 3]))',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('to.list converts stack to list', () {
+      final Runtime runtime = getRuntime(
+        'main = to.list(stack.new([1, 2, 3]))',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('to.list converts queue to list', () {
+      final Runtime runtime = getRuntime(
+        'main = to.list(queue.new([1, 2, 3]))',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+  });
+
+  // Table of type expressions used across all is.* tests.
+  final typeExpressions = {
+    'integer': '42',
+    'decimal': '12.5',
+    'string': '"Hello"',
+    'boolean': 'true',
+    'list': '[1, 2, 3]',
+    'map': '{"foo": 1}',
+    'vector': 'vector.new([1, 2, 3])',
+    'set': 'set.new([1, 2, 3])',
+    'stack': 'stack.new([1, 2, 3])',
+    'queue': 'queue.new([1, 2, 3])',
+    'function': 'num.abs',
+    'timestamp': 'time.now()',
+    'file': 'file.fromPath(".")',
+    'directory': 'directory.fromPath(".")',
+  };
+
+  // Each entry: function name -> set of type keys that should return true.
+  final isChecks = <String, Set<String>>{
+    'is.number': {'integer', 'decimal'},
+    'is.string': {'string'},
+    'is.boolean': {'boolean'},
+    'is.list': {'list'},
+    'is.map': {'map'},
+    'is.vector': {'vector'},
+    'is.set': {'set'},
+    'is.stack': {'stack'},
+    'is.queue': {'queue'},
+    'is.function': {'function'},
+    'is.timestamp': {'timestamp'},
+    'is.file': {'file'},
+    'is.directory': {'directory'},
+  };
+
+  for (final entry in isChecks.entries) {
+    final fn = entry.key;
+    final trueTypes = entry.value;
+
+    group(fn, () {
+      for (final typeEntry in typeExpressions.entries) {
+        final typeName = typeEntry.key;
+        final expr = typeEntry.value;
+        final expected = trueTypes.contains(typeName);
+
+        test('returns $expected for $typeName', () {
+          final Runtime runtime = getRuntime('main = $fn($expr)');
+          checkResult(runtime, expected);
+        });
+      }
+    });
+  }
+
+  // Special cases not covered by the table above.
+  group('Is (special cases)', () {
+    test('is.integer returns false for whole decimal', () {
+      final Runtime runtime = getRuntime('main = is.integer(12.0)');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer returns true for integer', () {
+      final Runtime runtime = getRuntime('main = is.integer(12)');
+      checkResult(runtime, true);
+    });
+
+    test('is.integer returns false for fractional decimal', () {
+      final Runtime runtime = getRuntime('main = is.integer(12.1)');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal returns false for integer', () {
+      final Runtime runtime = getRuntime('main = is.decimal(12)');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal returns true for decimal', () {
+      final Runtime runtime = getRuntime('main = is.decimal(12.5)');
+      checkResult(runtime, true);
+    });
+
+    test('is.infinite returns false for finite number', () {
+      final Runtime runtime = getRuntime('main = is.infinite(12)');
+      checkResult(runtime, false);
+    });
+
+    test('is.infinite returns true for division by zero', () {
+      final Runtime runtime = getRuntime('main = is.infinite(1/0)');
+      checkResult(runtime, true);
+    });
+
+    test('is.list returns true for empty list', () {
+      final Runtime runtime = getRuntime('main = is.list([])');
+      checkResult(runtime, true);
+    });
+
+    test('is.map returns true for empty map', () {
+      final Runtime runtime = getRuntime('main = is.map({})');
+      checkResult(runtime, true);
+    });
+
+    test('is.stack returns true for empty stack', () {
+      final Runtime runtime = getRuntime('main = is.stack(stack.new([]))');
+      checkResult(runtime, true);
+    });
+
+    test('is.queue returns true for empty queue', () {
+      final Runtime runtime = getRuntime('main = is.queue(queue.new([]))');
+      checkResult(runtime, true);
+    });
+  });
+
+  group('Casting Edge Cases', () {
+    test('to.number throws ParseError for non-numeric string', () {
+      final Runtime runtime = getRuntime('main = to.number("hello")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('hello'),
+              contains('number'),
+              contains('to.number'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('to.integer throws ParseError for non-numeric string', () {
+      final Runtime runtime = getRuntime('main = to.integer("hello")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('hello'),
+              contains('integer'),
+              contains('to.integer'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('to.integer throws ParseError for decimal string', () {
+      final Runtime runtime = getRuntime('main = to.integer("3.14")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('3.14'),
+              contains('integer'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('to.decimal throws ParseError for non-numeric string', () {
+      final Runtime runtime = getRuntime('main = to.decimal("hello")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('hello'),
+              contains('decimal'),
+              contains('to.decimal'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('to.list with number throws', () {
+      final Runtime runtime = getRuntime('main = to.list(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.boolean with list throws', () {
+      final Runtime runtime = getRuntime('main = to.boolean([])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.boolean with map throws', () {
+      final Runtime runtime = getRuntime('main = to.boolean({})');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.list with list', () {
+      final Runtime runtime = getRuntime('main = to.list([1, 2, 3])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+}

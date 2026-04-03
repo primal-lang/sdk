@@ -4,21 +4,21 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class MapSet extends NativeFunctionNode {
   MapSet()
-      : super(
-          name: 'map.set',
-          parameters: [
-            Parameter.map('a'),
-            Parameter.any('b'),
-            Parameter.any('c'),
-          ],
-        );
+    : super(
+        name: 'map.set',
+        parameters: [
+          Parameter.map('a'),
+          Parameter.any('b'),
+          Parameter.any('c'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {

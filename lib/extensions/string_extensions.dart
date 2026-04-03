@@ -1,63 +1,72 @@
 extension StringExtensions on String {
   bool get isDigit => RegExp(r'\d').hasMatch(this);
 
+  bool get isHexDigit => RegExp(r'[0-9a-fA-F]').hasMatch(this);
+
   bool get isLetter => RegExp(r'[a-zA-Z]').hasMatch(this);
 
-  bool get isWhitespace => RegExp(r'\s').hasMatch(this);
+  bool get isWhitespace =>
+      this == ' ' || this == '\t' || this == '\n' || this == '\r';
 
-  bool get isNewLine => RegExp(r'\n').hasMatch(this);
+  bool get isNewLine => this == '\n';
 
-  bool get isDoubleQuote => RegExp(r'"').hasMatch(this);
+  bool get isDoubleQuote => this == '"';
 
-  bool get isSingleQuote => RegExp(r"'").hasMatch(this);
+  bool get isSingleQuote => this == "'";
 
-  bool get isMinus => RegExp(r'-').hasMatch(this);
+  bool get isMinus => this == '-';
 
-  bool get isPlus => RegExp(r'\+').hasMatch(this);
+  bool get isPlus => this == '+';
 
-  bool get isEquals => RegExp(r'=').hasMatch(this);
+  bool get isEquals => this == '=';
 
-  bool get isGreater => RegExp(r'>').hasMatch(this);
+  bool get isGreater => this == '>';
 
-  bool get isLess => RegExp(r'<').hasMatch(this);
+  bool get isLess => this == '<';
 
-  bool get isPipe => RegExp(r'\|').hasMatch(this);
+  bool get isPipe => this == '|';
 
-  bool get isAmpersand => RegExp(r'&').hasMatch(this);
+  bool get isAmpersand => this == '&';
 
-  bool get isBang => RegExp(r'!').hasMatch(this);
+  bool get isBang => this == '!';
 
-  bool get isForwardSlash => RegExp(r'/').hasMatch(this);
+  bool get isForwardSlash => this == '/';
 
-  bool get isAsterisk => RegExp(r'\*').hasMatch(this);
+  bool get isBackslash => this == '\\';
 
-  bool get isPercent => RegExp(r'%').hasMatch(this);
+  bool get isAsterisk => this == '*';
 
-  bool get isUnderscore => RegExp(r'_').hasMatch(this);
+  bool get isPercent => this == '%';
 
-  bool get isDot => RegExp(r'\.').hasMatch(this);
+  bool get isAt => this == '@';
 
-  bool get isComma => RegExp(r',').hasMatch(this);
+  bool get isUnderscore => this == '_';
 
-  bool get isColon => RegExp(r':').hasMatch(this);
+  bool get isDot => this == '.';
 
-  bool get isOpenParenthesis => RegExp(r'\(').hasMatch(this);
+  bool get isExponent => this == 'e' || this == 'E';
 
-  bool get isCloseParenthesis => RegExp(r'\)').hasMatch(this);
+  bool get isComma => this == ',';
 
-  bool get isOpenBracket => RegExp(r'\[').hasMatch(this);
+  bool get isColon => this == ':';
 
-  bool get isCloseBracket => RegExp(r'\]').hasMatch(this);
+  bool get isOpenParenthesis => this == '(';
 
-  bool get isOpenBraces => RegExp(r'\{').hasMatch(this);
+  bool get isCloseParenthesis => this == ')';
 
-  bool get isCloseBraces => RegExp(r'\}').hasMatch(this);
+  bool get isOpenBracket => this == '[';
 
-  bool get isBoolean => RegExp(r'true|false').hasMatch(this);
+  bool get isCloseBracket => this == ']';
 
-  bool get isIf => RegExp(r'if').hasMatch(this);
+  bool get isOpenBraces => this == '{';
 
-  bool get isElse => RegExp(r'else').hasMatch(this);
+  bool get isCloseBraces => this == '}';
+
+  bool get isBoolean => this == 'true' || this == 'false';
+
+  bool get isIf => this == 'if';
+
+  bool get isElse => this == 'else';
 
   bool get isOperandDelimiter =>
       isWhitespace ||
@@ -79,97 +88,8 @@ extension StringExtensions on String {
       isSingleQuote ||
       isOpenParenthesis ||
       isOpenBracket ||
-      isOpenBraces;
-
-  bool get isCommaDelimiter =>
-      isWhitespace ||
-      isDigit ||
-      isLetter ||
-      isDoubleQuote ||
-      isSingleQuote ||
-      isOpenParenthesis ||
-      isOpenBracket ||
       isOpenBraces ||
       isUnaryOperator;
-
-  bool get isColonDelimiter =>
-      isWhitespace ||
-      isDigit ||
-      isLetter ||
-      isDoubleQuote ||
-      isSingleQuote ||
-      isOpenParenthesis ||
-      isOpenBracket ||
-      isOpenBraces ||
-      isUnaryOperator;
-
-  bool get isOpenParenthesisDelimiter =>
-      isWhitespace ||
-      isDigit ||
-      isLetter ||
-      isDoubleQuote ||
-      isSingleQuote ||
-      isOpenParenthesis ||
-      isCloseParenthesis ||
-      isOpenBracket ||
-      isOpenBraces ||
-      isUnaryOperator;
-
-  bool get isCloseParenthesisDelimiter =>
-      isWhitespace ||
-      isComma ||
-      isColon ||
-      isLetter ||
-      isOpenParenthesis ||
-      isCloseParenthesis ||
-      isOpenBracket ||
-      isCloseBracket ||
-      isBinaryOperator;
-
-  bool get isOpenBracketDelimiter =>
-      isWhitespace ||
-      isDigit ||
-      isLetter ||
-      isDoubleQuote ||
-      isSingleQuote ||
-      isOpenParenthesis ||
-      isOpenBracket ||
-      isCloseBracket ||
-      isOpenBraces ||
-      isUnaryOperator;
-
-  bool get isCloseBracketDelimiter =>
-      isWhitespace ||
-      isComma ||
-      isLetter ||
-      isOpenParenthesis ||
-      isCloseParenthesis ||
-      isOpenBracket ||
-      isCloseBracket ||
-      isCloseBraces ||
-      isBinaryOperator;
-
-  bool get isOpenBracesDelimiter =>
-      isWhitespace ||
-      isDigit ||
-      isLetter ||
-      isDoubleQuote ||
-      isSingleQuote ||
-      isOpenParenthesis ||
-      isOpenBracket ||
-      isOpenBraces ||
-      isCloseBraces ||
-      isUnaryOperator;
-
-  bool get isCloseBracesDelimiter =>
-      isWhitespace ||
-      isComma ||
-      isLetter ||
-      isCloseParenthesis ||
-      isOpenBracket ||
-      isCloseBracket ||
-      isCloseBraces ||
-      isBinaryOperator;
 
   bool get isIdentifier => isLetter || isDigit || isDot || isUnderscore;
 
@@ -184,7 +104,8 @@ extension StringExtensions on String {
       isBang ||
       isForwardSlash ||
       isAsterisk ||
-      isPercent;
+      isPercent ||
+      isAt;
 
   bool get isUnaryOperator => isMinus || isBang;
 }

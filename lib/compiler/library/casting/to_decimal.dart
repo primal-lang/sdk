@@ -4,19 +4,19 @@ import 'package:primal/compiler/runtime/node.dart';
 
 class ToDecimal extends NativeFunctionNode {
   ToDecimal()
-      : super(
-          name: 'to.decimal',
-          parameters: [
-            Parameter.any('a'),
-          ],
-        );
+    : super(
+        name: 'to.decimal',
+        parameters: [
+          Parameter.any('a'),
+        ],
+      );
 
   @override
   Node node(List<Node> arguments) => NodeWithArguments(
-        name: name,
-        parameters: parameters,
-        arguments: arguments,
-      );
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -31,7 +31,11 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      return NumberNode(double.parse(a.value));
+      try {
+        return NumberNode(double.parse(a.value));
+      } on FormatException {
+        throw ParseError(function: name, input: a.value, targetType: 'decimal');
+      }
     } else if (a is NumberNode) {
       return NumberNode(a.value.toDouble());
     } else {
