@@ -15,4 +15,4 @@ read all the documentation in "docs" and the code in "lib" propose new features 
 - ranges, slices and spread
 - enums
 
-come up with new features thare are not in that list (you can propose similar features if you want) ask me if you have questions
+come up with new features thare are not in that list (you can propose similar features if you want). ask me if you have questions
