@@ -1,6 +1,6 @@
 read all the documentation in "docs" and the code in "lib" propose new features to add to the language. some examples:
 - anonymous functions (lambda functions)
-- curryfication
+- curryfication / partial application
 - "let" expression
 - try/catch
 - imports
@@ -14,5 +14,11 @@ read all the documentation in "docs" and the code in "lib" propose new features 
 - pipeline operator
 - ranges, slices and spread
 - enums
+- where clauses
+- guards
+- function composition operator
+- list comprehensions
+- tuples
+- regular expression
 
 come up with new features thare are not in that list (you can propose similar features if you want). ask me if you have questions

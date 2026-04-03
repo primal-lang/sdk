@@ -108,7 +108,7 @@ class SemanticAnalyzer
       final Node node = checkNode(
         node: function.node,
         currentFunction: function.name,
-        availableParameters: function.parameters.map((e) => e.name).toList(),
+        availableParameters: function.parameters.map((e) => e.name).toSet(),
         usedParameters: usedParameters,
         allFunctions: allFunctions,
       );
@@ -139,145 +139,54 @@ class SemanticAnalyzer
   Node checkNode({
     required Node node,
     required String currentFunction,
-    required List<String> availableParameters,
+    required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
-  }) {
-    if (node is IdentifierNode) {
-      return checkVariableIdentifier(
-        node: node,
-        currentFunction: currentFunction,
-        availableParameters: availableParameters,
-        usedParameters: usedParameters,
-        allFunctions: allFunctions,
-      );
-    } else if (node is CallNode) {
-      Node callee = node.callee;
-
-      // Check for non-callable literals (e.g., 5(1))
-      if (_isNonCallableLiteral(callee)) {
-        throw NotCallableError(
-          value: callee.toString(),
-          type: _literalTypeName(callee),
-        );
-      }
-
-      // Note: Arity checking only works for direct calls (e.g., foo(1, 2)).
-      // Indirect calls (e.g., f()(x)) cannot be statically checked without
-      // return type information and are validated at runtime instead.
-
-      // Check for @ operator with non-indexable first argument (e.g., 5[0])
-      if (callee is IdentifierNode &&
-          callee.value == '@' &&
-          node.arguments.isNotEmpty) {
-        final Node target = node.arguments[0];
-        if (_isNonIndexableLiteral(target)) {
-          throw NotIndexableError(
-            value: target.toString(),
-            type: _literalTypeName(target),
-          );
-        }
-      }
-
-      if (callee is IdentifierNode) {
-        callee = checkCalleeIdentifier(
-          node: node,
-          callee: callee,
-          currentFunction: currentFunction,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        );
-      } else if (callee is CallNode) {
-        callee = checkNode(
-          node: callee,
-          currentFunction: currentFunction,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        );
-      }
-
-      final List<Node> newArguments = [];
-
-      for (final Node argument in node.arguments) {
-        newArguments.add(
-          checkNode(
-            node: argument,
-            currentFunction: currentFunction,
-            availableParameters: availableParameters,
-            usedParameters: usedParameters,
-            allFunctions: allFunctions,
-          ),
-        );
-      }
-
-      return CallNode(
-        callee: callee,
-        arguments: newArguments,
-      );
-    } else if (node is ListNode) {
-      final List<Node> elements = [];
-
-      for (final Node element in node.value) {
-        elements.add(
-          checkNode(
-            node: element,
-            currentFunction: currentFunction,
-            availableParameters: availableParameters,
-            usedParameters: usedParameters,
-            allFunctions: allFunctions,
-          ),
-        );
-      }
-
-      return ListNode(elements);
-    } else if (node is MapNode) {
-      final Map<Node, Node> elements = {};
-
-      for (final MapEntry<Node, Node> entry in node.value.entries) {
-        final Node key = checkNode(
-          node: entry.key,
-          currentFunction: currentFunction,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        );
-
-        final Node value = checkNode(
-          node: entry.value,
-          currentFunction: currentFunction,
-          availableParameters: availableParameters,
-          usedParameters: usedParameters,
-          allFunctions: allFunctions,
-        );
-
-        elements[key] = value;
-      }
-
-      return MapNode(elements);
-    } else if (node is BooleanNode ||
-        node is NumberNode ||
-        node is StringNode) {
-      // Literals contain no identifiers and need no checking
-      return node;
-    }
-
-    throw StateError(
+  }) => switch (node) {
+    IdentifierNode() => _checkIdentifier(
+      node: node,
+      currentFunction: currentFunction,
+      availableParameters: availableParameters,
+      usedParameters: usedParameters,
+      allFunctions: allFunctions,
+    ),
+    CallNode() => _checkCall(
+      node: node,
+      currentFunction: currentFunction,
+      availableParameters: availableParameters,
+      usedParameters: usedParameters,
+      allFunctions: allFunctions,
+    ),
+    ListNode() => _checkList(
+      node: node,
+      currentFunction: currentFunction,
+      availableParameters: availableParameters,
+      usedParameters: usedParameters,
+      allFunctions: allFunctions,
+    ),
+    MapNode() => _checkMap(
+      node: node,
+      currentFunction: currentFunction,
+      availableParameters: availableParameters,
+      usedParameters: usedParameters,
+      allFunctions: allFunctions,
+    ),
+    // Literals contain no identifiers and need no checking
+    BooleanNode() || NumberNode() || StringNode() => node,
+    _ => throw StateError(
       'Unexpected node type in semantic analysis: ${node.runtimeType}',
-    );
-  }
+    ),
+  };
 
-  Node checkVariableIdentifier({
+  Node _checkIdentifier({
     required IdentifierNode node,
     required String currentFunction,
-    required List<String> availableParameters,
+    required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
   }) {
     if (availableParameters.contains(node.value)) {
       usedParameters.add(node.value);
-
       return BoundVariableNode(node.value);
     } else if (allFunctions.containsKey(node.value)) {
       return node;
@@ -289,11 +198,136 @@ class SemanticAnalyzer
     }
   }
 
-  Node checkCalleeIdentifier({
+  Node _checkCall({
+    required CallNode node,
+    required String currentFunction,
+    required Set<String> availableParameters,
+    required Set<String> usedParameters,
+    required Map<String, FunctionNode> allFunctions,
+  }) {
+    Node callee = node.callee;
+
+    // Check for non-callable literals (e.g., 5(1))
+    if (_isNonCallableLiteral(callee)) {
+      throw NotCallableError(
+        value: callee.toString(),
+        type: _literalTypeName(callee),
+      );
+    }
+
+    // Note: Arity checking only works for direct calls (e.g., foo(1, 2)).
+    // Indirect calls (e.g., f()(x)) cannot be statically checked without
+    // return type information and are validated at runtime instead.
+
+    // Check for @ operator with non-indexable first argument (e.g., 5[0])
+    if (callee is IdentifierNode &&
+        callee.value == '@' &&
+        node.arguments.isNotEmpty) {
+      final Node target = node.arguments[0];
+      if (_isNonIndexableLiteral(target)) {
+        throw NotIndexableError(
+          value: target.toString(),
+          type: _literalTypeName(target),
+        );
+      }
+    }
+
+    if (callee is IdentifierNode) {
+      callee = _checkCalleeIdentifier(
+        node: node,
+        callee: callee,
+        currentFunction: currentFunction,
+        availableParameters: availableParameters,
+        usedParameters: usedParameters,
+        allFunctions: allFunctions,
+      );
+    } else if (callee is CallNode) {
+      callee = checkNode(
+        node: callee,
+        currentFunction: currentFunction,
+        availableParameters: availableParameters,
+        usedParameters: usedParameters,
+        allFunctions: allFunctions,
+      );
+    }
+
+    final List<Node> newArguments = node.arguments
+        .map(
+          (argument) => checkNode(
+            node: argument,
+            currentFunction: currentFunction,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            allFunctions: allFunctions,
+          ),
+        )
+        .toList();
+
+    return CallNode(
+      callee: callee,
+      arguments: newArguments,
+    );
+  }
+
+  Node _checkList({
+    required ListNode node,
+    required String currentFunction,
+    required Set<String> availableParameters,
+    required Set<String> usedParameters,
+    required Map<String, FunctionNode> allFunctions,
+  }) {
+    final List<Node> elements = node.value
+        .map(
+          (element) => checkNode(
+            node: element,
+            currentFunction: currentFunction,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            allFunctions: allFunctions,
+          ),
+        )
+        .toList();
+
+    return ListNode(elements);
+  }
+
+  Node _checkMap({
+    required MapNode node,
+    required String currentFunction,
+    required Set<String> availableParameters,
+    required Set<String> usedParameters,
+    required Map<String, FunctionNode> allFunctions,
+  }) {
+    final Map<Node, Node> elements = {};
+
+    for (final MapEntry<Node, Node> entry in node.value.entries) {
+      final Node key = checkNode(
+        node: entry.key,
+        currentFunction: currentFunction,
+        availableParameters: availableParameters,
+        usedParameters: usedParameters,
+        allFunctions: allFunctions,
+      );
+
+      final Node value = checkNode(
+        node: entry.value,
+        currentFunction: currentFunction,
+        availableParameters: availableParameters,
+        usedParameters: usedParameters,
+        allFunctions: allFunctions,
+      );
+
+      elements[key] = value;
+    }
+
+    return MapNode(elements);
+  }
+
+  Node _checkCalleeIdentifier({
     required CallNode node,
     required IdentifierNode callee,
     required String currentFunction,
-    required List<String> availableParameters,
+    required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionNode> allFunctions,
   }) {
@@ -301,7 +335,6 @@ class SemanticAnalyzer
 
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
-
       return BoundVariableNode(functionName);
     } else if (allFunctions.containsKey(functionName)) {
       final FunctionNode function = allFunctions[functionName]!;
