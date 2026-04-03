@@ -1,0 +1,9 @@
+- High: semantic resolution is only half-done. Known function names
+survive analysis as plain IdentifierNodes instead of becoming
+resolved references in the IR lib/compiler/semantic/
+semantic_analyzer.dart:259 and are looked up again through the
+global runtime scope later lib/compiler/runtime/node.dart:205
+lib/compiler/runtime/runtime.dart:12. That is acceptable for a
+tiny interpreter, but architecturally it means the analyzer
+validates one representation and the runtime still depends on
+mutable name lookup.

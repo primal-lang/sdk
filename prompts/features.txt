@@ -1,4 +1,4 @@
-read all the documentation in "docs" and the code in "lib" propose new features to add to the language. some examples:
+read all the documentation in @docs/ and the code in @lib/ propose new features to add to the language. some examples:
 - anonymous functions (lambda functions)
 - curryfication / partial application
 - "let" expression
