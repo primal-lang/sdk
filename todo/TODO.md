@@ -9,6 +9,7 @@
 
 ---
 
+- Are all @docs up-to-date
 - Create changelog
 - Update website
   - With latest changes (add the @ operator)
