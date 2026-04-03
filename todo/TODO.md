@@ -9,7 +9,6 @@
 
 ---
 
-- Create changelog
 - Update website
   - With latest changes (add the @ operator)
   - Compile to JS and use 0.4.1
