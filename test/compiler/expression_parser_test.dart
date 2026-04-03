@@ -580,6 +580,48 @@ void main() {
     });
   });
 
+  group('Number literal formats', () {
+    test('Integer with underscore separator', () {
+      final Expression expression = getExpression('1_000_000');
+      expect(expression.toString(), '1000000');
+    });
+
+    test('Decimal with underscore separator', () {
+      final Expression expression = getExpression('3.14_159');
+      expect(expression.toString(), '3.14159');
+    });
+
+    test('Scientific notation - positive exponent', () {
+      final Expression expression = getExpression('1e10');
+      expect(expression.toString(), '10000000000.0');
+    });
+
+    test('Scientific notation - explicit positive exponent', () {
+      final Expression expression = getExpression('1e+10');
+      expect(expression.toString(), '10000000000.0');
+    });
+
+    test('Scientific notation - negative exponent', () {
+      final Expression expression = getExpression('1e-3');
+      expect(expression.toString(), '0.001');
+    });
+
+    test('Scientific notation - decimal with exponent', () {
+      final Expression expression = getExpression('1.5e2');
+      expect(expression.toString(), '150.0');
+    });
+
+    test('Underscore number in expression', () {
+      final Expression expression = getExpression('1_000 + 2_000');
+      expect(expression.toString(), '+(1000, 2000)');
+    });
+
+    test('Scientific notation in expression', () {
+      final Expression expression = getExpression('1e3 * 2');
+      expect(expression.toString(), '*(1000.0, 2)');
+    });
+  });
+
   group('ExpressionParser edge cases', () {
     test('accessing previous before advance throws StateError', () {
       final List<Token> tokens = getTokens('x');

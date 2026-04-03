@@ -1,9 +1,0 @@
-analyze the test suite for the project located at @test/ and   
-proposes ways we can improve it:                                   
-- better structure?                                                
-- better approach?                                                 
-- implement missing tests?                                         
-- increase coverage?
-
-don't make it overcomplicated                                                                   
-ask me if you have questions

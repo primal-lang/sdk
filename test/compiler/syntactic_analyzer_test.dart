@@ -1020,6 +1020,54 @@ void main() {
       ]);
     });
 
+    // Number literal formats
+
+    test('Literal number with underscore separator', () {
+      final List<FunctionDefinition> functions = getFunctions(
+        'million = 1_000_000',
+      );
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'million',
+          parameters: [],
+          expression: NumberExpression(numberToken(1000000, 1, 11)),
+        ),
+      ]);
+    });
+
+    test('Literal number with scientific notation', () {
+      final List<FunctionDefinition> functions = getFunctions('big = 1e10');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'big',
+          parameters: [],
+          expression: NumberExpression(numberToken(1e10, 1, 7)),
+        ),
+      ]);
+    });
+
+    test('Literal number with scientific notation and negative exponent', () {
+      final List<FunctionDefinition> functions = getFunctions('small = 1e-5');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'small',
+          parameters: [],
+          expression: NumberExpression(numberToken(1e-5, 1, 9)),
+        ),
+      ]);
+    });
+
+    test('Literal decimal with scientific notation', () {
+      final List<FunctionDefinition> functions = getFunctions('val = 2.5e3');
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'val',
+          parameters: [],
+          expression: NumberExpression(numberToken(2.5e3, 1, 7)),
+        ),
+      ]);
+    });
+
     // ResultState terminal behavior
 
     test('ResultState.next throws StateError', () {

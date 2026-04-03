@@ -627,4 +627,51 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
   });
+
+  group('Number literal formats', () {
+    test('Integer with underscore separator', () {
+      final Runtime runtime = getRuntime('main = 1_000_000');
+      checkResult(runtime, 1000000);
+    });
+
+    test('Decimal with underscore separator', () {
+      final Runtime runtime = getRuntime('main = 3.14_159');
+      checkResult(runtime, 3.14159);
+    });
+
+    test('Scientific notation - positive exponent', () {
+      final Runtime runtime = getRuntime('main = 1e6');
+      checkResult(runtime, 1e6);
+    });
+
+    test('Scientific notation - explicit positive exponent', () {
+      final Runtime runtime = getRuntime('main = 1e+6');
+      checkResult(runtime, 1e6);
+    });
+
+    test('Scientific notation - negative exponent', () {
+      final Runtime runtime = getRuntime('main = 1e-3');
+      checkResult(runtime, 0.001);
+    });
+
+    test('Scientific notation - decimal with exponent', () {
+      final Runtime runtime = getRuntime('main = 2.5e3');
+      checkResult(runtime, 2.5e3);
+    });
+
+    test('Underscore number in arithmetic', () {
+      final Runtime runtime = getRuntime('main = 1_000 + 2_000');
+      checkResult(runtime, 3000);
+    });
+
+    test('Scientific notation in arithmetic', () {
+      final Runtime runtime = getRuntime('main = 1e3 * 2');
+      checkResult(runtime, 1e3 * 2);
+    });
+
+    test('Mixed underscore and scientific notation', () {
+      final Runtime runtime = getRuntime('main = 1_000e3');
+      checkResult(runtime, 1000e3);
+    });
+  });
 }
