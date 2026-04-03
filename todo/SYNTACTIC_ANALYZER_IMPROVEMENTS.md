@@ -1,249 +1,3 @@
-# Syntactic Analyzer: Detailed Improvement Plan
-
-This document details specific issues identified in the syntactic analyzer and provides a concrete plan for addressing each one.
-
----
-
-## Table of Contents
-
-1. [Issue #2: Type Checks Mix Syntactic and Semantic Concerns](#issue-2-type-checks-mix-syntactic-and-semantic-concerns)
-2. [Issue #3: `ResultState` Doesn't Implement `process()`](#issue-3-resultstate-doesnt-implement-process)
-3. [Issue #4: `previous` Assumes Non-Null](#issue-4-previous-assumes-non-null)
-4. [Issue #7: Lambda Allocation in `match()`](#issue-7-lambda-allocation-in-match)
-5. [Issue #8: `MapEntryExpression` Lacks Location Info](#issue-8-mapentryexpression-lacks-location-info)
-
----
-
-## Issue #2: Type Checks Mix Syntactic and Semantic Concerns
-
-### Location
-
-`lib/compiler/syntactic/expression_parser.dart`, lines 187-231 (the `call()` method)
-
-### Current Behavior
-
-The `call()` method explicitly checks the runtime type of parsed expressions to decide whether they can be called or indexed:
-
-```dart
-Expression call() {
-  Expression exp = primary();
-
-  while (true) {
-    if (match([(t) => t is OpenParenthesisToken])) {
-      // TYPE CHECK: Only allows IdentifierExpression or CallExpression
-      if ((exp is IdentifierExpression) || (exp is CallExpression)) {
-        exp = finishCall(exp);
-      } else {
-        throw InvalidTokenError(
-          previous,
-          'callable expression (identifier or function call) before',
-        );
-      }
-    } else if (match([(t) => t is OpenBracketToken])) {
-      // TYPE CHECK: Only allows specific expression types
-      if ((exp is IdentifierExpression) ||
-          (exp is CallExpression) ||
-          (exp is StringExpression) ||
-          (exp is ListExpression) ||
-          (exp is MapExpression)) {
-        // ... perform indexing
-      } else {
-        throw InvalidTokenError(
-          previous,
-          'indexable expression (identifier, function call, string, list, or map) before',
-        );
-      }
-    } else {
-      break;
-    }
-  }
-
-  return exp;
-}
-```
-
-### Why This Is Problematic
-
-#### 1. Violates Separation of Concerns
-
-The parser's job is to convert a stream of tokens into an Abstract Syntax Tree (AST). Deciding what is "callable" or "indexable" is a **semantic** decision that belongs in semantic analysis.
-
-The classic compiler pipeline is:
-```
-Lexical Analysis → Syntactic Analysis → Semantic Analysis → Code Generation
-                   (tokens → AST)       (type checking)
-```
-
-Mixing semantic checks into the parser blurs this boundary and makes both harder to maintain.
-
-#### 2. Rejects Valid Syntax
-
-Consider this input:
-```
-(1 + 2)(x)
-```
-
-**Syntactically**, this is valid:
-- A parenthesized expression `(1 + 2)`
-- Followed by a function call syntax `(x)`
-
-The parser should produce:
-```
-CallExpression(
-  callee: CallExpression(+, [1, 2]),  // from binary operation
-  arguments: [IdentifierExpression(x)]
-)
-```
-
-But currently, the parser **rejects** this because `CallExpression.fromBinaryOperation` returns a `CallExpression`, which IS in the allowed list... but wait, let me trace through more carefully:
-
-Actually, `1 + 2` produces a `CallExpression` (because operators are desugared), so this specific case would pass. Let me find a case that actually fails:
-
-```
-(1)(x)
-```
-
-Here:
-- `(1)` is parsed as `NumberExpression(1)` (parentheses just group, don't change type)
-- `(x)` attempts to call it
-
-Since `NumberExpression` is not in `[IdentifierExpression, CallExpression]`, this throws `InvalidTokenError`.
-
-**But is `(1)(x)` valid Primal?** That's a semantic question! The parser shouldn't decide. It should build:
-```
-CallExpression(
-  callee: NumberExpression(1),
-  arguments: [IdentifierExpression(x)]
-)
-```
-
-And let semantic analysis report: "Cannot call a number."
-
-#### 3. Error Messages Are Misleading
-
-The error says "invalid token" but the token `(` is perfectly valid. The problem isn't the token—it's that the preceding expression can't be called. This is a type error, not a syntax error.
-
-#### 4. Whitelist Is Incomplete/Arbitrary
-
-For calling (lines 192-193):
-```dart
-if ((exp is IdentifierExpression) || (exp is CallExpression))
-```
-
-For indexing (lines 201-205):
-```dart
-if ((exp is IdentifierExpression) ||
-    (exp is CallExpression) ||
-    (exp is StringExpression) ||
-    (exp is ListExpression) ||
-    (exp is MapExpression))
-```
-
-Why isn't `BooleanExpression` in the indexing list? Because booleans can't be indexed. But that's a semantic decision! What if a future version of Primal adds a type that can be indexed? You'd need to update the parser.
-
-### Proposed Solution
-
-Remove all type checks from `call()`. Accept any expression as a callee or indexee:
-
-```dart
-Expression call() {
-  Expression exp = primary();
-
-  while (true) {
-    if (match([(t) => t is OpenParenthesisToken])) {
-      // No type check - any expression can syntactically be "called"
-      exp = finishCall(exp);
-    } else if (match([(t) => t is OpenBracketToken])) {
-      // No type check - any expression can syntactically be "indexed"
-      final Token operator = AtToken(
-        Lexeme(
-          value: '@',
-          location: previous.location,
-        ),
-      );
-      final Expression idx = expression();
-      consume((t) => t is CloseBracketToken, ']');
-      exp = CallExpression.fromBinaryOperation(
-        operator: operator,
-        left: exp,
-        right: idx,
-      );
-    } else {
-      break;
-    }
-  }
-
-  return exp;
-}
-```
-
-Then add validation in semantic analysis to report meaningful errors like:
-- "Cannot call expression of type Number"
-- "Cannot index expression of type Boolean"
-
-### Impact on Tests
-
-**Tests that will break:**
-
-From `test/compiler/expression_parser_test.dart`:
-
-```dart
-test('non-identifier call throws InvalidTokenError', () {
-  expect(
-    () => getExpression('5(1)'),
-    throwsA(isA<InvalidTokenError>()),
-  );
-});
-
-test('non-indexable bracket access throws InvalidTokenError', () {
-  expect(
-    () => getExpression('5[0]'),
-    throwsA(isA<InvalidTokenError>()),
-  );
-});
-```
-
-**Required test changes:**
-
-1. **Remove** or **modify** the above tests since `5(1)` and `5[0]` will now parse successfully
-2. **Add tests** verifying that these parse into the expected AST:
-   ```dart
-   test('Number followed by call syntax parses as CallExpression', () {
-     final Expression expression = getExpression('5(1)');
-     expect(expression, isA<CallExpression>());
-     final call = expression as CallExpression;
-     expect(call.callee, isA<NumberExpression>());
-     expect(call.arguments.length, 1);
-   });
-
-   test('Number followed by index syntax parses as index operation', () {
-     final Expression expression = getExpression('5[0]');
-     expect(expression.toString(), '@(5, 0)');
-   });
-   ```
-
-3. **Add semantic analysis tests** to verify that type errors are caught during semantic analysis (not parsing):
-   ```dart
-   // In semantic_analyzer_test.dart
-   test('Calling a number produces semantic error', () {
-     expect(
-       () => analyze('main = 5(1)'),
-       throwsA(isA<SemanticError>()), // or whatever error type
-     );
-   });
-   ```
-
-### Files to Modify
-
-| File | Change |
-|------|--------|
-| `lib/compiler/syntactic/expression_parser.dart` | Remove type checks in `call()` |
-| `lib/compiler/semantic/semantic_analyzer.dart` | Add "is callable" / "is indexable" validation |
-| `test/compiler/expression_parser_test.dart` | Update/remove error tests, add AST structure tests |
-| `test/compiler/semantic_analyzer_test.dart` | Add type validation tests |
-
----
-
 ## Issue #3: `ResultState` Doesn't Implement `process()`
 
 ### Location
@@ -310,6 +64,7 @@ class ResultState extends State<void, FunctionDefinition>
 The generic type `I` is `void`, meaning `process(I input)` becomes `process(void input)`. In Dart, you can't actually pass a `void` value, so calling `iterator.next` (which returns a `Token`, not `void`) would cause a type mismatch at runtime if the type system were stricter.
 
 Currently it "works" because:
+
 1. `process()` is never called on `ResultState`
 2. Dart's type system allows this due to how `void` and generics interact
 
@@ -374,10 +129,10 @@ test('ResultState.next throws StateError', () {
 
 ### Files to Modify
 
-| File | Change |
-|------|--------|
+| File                                             | Change                                    |
+| ------------------------------------------------ | ----------------------------------------- |
 | `lib/compiler/syntactic/syntactic_analyzer.dart` | Override `next` in `ResultState` to throw |
-| `test/compiler/syntactic_analyzer_test.dart` | Add test for `ResultState.next` throwing |
+| `test/compiler/syntactic_analyzer_test.dart`     | Add test for `ResultState.next` throwing  |
 
 ---
 
@@ -540,10 +295,10 @@ Note: These tests require making `previous` accessible for testing, or testing t
 
 ### Files to Modify
 
-| File | Change |
-|------|--------|
+| File                                            | Change                              |
+| ----------------------------------------------- | ----------------------------------- |
 | `lib/compiler/syntactic/expression_parser.dart` | Add null check to `previous` getter |
-| `test/compiler/expression_parser_test.dart` | Add edge case tests |
+| `test/compiler/expression_parser_test.dart`     | Add edge case tests                 |
 
 ---
 
@@ -592,12 +347,14 @@ while (match([(t) => t is MinusToken, (t) => t is PlusToken])) {
 #### 1. Heap Allocation Overhead
 
 In Dart, closures are objects allocated on the heap. Each `(t) => t is SomeToken` creates a new `Closure` instance with:
+
 - A function pointer
 - A captured environment (empty in this case, but still allocated)
 
 #### 2. GC Pressure
 
 Parsing happens frequently. For a program with 100 expressions:
+
 - `equality()` creates 2 closures per call × 100 = 200 closures
 - `comparison()` creates 4 closures per call × 100 = 400 closures
 - `term()` creates 2 closures per call × 100 = 200 closures
@@ -730,6 +487,7 @@ This requires changing `match()` to accept a single predicate, but avoids list a
 ### Recommended Approach
 
 **Option A** (static predicates) is the most straightforward improvement:
+
 - Zero allocation per parse
 - No API changes needed
 - Predicates are self-documenting
@@ -759,10 +517,10 @@ test('Expression parsing performance', () {
 
 ### Files to Modify
 
-| File | Change |
-|------|--------|
+| File                                            | Change                                        |
+| ----------------------------------------------- | --------------------------------------------- |
 | `lib/compiler/syntactic/expression_parser.dart` | Add static predicates, update `match()` calls |
-| `test/compiler/expression_parser_test.dart` | (Optional) Add performance test |
+| `test/compiler/expression_parser_test.dart`     | (Optional) Add performance test               |
 
 ---
 
@@ -802,6 +560,7 @@ class MapExpression extends LiteralExpression<List<MapEntryExpression>> { /* has
 #### 1. Poor Error Localization
 
 Consider this code:
+
 ```primal
 config = {"name": 123, "debug": "yes"}
 ```
@@ -809,11 +568,13 @@ config = {"name": 123, "debug": "yes"}
 If semantic analysis detects that `"name": 123` is invalid (e.g., expected a string value), the error can only point to the `MapExpression`'s location (the opening `{`), not to the specific entry.
 
 **Current error:**
+
 ```
 Error at line 1, column 10: Type mismatch in map
 ```
 
 **Desired error:**
+
 ```
 Error at line 1, column 11: Expected string value for key "name", got number
                     ^^^^^
@@ -824,6 +585,7 @@ Without location info on `MapEntryExpression`, we can't produce the better error
 #### 2. Inconsistency in Data Model
 
 Every other syntactic construct has location information:
+
 - `Expression` has `location`
 - `Token` has `location`
 - `FunctionDefinition` has an expression with a location
@@ -884,6 +646,7 @@ Expression map(Token token) {
 ### Alternative: Use Key's Location Directly
 
 If adding a field to `MapEntryExpression` is considered too invasive, error messages could use `entry.key.location` directly. However, this is a workaround rather than a proper fix:
+
 - It couples error reporting to knowledge about `MapEntryExpression`'s internal structure
 - It doesn't help if the error is about the entry as a whole (not specifically the key)
 
@@ -909,6 +672,7 @@ MapEntryExpression(
 ```
 
 **All map-related tests need this update:**
+
 - `test('Literal map definition', ...)`
 - `test('Indexing map', ...)`
 - Any test in `expression_parser_test.dart` that creates maps
@@ -930,12 +694,12 @@ test('MapEntryExpression has correct location', () {
 
 ### Files to Modify
 
-| File | Change |
-|------|--------|
-| `lib/compiler/syntactic/expression.dart` | Add `location` field to `MapEntryExpression` |
+| File                                            | Change                                                 |
+| ----------------------------------------------- | ------------------------------------------------------ |
+| `lib/compiler/syntactic/expression.dart`        | Add `location` field to `MapEntryExpression`           |
 | `lib/compiler/syntactic/expression_parser.dart` | Pass `key.location` when creating `MapEntryExpression` |
-| `test/compiler/syntactic_analyzer_test.dart` | Update all `MapEntryExpression` constructions |
-| `test/compiler/expression_parser_test.dart` | Update map-related tests if needed |
+| `test/compiler/syntactic_analyzer_test.dart`    | Update all `MapEntryExpression` constructions          |
+| `test/compiler/expression_parser_test.dart`     | Update map-related tests if needed                     |
 
 ---
 
@@ -943,13 +707,13 @@ test('MapEntryExpression has correct location', () {
 
 Recommended order of implementation (least to most disruptive):
 
-| Order | Issue | Risk | Effort | Files Changed |
-|-------|-------|------|--------|---------------|
-| 1 | #3: `ResultState.next` throws | Very Low | Low | 2 |
-| 2 | #4: `previous` null check | Very Low | Low | 2 |
-| 3 | #7: Static predicates | Very Low | Medium | 2 |
-| 4 | #8: `MapEntryExpression` location | Low | Medium | 4 |
-| 5 | #2: Remove type checks from parser | Medium | High | 4+ |
+| Order | Issue                              | Risk     | Effort | Files Changed |
+| ----- | ---------------------------------- | -------- | ------ | ------------- |
+| 1     | #3: `ResultState.next` throws      | Very Low | Low    | 2             |
+| 2     | #4: `previous` null check          | Very Low | Low    | 2             |
+| 3     | #7: Static predicates              | Very Low | Medium | 2             |
+| 4     | #8: `MapEntryExpression` location  | Low      | Medium | 4             |
+| 5     | #2: Remove type checks from parser | Medium   | High   | 4+            |
 
 Issues #3, #4, and #7 are pure improvements with no behavioral changes.
 
@@ -963,25 +727,25 @@ Issue #2 is the most significant change, as it moves validation from syntactic t
 
 ### New Tests to Add
 
-| Test File | Test Description |
-|-----------|------------------|
-| `syntactic_analyzer_test.dart` | `ResultState.next` throws `StateError` |
-| `expression_parser_test.dart` | `previous` before advance throws `StateError` |
-| `expression_parser_test.dart` | `previous` after advance returns correct token |
-| `expression_parser_test.dart` | (Optional) Performance benchmark |
-| `syntactic_analyzer_test.dart` | `MapEntryExpression` has correct location |
-| `expression_parser_test.dart` | `5(1)` parses as `CallExpression` with `NumberExpression` callee |
-| `expression_parser_test.dart` | `5[0]` parses as index operation on `NumberExpression` |
-| `semantic_analyzer_test.dart` | Calling a number produces semantic error |
-| `semantic_analyzer_test.dart` | Indexing a boolean produces semantic error |
+| Test File                      | Test Description                                                 |
+| ------------------------------ | ---------------------------------------------------------------- |
+| `syntactic_analyzer_test.dart` | `ResultState.next` throws `StateError`                           |
+| `expression_parser_test.dart`  | `previous` before advance throws `StateError`                    |
+| `expression_parser_test.dart`  | `previous` after advance returns correct token                   |
+| `expression_parser_test.dart`  | (Optional) Performance benchmark                                 |
+| `syntactic_analyzer_test.dart` | `MapEntryExpression` has correct location                        |
+| `expression_parser_test.dart`  | `5(1)` parses as `CallExpression` with `NumberExpression` callee |
+| `expression_parser_test.dart`  | `5[0]` parses as index operation on `NumberExpression`           |
+| `semantic_analyzer_test.dart`  | Calling a number produces semantic error                         |
+| `semantic_analyzer_test.dart`  | Indexing a boolean produces semantic error                       |
 
 ### Tests to Modify
 
-| Test File | Current Test | Change Required |
-|-----------|--------------|-----------------|
-| `expression_parser_test.dart` | `'non-identifier call throws InvalidTokenError'` | Remove or change to expect successful parse |
-| `expression_parser_test.dart` | `'non-indexable bracket access throws InvalidTokenError'` | Remove or change to expect successful parse |
-| `syntactic_analyzer_test.dart` | All `MapEntryExpression` constructions | Add `location` parameter |
+| Test File                      | Current Test                                              | Change Required                             |
+| ------------------------------ | --------------------------------------------------------- | ------------------------------------------- |
+| `expression_parser_test.dart`  | `'non-identifier call throws InvalidTokenError'`          | Remove or change to expect successful parse |
+| `expression_parser_test.dart`  | `'non-indexable bracket access throws InvalidTokenError'` | Remove or change to expect successful parse |
+| `syntactic_analyzer_test.dart` | All `MapEntryExpression` constructions                    | Add `location` parameter                    |
 
 ---
 

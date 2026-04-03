@@ -223,4 +223,108 @@ main = apply(10, 5)
 ''');
     expect(code.warnings.length, equals(0));
   });
+
+  // --- Error: non-callable literals ---
+
+  test('calling number literal throws NotCallableError', () {
+    expect(
+      () => getIntermediateCode('main = 5(1)'),
+      throwsA(isA<NotCallableError>()),
+    );
+  });
+
+  test('calling boolean literal throws NotCallableError', () {
+    expect(
+      () => getIntermediateCode('main = true(1)'),
+      throwsA(isA<NotCallableError>()),
+    );
+  });
+
+  test('calling string literal throws NotCallableError', () {
+    expect(
+      () => getIntermediateCode('main = "hello"(1)'),
+      throwsA(isA<NotCallableError>()),
+    );
+  });
+
+  test('calling list literal throws NotCallableError', () {
+    expect(
+      () => getIntermediateCode('main = [1, 2](0)'),
+      throwsA(isA<NotCallableError>()),
+    );
+  });
+
+  test('calling map literal throws NotCallableError', () {
+    expect(
+      () => getIntermediateCode('main = {"a": 1}("a")'),
+      throwsA(isA<NotCallableError>()),
+    );
+  });
+
+  // --- Error: non-indexable literals ---
+
+  test('indexing number literal throws NotIndexableError', () {
+    expect(
+      () => getIntermediateCode('main = 5[0]'),
+      throwsA(isA<NotIndexableError>()),
+    );
+  });
+
+  test('indexing boolean literal throws NotIndexableError', () {
+    expect(
+      () => getIntermediateCode('main = true[0]'),
+      throwsA(isA<NotIndexableError>()),
+    );
+  });
+
+  // --- Valid: indexable literals ---
+
+  test('indexing string literal is valid', () {
+    final IntermediateCode code = getIntermediateCode('main = "hello"[0]');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('indexing list literal is valid', () {
+    final IntermediateCode code = getIntermediateCode('main = [1, 2, 3][0]');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('indexing map literal is valid', () {
+    final IntermediateCode code = getIntermediateCode('main = {"a": 1}["a"]');
+    expect(code.warnings.length, equals(0));
+  });
+
+  // --- Valid: identifier/call expressions (runtime checked) ---
+
+  test('calling identifier is valid (runtime checked)', () {
+    final IntermediateCode code = getIntermediateCode('''
+foo(x) = num.abs(x)
+main = foo(-5)
+''');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('indexing identifier is valid (runtime checked)', () {
+    final IntermediateCode code = getIntermediateCode('''
+foo = [1, 2, 3]
+main = foo[0]
+''');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('calling call result is valid (runtime checked)', () {
+    final IntermediateCode code = getIntermediateCode('''
+getFunc = num.abs
+main = getFunc()(-5)
+''');
+    expect(code.warnings.length, equals(0));
+  });
+
+  test('chained indexing on identifier is valid', () {
+    final IntermediateCode code = getIntermediateCode('''
+matrix = [[1, 2], [3, 4]]
+main = matrix[0][1]
+''');
+    expect(code.warnings.length, equals(0));
+  });
 }

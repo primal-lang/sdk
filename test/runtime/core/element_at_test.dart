@@ -52,7 +52,10 @@ void main() {
     });
 
     test('throws InvalidArgumentTypesError for invalid types', () {
-      final Runtime runtime = getRuntime('main = 42 @ 0');
+      final Runtime runtime = getRuntime('''
+x = 42
+main = x @ 0
+''');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),

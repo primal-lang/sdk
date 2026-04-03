@@ -189,39 +189,21 @@ class ExpressionParser {
 
     while (true) {
       if (match([(t) => t is OpenParenthesisToken])) {
-        if ((exp is IdentifierExpression) || (exp is CallExpression)) {
-          exp = finishCall(exp);
-        } else {
-          throw InvalidTokenError(
-            previous,
-            'callable expression (identifier or function call) before',
-          );
-        }
+        exp = finishCall(exp);
       } else if (match([(t) => t is OpenBracketToken])) {
-        if ((exp is IdentifierExpression) ||
-            (exp is CallExpression) ||
-            (exp is StringExpression) ||
-            (exp is ListExpression) ||
-            (exp is MapExpression)) {
-          final Token operator = AtToken(
-            Lexeme(
-              value: '@',
-              location: previous.location,
-            ),
-          );
-          final Expression idx = expression();
-          consume((t) => t is CloseBracketToken, ']');
-          exp = CallExpression.fromBinaryOperation(
-            operator: operator,
-            left: exp,
-            right: idx,
-          );
-        } else {
-          throw InvalidTokenError(
-            previous,
-            'indexable expression (identifier, function call, string, list, or map) before',
-          );
-        }
+        final Token operator = AtToken(
+          Lexeme(
+            value: '@',
+            location: previous.location,
+          ),
+        );
+        final Expression idx = expression();
+        consume((t) => t is CloseBracketToken, ']');
+        exp = CallExpression.fromBinaryOperation(
+          operator: operator,
+          left: exp,
+          right: idx,
+        );
       } else {
         break;
       }

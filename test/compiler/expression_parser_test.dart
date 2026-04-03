@@ -529,18 +529,54 @@ void main() {
       );
     });
 
-    test('non-identifier call throws InvalidTokenError', () {
-      expect(
-        () => getExpression('5(1)'),
-        throwsA(isA<InvalidTokenError>()),
-      );
+    // Happy cases: syntactically valid, produces correct AST
+
+    test('number followed by call syntax parses to CallExpression', () {
+      final Expression expression = getExpression('5(1)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect(call.callee, isA<NumberExpression>());
+      expect(call.arguments.length, equals(1));
     });
 
-    test('non-indexable bracket access throws InvalidTokenError', () {
-      expect(
-        () => getExpression('5[0]'),
-        throwsA(isA<InvalidTokenError>()),
-      );
+    test('number followed by bracket syntax parses to @ CallExpression', () {
+      final Expression expression = getExpression('5[0]');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), '@(5, 0)');
+    });
+
+    test('boolean followed by call syntax parses to CallExpression', () {
+      final Expression expression = getExpression('true(1)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect(call.callee, isA<BooleanExpression>());
+    });
+
+    test('boolean followed by bracket syntax parses to @ CallExpression', () {
+      final Expression expression = getExpression('false[0]');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), '@(false, 0)');
+    });
+
+    test('string followed by call syntax parses to CallExpression', () {
+      final Expression expression = getExpression('"hello"(1)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect(call.callee, isA<StringExpression>());
+    });
+
+    test('list followed by call syntax parses to CallExpression', () {
+      final Expression expression = getExpression('[1, 2](0)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect(call.callee, isA<ListExpression>());
+    });
+
+    test('map followed by call syntax parses to CallExpression', () {
+      final Expression expression = getExpression('{"a": 1}(0)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect(call.callee, isA<MapExpression>());
     });
   });
 }

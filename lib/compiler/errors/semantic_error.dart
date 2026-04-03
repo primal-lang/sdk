@@ -38,3 +38,13 @@ class InvalidNumberOfArgumentsError extends SemanticError {
   const InvalidNumberOfArgumentsError(String function)
     : super('Invalid number of arguments calling function "$function"');
 }
+
+class NotCallableError extends SemanticError {
+  const NotCallableError(String value)
+    : super('Cannot call literal value "$value"');
+}
+
+class NotIndexableError extends SemanticError {
+  const NotIndexableError(String value)
+    : super('Cannot index literal value "$value"');
+}

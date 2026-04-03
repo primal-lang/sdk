@@ -162,6 +162,21 @@ class SemanticAnalyzer
     } else if (node is CallNode) {
       Node callee = node.callee;
 
+      // Check for non-callable literals (e.g., 5(1))
+      if (_isNonCallableLiteral(callee)) {
+        throw NotCallableError(callee.toString());
+      }
+
+      // Check for @ operator with non-indexable first argument (e.g., 5[0])
+      if (callee is FreeVariableNode &&
+          callee.value == '@' &&
+          node.arguments.isNotEmpty) {
+        final Node target = node.arguments[0];
+        if (_isNonIndexableLiteral(target)) {
+          throw NotIndexableError(target.toString());
+        }
+      }
+
       if (callee is FreeVariableNode) {
         callee = checkCalleeIdentifier(
           node: node,
@@ -279,5 +294,17 @@ class SemanticAnalyzer
     } else {
       throw UndefinedFunctionError(functionName);
     }
+  }
+
+  bool _isNonCallableLiteral(Node node) {
+    return node is NumberNode ||
+        node is BooleanNode ||
+        node is StringNode ||
+        node is ListNode ||
+        node is MapNode;
+  }
+
+  bool _isNonIndexableLiteral(Node node) {
+    return node is NumberNode || node is BooleanNode;
   }
 }

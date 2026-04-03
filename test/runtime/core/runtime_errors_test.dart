@@ -302,4 +302,34 @@ void main() {
       );
     });
   });
+
+  group('Dynamic Callability Errors', () {
+    test(
+      'calling function result that is not callable throws InvalidFunctionError',
+      () {
+        final Runtime runtime = getRuntime('''
+getVal(x) = x
+main = getVal(5)(1)
+''');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidFunctionError>()),
+        );
+      },
+    );
+
+    test(
+      'indexing non-indexable variable throws InvalidArgumentTypesError',
+      () {
+        final Runtime runtime = getRuntime('''
+getVal(x) = x
+main = getVal(true)[0]
+''');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
+  });
 }
