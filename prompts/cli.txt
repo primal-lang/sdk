@@ -1,3 +1,0 @@
---help (-h)             : Show this help
---version (-v)          : Print the version string
---debug (-d)            : Set the debug flag in the REPL
