@@ -98,7 +98,7 @@ The parser desugars several syntactic forms into `CallExpression` nodes:
 | `a[i]`            | `@(a, i)`          |
 | `if (c) t else f` | `if(c, t, f)`      |
 
-Note: Unary negation is converted to binary subtraction from zero.
+Note: Unary negation is converted to binary subtraction from zero. The synthetic `0` uses the same source location as the `-` operator, since it represents the implicit zero at that position.
 
 ## Bridge to Runtime
 

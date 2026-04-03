@@ -210,6 +210,9 @@ class ExpressionParser {
       final Expression right = unary();
 
       if (operator.value == '-') {
+        // Unary negation `-x` is desugared to binary subtraction `-(0, x)`.
+        // The synthetic zero uses the operator's location since it logically
+        // originates from the negation syntax at that position.
         return CallExpression.fromBinaryOperation(
           operator: operator,
           left: NumberExpression(
