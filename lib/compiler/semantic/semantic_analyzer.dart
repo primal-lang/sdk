@@ -207,10 +207,10 @@ class SemanticAnalyzer
     } else if (node is ListNode) {
       final List<Node> elements = [];
 
-      for (final Node node in node.value) {
+      for (final Node element in node.value) {
         elements.add(
           checkNode(
-            node: node,
+            node: element,
             availableParameters: availableParameters,
             usedParameters: usedParameters,
             allFunctions: allFunctions,
