@@ -9,11 +9,6 @@
 
 ---
 
-- Are there test that we only capture in the lexical that we should add in all levels after?
-
-- Finish to polish
-  - Lexical analyzer
-  - Syntactic analyzer
 - Create changelog
 - Merge current branch
 - Release 0.4.1

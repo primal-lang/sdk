@@ -99,6 +99,82 @@ void main() {
       final Runtime runtime = getRuntime('main = list.at([1, 2, 3], -1)');
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
+
+    test('str.removeAt out of bounds', () {
+      final Runtime runtime = getRuntime('main = str.removeAt("Hi", 5)');
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('str.removeAt negative index', () {
+      final Runtime runtime = getRuntime('main = str.removeAt("Hi", -1)');
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('list.removeAt negative index', () {
+      final Runtime runtime = getRuntime('main = list.removeAt([1, 2], -1)');
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('list.swap negative first index', () {
+      final Runtime runtime = getRuntime('main = list.swap([1, 2], -1, 0)');
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('list.swap negative second index', () {
+      final Runtime runtime = getRuntime('main = list.swap([1, 2], 0, -1)');
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('list.swap first index out of bounds', () {
+      final Runtime runtime = getRuntime('main = list.swap([1, 2], 5, 0)');
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list.set negative index', () {
+      final Runtime runtime = getRuntime('main = list.set([1, 2], -1, 99)');
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('list.set out of bounds index', () {
+      final Runtime runtime = getRuntime('main = list.set([1, 2], 10, 99)');
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list.sublist negative start index', () {
+      final Runtime runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], -1, 2)',
+      );
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('list.sublist end less than start', () {
+      final Runtime runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], 2, 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('str.take negative count', () {
+      final Runtime runtime = getRuntime('main = str.take("Hello", -1)');
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('str.drop negative count', () {
+      final Runtime runtime = getRuntime('main = str.drop("Hello", -1)');
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('str.substring negative start', () {
+      final Runtime runtime = getRuntime(
+        'main = str.substring("Hello", -1, 3)',
+      );
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('str.substring end less than start', () {
+      final Runtime runtime = getRuntime('main = str.substring("Hello", 3, 1)');
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
   });
 
   group('Nested Collections', () {
