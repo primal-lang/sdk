@@ -170,28 +170,6 @@ older = alice with { age: 31 }
 
 ---
 
-## 18. User-Defined Infix Operators
-
-**Current Fit:** Low | **Complexity:** High | **Impact:** Low-Medium
-
-Allow users to define custom infix operators:
-
-```
-(a <+> b) = list.concat(a, b)
-combined = [1, 2] <+> [3, 4]
-```
-
-**Why it belongs:** It opens the door to domain-specific syntax, especially for pipelines, parsing, math, and collection composition.
-
-**Design notes:**
-
-- Precedence and associativity rules are the hard part.
-- A constrained version could require operators to come from a small allowed symbol set.
-- This is powerful, but it is one of the easiest proposals to overdo in a minimalist language.
-- If adopted, it should probably come late.
-
----
-
 ## 19. Multiline / Raw Strings
 
 **Current Fit:** High | **Complexity:** Low | **Impact:** High
@@ -219,54 +197,6 @@ pattern = r"\d+\.\d+"
 
 ---
 
-## 20. Doc Comments
-
-**Current Fit:** High | **Complexity:** Low-Medium | **Impact:** Medium
-
-Attach structured comments to function definitions:
-
-```primal
-/// Calculates factorial of n.
-/// @param n A non-negative integer
-/// @returns n!
-/// @example factorial(5) // returns 120
-factorial(n) = if (n <= 1) 1 else n * factorial(n - 1)
-```
-
-**Why it belongs:** Primal already has strong documentation in `docs/`. Doc comments would let source files carry that same clarity and enable REPL help, documentation generation, and editor support.
-
-**Design notes:**
-
-- Triple-slash comments should attach to the next function definition.
-- This has no runtime cost if treated as metadata.
-- A first version only needs to preserve the raw text.
-- Later tooling can parse tags like `@param`, `@returns`, and `@example`.
-
----
-
-## 21. Tail Call Optimization
-
-**Current Fit:** Medium-Low | **Complexity:** High | **Impact:** High
-
-Optimize tail-recursive functions to avoid stack overflow:
-
-```
-factorial(n) = factorialHelper(n, 1) where
-  factorialHelper(n, acc) =
-    if (n <= 1) acc else factorialHelper(n - 1, n * acc)
-```
-
-**Why it belongs:** Primal explicitly relies on recursion instead of loops. Without tail-call optimization, a large class of idiomatic programs remains fragile.
-
-**Design notes:**
-
-- Self-tail recursion is the best first target.
-- Mutual tail recursion could come later if needed.
-- This likely requires runtime changes, such as a trampoline or loop-based evaluation path.
-- This is one of the highest-impact runtime improvements available.
-
----
-
 ## 22. Maybe / Option Type
 
 **Current Fit:** Medium | **Complexity:** Medium-High | **Impact:** High
@@ -288,32 +218,6 @@ value = maybe.unwrapOr(safeHead([]), 0)
 - The standard library would need helpers such as `maybe.map`, `maybe.flatMap`, `maybe.unwrapOr`, and `maybe.isSome`.
 - This becomes especially valuable if safe indexing/lookups are added.
 - It also reduces overuse of `try(a, b)` for non-exceptional control flow.
-
----
-
-## 23. Bitwise Operators
-
-**Current Fit:** High as library, Medium as syntax | **Complexity:** Low-Medium | **Impact:** Medium
-
-Add bitwise operations and shifts:
-
-```
-a = bit.and(5, 3)
-b = bit.or(5, 3)
-c = bit.xor(5, 3)
-d = bit.not(5)
-e = bit.shiftLeft(5, 2)
-f = bit.shiftRight(20, 2)
-```
-
-**Why it belongs:** Bitwise operations are standard tools for flags, masks, low-level data handling, and teaching numeric representations.
-
-**Design notes:**
-
-- A library-first design is safer than adding syntax immediately.
-- Functions are probably enough for a first version.
-- If syntax is later added, it should reuse the same semantics.
-- This is a good example of a feature that can start in the standard library before it needs parser support.
 
 ---
 

@@ -29,6 +29,12 @@ read all the documentation in "docs" and the code in "lib" propose new features 
 - Record Types
 - Boolean Alias and Fallback Operators
 - Assert / Contract Expressions
-18
+- User-Defined Infix Operators
+- Multiline / Raw Strings
+- Doc Comments
+- Tail Call Optimization
+- Maybe / Option Type
+- Bitwise Operators
+24
 
 come up with new features thare are not in that list (you can propose similar features if you want). ask me if you have questions
