@@ -140,4 +140,9 @@ class FunctionParametrizedState
 
 class ResultState extends State<void, FunctionDefinition> {
   const ResultState(super.iterator, super.output);
+
+  @override
+  State get next => throw StateError(
+    'ResultState is a terminal state. Check for ResultState before calling next.',
+  );
 }

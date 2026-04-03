@@ -2,9 +2,12 @@
 library;
 
 import 'package:primal/compiler/errors/syntactic_error.dart';
+import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
+import 'package:primal/compiler/syntactic/syntactic_analyzer.dart';
+import 'package:primal/utils/list_iterator.dart';
 import 'package:test/test.dart';
 import '../helpers/assertion_helpers.dart';
 import '../helpers/pipeline_helpers.dart';
@@ -989,6 +992,24 @@ void main() {
           expression: NumberExpression(numberToken(2, 2, 5)),
         ),
       ]);
+    });
+
+    // ResultState terminal behavior
+
+    test('ResultState.next throws StateError', () {
+      final ListIterator<Token> iterator = ListIterator<Token>([]);
+      final ResultState resultState = ResultState(
+        iterator,
+        FunctionDefinition(
+          name: 'test',
+          expression: BooleanExpression(booleanToken(true, 1, 1)),
+        ),
+      );
+
+      expect(
+        () => resultState.next,
+        throwsA(isA<StateError>()),
+      );
     });
   });
 }
