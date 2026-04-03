@@ -9,16 +9,87 @@ class ExpressionParser {
 
   const ExpressionParser(this.iterator);
 
+  // Static predicates - allocated once
+  static bool _isIf(Token t) => t is IfToken;
+  static bool _isElse(Token t) => t is ElseToken;
+  static bool _isNotEqual(Token t) => t is NotEqualToken;
+  static bool _isEqual(Token t) => t is EqualToken;
+  static bool _isPipe(Token t) => t is PipeToken;
+  static bool _isAmpersand(Token t) => t is AmpersandToken;
+  static bool _isGreaterThan(Token t) => t is GreaterThanToken;
+  static bool _isGreaterEqualThan(Token t) => t is GreaterEqualThanToken;
+  static bool _isLessThan(Token t) => t is LessThanToken;
+  static bool _isLessEqualThan(Token t) => t is LessEqualThanToken;
+  static bool _isMinus(Token t) => t is MinusToken;
+  static bool _isPlus(Token t) => t is PlusToken;
+  static bool _isForwardSlash(Token t) => t is ForwardSlashToken;
+  static bool _isAsterisk(Token t) => t is AsteriskToken;
+  static bool _isPercent(Token t) => t is PercentToken;
+  static bool _isAt(Token t) => t is AtToken;
+  static bool _isBang(Token t) => t is BangToken;
+  static bool _isOpenParen(Token t) => t is OpenParenthesisToken;
+  static bool _isCloseParen(Token t) => t is CloseParenthesisToken;
+  static bool _isOpenBracket(Token t) => t is OpenBracketToken;
+  static bool _isCloseBracket(Token t) => t is CloseBracketToken;
+  static bool _isOpenBraces(Token t) => t is OpenBracesToken;
+  static bool _isCloseBraces(Token t) => t is CloseBracesToken;
+  static bool _isComma(Token t) => t is CommaToken;
+  static bool _isColon(Token t) => t is ColonToken;
+  static bool _isBoolean(Token t) => t is BooleanToken;
+  static bool _isNumber(Token t) => t is NumberToken;
+  static bool _isString(Token t) => t is StringToken;
+  static bool _isIdentifier(Token t) => t is IdentifierToken;
+
+  // Static predicate lists - allocated once
+  static final List<bool Function(Token)> _ifPredicates = [_isIf];
+  static final List<bool Function(Token)> _equalityPredicates = [
+    _isNotEqual,
+    _isEqual,
+  ];
+  static final List<bool Function(Token)> _logicOrPredicates = [_isPipe];
+  static final List<bool Function(Token)> _logicAndPredicates = [_isAmpersand];
+  static final List<bool Function(Token)> _comparisonPredicates = [
+    _isGreaterThan,
+    _isGreaterEqualThan,
+    _isLessThan,
+    _isLessEqualThan,
+  ];
+  static final List<bool Function(Token)> _termPredicates = [_isMinus, _isPlus];
+  static final List<bool Function(Token)> _factorPredicates = [
+    _isForwardSlash,
+    _isAsterisk,
+    _isPercent,
+  ];
+  static final List<bool Function(Token)> _indexPredicates = [_isAt];
+  static final List<bool Function(Token)> _unaryPredicates = [
+    _isBang,
+    _isMinus,
+  ];
+  static final List<bool Function(Token)> _openParenPredicates = [_isOpenParen];
+  static final List<bool Function(Token)> _openBracketPredicates = [
+    _isOpenBracket,
+  ];
+  static final List<bool Function(Token)> _commaPredicates = [_isComma];
+  static final List<bool Function(Token)> _booleanPredicates = [_isBoolean];
+  static final List<bool Function(Token)> _numberPredicates = [_isNumber];
+  static final List<bool Function(Token)> _stringPredicates = [_isString];
+  static final List<bool Function(Token)> _identifierPredicates = [
+    _isIdentifier,
+  ];
+  static final List<bool Function(Token)> _openBracesPredicates = [
+    _isOpenBraces,
+  ];
+
   Expression expression() => ifExpression();
 
   Expression ifExpression() {
-    if (match([(t) => t is IfToken])) {
+    if (match(_ifPredicates)) {
       final Token operator = previous;
-      consume((t) => t is OpenParenthesisToken, '(');
+      consume(_isOpenParen, '(');
       final Expression condition = expression();
-      consume((t) => t is CloseParenthesisToken, ')');
+      consume(_isCloseParen, ')');
       final Expression ifTrue = expression();
-      consume((t) => t is ElseToken, 'else');
+      consume(_isElse, 'else');
       final Expression ifFalse = expression();
 
       return CallExpression.fromIf(
@@ -35,7 +106,7 @@ class ExpressionParser {
   Expression equality() {
     Expression expression = logicOr();
 
-    while (match([(t) => t is NotEqualToken, (t) => t is EqualToken])) {
+    while (match(_equalityPredicates)) {
       final Token operator = previous;
       final Expression right = logicOr();
 
@@ -52,7 +123,7 @@ class ExpressionParser {
   Expression logicOr() {
     Expression expression = logicAnd();
 
-    while (match([(t) => t is PipeToken])) {
+    while (match(_logicOrPredicates)) {
       final Token operator = previous;
       final Expression right = logicAnd();
 
@@ -69,7 +140,7 @@ class ExpressionParser {
   Expression logicAnd() {
     Expression expression = comparison();
 
-    while (match([(t) => t is AmpersandToken])) {
+    while (match(_logicAndPredicates)) {
       final Token operator = previous;
       final Expression right = comparison();
 
@@ -86,12 +157,7 @@ class ExpressionParser {
   Expression comparison() {
     Expression expression = term();
 
-    while (match([
-      (t) => t is GreaterThanToken,
-      (t) => t is GreaterEqualThanToken,
-      (t) => t is LessThanToken,
-      (t) => t is LessEqualThanToken,
-    ])) {
+    while (match(_comparisonPredicates)) {
       final Token operator = previous;
       final Expression right = term();
 
@@ -108,7 +174,7 @@ class ExpressionParser {
   Expression term() {
     Expression expression = factor();
 
-    while (match([(t) => t is MinusToken, (t) => t is PlusToken])) {
+    while (match(_termPredicates)) {
       final Token operator = previous;
       final Expression right = factor();
 
@@ -125,11 +191,7 @@ class ExpressionParser {
   Expression factor() {
     Expression expression = index();
 
-    while (match([
-      (t) => t is ForwardSlashToken,
-      (t) => t is AsteriskToken,
-      (t) => t is PercentToken,
-    ])) {
+    while (match(_factorPredicates)) {
       final Token operator = previous;
       final Expression right = index();
 
@@ -146,7 +208,7 @@ class ExpressionParser {
   Expression index() {
     Expression expression = unary();
 
-    while (match([(t) => t is AtToken])) {
+    while (match(_indexPredicates)) {
       final Token operator = previous;
       final Expression right = unary();
 
@@ -161,7 +223,7 @@ class ExpressionParser {
   }
 
   Expression unary() {
-    if (match([(t) => t is BangToken, (t) => t is MinusToken])) {
+    if (match(_unaryPredicates)) {
       final Token operator = previous;
       final Expression right = unary();
 
@@ -188,9 +250,9 @@ class ExpressionParser {
     Expression exp = primary();
 
     while (true) {
-      if (match([(t) => t is OpenParenthesisToken])) {
+      if (match(_openParenPredicates)) {
         exp = finishCall(exp);
-      } else if (match([(t) => t is OpenBracketToken])) {
+      } else if (match(_openBracketPredicates)) {
         final Token operator = AtToken(
           Lexeme(
             value: '@',
@@ -198,7 +260,7 @@ class ExpressionParser {
           ),
         );
         final Expression idx = expression();
-        consume((t) => t is CloseBracketToken, ']');
+        consume(_isCloseBracket, ']');
         exp = CallExpression.fromBinaryOperation(
           operator: operator,
           left: exp,
@@ -215,33 +277,33 @@ class ExpressionParser {
   Expression finishCall(Expression callee) {
     final List<Expression> arguments = [];
 
-    if (!check((t) => t is CloseParenthesisToken)) {
+    if (!check(_isCloseParen)) {
       do {
         arguments.add(expression());
-      } while (match([(t) => t is CommaToken]));
+      } while (match(_commaPredicates));
     }
 
-    consume((t) => t is CloseParenthesisToken, ')');
+    consume(_isCloseParen, ')');
 
     return CallExpression(callee: callee, arguments: arguments);
   }
 
   Expression primary() {
-    if (match([(t) => t is BooleanToken])) {
+    if (match(_booleanPredicates)) {
       return BooleanExpression(previous);
-    } else if (match([(t) => t is NumberToken])) {
+    } else if (match(_numberPredicates)) {
       return NumberExpression(previous);
-    } else if (match([(t) => t is StringToken])) {
+    } else if (match(_stringPredicates)) {
       return StringExpression(previous);
-    } else if (match([(t) => t is IdentifierToken])) {
+    } else if (match(_identifierPredicates)) {
       return IdentifierExpression(previous);
-    } else if (match([(t) => t is OpenParenthesisToken])) {
+    } else if (match(_openParenPredicates)) {
       final Expression expr = expression();
-      consume((t) => t is CloseParenthesisToken, ')');
+      consume(_isCloseParen, ')');
       return expr;
-    } else if (match([(t) => t is OpenBracketToken])) {
+    } else if (match(_openBracketPredicates)) {
       return list(previous);
-    } else if (match([(t) => t is OpenBracesToken])) {
+    } else if (match(_openBracesPredicates)) {
       return map(previous);
     }
 
@@ -251,13 +313,13 @@ class ExpressionParser {
   Expression list(Token token) {
     final List<Expression> elements = [];
 
-    if (!check((t) => t is CloseBracketToken)) {
+    if (!check(_isCloseBracket)) {
       do {
         elements.add(expression());
-      } while (match([(t) => t is CommaToken]));
+      } while (match(_commaPredicates));
     }
 
-    consume((t) => t is CloseBracketToken, ']');
+    consume(_isCloseBracket, ']');
 
     return ListExpression(
       location: token.location,
@@ -268,16 +330,16 @@ class ExpressionParser {
   Expression map(Token token) {
     final List<MapEntryExpression> pairs = [];
 
-    if (!check((t) => t is CloseBracesToken)) {
+    if (!check(_isCloseBraces)) {
       do {
         final Expression key = expression();
-        consume((t) => t is ColonToken, ':');
+        consume(_isColon, ':');
         final Expression value = expression();
         pairs.add(MapEntryExpression(key: key, value: value));
-      } while (match([(t) => t is CommaToken]));
+      } while (match(_commaPredicates));
     }
 
-    consume((t) => t is CloseBracesToken, '}');
+    consume(_isCloseBraces, '}');
 
     return MapExpression(
       location: token.location,
