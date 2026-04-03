@@ -330,5 +330,14 @@ class ExpressionParser {
     }
   }
 
-  Token get previous => iterator.previous!;
+  Token get previous {
+    final Token? token = iterator.previous;
+    if (token == null) {
+      throw StateError(
+        'Attempted to access previous token before any tokens were consumed. '
+        'This indicates a bug in the parser.',
+      );
+    }
+    return token;
+  }
 }

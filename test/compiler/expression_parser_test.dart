@@ -579,4 +579,25 @@ void main() {
       expect(call.callee, isA<MapExpression>());
     });
   });
+
+  group('ExpressionParser edge cases', () {
+    test('accessing previous before advance throws StateError', () {
+      final List<Token> tokens = getTokens('x');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      expect(
+        () => parser.previous,
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('previous returns last consumed token after advance', () {
+      final List<Token> tokens = getTokens('x');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      parser.advance();
+      expect(parser.previous, isA<IdentifierToken>());
+      expect(parser.previous.value, equals('x'));
+    });
+  });
 }
