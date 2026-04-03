@@ -1,8 +1,8 @@
 import 'dart:js_interop';
 
 import 'package:primal/compiler/compiler.dart';
-import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 
 @JS('compileInput')
@@ -86,20 +86,20 @@ void main(List<String> args) {
 
   runtimeHasMain = (JSNumber codeId) {
     final code = _getCode(codeId.toDartInt);
-    final runtime = Runtime(code);
+    final runtime = RuntimeFacade(code);
     return runtime.hasMain.toJS;
   }.toJS;
 
   runtimeExecuteMain = (JSNumber codeId) {
     final code = _getCode(codeId.toDartInt);
-    final runtime = Runtime(code);
+    final runtime = RuntimeFacade(code);
     return runtime.executeMain().toJS;
   }.toJS;
 
   runtimeReduce = (JSNumber codeId, JSNumber expressionId) {
     final code = _getCode(codeId.toDartInt);
     final expression = _getExpression(expressionId.toDartInt);
-    final runtime = Runtime(code);
+    final runtime = RuntimeFacade(code);
     return runtime.evaluate(expression).toJS;
   }.toJS;
 

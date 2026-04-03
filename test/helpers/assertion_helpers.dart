@@ -1,8 +1,8 @@
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/semantic/lowerer.dart';
+import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
@@ -85,7 +85,7 @@ void checkFunctions(
   }
 }
 
-void checkResult(Runtime runtime, Object result) {
+void checkResult(RuntimeFacade runtime, Object result) {
   expect(runtime.executeMain(), result.toString());
 }
 
@@ -93,7 +93,7 @@ void checkResult(Runtime runtime, Object result) {
 ///
 /// This catches cases where toString() representations collide across types
 /// (e.g. NumberNode(1) vs StringNode("1")).
-void checkTypedResult<T extends Node>(Runtime runtime, Object result) {
+void checkTypedResult<T extends Node>(RuntimeFacade runtime, Object result) {
   final expression = runtime.mainExpression([]);
   final node = const Lowerer().lowerExpression(expression).evaluate();
   expect(
@@ -104,7 +104,7 @@ void checkTypedResult<T extends Node>(Runtime runtime, Object result) {
   expect(runtime.executeMain(), result.toString());
 }
 
-void checkDates(Runtime runtime, DateTime result) {
+void checkDates(RuntimeFacade runtime, DateTime result) {
   expect(
     runtime.executeMain().substring(0, 14),
     equals('"${result.toIso8601String().substring(0, 13)}'),

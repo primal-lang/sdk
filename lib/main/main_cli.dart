@@ -1,6 +1,6 @@
 import 'package:primal/compiler/compiler.dart';
-import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
@@ -76,7 +76,7 @@ void runCli(
       currentConsole.warning(warning);
     }
 
-    final Runtime runtime = Runtime(intermediateCode);
+    final RuntimeFacade runtime = RuntimeFacade(intermediateCode);
 
     if (runtime.hasMain) {
       _executeMain(
@@ -102,7 +102,7 @@ void runCli(
 }
 
 void _executeMain({
-  required Runtime runtime,
+  required RuntimeFacade runtime,
   required List<String> args,
   required Console console,
   required bool debug,
@@ -128,7 +128,7 @@ void _executeMain({
 }
 
 void _runRepl({
-  required Runtime runtime,
+  required RuntimeFacade runtime,
   required Compiler compiler,
   required Console console,
   required bool debug,

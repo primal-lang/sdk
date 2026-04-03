@@ -2,7 +2,7 @@
 library;
 
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';
@@ -10,29 +10,29 @@ import '../../helpers/pipeline_helpers.dart';
 void main() {
   group('Map', () {
     test('Map constructor creates empty map', () {
-      final Runtime runtime = getRuntime('main = {}');
+      final RuntimeFacade runtime = getRuntime('main = {}');
       checkResult(runtime, {});
     });
 
     test('Map constructor creates single-entry map', () {
-      final Runtime runtime = getRuntime('main = {"foo": 1}');
+      final RuntimeFacade runtime = getRuntime('main = {"foo": 1}');
       checkResult(runtime, {'"foo"': 1});
     });
 
     test('Map constructor creates nested map', () {
-      final Runtime runtime = getRuntime('main = {"foo": {"bar": 2}}');
+      final RuntimeFacade runtime = getRuntime('main = {"foo": {"bar": 2}}');
       checkResult(runtime, {
         '"foo"': {'"bar"': 2},
       });
     });
 
     test('Map constructor evaluates value expressions', () {
-      final Runtime runtime = getRuntime('main = {"foo": 1 + 2}');
+      final RuntimeFacade runtime = getRuntime('main = {"foo": 1 + 2}');
       checkResult(runtime, {'"foo"': 3});
     });
 
     test('Map constructor creates map with mixed value types', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = {"name": "John", "age": 42, "married": true}',
       );
       checkResult(runtime, {
@@ -43,28 +43,28 @@ void main() {
     });
 
     test('Map indexing returns value for existing key', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = {"name": "John", "age": 42, "married": true}["age"]',
       );
       checkResult(runtime, 42);
     });
 
     test('Map indexing returns list value', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = {"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"]',
       );
       checkResult(runtime, [42, 99, 201]);
     });
 
     test('Map indexing chains with list indexing', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = ({"name": "John", "numbers": [42, 99, 201], "married": true}["numbers"])[1]',
       );
       checkResult(runtime, 99);
     });
 
     test('Map indexing works inside function with map argument', () {
-      final Runtime runtime = getRuntime('''
+      final RuntimeFacade runtime = getRuntime('''
 foo(values) = {
   "name": values["name"],
   "age": values["age"],
@@ -81,26 +81,26 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('map.at returns value for existing key', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.at({"name": "John", "age": 42, "married": true}, "age")',
       );
       checkResult(runtime, 42);
     });
 
     test('map.at returns evaluated expression value', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.at({"name": "John", "age": 42 + 1, "married": true}, "age")',
       );
       checkResult(runtime, 43);
     });
 
     test('map.set adds entry to empty map', () {
-      final Runtime runtime = getRuntime('main = map.set({}, "foo", 1)');
+      final RuntimeFacade runtime = getRuntime('main = map.set({}, "foo", 1)');
       checkResult(runtime, {'"foo"': 1});
     });
 
     test('map.set overwrites existing key value', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.set({"name": "John", "age": 42, "married": true}, "age", 30)',
       );
       checkResult(runtime, {
@@ -111,24 +111,24 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('map.keys returns empty list for empty map', () {
-      final Runtime runtime = getRuntime('main = map.keys({})');
+      final RuntimeFacade runtime = getRuntime('main = map.keys({})');
       checkResult(runtime, []);
     });
 
     test('map.keys returns all keys including mixed types', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.keys({"name": "John", "age": 42, "married": true, 3: 2})',
       );
       checkResult(runtime, ['"name"', '"age"', '"married"', 3]);
     });
 
     test('map.values returns empty list for empty map', () {
-      final Runtime runtime = getRuntime('main = map.values({})');
+      final RuntimeFacade runtime = getRuntime('main = map.values({})');
       checkResult(runtime, []);
     });
 
     test('map.values returns all values including mixed types', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.values({"name": "John", "age": 42, "married": true, 3: 2, "foo": [1, 2, 3]})',
       );
       checkResult(runtime, [
@@ -141,64 +141,66 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('map.containsKey returns false for empty map', () {
-      final Runtime runtime = getRuntime('main = map.containsKey({}, "name")');
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey({}, "name")',
+      );
       checkResult(runtime, false);
     });
 
     test('map.containsKey returns true for existing key', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.containsKey({"name": "John"}, "name")',
       );
       checkResult(runtime, true);
     });
 
     test('map.containsKey matches key built from expression', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.containsKey({("na" + "me"): "John"}, "name")',
       );
       checkResult(runtime, true);
     });
 
     test('map.containsKey returns false for missing key', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.containsKey({"name": "John"}, "age")',
       );
       checkResult(runtime, false);
     });
 
     test('map.isEmpty returns true for empty map', () {
-      final Runtime runtime = getRuntime('main = map.isEmpty({})');
+      final RuntimeFacade runtime = getRuntime('main = map.isEmpty({})');
       checkResult(runtime, true);
     });
 
     test('map.isEmpty returns false for non-empty map', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.isEmpty({"name": "John"})',
       );
       checkResult(runtime, false);
     });
 
     test('map.isNotEmpty returns false for empty map', () {
-      final Runtime runtime = getRuntime('main = map.isNotEmpty({})');
+      final RuntimeFacade runtime = getRuntime('main = map.isNotEmpty({})');
       checkResult(runtime, false);
     });
 
     test('map.isNotEmpty returns true for non-empty map', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.isNotEmpty({"name": "John"})',
       );
       checkResult(runtime, true);
     });
 
     test('map.removeAt removes existing key', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.removeAt({"name": "John", "age": 42, "married": true}, "age")',
       );
       checkResult(runtime, {'"name"': '"John"', '"married"': true});
     });
 
     test('map.removeAt returns unchanged map for missing key', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.removeAt({"name": "John", "age": 42, "married": true}, "foo")',
       );
       checkResult(runtime, {
@@ -209,12 +211,12 @@ main = foo({"name": "John", "age": 42, "married": true})
     });
 
     test('map.length returns zero for empty map', () {
-      final Runtime runtime = getRuntime('main = map.length({})');
+      final RuntimeFacade runtime = getRuntime('main = map.length({})');
       checkResult(runtime, 0);
     });
 
     test('map.length returns entry count for non-empty map', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.length({"name": "John", "age": 42, "married": true})',
       );
       checkResult(runtime, 3);
@@ -223,17 +225,17 @@ main = foo({"name": "John", "age": 42, "married": true})
 
   group('Map Missing Key', () {
     test('map.at missing key throws', () {
-      final Runtime runtime = getRuntime('main = map.at({"a": 1}, "b")');
+      final RuntimeFacade runtime = getRuntime('main = map.at({"a": 1}, "b")');
       expect(runtime.executeMain, throwsA(isA<InvalidMapIndexError>()));
     });
 
     test('map indexing missing key throws', () {
-      final Runtime runtime = getRuntime('main = {"a": 1}["b"]');
+      final RuntimeFacade runtime = getRuntime('main = {"a": 1}["b"]');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
     test('map.set adds new key to non-empty map', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.set({"a": 1}, "b", 2)',
       );
       checkResult(runtime, {'"a"': 1, '"b"': 2});
@@ -242,41 +244,41 @@ main = foo({"name": "John", "age": 42, "married": true})
 
   group('Map Type Errors', () {
     test('map.length throws for wrong type', () {
-      final Runtime runtime = getRuntime('main = map.length("hello")');
+      final RuntimeFacade runtime = getRuntime('main = map.length("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
     test('map.keys throws for wrong type', () {
-      final Runtime runtime = getRuntime('main = map.keys("hello")');
+      final RuntimeFacade runtime = getRuntime('main = map.keys("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
     test('map.values throws for wrong type', () {
-      final Runtime runtime = getRuntime('main = map.values("hello")');
+      final RuntimeFacade runtime = getRuntime('main = map.values("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
     test('map.isEmpty throws for wrong type', () {
-      final Runtime runtime = getRuntime('main = map.isEmpty("hello")');
+      final RuntimeFacade runtime = getRuntime('main = map.isEmpty("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
     test('map.containsKey throws for wrong type', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.containsKey("hello", "a")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
     test('map.at throws for wrong type', () {
-      final Runtime runtime = getRuntime('main = map.at("hello", "a")');
+      final RuntimeFacade runtime = getRuntime('main = map.at("hello", "a")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
   });
 
   group('Map Error Cases', () {
     test('map.at throws InvalidMapIndexError for non-existent key', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = map.at({"name": "John", "age": 42}, "missing")',
       );
       expect(
@@ -288,7 +290,7 @@ main = foo({"name": "John", "age": 42, "married": true})
     test(
       'map.containsKey throws InvalidArgumentTypesError for non-map first argument',
       () {
-        final Runtime runtime = getRuntime(
+        final RuntimeFacade runtime = getRuntime(
           'main = map.containsKey([1, 2], "a")',
         );
         expect(

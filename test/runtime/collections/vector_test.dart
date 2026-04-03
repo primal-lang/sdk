@@ -2,7 +2,7 @@
 library;
 
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';
@@ -10,24 +10,24 @@ import '../../helpers/pipeline_helpers.dart';
 void main() {
   group('Vector', () {
     test('vector.new creates empty vector from empty list', () {
-      final Runtime runtime = getRuntime('main = vector.new([])');
+      final RuntimeFacade runtime = getRuntime('main = vector.new([])');
       checkResult(runtime, []);
     });
 
     test('vector.new creates vector from non-empty list', () {
-      final Runtime runtime = getRuntime('main = vector.new([1, 2])');
+      final RuntimeFacade runtime = getRuntime('main = vector.new([1, 2])');
       checkResult(runtime, [1, 2]);
     });
 
     test('vector.magnitude returns zero for empty vector', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.magnitude(vector.new([]))',
       );
       checkResult(runtime, 0.0);
     });
 
     test('vector.magnitude computes length of non-empty vector', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.magnitude(vector.new([1, 2, 3]))',
       );
       expect(
@@ -37,14 +37,14 @@ void main() {
     });
 
     test('vector.normalize returns empty vector for empty input', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.normalize(vector.new([]))',
       );
       checkResult(runtime, []);
     });
 
     test('vector.normalize returns unit vector for non-empty input', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.normalize(vector.new([1, 2, 3]))',
       );
       checkResult(runtime, [
@@ -55,21 +55,21 @@ void main() {
     });
 
     test('vector.add of two empty vectors returns empty vector', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.add(vector.new([]), vector.new([]))',
       );
       checkResult(runtime, []);
     });
 
     test('vector.add sums corresponding components', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.add(vector.new([1, 2]), vector.new([3, 4]))',
       );
       checkResult(runtime, [4, 6]);
     });
 
     test('vector.add throws for vectors with different lengths', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.add(vector.new([1, 2]), vector.new([4, 5, 6]))',
       );
       expect(
@@ -79,21 +79,21 @@ void main() {
     });
 
     test('vector.sub of two empty vectors returns empty vector', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.sub(vector.new([]), vector.new([]))',
       );
       checkResult(runtime, []);
     });
 
     test('vector.sub subtracts corresponding components', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.sub(vector.new([1, 2]), vector.new([3, 4]))',
       );
       checkResult(runtime, [-2, -2]);
     });
 
     test('vector.sub throws for vectors with different lengths', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.sub(vector.new([1, 2]), vector.new([4, 5, 6]))',
       );
       expect(
@@ -103,14 +103,14 @@ void main() {
     });
 
     test('vector.angle throws for empty vectors', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.angle(vector.new([]), vector.new([]))',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
     test('vector.angle computes angle between 2D vectors', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.angle(vector.new([1, 2]), vector.new([3, 4]))',
       );
       expect(
@@ -120,7 +120,7 @@ void main() {
     });
 
     test('vector.angle computes angle between 3D vectors', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = vector.angle(vector.new([3, 4, 0]), vector.new([4, 3, 0]))',
       );
       expect(
