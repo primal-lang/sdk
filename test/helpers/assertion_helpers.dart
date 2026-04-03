@@ -2,6 +2,7 @@ import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/semantic/lowerer.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
@@ -94,7 +95,7 @@ void checkResult(Runtime runtime, Object result) {
 /// (e.g. NumberNode(1) vs StringNode("1")).
 void checkTypedResult<T extends Node>(Runtime runtime, Object result) {
   final expression = runtime.mainExpression([]);
-  final node = expression.toNode().evaluate();
+  final node = const Lowerer().lowerExpression(expression).evaluate();
   expect(
     node,
     isA<T>(),

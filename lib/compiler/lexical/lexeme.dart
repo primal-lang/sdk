@@ -1,5 +1,4 @@
 import 'package:primal/compiler/models/location.dart';
-import 'package:primal/compiler/reader/character.dart';
 
 class Lexeme extends Located {
   final String value;
@@ -9,13 +8,8 @@ class Lexeme extends Located {
     required super.location,
   });
 
-  Lexeme add(Character character) => Lexeme(
-    value: value + character.value,
-    location: location,
-  );
-
-  Lexeme addValue(String value) => Lexeme(
-    value: this.value + value,
+  Lexeme add(String charValue) => Lexeme(
+    value: value + charValue,
     location: location,
   );
 

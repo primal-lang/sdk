@@ -1,6 +1,7 @@
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
 
 /// Converts semantic IR to runtime nodes for execution.
 ///
@@ -8,6 +9,42 @@ import 'package:primal/compiler/semantic/semantic_node.dart';
 /// representation needed for evaluation.
 class Lowerer {
   const Lowerer();
+
+  /// Converts a syntactic [Expression] to a runtime [Node].
+  ///
+  /// This is used for ad-hoc expression evaluation at runtime, such as
+  /// the REPL or dynamic expression construction.
+  Node lowerExpression(Expression expression) => switch (expression) {
+    BooleanExpression() => BooleanNode(expression.value),
+    NumberExpression() => NumberNode(expression.value),
+    StringExpression() => StringNode(expression.value),
+    ListExpression() => _lowerListExpression(expression),
+    MapExpression() => _lowerMapExpression(expression),
+    IdentifierExpression() => IdentifierNode(expression.value),
+    CallExpression() => _lowerCallExpression(expression),
+    _ => throw StateError(
+      'Unknown expression type: ${expression.runtimeType}',
+    ),
+  };
+
+  Node _lowerListExpression(ListExpression expression) {
+    return ListNode(expression.value.map(lowerExpression).toList());
+  }
+
+  Node _lowerMapExpression(MapExpression expression) {
+    final Map<Node, Node> entries = {};
+    for (final entry in expression.value) {
+      entries[lowerExpression(entry.key)] = lowerExpression(entry.value);
+    }
+    return MapNode(entries);
+  }
+
+  Node _lowerCallExpression(CallExpression expression) {
+    return CallNode(
+      callee: lowerExpression(expression.callee),
+      arguments: expression.arguments.map(lowerExpression).toList(),
+    );
+  }
 
   /// Converts a [SemanticFunction] to a [CustomFunctionNode].
   CustomFunctionNode lowerFunction(SemanticFunction function) {

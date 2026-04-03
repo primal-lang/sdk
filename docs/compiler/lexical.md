@@ -70,7 +70,7 @@ Additional internal states not reachable from `InitState`:
 
 All string states (including `StringState`, `StringEscapeState`, and related escape states) extend `StringRelatedState`, which provides a `stringStartLocation` property used for unterminated string error reporting.
 
-Multi-character tokens are accumulated via a `Lexeme` object that tracks the starting location and collects characters with `.add(Character)`, returning a new immutable `Lexeme` each time.
+Multi-character tokens are accumulated via a `Lexeme` object that tracks the starting location and collects characters with `.add(String)`, returning a new immutable `Lexeme` each time.
 
 ## String Escape Sequences
 
@@ -110,7 +110,7 @@ The braced format (`\u{...}`) follows JavaScript ES6 and Rust conventions, allow
 - Invalid character in braces: `InvalidBracedEscapeError`
 - Code point exceeds U+10FFFF: `InvalidCodePointError`
 
-The escape state uses `Lexeme.addValue(String)` to append the resolved character (which may differ from the input character) and returns to the parent string state.
+The escape state uses `Lexeme.add(String)` to append the resolved character (which may differ from the input character) and returns to the parent string state.
 
 If an unrecognized escape sequence is encountered (e.g., `\z`), the lexer throws `InvalidEscapeSequenceError`.
 

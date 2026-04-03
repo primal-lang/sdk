@@ -168,7 +168,7 @@ class StringState extends StringRelatedState {
     } else if (input.value.isBackslash) {
       return StringEscapeState(iterator, output, quoteType);
     } else {
-      return StringState(iterator, output.add(input), quoteType);
+      return StringState(iterator, output.add(input.value), quoteType);
     }
   }
 }
@@ -184,15 +184,15 @@ class StringEscapeState extends StringRelatedState {
   @override
   State process(Character input) {
     if (input.value == 'n') {
-      return StringState(iterator, output.addValue('\n'), quoteType);
+      return StringState(iterator, output.add('\n'), quoteType);
     } else if (input.value == 't') {
-      return StringState(iterator, output.addValue('\t'), quoteType);
+      return StringState(iterator, output.add('\t'), quoteType);
     } else if (input.value.isBackslash) {
-      return StringState(iterator, output.addValue('\\'), quoteType);
+      return StringState(iterator, output.add('\\'), quoteType);
     } else if (input.value.isDoubleQuote) {
-      return StringState(iterator, output.addValue('"'), quoteType);
+      return StringState(iterator, output.add('"'), quoteType);
     } else if (input.value.isSingleQuote) {
-      return StringState(iterator, output.addValue("'"), quoteType);
+      return StringState(iterator, output.add("'"), quoteType);
     } else if (input.value == 'x') {
       return StringHexEscapeState(
         iterator,
@@ -249,7 +249,7 @@ class StringHexEscapeState extends StringRelatedState {
       final int codePoint = int.parse(newHex, radix: 16);
       return StringState(
         iterator,
-        output.addValue(String.fromCharCode(codePoint)),
+        output.add(String.fromCharCode(codePoint)),
         quoteType,
       );
     }
@@ -332,7 +332,7 @@ class StringBracedEscapeState extends StringRelatedState {
       }
       return StringState(
         iterator,
-        output.addValue(String.fromCharCode(codePoint)),
+        output.add(String.fromCharCode(codePoint)),
         quoteType,
       );
     } else if (input.value.isHexDigit) {
@@ -372,7 +372,7 @@ class IntegerState extends State<Character, Lexeme> {
     if (input.value.isDigit) {
       return IntegerState(
         iterator,
-        output.add(input),
+        output.add(input.value),
         lastWasUnderscore: false,
       );
     } else if (input.value.isUnderscore) {
@@ -384,12 +384,12 @@ class IntegerState extends State<Character, Lexeme> {
       if (lastWasUnderscore) {
         throw InvalidCharacterError(input, 'digit');
       }
-      return DecimalInitState(iterator, output.add(input));
+      return DecimalInitState(iterator, output.add(input.value));
     } else if (input.value.isExponent) {
       if (lastWasUnderscore) {
         throw InvalidCharacterError(input, 'digit');
       }
-      return ExponentInitState(iterator, output.add(input));
+      return ExponentInitState(iterator, output.add(input.value));
     } else if (input.value.isOperandDelimiter) {
       if (lastWasUnderscore) {
         throw InvalidCharacterError(input, 'digit');
@@ -408,7 +408,7 @@ class DecimalInitState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isDigit) {
-      return DecimalState(iterator, output.add(input));
+      return DecimalState(iterator, output.add(input.value));
     } else {
       throw InvalidCharacterError(input, 'digit');
     }
@@ -429,7 +429,7 @@ class DecimalState extends State<Character, Lexeme> {
     if (input.value.isDigit) {
       return DecimalState(
         iterator,
-        output.add(input),
+        output.add(input.value),
         lastWasUnderscore: false,
       );
     } else if (input.value.isUnderscore) {
@@ -441,7 +441,7 @@ class DecimalState extends State<Character, Lexeme> {
       if (lastWasUnderscore) {
         throw InvalidCharacterError(input, 'digit');
       }
-      return ExponentInitState(iterator, output.add(input));
+      return ExponentInitState(iterator, output.add(input.value));
     } else if (input.value.isOperandDelimiter) {
       if (lastWasUnderscore) {
         throw InvalidCharacterError(input, 'digit');
@@ -460,9 +460,9 @@ class ExponentInitState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isDigit) {
-      return ExponentState(iterator, output.add(input));
+      return ExponentState(iterator, output.add(input.value));
     } else if (input.value.isPlus || input.value.isMinus) {
-      return ExponentSignState(iterator, output.add(input));
+      return ExponentSignState(iterator, output.add(input.value));
     } else {
       throw InvalidCharacterError(input, 'digit or sign');
     }
@@ -475,7 +475,7 @@ class ExponentSignState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isDigit) {
-      return ExponentState(iterator, output.add(input));
+      return ExponentState(iterator, output.add(input.value));
     } else {
       throw InvalidCharacterError(input, 'digit');
     }
@@ -496,7 +496,7 @@ class ExponentState extends State<Character, Lexeme> {
     if (input.value.isDigit) {
       return ExponentState(
         iterator,
-        output.add(input),
+        output.add(input.value),
         lastWasUnderscore: false,
       );
     } else if (input.value.isUnderscore) {
@@ -522,7 +522,7 @@ class IdentifierState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isIdentifier) {
-      return IdentifierState(iterator, output.add(input));
+      return IdentifierState(iterator, output.add(input.value));
     } else if (input.value.isOperandDelimiter) {
       iterator.back();
       return ResultState(iterator, _identifierOrKeywordToken(output));
@@ -566,7 +566,7 @@ class EqualsState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, EqualToken(output.add(input)));
+      return ResultState(iterator, EqualToken(output.add(input.value)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, AssignToken(output));
@@ -582,7 +582,10 @@ class GreaterState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, GreaterOrEqualToken(output.add(input)));
+      return ResultState(
+        iterator,
+        GreaterOrEqualToken(output.add(input.value)),
+      );
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, GreaterThanToken(output));
@@ -598,7 +601,7 @@ class LessState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, LessOrEqualToken(output.add(input)));
+      return ResultState(iterator, LessOrEqualToken(output.add(input.value)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, LessThanToken(output));
@@ -642,7 +645,7 @@ class BangState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isEquals) {
-      return ResultState(iterator, NotEqualToken(output.add(input)));
+      return ResultState(iterator, NotEqualToken(output.add(input.value)));
     } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, BangToken(output));

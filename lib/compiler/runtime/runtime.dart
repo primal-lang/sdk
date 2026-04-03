@@ -53,8 +53,9 @@ class Runtime {
   }
 
   String evaluate(Expression expression) {
+    final Node lowered = const Lowerer().lowerExpression(expression);
     final Node validated = SemanticAnalyzer.validateExpression(
-      expression.toNode(),
+      lowered,
       _loweredFunctions,
     );
     final Node result = validated.evaluate();

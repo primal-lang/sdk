@@ -1,11 +1,8 @@
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
-import 'package:primal/compiler/runtime/node.dart';
 
 abstract class Expression extends Located {
   const Expression({required super.location});
-
-  Node toNode();
 }
 
 abstract class LiteralExpression<T> extends Expression {
@@ -26,9 +23,6 @@ class BooleanExpression extends LiteralExpression<bool> {
         location: token.location,
         value: token.value,
       );
-
-  @override
-  Node toNode() => BooleanNode(value);
 }
 
 class NumberExpression extends LiteralExpression<num> {
@@ -37,9 +31,6 @@ class NumberExpression extends LiteralExpression<num> {
         location: token.location,
         value: token.value,
       );
-
-  @override
-  Node toNode() => NumberNode(value);
 }
 
 class StringExpression extends LiteralExpression<String> {
@@ -51,9 +42,6 @@ class StringExpression extends LiteralExpression<String> {
 
   @override
   String toString() => '"$value"';
-
-  @override
-  Node toNode() => StringNode(value);
 }
 
 class ListExpression extends LiteralExpression<List<Expression>> {
@@ -61,9 +49,6 @@ class ListExpression extends LiteralExpression<List<Expression>> {
     required super.location,
     required super.value,
   });
-
-  @override
-  Node toNode() => ListNode(value.map((e) => e.toNode()).toList());
 }
 
 class MapEntryExpression extends Located {
@@ -88,15 +73,6 @@ class MapExpression extends LiteralExpression<List<MapEntryExpression>> {
     final entries = value.map((e) => '${e.key}: ${e.value}').join(', ');
     return '{$entries}';
   }
-
-  @override
-  Node toNode() {
-    final Map<Node, Node> nodeMap = {};
-    for (final entry in value) {
-      nodeMap[entry.key.toNode()] = entry.value.toNode();
-    }
-    return MapNode(nodeMap);
-  }
 }
 
 class IdentifierExpression extends LiteralExpression<String> {
@@ -105,9 +81,6 @@ class IdentifierExpression extends LiteralExpression<String> {
         location: token.location,
         value: token.value,
       );
-
-  @override
-  Node toNode() => IdentifierNode(value);
 }
 
 class CallExpression extends Expression {
@@ -148,10 +121,4 @@ class CallExpression extends Expression {
 
   @override
   String toString() => '$callee(${arguments.join(', ')})';
-
-  @override
-  Node toNode() => CallNode(
-    callee: callee.toNode(),
-    arguments: arguments.map((e) => e.toNode()).toList(),
-  );
 }
