@@ -241,9 +241,16 @@ class SemanticAnalyzer
       }
 
       return MapNode(elements);
+    } else if (node is BooleanNode ||
+        node is NumberNode ||
+        node is StringNode) {
+      // Literals contain no identifiers and need no checking
+      return node;
     }
 
-    return node;
+    throw StateError(
+      'Unexpected node type in semantic analysis: ${node.runtimeType}',
+    );
   }
 
   Node checkVariableIdentifier({
