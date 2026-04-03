@@ -335,7 +335,9 @@ class ExpressionParser {
         final Expression key = expression();
         consume(_isColon, ':');
         final Expression value = expression();
-        pairs.add(MapEntryExpression(key: key, value: value));
+        pairs.add(
+          MapEntryExpression(location: key.location, key: key, value: value),
+        );
       } while (match(_commaPredicates));
     }
 

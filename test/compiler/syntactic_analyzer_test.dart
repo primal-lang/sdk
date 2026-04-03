@@ -174,14 +174,17 @@ void main() {
             location: const Location(row: 1, column: 7),
             value: [
               MapEntryExpression(
+                location: const Location(row: 1, column: 8),
                 key: NumberExpression(numberToken(1, 1, 8)),
                 value: StringExpression(stringToken('one', 1, 11)),
               ),
               MapEntryExpression(
+                location: const Location(row: 1, column: 18),
                 key: NumberExpression(numberToken(2, 1, 18)),
                 value: StringExpression(stringToken('two', 1, 21)),
               ),
               MapEntryExpression(
+                location: const Location(row: 1, column: 28),
                 key: NumberExpression(numberToken(3, 1, 28)),
                 value: StringExpression(stringToken('three', 1, 31)),
               ),
@@ -206,14 +209,17 @@ void main() {
                 location: const Location(row: 1, column: 7),
                 value: [
                   MapEntryExpression(
+                    location: const Location(row: 1, column: 8),
                     key: NumberExpression(numberToken(1, 1, 8)),
                     value: StringExpression(stringToken('one', 1, 11)),
                   ),
                   MapEntryExpression(
+                    location: const Location(row: 1, column: 18),
                     key: NumberExpression(numberToken(2, 1, 18)),
                     value: StringExpression(stringToken('two', 1, 21)),
                   ),
                   MapEntryExpression(
+                    location: const Location(row: 1, column: 28),
                     key: NumberExpression(numberToken(3, 1, 28)),
                     value: StringExpression(stringToken('three', 1, 31)),
                   ),
@@ -224,6 +230,16 @@ void main() {
           ),
         ),
       ]);
+    });
+
+    test('MapEntryExpression has correct location', () {
+      final List<FunctionDefinition> functions = getFunctions(
+        'map = {"key": "value"}',
+      );
+      final MapExpression mapExpr = functions[0].expression as MapExpression;
+      final MapEntryExpression entry = mapExpr.value[0];
+
+      expect(entry.location, equals(const Location(row: 1, column: 8)));
     });
 
     test('Function with no parameters', () {

@@ -67,10 +67,15 @@ class ListExpression extends LiteralExpression<List<Expression>> {
 }
 
 class MapEntryExpression {
+  final Location location;
   final Expression key;
   final Expression value;
 
-  const MapEntryExpression({required this.key, required this.value});
+  const MapEntryExpression({
+    required this.location,
+    required this.key,
+    required this.value,
+  });
 }
 
 class MapExpression extends LiteralExpression<List<MapEntryExpression>> {
