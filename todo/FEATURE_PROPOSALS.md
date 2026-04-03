@@ -3,6 +3,7 @@
 This document contains proposed features for the Primal programming language that extend beyond the current feature set. Each proposal includes an assessment of how well it fits Primal's design philosophy, implementation complexity, and potential impact.
 
 **Rating Scale:**
+
 - **Fit**: How well the feature aligns with Primal's functional, immutable, lazy-evaluated nature
 - **Complexity**: Implementation effort required
 - **Impact**: Value delivered to users
@@ -75,16 +76,17 @@ This document contains proposed features for the Primal programming language tha
 
 ### 1. Complex Numbers
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Native support for complex numbers with real and imaginary parts. Complex numbers are essential for scientific computing, signal processing, and mathematical applications.
 
 **Proposed Syntax:**
+
 ```primal
 // Literal syntax
 z1 = 3 + 4i
@@ -108,6 +110,7 @@ complex.fromReal(5)     // 5 + 0i
 ```
 
 **Use Cases:**
+
 - Electrical engineering (AC circuits, impedance)
 - Signal processing (Fourier transforms)
 - Quantum computing simulations
@@ -115,6 +118,7 @@ complex.fromReal(5)     // 5 + 0i
 - Control systems
 
 **Implementation Notes:**
+
 - Add `ComplexNode` to runtime nodes
 - Extend number parsing in lexer to recognize `i` suffix
 - Implement arithmetic with complex number rules
@@ -124,16 +128,17 @@ complex.fromReal(5)     // 5 + 0i
 
 ### 2. Rationals
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Exact rational number arithmetic using numerator/denominator pairs. Avoids floating-point precision errors that plague decimal arithmetic.
 
 **Proposed Syntax:**
+
 ```primal
 // Literal syntax using fraction notation
 r1 = 1/3
@@ -160,6 +165,7 @@ rational.ceil(7/3)        // 3
 ```
 
 **Use Cases:**
+
 - Financial calculations requiring exact arithmetic
 - Mathematical computations
 - Ratio and proportion problems
@@ -167,6 +173,7 @@ rational.ceil(7/3)        // 3
 - Recipe scaling
 
 **Implementation Notes:**
+
 - Store as pair of integers (numerator, denominator)
 - Always keep in lowest terms (GCD normalization)
 - Handle sign consistently (numerator carries sign)
@@ -176,16 +183,17 @@ rational.ceil(7/3)        // 3
 
 ### 3. Matrices
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
 | Complexity | **Medium** |
-| Impact     | **High** |
+| Impact     | **High**   |
 
 **Description:**
 First-class 2D matrices with linear algebra operations. Extends the existing `vector` type to two dimensions.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 m1 = matrix.new([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
@@ -240,6 +248,7 @@ matrix.solve(A, b)            // solve Ax = b
 ```
 
 **Use Cases:**
+
 - Machine learning (weights, transformations)
 - Computer graphics (transforms, projections)
 - Physics simulations
@@ -247,6 +256,7 @@ matrix.solve(A, b)            // solve Ax = b
 - Network analysis (adjacency matrices)
 
 **Implementation Notes:**
+
 - Store as nested lists internally with shape metadata
 - Validate dimensions on operations
 - Consider sparse matrix representation for large matrices
@@ -257,7 +267,7 @@ matrix.solve(A, b)            // solve Ax = b
 ### 4. Graph Type
 
 | Property   | Rating   |
-|------------|----------|
+| ---------- | -------- |
 | Fit        | **High** |
 | Complexity | **High** |
 | Impact     | **High** |
@@ -266,6 +276,7 @@ matrix.solve(A, b)            // solve Ax = b
 First-class graph data structure supporting both directed and undirected graphs with weighted edges.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 g1 = graph.new()                          // empty graph
@@ -326,6 +337,7 @@ graph.intersection(g1, g2)
 ```
 
 **Use Cases:**
+
 - Social network analysis
 - Route planning and navigation
 - Dependency resolution
@@ -334,6 +346,7 @@ graph.intersection(g1, g2)
 - Compiler optimizations (control flow graphs)
 
 **Implementation Notes:**
+
 - Store as adjacency list for sparse graphs
 - Consider adjacency matrix for dense graphs
 - Implement classic algorithms efficiently
@@ -343,16 +356,17 @@ graph.intersection(g1, g2)
 
 ### 5. Tree Type
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
 | Complexity | **Medium** |
-| Impact     | **High** |
+| Impact     | **High**   |
 
 **Description:**
 First-class tree data structure with traversal and transformation operations. Trees are fundamental for hierarchical data.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 t1 = tree.leaf(5)                         // leaf node
@@ -408,6 +422,7 @@ tree.rotate(t2, direction)                // AVL rotation
 ```
 
 **Use Cases:**
+
 - File system representation
 - HTML/XML document trees
 - Abstract syntax trees (ASTs)
@@ -416,6 +431,7 @@ tree.rotate(t2, direction)                // AVL rotation
 - Game trees (minimax)
 
 **Implementation Notes:**
+
 - Generic tree with arbitrary branching factor
 - Special support for binary trees
 - Implement traversals as lazy sequences
@@ -425,16 +441,17 @@ tree.rotate(t2, direction)                // AVL rotation
 
 ### 6. NonEmpty Collections
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Type-safe collections guaranteed to have at least one element. Eliminates null checks and "empty collection" errors at the type level.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 nel1 = nonempty.list(1, [2, 3, 4])        // head + tail
@@ -473,12 +490,14 @@ nonempty.isSingleton(nel1)                // length == 1
 ```
 
 **Use Cases:**
+
 - Function that must return at least one result
 - Configuration with required defaults
 - Validation errors (at least one error)
 - Selected items (at least one selected)
 
 **Implementation Notes:**
+
 - Store as (head, tail) pair internally
 - Type system tracks non-emptiness
 - Operations preserve or lose non-empty guarantee appropriately
@@ -487,16 +506,17 @@ nonempty.isSingleton(nel1)                // length == 1
 
 ### 7. Difference Lists
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 A list representation that supports O(1) append operations. Represented as a function from lists to lists, enabling efficient concatenation.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 dl1 = dlist.new()                         // empty
@@ -521,12 +541,14 @@ buildString(parts) =
 ```
 
 **Use Cases:**
+
 - Building large lists incrementally
 - Logger that accumulates messages
 - Parser combinators (accumulating results)
 - Any left-fold that builds a list
 
 **Implementation Notes:**
+
 - Represent as `list -> list` function internally
 - `append(dl1, dl2)` = `x -> dl1(dl2(x))`
 - `toList(dl)` = `dl([])`
@@ -536,16 +558,17 @@ buildString(parts) =
 
 ### 8. Finger Trees
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
+| Complexity | **High**   |
 | Impact     | **Medium** |
 
 **Description:**
 A general-purpose persistent data structure with O(1) access to both ends and O(log n) concatenation and random access.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 ft1 = finger.new()                        // empty
@@ -579,12 +602,14 @@ finger.isEmpty(ft2)
 ```
 
 **Use Cases:**
+
 - Double-ended queues (deques)
 - Priority queues (with appropriate measure)
 - Indexed sequences
 - Text editors (rope-like functionality)
 
 **Implementation Notes:**
+
 - Complex implementation with 2-3 trees
 - Parameterized by monoid for measurements
 - Worth the complexity for specific use cases
@@ -593,9 +618,9 @@ finger.isEmpty(ft2)
 
 ### 9. Tries / Prefix Trees
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
 | Complexity | **Medium** |
 | Impact     | **Medium** |
 
@@ -603,6 +628,7 @@ finger.isEmpty(ft2)
 Tree structure for efficient string/sequence lookup with prefix-based operations.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 t1 = trie.new()
@@ -639,6 +665,7 @@ trie.isEmpty(t2)
 ```
 
 **Use Cases:**
+
 - Autocomplete/typeahead
 - Spell checkers
 - IP routing tables
@@ -646,6 +673,7 @@ trie.isEmpty(t2)
 - Command-line tab completion
 
 **Implementation Notes:**
+
 - Each node has map of character -> child
 - Terminal nodes marked with flag/value
 - Consider compressed tries (radix trees) for efficiency
@@ -654,16 +682,17 @@ trie.isEmpty(t2)
 
 ### 10. Persistent Vectors
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
 | Complexity | **Medium** |
-| Impact     | **High** |
+| Impact     | **High**   |
 
 **Description:**
 Clojure-style persistent vectors with efficient random access and updates through structural sharing.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 pv1 = pvec.new()
@@ -696,12 +725,14 @@ pvec.isEmpty(pv2)
 ```
 
 **Use Cases:**
+
 - Large immutable sequences
 - Undo/redo with minimal memory
 - Concurrent data sharing
 - Functional data pipelines
 
 **Implementation Notes:**
+
 - 32-way branching trie structure
 - Path copying for updates
 - Tail optimization for appends
@@ -714,7 +745,7 @@ pvec.isEmpty(pv2)
 ### 11. Lenses / Optics
 
 | Property   | Rating   |
-|------------|----------|
+| ---------- | -------- |
 | Fit        | **High** |
 | Complexity | **High** |
 | Impact     | **High** |
@@ -723,6 +754,7 @@ pvec.isEmpty(pv2)
 Composable getters and setters for deeply nested immutable data structures. Lenses solve the "nested update problem" in functional programming.
 
 **Proposed Syntax:**
+
 ```primal
 // Given nested data
 person = {
@@ -785,12 +817,14 @@ iso.backward(celsiusFahrenheit, 32)       // 0
 ```
 
 **Use Cases:**
+
 - Updating deeply nested configuration
 - State management in applications
 - JSON/data transformation pipelines
 - Working with immutable UI state
 
 **Implementation Notes:**
+
 - Lens = pair of getter and setter functions
 - Composition is function composition
 - Prisms handle optional/sum types
@@ -800,16 +834,17 @@ iso.backward(celsiusFahrenheit, 32)       // 0
 
 ### 12. Transducers
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
 | Complexity | **Medium** |
-| Impact     | **High** |
+| Impact     | **High**   |
 
 **Description:**
 Composable algorithmic transformations that are independent of the input/output source. Unlike chained map/filter, transducers don't create intermediate collections.
 
 **Proposed Syntax:**
+
 ```primal
 // Individual transducers
 mapT = transducer.map((x) -> x * 2)
@@ -850,12 +885,14 @@ transducer.mapIndexed((i, x) -> [i, x])          // with index
 ```
 
 **Use Cases:**
+
 - Processing large data sets efficiently
 - Building reusable transformation pipelines
 - Stream processing
 - Avoiding memory overhead of intermediate collections
 
 **Implementation Notes:**
+
 - Transducer = `(reducer -> reducer)` function
 - Composition is right-to-left function composition
 - Must handle reduced (early termination) properly
@@ -866,7 +903,7 @@ transducer.mapIndexed((i, x) -> [i, x])          // with index
 ### 13. Trampolining
 
 | Property   | Rating   |
-|------------|----------|
+| ---------- | -------- |
 | Fit        | **High** |
 | Complexity | **Low**  |
 | Impact     | **High** |
@@ -875,6 +912,7 @@ transducer.mapIndexed((i, x) -> [i, x])          // with index
 Built-in support for converting recursive functions to iterative execution, preventing stack overflow for deep recursion.
 
 **Proposed Syntax:**
+
 ```primal
 // Without trampolining - stack overflow for large n
 factorial(n) = if (n <= 1) 1 else n * factorial(n - 1)
@@ -907,12 +945,14 @@ sumList(lst, acc) =
 ```
 
 **Use Cases:**
+
 - Deep recursive algorithms
 - Tree traversals on large trees
 - Parsing deeply nested structures
 - Any recursive algorithm that might overflow
 
 **Implementation Notes:**
+
 - Trampoline = loop that handles `Done` or `Bounce` values
 - Simple to implement: `Bounce` wraps thunk, `Done` wraps result
 - Could integrate with tail-call optimization detection
@@ -921,9 +961,9 @@ sumList(lst, acc) =
 
 ### 14. Codata / Corecursion
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
 | Complexity | **Medium** |
 | Impact     | **Medium** |
 
@@ -931,6 +971,7 @@ sumList(lst, acc) =
 Support for infinite data structures defined by how they produce elements (corecursion) rather than how they're consumed (recursion). Already partially supported via laziness, but explicit codata would be clearer.
 
 **Proposed Syntax:**
+
 ```primal
 // Infinite streams (codata)
 naturals = codata.unfold(0, (n) -> [n, n + 1])
@@ -974,6 +1015,7 @@ codata.ana(seed, predicate, mapper, next)
 ```
 
 **Use Cases:**
+
 - Mathematical sequences
 - Event streams
 - Lazy I/O
@@ -981,6 +1023,7 @@ codata.ana(seed, predicate, mapper, next)
 - Infinite game worlds
 
 **Implementation Notes:**
+
 - Represent as thunk that produces (head, tail-thunk)
 - Must prevent accidental forcing of infinite structures
 - Clear distinction from finite lists
@@ -989,16 +1032,17 @@ codata.ana(seed, predicate, mapper, next)
 
 ### 15. First-Class Patterns
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
+| Complexity | **High**   |
 | Impact     | **Medium** |
 
 **Description:**
 Patterns as values that can be composed, stored, and passed to functions. Enables building complex patterns from simple ones.
 
 **Proposed Syntax:**
+
 ```primal
 // Basic patterns
 anyP = pattern.any()                      // matches anything
@@ -1038,12 +1082,14 @@ pattern.case(value, [
 ```
 
 **Use Cases:**
+
 - Building domain-specific pattern languages
 - Validation frameworks
 - Parsing combinators
 - Query expressions
 
 **Implementation Notes:**
+
 - Pattern = object with match and extract methods
 - Composition creates new pattern objects
 - Integrate with pattern matching syntax
@@ -1052,16 +1098,17 @@ pattern.case(value, [
 
 ### 16. Active Patterns
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
+| Complexity | **High**   |
 | Impact     | **Medium** |
 
 **Description:**
 User-defined pattern decompositions that run arbitrary code during pattern matching. Inspired by F#'s active patterns.
 
 **Proposed Syntax:**
+
 ```primal
 // Single-case active pattern (total)
 @pattern Even(n) = if (num.isEven(n)) n / 2 else fail
@@ -1109,12 +1156,14 @@ parseEmail(s) = match s with
 ```
 
 **Use Cases:**
+
 - Parsing and validation
 - Domain modeling
 - Complex conditional logic
 - Data extraction
 
 **Implementation Notes:**
+
 - Active pattern = function returning match result or failure
 - Integrate with pattern matching desugaring
 - Consider partial vs total patterns
@@ -1123,16 +1172,17 @@ parseEmail(s) = match s with
 
 ### 17. Monoid / Semigroup Operations
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Built-in support for algebraic structures with associative operations. Enables generic folding and combining.
 
 **Proposed Syntax:**
+
 ```primal
 // Built-in monoid instances
 monoid.sum                                // numbers with +, identity 0
@@ -1178,12 +1228,14 @@ semigroup.fold(semigroup.max, nonempty.of(1, 5, 3, 2))  // 5
 ```
 
 **Use Cases:**
+
 - Generic aggregation
 - Parallel-safe combining
 - Configuration merging
 - Accumulating results
 
 **Implementation Notes:**
+
 - Monoid = {identity, combine} where combine is associative
 - Enables parallelization (associativity)
 - Many built-in types have natural monoid instances
@@ -1192,9 +1244,9 @@ semigroup.fold(semigroup.max, nonempty.of(1, 5, 3, 2))  // 5
 
 ### 18. Functors and Applicatives
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
 | Complexity | **Medium** |
 | Impact     | **Medium** |
 
@@ -1202,6 +1254,7 @@ semigroup.fold(semigroup.max, nonempty.of(1, 5, 3, 2))  // 5
 Explicit functor and applicative interfaces for mapping and combining computations in context.
 
 **Proposed Syntax:**
+
 ```primal
 // Functor: map over structure
 functor.map(list.functor, [1, 2, 3], (x) -> x * 2)     // [2, 4, 6]
@@ -1249,12 +1302,14 @@ validateAll(inputs) = applicative.traverse(
 ```
 
 **Use Cases:**
+
 - Uniform interface for mapping
 - Combining optional values
 - Parallel validation
 - Effectful traversals
 
 **Implementation Notes:**
+
 - Functor laws: identity, composition
 - Applicative laws: identity, composition, homomorphism, interchange
 - Dictionary-passing style or type classes
@@ -1265,16 +1320,17 @@ validateAll(inputs) = applicative.traverse(
 
 ### 19. Algebraic Effects / Effect Handlers
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
-| Impact     | **High** |
+| Complexity | **High**   |
+| Impact     | **High**   |
 
 **Description:**
 A modern approach to managing side effects that separates effect declaration from effect handling. More flexible than monads.
 
 **Proposed Syntax:**
+
 ```primal
 // Declare effects
 effect Console {
@@ -1340,6 +1396,7 @@ handler ListHandler {
 ```
 
 **Use Cases:**
+
 - Controlled side effects
 - Dependency injection
 - Testing (mock effects)
@@ -1347,6 +1404,7 @@ handler ListHandler {
 - Async/concurrent programming
 
 **Implementation Notes:**
+
 - Requires delimited continuations internally
 - Effect rows for tracking which effects are used
 - Significant compiler/runtime changes
@@ -1355,16 +1413,17 @@ handler ListHandler {
 
 ### 20. Delimited Continuations
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
+| Complexity | **High**   |
 | Impact     | **Medium** |
 
 **Description:**
 First-class control flow with `shift` and `reset` operators. Enables implementing complex control patterns.
 
 **Proposed Syntax:**
+
 ```primal
 // reset: delimits the continuation
 // shift: captures the continuation up to enclosing reset
@@ -1428,6 +1487,7 @@ triples(n) = reset(do {
 ```
 
 **Use Cases:**
+
 - Implementing generators
 - Coroutines
 - Backtracking search
@@ -1435,6 +1495,7 @@ triples(n) = reset(do {
 - Async/await patterns
 
 **Implementation Notes:**
+
 - Requires CPS transformation or stack manipulation
 - Performance considerations
 - Careful interaction with other features
@@ -1444,7 +1505,7 @@ triples(n) = reset(do {
 ### 21. Validation Type
 
 | Property   | Rating   |
-|------------|----------|
+| ---------- | -------- |
 | Fit        | **High** |
 | Complexity | **Low**  |
 | Impact     | **High** |
@@ -1453,6 +1514,7 @@ triples(n) = reset(do {
 Like Result/Either but accumulates all errors instead of short-circuiting on the first one. Essential for form validation and data processing.
 
 **Proposed Syntax:**
+
 ```primal
 // Creation
 valid1 = validation.success(42)
@@ -1523,12 +1585,14 @@ validateAddress(addr) = validation.combine([
 ```
 
 **Use Cases:**
+
 - Form validation (show all errors at once)
 - Data import (collect all parsing errors)
 - Configuration validation
 - API request validation
 
 **Implementation Notes:**
+
 - Store errors as list (semigroup for combining)
 - Applicative instance accumulates; Monad would short-circuit
 - Integrate with Result type
@@ -1537,8 +1601,8 @@ validateAddress(addr) = validation.combine([
 
 ### 22. Implicit Parameters
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
 | Complexity | **Medium** |
 | Impact     | **Medium** |
@@ -1547,6 +1611,7 @@ validateAddress(addr) = validation.combine([
 Parameters that are automatically passed through the call chain without explicit threading. Useful for configuration, logging, and dependency injection.
 
 **Proposed Syntax:**
+
 ```primal
 // Declare implicit parameter
 implicit config: Config
@@ -1595,6 +1660,7 @@ whenImplicit(logger, (l) -> l.debug("..."))
 ```
 
 **Use Cases:**
+
 - Configuration threading
 - Logging context
 - Transaction context
@@ -1602,6 +1668,7 @@ whenImplicit(logger, (l) -> l.debug("..."))
 - Dependency injection
 
 **Implementation Notes:**
+
 - Scope-based resolution
 - Compile-time or runtime resolution
 - Clear rules for ambiguity
@@ -1610,16 +1677,17 @@ whenImplicit(logger, (l) -> l.debug("..."))
 
 ### 23. Async / Promises
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
 | Complexity | **Medium** |
-| Impact     | **High** |
+| Impact     | **High**   |
 
 **Description:**
 Asynchronous computation support with promises/futures. While Primal is single-threaded, async enables non-blocking I/O.
 
 **Proposed Syntax:**
+
 ```primal
 // Creating promises
 p1 = async.resolve(42)                    // immediately resolved
@@ -1679,6 +1747,7 @@ async.runSync(promise)
 ```
 
 **Use Cases:**
+
 - HTTP requests
 - File I/O (non-blocking)
 - Timers and delays
@@ -1686,6 +1755,7 @@ async.runSync(promise)
 - Event handling
 
 **Implementation Notes:**
+
 - Event loop integration
 - Promise/A+ compatible semantics
 - Clear async boundary
@@ -1694,16 +1764,17 @@ async.runSync(promise)
 
 ### 24. Streams / Observables
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
+| Complexity | **High**   |
 | Impact     | **Medium** |
 
 **Description:**
 Reactive streams for handling sequences of asynchronous events over time.
 
 **Proposed Syntax:**
+
 ```primal
 // Creating streams
 s1 = stream.of(1, 2, 3)                   // finite stream
@@ -1759,6 +1830,7 @@ stream.complete(subj)
 ```
 
 **Use Cases:**
+
 - User input handling
 - Real-time data feeds
 - Event-driven architectures
@@ -1766,6 +1838,7 @@ stream.complete(subj)
 - WebSocket messages
 
 **Implementation Notes:**
+
 - Push-based (vs pull-based iterators)
 - Backpressure handling
 - Memory management for subscriptions
@@ -1776,16 +1849,17 @@ stream.complete(subj)
 
 ### 25. Units of Measure
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
+| Complexity | **High**   |
 | Impact     | **Medium** |
 
 **Description:**
 Track physical units at the type level, preventing unit mismatch errors at compile time.
 
 **Proposed Syntax:**
+
 ```primal
 // Define base units
 unit Meter
@@ -1840,6 +1914,7 @@ pi = 3.14159<1>                           // explicitly dimensionless
 ```
 
 **Use Cases:**
+
 - Physics simulations
 - Engineering calculations
 - Financial applications (currency)
@@ -1847,6 +1922,7 @@ pi = 3.14159<1>                           // explicitly dimensionless
 - Preventing Mars Climate Orbiter disasters
 
 **Implementation Notes:**
+
 - Units as type-level tags
 - Compile-time unit checking
 - SI base units + derived units
@@ -1857,7 +1933,7 @@ pi = 3.14159<1>                           // explicitly dimensionless
 ### 26. Nominal Newtypes
 
 | Property   | Rating   |
-|------------|----------|
+| ---------- | -------- |
 | Fit        | **High** |
 | Complexity | **Low**  |
 | Impact     | **High** |
@@ -1866,6 +1942,7 @@ pi = 3.14159<1>                           // explicitly dimensionless
 Create distinct types from existing types with zero runtime overhead. Prevents mixing up semantically different values.
 
 **Proposed Syntax:**
+
 ```primal
 // Declare newtypes
 newtype UserId = Number
@@ -1920,12 +1997,14 @@ newtype SortedList<a> = List<a>
 ```
 
 **Use Cases:**
+
 - Preventing ID mixups (user ID vs product ID)
 - Sensitive data (password vs regular string)
 - Domain modeling
 - Type-safe wrappers
 
 **Implementation Notes:**
+
 - Zero runtime overhead (same representation)
 - Distinct at type level only
 - Controlled coercion
@@ -1934,16 +2013,17 @@ newtype SortedList<a> = List<a>
 
 ### 27. Row Polymorphism
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
-| Impact     | **High** |
+| Complexity | **High**   |
+| Impact     | **High**   |
 
 **Description:**
 Extensible records where functions can work on any record that has at least the required fields.
 
 **Proposed Syntax:**
+
 ```primal
 // Record type with open row
 type HasName = {name: String, ...rest}
@@ -1993,12 +2073,14 @@ handleResult(r: <Ok: a, Err: e, ...rest>) = match r with
 ```
 
 **Use Cases:**
+
 - Flexible record manipulation
 - Extensible APIs
 - Plugin systems
 - Gradual typing
 
 **Implementation Notes:**
+
 - Row variables in type system
 - Unification with row constraints
 - Significant type system changes
@@ -2007,16 +2089,17 @@ handleResult(r: <Ok: a, Err: e, ...rest>) = match r with
 
 ### 28. Linear / Affine Types
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **Low**  |
-| Complexity | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **Low**    |
+| Complexity | **High**   |
 | Impact     | **Medium** |
 
 **Description:**
 Types that must be used exactly once (linear) or at most once (affine). Enables safe resource management.
 
 **Proposed Syntax:**
+
 ```primal
 // Linear type: must use exactly once
 linear type FileHandle
@@ -2070,6 +2153,7 @@ unrestricted = Many
 ```
 
 **Use Cases:**
+
 - File handle safety
 - Database connections
 - Memory management
@@ -2077,6 +2161,7 @@ unrestricted = Many
 - Preventing resource leaks
 
 **Implementation Notes:**
+
 - Significant type system addition
 - Usage tracking in type checker
 - May conflict with Primal's simplicity goal
@@ -2085,16 +2170,17 @@ unrestricted = Many
 
 ### 29. Phantom Types
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Type parameters that don't appear in the runtime representation but provide compile-time safety.
 
 **Proposed Syntax:**
+
 ```primal
 // Phantom type parameter 'state' not used in data
 type Door<state> = {id: Number}
@@ -2148,6 +2234,7 @@ submit(data: FormData<Validated>) -> Response
 ```
 
 **Use Cases:**
+
 - State machines at type level
 - Validated vs unvalidated data
 - Safe HTML construction
@@ -2155,6 +2242,7 @@ submit(data: FormData<Validated>) -> Response
 - Encoding invariants
 
 **Implementation Notes:**
+
 - Phantom parameter in type definition
 - No runtime representation
 - Simple to implement
@@ -2163,16 +2251,17 @@ submit(data: FormData<Validated>) -> Response
 
 ### 30. Refinement Types
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
-| Impact     | **High** |
+| Complexity | **High**   |
+| Impact     | **High**   |
 
 **Description:**
 Types with predicates that constrain values. Enables expressing invariants in the type system.
 
 **Proposed Syntax:**
+
 ```primal
 // Refinement type syntax: {x: Base | predicate(x)}
 type PositiveInt = {n: Number | n > 0}
@@ -2216,6 +2305,7 @@ type Ascii = {s: String | all(s, (c) -> ord(c) < 128)}
 ```
 
 **Use Cases:**
+
 - Expressing invariants
 - Eliminating runtime checks
 - API contracts
@@ -2223,6 +2313,7 @@ type Ascii = {s: String | all(s, (c) -> ord(c) < 128)}
 - Mathematical properties
 
 **Implementation Notes:**
+
 - Requires SMT solver for checking
 - Trade-off: expressiveness vs decidability
 - May need escape hatches
@@ -2233,16 +2324,17 @@ type Ascii = {s: String | all(s, (c) -> ord(c) < 128)}
 
 ### 31. Symbols / Atoms
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Interned identifiers that are equal if they have the same name. Lighter than strings for use as keys and tags.
 
 **Proposed Syntax:**
+
 ```primal
 // Symbol literal with colon prefix
 status = :ok
@@ -2291,6 +2383,7 @@ createUser(:name, "Alice", :age, 30, :active, true)
 ```
 
 **Use Cases:**
+
 - Map keys
 - Pattern matching tags
 - Enum-like constants
@@ -2298,6 +2391,7 @@ createUser(:name, "Alice", :age, 30, :active, true)
 - Keyword arguments
 
 **Implementation Notes:**
+
 - Global symbol table (interning)
 - O(1) equality comparison
 - Minimal memory per unique symbol
@@ -2306,16 +2400,17 @@ createUser(:name, "Alice", :age, 30, :active, true)
 
 ### 32. Quotation / Quasi-quotation
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **High** |
+| Complexity | **High**   |
 | Impact     | **Medium** |
 
 **Description:**
 Code as data - the ability to quote expressions and splice values into quoted code. Foundation for metaprogramming.
 
 **Proposed Syntax:**
+
 ```primal
 // Quote: treat code as data (unevaluated AST)
 expr1 = '(1 + 2)                          // quoted expression
@@ -2367,6 +2462,7 @@ unless(isEmpty(list), process(list))
 ```
 
 **Use Cases:**
+
 - Code generation
 - DSL implementation
 - Optimization passes
@@ -2374,6 +2470,7 @@ unless(isEmpty(list), process(list))
 - Compile-time metaprogramming
 
 **Implementation Notes:**
+
 - Quote returns AST representation
 - Hygiene for macro system
 - Clear evaluation semantics
@@ -2382,8 +2479,8 @@ unless(isEmpty(list), process(list))
 
 ### 33. Multi-methods
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
 | Complexity | **Medium** |
 | Impact     | **Medium** |
@@ -2392,6 +2489,7 @@ unless(isEmpty(list), process(list))
 Functions that dispatch based on the runtime types of multiple arguments, not just one (like traditional OOP).
 
 **Proposed Syntax:**
+
 ```primal
 // Declare multi-method
 multimethod collide(a, b)
@@ -2444,6 +2542,7 @@ method jsonEncode(value: Map) = "{" + ... + "}"
 ```
 
 **Use Cases:**
+
 - Game collision systems
 - Serialization
 - Visitor pattern replacement
@@ -2451,6 +2550,7 @@ method jsonEncode(value: Map) = "{" + ... + "}"
 - Binary operations on mixed types
 
 **Implementation Notes:**
+
 - Dispatch table indexed by type tuple
 - Caching for performance
 - Clear precedence rules
@@ -2460,7 +2560,7 @@ method jsonEncode(value: Map) = "{" + ... + "}"
 ### 34. Debug / Trace Expressions
 
 | Property   | Rating   |
-|------------|----------|
+| ---------- | -------- |
 | Fit        | **High** |
 | Complexity | **Low**  |
 | Impact     | **High** |
@@ -2469,6 +2569,7 @@ method jsonEncode(value: Map) = "{" + ... + "}"
 Non-invasive debugging that prints intermediate values without changing program behavior.
 
 **Proposed Syntax:**
+
 ```primal
 // Basic trace: prints and returns value
 x = trace(expensive_computation())
@@ -2533,12 +2634,14 @@ withStackTrace(computation())
 ```
 
 **Use Cases:**
+
 - Debugging during development
 - Performance profiling
 - Understanding recursion
 - Validating assumptions
 
 **Implementation Notes:**
+
 - `trace` returns its argument unchanged
 - Should have minimal/no overhead when disabled
 - Integration with REPL
@@ -2547,16 +2650,17 @@ withStackTrace(computation())
 
 ### 35. First-Class Environments
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
 | Complexity | **Medium** |
-| Impact     | **Low**  |
+| Impact     | **Low**    |
 
 **Description:**
 Ability to capture, manipulate, and evaluate code within explicit environments/scopes.
 
 **Proposed Syntax:**
+
 ```primal
 // Capture current environment
 env1 = environment.current()
@@ -2608,12 +2712,14 @@ safEval(code) =
 ```
 
 **Use Cases:**
+
 - Implementing REPLs
 - Sandboxed evaluation
 - Dynamic scoping
 - Testing with mock environments
 
 **Implementation Notes:**
+
 - Environment = map from names to values
 - Closure = (environment, expression)
 - Security considerations for eval
@@ -2622,16 +2728,17 @@ safEval(code) =
 
 ### 36. Keyword Arguments as Values
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 First-class keyword arguments that can be passed around, merged, and applied to functions.
 
 **Proposed Syntax:**
+
 ```primal
 // Keyword argument syntax
 result = createUser(name: "Alice", age: 30, active: true)
@@ -2676,12 +2783,14 @@ configure(host: "localhost", port: 8080)
 ```
 
 **Use Cases:**
+
 - Readable function calls
 - Configuration objects
 - Builder patterns
 - API design
 
 **Implementation Notes:**
+
 - Keywords as special map type
 - Compile-time or runtime checking
 - Integration with partial application
@@ -2692,16 +2801,17 @@ configure(host: "localhost", port: 8080)
 
 ### 37. Property-Based Testing
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
 | Complexity | **Medium** |
-| Impact     | **High** |
+| Impact     | **High**   |
 
 **Description:**
 Built-in support for generating random test data and checking properties hold for all inputs.
 
 **Proposed Syntax:**
+
 ```primal
 // Basic property test
 @property
@@ -2775,12 +2885,14 @@ distribution(x: Number) =
 ```
 
 **Use Cases:**
+
 - Finding edge cases
 - Testing algebraic properties
 - Fuzz testing
 - API contract verification
 
 **Implementation Notes:**
+
 - Integrate with generator monad
 - Shrinking for minimal counterexamples
 - Reproducible with seeds
@@ -2789,16 +2901,17 @@ distribution(x: Number) =
 
 ### 38. Soft Invariants / Contracts
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Declarative pre-conditions, post-conditions, and invariants that can be checked at runtime or documented.
 
 **Proposed Syntax:**
+
 ```primal
 // Pre-condition
 @require(n >= 0)
@@ -2855,12 +2968,14 @@ deposit(account, amount) = ...
 ```
 
 **Use Cases:**
+
 - API documentation
 - Runtime validation
 - Design by contract
 - Debugging
 
 **Implementation Notes:**
+
 - Configurable enforcement level
 - Integrate with error messages
 - Support for `old` values
@@ -2869,16 +2984,17 @@ deposit(account, amount) = ...
 
 ### 39. Snapshot Testing
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **Low**  |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Compare output against previously saved "golden" outputs. Useful for testing complex outputs.
 
 **Proposed Syntax:**
+
 ```primal
 // Basic snapshot test
 @snapshot("render_user")
@@ -2928,12 +3044,14 @@ snapshot.read("name")                     // get stored value
 ```
 
 **Use Cases:**
+
 - UI component testing
 - Serialization output
 - Report generation
 - API response testing
 
 **Implementation Notes:**
+
 - File-based storage
 - Clear diff output
 - Update workflow
@@ -2945,7 +3063,7 @@ snapshot.read("name")                     // get stored value
 ### 40. Case Expressions
 
 | Property   | Rating   |
-|------------|----------|
+| ---------- | -------- |
 | Fit        | **High** |
 | Complexity | **Low**  |
 | Impact     | **High** |
@@ -2954,6 +3072,7 @@ snapshot.read("name")                     // get stored value
 Multi-way conditionals that are more readable than nested if-else chains.
 
 **Proposed Syntax:**
+
 ```primal
 // Basic case expression
 grade(score) = case
@@ -3006,12 +3125,14 @@ result = case computeSomething() of
 ```
 
 **Use Cases:**
+
 - Replacing nested if-else
 - State machines
 - Input classification
 - Readable conditionals
 
 **Implementation Notes:**
+
 - Desugar to nested if-else
 - Pattern matching integration
 - Exhaustiveness checking (optional)
@@ -3020,16 +3141,17 @@ result = case computeSomething() of
 
 ### 41. When Expressions
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Conditional expression for when you only care about the true case (like Ruby's unless/when).
 
 **Proposed Syntax:**
+
 ```primal
 // when: execute if condition true, return nothing otherwise
 when(condition, value)
@@ -3078,12 +3200,14 @@ data
 ```
 
 **Use Cases:**
+
 - Optional execution
 - Null checks
 - Conditional transformation
 - Guard clauses
 
 **Implementation Notes:**
+
 - Simple desugaring
 - Works with Maybe/Option type
 - Pipeline friendly
@@ -3092,16 +3216,17 @@ data
 
 ### 42. With Expressions
 
-| Property   | Rating   |
-|------------|----------|
-| Fit        | **High** |
-| Complexity | **Low**  |
+| Property   | Rating     |
+| ---------- | ---------- |
+| Fit        | **High**   |
+| Complexity | **Low**    |
 | Impact     | **Medium** |
 
 **Description:**
 Scoped bindings that are only available within an expression. Cleaner than nested lets.
 
 **Proposed Syntax:**
+
 ```primal
 // Basic with expression
 result = with {
@@ -3153,12 +3278,14 @@ result = (with x = 10 in x * x)
 ```
 
 **Use Cases:**
+
 - Complex calculations with intermediates
 - Avoiding repeated expressions
 - Scoped helper functions
 - Readable complex expressions
 
 **Implementation Notes:**
+
 - Desugar to let bindings
 - Sequential binding semantics
 - Block-level scoping
@@ -3168,7 +3295,7 @@ result = (with x = 10 in x * x)
 ### 43. Placeholder Arguments
 
 | Property   | Rating   |
-|------------|----------|
+| ---------- | -------- |
 | Fit        | **High** |
 | Complexity | **Low**  |
 | Impact     | **High** |
@@ -3177,6 +3304,7 @@ result = (with x = 10 in x * x)
 Shorthand for creating anonymous functions using placeholders like `_` for arguments.
 
 **Proposed Syntax:**
+
 ```primal
 // Instead of: (x) -> x + 1
 list.map(numbers, _ + 1)
@@ -3220,12 +3348,14 @@ list.map(lists, list.map(_, _ * 2))
 ```
 
 **Use Cases:**
+
 - Concise lambdas
 - Point-free style
 - Readable transformations
 - Quick predicates
 
 **Implementation Notes:**
+
 - Parse `_` specially in expression position
 - Wrap in minimal lambda
 - Handle multiple placeholders
@@ -3234,16 +3364,17 @@ list.map(lists, list.map(_, _ * 2))
 
 ### 44. Method Chaining Syntax
 
-| Property   | Rating   |
-|------------|----------|
+| Property   | Rating     |
+| ---------- | ---------- |
 | Fit        | **Medium** |
-| Complexity | **Low**  |
-| Impact     | **High** |
+| Complexity | **Low**    |
+| Impact     | **High**   |
 
 **Description:**
 Allow calling functions in method style for better readability of transformation chains.
 
 **Proposed Syntax:**
+
 ```primal
 // Instead of: list.map(list.filter(numbers, isEven), double)
 numbers.filter(isEven).map(double)
@@ -3294,12 +3425,14 @@ result = data
 ```
 
 **Use Cases:**
+
 - Data transformation pipelines
 - Fluent interfaces
 - Readable chains
 - Familiar to OOP developers
 
 **Implementation Notes:**
+
 - Purely syntactic transformation
 - `x.f(args)` → `f(x, args)`
 - No method resolution, just function call
@@ -3310,15 +3443,15 @@ result = data
 
 This document proposes 44 new features for the Primal programming language, organized into 7 categories:
 
-| Category | Count | High Impact |
-|----------|-------|-------------|
-| Data Types & Structures | 10 | Matrices, Graphs, Trees |
-| Functional Patterns | 8 | Lenses, Transducers, Trampolining |
-| Effects & Control Flow | 6 | Validation, Async, Algebraic Effects |
-| Type System | 6 | Newtypes, Row Polymorphism |
-| Language Primitives | 6 | Symbols, Debug/Trace |
-| Testing & Verification | 3 | Property-Based Testing |
-| Syntax Sugar | 5 | Placeholder Args, Method Chaining |
+| Category                | Count | High Impact                          |
+| ----------------------- | ----- | ------------------------------------ |
+| Data Types & Structures | 10    | Matrices, Graphs, Trees              |
+| Functional Patterns     | 8     | Lenses, Transducers, Trampolining    |
+| Effects & Control Flow  | 6     | Validation, Async, Algebraic Effects |
+| Type System             | 6     | Newtypes, Row Polymorphism           |
+| Language Primitives     | 6     | Symbols, Debug/Trace                 |
+| Testing & Verification  | 3     | Property-Based Testing               |
+| Syntax Sugar            | 5     | Placeholder Args, Method Chaining    |
 
 **Recommended Priority (High Fit + High Impact + Low/Medium Complexity):**
 
