@@ -1,3 +1,5 @@
+Is the runtime following the beta-reduction: substitute and reduce?
+
 - High: semantic resolution is only half-done. Known function names
 survive analysis as plain IdentifierNodes instead of becoming
 resolved references in the IR lib/compiler/semantic/
