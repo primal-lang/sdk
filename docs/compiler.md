@@ -155,12 +155,12 @@ The compiler uses a **strategy pattern** to abstract platform-specific operation
 
 ### Implementations
 
-|                | CLI                       | Web                                                  |
-| -------------- | ------------------------- | ---------------------------------------------------- |
-| Console output | `stdout` / `stderr`       | `print()`                                            |
-| Console input  | `stdin.readLineSync()`    | Unsupported                                          |
-| File system    | `dart:io` synchronous API | Unsupported (throws `UnimplementedFunctionWebError`) |
-| Environment    | `Platform.environment`    | Unsupported                                          |
+|                | CLI                       | Web         |
+| -------------- | ------------------------- | ----------- |
+| Console output | `stdout` / `stderr`       | `print()`   |
+| Console input  | `stdin.readLineSync()`    | Unsupported |
+| File system    | `dart:io` synchronous API | Unsupported |
+| Environment    | `Platform.environment`    | Unsupported |
 
 The active platform is selected at startup based on the entry point (`main_cli.dart` or `main_web.dart`).
 
