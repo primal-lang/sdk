@@ -31,7 +31,15 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is StringNode) {
-      return TimestampNode(DateTime.parse(a.value));
+      try {
+        return TimestampNode(DateTime.parse(a.value));
+      } on FormatException {
+        throw ParseError(
+          function: name,
+          input: a.value,
+          targetType: 'timestamp',
+        );
+      }
     } else {
       throw InvalidArgumentTypesError(
         function: name,

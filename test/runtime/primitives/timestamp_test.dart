@@ -1,6 +1,7 @@
 @Tags(['runtime'])
 library;
 
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
@@ -24,6 +25,16 @@ void main() {
         'main = time.fromIso("${now.toIso8601String()}")',
       );
       checkDates(runtime, now);
+    });
+
+    test('time.fromIso throws for invalid ISO string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = time.fromIso("not-a-date")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<ParseError>()),
+      );
     });
 
     test('time.year', () {

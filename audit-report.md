@@ -1,23 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/timestamp/time_from_iso.dart`
-
-**Line 34**: Uncaught `FormatException` from `DateTime.parse()`
-
-- **Issue**: `DateTime.parse()` throws `FormatException` for invalid ISO strings, but this is not caught and converted to a Primal `ParseError`.
-- **Impact**: Internal Dart exception surfaces to the user instead of a user-friendly error.
-- **Fix**:
-
-```dart
-if (a is StringNode) {
-  try {
-    return TimestampNode(DateTime.parse(a.value));
-  } on FormatException {
-    throw ParseError(function: name, input: a.value, targetType: 'timestamp');
-  }
-}
-```
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_match.dart`
 
 **Line 36**: Uncaught `FormatException` from invalid regex patterns
