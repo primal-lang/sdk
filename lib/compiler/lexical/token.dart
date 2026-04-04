@@ -32,6 +32,8 @@ class StringToken extends Token<String> {
       );
 }
 
+/// The lexeme value must contain only digits and optional decimal/exponent
+/// notation. Underscores in source (e.g., `1_000`) are stripped by the lexer.
 class NumberToken extends Token<num> {
   NumberToken(Lexeme lexeme)
     : super(
