@@ -1,29 +1,3 @@
-### 4. `list.sort` error reports incomplete actual types
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sort.dart`
-**Line**: 58
-
-- **Issue**: Same issue as `list.filter` - the error reports `actual: [a.type]` instead of `actual: [a.type, b.type]`.
-- **Impact**: Confusing error message for users.
-- **Fix**:
-
-```dart
-throw InvalidArgumentTypesError(
-  function: name,
-  expected: parameterTypes,
-  actual: [a.type, b.type],
-);
-```
-
-**Follow-up**:
-
-- **Tests**: Add/update tests to cover this case
-  - Success case: Verify sort works with correct types
-  - Failure case: Verify error message correctly shows both actual types
-- **Docs**: No doc changes needed
-
-## Info
-
 ### 1. `list.any` and `list.none` report incomplete actual types
 
 **Files**:
