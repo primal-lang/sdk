@@ -1,40 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_drop.dart`
-
-**Line 36**: Missing bounds validation for negative or out-of-range drop count
-
-- **Issue**: The `list.drop` function does not validate that the drop count `b` is non-negative or within bounds. `sublist()` will throw a `RangeError` if the count is negative or exceeds the list length.
-- **Impact**: Uncaught `RangeError` from Dart's `sublist()` will surface as an internal error rather than a user-friendly Primal runtime error.
-- **Fix**:
-
-```dart
-@override
-Node evaluate() {
-  final Node a = arguments[0].evaluate();
-  final Node b = arguments[1].evaluate();
-
-  if ((a is ListNode) && (b is NumberNode)) {
-    final int count = b.value.toInt();
-    if (count < 0) {
-      throw NegativeIndexError(function: name, index: count);
-    }
-    if (count > a.value.length) {
-      throw IndexOutOfBoundsError(
-        function: name,
-        index: count,
-        length: a.value.length,
-      );
-    }
-    return ListNode(a.value.sublist(count, a.value.length));
-  } else {
-    throw InvalidArgumentTypesError(
-      function: name,
-      expected: parameterTypes,
-      actual: [a.type, b.type],
-    );
-  }
-}
-```
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/arithmetic/num_int_random.dart`
 
 **Line 38**: Invalid range calculation can cause `ArgumentError` in `Random.nextInt()`
@@ -76,6 +39,8 @@ Node evaluate() {
 }
 ```
 
+add/update the tests to cover this case.
+
 ---
 
 ## Warnings
@@ -88,6 +53,8 @@ Node evaluate() {
 - **Impact**: Dart internal error surfaces instead of a user-friendly Primal error.
 - **Fix**: Add validation for `a.value.toInt() < 0`.
 
+add/update the tests to cover this case.
+
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/vector/vector_normalize.dart`
 
 **Line 35-42**: Division by zero when normalizing a zero vector
@@ -95,6 +62,8 @@ Node evaluate() {
 - **Issue**: When the vector magnitude is zero (zero vector), the function divides each component by zero, producing `NaN` or `Infinity` values.
 - **Impact**: Silent incorrect results instead of a meaningful error.
 - **Fix**: Check if `magnitude.value == 0` and throw an appropriate error.
+
+add/update the tests to cover this case.
 
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/timestamp/time_from_iso.dart`
 
@@ -114,6 +83,8 @@ if (a is StringNode) {
 }
 ```
 
+add/update the tests to cover this case.
+
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_match.dart`
 
 **Line 36**: Uncaught `FormatException` from invalid regex patterns
@@ -121,6 +92,8 @@ if (a is StringNode) {
 - **Issue**: `RegExp(b.value)` throws `FormatException` if the pattern is invalid, but this is not caught.
 - **Impact**: Internal Dart exception surfaces to the user.
 - **Fix**: Wrap in try-catch and throw a meaningful `ParseError` or similar.
+
+add/update the tests to cover this case.
 
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sort.dart`
 
@@ -134,6 +107,8 @@ if (a is StringNode) {
 return value.value.toInt();
 ```
 
+add/update the tests to cover this case.
+
 ### `/home/max/Repositories/personal/primal-sdk/lib/utils/stack.dart`
 
 **Line 8**: Stack `pop()` method mutates internal list
@@ -141,6 +116,8 @@ return value.value.toInt();
 - **Issue**: `_list.removeLast()` mutates `_list`, but the Stack class appears designed for immutability (other methods like `push` return a new Stack). This breaks the immutability contract.
 - **Impact**: If the same Stack reference is used after `pop()`, the original stack is modified, violating Primal's immutability guarantees.
 - **Note**: This class may not be used by the runtime (StackNode uses `List<Node>` directly), but the implementation is inconsistent.
+
+add/update the tests to cover this case.
 
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sublist.dart`
 
@@ -150,6 +127,8 @@ return value.value.toInt();
 - **Impact**: Internal Dart error surfaces instead of a user-friendly Primal error.
 - **Fix**: Add validation: `if (start > a.value.length)`.
 
+add/update the tests to cover this case.
+
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/arithmetic/num_log.dart`
 
 **Line 35**: No validation for non-positive input to logarithm
@@ -157,6 +136,8 @@ return value.value.toInt();
 - **Issue**: `log()` of zero returns `-Infinity`, and `log()` of negative numbers returns `NaN`. These are mathematically undefined but silently produce special values.
 - **Impact**: Silent incorrect results that may propagate through calculations.
 - **Fix**: Validate input and throw `InvalidNumericOperationError` for non-positive values.
+
+add/update the tests to cover this case.
 
 ---
 
@@ -170,6 +151,8 @@ return value.value.toInt();
 - **Impact**: This is consistent with Dart behavior and may be intentional for IEEE 754 floating-point semantics, but it differs from the explicit error thrown by modulo operations.
 - **Suggestion**: Consider adding a consistency comment or explicit documentation.
 
+add/update the tests to cover this case.
+
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/control/try.dart`
 
 **Line 36-38**: Catch-all exception handler includes all errors
@@ -179,6 +162,8 @@ return value.value.toInt();
 - **Suggestion**: Consider catching only `Exception` or specific Primal error types: `on RuntimeError catch (e)`.
 
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/json/json_decode.dart`
+
+add/update the tests to cover this case.
 
 **Line 64**: `getMap` uses `LiteralNode.from()` which throws for non-primitive keys
 
@@ -192,6 +177,8 @@ return value.value.toInt();
 - **Issue**: Calling `last` on an empty list throws `StateError` from Dart. No check is performed.
 - **Impact**: If caller doesn't check, internal Dart error surfaces.
 - **Suggestion**: This may be intentional (caller is expected to check), but could benefit from a guard or documentation.
+
+add/update the tests to cover this case.
 
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_filter.dart`
 
@@ -210,3 +197,5 @@ if (value is! BooleanNode) {
   );
 }
 ```
+
+add/update the tests to cover this case.

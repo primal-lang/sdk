@@ -724,5 +724,44 @@ main = foo([2])
         );
       },
     );
+
+    test('list.drop throws IndexOutOfBoundsError for out-of-bounds count', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.drop([1, 2, 3], 10)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('10'),
+              contains('length: 3'),
+              contains('list.drop'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.drop throws NegativeIndexError for negative count', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.drop([1, 2, 3], -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.drop'),
+            ),
+          ),
+        ),
+      );
+    });
   });
 }
