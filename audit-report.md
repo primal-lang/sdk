@@ -1,13 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sublist.dart`
-
-**Line 43-48**: Missing validation for `start > length`
-
-- **Issue**: The validation only checks `end < start` and `end > length`, but not `start > length`. Dart's `sublist()` will throw `RangeError` for invalid start.
-- **Impact**: Internal Dart error surfaces instead of a user-friendly Primal error.
-- **Fix**: Add validation: `if (start > a.value.length)`.
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/arithmetic/num_log.dart`
 
 **Line 35**: No validation for non-positive input to logarithm

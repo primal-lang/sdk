@@ -196,6 +196,13 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
+    test('list.sublist start greater than length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], 10, 12)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
     test('str.take negative count', () {
       final RuntimeFacade runtime = getRuntime('main = str.take("Hello", -1)');
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));

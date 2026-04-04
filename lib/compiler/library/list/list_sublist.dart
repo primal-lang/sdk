@@ -40,6 +40,13 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       if (start < 0) {
         throw NegativeIndexError(function: name, index: start);
       }
+      if (start > a.value.length) {
+        throw IndexOutOfBoundsError(
+          function: name,
+          index: start,
+          length: a.value.length,
+        );
+      }
       if (end < start) {
         throw IndexOutOfBoundsError(
           function: name,
