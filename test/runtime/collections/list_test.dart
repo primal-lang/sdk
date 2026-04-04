@@ -607,6 +607,14 @@ main = foo([2])
         '"Peter"',
       ]);
     });
+
+    test('list.sort handles comparator returning decimal values', () {
+      final RuntimeFacade runtime = getRuntime('''
+decimalCompare(a, b) = num.mul(num.sub(a, b), 1.5)
+main = list.sort([3, 1, 5, 2, 4], decimalCompare)
+''');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
   });
 
   group('List Type Errors', () {

@@ -39,7 +39,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         final Node value = b.apply([x, y]);
 
         if (value is NumberNode) {
-          return value.value as int;
+          return value.value.toInt();
         } else {
           return 0;
         }

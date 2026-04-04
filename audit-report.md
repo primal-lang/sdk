@@ -1,17 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sort.dart`
-
-**Line 42**: Unsafe cast of comparator result to `int`
-
-- **Issue**: The comparator function's return value is cast to `int` with `value.value as int`, but `NumberNode.value` is `num`, not `int`. If the user's comparator returns a decimal (e.g., `0.5`), this cast will fail at runtime.
-- **Impact**: Runtime `TypeError` for valid-looking Primal code.
-- **Fix**: Use `.toInt()` instead of `as int`:
-
-```dart
-return value.value.toInt();
-```
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/utils/stack.dart`
 
 **Line 8**: Stack `pop()` method mutates internal list
