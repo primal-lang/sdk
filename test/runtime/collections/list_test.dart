@@ -469,6 +469,13 @@ main = foo([2])
       checkResult(runtime, []);
     });
 
+    test('list.filter throws when predicate returns non-boolean', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filter([1, 2, 3], num.abs)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
     test('list.reduce returns initial value for empty list', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.reduce([], 0, num.add)',
