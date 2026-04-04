@@ -222,7 +222,13 @@ class FunctionRefNode extends Node {
   const FunctionRefNode(this.name, this.functions);
 
   @override
-  FunctionNode evaluate() => functions[name]!;
+  FunctionNode evaluate() {
+    final FunctionNode? function = functions[name];
+    if (function == null) {
+      throw NotFoundInScopeError(name);
+    }
+    return function;
+  }
 
   @override
   Type get type => const FunctionType();

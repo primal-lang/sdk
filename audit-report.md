@@ -1,34 +1,5 @@
-### 2. `FunctionRefNode.evaluate()` uses non-null assertion without validation
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/runtime/node.dart`
-**Line**: 225
-
-- **Issue**: `FunctionNode evaluate() => functions[name]!;` uses the bang operator assuming the function always exists in the map. While semantic analysis should prevent undefined functions from reaching runtime, this assumption could fail if the lowering phase or function map construction has a bug.
-- **Impact**: If a bug in the compiler pipeline allows an undefined function reference to reach runtime, the bang operator will throw a null assertion error with no context about which function was missing.
-- **Fix**:
-
-```dart
-@override
-FunctionNode evaluate() {
-  final FunctionNode? fn = functions[name];
-  if (fn == null) {
-    throw NotFoundInScopeError(name);
-  }
-  return fn;
-}
-```
-
-**Follow-up**:
-
-- **Tests**: Add/update tests to cover this case
-  - Success case: Verify function references resolve correctly
-  - Failure case: If possible, construct a scenario where a function reference is missing to verify error handling
-- **Docs**: No doc changes needed
-
----
-
 ### 3. `InvalidArgumentTypesError` in `list.filter` reports incomplete actual types
-
+ri
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_filter.dart`
 **Line**: 60
 
