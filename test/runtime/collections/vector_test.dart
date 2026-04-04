@@ -119,6 +119,13 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
+    test('vector.angle throws for zero-magnitude vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([0, 0, 0]), vector.new([1, 2, 3]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
+
     test('vector.angle computes angle between 2D vectors', () {
       final RuntimeFacade runtime = getRuntime(
         'main = vector.angle(vector.new([1, 2]), vector.new([3, 4]))',

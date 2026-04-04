@@ -1,29 +1,3 @@
-### 1. `vector.angle` does not handle zero-magnitude vectors
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/vector/vector_angle.dart`
-**Line**: 67
-
-- **Issue**: The function computes `dotProduct / (magnitudeA * magnitudeB)` without checking if either magnitude is zero. If both vectors have the same direction but zero magnitude (all zeros), this will result in `0/0 = NaN`, and `acos(NaN)` returns `NaN`. While empty vectors are guarded (line 45-47), a non-empty vector like `[0, 0, 0]` has zero magnitude.
-- **Impact**: Users passing zero-magnitude vectors will get `NaN` as the result instead of a helpful error message.
-- **Fix**:
-
-```dart
-if (magnitudeA == 0 || magnitudeB == 0) {
-  throw DivisionByZeroError(function: name);
-}
-
-final num cosine = dotProduct / (magnitudeA * magnitudeB);
-```
-
-**Follow-up**:
-
-- **Tests**: Add/update tests to cover this case
-  - Success case: Test angle between non-zero vectors returns correct radians
-  - Failure case: Test angle with a zero-magnitude vector throws `DivisionByZeroError`
-- **Docs**: Update `docs/reference/vector.md` to document that zero-magnitude vectors throw an error
-
----
-
 ### 2. `FunctionRefNode.evaluate()` uses non-null assertion without validation
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/runtime/node.dart`

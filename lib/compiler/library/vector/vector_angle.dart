@@ -64,6 +64,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         a: b,
       ).native();
 
+      if (magnitudeA == 0 || magnitudeB == 0) {
+        throw DivisionByZeroError(function: name);
+      }
+
       final num cosine = dotProduct / (magnitudeA * magnitudeB);
 
       return NumberNode(acos(cosine));
