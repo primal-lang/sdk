@@ -91,21 +91,34 @@ Write findings to `audit-report.md` in the project root:
 
 [Issues that will cause incorrect behavior, crashes, or data corruption]
 
-### [File Path]
+### 1. [Issue title]
 
-**Line X**: [Issue title]
+**File**: [File Path]
+**Line**: X
 
 - **Issue**: [Explanation of the bug]
 - **Impact**: [What could go wrong]
 - **Fix**: [Code snippet showing the fix]
 
+### 2. [Issue title]
+
+...
+
 ## Warnings
 
 [Issues that could cause problems under specific conditions]
 
+### 3. [Issue title]
+
+...
+
 ## Info
 
 [Minor improvements and defensive programming suggestions]
+
+### 4. [Issue title]
+
+...
 ```
 
 ---
