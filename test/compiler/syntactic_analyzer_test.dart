@@ -3,6 +3,7 @@ library;
 
 import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/models/located.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';

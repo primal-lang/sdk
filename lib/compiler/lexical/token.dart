@@ -1,5 +1,5 @@
 import 'package:primal/compiler/lexical/lexeme.dart';
-import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/located.dart';
 
 class Token<T> extends Located {
   final T value;

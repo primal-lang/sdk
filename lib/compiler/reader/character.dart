@@ -1,4 +1,4 @@
-import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/located.dart';
 
 class Character extends Located {
   final String value;

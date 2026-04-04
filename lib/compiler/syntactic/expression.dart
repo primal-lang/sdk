@@ -1,5 +1,5 @@
 import 'package:primal/compiler/lexical/token.dart';
-import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/located.dart';
 
 abstract class Expression extends Located {
   const Expression({required super.location});
