@@ -1,29 +1,3 @@
-### 3. `InvalidArgumentTypesError` in `list.filter` reports incomplete actual types
-ri
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_filter.dart`
-**Line**: 60
-
-- **Issue**: The error thrown reports `actual: [a.type]` but the function takes two parameters (list and function). This inconsistency makes the error message confusing because it only shows one actual type while `expected` shows two (`parameterTypes`).
-- **Impact**: Users see a confusing error message that doesn't fully describe the type mismatch.
-- **Fix**:
-
-```dart
-throw InvalidArgumentTypesError(
-  function: name,
-  expected: parameterTypes,
-  actual: [a.type, b.type],
-);
-```
-
-**Follow-up**:
-
-- **Tests**: Add/update tests to cover this case
-  - Success case: Verify filter works with correct types
-  - Failure case: Verify error message correctly shows both actual types when passed wrong types
-- **Docs**: No doc changes needed
-
----
-
 ### 4. `list.sort` error reports incomplete actual types
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sort.dart`
