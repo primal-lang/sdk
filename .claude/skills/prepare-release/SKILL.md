@@ -3,6 +3,14 @@ name: prepare-release
 description: Prepares the next SDK release by updating version, syncing documentation, generating changelog, and building the web binary.
 ---
 
+0. **Pre-flight Checks**: Run validation checks before starting the release process.
+   a. Run `git status` to check for uncommitted changes; warn the user if the working directory is not clean
+   b. Run `dart format lib` to format library code
+   c. Run `dart format test` to format test code
+   d. Run `dart analyze` to perform static analysis
+   e. Run `dart test` to run all tests
+   f. If any command fails, stop immediately and report the error
+
 1. **Version Update**: Prompt the user for the new version number.
    a. Validate that the input follows semver format (`X.Y.Z` where X, Y, Z are non-negative integers)
    b. If invalid, explain the expected format and prompt again
