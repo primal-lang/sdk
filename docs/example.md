@@ -6,7 +6,9 @@ This document walks through the complete compilation and evaluation of a Primal 
 
 ```primal
 square(n) = n * n
+
 max(a, b) = if (a >= b) a else b
+
 main = max(square(3), square(4))
 ```
 
@@ -48,96 +50,11 @@ Source Code
 
 The SourceReader is the first stage of the pipeline. It converts a raw input string into a flat list of `Character` objects, each annotated with its source position (row and column).
 
-### Data Models
-
-#### Location
-
-**File**: `lib/compiler/models/location.dart`
-
-Represents a position in source code with 1-based row and column numbers.
-
-```dart
-class Location {
-  final int row;
-  final int column;
-
-  const Location({
-    required this.row,
-    required this.column,
-  });
-}
-```
-
-#### Located
-
-**File**: `lib/compiler/models/located.dart`
-
-Base class for any object that has a source location.
-
-```dart
-class Located {
-  final Location location;
-
-  const Located({required this.location});
-}
-```
-
-#### Character
-
-**File**: `lib/compiler/reader/character.dart`
-
-Represents a single character from the source code with its location.
-
-```dart
-class Character extends Located {
-  final String value;
-
-  const Character({
-    required this.value,
-    required super.location,
-  });
-}
-```
-
-#### Analyzer
-
-**File**: `lib/compiler/models/analyzer.dart`
-
-Abstract base class for all pipeline stages. Each stage takes an input of type `I` and produces an output of type `O`.
-
-```dart
-abstract class Analyzer<I, O> {
-  final I input;
-
-  const Analyzer(this.input);
-
-  O analyze();
-}
-```
-
 ### Transformation
 
 **Input**: `String` (the raw source code)
 
 **Output**: `List<Character>` (characters with locations)
-
-The `SourceReader` extends `Analyzer<String, List<Character>>`:
-
-```dart
-class SourceReader extends Analyzer<String, List<Character>> {
-  const SourceReader(super.input);
-
-  @override
-  List<Character> analyze() {
-    // 1. Normalize line endings (\r\n and \r → \n)
-    // 2. Split into rows
-    // 3. Skip shebang line if present (starts with #!)
-    // 4. For each row, iterate by grapheme cluster
-    // 5. Create Character objects with Location
-    // 6. Append \n after each row
-  }
-}
-```
 
 ### Step-by-Step Processing
 
@@ -145,7 +62,9 @@ class SourceReader extends Analyzer<String, List<Character>> {
 
 ```
 square(n) = n * n
+
 max(a, b) = if (a >= b) a else b
+
 main = max(square(3), square(4))
 ```
 
