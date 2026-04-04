@@ -1,5 +1,6 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListSort extends NativeFunctionNode {
@@ -41,7 +42,11 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         if (value is NumberNode) {
           return value.value.toInt();
         } else {
-          return 0;
+          throw InvalidArgumentTypesError(
+            function: name,
+            expected: [const NumberType()],
+            actual: [value.type],
+          );
         }
       });
 

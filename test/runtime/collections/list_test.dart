@@ -657,6 +657,30 @@ main = list.sort([3, 1, 5, 2, 4], decimalCompare)
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
+    test(
+      'list.sort throws InvalidArgumentTypesError for non-numeric comparator result',
+      () {
+        final RuntimeFacade runtime = getRuntime('''
+badCompare(a, b) = true
+main = list.sort([3, 1, 2], badCompare)
+''');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('list.sort'),
+                contains('Number'),
+                contains('Boolean'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
     test('list.contains throws for wrong type', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.contains("hello", 1)',

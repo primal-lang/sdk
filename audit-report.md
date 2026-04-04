@@ -1,31 +1,3 @@
-### 4. `list.sort` silently ignores non-numeric comparator results
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sort.dart`
-**Line**: 40-45
-
-- **Issue**: When the comparator function returns a non-number value, `list.sort` returns `0` (equal) instead of throwing an error. This silently produces incorrect sorting results.
-- **Impact**: Users may receive incorrectly sorted lists without any indication that their comparator function is wrong. For example, if the comparator returns a boolean or string, elements will be treated as equal.
-- **Fix**:
-
-```dart
-result.sort((x, y) {
-  final Node value = b.apply([x, y]);
-
-  if (value is NumberNode) {
-    return value.value.toInt();
-  } else {
-    throw InvalidArgumentTypesError(
-      function: name,
-      expected: [const NumberType()],
-      actual: [value.type],
-    );
-  }
-});
-```
-
-add/update the tests to cover this case.
-update @docs if needed
-
 ### 5. `list.all`, `list.any`, and `list.none` silently ignore non-boolean results
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_all.dart`
