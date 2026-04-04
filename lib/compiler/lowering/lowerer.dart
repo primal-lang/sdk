@@ -4,10 +4,12 @@ import 'package:primal/compiler/semantic/semantic_node.dart';
 
 /// Converts semantic IR to runtime nodes for execution.
 ///
-/// This pass strips source locations and produces the minimal runtime
-/// representation needed for evaluation.
+/// This pass strips source locations and resolves function references to
+/// direct [FunctionNode] references, eliminating runtime name lookup.
 class Lowerer {
-  const Lowerer();
+  final Map<String, FunctionNode> functions;
+
+  const Lowerer(this.functions);
 
   /// Converts a [SemanticFunction] to a [CustomFunctionNode].
   CustomFunctionNode lowerFunction(SemanticFunction function) {
@@ -25,7 +27,7 @@ class Lowerer {
     SemanticStringNode() => StringNode(node.value),
     SemanticListNode() => _lowerList(node),
     SemanticMapNode() => _lowerMap(node),
-    SemanticIdentifierNode() => IdentifierNode(node.name),
+    SemanticIdentifierNode() => FunctionRefNode(node.name, functions),
     SemanticBoundVariableNode() => BoundVariableNode(node.name),
     SemanticCallNode() => _lowerCall(node),
     _ => throw StateError('Unknown semantic node type: ${node.runtimeType}'),

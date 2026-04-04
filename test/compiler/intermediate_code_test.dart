@@ -96,7 +96,7 @@ void main() {
     test('lowered custom function is a CustomFunctionNode', () {
       final IntermediateCode code = getIntermediateCode('main = 42');
       final SemanticFunction mainFn = code.customFunctions['main']!;
-      const Lowerer lowerer = Lowerer();
+      const Lowerer lowerer = Lowerer({});
       final CustomFunctionNode lowered = lowerer.lowerFunction(mainFn);
 
       expect(lowered, isA<CustomFunctionNode>());

@@ -9,12 +9,14 @@ class RuntimeInputBuilder {
   const RuntimeInputBuilder();
 
   RuntimeInput build(IntermediateCode code) {
-    const Lowerer lowerer = Lowerer();
-
     // Fetch runtime FunctionNodes from StandardLibrary
     final Map<String, FunctionNode> functions = Mapper.toMap(
       StandardLibrary.get(),
     );
+
+    // Create lowerer with access to all functions (standard library already present,
+    // custom functions will be added as they are lowered)
+    final Lowerer lowerer = Lowerer(functions);
 
     // Lower custom functions from semantic IR to runtime nodes
     for (final function in code.customFunctions.values) {

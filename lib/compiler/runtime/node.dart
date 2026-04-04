@@ -4,7 +4,6 @@ import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/bindings.dart';
-import 'package:primal/compiler/runtime/runtime.dart';
 
 abstract class Node {
   const Node();
@@ -203,37 +202,51 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
   }
 }
 
-class IdentifierNode extends Node {
-  final String value;
+/// A resolved function reference.
+///
+/// Holds a function name and a reference to the functions map. Resolution
+/// happens at evaluation time, enabling forward references and mutual recursion
+/// while avoiding global mutable state.
+class FunctionRefNode extends Node {
+  final String name;
+  final Map<String, FunctionNode> functions;
 
-  const IdentifierNode(this.value);
-
-  @override
-  FunctionNode evaluate() {
-    final Node node = Runtime.SCOPE.get(value);
-
-    if (node is FunctionNode) {
-      return node;
-    } else {
-      throw InvalidFunctionError(value);
-    }
-  }
+  const FunctionRefNode(this.name, this.functions);
 
   @override
-  Type get type => const AnyType();
+  FunctionNode evaluate() => functions[name]!;
 
   @override
-  String toString() => value;
+  Type get type => const FunctionType();
+
+  @override
+  String toString() => name;
 
   @override
   dynamic native() => evaluate().native();
 }
 
-class BoundVariableNode extends IdentifierNode {
-  const BoundVariableNode(super.value);
+/// A reference to a bound parameter within a function body.
+///
+/// During function application, [substitute] replaces this node with the
+/// corresponding argument value from the [Bindings].
+class BoundVariableNode extends Node {
+  final String name;
+
+  const BoundVariableNode(this.name);
 
   @override
-  Node substitute(Bindings bindings) => bindings.get(value);
+  Node substitute(Bindings bindings) => bindings.get(name);
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  String toString() => name;
+
+  @override
+  dynamic native() =>
+      throw StateError('BoundVariableNode cannot be converted to native');
 }
 
 class CallNode extends Node {
@@ -261,7 +274,7 @@ class CallNode extends Node {
   FunctionNode getFunctionNode(Node callee) {
     if (callee is CallNode) {
       return getFunctionNode(callee.evaluate());
-    } else if (callee is IdentifierNode) {
+    } else if (callee is FunctionRefNode) {
       return callee.evaluate();
     } else if (callee is FunctionNode) {
       return callee;

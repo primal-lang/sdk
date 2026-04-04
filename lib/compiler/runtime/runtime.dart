@@ -3,16 +3,11 @@ import 'dart:io';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
-import 'package:primal/compiler/runtime/scope.dart';
 
 class Runtime {
   final RuntimeInput input;
 
-  static Scope<FunctionNode> SCOPE = const Scope();
-
-  Runtime(this.input) {
-    SCOPE = Scope(input.functions);
-  }
+  const Runtime(this.input);
 
   Node evaluateNode(Node node) => node.evaluate();
 

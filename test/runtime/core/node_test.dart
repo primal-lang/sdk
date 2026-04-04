@@ -336,6 +336,51 @@ void main() {
       const BoundVariableNode node = BoundVariableNode('myVar');
       expect(node.toString(), 'myVar');
     });
+
+    test('native() throws StateError', () {
+      const BoundVariableNode node = BoundVariableNode('x');
+      expect(() => node.native(), throwsStateError);
+    });
+  });
+
+  group('FunctionRefNode', () {
+    test('evaluate() returns the referenced function', () {
+      final FunctionNode fn = FunctionNode(
+        name: 'myFunc',
+        parameters: [Parameter.number('x')],
+      );
+      final Map<String, FunctionNode> functions = {'myFunc': fn};
+      final FunctionRefNode ref = FunctionRefNode('myFunc', functions);
+
+      expect(ref.evaluate(), same(fn));
+    });
+
+    test('type is FunctionType', () {
+      const FunctionNode fn = FunctionNode(name: 'f', parameters: []);
+      final Map<String, FunctionNode> functions = {'f': fn};
+      final FunctionRefNode ref = FunctionRefNode('f', functions);
+
+      expect(ref.type, isA<FunctionType>());
+    });
+
+    test('toString() returns function name', () {
+      const FunctionNode fn = FunctionNode(name: 'myFunc', parameters: []);
+      final Map<String, FunctionNode> functions = {'myFunc': fn};
+      final FunctionRefNode ref = FunctionRefNode('myFunc', functions);
+
+      expect(ref.toString(), 'myFunc');
+    });
+
+    test('native() returns function string representation', () {
+      final FunctionNode fn = FunctionNode(
+        name: 'add',
+        parameters: [Parameter.number('a'), Parameter.number('b')],
+      );
+      final Map<String, FunctionNode> functions = {'add': fn};
+      final FunctionRefNode ref = FunctionRefNode('add', functions);
+
+      expect(ref.native(), 'add(a: Number, b: Number)');
+    });
   });
 
   group('FunctionNode', () {

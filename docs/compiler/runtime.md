@@ -1,16 +1,17 @@
 # Runtime
 
-**Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/node.dart`, `lib/compiler/runtime/bindings.dart`, `lib/compiler/runtime/scope.dart`
+**Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/node.dart`, `lib/compiler/runtime/bindings.dart`
 
 The runtime evaluates compiled code through **node substitution and reduction**. It receives `IntermediateCode` from the semantic analyzer and lowers semantic IR to runtime nodes for execution.
 
 ## Initialization
 
-When a `Runtime` is created, the `RuntimeInputBuilder` constructs a `RuntimeInput`:
+When a `RuntimeFacade` is created, the `RuntimeInputBuilder` constructs a `RuntimeInput`:
 
-1. The `Lowerer` converts each `SemanticFunction` from `IntermediateCode` to a `CustomFunctionNode`.
-2. Standard library functions are fetched directly from `StandardLibrary.get()` as `FunctionNode` instances.
-3. All functions are stored in the global `SCOPE` for identifier resolution.
+1. Standard library functions are fetched from `StandardLibrary.get()` as `FunctionNode` instances and stored in a functions map.
+2. The `Lowerer` is created with access to this functions map.
+3. Each `SemanticFunction` from `IntermediateCode` is lowered to a `CustomFunctionNode` and added to the map.
+4. Function references (`SemanticIdentifierNode`) are lowered to `FunctionRefNode`, which holds the function name and a reference to the shared functions map.
 
 Note: `IntermediateCode` contains only `FunctionSignature` references for the standard library (not `FunctionNode`), keeping the semantic output free of runtime types. The actual runtime nodes are instantiated during this initialization step.
 
@@ -29,9 +30,9 @@ All runtime values are nodes. The base `Node` class defines:
 **Collection nodes** (substitute recursively; self-evaluating):
 `ListNode`, `MapNode`, `SetNode`, `VectorNode`, `StackNode`, `QueueNode`
 
-**Variable nodes**:
+**Reference nodes**:
 
-- `IdentifierNode(name)` - resolved at runtime by looking up `name` in the global scope.
+- `FunctionRefNode(name, functions)` - holds a function name and the functions map; `evaluate()` returns the referenced `FunctionNode`.
 - `BoundVariableNode(name)` - replaced during substitution via bindings.
 
 **Call node**:
@@ -52,17 +53,21 @@ Function application follows these steps:
 3. Substitute all `BoundVariableNode`s in the function body with their bound values.
 4. Evaluate the resulting node.
 
-This is a substitution-based evaluation model consistent with lambda calculus reduction.
+This is a substitution-based evaluation model consistent with lambda calculus beta-reduction.
 
-## Scope
+## Function Resolution
 
-`Scope` (`lib/compiler/runtime/scope.dart`) is a global map from function names to `FunctionNode` definitions, stored as `Runtime.SCOPE`. `IdentifierNode`s in function bodies are resolved against this scope at evaluation time.
+Function references are resolved at lowering time, not runtime. The `Lowerer` converts `SemanticIdentifierNode` (which contains a resolved `FunctionSignature`) to `FunctionRefNode`, passing the shared functions map. At evaluation time, `FunctionRefNode.evaluate()` looks up the function in the map.
+
+This approach:
+- Supports forward references and mutual recursion (the map is populated as functions are lowered)
+- Maintains explicit dependency injection (the functions map is passed at construction time)
 
 ## Separation from Semantic Analysis
 
 The runtime layer is intentionally minimal:
 
-- It receives **lowered** nodes (no source locations or resolved references).
+- It receives **lowered** nodes (no source locations).
 - Semantic validation happens earlier in the pipeline.
 - Runtime errors (type mismatches, missing keys) are detected during evaluation.
 

@@ -3,13 +3,29 @@ library;
 
 import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:test/test.dart';
 
 void main() {
-  const Lowerer lowerer = Lowerer();
   const Location defaultLocation = Location(row: 1, column: 1);
+
+  // Create mock functions for testing identifier lowering
+  final Map<String, FunctionNode> functions = {
+    'myVar': const FunctionNode(name: 'myVar', parameters: []),
+    'foo': const FunctionNode(name: 'foo', parameters: []),
+    'add': FunctionNode(
+      name: 'add',
+      parameters: [
+        Parameter.number('a'),
+        Parameter.number('b'),
+      ],
+    ),
+    'outer': FunctionNode(name: 'outer', parameters: [Parameter.any('x')]),
+    'inner': FunctionNode(name: 'inner', parameters: [Parameter.any('x')]),
+  };
+  final Lowerer lowerer = Lowerer(functions);
 
   group('Lowerer.lowerNode', () {
     group('SemanticBooleanNode', () {
@@ -85,15 +101,15 @@ void main() {
     });
 
     group('SemanticIdentifierNode', () {
-      test('lowers identifier', () {
+      test('lowers identifier to FunctionRefNode', () {
         const SemanticIdentifierNode semantic = SemanticIdentifierNode(
           location: defaultLocation,
           name: 'myVar',
         );
         final Node node = lowerer.lowerNode(semantic);
 
-        expect(node, isA<IdentifierNode>());
-        expect((node as IdentifierNode).value, equals('myVar'));
+        expect(node, isA<FunctionRefNode>());
+        expect((node as FunctionRefNode).name, equals('myVar'));
       });
     });
 
@@ -106,7 +122,7 @@ void main() {
         final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<BoundVariableNode>());
-        expect((node as BoundVariableNode).value, equals('x'));
+        expect((node as BoundVariableNode).name, equals('x'));
       });
     });
 
@@ -212,8 +228,8 @@ void main() {
 
         expect(node, isA<CallNode>());
         final CallNode call = node as CallNode;
-        expect(call.callee, isA<IdentifierNode>());
-        expect((call.callee as IdentifierNode).value, equals('foo'));
+        expect(call.callee, isA<FunctionRefNode>());
+        expect((call.callee as FunctionRefNode).name, equals('foo'));
         expect(call.arguments, isEmpty);
       });
 
@@ -265,7 +281,7 @@ void main() {
         expect(outer.arguments.length, equals(1));
         expect(outer.arguments[0], isA<CallNode>());
         final CallNode inner = outer.arguments[0] as CallNode;
-        expect((inner.callee as IdentifierNode).value, equals('inner'));
+        expect((inner.callee as FunctionRefNode).name, equals('inner'));
       });
     });
   });

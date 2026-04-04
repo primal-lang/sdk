@@ -75,7 +75,7 @@ class RuntimeFacade {
   /// Used by tests that need to inspect the node type.
   Node evaluateToNode(Expression expression) {
     const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
-    const Lowerer lowerer = Lowerer();
+    final Lowerer lowerer = Lowerer(_runtimeInput.functions);
 
     // Proper pipeline: Expression → SemanticNode → Node → evaluate
     final SemanticNode semanticNode = analyzer.checkExpression(
