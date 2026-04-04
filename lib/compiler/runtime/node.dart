@@ -294,6 +294,9 @@ class CallNode extends Node {
 }
 
 class FunctionNode extends Node {
+  static const int maxRecursionDepth = 1000;
+  static int _currentDepth = 0;
+
   final String name;
   final List<Parameter> parameters;
 
@@ -311,6 +314,26 @@ class FunctionNode extends Node {
     name: name,
     parameters: parameters,
   );
+
+  /// Resets the recursion depth counter. Call this before starting evaluation.
+  static void resetDepth() {
+    _currentDepth = 0;
+  }
+
+  /// Increments recursion depth, throwing if limit exceeded.
+  /// Returns true if depth was incremented (caller must decrement).
+  static bool incrementDepth() {
+    if (_currentDepth >= maxRecursionDepth) {
+      throw RecursionLimitError(limit: maxRecursionDepth);
+    }
+    _currentDepth++;
+    return true;
+  }
+
+  /// Decrements recursion depth.
+  static void decrementDepth() {
+    _currentDepth--;
+  }
 
   Node apply(List<Node> arguments) {
     if (parameters.length != arguments.length) {
@@ -348,6 +371,28 @@ class CustomFunctionNode extends FunctionNode {
     required super.parameters,
     required this.node,
   });
+
+  @override
+  Node apply(List<Node> arguments) {
+    if (parameters.length != arguments.length) {
+      throw InvalidArgumentCountError(
+        function: name,
+        expected: parameters.length,
+        actual: arguments.length,
+      );
+    }
+
+    FunctionNode.incrementDepth();
+    try {
+      final Bindings bindings = Bindings.from(
+        parameters: parameters,
+        arguments: arguments,
+      );
+      return substitute(bindings).evaluate();
+    } finally {
+      FunctionNode.decrementDepth();
+    }
+  }
 
   @override
   Node substitute(Bindings bindings) => node.substitute(bindings);

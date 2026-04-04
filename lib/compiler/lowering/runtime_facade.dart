@@ -87,6 +87,7 @@ class RuntimeFacade {
     );
 
     final Node lowered = lowerer.lowerNode(semanticNode);
+    FunctionNode.resetDepth();
     return lowered.evaluate();
   }
 

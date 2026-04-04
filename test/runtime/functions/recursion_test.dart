@@ -1,6 +1,7 @@
 @Tags(['runtime'])
 library;
 
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
@@ -71,6 +72,31 @@ isOdd(n) = if (n == 0) false else isEven(n - 1)
 main = isOdd(5)
 ''');
       checkResult(runtime, true);
+    });
+
+    test('throws RecursionLimitError for infinite recursion', () {
+      final RuntimeFacade runtime = getRuntime('''
+infinite(x) = infinite(x)
+main = infinite(1)
+''');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<RecursionLimitError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('1000'),
+          ),
+        ),
+      );
+    });
+
+    test('deep recursion within limit succeeds', () {
+      final RuntimeFacade runtime = getRuntime('''
+countdown(n) = if (n <= 0) 0 else countdown(n - 1)
+main = countdown(500)
+''');
+      checkResult(runtime, 0);
     });
   });
 }

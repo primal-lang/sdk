@@ -1,27 +1,3 @@
-### 9. Missing `const` constructor on `Parameter` class
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/models/parameter.dart`
-**Line**: 3-11
-
-- **Issue**: The `Parameter` class has only `final` fields but uses factory constructors that prevent const usage. While not a bug, const constructors would enable compile-time constant parameters.
-- **Impact**: Minor: slightly less efficient memory usage for parameter instances.
-- **Suggestion**: Consider using `const Parameter._({...})` and adjusting factory constructors, or leave as-is since the performance impact is negligible.
-
-add/update the tests to cover this case.
-update @docs if needed
-
-### 10. Potential unbounded recursion in evaluation
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/runtime/node.dart`
-**Line**: 268-271
-
-- **Issue**: The `CallNode.evaluate()` method and recursive function calls in Primal have no depth limit. Deeply recursive or infinitely recursive user code will cause a stack overflow.
-- **Impact**: Malicious or buggy Primal code like `f(x) = f(x)` will crash the interpreter with a stack overflow. This is expected behavior for a simple interpreter but could be improved with a recursion depth limit.
-- **Suggestion**: Consider adding an optional depth counter for evaluation, especially if the interpreter is exposed to untrusted input.
-
-add/update the tests to cover this case.
-update @docs if needed
-
 ### 11. `LiteralNode.from` doesn't handle all node types
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/runtime/node.dart`

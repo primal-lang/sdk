@@ -132,3 +132,11 @@ class JsonParseError extends RuntimeError {
   static String _truncate(String s) =>
       s.length > 50 ? '${s.substring(0, 50)}...' : s;
 }
+
+class RecursionLimitError extends RuntimeError {
+  RecursionLimitError({
+    required int limit,
+  }) : super(
+         'Maximum recursion depth of $limit exceeded',
+       );
+}
