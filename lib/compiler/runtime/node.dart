@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/bindings.dart';
@@ -291,6 +292,12 @@ class FunctionNode extends Node {
   List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
 
   bool equalSignature(FunctionNode function) => function.name == name;
+
+  /// Returns a phase-agnostic signature for this function.
+  FunctionSignature toSignature() => FunctionSignature(
+    name: name,
+    parameters: parameters,
+  );
 
   Node apply(List<Node> arguments) {
     if (parameters.length != arguments.length) {

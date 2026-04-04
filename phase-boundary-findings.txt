@@ -1,0 +1,22 @@
+Phase Boundary Review - Primal Compiler
+
+1. High-level pipeline
+   - Compiler orchestrates: SourceReader -> LexicalAnalyzer -> SyntacticAnalyzer -> SemanticAnalyzer, as shown in lib/compiler/compiler.dart:16-28, which keeps invocation order clear.
+
+2. Reader vs Lexer
+   - SourceReader produces a list of Character objects in lib/compiler/reader/source_reader.dart:9-52 but depends on lib/compiler/reader/character.dart:1-16, which itself imports Lexeme (lib/compiler/reader/character.dart:1). This means the reader already knows about lexical lexeme metadata rather than exposing plain byte data, so the dependency graph is not strictly layered.
+
+3. Lexer vs Parser
+   - LexicalAnalyzer builds Token subclasses via states defined in lib/compiler/lexical/lexical_analyzer.dart:33-153, and the parser (lib/compiler/syntactic/expression_parser.dart:7-400) uses those tokens directly. That's intended, but the parser also desugars constructs into CallExpression forms (for `if`, binary/unary operators, index shorthand) at lib/compiler/syntactic/expression_parser.dart:67-259, so syntactic analysis already encodes semantic expectations.
+
+4. Parser vs SemanticAnalyzer
+   - SemanticAnalyzer still imports runtime FunctionNode/Node types (lib/compiler/semantic/semantic_analyzer.dart:6-14) to resolve identifiers and performs arity, callable, and indexing checks (lib/compiler/semantic/semantic_analyzer.dart:158-363). It returns SemanticFunction entries referencing runtime functions via SemanticIdentifierNode (lib/compiler/semantic/semantic_node.dart:90-132) and stores the standard library map as runtime FunctionNode entries in IntermediateCode (lib/compiler/semantic/intermediate_code.dart:12-45), meaning semantic analysis is tightly coupled to the runtime layer.
+
+5. Semantic vs Runtime
+   - The runtime path also relies on semantic validation when evaluating ad-hoc expressions: RuntimeFacade.eval lowers expressions directly to runtime nodes (lib/compiler/semantic/runtime_facade.dart:46-55) and immediately re-runs SemanticAnalyzer.validateExpression on those runtime nodes (lib/compiler/semantic/semantic_analyzer.dart:24-40, 435-595) before evaluation. Lowerer supports both expression and semantic node conversions (lib/compiler/semantic/lowerer.dart:17-88) so runtime and semantic IR are intertwined when ad-hoc evaluation occurs.
+
+6. Runtime library mixing
+   - StandardLibrary returns runtime FunctionNode implementations (lib/compiler/library/standard_library.dart:230-320) which semantic analysis copies into IntermediateCode alongside parsed custom functions, so the semantic output is not an isolated IR but already a hybrid of runtime/function metadata.
+
+Summary
+   The refactor clarified the top-level phase ordering, but true isolation between layers remains incomplete: the reader already references lexical lexemes; the parser performs desugaring beyond pure syntax; semantic analysis keeps runtime nodes/FunctionNode dependencies and exposes them directly to RuntimeFacade; and runtime evaluation still re-invokes semantic checks on runtime nodes. These overlaps mean the pipeline phases are not yet strictly separated, though the entry point layout is much cleaner.

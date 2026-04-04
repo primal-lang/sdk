@@ -1,6 +1,7 @@
 @Tags(['compiler'])
 library;
 
+import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
@@ -8,6 +9,8 @@ import 'package:test/test.dart';
 import '../helpers/pipeline_helpers.dart';
 
 void main() {
+  const Compiler compiler = Compiler();
+
   group('RuntimeFacade', () {
     group('hasMain', () {
       test('returns true when main is defined', () {
@@ -21,7 +24,10 @@ void main() {
       });
 
       test('returns false for empty intermediate code', () {
-        final RuntimeFacade runtime = RuntimeFacade(IntermediateCode.empty());
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateCode.empty(),
+          compiler.expression,
+        );
         expect(runtime.hasMain, false);
       });
     });
@@ -47,7 +53,10 @@ void main() {
 
     group('evaluate', () {
       test('evaluates simple expression', () {
-        final RuntimeFacade runtime = RuntimeFacade(IntermediateCode.empty());
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateCode.empty(),
+          compiler.expression,
+        );
         final Expression expression = getExpression('1 + 2');
         expect(runtime.evaluate(expression), '3');
       });
@@ -59,7 +68,10 @@ void main() {
       });
 
       test('evaluates nested expressions', () {
-        final RuntimeFacade runtime = RuntimeFacade(IntermediateCode.empty());
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateCode.empty(),
+          compiler.expression,
+        );
         final Expression expression = getExpression('(1 + 2) * (3 + 4)');
         expect(runtime.evaluate(expression), '21');
       });

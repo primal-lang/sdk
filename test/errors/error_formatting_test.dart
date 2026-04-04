@@ -7,11 +7,11 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/reader/character.dart';
-import 'package:primal/compiler/runtime/node.dart';
 import 'package:test/test.dart';
 
 import '../helpers/token_factories.dart';
@@ -140,11 +140,11 @@ void main() {
 
   group('DuplicatedFunctionError', () {
     test('toString() lists both parameter sets', () {
-      final FunctionNode function1 = FunctionNode(
+      final FunctionSignature function1 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('x'), Parameter.number('y')],
       );
-      final FunctionNode function2 = FunctionNode(
+      final FunctionSignature function2 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );

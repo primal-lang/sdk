@@ -1,4 +1,4 @@
-import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
@@ -6,34 +6,56 @@ import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/semantic/lowerer.dart';
 import 'package:primal/compiler/semantic/runtime_input_builder.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
+import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
+
+/// Parses a string into an [Expression].
+typedef ExpressionParser = Expression Function(String input);
 
 class RuntimeFacade {
   final IntermediateCode intermediateCode;
+  final ExpressionParser _parseExpression;
   final RuntimeInput _runtimeInput;
   final Runtime _runtime;
+  final Map<String, FunctionSignature> _allSignatures;
 
-  RuntimeFacade._internal(this.intermediateCode, this._runtimeInput)
-    : _runtime = Runtime(_runtimeInput);
+  RuntimeFacade._internal(
+    this.intermediateCode,
+    this._parseExpression,
+    this._runtimeInput,
+    this._allSignatures,
+  ) : _runtime = Runtime(_runtimeInput);
 
-  factory RuntimeFacade(IntermediateCode code) {
+  factory RuntimeFacade(
+    IntermediateCode code,
+    ExpressionParser parseExpression,
+  ) {
     final RuntimeInput input = const RuntimeInputBuilder().build(code);
-    return RuntimeFacade._internal(code, input);
+
+    // Build combined signature map for expression validation
+    final Map<String, FunctionSignature> allSignatures = {
+      ...code.standardLibrarySignatures,
+      for (final fn in code.customFunctions.values)
+        fn.name: FunctionSignature(
+          name: fn.name,
+          parameters: fn.parameters,
+        ),
+    };
+
+    return RuntimeFacade._internal(code, parseExpression, input, allSignatures);
   }
 
   bool get hasMain => intermediateCode.containsFunction('main');
 
   Expression mainExpression(List<String> arguments) {
-    const Compiler compiler = Compiler();
-
     final FunctionNode? main = _runtimeInput.getFunction('main');
 
     if ((main != null) && main.parameters.isNotEmpty) {
-      return compiler.expression(
+      return _parseExpression(
         'main(${arguments.map((e) => '"$e"').join(', ')})',
       );
     } else {
-      return compiler.expression('main()');
+      return _parseExpression('main()');
     }
   }
 
@@ -44,14 +66,28 @@ class RuntimeFacade {
   }
 
   String evaluate(Expression expression) {
-    final Node lowered = const Lowerer().lowerExpression(expression);
-    final Node validated = SemanticAnalyzer.validateExpression(
-      lowered,
-      _runtimeInput.functions,
-    );
-    final Node result = validated.evaluate();
-
+    final Node result = evaluateToNode(expression);
     return _runtime.format(result.native()).toString();
+  }
+
+  /// Evaluates an expression and returns the runtime node.
+  ///
+  /// Used by tests that need to inspect the node type.
+  Node evaluateToNode(Expression expression) {
+    const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
+    const Lowerer lowerer = Lowerer();
+
+    // Proper pipeline: Expression → SemanticNode → Node → evaluate
+    final SemanticNode semanticNode = analyzer.checkExpression(
+      expression: expression,
+      currentFunction: '<expression>',
+      availableParameters: {},
+      usedParameters: {},
+      allSignatures: _allSignatures,
+    );
+
+    final Node lowered = lowerer.lowerNode(semanticNode);
+    return lowered.evaluate();
   }
 
   dynamic format(dynamic value) => _runtime.format(value);

@@ -1,5 +1,5 @@
+import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/location.dart';
-import 'package:primal/compiler/runtime/node.dart';
 
 /// Base class for all semantic IR nodes.
 ///
@@ -84,17 +84,17 @@ class SemanticMapNode extends SemanticLiteralNode<List<SemanticMapEntryNode>> {
 
 /// A reference to a function, resolved during semantic analysis.
 ///
-/// The [resolvedFunction] field holds the actual [FunctionNode] when the
+/// The [resolvedSignature] field holds the function signature when the
 /// identifier refers to a known function. This enables static arity checking
-/// and future optimizations.
+/// and future optimizations without depending on runtime node types.
 class SemanticIdentifierNode extends SemanticNode {
   final String name;
-  final FunctionNode? resolvedFunction;
+  final FunctionSignature? resolvedSignature;
 
   const SemanticIdentifierNode({
     required super.location,
     required this.name,
-    this.resolvedFunction,
+    this.resolvedSignature,
   });
 
   @override

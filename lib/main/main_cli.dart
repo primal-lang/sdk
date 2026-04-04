@@ -76,7 +76,10 @@ void runCli(
       currentConsole.warning(warning);
     }
 
-    final RuntimeFacade runtime = RuntimeFacade(intermediateCode);
+    final RuntimeFacade runtime = RuntimeFacade(
+      intermediateCode,
+      compiler.expression,
+    );
 
     if (runtime.hasMain) {
       _executeMain(

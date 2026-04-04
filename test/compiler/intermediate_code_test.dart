@@ -1,6 +1,7 @@
 @Tags(['compiler'])
 library;
 
+import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
 import 'package:primal/compiler/semantic/lowerer.dart';
@@ -12,20 +13,20 @@ import '../helpers/pipeline_helpers.dart';
 
 void main() {
   group('IntermediateCode', () {
-    test('empty() contains standard library functions', () {
+    test('empty() contains standard library signatures', () {
       final IntermediateCode code = IntermediateCode.empty();
 
-      expect(code.standardLibrary, isNotEmpty);
+      expect(code.standardLibrarySignatures, isNotEmpty);
       expect(code.customFunctions, isEmpty);
       expect(code.warnings, isEmpty);
     });
 
-    test('empty() includes core library functions', () {
+    test('empty() includes core library signatures', () {
       final IntermediateCode code = IntermediateCode.empty();
 
-      expect(code.standardLibrary.containsKey('num.add'), isTrue);
-      expect(code.standardLibrary.containsKey('str.length'), isTrue);
-      expect(code.standardLibrary.containsKey('list.map'), isTrue);
+      expect(code.standardLibrarySignatures.containsKey('num.add'), isTrue);
+      expect(code.standardLibrarySignatures.containsKey('str.length'), isTrue);
+      expect(code.standardLibrarySignatures.containsKey('list.map'), isTrue);
     });
 
     test('compiled program includes user-defined functions', () {
@@ -43,7 +44,7 @@ void main() {
         final IntermediateCode code = getIntermediateCode('main = 42');
 
         expect(code.customFunctions.containsKey('main'), isTrue);
-        expect(code.standardLibrary.containsKey('num.add'), isTrue);
+        expect(code.standardLibrarySignatures.containsKey('num.add'), isTrue);
       },
     );
 
@@ -101,11 +102,14 @@ void main() {
       expect(lowered, isA<CustomFunctionNode>());
     });
 
-    test('standard library function node is a NativeFunctionNode', () {
+    test('standard library signature is a FunctionSignature', () {
       final IntermediateCode code = getIntermediateCode('main = 42');
-      final FunctionNode numAdd = code.standardLibrary['num.add']!;
+      final FunctionSignature? numAddSig = code.getStandardLibrarySignature(
+        'num.add',
+      );
 
-      expect(numAdd, isA<NativeFunctionNode>());
+      expect(numAddSig, isA<FunctionSignature>());
+      expect(numAddSig?.arity, equals(2));
     });
 
     test('parameterless function has empty parameter list', () {

@@ -49,9 +49,10 @@ IntermediateCode getIntermediateCode(String source) {
 }
 
 RuntimeFacade getRuntime(String source) {
+  const Compiler compiler = Compiler();
   final IntermediateCode intermediateCode = getIntermediateCode(source);
 
-  return RuntimeFacade(intermediateCode);
+  return RuntimeFacade(intermediateCode, compiler.expression);
 }
 
 Expression getExpression(String source) {

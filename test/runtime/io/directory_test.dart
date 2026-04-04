@@ -5,7 +5,6 @@ library;
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:primal/compiler/semantic/lowerer.dart';
 import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:test/test.dart';
 
@@ -173,10 +172,7 @@ void main() {
           'main = directory.list(directory.fromPath(${primalString(existingDirectory.path)}))',
         );
         final List<dynamic> children =
-            const Lowerer()
-                    .lowerExpression(runtime.mainExpression([]))
-                    .evaluate()
-                    .native()
+            runtime.evaluateToNode(runtime.mainExpression([])).native()
                 as List<dynamic>;
         final List<String> paths = children
             .map((child) => (child as FileSystemEntity).absolute.path)

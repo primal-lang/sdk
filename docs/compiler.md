@@ -15,7 +15,7 @@ Source Code
  Syntactic Analyzer .. Function definitions with ASTs     → compiler/syntactic.md
     |
     v
- Semantic Analyzer ... Semantic IR with locations         → compiler/semantic.md
+ Semantic Analyzer ... Semantic IR with FunctionSignature → compiler/semantic.md
     |
     v
  Lowerer ............. Runtime nodes for evaluation       → compiler/semantic.md
@@ -55,6 +55,20 @@ Types are represented as classes extending `Type`:
 | `AnyType`          | Wildcard (accepts any type)          |
 
 Type checking is **dynamic** - it happens at runtime when native functions validate their argument types, not during compilation.
+
+### FunctionSignature
+
+**File**: `lib/compiler/models/function_signature.dart`
+
+A lightweight, phase-agnostic representation of a function's calling interface used during semantic analysis:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | `String` | Function name |
+| `parameters` | `List<Parameter>` | Parameter definitions |
+| `arity` | `int` | Number of parameters |
+
+This model allows the semantic analyzer to validate function calls without depending on runtime types. See [compiler/models.md](compiler/models.md) for more details.
 
 ---
 

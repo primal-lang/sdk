@@ -48,7 +48,7 @@ The semantic IR is a bound AST that preserves source information lost in runtime
 | `SemanticStringNode`        | String literal with location                                 |
 | `SemanticListNode`          | List literal with location and semantic elements             |
 | `SemanticMapNode`           | Map literal with location and semantic entries               |
-| `SemanticIdentifierNode`    | Function reference with location and resolved `FunctionNode` |
+| `SemanticIdentifierNode`    | Function reference with location and resolved `FunctionSignature` |
 | `SemanticBoundVariableNode` | Parameter reference with location                            |
 | `SemanticCallNode`          | Function call with location, callee, and arguments           |
 
@@ -74,15 +74,17 @@ Represents a user-defined function with its semantic body and source location.
 The output of semantic analysis:
 
 - `customFunctions`: `Map<String, SemanticFunction>` - user-defined functions with semantic IR bodies.
-- `standardLibrary`: `Map<String, FunctionNode>` - built-in functions as runtime nodes.
+- `standardLibrarySignatures`: `Map<String, FunctionSignature>` - signatures of built-in functions (without runtime dependencies).
 - `warnings`: `List<GenericWarning>` - any warnings produced during analysis.
+
+The actual runtime `FunctionNode` instances for the standard library are obtained during lowering via `StandardLibrary.get()`, not stored in `IntermediateCode`. This keeps the semantic output free of runtime types.
 
 Helper methods:
 
 - `containsFunction(name)` - checks if a function exists (custom or stdlib).
 - `allFunctionNames` - returns all function names.
 - `getCustomFunction(name)` - returns a custom function by name.
-- `getStandardLibraryFunction(name)` - returns a stdlib function by name.
+- `getStandardLibrarySignature(name)` - returns a stdlib function signature by name.
 
 ## Lowerer
 
@@ -97,7 +99,10 @@ class Lowerer {
 }
 ```
 
-This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model.
+- `lowerFunction()` converts user-defined functions to `CustomFunctionNode`.
+- `lowerNode()` converts semantic expressions to runtime `Node` instances.
+
+This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model. The lowerer operates only on semantic types (`SemanticNode`, `SemanticFunction`) and produces runtime types (`Node`, `CustomFunctionNode`), maintaining clean phase separation.
 
 | Semantic Node               | Runtime Node        |
 | --------------------------- | ------------------- |
@@ -109,6 +114,19 @@ This pass strips source locations and produces the minimal runtime representatio
 | `SemanticIdentifierNode`    | `IdentifierNode`    |
 | `SemanticBoundVariableNode` | `BoundVariableNode` |
 | `SemanticCallNode`          | `CallNode`          |
+
+## Phase Boundaries
+
+The semantic phase maintains strict separation from the runtime phase:
+
+- **No runtime imports** - `semantic_node.dart`, `semantic_analyzer.dart`, and `intermediate_code.dart` do not import from `runtime/`.
+- **FunctionSignature abstraction** - instead of storing `FunctionNode` references, the semantic phase uses `FunctionSignature` for call validation.
+- **Lowering is one-way** - `Lowerer` converts semantic IR to runtime nodes, but never the reverse.
+
+This separation ensures that:
+1. Semantic analysis can be performed without instantiating runtime nodes.
+2. The runtime layer remains focused purely on evaluation.
+3. Future optimizations can operate on semantic IR without affecting runtime behavior.
 
 ## Design Rationale
 

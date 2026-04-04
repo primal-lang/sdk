@@ -8,6 +8,12 @@ import 'package:primal/compiler/reader/character.dart';
 import 'package:primal/extensions/string_extensions.dart';
 import 'package:primal/utils/list_iterator.dart';
 
+/// Creates a [Lexeme] from a [Character].
+Lexeme _lexemeOf(Character character) => Lexeme(
+  value: character.value,
+  location: character.location,
+);
+
 Token _identifierOrKeywordToken(Lexeme lexeme) {
   if (lexeme.value.isBoolean) {
     return BooleanToken(lexeme);
@@ -104,49 +110,49 @@ class InitState extends State<Character, void> {
         QuoteType.single,
       );
     } else if (input.value.isDigit) {
-      return IntegerState(iterator, input.lexeme);
+      return IntegerState(iterator, _lexemeOf(input));
     } else if (input.value.isLetter) {
-      return IdentifierState(iterator, input.lexeme);
+      return IdentifierState(iterator, _lexemeOf(input));
     } else if (input.value.isMinus) {
-      return MinusState(iterator, input.lexeme);
+      return MinusState(iterator, _lexemeOf(input));
     } else if (input.value.isPlus) {
-      return PlusState(iterator, input.lexeme);
+      return PlusState(iterator, _lexemeOf(input));
     } else if (input.value.isEquals) {
-      return EqualsState(iterator, input.lexeme);
+      return EqualsState(iterator, _lexemeOf(input));
     } else if (input.value.isGreater) {
-      return GreaterState(iterator, input.lexeme);
+      return GreaterState(iterator, _lexemeOf(input));
     } else if (input.value.isLess) {
-      return LessState(iterator, input.lexeme);
+      return LessState(iterator, _lexemeOf(input));
     } else if (input.value.isPipe) {
-      return PipeState(iterator, input.lexeme);
+      return PipeState(iterator, _lexemeOf(input));
     } else if (input.value.isAmpersand) {
-      return AmpersandState(iterator, input.lexeme);
+      return AmpersandState(iterator, _lexemeOf(input));
     } else if (input.value.isBang) {
-      return BangState(iterator, input.lexeme);
+      return BangState(iterator, _lexemeOf(input));
     } else if (input.value.isForwardSlash) {
-      return ForwardSlashState(iterator, input.lexeme);
+      return ForwardSlashState(iterator, _lexemeOf(input));
     } else if (input.value.isAsterisk) {
-      return AsteriskState(iterator, input.lexeme);
+      return AsteriskState(iterator, _lexemeOf(input));
     } else if (input.value.isPercent) {
-      return PercentState(iterator, input.lexeme);
+      return PercentState(iterator, _lexemeOf(input));
     } else if (input.value.isAt) {
-      return ResultState(iterator, AtToken(input.lexeme));
+      return ResultState(iterator, AtToken(_lexemeOf(input)));
     } else if (input.value.isComma) {
-      return ResultState(iterator, CommaToken(input.lexeme));
+      return ResultState(iterator, CommaToken(_lexemeOf(input)));
     } else if (input.value.isColon) {
-      return ResultState(iterator, ColonToken(input.lexeme));
+      return ResultState(iterator, ColonToken(_lexemeOf(input)));
     } else if (input.value.isOpenParenthesis) {
-      return ResultState(iterator, OpenParenthesisToken(input.lexeme));
+      return ResultState(iterator, OpenParenthesisToken(_lexemeOf(input)));
     } else if (input.value.isCloseParenthesis) {
-      return ResultState(iterator, CloseParenthesisToken(input.lexeme));
+      return ResultState(iterator, CloseParenthesisToken(_lexemeOf(input)));
     } else if (input.value.isOpenBracket) {
-      return ResultState(iterator, OpenBracketToken(input.lexeme));
+      return ResultState(iterator, OpenBracketToken(_lexemeOf(input)));
     } else if (input.value.isCloseBracket) {
-      return ResultState(iterator, CloseBracketToken(input.lexeme));
+      return ResultState(iterator, CloseBracketToken(_lexemeOf(input)));
     } else if (input.value.isOpenBraces) {
-      return ResultState(iterator, OpenBracesToken(input.lexeme));
+      return ResultState(iterator, OpenBracesToken(_lexemeOf(input)));
     } else if (input.value.isCloseBraces) {
-      return ResultState(iterator, CloseBracesToken(input.lexeme));
+      return ResultState(iterator, CloseBracesToken(_lexemeOf(input)));
     } else {
       throw InvalidCharacterError(input);
     }

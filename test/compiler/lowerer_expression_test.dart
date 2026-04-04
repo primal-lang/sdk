@@ -1,125 +1,137 @@
 @Tags(['compiler'])
 library;
 
-import 'package:primal/compiler/lexical/lexeme.dart';
-import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/semantic/lowerer.dart';
-import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:test/test.dart';
 
 void main() {
-  const lowerer = Lowerer();
-  const defaultLocation = Location(row: 1, column: 1);
+  const Lowerer lowerer = Lowerer();
+  const Location defaultLocation = Location(row: 1, column: 1);
 
-  BooleanToken boolToken(bool value) => BooleanToken(
-    Lexeme(value: value.toString(), location: defaultLocation),
-  );
-
-  NumberToken numToken(num value) => NumberToken(
-    Lexeme(value: value.toString(), location: defaultLocation),
-  );
-
-  StringToken strToken(String value) => StringToken(
-    Lexeme(value: value, location: defaultLocation),
-  );
-
-  IdentifierToken idToken(String value) => IdentifierToken(
-    Lexeme(value: value, location: defaultLocation),
-  );
-
-  group('Lowerer.lowerExpression', () {
-    group('BooleanExpression', () {
+  group('Lowerer.lowerNode', () {
+    group('SemanticBooleanNode', () {
       test('lowers true', () {
-        final BooleanExpression expression = BooleanExpression(boolToken(true));
-        final Node node = lowerer.lowerExpression(expression);
+        const SemanticBooleanNode semantic = SemanticBooleanNode(
+          location: defaultLocation,
+          value: true,
+        );
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<BooleanNode>());
         expect((node as BooleanNode).value, isTrue);
       });
 
       test('lowers false', () {
-        final BooleanExpression expression = BooleanExpression(
-          boolToken(false),
+        const SemanticBooleanNode semantic = SemanticBooleanNode(
+          location: defaultLocation,
+          value: false,
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<BooleanNode>());
         expect((node as BooleanNode).value, isFalse);
       });
     });
 
-    group('NumberExpression', () {
+    group('SemanticNumberNode', () {
       test('lowers integer', () {
-        final NumberExpression expression = NumberExpression(numToken(42));
-        final Node node = lowerer.lowerExpression(expression);
+        const SemanticNumberNode semantic = SemanticNumberNode(
+          location: defaultLocation,
+          value: 42,
+        );
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<NumberNode>());
         expect((node as NumberNode).value, equals(42));
       });
 
       test('lowers decimal', () {
-        final NumberExpression expression = NumberExpression(numToken(3.14));
-        final Node node = lowerer.lowerExpression(expression);
+        const SemanticNumberNode semantic = SemanticNumberNode(
+          location: defaultLocation,
+          value: 3.14,
+        );
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<NumberNode>());
         expect((node as NumberNode).value, equals(3.14));
       });
     });
 
-    group('StringExpression', () {
+    group('SemanticStringNode', () {
       test('lowers string', () {
-        final StringExpression expression = StringExpression(strToken('hello'));
-        final Node node = lowerer.lowerExpression(expression);
+        const SemanticStringNode semantic = SemanticStringNode(
+          location: defaultLocation,
+          value: 'hello',
+        );
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<StringNode>());
         expect((node as StringNode).value, equals('hello'));
       });
 
       test('lowers empty string', () {
-        final StringExpression expression = StringExpression(strToken(''));
-        final Node node = lowerer.lowerExpression(expression);
+        const SemanticStringNode semantic = SemanticStringNode(
+          location: defaultLocation,
+          value: '',
+        );
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<StringNode>());
         expect((node as StringNode).value, equals(''));
       });
     });
 
-    group('IdentifierExpression', () {
+    group('SemanticIdentifierNode', () {
       test('lowers identifier', () {
-        final IdentifierExpression expression = IdentifierExpression(
-          idToken('myVar'),
+        const SemanticIdentifierNode semantic = SemanticIdentifierNode(
+          location: defaultLocation,
+          name: 'myVar',
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<IdentifierNode>());
         expect((node as IdentifierNode).value, equals('myVar'));
       });
     });
 
-    group('ListExpression', () {
+    group('SemanticBoundVariableNode', () {
+      test('lowers bound variable', () {
+        const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'x',
+        );
+        final Node node = lowerer.lowerNode(semantic);
+
+        expect(node, isA<BoundVariableNode>());
+        expect((node as BoundVariableNode).value, equals('x'));
+      });
+    });
+
+    group('SemanticListNode', () {
       test('lowers empty list', () {
-        const ListExpression expression = ListExpression(
+        const SemanticListNode semantic = SemanticListNode(
           location: defaultLocation,
           value: [],
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<ListNode>());
         expect((node as ListNode).value, isEmpty);
       });
 
       test('lowers list with elements', () {
-        final ListExpression expression = ListExpression(
+        const SemanticListNode semantic = SemanticListNode(
           location: defaultLocation,
           value: [
-            NumberExpression(numToken(1)),
-            NumberExpression(numToken(2)),
-            NumberExpression(numToken(3)),
+            SemanticNumberNode(location: defaultLocation, value: 1),
+            SemanticNumberNode(location: defaultLocation, value: 2),
+            SemanticNumberNode(location: defaultLocation, value: 3),
           ],
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<ListNode>());
         final ListNode list = node as ListNode;
@@ -130,16 +142,18 @@ void main() {
       });
 
       test('lowers nested list', () {
-        final ListExpression expression = ListExpression(
+        const SemanticListNode semantic = SemanticListNode(
           location: defaultLocation,
           value: [
-            ListExpression(
+            SemanticListNode(
               location: defaultLocation,
-              value: [NumberExpression(numToken(1))],
+              value: [
+                SemanticNumberNode(location: defaultLocation, value: 1),
+              ],
             ),
           ],
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<ListNode>());
         final ListNode outer = node as ListNode;
@@ -150,35 +164,33 @@ void main() {
       });
     });
 
-    group('MapExpression', () {
+    group('SemanticMapNode', () {
       test('lowers empty map', () {
-        const MapExpression expression = MapExpression(
+        const SemanticMapNode semantic = SemanticMapNode(
           location: defaultLocation,
           value: [],
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<MapNode>());
         expect((node as MapNode).value, isEmpty);
       });
 
       test('lowers map with entries', () {
-        final MapExpression expression = MapExpression(
+        const SemanticMapNode semantic = SemanticMapNode(
           location: defaultLocation,
           value: [
-            MapEntryExpression(
-              location: defaultLocation,
-              key: StringExpression(strToken('a')),
-              value: NumberExpression(numToken(1)),
+            SemanticMapEntryNode(
+              key: SemanticStringNode(location: defaultLocation, value: 'a'),
+              value: SemanticNumberNode(location: defaultLocation, value: 1),
             ),
-            MapEntryExpression(
-              location: defaultLocation,
-              key: StringExpression(strToken('b')),
-              value: NumberExpression(numToken(2)),
+            SemanticMapEntryNode(
+              key: SemanticStringNode(location: defaultLocation, value: 'b'),
+              value: SemanticNumberNode(location: defaultLocation, value: 2),
             ),
           ],
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<MapNode>());
         final MapNode map = node as MapNode;
@@ -186,13 +198,17 @@ void main() {
       });
     });
 
-    group('CallExpression', () {
+    group('SemanticCallNode', () {
       test('lowers call with no arguments', () {
-        final CallExpression expression = CallExpression(
-          callee: IdentifierExpression(idToken('foo')),
+        const SemanticCallNode semantic = SemanticCallNode(
+          location: defaultLocation,
+          callee: SemanticIdentifierNode(
+            location: defaultLocation,
+            name: 'foo',
+          ),
           arguments: [],
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<CallNode>());
         final CallNode call = node as CallNode;
@@ -202,14 +218,18 @@ void main() {
       });
 
       test('lowers call with arguments', () {
-        final CallExpression expression = CallExpression(
-          callee: IdentifierExpression(idToken('add')),
+        const SemanticCallNode semantic = SemanticCallNode(
+          location: defaultLocation,
+          callee: SemanticIdentifierNode(
+            location: defaultLocation,
+            name: 'add',
+          ),
           arguments: [
-            NumberExpression(numToken(1)),
-            NumberExpression(numToken(2)),
+            SemanticNumberNode(location: defaultLocation, value: 1),
+            SemanticNumberNode(location: defaultLocation, value: 2),
           ],
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<CallNode>());
         final CallNode call = node as CallNode;
@@ -219,16 +239,26 @@ void main() {
       });
 
       test('lowers nested call', () {
-        final CallExpression expression = CallExpression(
-          callee: IdentifierExpression(idToken('outer')),
+        const SemanticCallNode semantic = SemanticCallNode(
+          location: defaultLocation,
+          callee: SemanticIdentifierNode(
+            location: defaultLocation,
+            name: 'outer',
+          ),
           arguments: [
-            CallExpression(
-              callee: IdentifierExpression(idToken('inner')),
-              arguments: [NumberExpression(numToken(42))],
+            SemanticCallNode(
+              location: defaultLocation,
+              callee: SemanticIdentifierNode(
+                location: defaultLocation,
+                name: 'inner',
+              ),
+              arguments: [
+                SemanticNumberNode(location: defaultLocation, value: 42),
+              ],
             ),
           ],
         );
-        final Node node = lowerer.lowerExpression(expression);
+        final Node node = lowerer.lowerNode(semantic);
 
         expect(node, isA<CallNode>());
         final CallNode outer = node as CallNode;

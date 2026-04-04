@@ -6,11 +6,13 @@ The runtime evaluates compiled code through **node substitution and reduction**.
 
 ## Initialization
 
-When a `Runtime` is created with `IntermediateCode`:
+When a `Runtime` is created, the `RuntimeInputBuilder` constructs a `RuntimeInput`:
 
-1. The `Lowerer` converts each `SemanticFunction` to a `CustomFunctionNode`.
-2. Standard library functions (already `FunctionNode`) are included as-is.
+1. The `Lowerer` converts each `SemanticFunction` from `IntermediateCode` to a `CustomFunctionNode`.
+2. Standard library functions are fetched directly from `StandardLibrary.get()` as `FunctionNode` instances.
 3. All functions are stored in the global `SCOPE` for identifier resolution.
+
+Note: `IntermediateCode` contains only `FunctionSignature` references for the standard library (not `FunctionNode`), keeping the semantic output free of runtime types. The actual runtime nodes are instantiated during this initialization step.
 
 ## Node Hierarchy
 

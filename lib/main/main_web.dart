@@ -88,20 +88,20 @@ void main(List<String> args) {
 
   runtimeHasMain = (JSNumber codeId) {
     final IntermediateCode code = _getCode(codeId.toDartInt);
-    final RuntimeFacade runtime = RuntimeFacade(code);
+    final RuntimeFacade runtime = RuntimeFacade(code, compiler.expression);
     return runtime.hasMain.toJS;
   }.toJS;
 
   runtimeExecuteMain = (JSNumber codeId) {
     final IntermediateCode code = _getCode(codeId.toDartInt);
-    final RuntimeFacade runtime = RuntimeFacade(code);
+    final RuntimeFacade runtime = RuntimeFacade(code, compiler.expression);
     return runtime.executeMain().toJS;
   }.toJS;
 
   runtimeReduce = (JSNumber codeId, JSNumber expressionId) {
     final IntermediateCode code = _getCode(codeId.toDartInt);
     final Expression expression = _getExpression(expressionId.toDartInt);
-    final RuntimeFacade runtime = RuntimeFacade(code);
+    final RuntimeFacade runtime = RuntimeFacade(code, compiler.expression);
     return runtime.evaluate(expression).toJS;
   }.toJS;
 
