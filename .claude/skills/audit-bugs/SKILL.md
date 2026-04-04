@@ -19,7 +19,7 @@ description: Audits the codebase for bugs, inconsistencies, and potential runtim
 
 ## Focus Area 2: Dart-Specific Gotchas
 
-- **Null Safety Gaps**: Find nullable types accessed without null checks (`!`, `??`, `?.`, or prior `if` check). Pay attention to `T?` return types from methods like `ListIterator.peek` and `ListIterator.previous`.
+- **Null Safety Gaps**: Find nullable types accessed without null checks (bang operator, null-aware operators like ?? and ?., or prior if-check). Pay attention to nullable return types from methods like `ListIterator.peek` and `ListIterator.previous`.
 - **Type Promotion Breaks**: Identify cases where a null check doesn't promote because the variable is reassigned or is a non-local variable.
 - **Late Initialization**: Find `late` variables that might be accessed before initialization.
 - **Collection Safety**: Detect `.first`, `.last`, `.single` on potentially empty collections without guards. Check for `.firstWhere()` / `.singleWhere()` without `orElse`.
