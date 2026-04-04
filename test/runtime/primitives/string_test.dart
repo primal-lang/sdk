@@ -430,6 +430,16 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('str.match throws ParseError for invalid regex', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.match("hello", "[invalid")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<ParseError>()),
+      );
+    });
+
     test('str.contains empty pattern', () {
       final RuntimeFacade runtime = getRuntime(
         'main = str.contains("Hello", "")',

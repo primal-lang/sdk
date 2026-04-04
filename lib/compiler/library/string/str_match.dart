@@ -33,7 +33,11 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is StringNode) && (b is StringNode)) {
-      return BooleanNode(RegExp(b.value).hasMatch(a.value));
+      try {
+        return BooleanNode(RegExp(b.value).hasMatch(a.value));
+      } on FormatException {
+        throw ParseError(function: name, input: b.value, targetType: 'regex');
+      }
     } else {
       throw InvalidArgumentTypesError(
         function: name,

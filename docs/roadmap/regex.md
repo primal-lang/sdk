@@ -1,3 +1,5 @@
+We currently have `str.match` which accepts string-based regex patterns, but this can be error-prone and less readable. Introducing first-class regex syntax with literal regexes would improve readability and allow for better validation during lexing/parsing. A dedicated regex runtime value would also provide a cleaner API for regex operations. This proposal would also introduce a new `regex.*` namespace in the standard library to house regex-related functions. Raw strings and regex literals would complement each other well, providing flexibility for different use cases.
+
 Primal already exposes `str.match`, but string-based regex patterns are harder to read and easier to mistype.
 
 **Design notes:**

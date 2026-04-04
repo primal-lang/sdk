@@ -1,13 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_match.dart`
-
-**Line 36**: Uncaught `FormatException` from invalid regex patterns
-
-- **Issue**: `RegExp(b.value)` throws `FormatException` if the pattern is invalid, but this is not caught.
-- **Impact**: Internal Dart exception surfaces to the user.
-- **Fix**: Wrap in try-catch and throw a meaningful `ParseError` or similar.
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sort.dart`
 
 **Line 42**: Unsafe cast of comparator result to `int`
