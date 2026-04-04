@@ -519,9 +519,42 @@ void main() {
       checkResult(runtime, 5);
     });
 
-    test('num.log(0) returns negative infinity', () {
+    test('num.log throws InvalidNumericOperationError for zero', () {
       final RuntimeFacade runtime = getRuntime('main = num.log(0)');
-      checkResult(runtime, double.negativeInfinity);
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidNumericOperationError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('num.log'),
+              contains('logarithm'),
+              contains('non-positive'),
+              contains('0'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('num.log throws InvalidNumericOperationError for negative input', () {
+      final RuntimeFacade runtime = getRuntime('main = num.log(-5)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidNumericOperationError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('num.log'),
+              contains('logarithm'),
+              contains('non-positive'),
+              contains('-5'),
+            ),
+          ),
+        ),
+      );
     });
 
     test('num.pow(0, 0) returns 1', () {

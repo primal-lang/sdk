@@ -1,15 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/arithmetic/num_log.dart`
-
-**Line 35**: No validation for non-positive input to logarithm
-
-- **Issue**: `log()` of zero returns `-Infinity`, and `log()` of negative numbers returns `NaN`. These are mathematically undefined but silently produce special values.
-- **Impact**: Silent incorrect results that may propagate through calculations.
-- **Fix**: Validate input and throw `InvalidNumericOperationError` for non-positive values.
-
-add/update the tests to cover this case.
-
----
-
 ## Info
 
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/operators/operator_div.dart` and `num_div.dart`

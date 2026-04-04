@@ -32,6 +32,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is NumberNode) {
+      if (a.value <= 0) {
+        throw InvalidNumericOperationError(
+          function: name,
+          reason: 'cannot compute logarithm of non-positive number ${a.value}',
+        );
+      }
       return NumberNode(log(a.value));
     } else {
       throw InvalidArgumentTypesError(
