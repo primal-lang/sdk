@@ -43,6 +43,16 @@ void main() {
       checkResult(runtime, []);
     });
 
+    test('vector.normalize throws for zero vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.new([0, 0, 0]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<DivisionByZeroError>()),
+      );
+    });
+
     test('vector.normalize returns unit vector for non-empty input', () {
       final RuntimeFacade runtime = getRuntime(
         'main = vector.normalize(vector.new([1, 2, 3]))',

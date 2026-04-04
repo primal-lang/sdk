@@ -1,13 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/vector/vector_normalize.dart`
-
-**Line 35-42**: Division by zero when normalizing a zero vector
-
-- **Issue**: When the vector magnitude is zero (zero vector), the function divides each component by zero, producing `NaN` or `Infinity` values.
-- **Impact**: Silent incorrect results instead of a meaningful error.
-- **Fix**: Check if `magnitude.value == 0` and throw an appropriate error.
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/timestamp/time_from_iso.dart`
 
 **Line 34**: Uncaught `FormatException` from `DateTime.parse()`

@@ -32,14 +32,25 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
 
     if (a is VectorNode) {
+      final List<num> list = a.native().cast<num>();
+
+      if (list.isEmpty) {
+        return a;
+      }
+
       final NumberNode magnitude = VectorMagnitude.execute(
         function: this,
         a: a,
       );
-      final List list = a.native();
+
+      if (magnitude.value == 0) {
+        throw DivisionByZeroError(function: name);
+      }
 
       return VectorNode(
-        list.map((element) => NumberNode(element / magnitude.value)).toList(),
+        list
+            .map((num element) => NumberNode(element / magnitude.value))
+            .toList(),
       );
     } else {
       throw InvalidArgumentTypesError(
