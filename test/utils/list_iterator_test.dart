@@ -152,6 +152,13 @@ void main() {
       iterator.advance();
       expect(iterator.next, 2);
     });
+
+    test('back() at index zero does not go negative', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      iterator.back();
+      expect(iterator.peek, 1);
+      expect(iterator.hasNext, true);
+    });
   });
 
   group('ListIterator - full iteration', () {

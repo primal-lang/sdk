@@ -1,23 +1,3 @@
-### 7. `ListIterator.back()` can cause negative index
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/utils/list_iterator.dart`
-**Line**: 48-50
-
-- **Issue**: The `back()` method decrements `_index` without checking if it's already at 0. If called when `_index == 0`, subsequent operations could behave unexpectedly.
-- **Impact**: This is primarily an internal API issue. The current usage in the codebase appears safe because `back()` is only called after consuming a character. However, future changes could introduce bugs.
-- **Fix**: Consider adding a guard:
-
-```dart
-void back() {
-  if (_index > 0) {
-    _index--;
-  }
-}
-```
-
-add/update the tests to cover this case.
-update @docs if needed
-
 ### 8. `element_at` (@) uses Dart string indexing for strings
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/index/element_at.dart`

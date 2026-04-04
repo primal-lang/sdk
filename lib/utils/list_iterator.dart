@@ -46,6 +46,8 @@ class ListIterator<T> {
   }
 
   void back() {
-    _index--;
+    if (_index > 0) {
+      _index--;
+    }
   }
 }
