@@ -1,13 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/utils/list_iterator.dart`
-
-**Line 37**: `last` getter has no empty-list guard
-
-- **Issue**: Calling `last` on an empty list throws `StateError` from Dart. No check is performed.
-- **Impact**: If caller doesn't check, internal Dart error surfaces.
-- **Suggestion**: This may be intentional (caller is expected to check), but could benefit from a guard or documentation.
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_filter.dart`
 
 **Lines 39-43**: Silent failure when predicate returns non-boolean

@@ -34,6 +34,14 @@ void main() {
       final ListIterator<int> iterator = ListIterator([]);
       expect(iterator.previous, null);
     });
+
+    test('last throws UnexpectedEndOfFileError', () {
+      final ListIterator<int> iterator = ListIterator([]);
+      expect(
+        () => iterator.last,
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
   });
 
   group('ListIterator - single element', () {

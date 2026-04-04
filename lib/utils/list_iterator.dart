@@ -34,7 +34,12 @@ class ListIterator<T> {
     }
   }
 
-  T get last => _list.last;
+  T get last {
+    if (_list.isEmpty) {
+      throw const UnexpectedEndOfFileError();
+    }
+    return _list.last;
+  }
 
   void advance() {
     _index++;
