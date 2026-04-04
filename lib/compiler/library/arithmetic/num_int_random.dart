@@ -34,9 +34,22 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is NumberNode) && (b is NumberNode)) {
-      return NumberNode(
-        a.value + Random().nextInt((b.value - a.value + 1).toInt()),
-      );
+      final int min = a.value.toInt();
+      final int max = b.value.toInt();
+      if (max < min) {
+        throw InvalidNumericOperationError(
+          function: name,
+          reason: 'max ($max) must be >= min ($min)',
+        );
+      }
+      final int range = max - min + 1;
+      if (range <= 0) {
+        throw InvalidNumericOperationError(
+          function: name,
+          reason: 'range overflow',
+        );
+      }
+      return NumberNode(min + Random().nextInt(range));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

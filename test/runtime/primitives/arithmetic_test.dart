@@ -573,6 +573,36 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = num.pow(2, 32)');
       checkResult(runtime, 4294967296);
     });
+
+    test(
+      'num.integerRandom throws InvalidNumericOperationError when max < min',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = num.integerRandom(20, 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(
+                contains('num.integerRandom'),
+                contains('max'),
+                contains('min'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('num.integerRandom with equal min and max returns that value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = num.integerRandom(5, 5)',
+      );
+      checkResult(runtime, 5);
+    });
   });
 
   group('Arithmetic Type Errors', () {
