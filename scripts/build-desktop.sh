@@ -4,8 +4,6 @@ set -e
 
 mkdir -p output
 
-dart compile js lib/main/main_web.dart -O2 -o output/primal.js
-
 OS="$(uname -s)"
 case "$OS" in
   Linux*)   dart compile exe lib/main/main_cli.dart -o output/primal-linux-x86-64 ;;
