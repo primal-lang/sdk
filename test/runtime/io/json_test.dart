@@ -184,4 +184,34 @@ void main() {
       );
     });
   });
+
+  group('JSON Map Key Handling', () {
+    test('json.decode correctly converts string keys to StringNode', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = json.decode(\'{"key": "value"}\')',
+      );
+      checkResult(runtime, {'"key"': '"value"'});
+    });
+
+    test('json.decode handles numeric string keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = json.decode(\'{"123": "numeric key"}\')',
+      );
+      checkResult(runtime, {'"123"': '"numeric key"'});
+    });
+
+    test('json.decode handles empty string key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = json.decode(\'{"": "empty key"}\')',
+      );
+      checkResult(runtime, {'""': '"empty key"'});
+    });
+
+    test('json.decode handles unicode keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = json.decode(\'{"emoji\\u2764": "heart"}\')',
+      );
+      checkResult(runtime, {'"emoji❤"': '"heart"'});
+    });
+  });
 }

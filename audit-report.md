@@ -1,8 +1,3 @@
-**Line 64**: `getMap` uses `LiteralNode.from()` which throws for non-primitive keys
-
-- **Issue**: If a JSON map has a key that's not a primitive (bool, num, String), `LiteralNode.from()` will throw `InvalidLiteralValueError`. However, JSON keys are always strings, so this is not reachable in practice.
-- **Impact**: None in practice, but defensive programming would check this.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/utils/list_iterator.dart`
 
 **Line 37**: `last` getter has no empty-list guard
