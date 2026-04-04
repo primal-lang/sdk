@@ -693,6 +693,29 @@ void main() {
       },
     );
 
+    test(
+      'str.substring throws IndexOutOfBoundsError when start exceeds length',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = str.substring("ab", 5, 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('5'),
+                contains('length: 2'),
+                contains('str.substring'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
     test('str.length throws InvalidArgumentTypesError for number argument', () {
       final RuntimeFacade runtime = getRuntime('main = str.length(42)');
       expect(

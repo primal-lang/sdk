@@ -1,25 +1,3 @@
-### 3. `str.substring` does not validate that start <= length
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_substring.dart`
-**Line**: 42-58
-
-- **Issue**: While `list.sublist` validates `start > a.value.length`, `str.substring` only validates that `end > chars.length` and `end < start`. If `start > chars.length` but `start <= end`, the function will silently return an empty string instead of throwing an error.
-- **Impact**: Inconsistent behavior between `str.substring` and `list.sublist`. For example, `str.substring("ab", 5, 10)` would silently produce an empty string.
-- **Fix**: Add validation:
-
-```dart
-if (start > chars.length) {
-  throw IndexOutOfBoundsError(
-    function: name,
-    index: start,
-    length: chars.length,
-  );
-}
-```
-
-add/update the tests to cover this case.
-update @docs if needed
-
 ### 4. `list.sort` silently ignores non-numeric comparator results
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sort.dart`
