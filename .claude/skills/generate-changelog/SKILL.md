@@ -1,5 +1,5 @@
 ---
-name: changelog
+name: generate-changelog
 description: Generates a changelog by comparing the current branch against main, analyzing code changes to categorize them as Added, Fixed, Changed, Deprecated, Removed, or Security.
 ---
 
