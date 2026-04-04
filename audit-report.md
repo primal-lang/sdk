@@ -1,15 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/control/try.dart`
-
-**Line 36-38**: Catch-all exception handler includes all errors
-
-- **Issue**: `catch (e)` catches all exceptions including `Error` types (like `OutOfMemoryError`). This is very broad.
-- **Impact**: Potentially masks serious errors that shouldn't be caught.
-- **Suggestion**: Consider catching only `Exception` or specific Primal error types: `on RuntimeError catch (e)`.
-
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/json/json_decode.dart`
-
-add/update the tests to cover this case.
-
 **Line 64**: `getMap` uses `LiteralNode.from()` which throws for non-primitive keys
 
 - **Issue**: If a JSON map has a key that's not a primitive (bool, num, String), `LiteralNode.from()` will throw `InvalidLiteralValueError`. However, JSON keys are always strings, so this is not reachable in practice.
