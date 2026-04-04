@@ -2,6 +2,7 @@
 .idx/
 !scripts/
 !.vscode/
+!.claude/
 bin/aot/
 bin/web/
 coverage/
