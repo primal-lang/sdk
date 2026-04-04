@@ -1,28 +1,3 @@
-### 2. `try` function does not evaluate fallback expression
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/control/try.dart`
-**Line**: 37
-
-- **Issue**: When an exception is caught, the `try` function returns `b` directly without calling `.evaluate()`. This means the fallback value is returned as an unevaluated node rather than its evaluated result.
-- **Impact**: If the fallback expression is a function call or complex expression (e.g., `try(errorFn(), fallbackFn())`), the user receives an unevaluated node instead of the expected evaluated result. This breaks the semantic contract of `try`.
-- **Fix**:
-
-```dart
-@override
-Node evaluate() {
-  final Node a = arguments[0];
-  final Node b = arguments[1];
-
-  try {
-    return a.evaluate();
-  } on Exception {
-    return b.evaluate();  // Add .evaluate() here
-  }
-}
-```
-
-add/update the tests to cover this case.
-
 ### 3. `str.substring` does not validate that start <= length
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_substring.dart`
@@ -43,6 +18,7 @@ if (start > chars.length) {
 ```
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 4. `list.sort` silently ignores non-numeric comparator results
 
@@ -70,6 +46,7 @@ result.sort((x, y) {
 ```
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 5. `list.all`, `list.any`, and `list.none` silently ignore non-boolean results
 
@@ -97,6 +74,7 @@ if (value is! BooleanNode) {
 ```
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 6. Inconsistent `InvalidArgumentTypesError` reporting
 
@@ -119,6 +97,7 @@ throw InvalidArgumentTypesError(
 ```
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 7. `ListIterator.back()` can cause negative index
 
@@ -138,6 +117,7 @@ void back() {
 ```
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 8. `element_at` (@) uses Dart string indexing for strings
 
@@ -167,6 +147,7 @@ add/update the tests to cover this case.
 ```
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 9. Missing `const` constructor on `Parameter` class
 
@@ -178,6 +159,7 @@ add/update the tests to cover this case.
 - **Suggestion**: Consider using `const Parameter._({...})` and adjusting factory constructors, or leave as-is since the performance impact is negligible.
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 10. Potential unbounded recursion in evaluation
 
@@ -189,6 +171,7 @@ add/update the tests to cover this case.
 - **Suggestion**: Consider adding an optional depth counter for evaluation, especially if the interpreter is exposed to untrusted input.
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 11. `LiteralNode.from` doesn't handle all node types
 
@@ -200,6 +183,7 @@ add/update the tests to cover this case.
 - **Suggestion**: Either extend the factory to handle all types or document that it only handles JSON-compatible types.
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 12. Duplicate class names across files
 
@@ -210,6 +194,7 @@ add/update the tests to cover this case.
 - **Suggestion**: Consider using unique class names or moving the pattern to a shared base class.
 
 add/update the tests to cover this case.
+update @docs if needed
 
 ### 13. `error.throw` evaluates first argument before throwing
 
@@ -221,3 +206,4 @@ add/update the tests to cover this case.
 - **Suggestion**: Evaluate `b` and ensure it's a `StringNode` before using its value, or clarify the intended behavior in documentation.
 
 add/update the tests to cover this case.
+update @docs if needed

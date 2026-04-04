@@ -43,6 +43,13 @@ void main() {
       );
       checkResult(runtime, 42);
     });
+
+    test('try/catch evaluates fallback expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = try(error.throw(0, "fail"), 1 + 2)',
+      );
+      checkResult(runtime, 3);
+    });
   });
 
   group('Error', () {
