@@ -32,7 +32,15 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    throw CustomError(a, b.toString());
+    if (b is StringNode) {
+      throw CustomError(a, b.value);
+    } else {
+      throw InvalidArgumentTypesError(
+        function: name,
+        expected: parameterTypes,
+        actual: [a.type, b.type],
+      );
+    }
   }
 }
 

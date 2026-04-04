@@ -268,6 +268,39 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = try(1 + true, -1)');
       checkResult(runtime, -1);
     });
+
+    test('error.throw evaluates message expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = error.throw(1, str.concat("hello", " world"))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('hello world'),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'error.throw with non-string message throws InvalidArgumentTypesError',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = error.throw(1, 42)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(contains('error.throw'), contains('Number')),
+            ),
+          ),
+        );
+      },
+    );
   });
 
   group('Invalid Argument Count', () {
