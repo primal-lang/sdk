@@ -124,16 +124,71 @@ main = foo([2])
       checkResult(runtime, 5);
     });
 
-    test('list.set inserts element into empty list', () {
-      final RuntimeFacade runtime = getRuntime('main = list.set([], 0, 1)');
-      checkResult(runtime, [1]);
-    });
-
-    test('list.set inserts element at given index in non-empty list', () {
+    test('list.set replaces element at given index', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.set([1, 2, 3, 4, 5], 2, 42)',
       );
-      checkResult(runtime, [1, 2, 42, 3, 4, 5]);
+      checkResult(runtime, [1, 2, 42, 4, 5]);
+    });
+
+    test('list.set replaces first element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], 0, 99)',
+      );
+      checkResult(runtime, [99, 2, 3]);
+    });
+
+    test('list.set replaces last element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], 2, 99)',
+      );
+      checkResult(runtime, [1, 2, 99]);
+    });
+
+    test('list.set preserves list length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.length(list.set([1, 2, 3, 4, 5], 2, 42))',
+      );
+      checkResult(runtime, 5);
+    });
+
+    test('list.set in single element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1], 0, 99)',
+      );
+      checkResult(runtime, [99]);
+    });
+
+    test('list.set with string value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], 1, "hello")',
+      );
+      checkResult(runtime, [1, '"hello"', 3]);
+    });
+
+    test('list.set with boolean value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], 1, true)',
+      );
+      checkResult(runtime, [1, true, 3]);
+    });
+
+    test('list.set with nested list value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], 1, [4, 5])',
+      );
+      checkResult(runtime, [
+        1,
+        [4, 5],
+        3,
+      ]);
+    });
+
+    test('list.set evaluates value expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], 1, 10 + 5)',
+      );
+      checkResult(runtime, [1, 15, 3]);
     });
 
     test('list.join concatenates elements with separator', () {

@@ -154,6 +154,34 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
+    test('list.set index equal to length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2], 2, 99)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list.set empty list at index 0', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([], 0, 99)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list.set empty list at index 1', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([], 1, 99)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list.set single element list at index 1', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1], 1, 99)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
     test('list.sublist negative start index', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.sublist([1, 2, 3], -1, 2)',

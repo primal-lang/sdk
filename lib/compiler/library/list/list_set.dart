@@ -39,7 +39,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       if (index < 0) {
         throw NegativeIndexError(function: name, index: index);
       }
-      if (index > a.value.length) {
+      if (index >= a.value.length) {
         throw IndexOutOfBoundsError(
           function: name,
           index: index,
@@ -47,7 +47,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         );
       }
       final List<Node> head = a.value.sublist(0, index);
-      final List<Node> rest = a.value.sublist(index, a.value.length);
+      final List<Node> rest = a.value.sublist(index + 1, a.value.length);
 
       return ListNode([...head, c.evaluate(), ...rest]);
     } else {
