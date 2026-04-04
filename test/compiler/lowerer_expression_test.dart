@@ -1,9 +1,9 @@
 @Tags(['compiler'])
 library;
 
+import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/lowerer.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:test/test.dart';
 

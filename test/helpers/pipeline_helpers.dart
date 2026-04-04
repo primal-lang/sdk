@@ -1,11 +1,11 @@
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/reader/character.dart';
 import 'package:primal/compiler/reader/source_reader.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
-import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';

@@ -1,10 +1,10 @@
+import 'package:primal/compiler/lowering/lowerer.dart';
+import 'package:primal/compiler/lowering/runtime_input_builder.dart';
 import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
-import 'package:primal/compiler/semantic/lowerer.dart';
-import 'package:primal/compiler/semantic/runtime_input_builder.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/syntactic/expression.dart';

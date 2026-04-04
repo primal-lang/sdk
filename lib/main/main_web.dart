@@ -1,8 +1,8 @@
 import 'dart:js_interop';
 
 import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
-import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 
 @JS('compileInput')

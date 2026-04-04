@@ -1,10 +1,10 @@
 @Tags(['compiler'])
 library;
 
+import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
-import 'package:primal/compiler/semantic/lowerer.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/warnings/semantic_warning.dart';
 import 'package:test/test.dart';

@@ -2,7 +2,7 @@
 library;
 
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/semantic/runtime_facade.dart';
+import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';

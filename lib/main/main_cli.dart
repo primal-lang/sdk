@@ -1,6 +1,6 @@
 import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/semantic/intermediate_code.dart';
-import 'package:primal/compiler/semantic/runtime_facade.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';

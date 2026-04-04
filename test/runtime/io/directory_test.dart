@@ -5,7 +5,7 @@ library;
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:primal/compiler/semantic/runtime_facade.dart';
+import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
 
 import '../../helpers/assertion_helpers.dart';
