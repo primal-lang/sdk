@@ -105,15 +105,15 @@ Note: Unary negation is converted to binary subtraction from zero. The synthetic
 
 The semantic analyzer converts expressions directly to semantic IR nodes, preserving source locations:
 
-| Expression             | Semantic Node              |
-| ---------------------- | -------------------------- |
-| `BooleanExpression`    | `SemanticBooleanNode`      |
-| `NumberExpression`     | `SemanticNumberNode`       |
-| `StringExpression`     | `SemanticStringNode`       |
-| `ListExpression`       | `SemanticListNode`         |
-| `MapExpression`        | `SemanticMapNode`          |
+| Expression             | Semantic Node                                           |
+| ---------------------- | ------------------------------------------------------- |
+| `BooleanExpression`    | `SemanticBooleanNode`                                   |
+| `NumberExpression`     | `SemanticNumberNode`                                    |
+| `StringExpression`     | `SemanticStringNode`                                    |
+| `ListExpression`       | `SemanticListNode`                                      |
+| `MapExpression`        | `SemanticMapNode`                                       |
 | `IdentifierExpression` | `SemanticIdentifierNode` or `SemanticBoundVariableNode` |
-| `CallExpression`       | `SemanticCallNode`         |
+| `CallExpression`       | `SemanticCallNode`                                      |
 
 The semantic IR is then lowered to runtime nodes (`BooleanNode`, `NumberNode`, etc.) for evaluation. See [semantic.md](semantic.md) for details.
 

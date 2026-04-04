@@ -52,21 +52,21 @@ The analyzer starts in `InitState` and transitions based on the current characte
 
 Additional internal states not reachable from `InitState`:
 
-| State                       | Reachable from            | Purpose                                           |
-| --------------------------- | ------------------------- | ------------------------------------------------- |
-| `DecimalInitState`          | `IntegerState`            | Entered after `.`; requires at least one digit    |
-| `DecimalState`              | `DecimalInitState`        | Accumulates remaining decimal digits              |
-| `ExponentInitState`         | `IntegerState`, `DecimalState` | Entered after `e`/`E`; expects digit or sign |
-| `ExponentSignState`         | `ExponentInitState`       | Entered after `+`/`-`; requires at least one digit |
-| `ExponentState`             | `ExponentInitState`, `ExponentSignState` | Accumulates exponent digits        |
-| `StringEscapeState`         | `StringState`             | Processes escape sequence in string               |
-| `StringHexEscapeState`      | `StringEscapeState`       | Accumulates hex digits for `\xXX` or `\uXXXX`     |
-| `StringUnicodeEscapeState`  | `StringEscapeState`       | Dispatches `\u` to fixed or braced format         |
-| `StringBracedEscapeState`   | `StringUnicodeEscapeState`| Accumulates hex digits for `\u{...}`              |
-| `SingleLineCommentState`    | `ForwardSlashState`       | Consumes until newline                            |
-| `StartMultiLineCommentState`| `ForwardSlashState`       | Consumes until `*` is found                       |
-| `ClosingMultiLineCommentState` | `StartMultiLineCommentState` | Checks for `/` to close the comment          |
-| `ResultState`               | Any token-producing state | Carries the completed token back to the main loop |
+| State                          | Reachable from                           | Purpose                                            |
+| ------------------------------ | ---------------------------------------- | -------------------------------------------------- |
+| `DecimalInitState`             | `IntegerState`                           | Entered after `.`; requires at least one digit     |
+| `DecimalState`                 | `DecimalInitState`                       | Accumulates remaining decimal digits               |
+| `ExponentInitState`            | `IntegerState`, `DecimalState`           | Entered after `e`/`E`; expects digit or sign       |
+| `ExponentSignState`            | `ExponentInitState`                      | Entered after `+`/`-`; requires at least one digit |
+| `ExponentState`                | `ExponentInitState`, `ExponentSignState` | Accumulates exponent digits                        |
+| `StringEscapeState`            | `StringState`                            | Processes escape sequence in string                |
+| `StringHexEscapeState`         | `StringEscapeState`                      | Accumulates hex digits for `\xXX` or `\uXXXX`      |
+| `StringUnicodeEscapeState`     | `StringEscapeState`                      | Dispatches `\u` to fixed or braced format          |
+| `StringBracedEscapeState`      | `StringUnicodeEscapeState`               | Accumulates hex digits for `\u{...}`               |
+| `SingleLineCommentState`       | `ForwardSlashState`                      | Consumes until newline                             |
+| `StartMultiLineCommentState`   | `ForwardSlashState`                      | Consumes until `*` is found                        |
+| `ClosingMultiLineCommentState` | `StartMultiLineCommentState`             | Checks for `/` to close the comment                |
+| `ResultState`                  | Any token-producing state                | Carries the completed token back to the main loop  |
 
 All string states (including `StringState`, `StringEscapeState`, and related escape states) extend `StringRelatedState`, which provides a `stringStartLocation` property used for unterminated string error reporting.
 
@@ -90,20 +90,22 @@ Both quote escapes are supported in both string types for consistency. This allo
 
 Three Unicode escape formats are supported:
 
-| Format | Digits | Range | Example |
-| ------ | ------ | ----- | ------- |
-| `\xXX` | 2 hex (fixed) | U+0000 - U+00FF | `\x41` → "A" |
-| `\uXXXX` | 4 hex (fixed) | U+0000 - U+FFFF | `\u03B1` → "α" |
+| Format     | Digits             | Range             | Example            |
+| ---------- | ------------------ | ----------------- | ------------------ |
+| `\xXX`     | 2 hex (fixed)      | U+0000 - U+00FF   | `\x41` → "A"       |
+| `\uXXXX`   | 4 hex (fixed)      | U+0000 - U+FFFF   | `\u03B1` → "α"     |
 | `\u{X...}` | 1-6 hex (variable) | U+0000 - U+10FFFF | `\u{1F600}` → "😀" |
 
 The braced format (`\u{...}`) follows JavaScript ES6 and Rust conventions, allowing any valid Unicode code point with 1-6 hex digits.
 
 **Examples:**
+
 - `"\x48\x69"` → "Hi"
 - `"\u0048\u0065\u006C\u006C\u006F"` → "Hello"
 - `"\u{1F600}"` → "😀"
 
 **Error conditions:**
+
 - Non-hex character in escape: `InvalidHexEscapeError`
 - Empty braces (`\u{}`): `InvalidBracedEscapeError`
 - Too many digits in braces (>6): `InvalidBracedEscapeError`
@@ -140,18 +142,19 @@ Numeric literals support underscore separators for readability (e.g., `1_000_000
 
 Four states peek at the next character to distinguish single-character tokens from two-character compound tokens:
 
-| State          | If next is `=`                 | Otherwise (delimiter)    |
-| -------------- | ------------------------------ | ------------------------ |
-| `EqualsState`  | `EqualToken` (`==`)            | `AssignToken` (`=`)      |
+| State          | If next is `=`               | Otherwise (delimiter)    |
+| -------------- | ---------------------------- | ------------------------ |
+| `EqualsState`  | `EqualToken` (`==`)          | `AssignToken` (`=`)      |
 | `GreaterState` | `GreaterOrEqualToken` (`>=`) | `GreaterThanToken` (`>`) |
 | `LessState`    | `LessOrEqualToken` (`<=`)    | `LessThanToken` (`<`)    |
-| `BangState`    | `NotEqualToken` (`!=`)         | `BangToken` (`!`)        |
+| `BangState`    | `NotEqualToken` (`!=`)       | `BangToken` (`!`)        |
 
 In all cases the lookahead pattern applies: if the next character is not `=`, `iterator.back()` un-consumes it.
 
 ## Identifiers and Keywords
 
 Identifiers must start with an ASCII letter (`a-z`, `A-Z`) and may continue with any combination of:
+
 - Letters (`a-z`, `A-Z`)
 - Digits (`0-9`)
 - Dots (`.`)
@@ -211,14 +214,14 @@ After the main loop completes, the analyzer checks for unterminated or incomplet
 
 All tokens extend `Token<T>` and carry a typed value plus location:
 
-| Category    | Tokens                                                                                                                                                                                                                            | Value type              |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| Literals    | `StringToken`, `NumberToken`, `BooleanToken`                                                                                                                                                                                      | `String`, `num`, `bool` |
-| Identifiers | `IdentifierToken`                                                                                                                                                                                                                 | `String`                |
-| Keywords    | `IfToken`, `ElseToken`                                                                                                                                                                                                            | `String`                |
-| Assignment  | `AssignToken` (`=`)                                                                                                                                                                                                               | `String`                |
+| Category    | Tokens                                                                                                                                                                                                                        | Value type              |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| Literals    | `StringToken`, `NumberToken`, `BooleanToken`                                                                                                                                                                                  | `String`, `num`, `bool` |
+| Identifiers | `IdentifierToken`                                                                                                                                                                                                             | `String`                |
+| Keywords    | `IfToken`, `ElseToken`                                                                                                                                                                                                        | `String`                |
+| Assignment  | `AssignToken` (`=`)                                                                                                                                                                                                           | `String`                |
 | Binary ops  | `PlusToken`, `MinusToken`, `AsteriskToken`, `ForwardSlashToken`, `PercentToken`, `PipeToken`, `AmpersandToken`, `EqualToken`, `NotEqualToken`, `GreaterThanToken`, `GreaterOrEqualToken`, `LessThanToken`, `LessOrEqualToken` | `String`                |
-| Unary ops   | `BangToken`                                                                                                                                                                                                                       | `String`                |
-| Delimiters  | `OpenParenthesisToken`, `CloseParenthesisToken`, `OpenBracketToken`, `CloseBracketToken`, `OpenBracesToken`, `CloseBracesToken`, `CommaToken`, `ColonToken`                                                                       | `String`                |
+| Unary ops   | `BangToken`                                                                                                                                                                                                                   | `String`                |
+| Delimiters  | `OpenParenthesisToken`, `CloseParenthesisToken`, `OpenBracketToken`, `CloseBracketToken`, `OpenBracesToken`, `CloseBracesToken`, `CommaToken`, `ColonToken`                                                                   | `String`                |
 
 `NumberToken` parses the lexeme string to `num` and `BooleanToken` parses to `bool` at construction time. All other token types store the raw lexeme string.

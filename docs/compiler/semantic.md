@@ -41,16 +41,16 @@ The semantic IR is a bound AST that preserves source information lost in runtime
 
 **File**: `lib/compiler/semantic/semantic_node.dart`
 
-| Node Type                   | Description                                                  |
-| --------------------------- | ------------------------------------------------------------ |
-| `SemanticBooleanNode`       | Boolean literal with location                                |
-| `SemanticNumberNode`        | Numeric literal with location                                |
-| `SemanticStringNode`        | String literal with location                                 |
-| `SemanticListNode`          | List literal with location and semantic elements             |
-| `SemanticMapNode`           | Map literal with location and semantic entries               |
+| Node Type                   | Description                                                       |
+| --------------------------- | ----------------------------------------------------------------- |
+| `SemanticBooleanNode`       | Boolean literal with location                                     |
+| `SemanticNumberNode`        | Numeric literal with location                                     |
+| `SemanticStringNode`        | String literal with location                                      |
+| `SemanticListNode`          | List literal with location and semantic elements                  |
+| `SemanticMapNode`           | Map literal with location and semantic entries                    |
 | `SemanticIdentifierNode`    | Function reference with location and resolved `FunctionSignature` |
-| `SemanticBoundVariableNode` | Parameter reference with location                            |
-| `SemanticCallNode`          | Function call with location, callee, and arguments           |
+| `SemanticBoundVariableNode` | Parameter reference with location                                 |
+| `SemanticCallNode`          | Function call with location, callee, and arguments                |
 
 ### SemanticFunction
 
@@ -124,6 +124,7 @@ The semantic phase maintains strict separation from the runtime phase:
 - **Lowering is one-way** - `Lowerer` converts semantic IR to runtime nodes, but never the reverse.
 
 This separation ensures that:
+
 1. Semantic analysis can be performed without instantiating runtime nodes.
 2. The runtime layer remains focused purely on evaluation.
 3. Future optimizations can operate on semantic IR without affecting runtime behavior.

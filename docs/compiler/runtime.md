@@ -87,6 +87,7 @@ This is a substitution-based evaluation model consistent with lambda calculus be
 Function references are resolved at lowering time, not runtime. The `Lowerer` converts `SemanticIdentifierNode` (which contains a resolved `FunctionSignature`) to `FunctionRefNode`, passing the shared functions map. At evaluation time, `FunctionRefNode.evaluate()` looks up the function in the map.
 
 This approach:
+
 - Supports forward references and mutual recursion (the map is populated as functions are lowered)
 - Maintains explicit dependency injection (the functions map is passed at construction time)
 
