@@ -84,5 +84,15 @@ main = x @ 0
       final RuntimeFacade runtime = getRuntime('main = "hello"[0]');
       checkResult(runtime, '"h"');
     });
+
+    test('@ operator with grapheme returns full grapheme', () {
+      final RuntimeFacade runtime = getRuntime('main = "a👨‍👩‍👧b" @ 1');
+      checkResult(runtime, '"👨‍👩‍👧"');
+    });
+
+    test('bracket syntax with grapheme returns full grapheme', () {
+      final RuntimeFacade runtime = getRuntime('main = "a👨‍👩‍👧b"[1]');
+      checkResult(runtime, '"👨‍👩‍👧"');
+    });
   });
 }

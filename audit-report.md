@@ -1,33 +1,3 @@
-### 8. `element_at` (@) uses Dart string indexing for strings
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/index/element_at.dart`
-**Line**: 57-69
-
-- **Issue**: When indexing into a string, the function uses `a.value[index]` which operates on code units, not grapheme clusters. This is inconsistent with `str.at` which correctly uses `Characters` for grapheme-aware indexing.
-- **Impact**: For strings containing multi-byte characters (emoji, accented characters), `"emoji"@1` and `str.at("emoji", 1)` may return different results. The `@` operator could return partial characters or incorrect results.
-- **Fix**: Use Characters for consistency:
-
-```dart
-} else if ((a is StringNode) && (b is NumberNode)) {
-  final int index = b.value.toInt();
-  final Characters chars = a.value.characters;
-  if (index < 0) {
-    throw NegativeIndexError(function: name, index: index);
-  }
-  if (index >= chars.length) {
-    throw IndexOutOfBoundsError(
-      function: name,
-      index: index,
-      length: chars.length,
-    );
-  }
-  return StringNode(chars.elementAt(index));
-}
-```
-
-add/update the tests to cover this case.
-update @docs if needed
-
 ### 9. Missing `const` constructor on `Parameter` class
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/models/parameter.dart`
