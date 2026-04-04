@@ -234,8 +234,10 @@ void main() {
       checkResult(runtime, false);
     });
 
-    test('is.infinite returns true for division by zero', () {
-      final RuntimeFacade runtime = getRuntime('main = is.infinite(1/0)');
+    test('is.infinite returns true for infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.infinite(num.infinity())',
+      );
       checkResult(runtime, true);
     });
 

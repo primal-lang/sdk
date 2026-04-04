@@ -1,15 +1,3 @@
-## Info
-
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/operators/operator_div.dart` and `num_div.dart`
-
-**Lines 35-36**: Division by zero returns `Infinity` instead of error
-
-- **Issue**: Unlike `num.mod` and `%` which check for division by zero, the division operators `/` and `num.div` do not. Dividing by zero returns `Infinity` or `-Infinity`.
-- **Impact**: This is consistent with Dart behavior and may be intentional for IEEE 754 floating-point semantics, but it differs from the explicit error thrown by modulo operations.
-- **Suggestion**: Consider adding a consistency comment or explicit documentation.
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/control/try.dart`
 
 **Line 36-38**: Catch-all exception handler includes all errors

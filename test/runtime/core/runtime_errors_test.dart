@@ -12,14 +12,32 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Division and Modulo Edge Cases', () {
-    test('division by zero produces infinity', () {
+    test('division by zero throws DivisionByZeroError', () {
       final RuntimeFacade runtime = getRuntime('main = 1 / 0');
-      checkResult(runtime, double.infinity);
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Division by zero'), contains('/')),
+          ),
+        ),
+      );
     });
 
-    test('negative division by zero produces negative infinity', () {
+    test('negative division by zero throws DivisionByZeroError', () {
       final RuntimeFacade runtime = getRuntime('main = -1 / 0');
-      checkResult(runtime, double.negativeInfinity);
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Division by zero'), contains('/')),
+          ),
+        ),
+      );
     });
 
     test('modulo by zero throws DivisionByZeroError', () {
@@ -36,9 +54,18 @@ void main() {
       );
     });
 
-    test('zero divided by zero produces NaN', () {
+    test('zero divided by zero throws DivisionByZeroError', () {
       final RuntimeFacade runtime = getRuntime('main = 0 / 0');
-      expect(runtime.executeMain(), 'NaN');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Division by zero'), contains('/')),
+          ),
+        ),
+      );
     });
   });
 

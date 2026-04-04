@@ -369,14 +369,32 @@ void main() {
   });
 
   group('Division and Modulo Edge Cases', () {
-    test('division by zero', () {
+    test('division by zero throws DivisionByZeroError', () {
       final RuntimeFacade runtime = getRuntime('main = 5 / 0');
-      checkResult(runtime, double.infinity);
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Division by zero'), contains('/')),
+          ),
+        ),
+      );
     });
 
-    test('negative division by zero', () {
+    test('negative division by zero throws DivisionByZeroError', () {
       final RuntimeFacade runtime = getRuntime('main = -5 / 0');
-      checkResult(runtime, double.negativeInfinity);
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Division by zero'), contains('/')),
+          ),
+        ),
+      );
     });
 
     test('modulo by zero throws DivisionByZeroError', () {
@@ -387,18 +405,24 @@ void main() {
           isA<DivisionByZeroError>().having(
             (e) => e.toString(),
             'message',
-            allOf(
-              contains('Division by zero'),
-              contains('%'),
-            ),
+            allOf(contains('Division by zero'), contains('%')),
           ),
         ),
       );
     });
 
-    test('num.div by zero', () {
+    test('num.div by zero throws DivisionByZeroError', () {
       final RuntimeFacade runtime = getRuntime('main = num.div(5, 0)');
-      checkResult(runtime, double.infinity);
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Division by zero'), contains('num.div')),
+          ),
+        ),
+      );
     });
 
     test('num.mod by zero throws DivisionByZeroError', () {
