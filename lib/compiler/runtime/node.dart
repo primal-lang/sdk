@@ -41,6 +41,14 @@ abstract class LiteralNode<T> implements Node {
       return NumberNode(value);
     } else if (value is String) {
       return StringNode(value);
+    } else if (value is DateTime) {
+      return TimestampNode(value);
+    } else if (value is File) {
+      return FileNode(value);
+    } else if (value is Directory) {
+      return DirectoryNode(value);
+    } else if (value is Set<Node>) {
+      return SetNode(value);
     } else if (value is List<Node>) {
       return ListNode(value);
     } else if (value is Map<Node, Node>) {

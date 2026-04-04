@@ -1,15 +1,3 @@
-### 11. `LiteralNode.from` doesn't handle all node types
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/runtime/node.dart`
-**Line**: 37-51
-
-- **Issue**: The `LiteralNode.from` factory only handles `bool`, `num`, `String`, `List<Node>`, and `Map<Node, Node>`. It doesn't handle `DateTime`, `File`, `Directory`, or `Set<Node>`.
-- **Impact**: If `LiteralNode.from` is called with one of these types (e.g., via JSON decoding of unexpected data), it will throw an unhelpful `InvalidLiteralValueError`.
-- **Suggestion**: Either extend the factory to handle all types or document that it only handles JSON-compatible types.
-
-add/update the tests to cover this case.
-update @docs if needed
-
 ### 12. Duplicate class names across files
 
 **File**: Multiple files in `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/`

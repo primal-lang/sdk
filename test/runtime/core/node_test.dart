@@ -45,9 +45,29 @@ void main() {
       expect(node, isA<MapNode>());
     });
 
+    test('DateTime returns TimestampNode', () {
+      final LiteralNode node = LiteralNode.from(DateTime(2024));
+      expect(node, isA<TimestampNode>());
+    });
+
+    test('File returns FileNode', () {
+      final LiteralNode node = LiteralNode.from(File('test.txt'));
+      expect(node, isA<FileNode>());
+    });
+
+    test('Directory returns DirectoryNode', () {
+      final LiteralNode node = LiteralNode.from(Directory('test'));
+      expect(node, isA<DirectoryNode>());
+    });
+
+    test('Set<Node> returns SetNode', () {
+      final LiteralNode node = LiteralNode.from(<Node>{const NumberNode(1)});
+      expect(node, isA<SetNode>());
+    });
+
     test('unsupported type throws InvalidLiteralValueError', () {
       expect(
-        () => LiteralNode.from(DateTime(2024)),
+        () => LiteralNode.from(Object()),
         throwsA(isA<InvalidLiteralValueError>()),
       );
     });
