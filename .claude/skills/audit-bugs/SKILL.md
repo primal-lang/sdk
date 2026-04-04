@@ -7,16 +7,6 @@ description: Audits the codebase for bugs, inconsistencies, and potential runtim
 
 ---
 
-## Scope
-
-Target: `$ARGUMENTS`
-
-If no target is provided, ask the user which directory or files to audit. Do NOT audit the entire codebase at once — work on a focused scope (e.g., `lib/compiler/lexical/`, `lib/compiler/library/arithmetic/`, etc.).
-
-Skip generated files and test files unless explicitly requested.
-
----
-
 ## Focus Area 1: Logic & Control Flow
 
 - **Boolean Contradictions**: Scan for logical contradictions (e.g., `if (x && !x)`), unnecessary double-negations, or assignments where comparisons were intended (`if (x = 5)`).
@@ -127,3 +117,14 @@ Write findings to `audit-report.md` in the project root:
 - Do NOT modify any code — only report findings
 - Prioritize by severity: correctness and safety first
 - Run `dart analyze` first and incorporate any static analysis warnings
+
+---
+
+## Post-Fix Requirements
+
+After fixing an issue identified by this audit:
+
+1. **Write Tests**: Add tests that cover the fixed problem
+   - Include a test for the successful/correct behavior
+   - Include a test for the failure case that was previously broken
+2. **Update Documentation**: If the fix changes behavior or adds constraints, update the relevant documentation in `docs/`
