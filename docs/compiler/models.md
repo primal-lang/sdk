@@ -95,4 +95,4 @@ abstract class Analyzer<Input, Output> {
 }
 ```
 
-Implemented by `LexicalAnalyzer`, `SyntacticAnalyzer`, and `SemanticAnalyzer`.
+Implemented by `SourceReader`, `LexicalAnalyzer`, `SyntacticAnalyzer`, and `SemanticAnalyzer`.
