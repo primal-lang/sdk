@@ -100,6 +100,13 @@ Write findings to `audit-report.md` in the project root:
 - **Impact**: [What could go wrong]
 - **Fix**: [Code snippet showing the fix]
 
+**Follow-up**:
+
+- **Tests**: Add/update tests to cover this case
+  - Success case: [describe what to test for correct behavior]
+  - Failure case: [describe what to test for the bug scenario]
+- **Docs**: [Update `docs/X.md` if needed, or "No doc changes needed"]
+
 ### 2. [Issue title]
 
 ...
@@ -112,6 +119,13 @@ Write findings to `audit-report.md` in the project root:
 
 ...
 
+**Follow-up**:
+
+- **Tests**: Add/update tests to cover this case
+  - Success case: [describe what to test for correct behavior]
+  - Failure case: [describe what to test for the bug scenario]
+- **Docs**: [Update `docs/X.md` if needed, or "No doc changes needed"]
+
 ## Info
 
 [Minor improvements and defensive programming suggestions]
@@ -119,6 +133,13 @@ Write findings to `audit-report.md` in the project root:
 ### 4. [Issue title]
 
 ...
+
+**Follow-up**:
+
+- **Tests**: Add/update tests to cover this case
+  - Success case: [describe what to test for correct behavior]
+  - Failure case: [describe what to test for the bug scenario]
+- **Docs**: [Update `docs/X.md` if needed, or "No doc changes needed"]
 ```
 
 ---
@@ -130,14 +151,3 @@ Write findings to `audit-report.md` in the project root:
 - Do NOT modify any code — only report findings
 - Prioritize by severity: correctness and safety first
 - Run `dart analyze` first and incorporate any static analysis warnings
-
----
-
-## Post-Fix Requirements
-
-After fixing an issue identified by this audit:
-
-1. **Write Tests**: Add tests that cover the fixed problem
-   - Include a test for the successful/correct behavior
-   - Include a test for the failure case that was previously broken
-2. **Update Documentation**: If the fix changes behavior or adds constraints, update the relevant documentation in `docs/`
