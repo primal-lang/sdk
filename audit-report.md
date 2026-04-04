@@ -1,13 +1,3 @@
-### `/home/max/Repositories/personal/primal-sdk/lib/utils/stack.dart`
-
-**Line 8**: Stack `pop()` method mutates internal list
-
-- **Issue**: `_list.removeLast()` mutates `_list`, but the Stack class appears designed for immutability (other methods like `push` return a new Stack). This breaks the immutability contract.
-- **Impact**: If the same Stack reference is used after `pop()`, the original stack is modified, violating Primal's immutability guarantees.
-- **Note**: This class may not be used by the runtime (StackNode uses `List<Node>` directly), but the implementation is inconsistent.
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_sublist.dart`
 
 **Line 43-48**: Missing validation for `start > length`

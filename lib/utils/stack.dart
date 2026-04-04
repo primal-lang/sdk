@@ -5,7 +5,8 @@ class Stack<E> {
 
   Stack<E> push(E value) => Stack([..._list, value]);
 
-  E pop() => _list.removeLast();
+  (E, Stack<E>) pop() =>
+      (_list.last, Stack(_list.sublist(0, _list.length - 1)));
 
   E get peek => _list.last;
 
