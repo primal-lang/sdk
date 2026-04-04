@@ -72,20 +72,20 @@ The standard library provides 230+ built-in functions, organized by namespace:
 | `bool.*`     | 4     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`           |
 | `comp.*`     | 6     | `comp.eq`, `comp.lt`, `comp.ge`                         |
 | `map.*`      | 9     | `map.at`, `map.set`, `map.keys`, `map.values`           |
-| `set.*`      | 8+    | `set.add`, `set.union`, `set.intersection`              |
+| `set.*`      | 9     | `set.add`, `set.union`, `set.intersection`              |
 | `stack.*`    | 8     | `stack.push`, `stack.pop`, `stack.peek`                 |
 | `queue.*`    | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`          |
 | `vector.*`   | 6     | `vector.add`, `vector.magnitude`, `vector.normalize`    |
 | `time.*`     | 12    | `time.now`, `time.from.iso`, `time.year`                |
-| `file.*`     | 13    | `file.read`, `file.write`, `file.exists`                |
-| `dir.*`      | 11    | `dir.create`, `dir.list`, `dir.exists`                  |
+| `file.*`     | 14    | `file.read`, `file.write`, `file.exists`                |
+| `directory.*`| 11    | `directory.create`, `directory.list`, `directory.exists`|
 | `hash.*`     | 4     | `hash.md5`, `hash.sha256`                               |
 | `json.*`     | 2     | `json.encode`, `json.decode`                            |
 | `console.*`  | 3     | `console.write`, `console.read`                         |
 | Casting      | 22    | `is.boolean`, `to.string`, `to.integer`                 |
 | Operators    | 14    | `operator.add`, `operator.eq`, `operator.not`           |
 | Control flow | 2     | `if`, `try`                                             |
-| Other        | 3     | `@`, `env.get`, `throw`                                 |
+| Other        | 3     | `@`, `env.get`, `error.throw`                           |
 
 ---
 
@@ -121,7 +121,7 @@ Raised during execution:
 | ----------------------------------- | ------------------------------------------- |
 | `InvalidArgumentTypesError`         | Wrong argument types for a native function  |
 | `InvalidArgumentCountError`         | Wrong number of arguments at runtime        |
-| `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `zip`) |
+| `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `vector.add`) |
 | `InvalidLiteralValueError`          | Invalid literal value                       |
 | `InvalidValueError`                 | Invalid computed value                      |
 | `InvalidMapIndexError`              | Key not found in map                        |
@@ -129,12 +129,14 @@ Raised during execution:
 | `NotFoundInScopeError`              | Function not found in runtime scope         |
 | `InvalidFunctionError`              | Callee is not a function                    |
 | `UnimplementedFunctionWebError`     | I/O function called on web platform         |
-
-### Warnings
-
-Non-fatal diagnostics collected during semantic analysis:
-
-- `UnusedParameterWarning` - a declared parameter is never used in the function body.
+| `EmptyCollectionError`              | Attempting to access an empty collection    |
+| `IndexOutOfBoundsError`            | Index outside collection range              |
+| `NegativeIndexError`                | Negative index provided where disallowed    |
+| `DivisionByZeroError`               | Division by zero                            |
+| `InvalidNumericOperationError`      | Domain error (e.g., `log(-1)`, `sqrt(-1)`)  |
+| `ParseError`                        | Failed string conversion                    |
+| `JsonParseError`                    | Invalid JSON string                         |
+| `CustomError`                       | Explicitly raised via `error.throw`         |
 
 ---
 
@@ -186,6 +188,9 @@ Exposes the compiler as a set of JavaScript-callable functions via Dart's JS int
 - `runtimeHasMain(code)` - checks if a main function exists.
 - `runtimeExecuteMain(code)` - executes the main function.
 - `runtimeReduce(code, expression)` - evaluates an expression.
+- `intermediateCodeEmpty()` - returns an empty intermediate code handle.
+- `disposeCode(code)` - frees a compiled code handle.
+- `disposeExpression(expression)` - frees a parsed expression handle.
 
 Each call creates a fresh `Runtime` instance (stateless).
 
@@ -198,7 +203,7 @@ Each call creates a fresh `Runtime` instance (stateless).
 Supporting infrastructure used across compiler stages:
 
 - **`ListIterator`** - a cursor over a list with `next`, `peek`, `previous`, `advance()`, and `back()`. Used by the lexical and syntactic analyzers to traverse their input sequences.
-- **`Stack`** - a generic LIFO data structure. Used internally during parsing.
+- **`Stack`** - a generic LIFO data structure.
 - **`FileReader`** - reads source files from disk (CLI only).
 - **`Console`** - wraps platform console with colored output helpers (`warning()`, `error()`).
 - **`Mapper`** - converts a `List<FunctionNode>` into a `Map<String, FunctionNode>` keyed by function name.

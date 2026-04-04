@@ -116,5 +116,3 @@ The semantic analyzer converts expressions directly to semantic IR nodes, preser
 | `CallExpression`       | `SemanticCallNode`                                      |
 
 The semantic IR is then lowered to runtime nodes (`BooleanNode`, `NumberNode`, etc.) for evaluation. See [semantic.md](semantic.md) for details.
-
-Note: `Expression.toNode()` methods still exist for legacy compatibility (used by `Runtime.evaluate()` for ad-hoc expressions), but the main compilation pipeline uses direct conversion to semantic IR.

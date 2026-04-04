@@ -795,5 +795,44 @@ main = list.sort([3, 1, 5, 2, 4], decimalCompare)
         ),
       );
     });
+
+    test('list.take throws IndexOutOfBoundsError for out-of-bounds count', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.take([1, 2, 3], 10)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (IndexOutOfBoundsError e) => e.toString(),
+            'message',
+            allOf(
+              contains('10'),
+              contains('length: 3'),
+              contains('list.take'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.take throws NegativeIndexError for negative count', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.take([1, 2, 3], -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (NegativeIndexError e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.take'),
+            ),
+          ),
+        ),
+      );
+    });
   });
 }

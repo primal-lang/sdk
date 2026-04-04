@@ -111,7 +111,7 @@ This pass strips source locations and produces the minimal runtime representatio
 | `SemanticStringNode`        | `StringNode`        |
 | `SemanticListNode`          | `ListNode`          |
 | `SemanticMapNode`           | `MapNode`           |
-| `SemanticIdentifierNode`    | `IdentifierNode`    |
+| `SemanticIdentifierNode`    | `FunctionRefNode`   |
 | `SemanticBoundVariableNode` | `BoundVariableNode` |
 | `SemanticCallNode`          | `CallNode`          |
 

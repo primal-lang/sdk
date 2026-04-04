@@ -47,6 +47,7 @@ The analyzer starts in `InitState` and transitions based on the current characte
 | `/`                                               | `ForwardSlashState` (division or comment) |
 | `*`                                               | `AsteriskState`                           |
 | `%`                                               | `PercentState`                            |
+| `@`                                               | Emit `AtToken` via `ResultState`          |
 | Delimiters `(`, `)`, `[`, `]`, `{`, `}`, `,`, `:` | Emit token directly via `ResultState`     |
 | Whitespace / newline                              | Skipped, returns to `InitState`           |
 

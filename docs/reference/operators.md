@@ -75,6 +75,16 @@
 - **Symbol:** `+`
 - **Input:** Two numbers
 - **Output:** The sum of the numbers
+- **Supported combinations:**
+  - `Number + Number`
+  - `String + String`
+  - `Vector + Vector`
+  - `Any + List`
+  - `List + Any`
+  - `List + List`
+  - `Set + Set` (union)
+  - `Set + Any` (add element)
+  - `Any + Set` (add element)
 - **Example:**
 
 ```
@@ -86,6 +96,11 @@
 - **Symbol:** `-`
 - **Input:** Two numbers
 - **Output:** The difference of the numbers
+- **Supported combinations:**
+  - `Number - Number`
+  - `Vector - Vector`
+  - `Set - Any` (remove element)
+  - `Any - Set` (remove element)
 - **Example:**
 
 ```
@@ -169,22 +184,4 @@ true | false // returns true
 
 ```
 !true // returns false
-```
-
-## Concatenation Operator
-
-### Concatenation
-
-- **Symbol:** `+`
-- **Input:** Two elements
-- **Output:** The concatenated result
-- **Supported combinations:**
-  - `String + String`
-  - `Any + List`
-  - `List + Any`
-  - `List + List`
-- **Example:**
-
-```
-"hello" + " world" // returns "hello world"
 ```
