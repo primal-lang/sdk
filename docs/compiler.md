@@ -56,20 +56,6 @@ Types are represented as classes extending `Type`:
 
 Type checking is **dynamic** - it happens at runtime when native functions validate their argument types, not during compilation.
 
-### FunctionSignature
-
-**File**: `lib/compiler/models/function_signature.dart`
-
-A lightweight, phase-agnostic representation of a function's calling interface used during semantic analysis:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `name` | `String` | Function name |
-| `parameters` | `List<Parameter>` | Parameter definitions |
-| `arity` | `int` | Number of parameters |
-
-This model allows the semantic analyzer to validate function calls without depending on runtime types. See [compiler/models.md](compiler/models.md) for more details.
-
 ---
 
 ## 2. Standard Library
@@ -100,33 +86,6 @@ The standard library provides 230+ built-in functions, organized by namespace:
 | Operators    | 14    | `operator.add`, `operator.eq`, `operator.not`           |
 | Control flow | 2     | `if`, `try`                                             |
 | Other        | 3     | `@`, `env.get`, `throw`                                 |
-
-### Implementation Pattern
-
-Each native function follows a two-class pattern:
-
-```dart
-// 1. Definition class - declares name, parameters, and types
-class FunctionName extends NativeFunctionNode {
-  FunctionName() : super(
-    name: 'namespace.function',
-    parameters: [Parameter.type('arg1'), Parameter.any('arg2')],
-  );
-
-  @override
-  Node node(List<Node> arguments) => _Node(
-    name: name, parameters: parameters, arguments: arguments,
-  );
-}
-
-// 2. Evaluation class - implements the actual logic
-class _Node extends NativeFunctionNodeWithArguments {
-  @override
-  Node evaluate() {
-    // Validate argument types, compute result, return a Node
-  }
-}
-```
 
 ---
 

@@ -10,9 +10,9 @@ Models in this directory are shared across multiple compiler phases. They repres
 
 Represents a position in source code:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `row` | `int` | Line number (1-indexed) |
+| Field    | Type  | Description               |
+| -------- | ----- | ------------------------- |
+| `row`    | `int` | Line number (1-indexed)   |
 | `column` | `int` | Column number (1-indexed) |
 
 Used by all phases to track source positions for error reporting.
@@ -37,12 +37,13 @@ Extended by `Character`, `Token`, `Expression`, `SemanticNode`, and other AST ty
 
 Represents a function parameter:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `name` | `String` | Parameter name |
-| `type` | `Type` | Type constraint (e.g., `NumberType`, `AnyType`) |
+| Field  | Type     | Description                                     |
+| ------ | -------- | ----------------------------------------------- |
+| `name` | `String` | Parameter name                                  |
+| `type` | `Type`   | Type constraint (e.g., `NumberType`, `AnyType`) |
 
 Factory constructors provide convenient creation:
+
 - `Parameter.number(name)` - numeric parameter
 - `Parameter.string(name)` - string parameter
 - `Parameter.boolean(name)` - boolean parameter
@@ -55,23 +56,23 @@ Factory constructors provide convenient creation:
 
 A phase-agnostic representation of a function's calling interface:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `name` | `String` | Function name |
-| `parameters` | `List<Parameter>` | Parameter definitions |
-| `arity` | `int` | Number of parameters (computed) |
+| Field        | Type              | Description                     |
+| ------------ | ----------------- | ------------------------------- |
+| `name`       | `String`          | Function name                   |
+| `parameters` | `List<Parameter>` | Parameter definitions           |
+| `arity`      | `int`             | Number of parameters (computed) |
 
 Used during semantic analysis to validate function calls without depending on runtime types. This enables clean separation between the semantic and runtime phases.
 
 ### Relationship to FunctionNode
 
-| Aspect | FunctionSignature | FunctionNode |
-|--------|-------------------|--------------|
-| Phase | Semantic | Runtime |
-| Purpose | Call validation | Execution |
-| Has `evaluate()` | No | Yes |
-| Has `substitute()` | No | Yes |
-| Location | `models/` | `runtime/` |
+| Aspect             | FunctionSignature | FunctionNode |
+| ------------------ | ----------------- | ------------ |
+| Phase              | Semantic          | Runtime      |
+| Purpose            | Call validation   | Execution    |
+| Has `evaluate()`   | No                | Yes          |
+| Has `substitute()` | No                | Yes          |
+| Location           | `models/`         | `runtime/`   |
 
 `FunctionNode.toSignature()` creates a `FunctionSignature` from a `FunctionNode`.
 

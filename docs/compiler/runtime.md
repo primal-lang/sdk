@@ -44,6 +44,33 @@ All runtime values are nodes. The base `Node` class defines:
 - `CustomFunctionNode` - user-defined; `apply()` substitutes arguments into the body, then evaluates.
 - `NativeFunctionNode` - built-in; delegates to a Dart implementation.
 
+### Native Function Implementation Pattern
+
+Each native function follows a two-class pattern:
+
+```dart
+// 1. Definition class - declares name, parameters, and types
+class FunctionName extends NativeFunctionNode {
+  FunctionName() : super(
+    name: 'namespace.function',
+    parameters: [Parameter.type('arg1'), Parameter.any('arg2')],
+  );
+
+  @override
+  Node node(List<Node> arguments) => _Node(
+    name: name, parameters: parameters, arguments: arguments,
+  );
+}
+
+// 2. Evaluation class - implements the actual logic
+class _Node extends NativeFunctionNodeWithArguments {
+  @override
+  Node evaluate() {
+    // Validate argument types, compute result, return a Node
+  }
+}
+```
+
 ## Evaluation Model
 
 Function application follows these steps:

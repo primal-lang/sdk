@@ -1,15 +1,26 @@
 Available types:
 
-- `Boolean`
-- `Number`
-- `Integer` -> `Number`
-- `Decimal` -> `Number`
-- `String`
-- `List<T>`
-- `Map<String, T>`
-- `Function<Number, String, Boolean>`: (a: Number, b: String): Boolean
+| Type class         | Represents                           |
+| ------------------ | ------------------------------------ |
+| `BooleanType`      | Boolean values                       |
+| `NumberType`       | Numeric values (integer and decimal) |
+| `StringType`       | String values                        |
+| `ListType`         | Ordered collections                  |
+| `MapType`          | Key-value associations               |
+| `SetType`          | Unique element collections           |
+| `StackType`        | LIFO collections                     |
+| `QueueType`        | FIFO collections                     |
+| `VectorType`       | Mathematical vectors                 |
+| `FileType`         | File handles                         |
+| `DirectoryType`    | Directory handles                    |
+| `TimestampType`    | Date/time values                     |
+| `FunctionType`     | Function values                      |
+| `FunctionCallType` | Function call expressions            |
+| `AnyType`          | Wildcard (accepts any type)          |
 
-Missing types: Vector, Set, etc.
+- `Function<Number, String, Boolean>`: (a: Number, b: String): Boolean
+- `Integer` -> `Number`?
+- `Decimal` -> `Number`?
 
 ```primal
 type NumberList = List<Number>
