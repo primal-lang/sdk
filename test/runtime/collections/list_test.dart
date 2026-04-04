@@ -476,6 +476,66 @@ main = foo([2])
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
+    test('list.all throws when predicate returns non-boolean', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all([1, 2, 3], num.abs)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidArgumentTypesError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('list.all'),
+              contains('Boolean'),
+              contains('Number'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.any throws when predicate returns non-boolean', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.any([1, 2, 3], num.abs)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidArgumentTypesError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('list.any'),
+              contains('Boolean'),
+              contains('Number'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.none throws when predicate returns non-boolean', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.none([1, 2, 3], num.abs)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidArgumentTypesError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('list.none'),
+              contains('Boolean'),
+              contains('Number'),
+            ),
+          ),
+        ),
+      );
+    });
+
     test('list.reduce returns initial value for empty list', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.reduce([], 0, num.add)',

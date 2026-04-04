@@ -1,5 +1,6 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListAll extends NativeFunctionNode {
@@ -36,7 +37,15 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       for (final Node element in a.value) {
         final Node value = b.apply([element]);
 
-        if (value is BooleanNode && !value.value) {
+        if (value is! BooleanNode) {
+          throw InvalidArgumentTypesError(
+            function: name,
+            expected: [const BooleanType()],
+            actual: [value.type],
+          );
+        }
+
+        if (!value.value) {
           return const BooleanNode(false);
         }
       }

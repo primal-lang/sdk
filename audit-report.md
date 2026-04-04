@@ -1,31 +1,3 @@
-### 5. `list.all`, `list.any`, and `list.none` silently ignore non-boolean results
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_all.dart`
-**Line**: 39
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_any.dart`
-**Line**: 39
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_none.dart`
-**Line**: 39
-
-- **Issue**: These functions check `if (value is BooleanNode && ...)` but do nothing if the predicate returns a non-boolean. They silently continue iteration as if the predicate returned the neutral value. In contrast, `list.filter` properly throws an error for non-boolean results.
-- **Impact**: If a user's predicate function returns a non-boolean (e.g., a number or string), `list.all` will return `true`, `list.any` will return `false`, and `list.none` will return `true`, all without any indication of the error.
-- **Fix**: Add validation like `list.filter` does:
-
-```dart
-if (value is! BooleanNode) {
-  throw InvalidArgumentTypesError(
-    function: name,
-    expected: [const BooleanType()],
-    actual: [value.type],
-  );
-}
-```
-
-add/update the tests to cover this case.
-update @docs if needed
-
 ### 6. Inconsistent `InvalidArgumentTypesError` reporting
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_reduce.dart`
