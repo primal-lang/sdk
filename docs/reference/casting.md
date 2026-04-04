@@ -223,3 +223,25 @@ is.stack(stack.new([1, 2])) // returns true
 ```
 is.queue(queue.new([1, 2])) // returns true
 ```
+
+### Is File
+
+- **Signature:** `is.file(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a file, false otherwise
+- **Example:**
+
+```
+is.file(file.fromPath("data.txt")) // returns true
+```
+
+### Is Directory
+
+- **Signature:** `is.directory(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a directory, false otherwise
+- **Example:**
+
+```
+is.directory(directory.fromPath("/home/user")) // returns true
+```
