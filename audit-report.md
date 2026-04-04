@@ -1,26 +1,3 @@
-### 6. Inconsistent `InvalidArgumentTypesError` reporting
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_reduce.dart`
-**Line**: 48-49
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_map.dart`
-**Line**: 47-48
-
-- **Issue**: Several functions with multiple parameters only report `actual: [a.type]` instead of reporting all argument types. This provides incomplete error information to users.
-- **Impact**: When debugging type errors, users don't see all the actual argument types, making it harder to identify which argument is wrong.
-- **Fix**: Report all argument types:
-
-```dart
-throw InvalidArgumentTypesError(
-  function: name,
-  expected: parameterTypes,
-  actual: [a.type, b.type, c.type],  // Include all arguments
-);
-```
-
-add/update the tests to cover this case.
-update @docs if needed
-
 ### 7. `ListIterator.back()` can cause negative index
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/utils/list_iterator.dart`

@@ -752,7 +752,20 @@ main = list.sort([3, 1, 2], badCompare)
       final RuntimeFacade runtime = getRuntime(
         'main = list.map("hello", num.abs)',
       );
-      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidArgumentTypesError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('list.map'),
+              contains('String'),
+              contains('Function'),
+            ),
+          ),
+        ),
+      );
     });
   });
 
@@ -836,7 +849,17 @@ main = list.sort([3, 1, 2], badCompare)
         );
         expect(
           runtime.executeMain,
-          throwsA(isA<InvalidArgumentTypesError>()),
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('list.reduce'),
+                contains('List'),
+                contains('Number'),
+              ),
+            ),
+          ),
         );
       },
     );
