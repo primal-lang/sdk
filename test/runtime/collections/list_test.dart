@@ -391,6 +391,23 @@ main = foo([2])
       checkResult(runtime, [1, 1, 1]);
     });
 
+    test('list.filled throws NegativeIndexError for negative count', () {
+      final RuntimeFacade runtime = getRuntime('main = list.filled(-1, 1)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (NegativeIndexError e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.filled'),
+            ),
+          ),
+        ),
+      );
+    });
+
     test('list.indexOf returns -1 when element not found', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.indexOf([1, 2, 3], 4)',

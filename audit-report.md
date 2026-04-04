@@ -1,15 +1,3 @@
-## Warnings
-
-### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_filled.dart`
-
-**Line 36**: Missing validation for negative count
-
-- **Issue**: `List.filled(count, element)` throws `ArgumentError` if count is negative. The function does not validate the input.
-- **Impact**: Dart internal error surfaces instead of a user-friendly Primal error.
-- **Fix**: Add validation for `a.value.toInt() < 0`.
-
-add/update the tests to cover this case.
-
 ### `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/vector/vector_normalize.dart`
 
 **Line 35-42**: Division by zero when normalizing a zero vector
