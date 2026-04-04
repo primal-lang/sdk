@@ -1,6 +1,6 @@
 # SourceReader
 
-**File**: `lib/compiler/reader/source_reader.dart`
+**File**: `lib/compiler/reader/reader.dart`
 
 The source reader is the first stage of the compiler pipeline. It converts a raw input string into a flat list of `Character` objects, each annotated with its row and column position.
 

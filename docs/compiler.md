@@ -6,7 +6,7 @@ The Primal compiler is a five-stage pipeline that transforms source code into an
 Source Code
     |
     v
- SourceReader ........ Characters with locations          → compiler/source_reader.md
+ SourceReader ........ Characters with locations          → compiler/reader.md
     |
     v
  Lexical Analyzer .... Tokens (keywords, literals, ...)   → compiler/lexical.md
