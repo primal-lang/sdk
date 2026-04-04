@@ -55,7 +55,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [a.type],
+        actual: [a.type, b.type],
       );
     }
   }

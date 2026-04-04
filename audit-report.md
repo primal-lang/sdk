@@ -1,16 +1,3 @@
-### 1. `list.any` and `list.none` report incomplete actual types
-
-**Files**:
-
-- `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_any.dart` (line 58)
-- `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_none.dart` (line 58)
-
-- **Issue**: Both functions report `actual: [a.type]` in their `InvalidArgumentTypesError` instead of including both argument types.
-- **Impact**: Minor - error messages are slightly less informative.
-- **Suggested improvement**: Change to `actual: [a.type, b.type]` for consistency.
-
----
-
 ### 2. Potential performance: `NumberToken` parses underscore-containing numbers
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/lexical/token.dart`
