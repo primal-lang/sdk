@@ -13,16 +13,18 @@ void main() {
 
   group('Compiler.compile()', () {
     test('Simple program returns IntermediateRepresentation with main', () {
-      final IntermediateRepresentation code = compiler.compile('main = 42');
-      expect(code.containsFunction('main'), isTrue);
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = 42');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Function definitions create correct functions', () {
-      final IntermediateRepresentation code = compiler.compile(
-        'double(x) = x * 2\nmain = double(5)',
-      );
-      expect(code.containsFunction('double'), isTrue);
-      expect(code.containsFunction('main'), isTrue);
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'double(x) = x * 2\nmain = double(5)',
+          );
+      expect(intermediateRepresentation.containsFunction('double'), isTrue);
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Invalid syntax throws a compilation error', () {
@@ -40,15 +42,17 @@ void main() {
     });
 
     test('Warnings are populated for unused parameters', () {
-      final IntermediateRepresentation code = compiler.compile(
-        'f(x, y) = x\nmain = f(1, 2)',
-      );
-      expect(code.warnings.length, equals(1));
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'f(x, y) = x\nmain = f(1, 2)',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(1));
     });
 
     test('Program without main compiles successfully', () {
-      final IntermediateRepresentation code = compiler.compile('f(x) = x * 2');
-      expect(code.containsFunction('f'), isTrue);
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('f(x) = x * 2');
+      expect(intermediateRepresentation.containsFunction('f'), isTrue);
     });
   });
 

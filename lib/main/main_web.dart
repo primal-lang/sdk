@@ -37,9 +37,9 @@ final Map<int, Expression> _expressionRegistry = {};
 int _nextCodeId = 0;
 int _nextExpressionId = 0;
 
-int _storeCode(IntermediateRepresentation code) {
+int _storeCode(IntermediateRepresentation intermediateRepresentation) {
   final int id = _nextCodeId++;
-  _codeRegistry[id] = code;
+  _codeRegistry[id] = intermediateRepresentation;
   return id;
 }
 
@@ -49,12 +49,13 @@ int _storeExpression(Expression expression) {
   return id;
 }
 
-IntermediateRepresentation _getCode(int id) {
-  final IntermediateRepresentation? code = _codeRegistry[id];
-  if (code == null) {
+IntermediateRepresentation _getIntermediateRepresentation(int id) {
+  final IntermediateRepresentation? intermediateRepresentation =
+      _codeRegistry[id];
+  if (intermediateRepresentation == null) {
     throw StateError('Invalid code ID: $id');
   }
-  return code;
+  return intermediateRepresentation;
 }
 
 Expression _getExpression(int id) {
@@ -69,8 +70,9 @@ void main(List<String> args) {
   const Compiler compiler = Compiler();
 
   compileInput = (JSString source) {
-    final IntermediateRepresentation code = compiler.compile(source.toDart);
-    return _storeCode(code).toJS;
+    final IntermediateRepresentation intermediateRepresentation = compiler
+        .compile(source.toDart);
+    return _storeCode(intermediateRepresentation).toJS;
   }.toJS;
 
   compileExpression = (JSString source) {
@@ -79,35 +81,57 @@ void main(List<String> args) {
   }.toJS;
 
   runtimeWarnings = (JSNumber codeId) {
-    final IntermediateRepresentation code = _getCode(codeId.toDartInt);
-    final List<JSString> warnings = code.warnings
+    final IntermediateRepresentation intermediateRepresentation =
+        _getIntermediateRepresentation(
+          codeId.toDartInt,
+        );
+    final List<JSString> warnings = intermediateRepresentation.warnings
         .map((e) => e.toString().toJS)
         .toList();
     return warnings.toJS;
   }.toJS;
 
   runtimeHasMain = (JSNumber codeId) {
-    final IntermediateRepresentation code = _getCode(codeId.toDartInt);
-    final RuntimeFacade runtime = RuntimeFacade(code, compiler.expression);
+    final IntermediateRepresentation intermediateRepresentation =
+        _getIntermediateRepresentation(
+          codeId.toDartInt,
+        );
+    final RuntimeFacade runtime = RuntimeFacade(
+      intermediateRepresentation,
+      compiler.expression,
+    );
     return runtime.hasMain.toJS;
   }.toJS;
 
   runtimeExecuteMain = (JSNumber codeId) {
-    final IntermediateRepresentation code = _getCode(codeId.toDartInt);
-    final RuntimeFacade runtime = RuntimeFacade(code, compiler.expression);
+    final IntermediateRepresentation intermediateRepresentation =
+        _getIntermediateRepresentation(
+          codeId.toDartInt,
+        );
+    final RuntimeFacade runtime = RuntimeFacade(
+      intermediateRepresentation,
+      compiler.expression,
+    );
     return runtime.executeMain().toJS;
   }.toJS;
 
   runtimeReduce = (JSNumber codeId, JSNumber expressionId) {
-    final IntermediateRepresentation code = _getCode(codeId.toDartInt);
+    final IntermediateRepresentation intermediateRepresentation =
+        _getIntermediateRepresentation(
+          codeId.toDartInt,
+        );
     final Expression expression = _getExpression(expressionId.toDartInt);
-    final RuntimeFacade runtime = RuntimeFacade(code, compiler.expression);
+    final RuntimeFacade runtime = RuntimeFacade(
+      intermediateRepresentation,
+      compiler.expression,
+    );
     return runtime.evaluate(expression).toJS;
   }.toJS;
 
   intermediateRepresentationEmpty = () {
-    final IntermediateRepresentation code = IntermediateRepresentation.empty();
-    return _storeCode(code).toJS;
+    final IntermediateRepresentation intermediateRepresentation =
+        IntermediateRepresentation.empty();
+    return _storeCode(intermediateRepresentation).toJS;
   }.toJS;
 
   disposeCode = (JSNumber codeId) {

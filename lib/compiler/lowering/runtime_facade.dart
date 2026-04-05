@@ -27,22 +27,29 @@ class RuntimeFacade {
   ) : _runtime = Runtime(_runtimeInput);
 
   factory RuntimeFacade(
-    IntermediateRepresentation code,
+    IntermediateRepresentation intermediateRepresentation,
     ExpressionParser parseExpression,
   ) {
-    final RuntimeInput input = const RuntimeInputBuilder().build(code);
+    final RuntimeInput input = const RuntimeInputBuilder().build(
+      intermediateRepresentation,
+    );
 
     // Build combined signature map for expression validation
     final Map<String, FunctionSignature> allSignatures = {
-      ...code.standardLibrarySignatures,
-      for (final fn in code.customFunctions.values)
+      ...intermediateRepresentation.standardLibrarySignatures,
+      for (final fn in intermediateRepresentation.customFunctions.values)
         fn.name: FunctionSignature(
           name: fn.name,
           parameters: fn.parameters,
         ),
     };
 
-    return RuntimeFacade._internal(code, parseExpression, input, allSignatures);
+    return RuntimeFacade._internal(
+      intermediateRepresentation,
+      parseExpression,
+      input,
+      allSignatures,
+    );
   }
 
   bool get hasMain => intermediateRepresentation.containsFunction('main');

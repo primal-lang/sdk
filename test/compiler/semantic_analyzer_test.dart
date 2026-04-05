@@ -38,10 +38,11 @@ void main() {
   });
 
   test('Unused parameter', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation(
-      'isBiggerThan10(x, y) = x > 10',
-    );
-    expect(code.warnings.length, equals(1));
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation(
+          'isBiggerThan10(x, y) = x > 10',
+        );
+    expect(intermediateRepresentation.warnings.length, equals(1));
   });
 
   test('Undefined function', () {
@@ -61,28 +62,31 @@ void main() {
   });
 
   test('Valid program 1', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 foo(x) = x * 2
 main = foo(5)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('Valid program 2', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 bar = num.abs
 foo(x) = bar()(x) * 2
 main = foo(5)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('Valid program 3', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 apply(f, v) = f(v)
 main = apply(num.abs, 5)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   // --- Error: argument count mismatches ---
@@ -159,71 +163,79 @@ main = apply(num.abs, 5)
   // --- Warnings ---
 
   test('Multiple unused parameters', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation(
-      'f(x, y, z) = 1',
-    );
-    expect(code.warnings.length, equals(3));
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation(
+          'f(x, y, z) = 1',
+        );
+    expect(intermediateRepresentation.warnings.length, equals(3));
   });
 
   test('All parameters used', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation(
-      'f(x, y) = x + y',
-    );
-    expect(code.warnings.length, equals(0));
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation(
+          'f(x, y) = x + y',
+        );
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('No parameters no warnings', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation(
-      'f = 10',
-    );
-    expect(code.warnings.length, equals(0));
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation(
+          'f = 10',
+        );
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   // --- Valid programs: recursion and composition ---
 
   test('Self-recursive function', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 countdown(n) = if (n <= 0) 0 else countdown(n - 1)
 main = countdown(10)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('Mutual recursion', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 isEven(n) = if (n == 0) true else isOdd(n - 1)
 isOdd(n) = if (n == 0) false else isEven(n - 1)
 main = isEven(4)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('Chained function calls', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 double(x) = x * 2
 quadruple(x) = double(double(x))
 main = quadruple(3)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('Multiple functions calling each other', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 add(a, b) = a + b
 mul(a, b) = a * b
 combined(x, y) = add(mul(x, y), x)
 main = combined(3, 4)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('Parameter shadowing a function name', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 double(x) = x * 2
 apply(double, v) = double + v
 main = apply(10, 5)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   // --- Error: non-callable literals ---
@@ -282,57 +294,64 @@ main = apply(10, 5)
   // --- Valid: indexable literals ---
 
   test('indexing string literal is valid', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation(
-      'main = "hello"[0]',
-    );
-    expect(code.warnings.length, equals(0));
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation(
+          'main = "hello"[0]',
+        );
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('indexing list literal is valid', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation(
-      'main = [1, 2, 3][0]',
-    );
-    expect(code.warnings.length, equals(0));
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation(
+          'main = [1, 2, 3][0]',
+        );
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('indexing map literal is valid', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation(
-      'main = {"a": 1}["a"]',
-    );
-    expect(code.warnings.length, equals(0));
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation(
+          'main = {"a": 1}["a"]',
+        );
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   // --- Valid: identifier/call expressions (runtime checked) ---
 
   test('calling identifier is valid (runtime checked)', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 foo(x) = num.abs(x)
 main = foo(-5)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('indexing identifier is valid (runtime checked)', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 foo = [1, 2, 3]
 main = foo[0]
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('calling call result is valid (runtime checked)', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 getFunc = num.abs
 main = getFunc()(-5)
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('chained indexing on identifier is valid', () {
-    final IntermediateRepresentation code = getIntermediateRepresentation('''
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
 matrix = [[1, 2], [3, 4]]
 main = matrix[0][1]
 ''');
-    expect(code.warnings.length, equals(0));
+    expect(intermediateRepresentation.warnings.length, equals(0));
   });
 }

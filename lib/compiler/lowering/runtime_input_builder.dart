@@ -8,7 +8,7 @@ import 'package:primal/utils/mapper.dart';
 class RuntimeInputBuilder {
   const RuntimeInputBuilder();
 
-  RuntimeInput build(IntermediateRepresentation code) {
+  RuntimeInput build(IntermediateRepresentation intermediateRepresentation) {
     // Fetch runtime FunctionNodes from StandardLibrary
     final Map<String, FunctionNode> functions = Mapper.toMap(
       StandardLibrary.get(),
@@ -19,7 +19,7 @@ class RuntimeInputBuilder {
     final Lowerer lowerer = Lowerer(functions);
 
     // Lower custom functions from semantic IR to runtime nodes
-    for (final function in code.customFunctions.values) {
+    for (final function in intermediateRepresentation.customFunctions.values) {
       functions[function.name] = lowerer.lowerFunction(function);
     }
 
