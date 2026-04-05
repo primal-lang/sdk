@@ -1,37 +1,3 @@
-### 1. `try` function only catches `Exception`, not `Error`
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/control/try.dart`
-**Line**: 34-38
-
-- **Issue**: The `try` function catches only `Exception` but not `Error`. In Dart, many runtime errors are subclasses of `Error` (e.g., `StateError`, `ArgumentError`, `RangeError`). This means some errors in the Primal language could escape the `try` block unexpectedly.
-
-- **Impact**: Users may expect `try(expression, fallback)` to catch all errors, but some Dart errors will propagate through, causing unexpected behavior.
-
-- **Fix**:
-
-```dart
-@override
-Node evaluate() {
-  final Node a = arguments[0];
-  final Node b = arguments[1];
-
-  try {
-    return a.evaluate();
-  } catch (_) {  // Catches both Exception and Error
-    return b.evaluate();
-  }
-}
-```
-
-**Follow-up**:
-
-- **Tests**:
-  - Success case: Test that recoverable exceptions are caught
-  - Failure case: Test that `StateError` or similar `Error` types are caught
-- **Docs**: Update `docs/reference/control.md` to clarify what errors are caught
-
----
-
 ### 2. `list.zip` reports incomplete type information in error
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_zip.dart`

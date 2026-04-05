@@ -33,7 +33,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
 
     try {
       return a.evaluate();
-    } on Exception {
+    } catch (_) {
       return b.evaluate();
     }
   }
