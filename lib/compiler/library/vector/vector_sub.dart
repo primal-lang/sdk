@@ -43,7 +43,7 @@ class VectorSub extends NativeFunctionNode {
       throw InvalidArgumentTypesError(
         function: function.name,
         expected: function.parameterTypes,
-        actual: [a.type],
+        actual: [a.type, b.type],
       );
     }
   }
