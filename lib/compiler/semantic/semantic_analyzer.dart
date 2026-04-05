@@ -90,7 +90,7 @@ class SemanticAnalyzer
 
       customFunctions[function.name] = SemanticFunction(
         name: function.name,
-        parameters: function.parameters.map(Parameter.any).toList(),
+        parameters: customSignatures[function.name]!.parameters,
         body: body,
         location: function.expression.location,
       );
