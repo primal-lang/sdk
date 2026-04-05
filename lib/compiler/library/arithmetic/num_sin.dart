@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class NumSin extends NativeFunctionNode {
+class NumSin extends NativeFunctionTerm {
   const NumSin()
     : super(
         name: 'num.sin',
@@ -13,26 +13,26 @@ class NumSin extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is NumberNode) {
-      return NumberNode(sin(a.value));
+    if (a is NumberTerm) {
+      return NumberTerm(sin(a.value));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

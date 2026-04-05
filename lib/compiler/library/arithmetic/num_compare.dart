@@ -1,8 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class NumCompare extends NativeFunctionNode {
+class NumCompare extends NativeFunctionTerm {
   const NumCompare()
     : super(
         name: 'num.compare',
@@ -13,32 +13,32 @@ class NumCompare extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if ((a is NumberNode) && (b is NumberNode)) {
+    if ((a is NumberTerm) && (b is NumberTerm)) {
       if (a.value == b.value) {
-        return const NumberNode(0);
+        return const NumberTerm(0);
       } else if (a.value > b.value) {
-        return const NumberNode(1);
+        return const NumberTerm(1);
       } else {
-        return const NumberNode(-1);
+        return const NumberTerm(-1);
       }
     } else {
       throw InvalidArgumentTypesError(

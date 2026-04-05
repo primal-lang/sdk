@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
 class Runtime {
   final RuntimeInput input;
 
   const Runtime(this.input);
 
-  Node reduceNode(Node node) => node.reduce();
+  Term reduceTerm(Term term) => term.reduce();
 
   dynamic format(dynamic value) {
     if (value is bool) {

@@ -1,54 +1,59 @@
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 
-/// Converts semantic IR to runtime nodes for execution.
+/// Converts semantic IR to runtime terms for execution.
 ///
 /// This pass strips source locations and resolves function references to
-/// direct [FunctionNode] references, eliminating runtime name lookup.
+/// direct [FunctionTerm] references, eliminating runtime name lookup.
 class Lowerer {
-  final Map<String, FunctionNode> functions;
+  final Map<String, FunctionTerm> functions;
 
   const Lowerer(this.functions);
 
-  /// Converts a [SemanticFunction] to a [CustomFunctionNode].
-  CustomFunctionNode lowerFunction(SemanticFunction function) {
-    return CustomFunctionNode(
+  /// Converts a [SemanticFunction] to a [CustomFunctionTerm].
+  CustomFunctionTerm lowerFunction(SemanticFunction function) {
+    return CustomFunctionTerm(
       name: function.name,
       parameters: function.parameters,
-      node: lowerNode(function.body),
+      term: lowerTerm(function.body),
     );
   }
 
-  /// Converts a [SemanticNode] to a runtime [Node].
-  Node lowerNode(SemanticNode node) => switch (node) {
-    SemanticBooleanNode() => BooleanNode(node.value),
-    SemanticNumberNode() => NumberNode(node.value),
-    SemanticStringNode() => StringNode(node.value),
-    SemanticListNode() => _lowerList(node),
-    SemanticMapNode() => _lowerMap(node),
-    SemanticIdentifierNode() => FunctionReferenceNode(node.name, functions),
-    SemanticBoundVariableNode() => BoundVariableNode(node.name),
-    SemanticCallNode() => _lowerCall(node),
-    _ => throw StateError('Unknown semantic node type: ${node.runtimeType}'),
+  /// Converts a [SemanticNode] to a runtime [Term].
+  Term lowerTerm(SemanticNode semanticNode) => switch (semanticNode) {
+    SemanticBooleanNode() => BooleanTerm(semanticNode.value),
+    SemanticNumberNode() => NumberTerm(semanticNode.value),
+    SemanticStringNode() => StringTerm(semanticNode.value),
+    SemanticListNode() => _lowerList(semanticNode),
+    SemanticMapNode() => _lowerMap(semanticNode),
+    SemanticIdentifierNode() => FunctionReferenceTerm(
+      semanticNode.name,
+      functions,
+    ),
+    SemanticBoundVariableNode() => BoundVariableTerm(semanticNode.name),
+    SemanticCallNode() => _lowerCall(semanticNode),
+    _ => throw StateError(
+      'Unknown semantic node type: ${semanticNode.runtimeType}',
+    ),
   };
 
-  Node _lowerList(SemanticListNode node) {
-    return ListNode(node.value.map(lowerNode).toList());
+  Term _lowerList(SemanticListNode semanticNode) {
+    return ListTerm(semanticNode.value.map(lowerTerm).toList());
   }
 
-  Node _lowerMap(SemanticMapNode node) {
-    final Map<Node, Node> entries = {};
-    for (final SemanticMapEntryNode entry in node.value) {
-      entries[lowerNode(entry.key)] = lowerNode(entry.value);
+  Term _lowerMap(SemanticMapNode semanticNode) {
+    final Map<Term, Term> entries = {};
+    for (final SemanticMapEntryNode entry in semanticNode.value) {
+      entries[lowerTerm(entry.key)] = lowerTerm(entry.value);
     }
-    return MapNode(entries);
+    return MapTerm(entries);
   }
 
-  Node _lowerCall(SemanticCallNode node) {
-    return CallNode(
-      callee: lowerNode(node.callee),
-      arguments: node.arguments.map(lowerNode).toList(),
+  Term _lowerCall(SemanticCallNode semanticNode) {
+    return CallTerm(
+      callee: lowerTerm(semanticNode.callee),
+      arguments: semanticNode.arguments.map(lowerTerm).toList(),
     );
   }
 }

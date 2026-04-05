@@ -4,7 +4,7 @@ library;
 import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:test/test.dart';
 
@@ -12,38 +12,38 @@ void main() {
   const Location defaultLocation = Location(row: 1, column: 1);
 
   // Create mock functions for testing identifier lowering
-  final Map<String, FunctionNode> functions = {
-    'myVar': const FunctionNode(name: 'myVar', parameters: []),
-    'foo': const FunctionNode(name: 'foo', parameters: []),
-    'add': const FunctionNode(
+  final Map<String, FunctionTerm> functions = {
+    'myVar': const FunctionTerm(name: 'myVar', parameters: []),
+    'foo': const FunctionTerm(name: 'foo', parameters: []),
+    'add': const FunctionTerm(
       name: 'add',
       parameters: [
         Parameter.number('a'),
         Parameter.number('b'),
       ],
     ),
-    'outer': const FunctionNode(
+    'outer': const FunctionTerm(
       name: 'outer',
       parameters: [Parameter.any('x')],
     ),
-    'inner': const FunctionNode(
+    'inner': const FunctionTerm(
       name: 'inner',
       parameters: [Parameter.any('x')],
     ),
   };
   final Lowerer lowerer = Lowerer(functions);
 
-  group('Lowerer.lowerNode', () {
+  group('Lowerer.lowerTerm', () {
     group('SemanticBooleanNode', () {
       test('lowers true', () {
         const SemanticBooleanNode semantic = SemanticBooleanNode(
           location: defaultLocation,
           value: true,
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<BooleanNode>());
-        expect((node as BooleanNode).value, isTrue);
+        expect(term, isA<BooleanTerm>());
+        expect((term as BooleanTerm).value, isTrue);
       });
 
       test('lowers false', () {
@@ -51,10 +51,10 @@ void main() {
           location: defaultLocation,
           value: false,
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<BooleanNode>());
-        expect((node as BooleanNode).value, isFalse);
+        expect(term, isA<BooleanTerm>());
+        expect((term as BooleanTerm).value, isFalse);
       });
     });
 
@@ -64,10 +64,10 @@ void main() {
           location: defaultLocation,
           value: 42,
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<NumberNode>());
-        expect((node as NumberNode).value, equals(42));
+        expect(term, isA<NumberTerm>());
+        expect((term as NumberTerm).value, equals(42));
       });
 
       test('lowers decimal', () {
@@ -75,10 +75,10 @@ void main() {
           location: defaultLocation,
           value: 3.14,
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<NumberNode>());
-        expect((node as NumberNode).value, equals(3.14));
+        expect(term, isA<NumberTerm>());
+        expect((term as NumberTerm).value, equals(3.14));
       });
     });
 
@@ -88,10 +88,10 @@ void main() {
           location: defaultLocation,
           value: 'hello',
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<StringNode>());
-        expect((node as StringNode).value, equals('hello'));
+        expect(term, isA<StringTerm>());
+        expect((term as StringTerm).value, equals('hello'));
       });
 
       test('lowers empty string', () {
@@ -99,23 +99,23 @@ void main() {
           location: defaultLocation,
           value: '',
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<StringNode>());
-        expect((node as StringNode).value, equals(''));
+        expect(term, isA<StringTerm>());
+        expect((term as StringTerm).value, equals(''));
       });
     });
 
     group('SemanticIdentifierNode', () {
-      test('lowers identifier to FunctionReferenceNode', () {
+      test('lowers identifier to FunctionReferenceTerm', () {
         const SemanticIdentifierNode semantic = SemanticIdentifierNode(
           location: defaultLocation,
           name: 'myVar',
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<FunctionReferenceNode>());
-        expect((node as FunctionReferenceNode).name, equals('myVar'));
+        expect(term, isA<FunctionReferenceTerm>());
+        expect((term as FunctionReferenceTerm).name, equals('myVar'));
       });
     });
 
@@ -125,10 +125,10 @@ void main() {
           location: defaultLocation,
           name: 'x',
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<BoundVariableNode>());
-        expect((node as BoundVariableNode).name, equals('x'));
+        expect(term, isA<BoundVariableTerm>());
+        expect((term as BoundVariableTerm).name, equals('x'));
       });
     });
 
@@ -138,10 +138,10 @@ void main() {
           location: defaultLocation,
           value: [],
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<ListNode>());
-        expect((node as ListNode).value, isEmpty);
+        expect(term, isA<ListTerm>());
+        expect((term as ListTerm).value, isEmpty);
       });
 
       test('lowers list with elements', () {
@@ -153,14 +153,14 @@ void main() {
             SemanticNumberNode(location: defaultLocation, value: 3),
           ],
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<ListNode>());
-        final ListNode list = node as ListNode;
+        expect(term, isA<ListTerm>());
+        final ListTerm list = term as ListTerm;
         expect(list.value.length, equals(3));
-        expect((list.value[0] as NumberNode).value, equals(1));
-        expect((list.value[1] as NumberNode).value, equals(2));
-        expect((list.value[2] as NumberNode).value, equals(3));
+        expect((list.value[0] as NumberTerm).value, equals(1));
+        expect((list.value[1] as NumberTerm).value, equals(2));
+        expect((list.value[2] as NumberTerm).value, equals(3));
       });
 
       test('lowers nested list', () {
@@ -175,14 +175,14 @@ void main() {
             ),
           ],
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<ListNode>());
-        final ListNode outer = node as ListNode;
+        expect(term, isA<ListTerm>());
+        final ListTerm outer = term as ListTerm;
         expect(outer.value.length, equals(1));
-        expect(outer.value[0], isA<ListNode>());
-        final ListNode inner = outer.value[0] as ListNode;
-        expect((inner.value[0] as NumberNode).value, equals(1));
+        expect(outer.value[0], isA<ListTerm>());
+        final ListTerm inner = outer.value[0] as ListTerm;
+        expect((inner.value[0] as NumberTerm).value, equals(1));
       });
     });
 
@@ -192,10 +192,10 @@ void main() {
           location: defaultLocation,
           value: [],
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<MapNode>());
-        expect((node as MapNode).value, isEmpty);
+        expect(term, isA<MapTerm>());
+        expect((term as MapTerm).value, isEmpty);
       });
 
       test('lowers map with entries', () {
@@ -212,10 +212,10 @@ void main() {
             ),
           ],
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<MapNode>());
-        final MapNode map = node as MapNode;
+        expect(term, isA<MapTerm>());
+        final MapTerm map = term as MapTerm;
         expect(map.value.length, equals(2));
       });
     });
@@ -230,12 +230,12 @@ void main() {
           ),
           arguments: [],
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<CallNode>());
-        final CallNode call = node as CallNode;
-        expect(call.callee, isA<FunctionReferenceNode>());
-        expect((call.callee as FunctionReferenceNode).name, equals('foo'));
+        expect(term, isA<CallTerm>());
+        final CallTerm call = term as CallTerm;
+        expect(call.callee, isA<FunctionReferenceTerm>());
+        expect((call.callee as FunctionReferenceTerm).name, equals('foo'));
         expect(call.arguments, isEmpty);
       });
 
@@ -251,13 +251,13 @@ void main() {
             SemanticNumberNode(location: defaultLocation, value: 2),
           ],
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<CallNode>());
-        final CallNode call = node as CallNode;
+        expect(term, isA<CallTerm>());
+        final CallTerm call = term as CallTerm;
         expect(call.arguments.length, equals(2));
-        expect((call.arguments[0] as NumberNode).value, equals(1));
-        expect((call.arguments[1] as NumberNode).value, equals(2));
+        expect((call.arguments[0] as NumberTerm).value, equals(1));
+        expect((call.arguments[1] as NumberTerm).value, equals(2));
       });
 
       test('lowers nested call', () {
@@ -280,14 +280,14 @@ void main() {
             ),
           ],
         );
-        final Node node = lowerer.lowerNode(semantic);
+        final Term term = lowerer.lowerTerm(semantic);
 
-        expect(node, isA<CallNode>());
-        final CallNode outer = node as CallNode;
+        expect(term, isA<CallTerm>());
+        final CallTerm outer = term as CallTerm;
         expect(outer.arguments.length, equals(1));
-        expect(outer.arguments[0], isA<CallNode>());
-        final CallNode inner = outer.arguments[0] as CallNode;
-        expect((inner.callee as FunctionReferenceNode).name, equals('inner'));
+        expect(outer.arguments[0], isA<CallTerm>());
+        final CallTerm inner = outer.arguments[0] as CallTerm;
+        expect((inner.callee as FunctionReferenceTerm).name, equals('inner'));
       });
     });
   });

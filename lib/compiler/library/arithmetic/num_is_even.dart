@@ -1,8 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class NumIsEven extends NativeFunctionNode {
+class NumIsEven extends NativeFunctionTerm {
   const NumIsEven()
     : super(
         name: 'num.isEven',
@@ -12,26 +12,26 @@ class NumIsEven extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is NumberNode) {
-      return BooleanNode((a.value % 2) == 0);
+    if (a is NumberTerm) {
+      return BooleanTerm((a.value % 2) == 0);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

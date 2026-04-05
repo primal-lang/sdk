@@ -5,191 +5,191 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/bindings.dart';
 
-abstract class Node {
-  const Node();
+abstract class Term {
+  const Term();
 
   Type get type;
 
-  Node substitute(Bindings bindings) => this;
+  Term substitute(Bindings bindings) => this;
 
-  Node reduce() => this;
+  Term reduce() => this;
 
   dynamic native();
 }
 
-abstract class LiteralNode<T> implements Node {
+abstract class LiteralTerm<T> implements Term {
   final T value;
 
-  const LiteralNode(this.value);
+  const LiteralTerm(this.value);
 
   @override
   String toString() => value.toString();
 
   @override
-  Node substitute(Bindings bindings) => this;
+  Term substitute(Bindings bindings) => this;
 
   @override
-  Node reduce() => this;
+  Term reduce() => this;
 
   @override
   dynamic native() => value;
 
-  static LiteralNode from(dynamic value) {
+  static LiteralTerm from(dynamic value) {
     if (value is bool) {
-      return BooleanNode(value);
+      return BooleanTerm(value);
     } else if (value is num) {
-      return NumberNode(value);
+      return NumberTerm(value);
     } else if (value is String) {
-      return StringNode(value);
+      return StringTerm(value);
     } else if (value is DateTime) {
-      return TimestampNode(value);
+      return TimestampTerm(value);
     } else if (value is File) {
-      return FileNode(value);
+      return FileTerm(value);
     } else if (value is Directory) {
-      return DirectoryNode(value);
-    } else if (value is Set<Node>) {
-      return SetNode(value);
-    } else if (value is List<Node>) {
-      return ListNode(value);
-    } else if (value is Map<Node, Node>) {
-      return MapNode(value);
+      return DirectoryTerm(value);
+    } else if (value is Set<Term>) {
+      return SetTerm(value);
+    } else if (value is List<Term>) {
+      return ListTerm(value);
+    } else if (value is Map<Term, Term>) {
+      return MapTerm(value);
     } else {
       throw InvalidLiteralValueError(value.toString());
     }
   }
 }
 
-class BooleanNode extends LiteralNode<bool> {
-  const BooleanNode(super.value);
+class BooleanTerm extends LiteralTerm<bool> {
+  const BooleanTerm(super.value);
 
   @override
   Type get type => const BooleanType();
 }
 
-class NumberNode extends LiteralNode<num> {
-  const NumberNode(super.value);
+class NumberTerm extends LiteralTerm<num> {
+  const NumberTerm(super.value);
 
   @override
   Type get type => const NumberType();
 }
 
-class StringNode extends LiteralNode<String> {
-  const StringNode(super.value);
+class StringTerm extends LiteralTerm<String> {
+  const StringTerm(super.value);
 
   @override
   Type get type => const StringType();
 }
 
-class FileNode extends LiteralNode<File> {
-  const FileNode(super.value);
+class FileTerm extends LiteralTerm<File> {
+  const FileTerm(super.value);
 
   @override
   Type get type => const FileType();
 }
 
-class DirectoryNode extends LiteralNode<Directory> {
-  const DirectoryNode(super.value);
+class DirectoryTerm extends LiteralTerm<Directory> {
+  const DirectoryTerm(super.value);
 
   @override
   Type get type => const DirectoryType();
 }
 
-class TimestampNode extends LiteralNode<DateTime> {
-  const TimestampNode(super.value);
+class TimestampTerm extends LiteralTerm<DateTime> {
+  const TimestampTerm(super.value);
 
   @override
   Type get type => const TimestampType();
 }
 
-class ListNode extends LiteralNode<List<Node>> {
-  const ListNode(super.value);
+class ListTerm extends LiteralTerm<List<Term>> {
+  const ListTerm(super.value);
 
   @override
   Type get type => const ListType();
 
   @override
-  Node substitute(Bindings bindings) =>
-      ListNode(value.map((e) => e.substitute(bindings)).toList());
+  Term substitute(Bindings bindings) =>
+      ListTerm(value.map((e) => e.substitute(bindings)).toList());
 
   @override
   List native() => value.map((e) => e.native()).toList();
 }
 
-class VectorNode extends LiteralNode<List<Node>> {
-  const VectorNode(super.value);
+class VectorTerm extends LiteralTerm<List<Term>> {
+  const VectorTerm(super.value);
 
   @override
   Type get type => const VectorType();
 
   @override
-  Node substitute(Bindings bindings) =>
-      VectorNode(value.map((e) => e.substitute(bindings)).toList());
+  Term substitute(Bindings bindings) =>
+      VectorTerm(value.map((e) => e.substitute(bindings)).toList());
 
   @override
   List native() => value.map((e) => e.native()).toList();
 }
 
-class SetNode extends LiteralNode<Set<Node>> {
-  const SetNode(super.value);
+class SetTerm extends LiteralTerm<Set<Term>> {
+  const SetTerm(super.value);
 
   @override
   Type get type => const SetType();
 
   @override
-  Node substitute(Bindings bindings) =>
-      SetNode(value.map((e) => e.substitute(bindings)).toSet());
+  Term substitute(Bindings bindings) =>
+      SetTerm(value.map((e) => e.substitute(bindings)).toSet());
 
   @override
   Set native() => value.map((e) => e.native()).toSet();
 }
 
-class StackNode extends LiteralNode<List<Node>> {
-  const StackNode(super.value);
+class StackTerm extends LiteralTerm<List<Term>> {
+  const StackTerm(super.value);
 
   @override
   Type get type => const StackType();
 
   @override
-  Node substitute(Bindings bindings) =>
-      StackNode(value.map((e) => e.substitute(bindings)).toList());
+  Term substitute(Bindings bindings) =>
+      StackTerm(value.map((e) => e.substitute(bindings)).toList());
 
   @override
   List native() => value.map((e) => e.native()).toList();
 }
 
-class QueueNode extends LiteralNode<List<Node>> {
-  const QueueNode(super.value);
+class QueueTerm extends LiteralTerm<List<Term>> {
+  const QueueTerm(super.value);
 
   @override
   Type get type => const QueueType();
 
   @override
-  Node substitute(Bindings bindings) =>
-      QueueNode(value.map((e) => e.substitute(bindings)).toList());
+  Term substitute(Bindings bindings) =>
+      QueueTerm(value.map((e) => e.substitute(bindings)).toList());
 
   @override
   List native() => value.map((e) => e.native()).toList();
 }
 
-class MapNode extends LiteralNode<Map<Node, Node>> {
-  const MapNode(super.value);
+class MapTerm extends LiteralTerm<Map<Term, Term>> {
+  const MapTerm(super.value);
 
   @override
   Type get type => const MapType();
 
   @override
-  Node substitute(Bindings bindings) {
-    final Iterable<MapEntry<Node, Node>> entries = value.entries.map(
+  Term substitute(Bindings bindings) {
+    final Iterable<MapEntry<Term, Term>> entries = value.entries.map(
       (e) => MapEntry(e.key.substitute(bindings), e.value.substitute(bindings)),
     );
 
-    return MapNode(Map.fromEntries(entries));
+    return MapTerm(Map.fromEntries(entries));
   }
 
-  Map<dynamic, Node> asMapWithKeys() {
-    final Map<dynamic, Node> map = {};
+  Map<dynamic, Term> asMapWithKeys() {
+    final Map<dynamic, Term> map = {};
 
-    for (final MapEntry<Node, Node> entry in value.entries) {
+    for (final MapEntry<Term, Term> entry in value.entries) {
       map[entry.key.native()] = entry.value;
     }
 
@@ -200,7 +200,7 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
   Map<dynamic, dynamic> native() {
     final Map<dynamic, dynamic> map = {};
 
-    for (final MapEntry<Node, Node> entry in value.entries) {
+    for (final MapEntry<Term, Term> entry in value.entries) {
       final dynamic key = entry.key.native();
       final dynamic value = entry.value.native();
       map[key] = value;
@@ -215,15 +215,15 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
 /// Holds a function name and a reference to the functions map. Resolution
 /// happens at evaluation time, enabling forward references and mutual recursion
 /// while avoiding global mutable state.
-class FunctionReferenceNode extends Node {
+class FunctionReferenceTerm extends Term {
   final String name;
-  final Map<String, FunctionNode> functions;
+  final Map<String, FunctionTerm> functions;
 
-  const FunctionReferenceNode(this.name, this.functions);
+  const FunctionReferenceTerm(this.name, this.functions);
 
   @override
-  FunctionNode reduce() {
-    final FunctionNode? function = functions[name];
+  FunctionTerm reduce() {
+    final FunctionTerm? function = functions[name];
     if (function == null) {
       throw NotFoundInScopeError(name);
     }
@@ -242,15 +242,15 @@ class FunctionReferenceNode extends Node {
 
 /// A reference to a bound parameter within a function body.
 ///
-/// During function application, [substitute] replaces this node with the
+/// During function application, [substitute] replaces this term with the
 /// corresponding argument value from the [Bindings].
-class BoundVariableNode extends Node {
+class BoundVariableTerm extends Term {
   final String name;
 
-  const BoundVariableNode(this.name);
+  const BoundVariableTerm(this.name);
 
   @override
-  Node substitute(Bindings bindings) => bindings.get(name);
+  Term substitute(Bindings bindings) => bindings.get(name);
 
   @override
   Type get type => const AnyType();
@@ -260,37 +260,37 @@ class BoundVariableNode extends Node {
 
   @override
   dynamic native() =>
-      throw StateError('BoundVariableNode cannot be converted to native');
+      throw StateError('BoundVariableTerm cannot be converted to native');
 }
 
-class CallNode extends Node {
-  final Node callee;
-  final List<Node> arguments;
+class CallTerm extends Term {
+  final Term callee;
+  final List<Term> arguments;
 
-  const CallNode({
+  const CallTerm({
     required this.callee,
     required this.arguments,
   });
 
   @override
-  Node substitute(Bindings bindings) => CallNode(
+  Term substitute(Bindings bindings) => CallTerm(
     callee: callee.substitute(bindings),
     arguments: arguments.map((e) => e.substitute(bindings)).toList(),
   );
 
   @override
-  Node reduce() {
-    final FunctionNode function = getFunctionNode(callee);
+  Term reduce() {
+    final FunctionTerm function = getFunctionTerm(callee);
 
     return function.apply(arguments);
   }
 
-  FunctionNode getFunctionNode(Node callee) {
-    if (callee is CallNode) {
-      return getFunctionNode(callee.reduce());
-    } else if (callee is FunctionReferenceNode) {
+  FunctionTerm getFunctionTerm(Term callee) {
+    if (callee is CallTerm) {
+      return getFunctionTerm(callee.reduce());
+    } else if (callee is FunctionReferenceTerm) {
       return callee.reduce();
-    } else if (callee is FunctionNode) {
+    } else if (callee is FunctionTerm) {
       return callee;
     } else {
       throw InvalidFunctionError(callee.toString());
@@ -314,21 +314,21 @@ class CallNode extends Node {
 /// single-threaded use only. Do not share a [RuntimeFacade] across threads
 /// or call evaluation methods concurrently, as this will cause incorrect
 /// recursion limit enforcement.
-class FunctionNode extends Node {
+class FunctionTerm extends Term {
   static const int maxRecursionDepth = 1000;
   static int _currentDepth = 0;
 
   final String name;
   final List<Parameter> parameters;
 
-  const FunctionNode({
+  const FunctionTerm({
     required this.name,
     required this.parameters,
   });
 
   List<Type> get parameterTypes => parameters.map((e) => e.type).toList();
 
-  bool equalSignature(FunctionNode function) => function.name == name;
+  bool equalSignature(FunctionTerm function) => function.name == name;
 
   /// Returns a phase-agnostic signature for this function.
   FunctionSignature toSignature() => FunctionSignature(
@@ -356,7 +356,7 @@ class FunctionNode extends Node {
     _currentDepth--;
   }
 
-  Node apply(List<Node> arguments) {
+  Term apply(List<Term> arguments) {
     if (parameters.length != arguments.length) {
       throw InvalidArgumentCountError(
         function: name,
@@ -384,17 +384,17 @@ class FunctionNode extends Node {
   dynamic native() => toString();
 }
 
-class CustomFunctionNode extends FunctionNode {
-  final Node node;
+class CustomFunctionTerm extends FunctionTerm {
+  final Term term;
 
-  const CustomFunctionNode({
+  const CustomFunctionTerm({
     required super.name,
     required super.parameters,
-    required this.node,
+    required this.term,
   });
 
   @override
-  Node apply(List<Node> arguments) {
+  Term apply(List<Term> arguments) {
     if (parameters.length != arguments.length) {
       throw InvalidArgumentCountError(
         function: name,
@@ -403,7 +403,7 @@ class CustomFunctionNode extends FunctionNode {
       );
     }
 
-    FunctionNode.incrementDepth();
+    FunctionTerm.incrementDepth();
     try {
       final Bindings bindings = Bindings.from(
         parameters: parameters,
@@ -411,36 +411,36 @@ class CustomFunctionNode extends FunctionNode {
       );
       return substitute(bindings).reduce();
     } finally {
-      FunctionNode.decrementDepth();
+      FunctionTerm.decrementDepth();
     }
   }
 
   @override
-  Node substitute(Bindings bindings) => node.substitute(bindings);
+  Term substitute(Bindings bindings) => term.substitute(bindings);
 }
 
-abstract class NativeFunctionNode extends FunctionNode {
-  const NativeFunctionNode({
+abstract class NativeFunctionTerm extends FunctionTerm {
+  const NativeFunctionTerm({
     required super.name,
     required super.parameters,
   });
 
   @override
-  Node substitute(Bindings bindings) {
-    final List<Node> arguments = parameters
+  Term substitute(Bindings bindings) {
+    final List<Term> arguments = parameters
         .map((e) => bindings.get(e.name))
         .toList();
 
-    return node(arguments);
+    return term(arguments);
   }
 
-  Node node(List<Node> arguments);
+  Term term(List<Term> arguments);
 }
 
-class NativeFunctionNodeWithArguments extends FunctionNode {
-  final List<Node> arguments;
+class NativeFunctionTermWithArguments extends FunctionTerm {
+  final List<Term> arguments;
 
-  const NativeFunctionNodeWithArguments({
+  const NativeFunctionTermWithArguments({
     required super.name,
     required super.parameters,
     required this.arguments,

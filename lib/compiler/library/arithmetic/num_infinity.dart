@@ -1,6 +1,6 @@
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class NumInfinity extends NativeFunctionNode {
+class NumInfinity extends NativeFunctionTerm {
   const NumInfinity()
     : super(
         name: 'num.infinity',
@@ -8,5 +8,5 @@ class NumInfinity extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => const NumberNode(double.infinity);
+  Term term(List<Term> arguments) => const NumberTerm(double.infinity);
 }

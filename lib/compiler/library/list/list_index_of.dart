@@ -1,9 +1,9 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ListIndexOf extends NativeFunctionNode {
+class ListIndexOf extends NativeFunctionTerm {
   const ListIndexOf()
     : super(
         name: 'list.indexOf',
@@ -14,39 +14,39 @@ class ListIndexOf extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if (a is ListNode) {
+    if (a is ListTerm) {
       for (int i = 0; i < a.value.length; i++) {
-        final BooleanNode comparison = CompEq.execute(
+        final BooleanTerm comparison = CompEq.execute(
           function: this,
           a: a.value[i].reduce(),
           b: b,
         );
 
         if (comparison.value) {
-          return NumberNode(i);
+          return NumberTerm(i);
         }
       }
 
-      return const NumberNode(-1);
+      return const NumberTerm(-1);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

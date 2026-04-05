@@ -1,8 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ListSet extends NativeFunctionNode {
+class ListSet extends NativeFunctionTerm {
   const ListSet()
     : super(
         name: 'list.set',
@@ -14,27 +14,27 @@ class ListSet extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
-    final Node c = arguments[2];
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+    final Term c = arguments[2];
 
-    if ((a is ListNode) && (b is NumberNode)) {
+    if ((a is ListTerm) && (b is NumberTerm)) {
       final int index = b.value.toInt();
       if (index < 0) {
         throw NegativeIndexError(function: name, index: index);
@@ -46,10 +46,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
           length: a.value.length,
         );
       }
-      final List<Node> head = a.value.sublist(0, index);
-      final List<Node> rest = a.value.sublist(index + 1, a.value.length);
+      final List<Term> head = a.value.sublist(0, index);
+      final List<Term> rest = a.value.sublist(index + 1, a.value.length);
 
-      return ListNode([...head, c.reduce(), ...rest]);
+      return ListTerm([...head, c.reduce(), ...rest]);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

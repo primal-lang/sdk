@@ -1,8 +1,8 @@
 import 'package:primal/compiler/library/comparison/comp_neq.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class OperatorNeq extends NativeFunctionNode {
+class OperatorNeq extends NativeFunctionTerm {
   const OperatorNeq()
     : super(
         name: '!=',
@@ -13,24 +13,24 @@ class OperatorNeq extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
     return CompNeq.execute(
       function: this,

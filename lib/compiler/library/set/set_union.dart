@@ -1,8 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class SetUnion extends NativeFunctionNode {
+class SetUnion extends NativeFunctionTerm {
   const SetUnion()
     : super(
         name: 'set.union',
@@ -13,27 +13,27 @@ class SetUnion extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 
-  static SetNode execute({
-    required FunctionNode function,
-    required Node a,
-    required Node b,
+  static SetTerm execute({
+    required FunctionTerm function,
+    required Term a,
+    required Term b,
   }) {
-    if ((a is SetNode) && (b is SetNode)) {
-      final Set<Node> set = {...a.value};
+    if ((a is SetTerm) && (b is SetTerm)) {
+      final Set<Term> set = {...a.value};
 
-      for (final Node node in b.value) {
-        if (!set.contains(node.native())) {
-          set.add(node);
+      for (final Term element in b.value) {
+        if (!set.contains(element.native())) {
+          set.add(element);
         }
       }
 
-      return SetNode(set);
+      return SetTerm(set);
     } else {
       throw InvalidArgumentTypesError(
         function: function.name,
@@ -44,17 +44,17 @@ class SetUnion extends NativeFunctionNode {
   }
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
     return SetUnion.execute(
       function: this,

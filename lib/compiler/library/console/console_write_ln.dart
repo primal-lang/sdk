@@ -1,9 +1,9 @@
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/platform/base/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ConsoleWriteLn extends NativeFunctionNode {
+class ConsoleWriteLn extends NativeFunctionTerm {
   const ConsoleWriteLn()
     : super(
         name: 'console.writeLn',
@@ -13,23 +13,23 @@ class ConsoleWriteLn extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
     PlatformInterface().console.outWriteLn(a.toString());
 
     return a;

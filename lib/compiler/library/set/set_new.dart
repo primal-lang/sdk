@@ -1,8 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class SetNew extends NativeFunctionNode {
+class SetNew extends NativeFunctionTerm {
   const SetNew()
     : super(
         name: 'set.new',
@@ -12,38 +12,38 @@ class SetNew extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is ListNode) {
-      final Set<Node> nodeElements = {};
+    if (a is ListTerm) {
+      final Set<Term> termElements = {};
       final Set<dynamic> nativeElements = {};
 
-      for (final Node element in a.value) {
+      for (final Term element in a.value) {
         final dynamic native = element.native();
 
         if (!nativeElements.contains(native)) {
-          nodeElements.add(element);
+          termElements.add(element);
           nativeElements.add(native);
         }
       }
 
-      return SetNode(nodeElements);
+      return SetTerm(termElements);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

@@ -1,48 +1,48 @@
 # Runtime
 
-**Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/node.dart`, `lib/compiler/runtime/bindings.dart`
+**Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/term.dart`, `lib/compiler/runtime/bindings.dart`
 
-The runtime evaluates compiled code through **node substitution and reduction**. It receives `IntermediateRepresentation` from the semantic analyzer and lowers semantic IR to runtime nodes for execution.
+The runtime evaluates compiled code through **term substitution and reduction**. It receives `IntermediateRepresentation` from the semantic analyzer and lowers semantic IR to runtime terms for execution.
 
 ## Initialization
 
 When a `RuntimeFacade` is created, the `RuntimeInputBuilder` constructs a `RuntimeInput`:
 
-1. Standard library functions are fetched from `StandardLibrary.get()` as `FunctionNode` instances and stored in a functions map.
+1. Standard library functions are fetched from `StandardLibrary.get()` as `FunctionTerm` instances and stored in a functions map.
 2. The `Lowerer` is created with access to this functions map.
-3. Each `SemanticFunction` from `IntermediateRepresentation` is lowered to a `CustomFunctionNode` and added to the map.
-4. Function references (`SemanticIdentifierNode`) are lowered to `FunctionReferenceNode`, which holds the function name and a reference to the shared functions map.
+3. Each `SemanticFunction` from `IntermediateRepresentation` is lowered to a `CustomFunctionTerm` and added to the map.
+4. Function references (`SemanticIdentifierNode`) are lowered to `FunctionReferenceTerm`, which holds the function name and a reference to the shared functions map.
 
-Note: `IntermediateRepresentation` contains only `FunctionSignature` references for the standard library (not `FunctionNode`), keeping the semantic output free of runtime types. The actual runtime nodes are instantiated during this initialization step.
+Note: `IntermediateRepresentation` contains only `FunctionSignature` references for the standard library (not `FunctionTerm`), keeping the semantic output free of runtime types. The actual runtime terms are instantiated during this initialization step.
 
-## Node Hierarchy
+## Term Hierarchy
 
-All runtime values are nodes. The base `Node` class defines:
+All runtime values are terms. The base `Term` class defines:
 
-- `type` - returns the node's `Type`.
+- `type` - returns the term's `Type`.
 - `substitute(Bindings)` - replaces bound variables with their argument values.
-- `reduce()` - reduces the node to a value.
+- `reduce()` - reduces the term to a value.
 - `native()` - converts to a native Dart value.
 
-**Literal nodes** (self-evaluating):
-`BooleanNode`, `NumberNode`, `StringNode`, `FileNode`, `DirectoryNode`, `TimestampNode`
+**Literal terms** (self-evaluating):
+`BooleanTerm`, `NumberTerm`, `StringTerm`, `FileTerm`, `DirectoryTerm`, `TimestampTerm`
 
-**Collection nodes** (substitute recursively; self-evaluating):
-`ListNode`, `MapNode`, `SetNode`, `VectorNode`, `StackNode`, `QueueNode`
+**Collection terms** (substitute recursively; self-evaluating):
+`ListTerm`, `MapTerm`, `SetTerm`, `VectorTerm`, `StackTerm`, `QueueTerm`
 
-**Reference nodes**:
+**Reference terms**:
 
-- `FunctionReferenceNode(name, functions)` - holds a function name and the functions map; `reduce()` returns the referenced `FunctionNode`.
-- `BoundVariableNode(name)` - replaced during substitution via bindings.
+- `FunctionReferenceTerm(name, functions)` - holds a function name and the functions map; `reduce()` returns the referenced `FunctionTerm`.
+- `BoundVariableTerm(name)` - replaced during substitution via bindings.
 
-**Call node**:
-`CallNode(callee, arguments)` - on evaluation, reduces the callee to a `FunctionNode`, then calls `apply()` with the arguments.
+**Call term**:
+`CallTerm(callee, arguments)` - on evaluation, reduces the callee to a `FunctionTerm`, then calls `apply()` with the arguments.
 
-**Function nodes**:
+**Function terms**:
 
-- `FunctionNode` - base, with name and parameters.
-- `CustomFunctionNode` - user-defined; `apply()` substitutes arguments into the body, then reduces.
-- `NativeFunctionNode` - built-in; delegates to a Dart implementation.
+- `FunctionTerm` - base, with name and parameters.
+- `CustomFunctionTerm` - user-defined; `apply()` substitutes arguments into the body, then reduces.
+- `NativeFunctionTerm` - built-in; delegates to a Dart implementation.
 
 ### Native Function Implementation Pattern
 
@@ -50,23 +50,23 @@ Each native function follows a two-class pattern:
 
 ```dart
 // 1. Definition class - declares name, parameters, and types
-class FunctionName extends NativeFunctionNode {
+class FunctionName extends NativeFunctionTerm {
   FunctionName() : super(
     name: 'namespace.function',
     parameters: [Parameter.type('arg1'), Parameter.any('arg2')],
   );
 
   @override
-  Node node(List<Node> arguments) => _Node(
+  Term term(List<Term> arguments) => _Term(
     name: name, parameters: parameters, arguments: arguments,
   );
 }
 
 // 2. Evaluation class - implements the actual logic
-class _Node extends NativeFunctionNodeWithArguments {
+class _Term extends NativeFunctionTermWithArguments {
   @override
-  Node reduce() {
-    // Validate argument types, compute result, return a Node
+  Term reduce() {
+    // Validate argument types, compute result, return a Term
   }
 }
 ```
@@ -75,16 +75,16 @@ class _Node extends NativeFunctionNodeWithArguments {
 
 Function application follows these steps:
 
-1. Reduce the callee expression to get a `FunctionNode`.
+1. Reduce the callee expression to get a `FunctionTerm`.
 2. Create `Bindings` from the function's parameters and the provided arguments.
-3. Substitute all `BoundVariableNode`s in the function body with their bound values.
-4. Reduce the resulting node.
+3. Substitute all `BoundVariableTerm`s in the function body with their bound values.
+4. Reduce the resulting term.
 
 This is a substitution-based evaluation model consistent with lambda calculus beta-reduction.
 
 ## Function Resolution
 
-Function references are resolved at lowering time, not runtime. The `Lowerer` converts `SemanticIdentifierNode` (which contains a resolved `FunctionSignature`) to `FunctionReferenceNode`, passing the shared functions map. At evaluation time, `FunctionReferenceNode.reduce()` looks up the function in the map.
+Function references are resolved at lowering time, not runtime. The `Lowerer` converts `SemanticIdentifierNode` (which contains a resolved `FunctionSignature`) to `FunctionReferenceTerm`, passing the shared functions map. At evaluation time, `FunctionReferenceTerm.reduce()` looks up the function in the map.
 
 This approach:
 
@@ -95,7 +95,7 @@ This approach:
 
 The runtime layer is intentionally minimal:
 
-- It receives **lowered** nodes (no source locations).
+- It receives **lowered** terms (no source locations).
 - Semantic validation happens earlier in the pipeline.
 - Runtime errors (type mismatches, missing keys) are detected during evaluation.
 

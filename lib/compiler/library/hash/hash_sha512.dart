@@ -3,9 +3,9 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class HashSha512 extends NativeFunctionNode {
+class HashSha512 extends NativeFunctionTerm {
   const HashSha512()
     : super(
         name: 'hash.sha512',
@@ -15,29 +15,29 @@ class HashSha512 extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is StringNode) {
+    if (a is StringTerm) {
       final Uint8List bytes = utf8.encode(a.value);
       final Digest digest = sha512.convert(bytes);
 
-      return StringNode(digest.toString());
+      return StringTerm(digest.toString());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

@@ -1,8 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class MapValues extends NativeFunctionNode {
+class MapValues extends NativeFunctionTerm {
   const MapValues()
     : super(
         name: 'map.values',
@@ -12,28 +12,28 @@ class MapValues extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is MapNode) {
-      final Map<dynamic, Node> map = a.asMapWithKeys();
+    if (a is MapTerm) {
+      final Map<dynamic, Term> map = a.asMapWithKeys();
 
-      return ListNode(map.values.toList());
+      return ListTerm(map.values.toList());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

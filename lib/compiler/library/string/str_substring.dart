@@ -1,9 +1,9 @@
 import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class StrSubstring extends NativeFunctionNode {
+class StrSubstring extends NativeFunctionTerm {
   const StrSubstring()
     : super(
         name: 'str.substring',
@@ -15,27 +15,27 @@ class StrSubstring extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
-    final Node c = arguments[2].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+    final Term c = arguments[2].reduce();
 
-    if ((a is StringNode) && (b is NumberNode) && (c is NumberNode)) {
+    if ((a is StringTerm) && (b is NumberTerm) && (c is NumberTerm)) {
       final int start = b.value.toInt();
       final int end = c.value.toInt();
       final Characters chars = a.value.characters;
@@ -63,7 +63,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
           length: chars.length,
         );
       }
-      return StringNode(chars.skip(start).take(end - start).toString());
+      return StringTerm(chars.skip(start).take(end - start).toString());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

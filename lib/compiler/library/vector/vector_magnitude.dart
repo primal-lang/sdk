@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class VectorMagnitude extends NativeFunctionNode {
+class VectorMagnitude extends NativeFunctionTerm {
   const VectorMagnitude()
     : super(
         name: 'vector.magnitude',
@@ -13,17 +13,17 @@ class VectorMagnitude extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 
-  static NumberNode execute({
-    required FunctionNode function,
-    required Node a,
+  static NumberTerm execute({
+    required FunctionTerm function,
+    required Term a,
   }) {
-    if (a is VectorNode) {
+    if (a is VectorTerm) {
       double magnitude = 0;
       final List list = a.native();
 
@@ -31,7 +31,7 @@ class VectorMagnitude extends NativeFunctionNode {
         magnitude += element * element;
       }
 
-      return NumberNode(sqrt(magnitude));
+      return NumberTerm(sqrt(magnitude));
     } else {
       throw InvalidArgumentTypesError(
         function: function.name,
@@ -42,16 +42,16 @@ class VectorMagnitude extends NativeFunctionNode {
   }
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
     return VectorMagnitude.execute(
       function: this,

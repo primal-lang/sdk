@@ -88,7 +88,7 @@ list.map([num.add, num.sub, greet], function.name)
 
 **Implementation Notes:**
 
-- `FunctionNode` already stores `name` and `parameters`, so most of this proposal is exposing existing runtime metadata.
-- `function.signature` can reuse the formatting already present in `FunctionNode.toString()`.
+- `FunctionTerm` already stores `name` and `parameters`, so most of this proposal is exposing existing runtime metadata.
+- `function.signature` can reuse the formatting already present in `FunctionTerm.toString()`.
 - Later extensions could add documentation text, source location, or namespace data.
 - This is a very high-leverage addition for relatively little implementation work.

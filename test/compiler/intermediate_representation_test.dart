@@ -3,7 +3,7 @@ library;
 
 import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/models/function_signature.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/warnings/semantic_warning.dart';
@@ -140,7 +140,7 @@ void main() {
       expect(mainFn, isA<SemanticFunction>());
     });
 
-    test('lowered custom function is a CustomFunctionNode', () {
+    test('lowered custom function is a CustomFunctionTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
             'main = 42',
@@ -148,9 +148,9 @@ void main() {
       final SemanticFunction mainFn =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
-      final CustomFunctionNode lowered = lowerer.lowerFunction(mainFn);
+      final CustomFunctionTerm lowered = lowerer.lowerFunction(mainFn);
 
-      expect(lowered, isA<CustomFunctionNode>());
+      expect(lowered, isA<CustomFunctionTerm>());
     });
 
     test('standard library signature is a FunctionSignature', () {

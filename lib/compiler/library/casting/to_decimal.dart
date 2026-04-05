@@ -1,8 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ToDecimal extends NativeFunctionNode {
+class ToDecimal extends NativeFunctionTerm {
   const ToDecimal()
     : super(
         name: 'to.decimal',
@@ -12,32 +12,32 @@ class ToDecimal extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is StringNode) {
+    if (a is StringTerm) {
       try {
-        return NumberNode(double.parse(a.value));
+        return NumberTerm(double.parse(a.value));
       } on FormatException {
         throw ParseError(function: name, input: a.value, targetType: 'decimal');
       }
-    } else if (a is NumberNode) {
-      return NumberNode(a.value.toDouble());
+    } else if (a is NumberTerm) {
+      return NumberTerm(a.value.toDouble());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

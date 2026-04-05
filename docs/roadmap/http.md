@@ -1,4 +1,4 @@
-Problem: HTTP requests are asynchronous which complicates how the interpreter expects the evaluation of a node.
+Problem: HTTP requests are asynchronous which complicates how the interpreter expects the evaluation of a term.
 
 ```primal
 http.get(a: String, b: Map): HttpResponse

@@ -4,20 +4,20 @@ library;
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/bindings.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Bindings', () {
-    test('get existing key returns node', () {
-      const Bindings bindings = Bindings({'x': NumberNode(42)});
-      final Node result = bindings.get('x');
-      expect(result, isA<NumberNode>());
-      expect((result as NumberNode).value, 42);
+    test('get existing key returns term', () {
+      const Bindings bindings = Bindings({'x': NumberTerm(42)});
+      final Term result = bindings.get('x');
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 42);
     });
 
     test('get missing key throws NotFoundInScopeError', () {
-      const Bindings bindings = Bindings({'x': NumberNode(42)});
+      const Bindings bindings = Bindings({'x': NumberTerm(42)});
       expect(
         () => bindings.get('y'),
         throwsA(isA<NotFoundInScopeError>()),
@@ -34,13 +34,13 @@ void main() {
 
     test('multiple keys', () {
       const Bindings bindings = Bindings({
-        'a': NumberNode(1),
-        'b': StringNode('two'),
-        'c': BooleanNode(true),
+        'a': NumberTerm(1),
+        'b': StringTerm('two'),
+        'c': BooleanTerm(true),
       });
-      expect((bindings.get('a') as NumberNode).value, 1);
-      expect((bindings.get('b') as StringNode).value, 'two');
-      expect((bindings.get('c') as BooleanNode).value, true);
+      expect((bindings.get('a') as NumberTerm).value, 1);
+      expect((bindings.get('b') as StringTerm).value, 'two');
+      expect((bindings.get('c') as BooleanTerm).value, true);
     });
   });
 
@@ -48,11 +48,11 @@ void main() {
     test('creates from parameters and arguments', () {
       final Bindings bindings = Bindings.from(
         parameters: [const Parameter.number('x')],
-        arguments: [const NumberNode(10)],
+        arguments: [const NumberTerm(10)],
       );
-      final Node result = bindings.get('x');
-      expect(result, isA<NumberNode>());
-      expect((result as NumberNode).value, 10);
+      final Term result = bindings.get('x');
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 10);
     });
 
     test('with empty parameters and arguments', () {
@@ -71,14 +71,14 @@ void main() {
           const Parameter.boolean('c'),
         ],
         arguments: [
-          const NumberNode(1),
-          const StringNode('hello'),
-          const BooleanNode(true),
+          const NumberTerm(1),
+          const StringTerm('hello'),
+          const BooleanTerm(true),
         ],
       );
-      expect((bindings.get('a') as NumberNode).value, 1);
-      expect((bindings.get('b') as StringNode).value, 'hello');
-      expect((bindings.get('c') as BooleanNode).value, true);
+      expect((bindings.get('a') as NumberTerm).value, 1);
+      expect((bindings.get('b') as StringTerm).value, 'hello');
+      expect((bindings.get('c') as BooleanTerm).value, true);
     });
 
     test('parameter names map correctly to arguments', () {
@@ -87,10 +87,10 @@ void main() {
           const Parameter.number('first'),
           const Parameter.number('second'),
         ],
-        arguments: [const NumberNode(100), const NumberNode(200)],
+        arguments: [const NumberTerm(100), const NumberTerm(200)],
       );
-      expect((bindings.get('first') as NumberNode).value, 100);
-      expect((bindings.get('second') as NumberNode).value, 200);
+      expect((bindings.get('first') as NumberTerm).value, 100);
+      expect((bindings.get('second') as NumberTerm).value, 200);
     });
   });
 }

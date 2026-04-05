@@ -1,14 +1,14 @@
-### 1. Missing Recursion Depth Tracking in `FunctionNode.apply`
+### 1. Missing Recursion Depth Tracking in `FunctionTerm.apply`
 
-**File**: `lib/compiler/runtime/node.dart`
+**File**: `lib/compiler/runtime/term.dart`
 **Line**: 273 (approx)
 
-- **Issue**: The `FunctionNode.apply` method does not increment or decrement the recursion depth counter. Only `CustomFunctionNode.apply` implements this tracking. However, `FunctionNode.apply` is the primary entry point for all function applications, and it is called by higher-order functions like `list.map`, `list.filter`, and `list.sort`.
+- **Issue**: The `FunctionTerm.apply` method does not increment or decrement the recursion depth counter. Only `CustomFunctionTerm.apply` implements this tracking. However, `FunctionTerm.apply` is the primary entry point for all function applications, and it is called by higher-order functions like `list.map`, `list.filter`, and `list.sort`.
 - **Impact**: Mutual recursion between a custom function and a higher-order library function (or another native function that calls `apply`) will bypass the recursion limit, potentially leading to a stack overflow and crashing the process.
 - **Fix**:
 
 ```dart
-  Node apply(List<Node> arguments) {
+  Term apply(List<Term> arguments) {
     if (parameters.length != arguments.length) {
       throw InvalidArgumentCountError(
         function: name,
@@ -17,7 +17,7 @@
       );
     }
 
-    FunctionNode.incrementDepth();
+    FunctionTerm.incrementDepth();
     try {
       final Bindings bindings = Bindings.from(
         parameters: parameters,
@@ -26,12 +26,12 @@
 
       return substitute(bindings).reduce();
     } finally {
-      FunctionNode.decrementDepth();
+      FunctionTerm.decrementDepth();
     }
   }
 ```
 
-_Note: The `CustomFunctionNode.apply` override should then be removed as it would be redundant._
+_Note: The `CustomFunctionTerm.apply` override should then be removed as it would be redundant._
 
 **Follow-up**:
 
@@ -46,9 +46,9 @@ _Note: The `CustomFunctionNode.apply` override should then be removed as it woul
 
 **Files**: `lib/compiler/library/vector/vector_magnitude.dart`, `lib/compiler/library/vector/vector_angle.dart`, `lib/compiler/library/vector/vector_normalize.dart`
 
-- **Issue**: These functions call `a.native()` to perform calculations. `a.native()` recursively converts the entire `VectorNode` (a list of `Node`s) into a `List<dynamic>` of native types. In `VectorNormalize`, `a.native()` is called, and then `VectorMagnitude.execute(a)` is called, which calls `a.native()` _again_.
+- **Issue**: These functions call `a.native()` to perform calculations. `a.native()` recursively converts the entire `VectorTerm` (a list of `Term`s) into a `List<dynamic>` of native types. In `VectorNormalize`, `a.native()` is called, and then `VectorMagnitude.execute(a)` is called, which calls `a.native()` _again_.
 - **Impact**: Significant performance penalty and unnecessary memory allocations on "hot paths" for vector math, especially for large vectors or in tight loops.
-- **Fix**: Access `a.value` directly (which is `List<Node>`) and reduce/extract native values during the loop, or ensure `a.native()` is only called once.
+- **Fix**: Access `a.value` directly (which is `List<Term>`) and reduce/extract native values during the loop, or ensure `a.native()` is only called once.
 
 **Follow-up**:
 

@@ -1,7 +1,7 @@
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/models/location.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
@@ -88,17 +88,17 @@ void checkResult(RuntimeFacade runtime, Object result) {
   expect(runtime.executeMain(), result.toString());
 }
 
-/// Like [checkResult] but also asserts the runtime node type matches [T].
+/// Like [checkResult] but also asserts the runtime term type matches [T].
 ///
 /// This catches cases where toString() representations collide across types
-/// (e.g. NumberNode(1) vs StringNode("1")).
-void checkTypedResult<T extends Node>(RuntimeFacade runtime, Object result) {
+/// (e.g. NumberTerm(1) vs StringTerm("1")).
+void checkTypedResult<T extends Term>(RuntimeFacade runtime, Object result) {
   final Expression expression = runtime.mainExpression([]);
-  final Node node = runtime.evaluateToNode(expression);
+  final Term term = runtime.evaluateToTerm(expression);
   expect(
-    node,
+    term,
     isA<T>(),
-    reason: 'Expected node type $T but got ${node.runtimeType}',
+    reason: 'Expected term type $T but got ${term.runtimeType}',
   );
   expect(runtime.executeMain(), result.toString());
 }

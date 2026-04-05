@@ -2,9 +2,9 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/platform/base/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class DirectoryCreate extends NativeFunctionNode {
+class DirectoryCreate extends NativeFunctionTerm {
   const DirectoryCreate()
     : super(
         name: 'directory.create',
@@ -14,28 +14,28 @@ class DirectoryCreate extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is DirectoryNode) {
+    if (a is DirectoryTerm) {
       final bool created = PlatformInterface().directory.create(a.value);
 
-      return BooleanNode(created);
+      return BooleanTerm(created);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

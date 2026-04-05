@@ -3,7 +3,7 @@ import 'package:primal/compiler/models/parameter.dart';
 /// A phase-agnostic function signature.
 ///
 /// Used during semantic analysis to validate calls without
-/// depending on runtime node types.
+/// depending on runtime term types.
 class FunctionSignature {
   final String name;
   final List<Parameter> parameters;

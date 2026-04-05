@@ -30,8 +30,8 @@ description: Audits the codebase for bugs, inconsistencies, and potential runtim
 ## Focus Area 3: Compiler Pipeline Integrity
 
 - **State Machine Completeness**: For lexical/syntactic analyzers, verify all states handle all possible inputs (no missing transitions that would cause silent failures or infinite loops).
-- **AST Node Consistency**: Verify all `Node` subclasses implement required methods (`reduce()`, `substitute()`, etc.) correctly. Check that `type` getters return the correct `Type`.
-- **Evaluation Safety**: In `NativeFunctionNode` implementations, verify:
+- **AST Term Consistency**: Verify all `Term` subclasses implement required methods (`reduce()`, `substitute()`, etc.) correctly. Check that `type` getters return the correct `Type`.
+- **Evaluation Safety**: In `NativeFunctionTerm` implementations, verify:
   - All arguments are reduced before use (`arguments[i].reduce()`)
   - Type checks match parameter declarations
   - Return types match the documented behavior
@@ -42,7 +42,7 @@ description: Audits the codebase for bugs, inconsistencies, and potential runtim
 ## Focus Area 4: Resource & Performance
 
 - **Unbounded Recursion**: Identify recursive functions (especially in runtime evaluation) that lack depth guards and could cause stack overflow on malicious input.
-- **Inefficient Evaluation**: Flag repeated `.reduce()` calls on the same node (should reduce once and store).
+- **Inefficient Evaluation**: Flag repeated `.reduce()` calls on the same term (should reduce once and store).
 - **String Concatenation in Loops**: Detect string building via `+` in loops (should use `StringBuffer`).
 - **Collection Allocation in Hot Paths**: Find unnecessary `List` or `Map` creation inside `reduce()` methods.
 
@@ -51,7 +51,7 @@ description: Audits the codebase for bugs, inconsistencies, and potential runtim
 ## Focus Area 5: Consistency & Conventions
 
 - **Naming Inconsistencies**: Flag variations in naming patterns (e.g., `numDiv` vs `num_div`, `isEven` vs `is_even`).
-- **Pattern Violations**: Identify library functions that don't follow the `NativeFunctionNode` / `NativeFunctionNodeWithArguments` pattern.
+- **Pattern Violations**: Identify library functions that don't follow the `NativeFunctionTerm` / `NativeFunctionTermWithArguments` pattern.
 - **Parameter Declaration Mismatches**: Verify `Parameter.number()`, `Parameter.string()`, etc. match the actual type checks in `reduce()`.
 - **Missing `const` Constructors**: Flag classes with only `final` fields that should have `const` constructors.
 

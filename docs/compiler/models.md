@@ -64,9 +64,9 @@ A phase-agnostic representation of a function's calling interface:
 
 Used during semantic analysis to validate function calls without depending on runtime types. This enables clean separation between the semantic and runtime phases.
 
-### Relationship to FunctionNode
+### Relationship to FunctionTerm
 
-| Aspect             | FunctionSignature | FunctionNode |
+| Aspect             | FunctionSignature | FunctionTerm |
 | ------------------ | ----------------- | ------------ |
 | Phase              | Semantic          | Runtime      |
 | Purpose            | Call validation   | Execution    |
@@ -74,7 +74,7 @@ Used during semantic analysis to validate function calls without depending on ru
 | Has `substitute()` | No                | Yes          |
 | Location           | `models/`         | `runtime/`   |
 
-`FunctionNode.toSignature()` creates a `FunctionSignature` from a `FunctionNode`.
+`FunctionTerm.toSignature()` creates a `FunctionSignature` from a `FunctionTerm`.
 
 ## Type
 

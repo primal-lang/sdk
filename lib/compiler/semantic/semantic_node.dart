@@ -86,7 +86,7 @@ class SemanticMapNode extends SemanticLiteralNode<List<SemanticMapEntryNode>> {
 ///
 /// The [resolvedSignature] field holds the function signature when the
 /// identifier refers to a known function. This enables static arity checking
-/// and future optimizations without depending on runtime node types.
+/// and future optimizations without depending on runtime term types.
 class SemanticIdentifierNode extends SemanticNode {
   final String name;
   final FunctionSignature? resolvedSignature;

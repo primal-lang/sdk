@@ -1,11 +1,11 @@
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
 class RuntimeInput {
-  final Map<String, FunctionNode> functions;
+  final Map<String, FunctionTerm> functions;
 
   const RuntimeInput(this.functions);
 
   bool containsFunction(String name) => functions.containsKey(name);
 
-  FunctionNode? getFunction(String name) => functions[name];
+  FunctionTerm? getFunction(String name) => functions[name];
 }

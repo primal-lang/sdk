@@ -115,4 +115,4 @@ The semantic analyzer converts expressions directly to semantic IR nodes, preser
 | `IdentifierExpression` | `SemanticIdentifierNode` or `SemanticBoundVariableNode` |
 | `CallExpression`       | `SemanticCallNode`                                      |
 
-The semantic IR is then lowered to runtime nodes (`BooleanNode`, `NumberNode`, etc.) for evaluation. See [semantic.md](semantic.md) for details.
+The semantic IR is then lowered to runtime terms (`BooleanTerm`, `NumberTerm`, etc.) for evaluation. See [semantic.md](semantic.md) for details.

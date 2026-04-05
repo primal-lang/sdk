@@ -1,9 +1,9 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ListSort extends NativeFunctionNode {
+class ListSort extends NativeFunctionTerm {
   const ListSort()
     : super(
         name: 'list.sort',
@@ -14,32 +14,32 @@ class ListSort extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if ((a is ListNode) && (b is FunctionNode)) {
-      final List<Node> result = List<Node>.from(a.value);
+    if ((a is ListTerm) && (b is FunctionTerm)) {
+      final List<Term> result = List<Term>.from(a.value);
 
       result.sort((x, y) {
-        final Node value = b.apply([x, y]);
+        final Term value = b.apply([x, y]);
 
-        if (value is NumberNode) {
+        if (value is NumberTerm) {
           return value.value.toInt();
         } else {
           throw InvalidArgumentTypesError(
@@ -50,7 +50,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         }
       });
 
-      return ListNode(result);
+      return ListTerm(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

@@ -1,10 +1,10 @@
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
 class Mapper {
-  static Map<String, FunctionNode> toMap(List<FunctionNode> functions) {
-    final Map<String, FunctionNode> result = {};
+  static Map<String, FunctionTerm> toMap(List<FunctionTerm> functions) {
+    final Map<String, FunctionTerm> result = {};
 
-    for (final FunctionNode function in functions) {
+    for (final FunctionTerm function in functions) {
       result[function.name] = function;
     }
 

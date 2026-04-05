@@ -231,14 +231,14 @@ import 'package:primal/compiler/library/vector/vector_new.dart';
 import 'package:primal/compiler/library/vector/vector_normalize.dart';
 import 'package:primal/compiler/library/vector/vector_sub.dart';
 import 'package:primal/compiler/models/function_signature.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
 class StandardLibrary {
   /// Returns function signatures for semantic analysis.
   static List<FunctionSignature> getSignatures() =>
       get().map((f) => f.toSignature()).toList();
 
-  static List<FunctionNode> get() => [
+  static List<FunctionTerm> get() => [
     // Arithmetic
     const NumAbs(),
     const NumAdd(),

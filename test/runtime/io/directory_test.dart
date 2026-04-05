@@ -172,7 +172,7 @@ void main() {
           'main = directory.list(directory.fromPath(${primalString(existingDirectory.path)}))',
         );
         final List<dynamic> children =
-            runtime.evaluateToNode(runtime.mainExpression([])).native()
+            runtime.evaluateToTerm(runtime.mainExpression([])).native()
                 as List<dynamic>;
         final List<String> paths = children
             .map((child) => (child as FileSystemEntity).absolute.path)

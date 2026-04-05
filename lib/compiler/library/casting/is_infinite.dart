@@ -1,7 +1,7 @@
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class IsInfinite extends NativeFunctionNode {
+class IsInfinite extends NativeFunctionTerm {
   const IsInfinite()
     : super(
         name: 'is.infinite',
@@ -11,28 +11,28 @@ class IsInfinite extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is NumberNode) {
-      return BooleanNode(a.value.isInfinite);
+    if (a is NumberTerm) {
+      return BooleanTerm(a.value.isInfinite);
     } else {
-      return const BooleanNode(false);
+      return const BooleanTerm(false);
     }
   }
 }

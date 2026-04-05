@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class JsonDecode extends NativeFunctionNode {
+class JsonDecode extends NativeFunctionTerm {
   const JsonDecode()
     : super(
         name: 'json.decode',
@@ -13,25 +13,25 @@ class JsonDecode extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is StringNode) {
+    if (a is StringTerm) {
       final dynamic json;
       try {
         json = jsonDecode(a.value);
@@ -49,15 +49,15 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     }
   }
 
-  Node getValue(dynamic value) {
+  Term getValue(dynamic value) {
     if (value == null) {
       throw const RuntimeError('JSON null values are not supported');
     } else if (value is bool) {
-      return BooleanNode(value);
+      return BooleanTerm(value);
     } else if (value is num) {
-      return NumberNode(value);
+      return NumberTerm(value);
     } else if (value is String) {
-      return StringNode(value);
+      return StringTerm(value);
     } else if (value is List) {
       return getList(value);
     } else if (value is Map) {
@@ -67,19 +67,19 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     }
   }
 
-  ListNode getList(List<dynamic> element) =>
-      ListNode(element.where((e) => e != null).map(getValue).toList());
+  ListTerm getList(List<dynamic> element) =>
+      ListTerm(element.where((e) => e != null).map(getValue).toList());
 
-  MapNode getMap(Map<dynamic, dynamic> element) {
-    final Map<Node, Node> result = {};
+  MapTerm getMap(Map<dynamic, dynamic> element) {
+    final Map<Term, Term> result = {};
 
     element.forEach((key, value) {
       if (value != null) {
-        final Node nodeKey = LiteralNode.from(key);
-        result[nodeKey] = getValue(value);
+        final Term termKey = LiteralTerm.from(key);
+        result[termKey] = getValue(value);
       }
     });
 
-    return MapNode(result);
+    return MapTerm(result);
   }
 }

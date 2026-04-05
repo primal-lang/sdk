@@ -1,8 +1,8 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class SetAdd extends NativeFunctionNode {
+class SetAdd extends NativeFunctionTerm {
   const SetAdd()
     : super(
         name: 'set.add',
@@ -13,25 +13,25 @@ class SetAdd extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 
-  static SetNode execute({
-    required FunctionNode function,
-    required Node a,
-    required Node b,
+  static SetTerm execute({
+    required FunctionTerm function,
+    required Term a,
+    required Term b,
   }) {
-    if (a is SetNode) {
+    if (a is SetTerm) {
       if (a.native().contains(b.native())) {
         return a;
       } else {
-        final Set<Node> set = {...a.value};
+        final Set<Term> set = {...a.value};
         set.add(b);
 
-        return SetNode(set);
+        return SetTerm(set);
       }
     } else {
       throw InvalidArgumentTypesError(
@@ -43,17 +43,17 @@ class SetAdd extends NativeFunctionNode {
   }
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
     return SetAdd.execute(
       function: this,

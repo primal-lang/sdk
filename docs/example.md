@@ -36,7 +36,7 @@ Source Code
  Semantic Analyzer ... Semantic IR with FunctionSignature → compiler/semantic.md
     │
     ▼
- Lowerer ............. Runtime nodes for evaluation       → compiler/semantic.md
+ Lowerer ............. Runtime terms for evaluation       → compiler/semantic.md
     │
     ▼
  Runtime ............. Evaluation via node substitution   → compiler/runtime.md
@@ -890,11 +890,11 @@ IntermediateRepresentation(
 
 3. **Arity validation**: Direct calls (where the callee is an identifier) have their argument count validated at compile time. Indirect calls (e.g., `f()(x)` where `f` returns a function) are deferred to runtime.
 
-4. **Semantic nodes preserve locations**: Unlike the runtime nodes produced later, semantic nodes retain source positions for error reporting and debugging.
+4. **Semantic nodes preserve locations**: Unlike the runtime terms produced later, semantic nodes retain source positions for error reporting and debugging.
 
 5. **Bound variables vs identifiers**: Parameters become `SemanticBoundVariableNode` (a runtime substitution target), while functions become `SemanticIdentifierNode` (a reference to be resolved at runtime).
 
-6. **No runtime dependencies**: The semantic IR uses `FunctionSignature` instead of `FunctionNode`, keeping the semantic phase independent of the runtime system.
+6. **No runtime dependencies**: The semantic IR uses `FunctionSignature` instead of `FunctionTerm`, keeping the semantic phase independent of the runtime system.
 
 ---
 
@@ -902,33 +902,33 @@ IntermediateRepresentation(
 
 **File**: `lib/compiler/lowering/lowerer.dart`
 
-The lowerer converts the semantic IR to runtime nodes for evaluation. This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model.
+The lowerer converts the semantic IR to runtime terms for evaluation. This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model.
 
 ### Transformation
 
 **Input**: `IntermediateRepresentation` (semantic IR with resolved references)
 
-**Output**: `Map<String, FunctionNode>` (runtime functions for evaluation)
+**Output**: `Map<String, FunctionTerm>` (runtime functions for evaluation)
 
 ### Lowering Process
 
 The lowerer operates in two phases:
 
-1. **Function lowering** — Convert each `SemanticFunction` to a `CustomFunctionNode`
-2. **Node lowering** — Recursively convert each `SemanticNode` to its runtime `Node` equivalent
+1. **Function lowering** — Convert each `SemanticFunction` to a `CustomFunctionTerm`
+2. **Term lowering** — Recursively convert each `SemanticNode` to its runtime `Term` equivalent
 
-#### Node Type Mapping
+#### Term Type Mapping
 
-| Semantic Node               | Runtime Node            | Description                                |
+| Semantic Term               | Runtime Term            | Description                                |
 | --------------------------- | ----------------------- | ------------------------------------------ |
-| `SemanticBooleanNode`       | `BooleanNode`           | Boolean literal                            |
-| `SemanticNumberNode`        | `NumberNode`            | Numeric literal                            |
-| `SemanticStringNode`        | `StringNode`            | String literal                             |
-| `SemanticListNode`          | `ListNode`              | List literal with lowered elements         |
-| `SemanticMapNode`           | `MapNode`               | Map literal with lowered entries           |
-| `SemanticIdentifierNode`    | `FunctionReferenceNode` | Function reference with lookup map         |
-| `SemanticBoundVariableNode` | `BoundVariableNode`     | Parameter reference for substitution       |
-| `SemanticCallNode`          | `CallNode`              | Function call with lowered callee and args |
+| `SemanticBooleanNode`       | `BooleanTerm`           | Boolean literal                            |
+| `SemanticNumberNode`        | `NumberTerm`            | Numeric literal                            |
+| `SemanticStringNode`        | `StringTerm`            | String literal                             |
+| `SemanticListNode`          | `ListTerm`              | List literal with lowered elements         |
+| `SemanticMapNode`           | `MapTerm`               | Map literal with lowered entries           |
+| `SemanticIdentifierNode`    | `FunctionReferenceTerm` | Function reference with lookup map         |
+| `SemanticBoundVariableNode` | `BoundVariableTerm`     | Parameter reference for substitution       |
+| `SemanticCallNode`          | `CallTerm`              | Function call with lowered callee and args |
 
 ### Lowering Function 1: `square(n) = n * n`
 
@@ -948,27 +948,27 @@ SemanticFunction(
 
 **Lowering Trace:**
 
-| Step | Semantic Node                    | Action                                         | Runtime Node                            |
+| Step | Semantic Term                    | Action                                         | Runtime Term                            |
 | ---- | -------------------------------- | ---------------------------------------------- | --------------------------------------- |
-| 1    | `SemanticFunction("square")`     | Create `CustomFunctionNode`, lower body        | —                                       |
+| 1    | `SemanticFunction("square")`     | Create `CustomFunctionTerm`, lower body        | —                                       |
 | 2    | `SemanticCallNode`               | Lower callee and arguments                     | —                                       |
-| 3    | `SemanticIdentifierNode("*")`    | Create `FunctionReferenceNode("*", functions)` | `FunctionReferenceNode("*", functions)` |
-| 4    | `SemanticBoundVariableNode("n")` | Create `BoundVariableNode("n")`                | `BoundVariableNode("n")`                |
-| 5    | `SemanticBoundVariableNode("n")` | Create `BoundVariableNode("n")`                | `BoundVariableNode("n")`                |
-| 6    | `SemanticCallNode`               | Assemble `CallNode`                            | `CallNode(callee, arguments)`           |
-| 7    | `SemanticFunction("square")`     | Complete `CustomFunctionNode`                  | `CustomFunctionNode("square", ...)`     |
+| 3    | `SemanticIdentifierNode("*")`    | Create `FunctionReferenceTerm("*", functions)` | `FunctionReferenceTerm("*", functions)` |
+| 4    | `SemanticBoundVariableNode("n")` | Create `BoundVariableTerm("n")`                | `BoundVariableTerm("n")`                |
+| 5    | `SemanticBoundVariableNode("n")` | Create `BoundVariableTerm("n")`                | `BoundVariableTerm("n")`                |
+| 6    | `SemanticCallNode`               | Assemble `CallTerm`                            | `CallTerm(callee, arguments)`           |
+| 7    | `SemanticFunction("square")`     | Complete `CustomFunctionTerm`                  | `CustomFunctionTerm("square", ...)`     |
 
-**Output (Runtime Node):**
+**Output (Runtime Term):**
 
 ```
-CustomFunctionNode(
+CustomFunctionTerm(
   name: "square",
   parameters: [Parameter("n")],
-  node: CallNode(
-    callee: FunctionReferenceNode("*", functions),
+  node: CallTerm(
+    callee: FunctionReferenceTerm("*", functions),
     arguments: [
-      BoundVariableNode("n"),
-      BoundVariableNode("n")
+      BoundVariableTerm("n"),
+      BoundVariableTerm("n")
     ]
   )
 )
@@ -997,39 +997,39 @@ SemanticFunction(
 
 **Lowering Trace:**
 
-| Step | Semantic Node                    | Action                         | Runtime Node                       |
+| Step | Semantic Term                    | Action                         | Runtime Term                       |
 | ---- | -------------------------------- | ------------------------------ | ---------------------------------- |
-| 1    | `SemanticFunction("max")`        | Create `CustomFunctionNode`    | —                                  |
+| 1    | `SemanticFunction("max")`        | Create `CustomFunctionTerm`    | —                                  |
 | 2    | Outer `SemanticCallNode`         | Lower callee and arguments     | —                                  |
-| 3    | `SemanticIdentifierNode("if")`   | Create `FunctionReferenceNode` | `FunctionReferenceNode("if", ...)` |
+| 3    | `SemanticIdentifierNode("if")`   | Create `FunctionReferenceTerm` | `FunctionReferenceTerm("if", ...)` |
 | 4    | Inner `SemanticCallNode`         | Lower condition call           | —                                  |
-| 5    | `SemanticIdentifierNode(">=")`   | Create `FunctionReferenceNode` | `FunctionReferenceNode(">=", ...)` |
-| 6    | `SemanticBoundVariableNode("a")` | Create `BoundVariableNode`     | `BoundVariableNode("a")`           |
-| 7    | `SemanticBoundVariableNode("b")` | Create `BoundVariableNode`     | `BoundVariableNode("b")`           |
-| 8    | Inner `SemanticCallNode`         | Assemble condition `CallNode`  | `CallNode(>=, [a, b])`             |
-| 9    | `SemanticBoundVariableNode("a")` | Create `BoundVariableNode`     | `BoundVariableNode("a")`           |
-| 10   | `SemanticBoundVariableNode("b")` | Create `BoundVariableNode`     | `BoundVariableNode("b")`           |
-| 11   | Outer `SemanticCallNode`         | Assemble outer `CallNode`      | `CallNode(if, [cond, a, b])`       |
-| 12   | `SemanticFunction("max")`        | Complete `CustomFunctionNode`  | `CustomFunctionNode("max", ...)`   |
+| 5    | `SemanticIdentifierNode(">=")`   | Create `FunctionReferenceTerm` | `FunctionReferenceTerm(">=", ...)` |
+| 6    | `SemanticBoundVariableNode("a")` | Create `BoundVariableTerm`     | `BoundVariableTerm("a")`           |
+| 7    | `SemanticBoundVariableNode("b")` | Create `BoundVariableTerm`     | `BoundVariableTerm("b")`           |
+| 8    | Inner `SemanticCallNode`         | Assemble condition `CallTerm`  | `CallTerm(>=, [a, b])`             |
+| 9    | `SemanticBoundVariableNode("a")` | Create `BoundVariableTerm`     | `BoundVariableTerm("a")`           |
+| 10   | `SemanticBoundVariableNode("b")` | Create `BoundVariableTerm`     | `BoundVariableTerm("b")`           |
+| 11   | Outer `SemanticCallNode`         | Assemble outer `CallTerm`      | `CallTerm(if, [cond, a, b])`       |
+| 12   | `SemanticFunction("max")`        | Complete `CustomFunctionTerm`  | `CustomFunctionTerm("max", ...)`   |
 
-**Output (Runtime Node):**
+**Output (Runtime Term):**
 
 ```
-CustomFunctionNode(
+CustomFunctionTerm(
   name: "max",
   parameters: [Parameter("a"), Parameter("b")],
-  node: CallNode(
-    callee: FunctionReferenceNode("if", functions),
+  node: CallTerm(
+    callee: FunctionReferenceTerm("if", functions),
     arguments: [
-      CallNode(                              // condition
-        callee: FunctionReferenceNode(">=", functions),
+      CallTerm(                              // condition
+        callee: FunctionReferenceTerm(">=", functions),
         arguments: [
-          BoundVariableNode("a"),
-          BoundVariableNode("b")
+          BoundVariableTerm("a"),
+          BoundVariableTerm("b")
         ]
       ),
-      BoundVariableNode("a"),                // ifTrue
-      BoundVariableNode("b")                 // ifFalse
+      BoundVariableTerm("a"),                // ifTrue
+      BoundVariableTerm("b")                 // ifFalse
     ]
   )
 )
@@ -1059,38 +1059,38 @@ SemanticFunction(
 
 **Lowering Trace:**
 
-| Step | Semantic Node                      | Action                         | Runtime Node                           |
+| Step | Semantic Term                      | Action                         | Runtime Term                           |
 | ---- | ---------------------------------- | ------------------------------ | -------------------------------------- |
-| 1    | `SemanticFunction("main")`         | Create `CustomFunctionNode`    | —                                      |
+| 1    | `SemanticFunction("main")`         | Create `CustomFunctionTerm`    | —                                      |
 | 2    | Outer `SemanticCallNode`           | Lower callee and arguments     | —                                      |
-| 3    | `SemanticIdentifierNode("max")`    | Create `FunctionReferenceNode` | `FunctionReferenceNode("max", ...)`    |
+| 3    | `SemanticIdentifierNode("max")`    | Create `FunctionReferenceTerm` | `FunctionReferenceTerm("max", ...)`    |
 | 4    | First inner `SemanticCallNode`     | Lower `square(3)`              | —                                      |
-| 5    | `SemanticIdentifierNode("square")` | Create `FunctionReferenceNode` | `FunctionReferenceNode("square", ...)` |
-| 6    | `SemanticNumberNode(3)`            | Create `NumberNode`            | `NumberNode(3)`                        |
-| 7    | First inner `SemanticCallNode`     | Assemble `CallNode`            | `CallNode(square, [3])`                |
+| 5    | `SemanticIdentifierNode("square")` | Create `FunctionReferenceTerm` | `FunctionReferenceTerm("square", ...)` |
+| 6    | `SemanticNumberNode(3)`            | Create `NumberTerm`            | `NumberTerm(3)`                        |
+| 7    | First inner `SemanticCallNode`     | Assemble `CallTerm`            | `CallTerm(square, [3])`                |
 | 8    | Second inner `SemanticCallNode`    | Lower `square(4)`              | —                                      |
-| 9    | `SemanticIdentifierNode("square")` | Create `FunctionReferenceNode` | `FunctionReferenceNode("square", ...)` |
-| 10   | `SemanticNumberNode(4)`            | Create `NumberNode`            | `NumberNode(4)`                        |
-| 11   | Second inner `SemanticCallNode`    | Assemble `CallNode`            | `CallNode(square, [4])`                |
-| 12   | Outer `SemanticCallNode`           | Assemble outer `CallNode`      | `CallNode(max, [sq(3), sq(4)])`        |
-| 13   | `SemanticFunction("main")`         | Complete `CustomFunctionNode`  | `CustomFunctionNode("main", ...)`      |
+| 9    | `SemanticIdentifierNode("square")` | Create `FunctionReferenceTerm` | `FunctionReferenceTerm("square", ...)` |
+| 10   | `SemanticNumberNode(4)`            | Create `NumberTerm`            | `NumberTerm(4)`                        |
+| 11   | Second inner `SemanticCallNode`    | Assemble `CallTerm`            | `CallTerm(square, [4])`                |
+| 12   | Outer `SemanticCallNode`           | Assemble outer `CallTerm`      | `CallTerm(max, [sq(3), sq(4)])`        |
+| 13   | `SemanticFunction("main")`         | Complete `CustomFunctionTerm`  | `CustomFunctionTerm("main", ...)`      |
 
-**Output (Runtime Node):**
+**Output (Runtime Term):**
 
 ```
-CustomFunctionNode(
+CustomFunctionTerm(
   name: "main",
   parameters: [],
-  node: CallNode(
-    callee: FunctionReferenceNode("max", functions),
+  node: CallTerm(
+    callee: FunctionReferenceTerm("max", functions),
     arguments: [
-      CallNode(
-        callee: FunctionReferenceNode("square", functions),
-        arguments: [NumberNode(3)]
+      CallTerm(
+        callee: FunctionReferenceTerm("square", functions),
+        arguments: [NumberTerm(3)]
       ),
-      CallNode(
-        callee: FunctionReferenceNode("square", functions),
-        arguments: [NumberNode(4)]
+      CallTerm(
+        callee: FunctionReferenceTerm("square", functions),
+        arguments: [NumberTerm(4)]
       )
     ]
   )
@@ -1099,77 +1099,77 @@ CustomFunctionNode(
 
 ### Complete Output
 
-The `Lowerer` produces a `Map<String, FunctionNode>` combining custom and standard library functions:
+The `Lowerer` produces a `Map<String, FunctionTerm>` combining custom and standard library functions:
 
 ```
 {
   // Custom functions (lowered from semantic IR)
-  "square": CustomFunctionNode(
+  "square": CustomFunctionTerm(
     name: "square",
     parameters: [Parameter("n")],
-    node: CallNode(FunctionReferenceNode("*"), [BoundVariableNode("n"), BoundVariableNode("n")])
+    node: CallTerm(FunctionReferenceTerm("*"), [BoundVariableTerm("n"), BoundVariableTerm("n")])
   ),
-  "max": CustomFunctionNode(
+  "max": CustomFunctionTerm(
     name: "max",
     parameters: [Parameter("a"), Parameter("b")],
-    node: CallNode(FunctionReferenceNode("if"), [CallNode(...), BoundVariableNode("a"), BoundVariableNode("b")])
+    node: CallTerm(FunctionReferenceTerm("if"), [CallTerm(...), BoundVariableTerm("a"), BoundVariableTerm("b")])
   ),
-  "main": CustomFunctionNode(
+  "main": CustomFunctionTerm(
     name: "main",
     parameters: [],
-    node: CallNode(FunctionReferenceNode("max"), [CallNode(...), CallNode(...)])
+    node: CallTerm(FunctionReferenceTerm("max"), [CallTerm(...), CallTerm(...)])
   ),
 
   // Standard library functions (from StandardLibrary.get())
-  "*": NativeFunctionNode(...),
-  ">=": NativeFunctionNode(...),
-  "if": NativeFunctionNode(...),
+  "*": NativeFunctionTerm(...),
+  ">=": NativeFunctionTerm(...),
+  "if": NativeFunctionTerm(...),
   ... (200+ more)
 }
 ```
 
-### Runtime Node Tree Visualization
+### Runtime Term Tree Visualization
 
 Source locations are stripped; the tree shows only runtime structure.
 
 ```
 square(n) = n * n
 ─────────────────
-      CustomFunctionNode("square")
-      └─ node: CallNode
-         ├─ callee: FunctionReferenceNode("*") → functions map
+      CustomFunctionTerm("square")
+      └─ node: CallTerm
+         ├─ callee: FunctionReferenceTerm("*") → functions map
          └─ arguments:
-            ├─ BoundVariableNode("n")
-            └─ BoundVariableNode("n")
+            ├─ BoundVariableTerm("n")
+            └─ BoundVariableTerm("n")
 
 max(a, b) = if (a >= b) a else b
 ────────────────────────────────
-      CustomFunctionNode("max")
-      └─ node: CallNode
-         ├─ callee: FunctionReferenceNode("if") → functions map
+      CustomFunctionTerm("max")
+      └─ node: CallTerm
+         ├─ callee: FunctionReferenceTerm("if") → functions map
          └─ arguments:
-            ├─ CallNode                    ← condition
-            │  ├─ callee: FunctionReferenceNode(">=") → functions map
+            ├─ CallTerm                    ← condition
+            │  ├─ callee: FunctionReferenceTerm(">=") → functions map
             │  └─ arguments:
-            │     ├─ BoundVariableNode("a")
-            │     └─ BoundVariableNode("b")
-            ├─ BoundVariableNode("a")      ← ifTrue
-            └─ BoundVariableNode("b")      ← ifFalse
+            │     ├─ BoundVariableTerm("a")
+            │     └─ BoundVariableTerm("b")
+            ├─ BoundVariableTerm("a")      ← ifTrue
+            └─ BoundVariableTerm("b")      ← ifFalse
 
 main = max(square(3), square(4))
 ────────────────────────────────
-      CustomFunctionNode("main")
-      └─ node: CallNode
-         ├─ callee: FunctionReferenceNode("max") → functions map
+      CustomFunctionTerm("main")
+      └─ node: CallTerm
+         ├─ callee: FunctionReferenceTerm("max") → functions map
          └─ arguments:
-            ├─ CallNode
-            │  ├─ callee: FunctionReferenceNode("square") → functions map
+            ├─ CallTerm
+            │  ├─ callee: FunctionReferenceTerm("square") → functions map
             │  └─ arguments:
-            │     └─ NumberNode(3)
-            └─ CallNode
-               ├─ callee: FunctionReferenceNode("square") → functions map
+            │     └─ NumberTerm(3)
+            └─ CallTerm
+               ├─ callee: FunctionReferenceTerm("square") → functions map
                └─ arguments:
-                  └─ NumberNode(4)
+                  └─ NumberTerm(4)
 ```
 
 ### Summary
@@ -1177,24 +1177,24 @@ main = max(square(3), square(4))
 | Property                 | Value                        |
 | ------------------------ | ---------------------------- |
 | Input type               | `IntermediateRepresentation` |
-| Output type              | `Map<String, FunctionNode>`  |
+| Output type              | `Map<String, FunctionTerm>`  |
 | Custom functions lowered | 3                            |
 | Stdlib functions added   | 200+                         |
 | Semantic nodes lowered   | 15                           |
-| Runtime nodes created    | 15                           |
+| Runtime terms created    | 15                           |
 | Source locations         | Stripped                     |
 
 ### Key Observations
 
-1. **Location stripping**: All source position information is discarded. Runtime nodes contain only what is needed for evaluation. Error reporting with source locations must use the semantic IR before lowering.
+1. **Location stripping**: All source position information is discarded. Runtime terms contain only what is needed for evaluation. Error reporting with source locations must use the semantic IR before lowering.
 
-2. **Deferred function resolution**: `FunctionReferenceNode` stores a reference to the shared `functions` map rather than the resolved `FunctionNode` directly. This enables forward references and mutual recursion — `main` can reference `square` even if `square` is added to the map after `main` is lowered.
+2. **Deferred function resolution**: `FunctionReferenceTerm` stores a reference to the shared `functions` map rather than the resolved `FunctionTerm` directly. This enables forward references and mutual recursion — `main` can reference `square` even if `square` is added to the map after `main` is lowered.
 
-3. **BoundVariableNode for substitution**: Parameters become `BoundVariableNode` instances that will be replaced during function application via the `substitute()` method.
+3. **BoundVariableTerm for substitution**: Parameters become `BoundVariableTerm` instances that will be replaced during function application via the `substitute()` method.
 
-4. **Unified function map**: Custom functions (`CustomFunctionNode`) and standard library functions (`NativeFunctionNode`) are stored in the same map, enabling uniform lookup during evaluation.
+4. **Unified function map**: Custom functions (`CustomFunctionTerm`) and standard library functions (`NativeFunctionTerm`) are stored in the same map, enabling uniform lookup during evaluation.
 
-5. **Structural preservation**: The tree structure is preserved exactly — only the node types change. A `SemanticCallNode` with three arguments becomes a `CallNode` with three arguments.
+5. **Structural preservation**: The tree structure is preserved exactly — only the node types change. A `SemanticCallNode` with three arguments becomes a `CallTerm` with three arguments.
 
 6. **One-way transformation**: Lowering is irreversible. The semantic IR is the last point where source locations and resolved signatures are available.
 

@@ -1,7 +1,7 @@
 import 'dart:math';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class NumDecimalRandom extends NativeFunctionNode {
+class NumDecimalRandom extends NativeFunctionTerm {
   const NumDecimalRandom()
     : super(
         name: 'num.decimalRandom',
@@ -9,5 +9,5 @@ class NumDecimalRandom extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NumberNode(Random().nextDouble());
+  Term term(List<Term> arguments) => NumberTerm(Random().nextDouble());
 }

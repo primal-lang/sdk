@@ -4,7 +4,7 @@ import 'package:primal/compiler/semantic/semantic_node.dart';
 
 /// A user-defined function after semantic analysis.
 ///
-/// Unlike [CustomFunctionNode] which uses runtime nodes, this class
+/// Unlike [CustomFunctionTerm] which uses runtime terms, this class
 /// preserves source locations and resolved references in its body.
 class SemanticFunction {
   final String name;

@@ -3,9 +3,9 @@ import 'package:primal/compiler/library/set/set_difference.dart';
 import 'package:primal/compiler/library/set/set_remove.dart';
 import 'package:primal/compiler/library/vector/vector_sub.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class OperatorSub extends NativeFunctionNode {
+class OperatorSub extends NativeFunctionTerm {
   const OperatorSub()
     : super(
         name: '-',
@@ -16,40 +16,40 @@ class OperatorSub extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if ((a is NumberNode) && (b is NumberNode)) {
-      return NumberNode(a.value - b.value);
-    } else if ((a is VectorNode) && (b is VectorNode)) {
+    if ((a is NumberTerm) && (b is NumberTerm)) {
+      return NumberTerm(a.value - b.value);
+    } else if ((a is VectorTerm) && (b is VectorTerm)) {
       return VectorSub.execute(
         function: this,
         a: a,
         b: b,
       );
-    } else if ((a is SetNode) && (b is SetNode)) {
+    } else if ((a is SetTerm) && (b is SetTerm)) {
       return SetDifference.execute(
         function: this,
         a: a,
         b: b,
       );
-    } else if ((a is SetNode) && (b is! SetNode)) {
+    } else if ((a is SetTerm) && (b is! SetTerm)) {
       return SetRemove.execute(
         function: this,
         a: a,

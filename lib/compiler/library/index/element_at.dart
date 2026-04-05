@@ -1,9 +1,9 @@
 import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ElementAt extends NativeFunctionNode {
+class ElementAt extends NativeFunctionTerm {
   const ElementAt()
     : super(
         name: '@',
@@ -14,26 +14,26 @@ class ElementAt extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node reduce() {
-    final Node a = arguments[0].reduce();
-    final Node b = arguments[1].reduce();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if ((a is ListNode) && (b is NumberNode)) {
+    if ((a is ListTerm) && (b is NumberTerm)) {
       final int index = b.value.toInt();
       if (index < 0) {
         throw NegativeIndexError(function: name, index: index);
@@ -46,16 +46,16 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         );
       }
       return a.value[index];
-    } else if ((a is MapNode) && (b is LiteralNode)) {
-      final Map<dynamic, Node> map = a.asMapWithKeys();
-      final Node? node = map[b.value];
+    } else if ((a is MapTerm) && (b is LiteralTerm)) {
+      final Map<dynamic, Term> map = a.asMapWithKeys();
+      final Term? term = map[b.value];
 
-      if (node != null) {
-        return node;
+      if (term != null) {
+        return term;
       } else {
         throw ElementNotFoundError(b.value.toString());
       }
-    } else if ((a is StringNode) && (b is NumberNode)) {
+    } else if ((a is StringTerm) && (b is NumberTerm)) {
       final int index = b.value.toInt();
       if (index < 0) {
         throw NegativeIndexError(function: name, index: index);
@@ -68,7 +68,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
           length: chars.length,
         );
       }
-      return StringNode(chars.elementAt(index));
+      return StringTerm(chars.elementAt(index));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

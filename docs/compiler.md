@@ -18,13 +18,13 @@ Source Code
  Semantic Analyzer ... Semantic IR with FunctionSignature → compiler/semantic.md
     |
     v
- Lowerer ............. Runtime nodes for evaluation       → compiler/semantic.md
+ Lowerer ............. Runtime terms for evaluation       → compiler/semantic.md
     |
     v
- Runtime ............. Evaluation via node substitution   → compiler/runtime.md
+ Runtime ............. Evaluation via term substitution   → compiler/runtime.md
 ```
 
-The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateRepresentation` contains semantic IR (with source locations and resolved references). The `Runtime` then lowers this to runtime nodes for execution.
+The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateRepresentation` contains semantic IR (with source locations and resolved references). The `Runtime` then lowers this to runtime terms for execution.
 
 Each pipeline stage is documented in its own file under [`compiler/`](compiler/).
 
@@ -206,7 +206,7 @@ Supporting infrastructure used across compiler stages:
 - **`Stack`** - a generic LIFO data structure.
 - **`FileReader`** - reads source files from disk (CLI only).
 - **`Console`** - wraps platform console with colored output helpers (`warning()`, `error()`).
-- **`Mapper`** - converts a `List<FunctionNode>` into a `Map<String, FunctionNode>` keyed by function name.
+- **`Mapper`** - converts a `List<FunctionTerm>` into a `Map<String, FunctionTerm>` keyed by function name.
 - **String extensions** - character classification methods (`isDigit`, `isLetter`, `isWhitespace`, `isOperator`, `isDelimiter`, etc.) used extensively by the reader and lexer.
 
 ---

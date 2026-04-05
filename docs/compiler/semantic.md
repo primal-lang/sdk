@@ -1,6 +1,6 @@
 # Semantic Analysis
 
-**Files**: `lib/compiler/semantic/semantic_analyzer.dart`, `lib/compiler/semantic/semantic_node.dart`, `lib/compiler/semantic/semantic_function.dart`, `lib/compiler/semantic/lowerer.dart`
+**Files**: `lib/compiler/semantic/semantic_analyzer.dart`, `lib/compiler/semantic/semantic_node.dart`, `lib/compiler/semantic/semantic_function.dart`, `lib/compiler/lowering/lowerer.dart`
 
 The semantic analyzer validates parsed function definitions and produces `IntermediateRepresentation` containing a **semantic IR** (intermediate representation) that preserves source locations and resolved references.
 
@@ -15,7 +15,7 @@ Semantic IR (SemanticNode, SemanticFunction)
     ↓
 Lowerer
     ↓
-Runtime Nodes (Node, CustomFunctionNode)
+Runtime Terms (Term, CustomFunctionTerm)
 ```
 
 ## Semantic Checks
@@ -35,7 +35,7 @@ Nested structures (`SemanticCallNode`, `SemanticListNode`, `SemanticMapNode`) ar
 
 ## Semantic IR
 
-The semantic IR is a bound AST that preserves source information lost in runtime nodes:
+The semantic IR is a bound AST that preserves source information lost in runtime terms:
 
 ### SemanticNode Hierarchy
 
@@ -77,7 +77,7 @@ The output of semantic analysis:
 - `standardLibrarySignatures`: `Map<String, FunctionSignature>` - signatures of built-in functions (without runtime dependencies).
 - `warnings`: `List<GenericWarning>` - any warnings produced during analysis.
 
-The actual runtime `FunctionNode` instances for the standard library are obtained during lowering via `StandardLibrary.get()`, not stored in `IntermediateRepresentation`. This keeps the semantic output free of runtime types.
+The actual runtime `FunctionTerm` instances for the standard library are obtained during lowering via `StandardLibrary.get()`, not stored in `IntermediateRepresentation`. This keeps the semantic output free of runtime types.
 
 Helper methods:
 
@@ -88,50 +88,50 @@ Helper methods:
 
 ## Lowerer
 
-**File**: `lib/compiler/semantic/lowerer.dart`
+**File**: `lib/compiler/lowering/lowerer.dart`
 
-The lowerer converts semantic IR to runtime nodes for evaluation:
+The lowerer converts semantic IR to runtime terms for evaluation:
 
 ```dart
 class Lowerer {
-  CustomFunctionNode lowerFunction(SemanticFunction function);
-  Node lowerNode(SemanticNode node);
+  CustomFunctionTerm lowerFunction(SemanticFunction function);
+  Term lowerTerm(SemanticNode semanticNode);
 }
 ```
 
-- `lowerFunction()` converts user-defined functions to `CustomFunctionNode`.
-- `lowerNode()` converts semantic expressions to runtime `Node` instances.
+- `lowerFunction()` converts user-defined functions to `CustomFunctionTerm`.
+- `lowerTerm()` converts semantic expressions to runtime `Term` instances.
 
-This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model. The lowerer operates only on semantic types (`SemanticNode`, `SemanticFunction`) and produces runtime types (`Node`, `CustomFunctionNode`), maintaining clean phase separation.
+This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model. The lowerer operates only on semantic types (`SemanticNode`, `SemanticFunction`) and produces runtime types (`Term`, `CustomFunctionTerm`), maintaining clean phase separation.
 
-| Semantic Node               | Runtime Node            |
+| Semantic Node               | Runtime Term            |
 | --------------------------- | ----------------------- |
-| `SemanticBooleanNode`       | `BooleanNode`           |
-| `SemanticNumberNode`        | `NumberNode`            |
-| `SemanticStringNode`        | `StringNode`            |
-| `SemanticListNode`          | `ListNode`              |
-| `SemanticMapNode`           | `MapNode`               |
-| `SemanticIdentifierNode`    | `FunctionReferenceNode` |
-| `SemanticBoundVariableNode` | `BoundVariableNode`     |
-| `SemanticCallNode`          | `CallNode`              |
+| `SemanticBooleanNode`       | `BooleanTerm`           |
+| `SemanticNumberNode`        | `NumberTerm`            |
+| `SemanticStringNode`        | `StringTerm`            |
+| `SemanticListNode`          | `ListTerm`              |
+| `SemanticMapNode`           | `MapTerm`               |
+| `SemanticIdentifierNode`    | `FunctionReferenceTerm` |
+| `SemanticBoundVariableNode` | `BoundVariableTerm`     |
+| `SemanticCallNode`          | `CallTerm`              |
 
 ## Phase Boundaries
 
 The semantic phase maintains strict separation from the runtime phase:
 
 - **No runtime imports** - `semantic_node.dart`, `semantic_analyzer.dart`, and `intermediate_representation.dart` do not import from `runtime/`.
-- **FunctionSignature abstraction** - instead of storing `FunctionNode` references, the semantic phase uses `FunctionSignature` for call validation.
-- **Lowering is one-way** - `Lowerer` converts semantic IR to runtime nodes, but never the reverse.
+- **FunctionSignature abstraction** - instead of storing `FunctionTerm` references, the semantic phase uses `FunctionSignature` for call validation.
+- **Lowering is one-way** - `Lowerer` converts semantic IR to runtime terms, but never the reverse.
 
 This separation ensures that:
 
-1. Semantic analysis can be performed without instantiating runtime nodes.
+1. Semantic analysis can be performed without instantiating runtime terms.
 2. The runtime layer remains focused purely on evaluation.
 3. Future optimizations can operate on semantic IR without affecting runtime behavior.
 
 ## Design Rationale
 
-Separating semantic IR from runtime nodes enables:
+Separating semantic IR from runtime terms enables:
 
 - **Source locations** - error messages and diagnostics can point to exact source positions.
 - **Resolved references** - function identifiers are resolved at compile time, enabling static arity checking.

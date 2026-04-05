@@ -206,7 +206,7 @@ void main() {
   });
 
   group('JSON Map Key Handling', () {
-    test('json.decode correctly converts string keys to StringNode', () {
+    test('json.decode correctly converts string keys to StringTerm', () {
       final RuntimeFacade runtime = getRuntime(
         'main = json.decode(\'{"key": "value"}\')',
       );

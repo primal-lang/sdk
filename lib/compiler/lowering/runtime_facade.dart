@@ -1,9 +1,9 @@
 import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/lowering/runtime_input_builder.dart';
 import 'package:primal/compiler/models/function_signature.dart';
-import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
+import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
@@ -57,7 +57,7 @@ class RuntimeFacade {
   bool get hasMain => intermediateRepresentation.containsFunction('main');
 
   Expression mainExpression(List<String> arguments) {
-    final FunctionNode? main = _runtimeInput.getFunction('main');
+    final FunctionTerm? main = _runtimeInput.getFunction('main');
 
     if ((main != null) && main.parameters.isNotEmpty) {
       final String escapedArgs = arguments
@@ -79,22 +79,22 @@ class RuntimeFacade {
   }
 
   String evaluate(Expression expression) {
-    final Node result = evaluateToNode(expression);
+    final Term result = evaluateToTerm(expression);
     return _runtime.format(result.native()).toString();
   }
 
-  /// Evaluates an expression and returns the runtime node.
+  /// Evaluates an expression and returns the runtime term.
   ///
-  /// Used by tests that need to inspect the node type.
-  Node evaluateToNode(Expression expression) {
+  /// Used by tests that need to inspect the term type.
+  Term evaluateToTerm(Expression expression) {
     // Reset recursion depth at the start to clear any stale state from
     // previous failed evaluations.
-    FunctionNode.resetDepth();
+    FunctionTerm.resetDepth();
 
     const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
     final Lowerer lowerer = Lowerer(_runtimeInput.functions);
 
-    // Proper pipeline: Expression → SemanticNode → Node → evaluate
+    // Proper pipeline: Expression → SemanticNode → Term → evaluate
     final SemanticNode semanticNode = analyzer.checkExpression(
       expression: expression,
       currentFunction: '<expression>',
@@ -103,7 +103,7 @@ class RuntimeFacade {
       allSignatures: _allSignatures,
     );
 
-    final Node lowered = lowerer.lowerNode(semanticNode);
+    final Term lowered = lowerer.lowerTerm(semanticNode);
     return lowered.reduce();
   }
 

@@ -1,13 +1,13 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
 class Bindings {
-  final Map<String, Node> data;
+  final Map<String, Term> data;
 
   const Bindings(this.data);
 
-  Node get(String name) {
+  Term get(String name) {
     if (data.containsKey(name)) {
       return data[name]!;
     } else {
@@ -17,9 +17,9 @@ class Bindings {
 
   factory Bindings.from({
     required List<Parameter> parameters,
-    required List<Node> arguments,
+    required List<Term> arguments,
   }) {
-    final Map<String, Node> bindings = {};
+    final Map<String, Term> bindings = {};
 
     for (int i = 0; i < parameters.length; i++) {
       bindings[parameters[i].name] = arguments[i];
