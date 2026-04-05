@@ -4,7 +4,7 @@ library;
 import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/warnings/semantic_warning.dart';
 import 'package:test/test.dart';
@@ -12,9 +12,10 @@ import 'package:test/test.dart';
 import '../helpers/pipeline_helpers.dart';
 
 void main() {
-  group('IntermediateCode', () {
+  group('IntermediateRepresentation', () {
     test('empty() contains standard library signatures', () {
-      final IntermediateCode code = IntermediateCode.empty();
+      final IntermediateRepresentation code =
+          IntermediateRepresentation.empty();
 
       expect(code.standardLibrarySignatures, isNotEmpty);
       expect(code.customFunctions, isEmpty);
@@ -22,7 +23,8 @@ void main() {
     });
 
     test('empty() includes core library signatures', () {
-      final IntermediateCode code = IntermediateCode.empty();
+      final IntermediateRepresentation code =
+          IntermediateRepresentation.empty();
 
       expect(code.standardLibrarySignatures.containsKey('num.add'), isTrue);
       expect(code.standardLibrarySignatures.containsKey('str.length'), isTrue);
@@ -30,7 +32,7 @@ void main() {
     });
 
     test('compiled program includes user-defined functions', () {
-      final IntermediateCode code = getIntermediateCode(
+      final IntermediateRepresentation code = getIntermediateRepresentation(
         'double(x) = x * 2\nmain = double(5)',
       );
 
@@ -41,7 +43,9 @@ void main() {
     test(
       'compiled program preserves standard library alongside user functions',
       () {
-        final IntermediateCode code = getIntermediateCode('main = 42');
+        final IntermediateRepresentation code = getIntermediateRepresentation(
+          'main = 42',
+        );
 
         expect(code.customFunctions.containsKey('main'), isTrue);
         expect(code.standardLibrarySignatures.containsKey('num.add'), isTrue);
@@ -49,7 +53,7 @@ void main() {
     );
 
     test('user function has correct parameter count', () {
-      final IntermediateCode code = getIntermediateCode(
+      final IntermediateRepresentation code = getIntermediateRepresentation(
         'add(x, y) = x + y\nmain = add(1, 2)',
       );
       final SemanticFunction addFn = code.customFunctions['add']!;
@@ -58,7 +62,7 @@ void main() {
     });
 
     test('warnings list populated for unused parameters', () {
-      final IntermediateCode code = getIntermediateCode(
+      final IntermediateRepresentation code = getIntermediateRepresentation(
         'f(x, y) = x\nmain = f(1, 2)',
       );
 
@@ -71,7 +75,7 @@ void main() {
     });
 
     test('warnings list empty when all parameters are used', () {
-      final IntermediateCode code = getIntermediateCode(
+      final IntermediateRepresentation code = getIntermediateRepresentation(
         'add(x, y) = x + y\nmain = add(1, 2)',
       );
 
@@ -79,7 +83,7 @@ void main() {
     });
 
     test('multiple unused parameters generate multiple warnings', () {
-      final IntermediateCode code = getIntermediateCode(
+      final IntermediateRepresentation code = getIntermediateRepresentation(
         'f(x, y, z) = 42\nmain = f(1, 2, 3)',
       );
 
@@ -87,14 +91,18 @@ void main() {
     });
 
     test('custom function is a SemanticFunction', () {
-      final IntermediateCode code = getIntermediateCode('main = 42');
+      final IntermediateRepresentation code = getIntermediateRepresentation(
+        'main = 42',
+      );
       final SemanticFunction mainFn = code.customFunctions['main']!;
 
       expect(mainFn, isA<SemanticFunction>());
     });
 
     test('lowered custom function is a CustomFunctionNode', () {
-      final IntermediateCode code = getIntermediateCode('main = 42');
+      final IntermediateRepresentation code = getIntermediateRepresentation(
+        'main = 42',
+      );
       final SemanticFunction mainFn = code.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
       final CustomFunctionNode lowered = lowerer.lowerFunction(mainFn);
@@ -103,7 +111,9 @@ void main() {
     });
 
     test('standard library signature is a FunctionSignature', () {
-      final IntermediateCode code = getIntermediateCode('main = 42');
+      final IntermediateRepresentation code = getIntermediateRepresentation(
+        'main = 42',
+      );
       final FunctionSignature? numAddSig = code.getStandardLibrarySignature(
         'num.add',
       );
@@ -113,32 +123,40 @@ void main() {
     });
 
     test('parameterless function has empty parameter list', () {
-      final IntermediateCode code = getIntermediateCode('main = 42');
+      final IntermediateRepresentation code = getIntermediateRepresentation(
+        'main = 42',
+      );
       final SemanticFunction mainFn = code.customFunctions['main']!;
 
       expect(mainFn.parameters, isEmpty);
     });
 
     test('containsFunction returns true for custom functions', () {
-      final IntermediateCode code = getIntermediateCode('main = 42');
+      final IntermediateRepresentation code = getIntermediateRepresentation(
+        'main = 42',
+      );
 
       expect(code.containsFunction('main'), isTrue);
     });
 
     test('containsFunction returns true for standard library functions', () {
-      final IntermediateCode code = getIntermediateCode('main = 42');
+      final IntermediateRepresentation code = getIntermediateRepresentation(
+        'main = 42',
+      );
 
       expect(code.containsFunction('num.add'), isTrue);
     });
 
     test('containsFunction returns false for unknown functions', () {
-      final IntermediateCode code = getIntermediateCode('main = 42');
+      final IntermediateRepresentation code = getIntermediateRepresentation(
+        'main = 42',
+      );
 
       expect(code.containsFunction('unknown'), isFalse);
     });
 
     test('allFunctionNames includes both custom and standard library', () {
-      final IntermediateCode code = getIntermediateCode(
+      final IntermediateRepresentation code = getIntermediateRepresentation(
         'double(x) = x * 2\nmain = double(5)',
       );
 

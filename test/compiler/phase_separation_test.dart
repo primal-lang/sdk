@@ -46,7 +46,7 @@ void main() {
     test('semantic core does not import from runtime', () {
       // These files bridge semantic → runtime and legitimately import runtime:
       // - lowerer.dart: converts SemanticNode → Node
-      // - runtime_input_builder.dart: builds RuntimeInput from IntermediateCode
+      // - runtime_input_builder.dart: builds RuntimeInput from IntermediateRepresentation
       // - runtime_facade.dart: orchestrates runtime execution
       final List<String> violations = _checkImports(
         'lib/compiler/semantic',

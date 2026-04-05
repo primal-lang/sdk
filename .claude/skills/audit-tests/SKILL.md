@@ -158,7 +158,7 @@ Generate a summary report in this format:
 After generating the report, implement missing tests to achieve 100% coverage:
 
 1. **Prioritize by coverage impact**: Start with files that have the lowest coverage
-2. **Follow existing patterns**: Use the same test helpers (`getTokens`, `getFunctions`, `getIntermediateCode`, `getRuntime`, `checkResult`, `checkTokens`, etc.)
+2. **Follow existing patterns**: Use the same test helpers (`getTokens`, `getFunctions`, `getIntermediateRepresentation`, `getRuntime`, `checkResult`, `checkTokens`, etc.)
 3. **Use existing test structure**:
    - Place compiler tests in `test/compiler/`
    - Place runtime tests in `test/runtime/` organized by category

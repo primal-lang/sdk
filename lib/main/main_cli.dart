@@ -1,6 +1,6 @@
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
@@ -61,9 +61,10 @@ void runCli(
       compileWatch.start();
     }
 
-    final IntermediateCode intermediateCode = remainingArgs.isNotEmpty
+    final IntermediateRepresentation intermediateRepresentation =
+        remainingArgs.isNotEmpty
         ? compiler.compile(sourceReader(remainingArgs[0]))
-        : IntermediateCode.empty();
+        : IntermediateRepresentation.empty();
 
     if (debug && remainingArgs.isNotEmpty) {
       compileWatch.stop();
@@ -72,12 +73,12 @@ void runCli(
       );
     }
 
-    for (final GenericWarning warning in intermediateCode.warnings) {
+    for (final GenericWarning warning in intermediateRepresentation.warnings) {
       currentConsole.warning(warning);
     }
 
     final RuntimeFacade runtime = RuntimeFacade(
-      intermediateCode,
+      intermediateRepresentation,
       compiler.expression,
     );
 

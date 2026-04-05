@@ -4,7 +4,7 @@ library;
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:test/test.dart';
 
@@ -12,13 +12,13 @@ void main() {
   const Compiler compiler = Compiler();
 
   group('Compiler.compile()', () {
-    test('Simple program returns IntermediateCode with main', () {
-      final IntermediateCode code = compiler.compile('main = 42');
+    test('Simple program returns IntermediateRepresentation with main', () {
+      final IntermediateRepresentation code = compiler.compile('main = 42');
       expect(code.containsFunction('main'), isTrue);
     });
 
     test('Function definitions create correct functions', () {
-      final IntermediateCode code = compiler.compile(
+      final IntermediateRepresentation code = compiler.compile(
         'double(x) = x * 2\nmain = double(5)',
       );
       expect(code.containsFunction('double'), isTrue);
@@ -40,14 +40,14 @@ void main() {
     });
 
     test('Warnings are populated for unused parameters', () {
-      final IntermediateCode code = compiler.compile(
+      final IntermediateRepresentation code = compiler.compile(
         'f(x, y) = x\nmain = f(1, 2)',
       );
       expect(code.warnings.length, equals(1));
     });
 
     test('Program without main compiles successfully', () {
-      final IntermediateCode code = compiler.compile('f(x) = x * 2');
+      final IntermediateRepresentation code = compiler.compile('f(x) = x * 2');
       expect(code.containsFunction('f'), isTrue);
     });
   });

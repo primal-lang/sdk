@@ -655,13 +655,13 @@ main = max(square(3), square(4))
 
 **File**: `lib/compiler/semantic/semantic_analyzer.dart`
 
-The semantic analyzer validates function definitions and produces `IntermediateCode` containing a **semantic IR** that preserves source locations and resolved references. This stage performs identifier resolution, arity checking, and duplicate detection.
+The semantic analyzer validates function definitions and produces `IntermediateRepresentation` containing a **semantic IR** that preserves source locations and resolved references. This stage performs identifier resolution, arity checking, and duplicate detection.
 
 ### Transformation
 
 **Input**: `List<FunctionDefinition>` (3 function definitions with expression trees)
 
-**Output**: `IntermediateCode` (semantic IR with resolved references)
+**Output**: `IntermediateRepresentation` (semantic IR with resolved references)
 
 ### Two-Pass Analysis
 
@@ -834,10 +834,10 @@ SemanticFunction(
 
 ### Complete Output
 
-The `SemanticAnalyzer` produces an `IntermediateCode` object:
+The `SemanticAnalyzer` produces an `IntermediateRepresentation` object:
 
 ```
-IntermediateCode(
+IntermediateRepresentation(
   customFunctions: {
     "square": SemanticFunction(...),
     "max": SemanticFunction(...),
@@ -873,7 +873,7 @@ IntermediateCode(
 | Property                             | Value                      |
 | ------------------------------------ | -------------------------- |
 | Input type                           | `List<FunctionDefinition>` |
-| Output type                          | `IntermediateCode`         |
+| Output type                          | `IntermediateRepresentation`         |
 | Custom functions analyzed            | 3                          |
 | Standard library functions available | 70+                        |
 | Identifiers resolved                 | 10                         |

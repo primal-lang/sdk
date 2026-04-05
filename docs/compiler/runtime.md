@@ -2,7 +2,7 @@
 
 **Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/node.dart`, `lib/compiler/runtime/bindings.dart`
 
-The runtime evaluates compiled code through **node substitution and reduction**. It receives `IntermediateCode` from the semantic analyzer and lowers semantic IR to runtime nodes for execution.
+The runtime evaluates compiled code through **node substitution and reduction**. It receives `IntermediateRepresentation` from the semantic analyzer and lowers semantic IR to runtime nodes for execution.
 
 ## Initialization
 
@@ -10,10 +10,10 @@ When a `RuntimeFacade` is created, the `RuntimeInputBuilder` constructs a `Runti
 
 1. Standard library functions are fetched from `StandardLibrary.get()` as `FunctionNode` instances and stored in a functions map.
 2. The `Lowerer` is created with access to this functions map.
-3. Each `SemanticFunction` from `IntermediateCode` is lowered to a `CustomFunctionNode` and added to the map.
+3. Each `SemanticFunction` from `IntermediateRepresentation` is lowered to a `CustomFunctionNode` and added to the map.
 4. Function references (`SemanticIdentifierNode`) are lowered to `FunctionRefNode`, which holds the function name and a reference to the shared functions map.
 
-Note: `IntermediateCode` contains only `FunctionSignature` references for the standard library (not `FunctionNode`), keeping the semantic output free of runtime types. The actual runtime nodes are instantiated during this initialization step.
+Note: `IntermediateRepresentation` contains only `FunctionSignature` references for the standard library (not `FunctionNode`), keeping the semantic output free of runtime types. The actual runtime nodes are instantiated during this initialization step.
 
 ## Node Hierarchy
 

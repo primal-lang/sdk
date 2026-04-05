@@ -24,7 +24,7 @@ Source Code
  Runtime ............. Evaluation via node substitution   → compiler/runtime.md
 ```
 
-The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateCode` contains semantic IR (with source locations and resolved references). The `Runtime` then lowers this to runtime nodes for execution.
+The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateRepresentation` contains semantic IR (with source locations and resolved references). The `Runtime` then lowers this to runtime nodes for execution.
 
 Each pipeline stage is documented in its own file under [`compiler/`](compiler/).
 
@@ -188,7 +188,7 @@ Exposes the compiler as a set of JavaScript-callable functions via Dart's JS int
 - `runtimeHasMain(code)` - checks if a main function exists.
 - `runtimeExecuteMain(code)` - executes the main function.
 - `runtimeReduce(code, expression)` - evaluates an expression.
-- `intermediateCodeEmpty()` - returns an empty intermediate code handle.
+- `intermediateRepresentationEmpty()` - returns an empty intermediate representation handle.
 - `disposeCode(code)` - frees a compiled code handle.
 - `disposeExpression(expression)` - frees a parsed expression handle.
 

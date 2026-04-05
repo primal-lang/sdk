@@ -4,7 +4,7 @@ import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
@@ -13,21 +13,21 @@ import 'package:primal/compiler/syntactic/expression.dart';
 typedef ExpressionParser = Expression Function(String input);
 
 class RuntimeFacade {
-  final IntermediateCode intermediateCode;
+  final IntermediateRepresentation intermediateRepresentation;
   final ExpressionParser _parseExpression;
   final RuntimeInput _runtimeInput;
   final Runtime _runtime;
   final Map<String, FunctionSignature> _allSignatures;
 
   RuntimeFacade._internal(
-    this.intermediateCode,
+    this.intermediateRepresentation,
     this._parseExpression,
     this._runtimeInput,
     this._allSignatures,
   ) : _runtime = Runtime(_runtimeInput);
 
   factory RuntimeFacade(
-    IntermediateCode code,
+    IntermediateRepresentation code,
     ExpressionParser parseExpression,
   ) {
     final RuntimeInput input = const RuntimeInputBuilder().build(code);
@@ -45,7 +45,7 @@ class RuntimeFacade {
     return RuntimeFacade._internal(code, parseExpression, input, allSignatures);
   }
 
-  bool get hasMain => intermediateCode.containsFunction('main');
+  bool get hasMain => intermediateRepresentation.containsFunction('main');
 
   Expression mainExpression(List<String> arguments) {
     final FunctionNode? main = _runtimeInput.getFunction('main');

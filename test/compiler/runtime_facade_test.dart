@@ -3,7 +3,7 @@ library;
 
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:test/test.dart';
 import '../helpers/pipeline_helpers.dart';
@@ -25,7 +25,7 @@ void main() {
 
       test('returns false for empty intermediate code', () {
         final RuntimeFacade runtime = RuntimeFacade(
-          IntermediateCode.empty(),
+          IntermediateRepresentation.empty(),
           compiler.expression,
         );
         expect(runtime.hasMain, false);
@@ -54,7 +54,7 @@ void main() {
     group('evaluate', () {
       test('evaluates simple expression', () {
         final RuntimeFacade runtime = RuntimeFacade(
-          IntermediateCode.empty(),
+          IntermediateRepresentation.empty(),
           compiler.expression,
         );
         final Expression expression = getExpression('1 + 2');
@@ -69,7 +69,7 @@ void main() {
 
       test('evaluates nested expressions', () {
         final RuntimeFacade runtime = RuntimeFacade(
-          IntermediateCode.empty(),
+          IntermediateRepresentation.empty(),
           compiler.expression,
         );
         final Expression expression = getExpression('(1 + 2) * (3 + 4)');

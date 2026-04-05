@@ -2,7 +2,7 @@
 
 **Files**: `lib/compiler/semantic/semantic_analyzer.dart`, `lib/compiler/semantic/semantic_node.dart`, `lib/compiler/semantic/semantic_function.dart`, `lib/compiler/semantic/lowerer.dart`
 
-The semantic analyzer validates parsed function definitions and produces `IntermediateCode` containing a **semantic IR** (intermediate representation) that preserves source locations and resolved references.
+The semantic analyzer validates parsed function definitions and produces `IntermediateRepresentation` containing a **semantic IR** (intermediate representation) that preserves source locations and resolved references.
 
 ## Pipeline Position
 
@@ -69,7 +69,7 @@ Represents a user-defined function with its semantic body and source location.
 
 ## Intermediate Code
 
-**File**: `lib/compiler/semantic/intermediate_code.dart`
+**File**: `lib/compiler/semantic/intermediate_representation.dart`
 
 The output of semantic analysis:
 
@@ -77,7 +77,7 @@ The output of semantic analysis:
 - `standardLibrarySignatures`: `Map<String, FunctionSignature>` - signatures of built-in functions (without runtime dependencies).
 - `warnings`: `List<GenericWarning>` - any warnings produced during analysis.
 
-The actual runtime `FunctionNode` instances for the standard library are obtained during lowering via `StandardLibrary.get()`, not stored in `IntermediateCode`. This keeps the semantic output free of runtime types.
+The actual runtime `FunctionNode` instances for the standard library are obtained during lowering via `StandardLibrary.get()`, not stored in `IntermediateRepresentation`. This keeps the semantic output free of runtime types.
 
 Helper methods:
 
@@ -119,7 +119,7 @@ This pass strips source locations and produces the minimal runtime representatio
 
 The semantic phase maintains strict separation from the runtime phase:
 
-- **No runtime imports** - `semantic_node.dart`, `semantic_analyzer.dart`, and `intermediate_code.dart` do not import from `runtime/`.
+- **No runtime imports** - `semantic_node.dart`, `semantic_analyzer.dart`, and `intermediate_representation.dart` do not import from `runtime/`.
 - **FunctionSignature abstraction** - instead of storing `FunctionNode` references, the semantic phase uses `FunctionSignature` for call validation.
 - **Lowering is one-way** - `Lowerer` converts semantic IR to runtime nodes, but never the reverse.
 

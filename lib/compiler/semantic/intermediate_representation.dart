@@ -8,18 +8,18 @@ import 'package:primal/compiler/warnings/generic_warning.dart';
 /// Contains user-defined functions as [SemanticFunction] (with source locations
 /// and resolved references) and standard library signatures for validation.
 /// Runtime nodes are obtained separately during the lowering phase.
-class IntermediateCode {
+class IntermediateRepresentation {
   final Map<String, SemanticFunction> customFunctions;
   final Map<String, FunctionSignature> standardLibrarySignatures;
   final List<GenericWarning> warnings;
 
-  IntermediateCode({
+  IntermediateRepresentation({
     required this.customFunctions,
     required this.standardLibrarySignatures,
     required this.warnings,
   });
 
-  factory IntermediateCode.empty() => IntermediateCode(
+  factory IntermediateRepresentation.empty() => IntermediateRepresentation(
     customFunctions: {},
     standardLibrarySignatures: {
       for (final FunctionSignature sig in StandardLibrary.getSignatures())

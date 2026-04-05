@@ -3,7 +3,7 @@ import 'package:primal/compiler/library/standard_library.dart';
 import 'package:primal/compiler/models/analyzer.dart';
 import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
@@ -12,11 +12,11 @@ import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/compiler/warnings/semantic_warning.dart';
 
 class SemanticAnalyzer
-    extends Analyzer<List<FunctionDefinition>, IntermediateCode> {
+    extends Analyzer<List<FunctionDefinition>, IntermediateRepresentation> {
   const SemanticAnalyzer(super.input);
 
   @override
-  IntermediateCode analyze() {
+  IntermediateRepresentation analyze() {
     final List<GenericWarning> warnings = [];
 
     // Get standard library signatures for semantic analysis
@@ -96,7 +96,7 @@ class SemanticAnalyzer
       );
     }
 
-    return IntermediateCode(
+    return IntermediateRepresentation(
       customFunctions: customFunctions,
       standardLibrarySignatures: standardLibrarySignatures,
       warnings: warnings,
