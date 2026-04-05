@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class QueueIsEmpty extends NativeFunctionNode {
-  QueueIsEmpty()
+  const QueueIsEmpty()
     : super(
         name: 'queue.isEmpty',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );

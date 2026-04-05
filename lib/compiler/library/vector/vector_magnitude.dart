@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class VectorMagnitude extends NativeFunctionNode {
-  VectorMagnitude()
+  const VectorMagnitude()
     : super(
         name: 'vector.magnitude',
-        parameters: [
+        parameters: const [
           Parameter.vector('a'),
         ],
       );

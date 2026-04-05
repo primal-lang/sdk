@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class SetNew extends NativeFunctionNode {
-  SetNew()
+  const SetNew()
     : super(
         name: 'set.new',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
         ],
       );

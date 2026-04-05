@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StackPeek extends NativeFunctionNode {
-  StackPeek()
+  const StackPeek()
     : super(
         name: 'stack.peek',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );

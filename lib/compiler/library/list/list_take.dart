@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListTake extends NativeFunctionNode {
-  ListTake()
+  const ListTake()
     : super(
         name: 'list.take',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),
         ],

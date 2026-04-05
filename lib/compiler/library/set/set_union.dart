@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class SetUnion extends NativeFunctionNode {
-  SetUnion()
+  const SetUnion()
     : super(
         name: 'set.union',
-        parameters: [
+        parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),
         ],

@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrRemoveAt extends NativeFunctionNode {
-  StrRemoveAt()
+  const StrRemoveAt()
     : super(
         name: 'str.removeAt',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),
         ],

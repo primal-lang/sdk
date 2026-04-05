@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryRename extends NativeFunctionNode {
-  DirectoryRename()
+  const DirectoryRename()
     : super(
         name: 'directory.rename',
-        parameters: [
+        parameters: const [
           Parameter.directory('a'),
           Parameter.string('b'),
         ],

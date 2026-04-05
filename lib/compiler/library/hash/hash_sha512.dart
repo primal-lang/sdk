@@ -6,10 +6,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class HashSha512 extends NativeFunctionNode {
-  HashSha512()
+  const HashSha512()
     : super(
         name: 'hash.sha512',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

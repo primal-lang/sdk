@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class VectorAdd extends NativeFunctionNode {
-  VectorAdd()
+  const VectorAdd()
     : super(
         name: 'vector.add',
-        parameters: [
+        parameters: const [
           Parameter.vector('a'),
           Parameter.vector('b'),
         ],

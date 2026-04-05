@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrDrop extends NativeFunctionNode {
-  StrDrop()
+  const StrDrop()
     : super(
         name: 'str.drop',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),
         ],

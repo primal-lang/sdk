@@ -9,75 +9,44 @@ class Parameter {
     required this.type,
   });
 
-  factory Parameter.boolean(String name) => Parameter._(
-    name: name,
-    type: const BooleanType(),
-  );
+  const Parameter.boolean(String name)
+    : this._(name: name, type: const BooleanType());
 
-  factory Parameter.number(String name) => Parameter._(
-    name: name,
-    type: const NumberType(),
-  );
+  const Parameter.number(String name)
+    : this._(name: name, type: const NumberType());
 
-  factory Parameter.string(String name) => Parameter._(
-    name: name,
-    type: const StringType(),
-  );
+  const Parameter.string(String name)
+    : this._(name: name, type: const StringType());
 
-  factory Parameter.file(String name) => Parameter._(
-    name: name,
-    type: const FileType(),
-  );
+  const Parameter.file(String name)
+    : this._(name: name, type: const FileType());
 
-  factory Parameter.directory(String name) => Parameter._(
-    name: name,
-    type: const DirectoryType(),
-  );
+  const Parameter.directory(String name)
+    : this._(name: name, type: const DirectoryType());
 
-  factory Parameter.timestamp(String name) => Parameter._(
-    name: name,
-    type: const TimestampType(),
-  );
+  const Parameter.timestamp(String name)
+    : this._(name: name, type: const TimestampType());
 
-  factory Parameter.list(String name) => Parameter._(
-    name: name,
-    type: const ListType(),
-  );
+  const Parameter.list(String name)
+    : this._(name: name, type: const ListType());
 
-  factory Parameter.vector(String name) => Parameter._(
-    name: name,
-    type: const VectorType(),
-  );
+  const Parameter.vector(String name)
+    : this._(name: name, type: const VectorType());
 
-  factory Parameter.set(String name) => Parameter._(
-    name: name,
-    type: const SetType(),
-  );
+  const Parameter.set(String name) : this._(name: name, type: const SetType());
 
-  factory Parameter.stack(String name) => Parameter._(
-    name: name,
-    type: const StackType(),
-  );
+  const Parameter.stack(String name)
+    : this._(name: name, type: const StackType());
 
-  factory Parameter.queue(String name) => Parameter._(
-    name: name,
-    type: const QueueType(),
-  );
+  const Parameter.queue(String name)
+    : this._(name: name, type: const QueueType());
 
-  factory Parameter.map(String name) => Parameter._(
-    name: name,
-    type: const MapType(),
-  );
+  const Parameter.map(String name) : this._(name: name, type: const MapType());
 
-  factory Parameter.function(String name) => Parameter._(
-    name: name,
-    type: const FunctionType(),
-  );
+  const Parameter.function(String name)
+    : this._(name: name, type: const FunctionType());
 
-  factory Parameter.any(String name) => Parameter._(
-    name: name,
-    type: const AnyType(),
-  );
+  const Parameter.any(String name) : this._(name: name, type: const AnyType());
 
   @override
   String toString() => name;

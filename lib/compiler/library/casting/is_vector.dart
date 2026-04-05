@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsVector extends NativeFunctionNode {
-  IsVector()
+  const IsVector()
     : super(
         name: 'is.vector',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

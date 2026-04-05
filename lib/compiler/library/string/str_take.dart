@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrTake extends NativeFunctionNode {
-  StrTake()
+  const StrTake()
     : super(
         name: 'str.take',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),
         ],

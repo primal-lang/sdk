@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class SetLength extends NativeFunctionNode {
-  SetLength()
+  const SetLength()
     : super(
         name: 'set.length',
-        parameters: [
+        parameters: const [
           Parameter.set('a'),
         ],
       );

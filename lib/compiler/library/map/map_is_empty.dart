@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class MapIsEmpty extends NativeFunctionNode {
-  MapIsEmpty()
+  const MapIsEmpty()
     : super(
         name: 'map.isEmpty',
-        parameters: [
+        parameters: const [
           Parameter.map('a'),
         ],
       );

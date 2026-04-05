@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsFile extends NativeFunctionNode {
-  IsFile()
+  const IsFile()
     : super(
         name: 'is.file',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

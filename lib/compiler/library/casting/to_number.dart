@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ToNumber extends NativeFunctionNode {
-  ToNumber()
+  const ToNumber()
     : super(
         name: 'to.number',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

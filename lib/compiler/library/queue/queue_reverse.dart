@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class QueueReverse extends NativeFunctionNode {
-  QueueReverse()
+  const QueueReverse()
     : super(
         name: 'queue.reverse',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );

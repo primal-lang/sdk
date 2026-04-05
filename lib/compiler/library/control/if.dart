@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class If extends NativeFunctionNode {
-  If()
+  const If()
     : super(
         name: 'if',
-        parameters: [
+        parameters: const [
           Parameter.boolean('a'),
           Parameter.any('b'),
           Parameter.any('c'),

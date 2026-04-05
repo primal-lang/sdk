@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsList extends NativeFunctionNode {
-  IsList()
+  const IsList()
     : super(
         name: 'is.list',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

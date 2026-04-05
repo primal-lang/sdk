@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ToBoolean extends NativeFunctionNode {
-  ToBoolean()
+  const ToBoolean()
     : super(
         name: 'to.boolean',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class CompLt extends NativeFunctionNode {
-  CompLt()
+  const CompLt()
     : super(
         name: 'comp.lt',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.any('b'),
         ],

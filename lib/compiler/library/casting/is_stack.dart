@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsStack extends NativeFunctionNode {
-  IsStack()
+  const IsStack()
     : super(
         name: 'is.stack',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

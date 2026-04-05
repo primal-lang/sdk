@@ -1,10 +1,10 @@
 import 'package:primal/compiler/runtime/node.dart';
 
 class TimeNow extends NativeFunctionNode {
-  TimeNow()
+  const TimeNow()
     : super(
         name: 'time.now',
-        parameters: [],
+        parameters: const [],
       );
 
   @override

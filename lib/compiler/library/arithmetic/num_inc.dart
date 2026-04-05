@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumInc extends NativeFunctionNode {
-  NumInc()
+  const NumInc()
     : super(
         name: 'num.inc',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

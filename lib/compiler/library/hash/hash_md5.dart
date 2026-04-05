@@ -6,10 +6,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class HashMd5 extends NativeFunctionNode {
-  HashMd5()
+  const HashMd5()
     : super(
         name: 'hash.md5',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

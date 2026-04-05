@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrLowercase extends NativeFunctionNode {
-  StrLowercase()
+  const StrLowercase()
     : super(
         name: 'str.lowercase',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

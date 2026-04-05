@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class BoolAnd extends NativeFunctionNode {
-  BoolAnd()
+  const BoolAnd()
     : super(
         name: 'bool.and',
-        parameters: [
+        parameters: const [
           Parameter.boolean('a'),
           Parameter.boolean('b'),
         ],

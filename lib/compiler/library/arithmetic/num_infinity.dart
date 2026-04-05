@@ -1,10 +1,10 @@
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumInfinity extends NativeFunctionNode {
-  NumInfinity()
+  const NumInfinity()
     : super(
         name: 'num.infinity',
-        parameters: [],
+        parameters: const [],
       );
 
   @override

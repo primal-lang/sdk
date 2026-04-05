@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListSet extends NativeFunctionNode {
-  ListSet()
+  const ListSet()
     : super(
         name: 'list.set',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),
           Parameter.any('c'),

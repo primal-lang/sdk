@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrReplace extends NativeFunctionNode {
-  StrReplace()
+  const StrReplace()
     : super(
         name: 'str.replace',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),
           Parameter.string('c'),

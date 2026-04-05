@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryCopy extends NativeFunctionNode {
-  DirectoryCopy()
+  const DirectoryCopy()
     : super(
         name: 'directory.copy',
-        parameters: [
+        parameters: const [
           Parameter.directory('a'),
           Parameter.directory('b'),
         ],

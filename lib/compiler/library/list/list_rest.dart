@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListRest extends NativeFunctionNode {
-  ListRest()
+  const ListRest()
     : super(
         name: 'list.rest',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
         ],
       );

@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StackIsNotEmpty extends NativeFunctionNode {
-  StackIsNotEmpty()
+  const StackIsNotEmpty()
     : super(
         name: 'stack.isNotEmpty',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );

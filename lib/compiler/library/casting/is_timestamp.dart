@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsTimestamp extends NativeFunctionNode {
-  IsTimestamp()
+  const IsTimestamp()
     : super(
         name: 'is.timestamp',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

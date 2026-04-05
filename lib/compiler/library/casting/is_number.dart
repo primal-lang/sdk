@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsNumber extends NativeFunctionNode {
-  IsNumber()
+  const IsNumber()
     : super(
         name: 'is.number',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

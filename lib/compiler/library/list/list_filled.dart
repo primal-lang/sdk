@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListFilled extends NativeFunctionNode {
-  ListFilled()
+  const ListFilled()
     : super(
         name: 'list.filled',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
           Parameter.any('b'),
         ],

@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class TimeMonth extends NativeFunctionNode {
-  TimeMonth()
+  const TimeMonth()
     : super(
         name: 'time.month',
-        parameters: [
+        parameters: const [
           Parameter.timestamp('a'),
         ],
       );

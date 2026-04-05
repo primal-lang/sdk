@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListIndexOf extends NativeFunctionNode {
-  ListIndexOf()
+  const ListIndexOf()
     : super(
         name: 'list.indexOf',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.any('b'),
         ],

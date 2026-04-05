@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class TimeHour extends NativeFunctionNode {
-  TimeHour()
+  const TimeHour()
     : super(
         name: 'time.hour',
-        parameters: [
+        parameters: const [
           Parameter.timestamp('a'),
         ],
       );

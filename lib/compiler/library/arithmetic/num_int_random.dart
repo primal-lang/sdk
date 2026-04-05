@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumIntegerRandom extends NativeFunctionNode {
-  NumIntegerRandom()
+  const NumIntegerRandom()
     : super(
         name: 'num.integerRandom',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),
         ],

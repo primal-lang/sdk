@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListContains extends NativeFunctionNode {
-  ListContains()
+  const ListContains()
     : super(
         name: 'list.contains',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.any('b'),
         ],

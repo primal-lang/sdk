@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsString extends NativeFunctionNode {
-  IsString()
+  const IsString()
     : super(
         name: 'is.string',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

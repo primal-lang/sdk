@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListReduce extends NativeFunctionNode {
-  ListReduce()
+  const ListReduce()
     : super(
         name: 'list.reduce',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.any('b'),
           Parameter.function('c'),

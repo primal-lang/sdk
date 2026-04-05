@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumMul extends NativeFunctionNode {
-  NumMul()
+  const NumMul()
     : super(
         name: 'num.mul',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),
         ],

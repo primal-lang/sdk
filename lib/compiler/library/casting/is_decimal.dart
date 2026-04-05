@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsDecimal extends NativeFunctionNode {
-  IsDecimal()
+  const IsDecimal()
     : super(
         name: 'is.decimal',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

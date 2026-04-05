@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class OperatorNot extends NativeFunctionNode {
-  OperatorNot()
+  const OperatorNot()
     : super(
         name: '!',
-        parameters: [
+        parameters: const [
           Parameter.boolean('a'),
         ],
       );

@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ElementAt extends NativeFunctionNode {
-  ElementAt()
+  const ElementAt()
     : super(
         name: '@',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.any('b'),
         ],

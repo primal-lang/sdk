@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListRemoveAt extends NativeFunctionNode {
-  ListRemoveAt()
+  const ListRemoveAt()
     : super(
         name: 'list.removeAt',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),
         ],

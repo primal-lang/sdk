@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrCompare extends NativeFunctionNode {
-  StrCompare()
+  const StrCompare()
     : super(
         name: 'str.compare',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),
         ],

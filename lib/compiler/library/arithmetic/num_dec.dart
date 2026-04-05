@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumDec extends NativeFunctionNode {
-  NumDec()
+  const NumDec()
     : super(
         name: 'num.dec',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

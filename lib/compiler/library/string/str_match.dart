@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrMatch extends NativeFunctionNode {
-  StrMatch()
+  const StrMatch()
     : super(
         name: 'str.match',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),
         ],

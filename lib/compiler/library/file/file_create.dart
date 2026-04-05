@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class FileCreate extends NativeFunctionNode {
-  FileCreate()
+  const FileCreate()
     : super(
         name: 'file.create',
-        parameters: [
+        parameters: const [
           Parameter.file('a'),
         ],
       );

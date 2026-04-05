@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsMap extends NativeFunctionNode {
-  IsMap()
+  const IsMap()
     : super(
         name: 'is.map',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

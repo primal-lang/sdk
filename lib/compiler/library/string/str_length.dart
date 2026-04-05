@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrLength extends NativeFunctionNode {
-  StrLength()
+  const StrLength()
     : super(
         name: 'str.length',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

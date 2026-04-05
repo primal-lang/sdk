@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrPadRight extends NativeFunctionNode {
-  StrPadRight()
+  const StrPadRight()
     : super(
         name: 'str.padRight',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),
           Parameter.string('c'),

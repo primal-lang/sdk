@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumAbs extends NativeFunctionNode {
-  NumAbs()
+  const NumAbs()
     : super(
         name: 'num.abs',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

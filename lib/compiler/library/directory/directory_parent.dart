@@ -6,10 +6,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryParent extends NativeFunctionNode {
-  DirectoryParent()
+  const DirectoryParent()
     : super(
         name: 'directory.parent',
-        parameters: [
+        parameters: const [
           Parameter.directory('a'),
         ],
       );

@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrSubstring extends NativeFunctionNode {
-  StrSubstring()
+  const StrSubstring()
     : super(
         name: 'str.substring',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),
           Parameter.number('c'),

@@ -6,10 +6,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryList extends NativeFunctionNode {
-  DirectoryList()
+  const DirectoryList()
     : super(
         name: 'directory.list',
-        parameters: [
+        parameters: const [
           Parameter.directory('a'),
         ],
       );

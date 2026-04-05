@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListJoin extends NativeFunctionNode {
-  ListJoin()
+  const ListJoin()
     : super(
         name: 'list.join',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.string('b'),
         ],

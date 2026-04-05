@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListFilter extends NativeFunctionNode {
-  ListFilter()
+  const ListFilter()
     : super(
         name: 'list.filter',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),
         ],

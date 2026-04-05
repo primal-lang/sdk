@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryDelete extends NativeFunctionNode {
-  DirectoryDelete()
+  const DirectoryDelete()
     : super(
         name: 'directory.delete',
-        parameters: [
+        parameters: const [
           Parameter.directory('a'),
         ],
       );

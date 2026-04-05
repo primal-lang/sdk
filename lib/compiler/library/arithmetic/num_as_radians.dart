@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumAsRadians extends NativeFunctionNode {
-  NumAsRadians()
+  const NumAsRadians()
     : super(
         name: 'num.asRadians',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

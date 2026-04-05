@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumMin extends NativeFunctionNode {
-  NumMin()
+  const NumMin()
     : super(
         name: 'num.min',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),
         ],

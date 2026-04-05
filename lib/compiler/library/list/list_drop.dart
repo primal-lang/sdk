@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListDrop extends NativeFunctionNode {
-  ListDrop()
+  const ListDrop()
     : super(
         name: 'list.drop',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),
         ],

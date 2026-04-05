@@ -5,10 +5,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class VectorAngle extends NativeFunctionNode {
-  VectorAngle()
+  const VectorAngle()
     : super(
         name: 'vector.angle',
-        parameters: [
+        parameters: const [
           Parameter.vector('a'),
           Parameter.vector('b'),
         ],

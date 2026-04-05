@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListSublist extends NativeFunctionNode {
-  ListSublist()
+  const ListSublist()
     : super(
         name: 'list.sublist',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),
           Parameter.number('c'),

@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListLength extends NativeFunctionNode {
-  ListLength()
+  const ListLength()
     : super(
         name: 'list.length',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
         ],
       );

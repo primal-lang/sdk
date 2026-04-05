@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class TimeMillisecond extends NativeFunctionNode {
-  TimeMillisecond()
+  const TimeMillisecond()
     : super(
         name: 'time.millisecond',
-        parameters: [
+        parameters: const [
           Parameter.timestamp('a'),
         ],
       );

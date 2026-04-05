@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StackPush extends NativeFunctionNode {
-  StackPush()
+  const StackPush()
     : super(
         name: 'stack.push',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
           Parameter.any('b'),
         ],

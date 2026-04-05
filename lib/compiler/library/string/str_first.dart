@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrFirst extends NativeFunctionNode {
-  StrFirst()
+  const StrFirst()
     : super(
         name: 'str.first',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

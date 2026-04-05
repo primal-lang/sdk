@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class QueueEnqueue extends NativeFunctionNode {
-  QueueEnqueue()
+  const QueueEnqueue()
     : super(
         name: 'queue.enqueue',
-        parameters: [
+        parameters: const [
           Parameter.queue('a'),
           Parameter.any('b'),
         ],

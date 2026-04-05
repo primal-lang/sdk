@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class TimeDay extends NativeFunctionNode {
-  TimeDay()
+  const TimeDay()
     : super(
         name: 'time.day',
-        parameters: [
+        parameters: const [
           Parameter.timestamp('a'),
         ],
       );

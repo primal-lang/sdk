@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class QueueLength extends NativeFunctionNode {
-  QueueLength()
+  const QueueLength()
     : super(
         name: 'queue.length',
-        parameters: [
+        parameters: const [
           Parameter.queue('a'),
         ],
       );

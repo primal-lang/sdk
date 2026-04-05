@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsInfinite extends NativeFunctionNode {
-  IsInfinite()
+  const IsInfinite()
     : super(
         name: 'is.infinite',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

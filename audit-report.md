@@ -1,22 +1,3 @@
-## Info
-
-### 1. Missing `const` constructor on several `NativeFunctionNode` subclasses
-
-**Files**: Multiple files in `lib/compiler/library/`
-
-- **Issue**: Many `NativeFunctionNode` subclasses (e.g., `ListFirst`, `NumAbs`, etc.) define constructors without the `const` keyword, even though they could be const. This is a minor optimization opportunity.
-
-- **Impact**: Minimal - prevents potential compile-time constant folding, but no functional impact.
-
-- **Fix**: Add `const` keyword to constructors that only call super with constant values.
-
-**Follow-up**:
-
-- **Tests**: No tests needed
-- **Docs**: No doc changes needed
-
----
-
 ### 2. Potential string concatenation in hot path (str.removeAt)
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_remove_at.dart`

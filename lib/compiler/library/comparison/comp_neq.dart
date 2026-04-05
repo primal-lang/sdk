@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class CompNeq extends NativeFunctionNode {
-  CompNeq()
+  const CompNeq()
     : super(
         name: 'comp.neq',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.any('b'),
         ],

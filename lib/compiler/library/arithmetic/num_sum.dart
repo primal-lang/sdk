@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumSum extends NativeFunctionNode {
-  NumSum()
+  const NumSum()
     : super(
         name: 'num.sum',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),
         ],

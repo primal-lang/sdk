@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListInsertStart extends NativeFunctionNode {
-  ListInsertStart()
+  const ListInsertStart()
     : super(
         name: 'list.insertStart',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.any('b'),
         ],

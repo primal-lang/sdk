@@ -2,10 +2,10 @@ import 'dart:math';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumDecimalRandom extends NativeFunctionNode {
-  NumDecimalRandom()
+  const NumDecimalRandom()
     : super(
         name: 'num.decimalRandom',
-        parameters: [],
+        parameters: const [],
       );
 
   @override

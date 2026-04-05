@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ToString extends NativeFunctionNode {
-  ToString()
+  const ToString()
     : super(
         name: 'to.string',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

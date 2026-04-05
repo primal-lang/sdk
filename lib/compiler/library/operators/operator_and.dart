@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class OperatorAnd extends NativeFunctionNode {
-  OperatorAnd()
+  const OperatorAnd()
     : super(
         name: '&',
-        parameters: [
+        parameters: const [
           Parameter.boolean('a'),
           Parameter.boolean('b'),
         ],

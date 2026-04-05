@@ -3,10 +3,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class ConsoleRead extends NativeFunctionNode {
-  ConsoleRead()
+  const ConsoleRead()
     : super(
         name: 'console.read',
-        parameters: [],
+        parameters: const [],
       );
 
   @override

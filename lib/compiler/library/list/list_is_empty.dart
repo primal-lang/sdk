@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListIsEmpty extends NativeFunctionNode {
-  ListIsEmpty()
+  const ListIsEmpty()
     : super(
         name: 'list.isEmpty',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
         ],
       );

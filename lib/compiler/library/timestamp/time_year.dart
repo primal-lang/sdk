@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class TimeYear extends NativeFunctionNode {
-  TimeYear()
+  const TimeYear()
     : super(
         name: 'time.year',
-        parameters: [
+        parameters: const [
           Parameter.timestamp('a'),
         ],
       );

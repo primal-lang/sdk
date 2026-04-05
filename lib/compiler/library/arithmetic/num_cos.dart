@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumCos extends NativeFunctionNode {
-  NumCos()
+  const NumCos()
     : super(
         name: 'num.cos',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

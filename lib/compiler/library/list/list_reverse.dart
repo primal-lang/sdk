@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListReverse extends NativeFunctionNode {
-  ListReverse()
+  const ListReverse()
     : super(
         name: 'list.reverse',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
         ],
       );

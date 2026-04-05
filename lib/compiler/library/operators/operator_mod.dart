@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class OperatorMod extends NativeFunctionNode {
-  OperatorMod()
+  const OperatorMod()
     : super(
         name: '%',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),
         ],

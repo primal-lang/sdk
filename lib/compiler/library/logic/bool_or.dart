@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class BoolOr extends NativeFunctionNode {
-  BoolOr()
+  const BoolOr()
     : super(
         name: 'bool.or',
-        parameters: [
+        parameters: const [
           Parameter.boolean('a'),
           Parameter.boolean('b'),
         ],

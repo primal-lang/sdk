@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListInsertEnd extends NativeFunctionNode {
-  ListInsertEnd()
+  const ListInsertEnd()
     : super(
         name: 'list.insertEnd',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.any('b'),
         ],

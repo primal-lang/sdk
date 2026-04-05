@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrSplit extends NativeFunctionNode {
-  StrSplit()
+  const StrSplit()
     : super(
         name: 'str.split',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),
         ],

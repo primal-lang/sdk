@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrConcat extends NativeFunctionNode {
-  StrConcat()
+  const StrConcat()
     : super(
         name: 'str.concat',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),
         ],

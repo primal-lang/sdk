@@ -6,10 +6,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryFromPath extends NativeFunctionNode {
-  DirectoryFromPath()
+  const DirectoryFromPath()
     : super(
         name: 'directory.fromPath',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

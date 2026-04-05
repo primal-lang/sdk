@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StackReverse extends NativeFunctionNode {
-  StackReverse()
+  const StackReverse()
     : super(
         name: 'stack.reverse',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );

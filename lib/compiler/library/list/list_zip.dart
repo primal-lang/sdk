@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListZip extends NativeFunctionNode {
-  ListZip()
+  const ListZip()
     : super(
         name: 'list.zip',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.list('b'),
           Parameter.function('c'),

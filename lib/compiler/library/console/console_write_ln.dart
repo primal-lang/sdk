@@ -4,10 +4,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class ConsoleWriteLn extends NativeFunctionNode {
-  ConsoleWriteLn()
+  const ConsoleWriteLn()
     : super(
         name: 'console.writeLn',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumRound extends NativeFunctionNode {
-  NumRound()
+  const NumRound()
     : super(
         name: 'num.round',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

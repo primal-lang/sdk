@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class SetIsNotEmpty extends NativeFunctionNode {
-  SetIsNotEmpty()
+  const SetIsNotEmpty()
     : super(
         name: 'set.isNotEmpty',
-        parameters: [
+        parameters: const [
           Parameter.set('a'),
         ],
       );

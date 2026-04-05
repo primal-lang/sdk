@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListMap extends NativeFunctionNode {
-  ListMap()
+  const ListMap()
     : super(
         name: 'list.map',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),
         ],

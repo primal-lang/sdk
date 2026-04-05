@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListAny extends NativeFunctionNode {
-  ListAny()
+  const ListAny()
     : super(
         name: 'list.any',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),
         ],

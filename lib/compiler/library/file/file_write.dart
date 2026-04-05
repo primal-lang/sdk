@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class FileWrite extends NativeFunctionNode {
-  FileWrite()
+  const FileWrite()
     : super(
         name: 'file.write',
-        parameters: [
+        parameters: const [
           Parameter.file('a'),
           Parameter.string('b'),
         ],

@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class SetRemove extends NativeFunctionNode {
-  SetRemove()
+  const SetRemove()
     : super(
         name: 'set.remove',
-        parameters: [
+        parameters: const [
           Parameter.set('a'),
           Parameter.any('b'),
         ],

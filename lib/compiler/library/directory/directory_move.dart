@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class DirectoryMove extends NativeFunctionNode {
-  DirectoryMove()
+  const DirectoryMove()
     : super(
         name: 'directory.move',
-        parameters: [
+        parameters: const [
           Parameter.directory('a'),
           Parameter.directory('b'),
         ],

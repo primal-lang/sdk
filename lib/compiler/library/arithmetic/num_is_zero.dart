@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumIsZero extends NativeFunctionNode {
-  NumIsZero()
+  const NumIsZero()
     : super(
         name: 'num.isZero',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

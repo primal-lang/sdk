@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListRemove extends NativeFunctionNode {
-  ListRemove()
+  const ListRemove()
     : super(
         name: 'list.remove',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.any('b'),
         ],

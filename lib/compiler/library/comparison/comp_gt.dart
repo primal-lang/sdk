@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class CompGt extends NativeFunctionNode {
-  CompGt()
+  const CompGt()
     : super(
         name: 'comp.gt',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.any('b'),
         ],

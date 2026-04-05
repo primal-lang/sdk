@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class BoolNot extends NativeFunctionNode {
-  BoolNot()
+  const BoolNot()
     : super(
         name: 'bool.not',
-        parameters: [
+        parameters: const [
           Parameter.boolean('a'),
         ],
       );

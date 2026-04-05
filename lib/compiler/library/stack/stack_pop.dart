@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StackPop extends NativeFunctionNode {
-  StackPop()
+  const StackPop()
     : super(
         name: 'stack.pop',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );

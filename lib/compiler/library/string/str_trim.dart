@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrTrim extends NativeFunctionNode {
-  StrTrim()
+  const StrTrim()
     : super(
         name: 'str.trim',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

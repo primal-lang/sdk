@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrEndsWith extends NativeFunctionNode {
-  StrEndsWith()
+  const StrEndsWith()
     : super(
         name: 'str.endsWith',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),
         ],

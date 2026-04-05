@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class JsonEncode extends NativeFunctionNode {
-  JsonEncode()
+  const JsonEncode()
     : super(
         name: 'json.encode',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class FileRead extends NativeFunctionNode {
-  FileRead()
+  const FileRead()
     : super(
         name: 'file.read',
-        parameters: [
+        parameters: const [
           Parameter.file('a'),
         ],
       );

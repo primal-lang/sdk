@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class MapRemoveAt extends NativeFunctionNode {
-  MapRemoveAt()
+  const MapRemoveAt()
     : super(
         name: 'map.removeAt',
-        parameters: [
+        parameters: const [
           Parameter.map('a'),
           Parameter.number('b'),
         ],

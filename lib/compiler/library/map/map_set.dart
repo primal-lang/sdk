@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class MapSet extends NativeFunctionNode {
-  MapSet()
+  const MapSet()
     : super(
         name: 'map.set',
-        parameters: [
+        parameters: const [
           Parameter.map('a'),
           Parameter.any('b'),
           Parameter.any('c'),

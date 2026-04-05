@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class Throw extends NativeFunctionNode {
-  Throw()
+  const Throw()
     : super(
         name: 'error.throw',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.string('b'),
         ],

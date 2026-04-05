@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class MapLength extends NativeFunctionNode {
-  MapLength()
+  const MapLength()
     : super(
         name: 'map.length',
-        parameters: [
+        parameters: const [
           Parameter.map('a'),
         ],
       );

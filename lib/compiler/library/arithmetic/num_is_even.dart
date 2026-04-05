@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumIsEven extends NativeFunctionNode {
-  NumIsEven()
+  const NumIsEven()
     : super(
         name: 'num.isEven',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class FileCopy extends NativeFunctionNode {
-  FileCopy()
+  const FileCopy()
     : super(
         name: 'file.copy',
-        parameters: [
+        parameters: const [
           Parameter.file('a'),
           Parameter.file('b'),
         ],

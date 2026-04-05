@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class QueuePeek extends NativeFunctionNode {
-  QueuePeek()
+  const QueuePeek()
     : super(
         name: 'queue.peek',
-        parameters: [
+        parameters: const [
           Parameter.queue('a'),
         ],
       );

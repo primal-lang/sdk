@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumIsOdd extends NativeFunctionNode {
-  NumIsOdd()
+  const NumIsOdd()
     : super(
         name: 'num.isOdd',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

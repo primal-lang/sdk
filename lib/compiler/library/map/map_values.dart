@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class MapValues extends NativeFunctionNode {
-  MapValues()
+  const MapValues()
     : super(
         name: 'map.values',
-        parameters: [
+        parameters: const [
           Parameter.map('a'),
         ],
       );

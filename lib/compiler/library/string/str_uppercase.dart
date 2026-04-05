@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrUppercase extends NativeFunctionNode {
-  StrUppercase()
+  const StrUppercase()
     : super(
         name: 'str.uppercase',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

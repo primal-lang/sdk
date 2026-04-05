@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListNone extends NativeFunctionNode {
-  ListNone()
+  const ListNone()
     : super(
         name: 'list.none',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),
         ],

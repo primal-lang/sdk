@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class TimeCompare extends NativeFunctionNode {
-  TimeCompare()
+  const TimeCompare()
     : super(
         name: 'time.compare',
-        parameters: [
+        parameters: const [
           Parameter.timestamp('a'),
           Parameter.timestamp('b'),
         ],

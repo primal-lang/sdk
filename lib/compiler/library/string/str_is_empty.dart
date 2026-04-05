@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrIsEmpty extends NativeFunctionNode {
-  StrIsEmpty()
+  const StrIsEmpty()
     : super(
         name: 'str.isEmpty',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

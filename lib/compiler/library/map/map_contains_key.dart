@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class MapContainsKey extends NativeFunctionNode {
-  MapContainsKey()
+  const MapContainsKey()
     : super(
         name: 'map.containsKey',
-        parameters: [
+        parameters: const [
           Parameter.map('a'),
           Parameter.any('b'),
         ],

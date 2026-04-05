@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ToList extends NativeFunctionNode {
-  ToList()
+  const ToList()
     : super(
         name: 'to.list',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumIsNegative extends NativeFunctionNode {
-  NumIsNegative()
+  const NumIsNegative()
     : super(
         name: 'num.isNegative',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

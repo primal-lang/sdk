@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListConcat extends NativeFunctionNode {
-  ListConcat()
+  const ListConcat()
     : super(
         name: 'list.concat',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.list('b'),
         ],

@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class SetIntersection extends NativeFunctionNode {
-  SetIntersection()
+  const SetIntersection()
     : super(
         name: 'set.intersection',
-        parameters: [
+        parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),
         ],

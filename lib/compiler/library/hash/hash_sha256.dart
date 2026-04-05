@@ -6,10 +6,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class HashSha256 extends NativeFunctionNode {
-  HashSha256()
+  const HashSha256()
     : super(
         name: 'hash.sha256',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class TimeFromIso extends NativeFunctionNode {
-  TimeFromIso()
+  const TimeFromIso()
     : super(
         name: 'time.fromIso',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

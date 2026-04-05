@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class QueueDequeue extends NativeFunctionNode {
-  QueueDequeue()
+  const QueueDequeue()
     : super(
         name: 'queue.dequeue',
-        parameters: [
+        parameters: const [
           Parameter.queue('a'),
         ],
       );

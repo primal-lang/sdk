@@ -6,10 +6,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class FileFromPath extends NativeFunctionNode {
-  FileFromPath()
+  const FileFromPath()
     : super(
         name: 'file.fromPath',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

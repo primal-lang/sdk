@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class VectorNormalize extends NativeFunctionNode {
-  VectorNormalize()
+  const VectorNormalize()
     : super(
         name: 'vector.normalize',
-        parameters: [
+        parameters: const [
           Parameter.vector('a'),
         ],
       );

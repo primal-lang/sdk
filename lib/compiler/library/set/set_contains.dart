@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class SetContains extends NativeFunctionNode {
-  SetContains()
+  const SetContains()
     : super(
         name: 'set.contains',
-        parameters: [
+        parameters: const [
           Parameter.set('a'),
           Parameter.any('b'),
         ],

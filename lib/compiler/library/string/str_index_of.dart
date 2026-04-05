@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrIndexOf extends NativeFunctionNode {
-  StrIndexOf()
+  const StrIndexOf()
     : super(
         name: 'str.indexOf',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),
         ],

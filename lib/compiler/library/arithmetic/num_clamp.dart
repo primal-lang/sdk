@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumClamp extends NativeFunctionNode {
-  NumClamp()
+  const NumClamp()
     : super(
         name: 'num.clamp',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),
           Parameter.number('c'),

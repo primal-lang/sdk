@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class OperatorEq extends NativeFunctionNode {
-  OperatorEq()
+  const OperatorEq()
     : super(
         name: '==',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.any('b'),
         ],

@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsSet extends NativeFunctionNode {
-  IsSet()
+  const IsSet()
     : super(
         name: 'is.set',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

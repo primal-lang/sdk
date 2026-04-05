@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class VectorSub extends NativeFunctionNode {
-  VectorSub()
+  const VectorSub()
     : super(
         name: 'vector.sub',
-        parameters: [
+        parameters: const [
           Parameter.vector('a'),
           Parameter.vector('b'),
         ],

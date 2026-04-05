@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StackLength extends NativeFunctionNode {
-  StackLength()
+  const StackLength()
     : super(
         name: 'stack.length',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );

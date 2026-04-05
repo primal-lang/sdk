@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListFirst extends NativeFunctionNode {
-  ListFirst()
+  const ListFirst()
     : super(
         name: 'list.first',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
         ],
       );

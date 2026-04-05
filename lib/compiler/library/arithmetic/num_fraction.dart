@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumFraction extends NativeFunctionNode {
-  NumFraction()
+  const NumFraction()
     : super(
         name: 'num.fraction',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

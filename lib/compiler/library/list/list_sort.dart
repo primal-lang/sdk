@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListSort extends NativeFunctionNode {
-  ListSort()
+  const ListSort()
     : super(
         name: 'list.sort',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),
         ],

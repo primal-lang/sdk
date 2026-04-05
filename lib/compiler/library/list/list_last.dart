@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class ListLast extends NativeFunctionNode {
-  ListLast()
+  const ListLast()
     : super(
         name: 'list.last',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
         ],
       );

@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsQueue extends NativeFunctionNode {
-  IsQueue()
+  const IsQueue()
     : super(
         name: 'is.queue',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrReverse extends NativeFunctionNode {
-  StrReverse()
+  const StrReverse()
     : super(
         name: 'str.reverse',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

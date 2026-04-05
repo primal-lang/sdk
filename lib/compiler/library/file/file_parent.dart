@@ -6,10 +6,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class FileParent extends NativeFunctionNode {
-  FileParent()
+  const FileParent()
     : super(
         name: 'file.parent',
-        parameters: [
+        parameters: const [
           Parameter.file('a'),
         ],
       );

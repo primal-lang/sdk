@@ -2,10 +2,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class IsBoolean extends NativeFunctionNode {
-  IsBoolean()
+  const IsBoolean()
     : super(
         name: 'is.boolean',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );

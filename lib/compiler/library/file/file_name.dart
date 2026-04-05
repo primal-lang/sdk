@@ -5,10 +5,10 @@ import 'package:primal/compiler/platform/base/platform_cli.dart'
 import 'package:primal/compiler/runtime/node.dart';
 
 class FileName extends NativeFunctionNode {
-  FileName()
+  const FileName()
     : super(
         name: 'file.name',
-        parameters: [
+        parameters: const [
           Parameter.file('a'),
         ],
       );

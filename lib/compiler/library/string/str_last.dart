@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StrLast extends NativeFunctionNode {
-  StrLast()
+  const StrLast()
     : super(
         name: 'str.last',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );

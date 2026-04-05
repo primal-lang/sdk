@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumSqrt extends NativeFunctionNode {
-  NumSqrt()
+  const NumSqrt()
     : super(
         name: 'num.sqrt',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

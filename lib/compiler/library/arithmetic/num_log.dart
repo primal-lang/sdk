@@ -4,10 +4,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class NumLog extends NativeFunctionNode {
-  NumLog()
+  const NumLog()
     : super(
         name: 'num.log',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );

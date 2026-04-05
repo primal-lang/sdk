@@ -3,10 +3,10 @@ import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
 class StackNew extends NativeFunctionNode {
-  StackNew()
+  const StackNew()
     : super(
         name: 'stack.new',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
         ],
       );
