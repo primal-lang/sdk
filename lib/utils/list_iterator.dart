@@ -42,7 +42,9 @@ class ListIterator<T> {
   }
 
   void advance() {
-    _index++;
+    if (hasNext) {
+      _index++;
+    }
   }
 
   void back() {

@@ -159,6 +159,17 @@ void main() {
       expect(iterator.peek, 1);
       expect(iterator.hasNext, true);
     });
+
+    test('advance() at end does not go past bounds', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      iterator.advance();
+      iterator.advance();
+      iterator.advance();
+      expect(iterator.isAtEnd, true);
+      iterator.advance();
+      expect(iterator.isAtEnd, true);
+      expect(iterator.peek, null);
+    });
   });
 
   group('ListIterator - full iteration', () {
