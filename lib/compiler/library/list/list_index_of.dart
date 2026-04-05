@@ -29,15 +29,15 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
+    final Node b = arguments[1].reduce();
 
     if (a is ListNode) {
       for (int i = 0; i < a.value.length; i++) {
         final BooleanNode comparison = CompEq.execute(
           function: this,
-          a: a.value[i].evaluate(),
+          a: a.value[i].reduce(),
           b: b,
         );
 

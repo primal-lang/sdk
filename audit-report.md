@@ -6,6 +6,7 @@
 - **Issue**: The `FunctionNode.apply` method does not increment or decrement the recursion depth counter. Only `CustomFunctionNode.apply` implements this tracking. However, `FunctionNode.apply` is the primary entry point for all function applications, and it is called by higher-order functions like `list.map`, `list.filter`, and `list.sort`.
 - **Impact**: Mutual recursion between a custom function and a higher-order library function (or another native function that calls `apply`) will bypass the recursion limit, potentially leading to a stack overflow and crashing the process.
 - **Fix**:
+
 ```dart
   Node apply(List<Node> arguments) {
     if (parameters.length != arguments.length) {
@@ -23,15 +24,17 @@
         arguments: arguments,
       );
 
-      return substitute(bindings).evaluate();
+      return substitute(bindings).reduce();
     } finally {
       FunctionNode.decrementDepth();
     }
   }
 ```
-*Note: The `CustomFunctionNode.apply` override should then be removed as it would be redundant.*
+
+_Note: The `CustomFunctionNode.apply` override should then be removed as it would be redundant._
 
 **Follow-up**:
+
 - **Tests**: Add a test case with a deeply recursive mutual call between a custom function and `list.map`.
   - Success case: Recursion limit is hit at 1000 and `RecursionLimitError` is thrown.
   - Failure case: Process crashes with `Stack Overflow`.
@@ -43,11 +46,12 @@
 
 **Files**: `lib/compiler/library/vector/vector_magnitude.dart`, `lib/compiler/library/vector/vector_angle.dart`, `lib/compiler/library/vector/vector_normalize.dart`
 
-- **Issue**: These functions call `a.native()` to perform calculations. `a.native()` recursively converts the entire `VectorNode` (a list of `Node`s) into a `List<dynamic>` of native types. In `VectorNormalize`, `a.native()` is called, and then `VectorMagnitude.execute(a)` is called, which calls `a.native()` *again*.
+- **Issue**: These functions call `a.native()` to perform calculations. `a.native()` recursively converts the entire `VectorNode` (a list of `Node`s) into a `List<dynamic>` of native types. In `VectorNormalize`, `a.native()` is called, and then `VectorMagnitude.execute(a)` is called, which calls `a.native()` _again_.
 - **Impact**: Significant performance penalty and unnecessary memory allocations on "hot paths" for vector math, especially for large vectors or in tight loops.
-- **Fix**: Access `a.value` directly (which is `List<Node>`) and evaluate/extract native values during the loop, or ensure `a.native()` is only called once.
+- **Fix**: Access `a.value` directly (which is `List<Node>`) and reduce/extract native values during the loop, or ensure `a.native()` is only called once.
 
 **Follow-up**:
+
 - **Tests**: Performance benchmarks for large vectors.
 - **Docs**: No doc changes needed.
 
@@ -61,6 +65,7 @@
 - **Fix**: Defensive check or pre-validation if possible, though propagation usually works, it's a point of fragility.
 
 **Follow-up**:
+
 - **Tests**: Test `list.sort` where the comparator function triggers a recursion limit.
 - **Docs**: No doc changes needed.
 
@@ -73,6 +78,7 @@
 - **Fix**: Standardize on using `a.value` for metadata (like length) to avoid unnecessary native conversions.
 
 **Follow-up**:
+
 - **Tests**: No new tests needed.
 - **Docs**: No doc changes needed.
 
@@ -87,6 +93,7 @@
 - **Fix**: Add `const` to constructors where all fields are `final`.
 
 **Follow-up**:
+
 - **Tests**: No new tests needed.
 - **Docs**: No doc changes needed.
 
@@ -100,5 +107,6 @@
 - **Fix**: Refactor to pass the `Parameter` list directly if available.
 
 **Follow-up**:
+
 - **Tests**: No new tests needed.
 - **Docs**: No doc changes needed.

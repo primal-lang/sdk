@@ -70,7 +70,7 @@ Used during semantic analysis to validate function calls without depending on ru
 | ------------------ | ----------------- | ------------ |
 | Phase              | Semantic          | Runtime      |
 | Purpose            | Call validation   | Execution    |
-| Has `evaluate()`   | No                | Yes          |
+| Has `reduce()`     | No                | Yes          |
 | Has `substitute()` | No                | Yes          |
 | Location           | `models/`         | `runtime/`   |
 

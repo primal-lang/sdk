@@ -92,8 +92,8 @@ class CompEq extends NativeFunctionNode {
       for (int i = 0; i < listA.length; i++) {
         final BooleanNode comparison = execute(
           function: function,
-          a: listA[i].evaluate(),
-          b: listB[i].evaluate(),
+          a: listA[i].reduce(),
+          b: listB[i].reduce(),
         );
 
         if (!comparison.value) {
@@ -146,8 +146,8 @@ class CompEq extends NativeFunctionNode {
 
         final BooleanNode comparison = execute(
           function: function,
-          a: mapA[key]!.evaluate(),
-          b: mapB[key]!.evaluate(),
+          a: mapA[key]!.reduce(),
+          b: mapB[key]!.reduce(),
         );
 
         if (!comparison.value) {
@@ -168,9 +168,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
+    final Node b = arguments[1].reduce();
 
     return CompEq.execute(
       function: this,

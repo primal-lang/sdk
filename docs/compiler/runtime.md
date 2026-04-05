@@ -21,7 +21,7 @@ All runtime values are nodes. The base `Node` class defines:
 
 - `type` - returns the node's `Type`.
 - `substitute(Bindings)` - replaces bound variables with their argument values.
-- `evaluate()` - reduces the node to a value.
+- `reduce()` - reduces the node to a value.
 - `native()` - converts to a native Dart value.
 
 **Literal nodes** (self-evaluating):
@@ -32,16 +32,16 @@ All runtime values are nodes. The base `Node` class defines:
 
 **Reference nodes**:
 
-- `FunctionReferenceNode(name, functions)` - holds a function name and the functions map; `evaluate()` returns the referenced `FunctionNode`.
+- `FunctionReferenceNode(name, functions)` - holds a function name and the functions map; `reduce()` returns the referenced `FunctionNode`.
 - `BoundVariableNode(name)` - replaced during substitution via bindings.
 
 **Call node**:
-`CallNode(callee, arguments)` - on evaluation, evaluates the callee to a `FunctionNode`, then calls `apply()` with the arguments.
+`CallNode(callee, arguments)` - on evaluation, reduces the callee to a `FunctionNode`, then calls `apply()` with the arguments.
 
 **Function nodes**:
 
 - `FunctionNode` - base, with name and parameters.
-- `CustomFunctionNode` - user-defined; `apply()` substitutes arguments into the body, then evaluates.
+- `CustomFunctionNode` - user-defined; `apply()` substitutes arguments into the body, then reduces.
 - `NativeFunctionNode` - built-in; delegates to a Dart implementation.
 
 ### Native Function Implementation Pattern
@@ -65,7 +65,7 @@ class FunctionName extends NativeFunctionNode {
 // 2. Evaluation class - implements the actual logic
 class _Node extends NativeFunctionNodeWithArguments {
   @override
-  Node evaluate() {
+  Node reduce() {
     // Validate argument types, compute result, return a Node
   }
 }
@@ -75,16 +75,16 @@ class _Node extends NativeFunctionNodeWithArguments {
 
 Function application follows these steps:
 
-1. Evaluate the callee expression to get a `FunctionNode`.
+1. Reduce the callee expression to get a `FunctionNode`.
 2. Create `Bindings` from the function's parameters and the provided arguments.
 3. Substitute all `BoundVariableNode`s in the function body with their bound values.
-4. Evaluate the resulting node.
+4. Reduce the resulting node.
 
 This is a substitution-based evaluation model consistent with lambda calculus beta-reduction.
 
 ## Function Resolution
 
-Function references are resolved at lowering time, not runtime. The `Lowerer` converts `SemanticIdentifierNode` (which contains a resolved `FunctionSignature`) to `FunctionReferenceNode`, passing the shared functions map. At evaluation time, `FunctionReferenceNode.evaluate()` looks up the function in the map.
+Function references are resolved at lowering time, not runtime. The `Lowerer` converts `SemanticIdentifierNode` (which contains a resolved `FunctionSignature`) to `FunctionReferenceNode`, passing the shared functions map. At evaluation time, `FunctionReferenceNode.reduce()` looks up the function in the map.
 
 This approach:
 

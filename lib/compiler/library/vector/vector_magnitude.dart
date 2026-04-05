@@ -50,8 +50,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
 
     return VectorMagnitude.execute(
       function: this,

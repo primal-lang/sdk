@@ -30,9 +30,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
+    final Node b = arguments[1].reduce();
 
     if ((a is DirectoryNode) && (b is DirectoryNode)) {
       final bool copied = PlatformInterface().directory.copy(a.value, b.value);

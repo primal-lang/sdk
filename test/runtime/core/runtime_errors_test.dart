@@ -401,7 +401,7 @@ main = getVal(true)[0]
     );
   });
 
-  group('Runtime.evaluate() Semantic Validation', () {
+  group('Runtime.reduce() Semantic Validation', () {
     const Compiler compiler = Compiler();
 
     test('undefined function throws UndefinedFunctionError', () {

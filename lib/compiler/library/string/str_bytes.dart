@@ -29,8 +29,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
 
     if (a is StringNode) {
       final Uint8List bytes = Uint8List.fromList(utf8.encode(a.value));

@@ -117,7 +117,7 @@ main = foo([2])
       checkResult(runtime, 1);
     });
 
-    test('list.at returns evaluated expression at given index', () {
+    test('list.at returns reduced expression at given index', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.at([0, 2 + 3, 4], 1)',
       );
@@ -275,7 +275,7 @@ main = foo([2])
       checkResult(runtime, true);
     });
 
-    test('list.contains returns true when evaluated expression matches', () {
+    test('list.contains returns true when reduced expression matches', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.contains([1, 2 + 2, 3], 4)',
       );

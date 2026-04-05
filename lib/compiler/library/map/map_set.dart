@@ -29,14 +29,14 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
+    final Node b = arguments[1].reduce();
     final Node c = arguments[2];
 
     if ((a is MapNode) && (b is LiteralNode)) {
       final Map<dynamic, Node> map = a.asMapWithKeys();
-      map[b.value] = c.evaluate();
+      map[b.value] = c.reduce();
 
       final Map<Node, Node> newMap = {};
       map.forEach((key, value) {

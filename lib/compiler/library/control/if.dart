@@ -29,16 +29,16 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
     final Node b = arguments[1];
     final Node c = arguments[2];
 
     if (a is BooleanNode) {
       if (a.value) {
-        return b.evaluate();
+        return b.reduce();
       } else {
-        return c.evaluate();
+        return c.reduce();
       }
     } else {
       throw InvalidArgumentTypesError(

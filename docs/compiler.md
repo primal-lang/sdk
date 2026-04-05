@@ -64,28 +64,28 @@ Type checking is **dynamic** - it happens at runtime when native functions valid
 
 The standard library provides 230+ built-in functions, organized by namespace:
 
-| Namespace    | Count | Examples                                                |
-| ------------ | ----- | ------------------------------------------------------- |
-| `num.*`      | 35    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`           |
-| `str.*`      | 28    | `str.length`, `str.split`, `str.replace`, `str.reverse` |
-| `list.*`     | 31    | `list.map`, `list.filter`, `list.reduce`, `list.sort`   |
-| `bool.*`     | 4     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`           |
-| `comp.*`     | 6     | `comp.eq`, `comp.lt`, `comp.ge`                         |
-| `map.*`      | 9     | `map.at`, `map.set`, `map.keys`, `map.values`           |
-| `set.*`      | 9     | `set.add`, `set.union`, `set.intersection`              |
-| `stack.*`    | 8     | `stack.push`, `stack.pop`, `stack.peek`                 |
-| `queue.*`    | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`          |
-| `vector.*`   | 6     | `vector.add`, `vector.magnitude`, `vector.normalize`    |
-| `time.*`     | 12    | `time.now`, `time.from.iso`, `time.year`                |
-| `file.*`     | 14    | `file.read`, `file.write`, `file.exists`                |
-| `directory.*`| 11    | `directory.create`, `directory.list`, `directory.exists`|
-| `hash.*`     | 4     | `hash.md5`, `hash.sha256`                               |
-| `json.*`     | 2     | `json.encode`, `json.decode`                            |
-| `console.*`  | 3     | `console.write`, `console.read`                         |
-| Casting      | 22    | `is.boolean`, `to.string`, `to.integer`                 |
-| Operators    | 14    | `operator.add`, `operator.eq`, `operator.not`           |
-| Control flow | 2     | `if`, `try`                                             |
-| Other        | 3     | `@`, `env.get`, `error.throw`                           |
+| Namespace     | Count | Examples                                                 |
+| ------------- | ----- | -------------------------------------------------------- |
+| `num.*`       | 35    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`            |
+| `str.*`       | 28    | `str.length`, `str.split`, `str.replace`, `str.reverse`  |
+| `list.*`      | 31    | `list.map`, `list.filter`, `list.reduce`, `list.sort`    |
+| `bool.*`      | 4     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`            |
+| `comp.*`      | 6     | `comp.eq`, `comp.lt`, `comp.ge`                          |
+| `map.*`       | 9     | `map.at`, `map.set`, `map.keys`, `map.values`            |
+| `set.*`       | 9     | `set.add`, `set.union`, `set.intersection`               |
+| `stack.*`     | 8     | `stack.push`, `stack.pop`, `stack.peek`                  |
+| `queue.*`     | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`           |
+| `vector.*`    | 6     | `vector.add`, `vector.magnitude`, `vector.normalize`     |
+| `time.*`      | 12    | `time.now`, `time.from.iso`, `time.year`                 |
+| `file.*`      | 14    | `file.read`, `file.write`, `file.exists`                 |
+| `directory.*` | 11    | `directory.create`, `directory.list`, `directory.exists` |
+| `hash.*`      | 4     | `hash.md5`, `hash.sha256`                                |
+| `json.*`      | 2     | `json.encode`, `json.decode`                             |
+| `console.*`   | 3     | `console.write`, `console.read`                          |
+| Casting       | 22    | `is.boolean`, `to.string`, `to.integer`                  |
+| Operators     | 14    | `operator.add`, `operator.eq`, `operator.not`            |
+| Control flow  | 2     | `if`, `try`                                              |
+| Other         | 3     | `@`, `env.get`, `error.throw`                            |
 
 ---
 
@@ -117,26 +117,26 @@ Raised during compilation and abort the pipeline:
 
 Raised during execution:
 
-| Error                               | Cause                                       |
-| ----------------------------------- | ------------------------------------------- |
-| `InvalidArgumentTypesError`         | Wrong argument types for a native function  |
-| `InvalidArgumentCountError`         | Wrong number of arguments at runtime        |
+| Error                               | Cause                                              |
+| ----------------------------------- | -------------------------------------------------- |
+| `InvalidArgumentTypesError`         | Wrong argument types for a native function         |
+| `InvalidArgumentCountError`         | Wrong number of arguments at runtime               |
 | `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `vector.add`) |
-| `InvalidLiteralValueError`          | Invalid literal value                       |
-| `InvalidValueError`                 | Invalid computed value                      |
-| `InvalidMapIndexError`              | Key not found in map                        |
-| `ElementNotFoundError`              | Element not in collection                   |
-| `NotFoundInScopeError`              | Function not found in runtime scope         |
-| `InvalidFunctionError`              | Callee is not a function                    |
-| `UnimplementedFunctionWebError`     | I/O function called on web platform         |
-| `EmptyCollectionError`              | Attempting to access an empty collection    |
-| `IndexOutOfBoundsError`            | Index outside collection range              |
-| `NegativeIndexError`                | Negative index provided where disallowed    |
-| `DivisionByZeroError`               | Division by zero                            |
-| `InvalidNumericOperationError`      | Domain error (e.g., `log(-1)`, `sqrt(-1)`)  |
-| `ParseError`                        | Failed string conversion                    |
-| `JsonParseError`                    | Invalid JSON string                         |
-| `CustomError`                       | Explicitly raised via `error.throw`         |
+| `InvalidLiteralValueError`          | Invalid literal value                              |
+| `InvalidValueError`                 | Invalid computed value                             |
+| `InvalidMapIndexError`              | Key not found in map                               |
+| `ElementNotFoundError`              | Element not in collection                          |
+| `NotFoundInScopeError`              | Function not found in runtime scope                |
+| `InvalidFunctionError`              | Callee is not a function                           |
+| `UnimplementedFunctionWebError`     | I/O function called on web platform                |
+| `EmptyCollectionError`              | Attempting to access an empty collection           |
+| `IndexOutOfBoundsError`             | Index outside collection range                     |
+| `NegativeIndexError`                | Negative index provided where disallowed           |
+| `DivisionByZeroError`               | Division by zero                                   |
+| `InvalidNumericOperationError`      | Domain error (e.g., `log(-1)`, `sqrt(-1)`)         |
+| `ParseError`                        | Failed string conversion                           |
+| `JsonParseError`                    | Invalid JSON string                                |
+| `CustomError`                       | Explicitly raised via `error.throw`                |
 
 ---
 
@@ -176,7 +176,7 @@ The active platform is selected at startup based on the entry point (`main_cli.d
 2. Compiles the source via `Compiler().compile()`.
 3. Prints any warnings to the console.
 4. If a `main` function is defined, executes it with the remaining CLI arguments.
-5. Otherwise, enters a **REPL** loop where the user can type expressions and see their evaluated results.
+5. Otherwise, enters a **REPL** loop where the user can type expressions and see their reduced results.
 
 ### Web (`lib/main/main_web.dart`)
 
@@ -187,7 +187,7 @@ Exposes the compiler as a set of JavaScript-callable functions via Dart's JS int
 - `runtimeWarnings(code)` - extracts warnings from compiled code.
 - `runtimeHasMain(code)` - checks if a main function exists.
 - `runtimeExecuteMain(code)` - executes the main function.
-- `runtimeReduce(code, expression)` - evaluates an expression.
+- `runtimeReduce(code, expression)` - reduces an expression.
 - `intermediateRepresentationEmpty()` - returns an empty intermediate representation handle.
 - `disposeCode(code)` - frees a compiled code handle.
 - `disposeExpression(expression)` - frees a parsed expression handle.

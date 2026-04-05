@@ -23,13 +23,13 @@ class BoolOr extends NativeFunctionNode {
     required FunctionNode function,
     required List<Node> arguments,
   }) {
-    final Node a = arguments[0].evaluate();
+    final Node a = arguments[0].reduce();
 
     if (a is BooleanNode) {
       if (a.value) {
         return const BooleanNode(true);
       } else {
-        final Node b = arguments[1].evaluate();
+        final Node b = arguments[1].reduce();
 
         if (b is BooleanNode) {
           return b;
@@ -59,7 +59,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() => BoolOr.execute(
+  Node reduce() => BoolOr.execute(
     function: this,
     arguments: arguments,
   );

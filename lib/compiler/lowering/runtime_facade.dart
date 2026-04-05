@@ -104,7 +104,7 @@ class RuntimeFacade {
     );
 
     final Node lowered = lowerer.lowerNode(semanticNode);
-    return lowered.evaluate();
+    return lowered.reduce();
   }
 
   dynamic format(dynamic value) => _runtime.format(value);

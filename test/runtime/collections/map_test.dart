@@ -26,7 +26,7 @@ void main() {
       });
     });
 
-    test('Map constructor evaluates value expressions', () {
+    test('Map constructor reduces value expressions', () {
       final RuntimeFacade runtime = getRuntime('main = {"foo": 1 + 2}');
       checkResult(runtime, {'"foo"': 3});
     });
@@ -87,7 +87,7 @@ main = foo({"name": "John", "age": 42, "married": true})
       checkResult(runtime, 42);
     });
 
-    test('map.at returns evaluated expression value', () {
+    test('map.at returns reduced expression value', () {
       final RuntimeFacade runtime = getRuntime(
         'main = map.at({"name": "John", "age": 42 + 1, "married": true}, "age")',
       );

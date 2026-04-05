@@ -45,9 +45,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
+    final Node b = arguments[1].reduce();
 
     if ((a is SetNode) && (b is SetNode)) {
       return SetDifference.execute(

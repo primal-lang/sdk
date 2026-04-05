@@ -30,9 +30,9 @@ description: Audits the codebase for bugs, inconsistencies, and potential runtim
 ## Focus Area 3: Compiler Pipeline Integrity
 
 - **State Machine Completeness**: For lexical/syntactic analyzers, verify all states handle all possible inputs (no missing transitions that would cause silent failures or infinite loops).
-- **AST Node Consistency**: Verify all `Node` subclasses implement required methods (`evaluate()`, `substitute()`, etc.) correctly. Check that `type` getters return the correct `Type`.
+- **AST Node Consistency**: Verify all `Node` subclasses implement required methods (`reduce()`, `substitute()`, etc.) correctly. Check that `type` getters return the correct `Type`.
 - **Evaluation Safety**: In `NativeFunctionNode` implementations, verify:
-  - All arguments are evaluated before use (`arguments[i].evaluate()`)
+  - All arguments are reduced before use (`arguments[i].reduce()`)
   - Type checks match parameter declarations
   - Return types match the documented behavior
 - **Error Propagation**: Ensure errors thrown in one pipeline stage don't get silently caught and ignored. Verify `try/catch` blocks either re-throw, log, or handle appropriately.
@@ -42,9 +42,9 @@ description: Audits the codebase for bugs, inconsistencies, and potential runtim
 ## Focus Area 4: Resource & Performance
 
 - **Unbounded Recursion**: Identify recursive functions (especially in runtime evaluation) that lack depth guards and could cause stack overflow on malicious input.
-- **Inefficient Evaluation**: Flag repeated `.evaluate()` calls on the same node (should evaluate once and store).
+- **Inefficient Evaluation**: Flag repeated `.reduce()` calls on the same node (should reduce once and store).
 - **String Concatenation in Loops**: Detect string building via `+` in loops (should use `StringBuffer`).
-- **Collection Allocation in Hot Paths**: Find unnecessary `List` or `Map` creation inside `evaluate()` methods.
+- **Collection Allocation in Hot Paths**: Find unnecessary `List` or `Map` creation inside `reduce()` methods.
 
 ---
 
@@ -52,7 +52,7 @@ description: Audits the codebase for bugs, inconsistencies, and potential runtim
 
 - **Naming Inconsistencies**: Flag variations in naming patterns (e.g., `numDiv` vs `num_div`, `isEven` vs `is_even`).
 - **Pattern Violations**: Identify library functions that don't follow the `NativeFunctionNode` / `NativeFunctionNodeWithArguments` pattern.
-- **Parameter Declaration Mismatches**: Verify `Parameter.number()`, `Parameter.string()`, etc. match the actual type checks in `evaluate()`.
+- **Parameter Declaration Mismatches**: Verify `Parameter.number()`, `Parameter.string()`, etc. match the actual type checks in `reduce()`.
 - **Missing `const` Constructors**: Flag classes with only `final` fields that should have `const` constructors.
 
 ---

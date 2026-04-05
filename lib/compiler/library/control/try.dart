@@ -27,14 +27,14 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
+  Node reduce() {
     final Node a = arguments[0];
     final Node b = arguments[1];
 
     try {
-      return a.evaluate();
+      return a.reduce();
     } catch (_) {
-      return b.evaluate();
+      return b.reduce();
     }
   }
 }

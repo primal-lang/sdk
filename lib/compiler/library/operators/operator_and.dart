@@ -28,7 +28,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() => BoolAnd.execute(
+  Node reduce() => BoolAnd.execute(
     function: this,
     arguments: arguments,
   );

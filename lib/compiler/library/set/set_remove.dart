@@ -31,7 +31,7 @@ class SetRemove extends NativeFunctionNode {
       for (final Node node in a.value) {
         final BooleanNode comparison = CompEq.execute(
           function: function,
-          a: node.evaluate(),
+          a: node.reduce(),
           b: b,
         );
 
@@ -59,9 +59,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
+    final Node b = arguments[1].reduce();
 
     return SetRemove.execute(
       function: this,

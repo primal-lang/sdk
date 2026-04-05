@@ -9,7 +9,7 @@ class Runtime {
 
   const Runtime(this.input);
 
-  Node evaluateNode(Node node) => node.evaluate();
+  Node reduceNode(Node node) => node.reduce();
 
   dynamic format(dynamic value) {
     if (value is bool) {

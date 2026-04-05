@@ -12,7 +12,7 @@ abstract class Node {
 
   Node substitute(Bindings bindings) => this;
 
-  Node evaluate() => this;
+  Node reduce() => this;
 
   dynamic native();
 }
@@ -29,7 +29,7 @@ abstract class LiteralNode<T> implements Node {
   Node substitute(Bindings bindings) => this;
 
   @override
-  Node evaluate() => this;
+  Node reduce() => this;
 
   @override
   dynamic native() => value;
@@ -222,7 +222,7 @@ class FunctionReferenceNode extends Node {
   const FunctionReferenceNode(this.name, this.functions);
 
   @override
-  FunctionNode evaluate() {
+  FunctionNode reduce() {
     final FunctionNode? function = functions[name];
     if (function == null) {
       throw NotFoundInScopeError(name);
@@ -237,7 +237,7 @@ class FunctionReferenceNode extends Node {
   String toString() => name;
 
   @override
-  dynamic native() => evaluate().native();
+  dynamic native() => reduce().native();
 }
 
 /// A reference to a bound parameter within a function body.
@@ -279,7 +279,7 @@ class CallNode extends Node {
   );
 
   @override
-  Node evaluate() {
+  Node reduce() {
     final FunctionNode function = getFunctionNode(callee);
 
     return function.apply(arguments);
@@ -287,9 +287,9 @@ class CallNode extends Node {
 
   FunctionNode getFunctionNode(Node callee) {
     if (callee is CallNode) {
-      return getFunctionNode(callee.evaluate());
+      return getFunctionNode(callee.reduce());
     } else if (callee is FunctionReferenceNode) {
-      return callee.evaluate();
+      return callee.reduce();
     } else if (callee is FunctionNode) {
       return callee;
     } else {
@@ -304,7 +304,7 @@ class CallNode extends Node {
   String toString() => '$callee(${arguments.join(', ')})';
 
   @override
-  dynamic native() => evaluate().native();
+  dynamic native() => reduce().native();
 }
 
 /// Represents a function in the runtime.
@@ -370,7 +370,7 @@ class FunctionNode extends Node {
       arguments: arguments,
     );
 
-    return substitute(bindings).evaluate();
+    return substitute(bindings).reduce();
   }
 
   @override
@@ -409,7 +409,7 @@ class CustomFunctionNode extends FunctionNode {
         parameters: parameters,
         arguments: arguments,
       );
-      return substitute(bindings).evaluate();
+      return substitute(bindings).reduce();
     } finally {
       FunctionNode.decrementDepth();
     }

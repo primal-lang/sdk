@@ -29,9 +29,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
+    final Node b = arguments[1].reduce();
     final Node c = arguments[2];
 
     if ((a is ListNode) && (b is NumberNode)) {
@@ -49,7 +49,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       final List<Node> head = a.value.sublist(0, index);
       final List<Node> rest = a.value.sublist(index + 1, a.value.length);
 
-      return ListNode([...head, c.evaluate(), ...rest]);
+      return ListNode([...head, c.reduce(), ...rest]);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

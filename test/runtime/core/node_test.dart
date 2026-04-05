@@ -97,8 +97,8 @@ void main() {
       expect(node.substitute(bindings), same(node));
     });
 
-    test('evaluate() returns itself', () {
-      expect(node.evaluate(), same(node));
+    test('reduce() returns itself', () {
+      expect(node.reduce(), same(node));
     });
 
     test('false value', () {
@@ -145,8 +145,8 @@ void main() {
       expect(intNode.substitute(bindings), same(intNode));
     });
 
-    test('evaluate() returns itself', () {
-      expect(intNode.evaluate(), same(intNode));
+    test('reduce() returns itself', () {
+      expect(intNode.reduce(), same(intNode));
     });
 
     test('zero value', () {
@@ -184,8 +184,8 @@ void main() {
       expect(node.substitute(bindings), same(node));
     });
 
-    test('evaluate() returns itself', () {
-      expect(node.evaluate(), same(node));
+    test('reduce() returns itself', () {
+      expect(node.reduce(), same(node));
     });
 
     test('empty string', () {
@@ -364,7 +364,7 @@ void main() {
   });
 
   group('FunctionReferenceNode', () {
-    test('evaluate() returns the referenced function', () {
+    test('reduce() returns the referenced function', () {
       const FunctionNode function = FunctionNode(
         name: 'myFunc',
         parameters: [Parameter.number('x')],
@@ -375,7 +375,7 @@ void main() {
         functions,
       );
 
-      expect(reference.evaluate(), same(function));
+      expect(reference.reduce(), same(function));
     });
 
     test('type is FunctionType', () {
@@ -568,13 +568,13 @@ void main() {
     });
   });
 
-  group('FunctionNode evaluate', () {
-    test('evaluate returns itself', () {
+  group('FunctionNode reduce', () {
+    test('reduce returns itself', () {
       const FunctionNode node = FunctionNode(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
-      expect(node.evaluate(), same(node));
+      expect(node.reduce(), same(node));
     });
   });
 
@@ -584,7 +584,7 @@ void main() {
         callee: NumberNode(42),
         arguments: [],
       );
-      expect(call.evaluate, throwsA(isA<InvalidFunctionError>()));
+      expect(call.reduce, throwsA(isA<InvalidFunctionError>()));
     });
 
     test('type is FunctionCallType', () {

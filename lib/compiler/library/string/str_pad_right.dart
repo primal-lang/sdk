@@ -30,10 +30,10 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
-    final Node c = arguments[2].evaluate();
+  Node reduce() {
+    final Node a = arguments[0].reduce();
+    final Node b = arguments[1].reduce();
+    final Node c = arguments[2].reduce();
 
     if ((a is StringNode) && (b is NumberNode) && (c is StringNode)) {
       final int targetWidth = b.value.toInt();
