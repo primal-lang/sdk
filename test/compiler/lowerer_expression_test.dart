@@ -15,15 +15,21 @@ void main() {
   final Map<String, FunctionNode> functions = {
     'myVar': const FunctionNode(name: 'myVar', parameters: []),
     'foo': const FunctionNode(name: 'foo', parameters: []),
-    'add': FunctionNode(
+    'add': const FunctionNode(
       name: 'add',
       parameters: [
         Parameter.number('a'),
         Parameter.number('b'),
       ],
     ),
-    'outer': FunctionNode(name: 'outer', parameters: [Parameter.any('x')]),
-    'inner': FunctionNode(name: 'inner', parameters: [Parameter.any('x')]),
+    'outer': const FunctionNode(
+      name: 'outer',
+      parameters: [Parameter.any('x')],
+    ),
+    'inner': const FunctionNode(
+      name: 'inner',
+      parameters: [Parameter.any('x')],
+    ),
   };
   final Lowerer lowerer = Lowerer(functions);
 

@@ -365,7 +365,7 @@ void main() {
 
   group('FunctionRefNode', () {
     test('evaluate() returns the referenced function', () {
-      final FunctionNode fn = FunctionNode(
+      const FunctionNode fn = FunctionNode(
         name: 'myFunc',
         parameters: [Parameter.number('x')],
       );
@@ -392,7 +392,7 @@ void main() {
     });
 
     test('native() returns function string representation', () {
-      final FunctionNode fn = FunctionNode(
+      const FunctionNode fn = FunctionNode(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
@@ -405,7 +405,7 @@ void main() {
 
   group('FunctionNode', () {
     test('type is FunctionType', () {
-      final FunctionNode node = FunctionNode(
+      const FunctionNode node = FunctionNode(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
@@ -413,7 +413,7 @@ void main() {
     });
 
     test('toString() includes name and parameters', () {
-      final FunctionNode node = FunctionNode(
+      const FunctionNode node = FunctionNode(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
@@ -421,7 +421,7 @@ void main() {
     });
 
     test('parameterTypes returns list of types', () {
-      final FunctionNode node = FunctionNode(
+      const FunctionNode node = FunctionNode(
         name: 'f',
         parameters: [Parameter.number('x'), Parameter.string('y')],
       );
@@ -431,7 +431,7 @@ void main() {
     });
 
     test('native() returns string representation', () {
-      final FunctionNode node = FunctionNode(
+      const FunctionNode node = FunctionNode(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
@@ -439,7 +439,7 @@ void main() {
     });
 
     test('apply with wrong argument count throws', () {
-      final FunctionNode node = FunctionNode(
+      const FunctionNode node = FunctionNode(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
@@ -450,15 +450,15 @@ void main() {
     });
 
     test('equalSignature compares names', () {
-      final FunctionNode f1 = FunctionNode(
+      const FunctionNode f1 = FunctionNode(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
-      final FunctionNode f2 = FunctionNode(
+      const FunctionNode f2 = FunctionNode(
         name: 'f',
         parameters: [Parameter.string('y')],
       );
-      final FunctionNode f3 = FunctionNode(
+      const FunctionNode f3 = FunctionNode(
         name: 'g',
         parameters: [Parameter.number('x')],
       );
@@ -555,7 +555,7 @@ void main() {
 
   group('FunctionNode evaluate', () {
     test('evaluate returns itself', () {
-      final FunctionNode node = FunctionNode(
+      const FunctionNode node = FunctionNode(
         name: 'f',
         parameters: [Parameter.number('x')],
       );

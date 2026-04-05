@@ -140,11 +140,11 @@ void main() {
 
   group('DuplicatedFunctionError', () {
     test('toString() lists both parameter sets', () {
-      final FunctionSignature function1 = FunctionSignature(
+      const FunctionSignature function1 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('x'), Parameter.number('y')],
       );
-      final FunctionSignature function2 = FunctionSignature(
+      const FunctionSignature function2 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );

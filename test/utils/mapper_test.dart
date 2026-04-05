@@ -15,8 +15,8 @@ void main() {
 
     test('toMap converts functions to map keyed by name', () {
       final List<FunctionNode> functions = [
-        FunctionNode(name: 'add', parameters: [Parameter.number('x')]),
-        FunctionNode(name: 'sub', parameters: [Parameter.number('y')]),
+        const FunctionNode(name: 'add', parameters: [Parameter.number('x')]),
+        const FunctionNode(name: 'sub', parameters: [Parameter.number('y')]),
       ];
       final Map<String, FunctionNode> result = Mapper.toMap(functions);
       expect(result.length, 2);
@@ -27,11 +27,11 @@ void main() {
     });
 
     test('toMap with duplicate names keeps last entry', () {
-      final FunctionNode first = FunctionNode(
+      const FunctionNode first = FunctionNode(
         name: 'f',
         parameters: [Parameter.number('a')],
       );
-      final FunctionNode second = FunctionNode(
+      const FunctionNode second = FunctionNode(
         name: 'f',
         parameters: [Parameter.string('b')],
       );

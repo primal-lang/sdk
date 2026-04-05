@@ -47,7 +47,7 @@ void main() {
   group('Bindings.from()', () {
     test('creates from parameters and arguments', () {
       final Bindings bindings = Bindings.from(
-        parameters: [Parameter.number('x')],
+        parameters: [const Parameter.number('x')],
         arguments: [const NumberNode(10)],
       );
       final Node result = bindings.get('x');
@@ -66,9 +66,9 @@ void main() {
     test('multiple parameters', () {
       final Bindings bindings = Bindings.from(
         parameters: [
-          Parameter.number('a'),
-          Parameter.string('b'),
-          Parameter.boolean('c'),
+          const Parameter.number('a'),
+          const Parameter.string('b'),
+          const Parameter.boolean('c'),
         ],
         arguments: [
           const NumberNode(1),
@@ -83,7 +83,10 @@ void main() {
 
     test('parameter names map correctly to arguments', () {
       final Bindings bindings = Bindings.from(
-        parameters: [Parameter.number('first'), Parameter.number('second')],
+        parameters: [
+          const Parameter.number('first'),
+          const Parameter.number('second'),
+        ],
         arguments: [const NumberNode(100), const NumberNode(200)],
       );
       expect((bindings.get('first') as NumberNode).value, 100);

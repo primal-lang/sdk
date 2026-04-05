@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('FunctionSignature', () {
     test('arity returns parameter count', () {
-      final FunctionSignature sig = FunctionSignature(
+      const FunctionSignature sig = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
@@ -21,11 +21,11 @@ void main() {
     });
 
     test('equality compares name and parameter names', () {
-      final FunctionSignature sig1 = FunctionSignature(
+      const FunctionSignature sig1 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
-      final FunctionSignature sig2 = FunctionSignature(
+      const FunctionSignature sig2 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.any('a'), Parameter.any('b')],
       );
@@ -33,11 +33,11 @@ void main() {
     });
 
     test('inequality when names differ', () {
-      final FunctionSignature sig1 = FunctionSignature(
+      const FunctionSignature sig1 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('a')],
       );
-      final FunctionSignature sig2 = FunctionSignature(
+      const FunctionSignature sig2 = FunctionSignature(
         name: 'sub',
         parameters: [Parameter.number('a')],
       );
@@ -45,11 +45,11 @@ void main() {
     });
 
     test('inequality when parameter names differ', () {
-      final FunctionSignature sig1 = FunctionSignature(
+      const FunctionSignature sig1 = FunctionSignature(
         name: 'func',
         parameters: [Parameter.any('x')],
       );
-      final FunctionSignature sig2 = FunctionSignature(
+      const FunctionSignature sig2 = FunctionSignature(
         name: 'func',
         parameters: [Parameter.any('y')],
       );
@@ -57,11 +57,11 @@ void main() {
     });
 
     test('inequality when parameter counts differ', () {
-      final FunctionSignature sig1 = FunctionSignature(
+      const FunctionSignature sig1 = FunctionSignature(
         name: 'func',
         parameters: [Parameter.any('a')],
       );
-      final FunctionSignature sig2 = FunctionSignature(
+      const FunctionSignature sig2 = FunctionSignature(
         name: 'func',
         parameters: [Parameter.any('a'), Parameter.any('b')],
       );
@@ -69,7 +69,7 @@ void main() {
     });
 
     test('toString formats correctly', () {
-      final FunctionSignature sig = FunctionSignature(
+      const FunctionSignature sig = FunctionSignature(
         name: 'test.func',
         parameters: [Parameter.any('x'), Parameter.any('y')],
       );
@@ -85,11 +85,11 @@ void main() {
     });
 
     test('hashCode is consistent with equality', () {
-      final FunctionSignature sig1 = FunctionSignature(
+      const FunctionSignature sig1 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
-      final FunctionSignature sig2 = FunctionSignature(
+      const FunctionSignature sig2 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.any('a'), Parameter.any('b')],
       );
