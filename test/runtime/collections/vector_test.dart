@@ -145,5 +145,26 @@ void main() {
         closeTo(0.28379410920832, 0.0001),
       );
     });
+
+    test('vector.angle returns 0 for parallel vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 0]), vector.new([1, 0]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(0, 0.000001));
+    });
+
+    test('vector.angle returns pi for anti-parallel vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 0]), vector.new([-1, 0]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(3.14159265, 0.000001));
+    });
+
+    test('vector.angle returns pi/2 for perpendicular vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 0]), vector.new([0, 1]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(1.5707963, 0.000001));
+    });
   });
 }

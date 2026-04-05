@@ -69,8 +69,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       }
 
       final num cosine = dotProduct / (magnitudeA * magnitudeB);
+      final num clampedCosine = cosine.clamp(-1.0, 1.0);
 
-      return NumberNode(acos(cosine));
+      return NumberNode(acos(clampedCosine));
     } else {
       throw InvalidArgumentTypesError(
         function: name,
