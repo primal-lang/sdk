@@ -215,11 +215,11 @@ class MapNode extends LiteralNode<Map<Node, Node>> {
 /// Holds a function name and a reference to the functions map. Resolution
 /// happens at evaluation time, enabling forward references and mutual recursion
 /// while avoiding global mutable state.
-class FunctionRefNode extends Node {
+class FunctionReferenceNode extends Node {
   final String name;
   final Map<String, FunctionNode> functions;
 
-  const FunctionRefNode(this.name, this.functions);
+  const FunctionReferenceNode(this.name, this.functions);
 
   @override
   FunctionNode evaluate() {
@@ -288,7 +288,7 @@ class CallNode extends Node {
   FunctionNode getFunctionNode(Node callee) {
     if (callee is CallNode) {
       return getFunctionNode(callee.evaluate());
-    } else if (callee is FunctionRefNode) {
+    } else if (callee is FunctionReferenceNode) {
       return callee.evaluate();
     } else if (callee is FunctionNode) {
       return callee;
@@ -307,7 +307,7 @@ class CallNode extends Node {
   dynamic native() => evaluate().native();
 }
 
-/// Represents a user-defined function in the runtime.
+/// Represents a function in the runtime.
 ///
 /// **Threading assumption**: The static recursion tracking (`_currentDepth`)
 /// assumes single-threaded execution. The Primal runtime is designed for

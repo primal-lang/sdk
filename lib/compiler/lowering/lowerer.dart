@@ -27,7 +27,7 @@ class Lowerer {
     SemanticStringNode() => StringNode(node.value),
     SemanticListNode() => _lowerList(node),
     SemanticMapNode() => _lowerMap(node),
-    SemanticIdentifierNode() => FunctionRefNode(node.name, functions),
+    SemanticIdentifierNode() => FunctionReferenceNode(node.name, functions),
     SemanticBoundVariableNode() => BoundVariableNode(node.name),
     SemanticCallNode() => _lowerCall(node),
     _ => throw StateError('Unknown semantic node type: ${node.runtimeType}'),

@@ -919,16 +919,16 @@ The lowerer operates in two phases:
 
 #### Node Type Mapping
 
-| Semantic Node               | Runtime Node        | Description                                |
-| --------------------------- | ------------------- | ------------------------------------------ |
-| `SemanticBooleanNode`       | `BooleanNode`       | Boolean literal                            |
-| `SemanticNumberNode`        | `NumberNode`        | Numeric literal                            |
-| `SemanticStringNode`        | `StringNode`        | String literal                             |
-| `SemanticListNode`          | `ListNode`          | List literal with lowered elements         |
-| `SemanticMapNode`           | `MapNode`           | Map literal with lowered entries           |
-| `SemanticIdentifierNode`    | `FunctionRefNode`   | Function reference with lookup map         |
-| `SemanticBoundVariableNode` | `BoundVariableNode` | Parameter reference for substitution       |
-| `SemanticCallNode`          | `CallNode`          | Function call with lowered callee and args |
+| Semantic Node               | Runtime Node            | Description                                |
+| --------------------------- | ----------------------- | ------------------------------------------ |
+| `SemanticBooleanNode`       | `BooleanNode`           | Boolean literal                            |
+| `SemanticNumberNode`        | `NumberNode`            | Numeric literal                            |
+| `SemanticStringNode`        | `StringNode`            | String literal                             |
+| `SemanticListNode`          | `ListNode`              | List literal with lowered elements         |
+| `SemanticMapNode`           | `MapNode`               | Map literal with lowered entries           |
+| `SemanticIdentifierNode`    | `FunctionReferenceNode` | Function reference with lookup map         |
+| `SemanticBoundVariableNode` | `BoundVariableNode`     | Parameter reference for substitution       |
+| `SemanticCallNode`          | `CallNode`              | Function call with lowered callee and args |
 
 ### Lowering Function 1: `square(n) = n * n`
 
@@ -948,15 +948,15 @@ SemanticFunction(
 
 **Lowering Trace:**
 
-| Step | Semantic Node                    | Action                                   | Runtime Node                        |
-| ---- | -------------------------------- | ---------------------------------------- | ----------------------------------- |
-| 1    | `SemanticFunction("square")`     | Create `CustomFunctionNode`, lower body  | —                                   |
-| 2    | `SemanticCallNode`               | Lower callee and arguments               | —                                   |
-| 3    | `SemanticIdentifierNode("*")`    | Create `FunctionRefNode("*", functions)` | `FunctionRefNode("*", functions)`   |
-| 4    | `SemanticBoundVariableNode("n")` | Create `BoundVariableNode("n")`          | `BoundVariableNode("n")`            |
-| 5    | `SemanticBoundVariableNode("n")` | Create `BoundVariableNode("n")`          | `BoundVariableNode("n")`            |
-| 6    | `SemanticCallNode`               | Assemble `CallNode`                      | `CallNode(callee, arguments)`       |
-| 7    | `SemanticFunction("square")`     | Complete `CustomFunctionNode`            | `CustomFunctionNode("square", ...)` |
+| Step | Semantic Node                    | Action                                         | Runtime Node                            |
+| ---- | -------------------------------- | ---------------------------------------------- | --------------------------------------- |
+| 1    | `SemanticFunction("square")`     | Create `CustomFunctionNode`, lower body        | —                                       |
+| 2    | `SemanticCallNode`               | Lower callee and arguments                     | —                                       |
+| 3    | `SemanticIdentifierNode("*")`    | Create `FunctionReferenceNode("*", functions)` | `FunctionReferenceNode("*", functions)` |
+| 4    | `SemanticBoundVariableNode("n")` | Create `BoundVariableNode("n")`                | `BoundVariableNode("n")`                |
+| 5    | `SemanticBoundVariableNode("n")` | Create `BoundVariableNode("n")`                | `BoundVariableNode("n")`                |
+| 6    | `SemanticCallNode`               | Assemble `CallNode`                            | `CallNode(callee, arguments)`           |
+| 7    | `SemanticFunction("square")`     | Complete `CustomFunctionNode`                  | `CustomFunctionNode("square", ...)`     |
 
 **Output (Runtime Node):**
 
@@ -965,7 +965,7 @@ CustomFunctionNode(
   name: "square",
   parameters: [Parameter("n")],
   node: CallNode(
-    callee: FunctionRefNode("*", functions),
+    callee: FunctionReferenceNode("*", functions),
     arguments: [
       BoundVariableNode("n"),
       BoundVariableNode("n")
@@ -997,20 +997,20 @@ SemanticFunction(
 
 **Lowering Trace:**
 
-| Step | Semantic Node                    | Action                        | Runtime Node                     |
-| ---- | -------------------------------- | ----------------------------- | -------------------------------- |
-| 1    | `SemanticFunction("max")`        | Create `CustomFunctionNode`   | —                                |
-| 2    | Outer `SemanticCallNode`         | Lower callee and arguments    | —                                |
-| 3    | `SemanticIdentifierNode("if")`   | Create `FunctionRefNode`      | `FunctionRefNode("if", ...)`     |
-| 4    | Inner `SemanticCallNode`         | Lower condition call          | —                                |
-| 5    | `SemanticIdentifierNode(">=")`   | Create `FunctionRefNode`      | `FunctionRefNode(">=", ...)`     |
-| 6    | `SemanticBoundVariableNode("a")` | Create `BoundVariableNode`    | `BoundVariableNode("a")`         |
-| 7    | `SemanticBoundVariableNode("b")` | Create `BoundVariableNode`    | `BoundVariableNode("b")`         |
-| 8    | Inner `SemanticCallNode`         | Assemble condition `CallNode` | `CallNode(>=, [a, b])`           |
-| 9    | `SemanticBoundVariableNode("a")` | Create `BoundVariableNode`    | `BoundVariableNode("a")`         |
-| 10   | `SemanticBoundVariableNode("b")` | Create `BoundVariableNode`    | `BoundVariableNode("b")`         |
-| 11   | Outer `SemanticCallNode`         | Assemble outer `CallNode`     | `CallNode(if, [cond, a, b])`     |
-| 12   | `SemanticFunction("max")`        | Complete `CustomFunctionNode` | `CustomFunctionNode("max", ...)` |
+| Step | Semantic Node                    | Action                         | Runtime Node                       |
+| ---- | -------------------------------- | ------------------------------ | ---------------------------------- |
+| 1    | `SemanticFunction("max")`        | Create `CustomFunctionNode`    | —                                  |
+| 2    | Outer `SemanticCallNode`         | Lower callee and arguments     | —                                  |
+| 3    | `SemanticIdentifierNode("if")`   | Create `FunctionReferenceNode` | `FunctionReferenceNode("if", ...)` |
+| 4    | Inner `SemanticCallNode`         | Lower condition call           | —                                  |
+| 5    | `SemanticIdentifierNode(">=")`   | Create `FunctionReferenceNode` | `FunctionReferenceNode(">=", ...)` |
+| 6    | `SemanticBoundVariableNode("a")` | Create `BoundVariableNode`     | `BoundVariableNode("a")`           |
+| 7    | `SemanticBoundVariableNode("b")` | Create `BoundVariableNode`     | `BoundVariableNode("b")`           |
+| 8    | Inner `SemanticCallNode`         | Assemble condition `CallNode`  | `CallNode(>=, [a, b])`             |
+| 9    | `SemanticBoundVariableNode("a")` | Create `BoundVariableNode`     | `BoundVariableNode("a")`           |
+| 10   | `SemanticBoundVariableNode("b")` | Create `BoundVariableNode`     | `BoundVariableNode("b")`           |
+| 11   | Outer `SemanticCallNode`         | Assemble outer `CallNode`      | `CallNode(if, [cond, a, b])`       |
+| 12   | `SemanticFunction("max")`        | Complete `CustomFunctionNode`  | `CustomFunctionNode("max", ...)`   |
 
 **Output (Runtime Node):**
 
@@ -1019,10 +1019,10 @@ CustomFunctionNode(
   name: "max",
   parameters: [Parameter("a"), Parameter("b")],
   node: CallNode(
-    callee: FunctionRefNode("if", functions),
+    callee: FunctionReferenceNode("if", functions),
     arguments: [
       CallNode(                              // condition
-        callee: FunctionRefNode(">=", functions),
+        callee: FunctionReferenceNode(">=", functions),
         arguments: [
           BoundVariableNode("a"),
           BoundVariableNode("b")
@@ -1059,21 +1059,21 @@ SemanticFunction(
 
 **Lowering Trace:**
 
-| Step | Semantic Node                      | Action                        | Runtime Node                      |
-| ---- | ---------------------------------- | ----------------------------- | --------------------------------- |
-| 1    | `SemanticFunction("main")`         | Create `CustomFunctionNode`   | —                                 |
-| 2    | Outer `SemanticCallNode`           | Lower callee and arguments    | —                                 |
-| 3    | `SemanticIdentifierNode("max")`    | Create `FunctionRefNode`      | `FunctionRefNode("max", ...)`     |
-| 4    | First inner `SemanticCallNode`     | Lower `square(3)`             | —                                 |
-| 5    | `SemanticIdentifierNode("square")` | Create `FunctionRefNode`      | `FunctionRefNode("square", ...)`  |
-| 6    | `SemanticNumberNode(3)`            | Create `NumberNode`           | `NumberNode(3)`                   |
-| 7    | First inner `SemanticCallNode`     | Assemble `CallNode`           | `CallNode(square, [3])`           |
-| 8    | Second inner `SemanticCallNode`    | Lower `square(4)`             | —                                 |
-| 9    | `SemanticIdentifierNode("square")` | Create `FunctionRefNode`      | `FunctionRefNode("square", ...)`  |
-| 10   | `SemanticNumberNode(4)`            | Create `NumberNode`           | `NumberNode(4)`                   |
-| 11   | Second inner `SemanticCallNode`    | Assemble `CallNode`           | `CallNode(square, [4])`           |
-| 12   | Outer `SemanticCallNode`           | Assemble outer `CallNode`     | `CallNode(max, [sq(3), sq(4)])`   |
-| 13   | `SemanticFunction("main")`         | Complete `CustomFunctionNode` | `CustomFunctionNode("main", ...)` |
+| Step | Semantic Node                      | Action                         | Runtime Node                           |
+| ---- | ---------------------------------- | ------------------------------ | -------------------------------------- |
+| 1    | `SemanticFunction("main")`         | Create `CustomFunctionNode`    | —                                      |
+| 2    | Outer `SemanticCallNode`           | Lower callee and arguments     | —                                      |
+| 3    | `SemanticIdentifierNode("max")`    | Create `FunctionReferenceNode` | `FunctionReferenceNode("max", ...)`    |
+| 4    | First inner `SemanticCallNode`     | Lower `square(3)`              | —                                      |
+| 5    | `SemanticIdentifierNode("square")` | Create `FunctionReferenceNode` | `FunctionReferenceNode("square", ...)` |
+| 6    | `SemanticNumberNode(3)`            | Create `NumberNode`            | `NumberNode(3)`                        |
+| 7    | First inner `SemanticCallNode`     | Assemble `CallNode`            | `CallNode(square, [3])`                |
+| 8    | Second inner `SemanticCallNode`    | Lower `square(4)`              | —                                      |
+| 9    | `SemanticIdentifierNode("square")` | Create `FunctionReferenceNode` | `FunctionReferenceNode("square", ...)` |
+| 10   | `SemanticNumberNode(4)`            | Create `NumberNode`            | `NumberNode(4)`                        |
+| 11   | Second inner `SemanticCallNode`    | Assemble `CallNode`            | `CallNode(square, [4])`                |
+| 12   | Outer `SemanticCallNode`           | Assemble outer `CallNode`      | `CallNode(max, [sq(3), sq(4)])`        |
+| 13   | `SemanticFunction("main")`         | Complete `CustomFunctionNode`  | `CustomFunctionNode("main", ...)`      |
 
 **Output (Runtime Node):**
 
@@ -1082,14 +1082,14 @@ CustomFunctionNode(
   name: "main",
   parameters: [],
   node: CallNode(
-    callee: FunctionRefNode("max", functions),
+    callee: FunctionReferenceNode("max", functions),
     arguments: [
       CallNode(
-        callee: FunctionRefNode("square", functions),
+        callee: FunctionReferenceNode("square", functions),
         arguments: [NumberNode(3)]
       ),
       CallNode(
-        callee: FunctionRefNode("square", functions),
+        callee: FunctionReferenceNode("square", functions),
         arguments: [NumberNode(4)]
       )
     ]
@@ -1107,17 +1107,17 @@ The `Lowerer` produces a `Map<String, FunctionNode>` combining custom and standa
   "square": CustomFunctionNode(
     name: "square",
     parameters: [Parameter("n")],
-    node: CallNode(FunctionRefNode("*"), [BoundVariableNode("n"), BoundVariableNode("n")])
+    node: CallNode(FunctionReferenceNode("*"), [BoundVariableNode("n"), BoundVariableNode("n")])
   ),
   "max": CustomFunctionNode(
     name: "max",
     parameters: [Parameter("a"), Parameter("b")],
-    node: CallNode(FunctionRefNode("if"), [CallNode(...), BoundVariableNode("a"), BoundVariableNode("b")])
+    node: CallNode(FunctionReferenceNode("if"), [CallNode(...), BoundVariableNode("a"), BoundVariableNode("b")])
   ),
   "main": CustomFunctionNode(
     name: "main",
     parameters: [],
-    node: CallNode(FunctionRefNode("max"), [CallNode(...), CallNode(...)])
+    node: CallNode(FunctionReferenceNode("max"), [CallNode(...), CallNode(...)])
   ),
 
   // Standard library functions (from StandardLibrary.get())
@@ -1137,7 +1137,7 @@ square(n) = n * n
 ─────────────────
       CustomFunctionNode("square")
       └─ node: CallNode
-         ├─ callee: FunctionRefNode("*") → functions map
+         ├─ callee: FunctionReferenceNode("*") → functions map
          └─ arguments:
             ├─ BoundVariableNode("n")
             └─ BoundVariableNode("n")
@@ -1146,10 +1146,10 @@ max(a, b) = if (a >= b) a else b
 ────────────────────────────────
       CustomFunctionNode("max")
       └─ node: CallNode
-         ├─ callee: FunctionRefNode("if") → functions map
+         ├─ callee: FunctionReferenceNode("if") → functions map
          └─ arguments:
             ├─ CallNode                    ← condition
-            │  ├─ callee: FunctionRefNode(">=") → functions map
+            │  ├─ callee: FunctionReferenceNode(">=") → functions map
             │  └─ arguments:
             │     ├─ BoundVariableNode("a")
             │     └─ BoundVariableNode("b")
@@ -1160,14 +1160,14 @@ main = max(square(3), square(4))
 ────────────────────────────────
       CustomFunctionNode("main")
       └─ node: CallNode
-         ├─ callee: FunctionRefNode("max") → functions map
+         ├─ callee: FunctionReferenceNode("max") → functions map
          └─ arguments:
             ├─ CallNode
-            │  ├─ callee: FunctionRefNode("square") → functions map
+            │  ├─ callee: FunctionReferenceNode("square") → functions map
             │  └─ arguments:
             │     └─ NumberNode(3)
             └─ CallNode
-               ├─ callee: FunctionRefNode("square") → functions map
+               ├─ callee: FunctionReferenceNode("square") → functions map
                └─ arguments:
                   └─ NumberNode(4)
 ```
@@ -1188,7 +1188,7 @@ main = max(square(3), square(4))
 
 1. **Location stripping**: All source position information is discarded. Runtime nodes contain only what is needed for evaluation. Error reporting with source locations must use the semantic IR before lowering.
 
-2. **Deferred function resolution**: `FunctionRefNode` stores a reference to the shared `functions` map rather than the resolved `FunctionNode` directly. This enables forward references and mutual recursion — `main` can reference `square` even if `square` is added to the map after `main` is lowered.
+2. **Deferred function resolution**: `FunctionReferenceNode` stores a reference to the shared `functions` map rather than the resolved `FunctionNode` directly. This enables forward references and mutual recursion — `main` can reference `square` even if `square` is added to the map after `main` is lowered.
 
 3. **BoundVariableNode for substitution**: Parameters become `BoundVariableNode` instances that will be replaced during function application via the `substitute()` method.
 

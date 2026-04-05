@@ -107,15 +107,15 @@ void main() {
     });
 
     group('SemanticIdentifierNode', () {
-      test('lowers identifier to FunctionRefNode', () {
+      test('lowers identifier to FunctionReferenceNode', () {
         const SemanticIdentifierNode semantic = SemanticIdentifierNode(
           location: defaultLocation,
           name: 'myVar',
         );
         final Node node = lowerer.lowerNode(semantic);
 
-        expect(node, isA<FunctionRefNode>());
-        expect((node as FunctionRefNode).name, equals('myVar'));
+        expect(node, isA<FunctionReferenceNode>());
+        expect((node as FunctionReferenceNode).name, equals('myVar'));
       });
     });
 
@@ -234,8 +234,8 @@ void main() {
 
         expect(node, isA<CallNode>());
         final CallNode call = node as CallNode;
-        expect(call.callee, isA<FunctionRefNode>());
-        expect((call.callee as FunctionRefNode).name, equals('foo'));
+        expect(call.callee, isA<FunctionReferenceNode>());
+        expect((call.callee as FunctionReferenceNode).name, equals('foo'));
         expect(call.arguments, isEmpty);
       });
 
@@ -287,7 +287,7 @@ void main() {
         expect(outer.arguments.length, equals(1));
         expect(outer.arguments[0], isA<CallNode>());
         final CallNode inner = outer.arguments[0] as CallNode;
-        expect((inner.callee as FunctionRefNode).name, equals('inner'));
+        expect((inner.callee as FunctionReferenceNode).name, equals('inner'));
       });
     });
   });

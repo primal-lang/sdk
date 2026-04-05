@@ -11,7 +11,7 @@ When a `RuntimeFacade` is created, the `RuntimeInputBuilder` constructs a `Runti
 1. Standard library functions are fetched from `StandardLibrary.get()` as `FunctionNode` instances and stored in a functions map.
 2. The `Lowerer` is created with access to this functions map.
 3. Each `SemanticFunction` from `IntermediateRepresentation` is lowered to a `CustomFunctionNode` and added to the map.
-4. Function references (`SemanticIdentifierNode`) are lowered to `FunctionRefNode`, which holds the function name and a reference to the shared functions map.
+4. Function references (`SemanticIdentifierNode`) are lowered to `FunctionReferenceNode`, which holds the function name and a reference to the shared functions map.
 
 Note: `IntermediateRepresentation` contains only `FunctionSignature` references for the standard library (not `FunctionNode`), keeping the semantic output free of runtime types. The actual runtime nodes are instantiated during this initialization step.
 
@@ -32,7 +32,7 @@ All runtime values are nodes. The base `Node` class defines:
 
 **Reference nodes**:
 
-- `FunctionRefNode(name, functions)` - holds a function name and the functions map; `evaluate()` returns the referenced `FunctionNode`.
+- `FunctionReferenceNode(name, functions)` - holds a function name and the functions map; `evaluate()` returns the referenced `FunctionNode`.
 - `BoundVariableNode(name)` - replaced during substitution via bindings.
 
 **Call node**:
@@ -84,7 +84,7 @@ This is a substitution-based evaluation model consistent with lambda calculus be
 
 ## Function Resolution
 
-Function references are resolved at lowering time, not runtime. The `Lowerer` converts `SemanticIdentifierNode` (which contains a resolved `FunctionSignature`) to `FunctionRefNode`, passing the shared functions map. At evaluation time, `FunctionRefNode.evaluate()` looks up the function in the map.
+Function references are resolved at lowering time, not runtime. The `Lowerer` converts `SemanticIdentifierNode` (which contains a resolved `FunctionSignature`) to `FunctionReferenceNode`, passing the shared functions map. At evaluation time, `FunctionReferenceNode.evaluate()` looks up the function in the map.
 
 This approach:
 

@@ -104,16 +104,16 @@ class Lowerer {
 
 This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model. The lowerer operates only on semantic types (`SemanticNode`, `SemanticFunction`) and produces runtime types (`Node`, `CustomFunctionNode`), maintaining clean phase separation.
 
-| Semantic Node               | Runtime Node        |
-| --------------------------- | ------------------- |
-| `SemanticBooleanNode`       | `BooleanNode`       |
-| `SemanticNumberNode`        | `NumberNode`        |
-| `SemanticStringNode`        | `StringNode`        |
-| `SemanticListNode`          | `ListNode`          |
-| `SemanticMapNode`           | `MapNode`           |
-| `SemanticIdentifierNode`    | `FunctionRefNode`   |
-| `SemanticBoundVariableNode` | `BoundVariableNode` |
-| `SemanticCallNode`          | `CallNode`          |
+| Semantic Node               | Runtime Node            |
+| --------------------------- | ----------------------- |
+| `SemanticBooleanNode`       | `BooleanNode`           |
+| `SemanticNumberNode`        | `NumberNode`            |
+| `SemanticStringNode`        | `StringNode`            |
+| `SemanticListNode`          | `ListNode`              |
+| `SemanticMapNode`           | `MapNode`               |
+| `SemanticIdentifierNode`    | `FunctionReferenceNode` |
+| `SemanticBoundVariableNode` | `BoundVariableNode`     |
+| `SemanticCallNode`          | `CallNode`              |
 
 ## Phase Boundaries
 
