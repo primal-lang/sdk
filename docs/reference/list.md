@@ -362,6 +362,8 @@ list.any([1, 2, 3], num.isEven) // returns true
 list.zip([1, 2], [3, 4], num.add) // returns [4, 6]
 ```
 
+> **Note:** When the lists have different lengths, the function is applied to pairs where both elements exist. Remaining elements from the longer list are included unmodified. For example, `list.zip([1, 2, 3], [10, 20], num.add)` returns `[11, 22, 3]`.
+
 ### Sort
 
 - **Signature:** `list.sort(a: List, b: Function): List`
