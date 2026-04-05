@@ -365,12 +365,17 @@ class FunctionTerm extends Term {
       );
     }
 
-    final Bindings bindings = Bindings.from(
-      parameters: parameters,
-      arguments: arguments,
-    );
+    FunctionTerm.incrementDepth();
+    try {
+      final Bindings bindings = Bindings.from(
+        parameters: parameters,
+        arguments: arguments,
+      );
 
-    return substitute(bindings).reduce();
+      return substitute(bindings).reduce();
+    } finally {
+      FunctionTerm.decrementDepth();
+    }
   }
 
   @override
