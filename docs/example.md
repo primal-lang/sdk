@@ -216,4 +216,177 @@ The output preserves every character from the source (including whitespace and n
 
 ## Stage 2: Lexical Analyzer
 
+**File**: `lib/compiler/lexical/lexical_analyzer.dart`
+
+The lexical analyzer consumes the character list and produces a list of typed tokens. It is implemented as a **state machine** that recognizes keywords, identifiers, literals, operators, and delimiters.
+
+### Transformation
+
+**Input**: `List<Character>` (84 characters with locations)
+
+**Output**: `List<Token>` (typed tokens with locations)
+
+### Step-by-Step Processing
+
+The analyzer wraps the input in a `ListIterator<Character>` and starts in `InitState`. Each iteration:
+
+1. Calls `state.next`, which reads the next character and delegates to `process()`
+2. Transitions to a new state based on the character
+3. When a `ResultState` is reached, the token is collected and the machine resets to `InitState`
+
+#### Processing Row 1: `square(n) = n * n`
+
+| Character | State Transition                      | Action                                                      |
+| --------- | ------------------------------------- | ----------------------------------------------------------- |
+| `s`       | `InitState` → `IdentifierState`       | Start identifier, lexeme = `"s"`                            |
+| `q`       | `IdentifierState` → `IdentifierState` | Accumulate, lexeme = `"sq"`                                 |
+| `u`       | `IdentifierState` → `IdentifierState` | Accumulate, lexeme = `"squ"`                                |
+| `a`       | `IdentifierState` → `IdentifierState` | Accumulate, lexeme = `"squa"`                               |
+| `r`       | `IdentifierState` → `IdentifierState` | Accumulate, lexeme = `"squar"`                              |
+| `e`       | `IdentifierState` → `IdentifierState` | Accumulate, lexeme = `"square"`                             |
+| `(`       | `IdentifierState` → `ResultState`     | Delimiter found; `back()`, emit `IdentifierToken("square")` |
+| `(`       | `InitState` → `ResultState`           | Emit `OpenParenthesisToken("(")` directly                   |
+| `n`       | `InitState` → `IdentifierState`       | Start identifier                                            |
+| `)`       | `IdentifierState` → `ResultState`     | Delimiter found; `back()`, emit `IdentifierToken("n")`      |
+| `)`       | `InitState` → `ResultState`           | Emit `CloseParenthesisToken(")")` directly                  |
+| ` `       | `InitState` → `InitState`             | Whitespace skipped                                          |
+| `=`       | `InitState` → `EqualsState`           | Start potential `=` or `==`                                 |
+| ` `       | `EqualsState` → `ResultState`         | Next char not `=`; `back()`, emit `AssignToken("=")`        |
+| ` `       | `InitState` → `InitState`             | Whitespace skipped                                          |
+| `n`       | `InitState` → `IdentifierState`       | Start identifier                                            |
+| ` `       | `IdentifierState` → `ResultState`     | Delimiter found; `back()`, emit `IdentifierToken("n")`      |
+| ` `       | `InitState` → `InitState`             | Whitespace skipped                                          |
+| `*`       | `InitState` → `AsteriskState`         | Start operator                                              |
+| ` `       | `AsteriskState` → `ResultState`       | Delimiter found; `back()`, emit `AsteriskToken("*")`        |
+| ` `       | `InitState` → `InitState`             | Whitespace skipped                                          |
+| `n`       | `InitState` → `IdentifierState`       | Start identifier                                            |
+| `\n`      | `IdentifierState` → `ResultState`     | Delimiter found; `back()`, emit `IdentifierToken("n")`      |
+| `\n`      | `InitState` → `InitState`             | Whitespace skipped                                          |
+
+**Tokens from Row 1**: 8 tokens
+
+#### Processing Row 2: `max(a, b) = if (a >= b) a else b`
+
+Key observations:
+
+- `max` → `IdentifierToken` (not a keyword)
+- `if` → `IfToken` (keyword detected at boundary)
+- `>=` → `GreaterOrEqualToken` (two-character operator)
+- `else` → `ElseToken` (keyword detected at boundary)
+
+The `>=` operator is recognized through lookahead:
+
+| Character | State Transition               | Action                                             |
+| --------- | ------------------------------ | -------------------------------------------------- |
+| `>`       | `InitState` → `GreaterState`   | Start potential `>` or `>=`                        |
+| `=`       | `GreaterState` → `ResultState` | Second `=` found; emit `GreaterOrEqualToken(">=")` |
+
+**Tokens from Row 2**: 16 tokens
+
+#### Processing Row 3: `main = max(square(3), square(4))`
+
+Key observations:
+
+- `3` and `4` → `NumberToken` with parsed `num` values
+- Nested parentheses are tokenized independently
+
+Number tokenization for `3`:
+
+| Character | State Transition               | Action                                           |
+| --------- | ------------------------------ | ------------------------------------------------ |
+| `3`       | `InitState` → `IntegerState`   | Start number, lexeme = `"3"`                     |
+| `)`       | `IntegerState` → `ResultState` | Delimiter found; `back()`, emit `NumberToken(3)` |
+
+**Tokens from Row 3**: 14 tokens
+
+### Complete Output
+
+The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
+
+#### Row 1 Tokens: `square(n) = n * n`
+
+| Index | Token Type              | Value      | Location |
+| ----- | ----------------------- | ---------- | -------- |
+| 0     | `IdentifierToken`       | `"square"` | [1, 1]   |
+| 1     | `OpenParenthesisToken`  | `"("`      | [1, 7]   |
+| 2     | `IdentifierToken`       | `"n"`      | [1, 8]   |
+| 3     | `CloseParenthesisToken` | `")"`      | [1, 9]   |
+| 4     | `AssignToken`           | `"="`      | [1, 11]  |
+| 5     | `IdentifierToken`       | `"n"`      | [1, 13]  |
+| 6     | `AsteriskToken`         | `"*"`      | [1, 15]  |
+| 7     | `IdentifierToken`       | `"n"`      | [1, 17]  |
+
+#### Row 2 Tokens: `max(a, b) = if (a >= b) a else b`
+
+| Index | Token Type              | Value    | Location |
+| ----- | ----------------------- | -------- | -------- |
+| 8     | `IdentifierToken`       | `"max"`  | [2, 1]   |
+| 9     | `OpenParenthesisToken`  | `"("`    | [2, 4]   |
+| 10    | `IdentifierToken`       | `"a"`    | [2, 5]   |
+| 11    | `CommaToken`            | `","`    | [2, 6]   |
+| 12    | `IdentifierToken`       | `"b"`    | [2, 8]   |
+| 13    | `CloseParenthesisToken` | `")"`    | [2, 9]   |
+| 14    | `AssignToken`           | `"="`    | [2, 11]  |
+| 15    | `IfToken`               | `"if"`   | [2, 13]  |
+| 16    | `OpenParenthesisToken`  | `"("`    | [2, 16]  |
+| 17    | `IdentifierToken`       | `"a"`    | [2, 17]  |
+| 18    | `GreaterOrEqualToken`   | `">="`   | [2, 19]  |
+| 19    | `IdentifierToken`       | `"b"`    | [2, 22]  |
+| 20    | `CloseParenthesisToken` | `")"`    | [2, 23]  |
+| 21    | `IdentifierToken`       | `"a"`    | [2, 25]  |
+| 22    | `ElseToken`             | `"else"` | [2, 27]  |
+| 23    | `IdentifierToken`       | `"b"`    | [2, 32]  |
+
+#### Row 3 Tokens: `main = max(square(3), square(4))`
+
+| Index | Token Type              | Value      | Location |
+| ----- | ----------------------- | ---------- | -------- |
+| 24    | `IdentifierToken`       | `"main"`   | [3, 1]   |
+| 25    | `AssignToken`           | `"="`      | [3, 6]   |
+| 26    | `IdentifierToken`       | `"max"`    | [3, 8]   |
+| 27    | `OpenParenthesisToken`  | `"("`      | [3, 11]  |
+| 28    | `IdentifierToken`       | `"square"` | [3, 12]  |
+| 29    | `OpenParenthesisToken`  | `"("`      | [3, 18]  |
+| 30    | `NumberToken`           | `3`        | [3, 19]  |
+| 31    | `CloseParenthesisToken` | `")"`      | [3, 20]  |
+| 32    | `CommaToken`            | `","`      | [3, 21]  |
+| 33    | `IdentifierToken`       | `"square"` | [3, 23]  |
+| 34    | `OpenParenthesisToken`  | `"("`      | [3, 29]  |
+| 35    | `NumberToken`           | `4`        | [3, 30]  |
+| 36    | `CloseParenthesisToken` | `")"`      | [3, 31]  |
+| 37    | `CloseParenthesisToken` | `")"`      | [3, 32]  |
+
+### Summary
+
+| Property              | Value                    |
+| --------------------- | ------------------------ |
+| Input type            | `List<Character>`        |
+| Output type           | `List<Token>`            |
+| Input length          | 84 characters            |
+| Output length         | 38 tokens                |
+| Whitespace characters | 46 (skipped)             |
+| Identifiers           | 15                       |
+| Keywords              | 2 (`if`, `else`)         |
+| Numbers               | 2 (`3`, `4`)             |
+| Operators             | 5 (`=` x3, `*`, `>=`)    |
+| Delimiters            | 14 (parentheses, commas) |
+
+### Key Observations
+
+1. **Whitespace elimination**: All 46 whitespace characters (spaces and newlines) are discarded—they served only to delimit tokens.
+
+2. **Keyword detection at boundary**: `if` and `else` are recognized as keywords only when the complete lexeme is checked. The lexer accumulates characters in `IdentifierState` and calls `_identifierOrKeywordToken()` at the delimiter.
+
+3. **Lookahead pattern**: Two-character operators like `>=` use lookahead. `GreaterState` peeks at the next character; if it's `=`, the compound token is emitted. Otherwise, `iterator.back()` un-consumes the character.
+
+4. **Single-character delimiters**: Parentheses, commas, and brackets are emitted directly from `InitState` without entering an intermediate state.
+
+5. **Typed token values**: `NumberToken` parses the lexeme to `num` at construction time. The tokens for `3` and `4` store the actual numeric values, not strings.
+
+6. **Location preservation**: Each token retains the location of its first character, enabling precise error messages in later stages.
+
+---
+
+## Stage 3: Syntactic Analyzer
+
 _Coming soon..._
