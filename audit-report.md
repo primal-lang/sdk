@@ -1,21 +1,3 @@
-### 4. Inconsistent behavior between `list.take`/`list.drop` and `str.take`/`str.drop`
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_take.dart`, `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_take.dart` (and corresponding `drop` files)
-**Lines**: Various
-
-- **Issue**: `list.take(list, n)` and `str.take(str, n)` throw `IndexOutOfBoundsError` when `n > length`. This is inconsistent with common functional programming conventions where `take` typically returns as many elements as available (clamping to length). The same applies to `drop`.
-
-- **Impact**: Users familiar with functional programming patterns may be surprised by the strict bounds checking, leading to more defensive code or unexpected runtime errors.
-
-- **Fix**: Consider allowing `take`/`drop` to clamp the count to the collection length rather than throwing. If strict behavior is desired, document it clearly.
-
-**Follow-up**:
-
-- **Tests**: Current behavior is correct per implementation; add tests documenting this design choice
-- **Docs**: Update `docs/reference/list.md` and `docs/reference/string.md` to clarify bounds behavior
-
----
-
 ## Info
 
 ### 1. Missing `const` constructor on several `NativeFunctionNode` subclasses

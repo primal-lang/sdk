@@ -461,40 +461,14 @@ void main() {
       checkResult(runtime, 0);
     });
 
-    test('str.take throws IndexOutOfBoundsError when count exceeds length', () {
+    test('str.take clamps to length when count exceeds length', () {
       final RuntimeFacade runtime = getRuntime('main = str.take("Hi", 10)');
-      expect(
-        runtime.executeMain,
-        throwsA(
-          isA<IndexOutOfBoundsError>().having(
-            (e) => e.toString(),
-            'message',
-            allOf(
-              contains('10'),
-              contains('length: 2'),
-              contains('str.take'),
-            ),
-          ),
-        ),
-      );
+      checkResult(runtime, '"Hi"');
     });
 
-    test('str.drop throws IndexOutOfBoundsError when count exceeds length', () {
+    test('str.drop clamps to length when count exceeds length', () {
       final RuntimeFacade runtime = getRuntime('main = str.drop("Hi", 10)');
-      expect(
-        runtime.executeMain,
-        throwsA(
-          isA<IndexOutOfBoundsError>().having(
-            (e) => e.toString(),
-            'message',
-            allOf(
-              contains('10'),
-              contains('length: 2'),
-              contains('str.drop'),
-            ),
-          ),
-        ),
-      );
+      checkResult(runtime, '""');
     });
   });
 

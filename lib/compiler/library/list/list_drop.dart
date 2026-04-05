@@ -1,3 +1,4 @@
+import 'dart:math' show min;
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
@@ -37,14 +38,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       if (count < 0) {
         throw NegativeIndexError(function: name, index: count);
       }
-      if (count > a.value.length) {
-        throw IndexOutOfBoundsError(
-          function: name,
-          index: count,
-          length: a.value.length,
-        );
-      }
-      return ListNode(a.value.sublist(count, a.value.length));
+      final int clampedCount = min(count, a.value.length);
+      return ListNode(a.value.sublist(clampedCount, a.value.length));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

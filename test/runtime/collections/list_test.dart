@@ -864,24 +864,11 @@ main = list.sort([3, 1, 2], badCompare)
       },
     );
 
-    test('list.drop throws IndexOutOfBoundsError for out-of-bounds count', () {
+    test('list.drop clamps to length for out-of-bounds count', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.drop([1, 2, 3], 10)',
       );
-      expect(
-        runtime.executeMain,
-        throwsA(
-          isA<IndexOutOfBoundsError>().having(
-            (e) => e.toString(),
-            'message',
-            allOf(
-              contains('10'),
-              contains('length: 3'),
-              contains('list.drop'),
-            ),
-          ),
-        ),
-      );
+      checkResult(runtime, []);
     });
 
     test('list.drop throws NegativeIndexError for negative count', () {
@@ -903,24 +890,11 @@ main = list.sort([3, 1, 2], badCompare)
       );
     });
 
-    test('list.take throws IndexOutOfBoundsError for out-of-bounds count', () {
+    test('list.take clamps to length for out-of-bounds count', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.take([1, 2, 3], 10)',
       );
-      expect(
-        runtime.executeMain,
-        throwsA(
-          isA<IndexOutOfBoundsError>().having(
-            (IndexOutOfBoundsError e) => e.toString(),
-            'message',
-            allOf(
-              contains('10'),
-              contains('length: 3'),
-              contains('list.take'),
-            ),
-          ),
-        ),
-      );
+      checkResult(runtime, [1, 2, 3]);
     });
 
     test('list.take throws NegativeIndexError for negative count', () {

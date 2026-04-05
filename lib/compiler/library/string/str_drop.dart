@@ -39,13 +39,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
       if (count < 0) {
         throw NegativeIndexError(function: name, index: count);
       }
-      if (count > chars.length) {
-        throw IndexOutOfBoundsError(
-          function: name,
-          index: count,
-          length: chars.length,
-        );
-      }
+      // Characters.skip() already clamps to available length
       return StringNode(chars.skip(count).toString());
     } else {
       throw InvalidArgumentTypesError(
