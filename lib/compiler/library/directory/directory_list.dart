@@ -38,7 +38,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
           .list(a.value);
       final List<Node> list = [];
 
-      for (final child in children) {
+      for (final FileSystemEntity child in children) {
         if (child is File) {
           list.add(FileNode(child));
         } else if (child is Directory) {

@@ -6,6 +6,7 @@ import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/semantic/semantic_analyzer.dart';
+import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 
@@ -37,7 +38,8 @@ class RuntimeFacade {
     // Build combined signature map for expression validation
     final Map<String, FunctionSignature> allSignatures = {
       ...intermediateRepresentation.standardLibrarySignatures,
-      for (final fn in intermediateRepresentation.customFunctions.values)
+      for (final SemanticFunction fn
+          in intermediateRepresentation.customFunctions.values)
         fn.name: FunctionSignature(
           name: fn.name,
           parameters: fn.parameters,

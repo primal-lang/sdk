@@ -335,7 +335,7 @@ class ExpressionParser {
   }
 
   bool match(List<bool Function(Token)> predicates) {
-    for (final predicate in predicates) {
+    for (final bool Function(Token) predicate in predicates) {
       if (check(predicate)) {
         advance();
         return true;

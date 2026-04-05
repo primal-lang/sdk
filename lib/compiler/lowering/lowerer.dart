@@ -39,7 +39,7 @@ class Lowerer {
 
   Node _lowerMap(SemanticMapNode node) {
     final Map<Node, Node> entries = {};
-    for (final entry in node.value) {
+    for (final SemanticMapEntryNode entry in node.value) {
       entries[lowerNode(entry.key)] = lowerNode(entry.value);
     }
     return MapNode(entries);

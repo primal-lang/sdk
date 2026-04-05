@@ -3,6 +3,7 @@ import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/runtime/node.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
+import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/utils/mapper.dart';
 
 class RuntimeInputBuilder {
@@ -19,7 +20,8 @@ class RuntimeInputBuilder {
     final Lowerer lowerer = Lowerer(functions);
 
     // Lower custom functions from semantic IR to runtime nodes
-    for (final function in intermediateRepresentation.customFunctions.values) {
+    for (final SemanticFunction function
+        in intermediateRepresentation.customFunctions.values) {
       functions[function.name] = lowerer.lowerFunction(function);
     }
 
