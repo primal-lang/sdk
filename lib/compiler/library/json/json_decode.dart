@@ -50,7 +50,9 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   }
 
   Node getValue(dynamic value) {
-    if (value is bool) {
+    if (value == null) {
+      throw const RuntimeError('JSON null values are not supported');
+    } else if (value is bool) {
       return BooleanNode(value);
     } else if (value is num) {
       return NumberNode(value);
@@ -66,14 +68,16 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
   }
 
   ListNode getList(List<dynamic> element) =>
-      ListNode(element.map(getValue).toList());
+      ListNode(element.where((e) => e != null).map(getValue).toList());
 
   MapNode getMap(Map<dynamic, dynamic> element) {
     final Map<Node, Node> result = {};
 
     element.forEach((key, value) {
-      final Node nodeKey = LiteralNode.from(key);
-      result[nodeKey] = getValue(value);
+      if (value != null) {
+        final Node nodeKey = LiteralNode.from(key);
+        result[nodeKey] = getValue(value);
+      }
     });
 
     return MapNode(result);

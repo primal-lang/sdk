@@ -23,3 +23,5 @@ json.encode({"name": "Alice", "age": 30}) // returns '{"name":"Alice","age":30}'
 ```
 json.decode('{"name":"Alice","age":30}') // returns {"name": "Alice", "age": 30}
 ```
+
+> **Note:** JSON `null` values are not supported. When decoding, `null` values in objects are skipped (the key is omitted), and `null` values in arrays are filtered out. A top-level `null` (e.g., `json.decode("null")`) throws a runtime error.

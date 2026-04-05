@@ -176,12 +176,32 @@ void main() {
       },
     );
 
-    test('json.decode with null value throws InvalidValueError', () {
+    test('json.decode with top-level null throws RuntimeError', () {
       final RuntimeFacade runtime = getRuntime('main = json.decode("null")');
       expect(
         runtime.executeMain,
-        throwsA(isA<InvalidValueError>()),
+        throwsA(
+          isA<RuntimeError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('JSON null values are not supported'),
+          ),
+        ),
       );
+    });
+
+    test('json.decode skips null values in objects', () {
+      final RuntimeFacade runtime = getRuntime(
+        "main = json.decode('{\"name\": \"John\", \"age\": null}')",
+      );
+      checkResult(runtime, {'"name"': '"John"'});
+    });
+
+    test('json.decode filters null values from arrays', () {
+      final RuntimeFacade runtime = getRuntime(
+        "main = json.decode('[1, null, 3]')",
+      );
+      checkResult(runtime, [1, 3]);
     });
   });
 
