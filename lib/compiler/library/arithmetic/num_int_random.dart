@@ -3,6 +3,8 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
+final Random _random = Random();
+
 class NumIntegerRandom extends NativeFunctionNode {
   const NumIntegerRandom()
     : super(
@@ -49,7 +51,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
           reason: 'range overflow',
         );
       }
-      return NumberNode(min + Random().nextInt(range));
+      return NumberNode(min + _random.nextInt(range));
     } else {
       throw InvalidArgumentTypesError(
         function: name,
