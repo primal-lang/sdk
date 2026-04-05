@@ -39,8 +39,8 @@ void runCli(
   bool debug = false;
   final List<String> remainingArgs = [];
 
-  for (final String arg in args) {
-    switch (arg) {
+  for (final String argument in args) {
+    switch (argument) {
       case '--help' || '-h':
         currentConsole.print(helpText);
         return;
@@ -50,7 +50,7 @@ void runCli(
       case '--debug' || '-d':
         debug = true;
       default:
-        remainingArgs.add(arg);
+        remainingArgs.add(argument);
     }
   }
 

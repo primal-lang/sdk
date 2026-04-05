@@ -38,11 +38,11 @@ class RuntimeFacade {
     // Build combined signature map for expression validation
     final Map<String, FunctionSignature> allSignatures = {
       ...intermediateRepresentation.standardLibrarySignatures,
-      for (final SemanticFunction fn
+      for (final SemanticFunction function
           in intermediateRepresentation.customFunctions.values)
-        fn.name: FunctionSignature(
-          name: fn.name,
-          parameters: fn.parameters,
+        function.name: FunctionSignature(
+          name: function.name,
+          parameters: function.parameters,
         ),
     };
 

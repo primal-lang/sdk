@@ -184,18 +184,20 @@ void main() {
   };
 
   for (final MapEntry<String, Set<String>> entry in isChecks.entries) {
-    final String fn = entry.key;
+    final String functionName = entry.key;
     final Set<String> trueTypes = entry.value;
 
-    group(fn, () {
+    group(functionName, () {
       for (final MapEntry<String, String> typeEntry
           in typeExpressions.entries) {
         final String typeName = typeEntry.key;
-        final String expr = typeEntry.value;
+        final String expression = typeEntry.value;
         final bool expected = trueTypes.contains(typeName);
 
         test('returns $expected for $typeName', () {
-          final RuntimeFacade runtime = getRuntime('main = $fn($expr)');
+          final RuntimeFacade runtime = getRuntime(
+            'main = $functionName($expression)',
+          );
           checkResult(runtime, expected);
         });
       }

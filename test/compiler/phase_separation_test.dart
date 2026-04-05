@@ -63,18 +63,18 @@ void main() {
 }
 
 List<String> _checkImports(
-  String directory,
+  String directoryPath,
   List<String> forbidden, {
   List<String> exclude = const [],
 }) {
   final List<String> violations = [];
-  final Directory dir = Directory(directory);
+  final Directory directory = Directory(directoryPath);
 
-  if (!dir.existsSync()) {
-    return ['Directory does not exist: $directory'];
+  if (!directory.existsSync()) {
+    return ['Directory does not exist: $directoryPath'];
   }
 
-  for (final FileSystemEntity entity in dir.listSync(recursive: true)) {
+  for (final FileSystemEntity entity in directory.listSync(recursive: true)) {
     if (entity is File && entity.path.endsWith('.dart')) {
       // Check if this file should be excluded
       final String fileName = entity.path.split('/').last;

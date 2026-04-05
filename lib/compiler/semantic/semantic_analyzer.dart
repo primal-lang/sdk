@@ -271,8 +271,8 @@ class SemanticAnalyzer
     // First, recursively check all arguments
     final List<SemanticNode> checkedArguments = expression.arguments
         .map(
-          (arg) => checkExpression(
-            expression: arg,
+          (argument) => checkExpression(
+            expression: argument,
             currentFunction: currentFunction,
             availableParameters: availableParameters,
             usedParameters: usedParameters,

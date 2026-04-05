@@ -1199,3 +1199,7 @@ main = max(square(3), square(4))
 6. **One-way transformation**: Lowering is irreversible. The semantic IR is the last point where source locations and resolved signatures are available.
 
 ---
+
+## Stage 6: Runtime
+
+**coming soon**

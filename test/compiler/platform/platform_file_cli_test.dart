@@ -117,20 +117,20 @@ void main() {
     test('copy copies a file', () {
       final File source = File('${tempDir.path}/src.txt')
         ..writeAsStringSync('data');
-      final File dest = File('${tempDir.path}/dst.txt');
+      final File destination = File('${tempDir.path}/dst.txt');
 
-      expect(platform.copy(source, dest), isTrue);
-      expect(dest.readAsStringSync(), equals('data'));
+      expect(platform.copy(source, destination), isTrue);
+      expect(destination.readAsStringSync(), equals('data'));
       expect(source.existsSync(), isTrue);
     });
 
     test('move moves a file', () {
       final File source = File('${tempDir.path}/mv_src.txt')
         ..writeAsStringSync('data');
-      final File dest = File('${tempDir.path}/mv_dst.txt');
+      final File destination = File('${tempDir.path}/mv_dst.txt');
 
-      expect(platform.move(source, dest), isTrue);
-      expect(dest.readAsStringSync(), equals('data'));
+      expect(platform.move(source, destination), isTrue);
+      expect(destination.readAsStringSync(), equals('data'));
       expect(source.existsSync(), isFalse);
     });
 
