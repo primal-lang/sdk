@@ -389,4 +389,266 @@ The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
 
 ## Stage 3: Syntactic Analyzer
 
+**Files**: `lib/compiler/syntactic/syntactic_analyzer.dart`, `lib/compiler/syntactic/expression_parser.dart`
+
+The syntactic analyzer (parser) converts the token list into a list of `FunctionDefinition` objects. Each definition contains a name, parameter list, and an expression tree. The parser uses a **state machine** for function definitions and a **recursive descent parser** for expressions.
+
+### Transformation
+
+**Input**: `List<Token>` (38 tokens)
+
+**Output**: `List<FunctionDefinition>` (3 function definitions with expression trees)
+
+### Step-by-Step Processing
+
+The analyzer uses two parsing mechanisms:
+
+1. **State machine** — Parses the function signature (name and parameters)
+2. **Recursive descent** — Parses the function body (expression tree)
+
+#### Parsing Function 1: `square(n) = n * n`
+
+**State Machine Trace:**
+
+| Token                       | State Transition                                                 | Action                |
+| --------------------------- | ---------------------------------------------------------------- | --------------------- |
+| `IdentifierToken("square")` | `InitState` → `FunctionNameState`                                | Set name = `"square"` |
+| `OpenParenthesisToken`      | `FunctionNameState` → `FunctionWithParametersState`              | Expect parameters     |
+| `IdentifierToken("n")`      | `FunctionWithParametersState` → `FunctionWithNewParametersState` | Add parameter `"n"`   |
+| `CloseParenthesisToken`     | `FunctionWithNewParametersState` → `FunctionParametrizedState`   | Parameters complete   |
+| `AssignToken`               | `FunctionParametrizedState` → `ResultState`                      | Parse body expression |
+
+**Expression Parsing for `n * n`:**
+
+The expression parser uses recursive descent with operator precedence. For `n * n`:
+
+```
+expression()
+  └─ ifExpression()
+       └─ equality()
+            └─ logicOr()
+                 └─ logicAnd()
+                      └─ comparison()
+                           └─ term()
+                                └─ factor()  ← multiplication handled here
+```
+
+| Step | Method                   | Token                  | Action                                     |
+| ---- | ------------------------ | ---------------------- | ------------------------------------------ |
+| 1    | `factor()` → `primary()` | `IdentifierToken("n")` | Return `IdentifierExpression("n")`         |
+| 2    | `factor()`               | `AsteriskToken("*")`   | Match `*`, save as operator                |
+| 3    | `factor()` → `primary()` | `IdentifierToken("n")` | Return `IdentifierExpression("n")`         |
+| 4    | `factor()`               | —                      | Build `CallExpression.fromBinaryOperation` |
+
+**Desugaring**: The binary `n * n` becomes `*(n, n)` — a call to the `*` function with two arguments.
+
+**Result:**
+
+```
+FunctionDefinition(
+  name: "square",
+  parameters: ["n"],
+  expression: CallExpression(
+    callee: IdentifierExpression("*"),
+    arguments: [
+      IdentifierExpression("n"),
+      IdentifierExpression("n")
+    ]
+  )
+)
+```
+
+#### Parsing Function 2: `max(a, b) = if (a >= b) a else b`
+
+**State Machine Trace:**
+
+| Token                    | State Transition                                                     | Action                |
+| ------------------------ | -------------------------------------------------------------------- | --------------------- |
+| `IdentifierToken("max")` | `InitState` → `FunctionNameState`                                    | Set name = `"max"`    |
+| `OpenParenthesisToken`   | `FunctionNameState` → `FunctionWithParametersState`                  | Expect parameters     |
+| `IdentifierToken("a")`   | `FunctionWithParametersState` → `FunctionWithNewParametersState`     | Add parameter `"a"`   |
+| `CommaToken`             | `FunctionWithNewParametersState` → `FunctionWithNextParametersState` | Expect next parameter |
+| `IdentifierToken("b")`   | `FunctionWithNextParametersState` → `FunctionWithNewParametersState` | Add parameter `"b"`   |
+| `CloseParenthesisToken`  | `FunctionWithNewParametersState` → `FunctionParametrizedState`       | Parameters complete   |
+| `AssignToken`            | `FunctionParametrizedState` → `ResultState`                          | Parse body expression |
+
+**Expression Parsing for `if (a >= b) a else b`:**
+
+The `if` expression has the lowest precedence (level 1):
+
+| Step | Method            | Token                   | Action                             |
+| ---- | ----------------- | ----------------------- | ---------------------------------- |
+| 1    | `ifExpression()`  | `IfToken("if")`         | Match `if`, start conditional      |
+| 2    | `ifExpression()`  | `OpenParenthesisToken`  | Consume `(`                        |
+| 3    | _parse condition_ | —                       | Recursively parse `a >= b`         |
+| 4    | `ifExpression()`  | `CloseParenthesisToken` | Consume `)`                        |
+| 5    | _parse ifTrue_    | `IdentifierToken("a")`  | Return `IdentifierExpression("a")` |
+| 6    | `ifExpression()`  | `ElseToken("else")`     | Consume `else`                     |
+| 7    | _parse ifFalse_   | `IdentifierToken("b")`  | Return `IdentifierExpression("b")` |
+
+**Parsing the condition `a >= b`:**
+
+| Step | Method                       | Token                       | Action                                     |
+| ---- | ---------------------------- | --------------------------- | ------------------------------------------ |
+| 1    | `comparison()` → `primary()` | `IdentifierToken("a")`      | Return `IdentifierExpression("a")`         |
+| 2    | `comparison()`               | `GreaterOrEqualToken(">=")` | Match `>=`, save as operator               |
+| 3    | `comparison()` → `primary()` | `IdentifierToken("b")`      | Return `IdentifierExpression("b")`         |
+| 4    | `comparison()`               | —                           | Build `CallExpression.fromBinaryOperation` |
+
+**Desugaring**: The `if` expression becomes `if(condition, ifTrue, ifFalse)` — a call to the `if` function with three arguments.
+
+**Result:**
+
+```
+FunctionDefinition(
+  name: "max",
+  parameters: ["a", "b"],
+  expression: CallExpression(
+    callee: IdentifierExpression("if"),
+    arguments: [
+      CallExpression(                      // condition: a >= b
+        callee: IdentifierExpression(">="),
+        arguments: [
+          IdentifierExpression("a"),
+          IdentifierExpression("b")
+        ]
+      ),
+      IdentifierExpression("a"),           // ifTrue
+      IdentifierExpression("b")            // ifFalse
+    ]
+  )
+)
+```
+
+#### Parsing Function 3: `main = max(square(3), square(4))`
+
+**State Machine Trace (nullary function):**
+
+| Token                     | State Transition                    | Action                    |
+| ------------------------- | ----------------------------------- | ------------------------- |
+| `IdentifierToken("main")` | `InitState` → `FunctionNameState`   | Set name = `"main"`       |
+| `AssignToken`             | `FunctionNameState` → `ResultState` | No parameters; parse body |
+
+**Expression Parsing for `max(square(3), square(4))`:**
+
+Function calls are handled at the `call()` level (precedence 10):
+
+| Step | Method                 | Token                    | Action                               |
+| ---- | ---------------------- | ------------------------ | ------------------------------------ |
+| 1    | `call()` → `primary()` | `IdentifierToken("max")` | Return `IdentifierExpression("max")` |
+| 2    | `call()`               | `OpenParenthesisToken`   | Match `(`, start argument list       |
+| 3    | `finishCall()`         | —                        | Parse first argument: `square(3)`    |
+| 4    | `finishCall()`         | `CommaToken`             | Match `,`, continue arguments        |
+| 5    | `finishCall()`         | —                        | Parse second argument: `square(4)`   |
+| 6    | `finishCall()`         | `CloseParenthesisToken`  | Consume `)`, complete call           |
+
+**Parsing `square(3)`:**
+
+| Step | Method                       | Token                       | Action                                  |
+| ---- | ---------------------------- | --------------------------- | --------------------------------------- |
+| 1    | `call()` → `primary()`       | `IdentifierToken("square")` | Return `IdentifierExpression("square")` |
+| 2    | `call()`                     | `OpenParenthesisToken`      | Match `(`                               |
+| 3    | `finishCall()` → `primary()` | `NumberToken(3)`            | Return `NumberExpression(3)`            |
+| 4    | `finishCall()`               | `CloseParenthesisToken`     | Consume `)`                             |
+
+**Result:**
+
+```
+FunctionDefinition(
+  name: "main",
+  parameters: [],
+  expression: CallExpression(
+    callee: IdentifierExpression("max"),
+    arguments: [
+      CallExpression(
+        callee: IdentifierExpression("square"),
+        arguments: [NumberExpression(3)]
+      ),
+      CallExpression(
+        callee: IdentifierExpression("square"),
+        arguments: [NumberExpression(4)]
+      )
+    ]
+  )
+)
+```
+
+### Complete Output
+
+The `SyntacticAnalyzer` produces a `List<FunctionDefinition>` with **3 definitions**:
+
+| Index | Name     | Parameters   | Expression (desugared)      |
+| ----- | -------- | ------------ | --------------------------- |
+| 0     | `square` | `["n"]`      | `*(n, n)`                   |
+| 1     | `max`    | `["a", "b"]` | `if(>=(a, b), a, b)`        |
+| 2     | `main`   | `[]`         | `max(square(3), square(4))` |
+
+### Expression Tree Visualization
+
+```
+square(n) = n * n
+─────────────────
+      CallExpression [1, 15]
+      ├─ callee: IdentifierExpression("*")
+      └─ arguments:
+         ├─ IdentifierExpression("n") [1, 13]
+         └─ IdentifierExpression("n") [1, 17]
+
+max(a, b) = if (a >= b) a else b
+────────────────────────────────
+      CallExpression [2, 13]
+      ├─ callee: IdentifierExpression("if")
+      └─ arguments:
+         ├─ CallExpression [2, 19]           ← condition
+         │  ├─ callee: IdentifierExpression(">=")
+         │  └─ arguments:
+         │     ├─ IdentifierExpression("a") [2, 17]
+         │     └─ IdentifierExpression("b") [2, 22]
+         ├─ IdentifierExpression("a") [2, 25] ← ifTrue
+         └─ IdentifierExpression("b") [2, 32] ← ifFalse
+
+main = max(square(3), square(4))
+────────────────────────────────
+      CallExpression [3, 8]
+      ├─ callee: IdentifierExpression("max")
+      └─ arguments:
+         ├─ CallExpression [3, 12]
+         │  ├─ callee: IdentifierExpression("square")
+         │  └─ arguments:
+         │     └─ NumberExpression(3) [3, 19]
+         └─ CallExpression [3, 23]
+            ├─ callee: IdentifierExpression("square")
+            └─ arguments:
+               └─ NumberExpression(4) [3, 30]
+```
+
+### Summary
+
+| Property                       | Value                      |
+| ------------------------------ | -------------------------- |
+| Input type                     | `List<Token>`              |
+| Output type                    | `List<FunctionDefinition>` |
+| Input length                   | 38 tokens                  |
+| Output length                  | 3 function definitions     |
+| Expression nodes created       | 15                         |
+| Identifiers desugared to calls | 3 (`*`, `>=`, `if`)        |
+
+### Key Observations
+
+1. **Operator desugaring**: All operators (`*`, `>=`) and control flow (`if`) are converted to `CallExpression` nodes. This unifies computation as function application, simplifying later stages.
+
+2. **Precedence via recursion**: The recursive descent parser encodes precedence through the call stack. `factor()` (multiplication) calls `index()` which calls `unary()`, ensuring `*` binds tighter than `+`.
+
+3. **Two parsing modes**: The state machine handles the flat structure of function signatures, while recursive descent handles the nested structure of expressions.
+
+4. **Location preservation**: Each expression node stores its source location from the originating token, enabling precise error messages in semantic analysis.
+
+5. **Nullary vs parameterized**: `main` has no parameters and uses the shorter path (`FunctionNameState` → `ResultState`), while `square` and `max` go through the parameter-parsing states.
+
+6. **Uniform call representation**: User-defined calls (`max(...)`, `square(...)`) and desugared operators (`*(n, n)`) use the same `CallExpression` structure.
+
+---
+
+## Stage 4: Semantic Analyzer
+
 _Coming soon..._
