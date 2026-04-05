@@ -6,6 +6,11 @@ import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/utils/mapper.dart';
 import 'package:test/test.dart';
 
+/// Test double for [FunctionTerm] since it is abstract.
+class TestFunctionTerm extends FunctionTerm {
+  const TestFunctionTerm({required super.name, required super.parameters});
+}
+
 void main() {
   group('Mapper', () {
     test('toMap converts empty list to empty map', () {
@@ -15,8 +20,14 @@ void main() {
 
     test('toMap converts functions to map keyed by name', () {
       final List<FunctionTerm> functions = [
-        const FunctionTerm(name: 'add', parameters: [Parameter.number('x')]),
-        const FunctionTerm(name: 'sub', parameters: [Parameter.number('y')]),
+        const TestFunctionTerm(
+          name: 'add',
+          parameters: [Parameter.number('x')],
+        ),
+        const TestFunctionTerm(
+          name: 'sub',
+          parameters: [Parameter.number('y')],
+        ),
       ];
       final Map<String, FunctionTerm> result = Mapper.toMap(functions);
       expect(result.length, 2);
@@ -27,11 +38,11 @@ void main() {
     });
 
     test('toMap with duplicate names keeps last entry', () {
-      const FunctionTerm first = FunctionTerm(
+      const TestFunctionTerm first = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.number('a')],
       );
-      const FunctionTerm second = FunctionTerm(
+      const TestFunctionTerm second = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.string('b')],
       );
@@ -42,7 +53,7 @@ void main() {
 
     test('toMap with single function', () {
       final List<FunctionTerm> functions = [
-        const FunctionTerm(name: 'main', parameters: []),
+        const TestFunctionTerm(name: 'main', parameters: []),
       ];
       final Map<String, FunctionTerm> result = Mapper.toMap(functions);
       expect(result.length, 1);

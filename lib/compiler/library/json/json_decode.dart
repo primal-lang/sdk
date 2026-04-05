@@ -75,7 +75,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
 
     element.forEach((key, value) {
       if (value != null) {
-        final Term termKey = LiteralTerm.from(key);
+        final Term termKey = ValueTerm.from(key);
         result[termKey] = getValue(value);
       }
     });

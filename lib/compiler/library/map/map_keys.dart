@@ -33,7 +33,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     if (a is MapTerm) {
       final Map<dynamic, Term> map = a.asMapWithKeys();
 
-      return ListTerm(map.keys.map(LiteralTerm.from).toList());
+      return ListTerm(map.keys.map(ValueTerm.from).toList());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

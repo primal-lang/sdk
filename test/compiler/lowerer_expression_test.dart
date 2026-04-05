@@ -8,25 +8,30 @@ import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:test/test.dart';
 
+/// Test double for [FunctionTerm] since it is abstract.
+class TestFunctionTerm extends FunctionTerm {
+  const TestFunctionTerm({required super.name, required super.parameters});
+}
+
 void main() {
   const Location defaultLocation = Location(row: 1, column: 1);
 
   // Create mock functions for testing identifier lowering
   final Map<String, FunctionTerm> functions = {
-    'myVar': const FunctionTerm(name: 'myVar', parameters: []),
-    'foo': const FunctionTerm(name: 'foo', parameters: []),
-    'add': const FunctionTerm(
+    'myVar': const TestFunctionTerm(name: 'myVar', parameters: []),
+    'foo': const TestFunctionTerm(name: 'foo', parameters: []),
+    'add': const TestFunctionTerm(
       name: 'add',
       parameters: [
         Parameter.number('a'),
         Parameter.number('b'),
       ],
     ),
-    'outer': const FunctionTerm(
+    'outer': const TestFunctionTerm(
       name: 'outer',
       parameters: [Parameter.any('x')],
     ),
-    'inner': const FunctionTerm(
+    'inner': const TestFunctionTerm(
       name: 'inner',
       parameters: [Parameter.any('x')],
     ),

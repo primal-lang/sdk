@@ -11,63 +11,68 @@ import 'package:primal/compiler/runtime/bindings.dart';
 import 'package:primal/compiler/runtime/term.dart';
 import 'package:test/test.dart';
 
+/// Test double for [FunctionTerm] since it is abstract.
+class TestFunctionTerm extends FunctionTerm {
+  const TestFunctionTerm({required super.name, required super.parameters});
+}
+
 void main() {
-  group('LiteralTerm.from()', () {
+  group('ValueTerm.from()', () {
     test('bool returns BooleanTerm', () {
-      final LiteralTerm term = LiteralTerm.from(true);
+      final ValueTerm term = ValueTerm.from(true);
       expect(term, isA<BooleanTerm>());
     });
 
     test('int returns NumberTerm', () {
-      final LiteralTerm term = LiteralTerm.from(42);
+      final ValueTerm term = ValueTerm.from(42);
       expect(term, isA<NumberTerm>());
     });
 
     test('double returns NumberTerm', () {
-      final LiteralTerm term = LiteralTerm.from(3.14);
+      final ValueTerm term = ValueTerm.from(3.14);
       expect(term, isA<NumberTerm>());
     });
 
     test('String returns StringTerm', () {
-      final LiteralTerm term = LiteralTerm.from('hello');
+      final ValueTerm term = ValueTerm.from('hello');
       expect(term, isA<StringTerm>());
     });
 
     test('List<Term> returns ListTerm', () {
-      final LiteralTerm term = LiteralTerm.from(<Term>[const NumberTerm(1)]);
+      final ValueTerm term = ValueTerm.from(<Term>[const NumberTerm(1)]);
       expect(term, isA<ListTerm>());
     });
 
     test('Map<Term, Term> returns MapTerm', () {
-      final LiteralTerm term = LiteralTerm.from(
+      final ValueTerm term = ValueTerm.from(
         <Term, Term>{const StringTerm('a'): const NumberTerm(1)},
       );
       expect(term, isA<MapTerm>());
     });
 
     test('DateTime returns TimestampTerm', () {
-      final LiteralTerm term = LiteralTerm.from(DateTime(2024));
+      final ValueTerm term = ValueTerm.from(DateTime(2024));
       expect(term, isA<TimestampTerm>());
     });
 
     test('File returns FileTerm', () {
-      final LiteralTerm term = LiteralTerm.from(File('test.txt'));
+      final ValueTerm term = ValueTerm.from(File('test.txt'));
       expect(term, isA<FileTerm>());
     });
 
     test('Directory returns DirectoryTerm', () {
-      final LiteralTerm term = LiteralTerm.from(Directory('test'));
+      final ValueTerm term = ValueTerm.from(Directory('test'));
       expect(term, isA<DirectoryTerm>());
     });
 
     test('Set<Term> returns SetTerm', () {
-      final LiteralTerm term = LiteralTerm.from(<Term>{const NumberTerm(1)});
+      final ValueTerm term = ValueTerm.from(<Term>{const NumberTerm(1)});
       expect(term, isA<SetTerm>());
     });
 
     test('unsupported type throws InvalidLiteralValueError', () {
       expect(
-        () => LiteralTerm.from(Object()),
+        () => ValueTerm.from(Object()),
         throwsA(isA<InvalidLiteralValueError>()),
       );
     });
@@ -365,7 +370,7 @@ void main() {
 
   group('FunctionReferenceTerm', () {
     test('reduce() returns the referenced function', () {
-      const FunctionTerm function = FunctionTerm(
+      const TestFunctionTerm function = TestFunctionTerm(
         name: 'myFunc',
         parameters: [Parameter.number('x')],
       );
@@ -379,7 +384,10 @@ void main() {
     });
 
     test('type is FunctionType', () {
-      const FunctionTerm function = FunctionTerm(name: 'f', parameters: []);
+      const TestFunctionTerm function = TestFunctionTerm(
+        name: 'f',
+        parameters: [],
+      );
       final Map<String, FunctionTerm> functions = {'f': function};
       final FunctionReferenceTerm reference = FunctionReferenceTerm(
         'f',
@@ -390,7 +398,7 @@ void main() {
     });
 
     test('toString() returns function name', () {
-      const FunctionTerm function = FunctionTerm(
+      const TestFunctionTerm function = TestFunctionTerm(
         name: 'myFunc',
         parameters: [],
       );
@@ -404,7 +412,7 @@ void main() {
     });
 
     test('native() returns function string representation', () {
-      const FunctionTerm function = FunctionTerm(
+      const TestFunctionTerm function = TestFunctionTerm(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
@@ -420,7 +428,7 @@ void main() {
 
   group('FunctionTerm', () {
     test('type is FunctionType', () {
-      const FunctionTerm term = FunctionTerm(
+      const TestFunctionTerm term = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
@@ -428,7 +436,7 @@ void main() {
     });
 
     test('toString() includes name and parameters', () {
-      const FunctionTerm term = FunctionTerm(
+      const TestFunctionTerm term = TestFunctionTerm(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
@@ -436,7 +444,7 @@ void main() {
     });
 
     test('parameterTypes returns list of types', () {
-      const FunctionTerm term = FunctionTerm(
+      const TestFunctionTerm term = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.number('x'), Parameter.string('y')],
       );
@@ -446,7 +454,7 @@ void main() {
     });
 
     test('native() returns string representation', () {
-      const FunctionTerm term = FunctionTerm(
+      const TestFunctionTerm term = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
@@ -454,7 +462,7 @@ void main() {
     });
 
     test('apply with wrong argument count throws', () {
-      const FunctionTerm term = FunctionTerm(
+      const TestFunctionTerm term = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
@@ -465,15 +473,15 @@ void main() {
     });
 
     test('equalSignature compares names', () {
-      const FunctionTerm f1 = FunctionTerm(
+      const TestFunctionTerm f1 = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.number('x')],
       );
-      const FunctionTerm f2 = FunctionTerm(
+      const TestFunctionTerm f2 = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.string('y')],
       );
-      const FunctionTerm f3 = FunctionTerm(
+      const TestFunctionTerm f3 = TestFunctionTerm(
         name: 'g',
         parameters: [Parameter.number('x')],
       );
@@ -570,7 +578,7 @@ void main() {
 
   group('FunctionTerm reduce', () {
     test('reduce returns itself', () {
-      const FunctionTerm term = FunctionTerm(
+      const TestFunctionTerm term = TestFunctionTerm(
         name: 'f',
         parameters: [Parameter.number('x')],
       );

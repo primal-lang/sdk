@@ -32,7 +32,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     final Term a = arguments[0].reduce();
     final Term b = arguments[1].reduce();
 
-    if ((a is MapTerm) && (b is LiteralTerm)) {
+    if ((a is MapTerm) && (b is ValueTerm)) {
       final Map<dynamic, Term> map = a.asMapWithKeys();
       final dynamic key = b.native();
 

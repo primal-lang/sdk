@@ -17,10 +17,10 @@ abstract class Term {
   dynamic native();
 }
 
-abstract class LiteralTerm<T> implements Term {
+abstract class ValueTerm<T> implements Term {
   final T value;
 
-  const LiteralTerm(this.value);
+  const ValueTerm(this.value);
 
   @override
   String toString() => value.toString();
@@ -34,7 +34,7 @@ abstract class LiteralTerm<T> implements Term {
   @override
   dynamic native() => value;
 
-  static LiteralTerm from(dynamic value) {
+  static ValueTerm from(dynamic value) {
     if (value is bool) {
       return BooleanTerm(value);
     } else if (value is num) {
@@ -59,49 +59,49 @@ abstract class LiteralTerm<T> implements Term {
   }
 }
 
-class BooleanTerm extends LiteralTerm<bool> {
+class BooleanTerm extends ValueTerm<bool> {
   const BooleanTerm(super.value);
 
   @override
   Type get type => const BooleanType();
 }
 
-class NumberTerm extends LiteralTerm<num> {
+class NumberTerm extends ValueTerm<num> {
   const NumberTerm(super.value);
 
   @override
   Type get type => const NumberType();
 }
 
-class StringTerm extends LiteralTerm<String> {
+class StringTerm extends ValueTerm<String> {
   const StringTerm(super.value);
 
   @override
   Type get type => const StringType();
 }
 
-class FileTerm extends LiteralTerm<File> {
+class FileTerm extends ValueTerm<File> {
   const FileTerm(super.value);
 
   @override
   Type get type => const FileType();
 }
 
-class DirectoryTerm extends LiteralTerm<Directory> {
+class DirectoryTerm extends ValueTerm<Directory> {
   const DirectoryTerm(super.value);
 
   @override
   Type get type => const DirectoryType();
 }
 
-class TimestampTerm extends LiteralTerm<DateTime> {
+class TimestampTerm extends ValueTerm<DateTime> {
   const TimestampTerm(super.value);
 
   @override
   Type get type => const TimestampType();
 }
 
-class ListTerm extends LiteralTerm<List<Term>> {
+class ListTerm extends ValueTerm<List<Term>> {
   const ListTerm(super.value);
 
   @override
@@ -115,7 +115,7 @@ class ListTerm extends LiteralTerm<List<Term>> {
   List native() => value.map((e) => e.native()).toList();
 }
 
-class VectorTerm extends LiteralTerm<List<Term>> {
+class VectorTerm extends ValueTerm<List<Term>> {
   const VectorTerm(super.value);
 
   @override
@@ -129,7 +129,7 @@ class VectorTerm extends LiteralTerm<List<Term>> {
   List native() => value.map((e) => e.native()).toList();
 }
 
-class SetTerm extends LiteralTerm<Set<Term>> {
+class SetTerm extends ValueTerm<Set<Term>> {
   const SetTerm(super.value);
 
   @override
@@ -143,7 +143,7 @@ class SetTerm extends LiteralTerm<Set<Term>> {
   Set native() => value.map((e) => e.native()).toSet();
 }
 
-class StackTerm extends LiteralTerm<List<Term>> {
+class StackTerm extends ValueTerm<List<Term>> {
   const StackTerm(super.value);
 
   @override
@@ -157,7 +157,7 @@ class StackTerm extends LiteralTerm<List<Term>> {
   List native() => value.map((e) => e.native()).toList();
 }
 
-class QueueTerm extends LiteralTerm<List<Term>> {
+class QueueTerm extends ValueTerm<List<Term>> {
   const QueueTerm(super.value);
 
   @override
@@ -171,7 +171,7 @@ class QueueTerm extends LiteralTerm<List<Term>> {
   List native() => value.map((e) => e.native()).toList();
 }
 
-class MapTerm extends LiteralTerm<Map<Term, Term>> {
+class MapTerm extends ValueTerm<Map<Term, Term>> {
   const MapTerm(super.value);
 
   @override
@@ -286,15 +286,11 @@ class CallTerm extends Term {
   }
 
   FunctionTerm getFunctionTerm(Term callee) {
-    if (callee is CallTerm) {
-      return getFunctionTerm(callee.reduce());
-    } else if (callee is FunctionReferenceTerm) {
-      return callee.reduce();
-    } else if (callee is FunctionTerm) {
-      return callee;
-    } else {
-      throw InvalidFunctionError(callee.toString());
+    final Term reduced = callee.reduce();
+    if (reduced is FunctionTerm) {
+      return reduced;
     }
+    throw InvalidFunctionError(callee.toString());
   }
 
   @override
@@ -314,7 +310,7 @@ class CallTerm extends Term {
 /// single-threaded use only. Do not share a [RuntimeFacade] across threads
 /// or call evaluation methods concurrently, as this will cause incorrect
 /// recursion limit enforcement.
-class FunctionTerm extends Term {
+abstract class FunctionTerm extends Term {
   static const int maxRecursionDepth = 1000;
   static int _currentDepth = 0;
 
@@ -443,7 +439,7 @@ abstract class NativeFunctionTerm extends FunctionTerm {
   Term term(List<Term> arguments);
 }
 
-class NativeFunctionTermWithArguments extends FunctionTerm {
+abstract class NativeFunctionTermWithArguments extends FunctionTerm {
   final List<Term> arguments;
 
   const NativeFunctionTermWithArguments({
@@ -451,4 +447,7 @@ class NativeFunctionTermWithArguments extends FunctionTerm {
     required super.parameters,
     required this.arguments,
   });
+
+  @override
+  Term reduce();
 }

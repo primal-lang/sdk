@@ -1,95 +1,3 @@
-## Issue 1: `FunctionTerm.apply()` is effectively dead code
-
-### Problem
-
-`FunctionTerm` is a concrete class with an `apply()` implementation, but this implementation is never used in production:
-
-- User-defined functions use `CustomFunctionTerm.apply()` (overrides base)
-- Native functions use `NativeFunctionTerm` which delegates to base `apply()`, but the actual work happens in `NativeFunctionTermWithArguments.reduce()`
-
-The base `FunctionTerm.apply()` has different semantics from `CustomFunctionTerm.apply()`:
-
-| Behavior                  | `FunctionTerm.apply()` | `CustomFunctionTerm.apply()` |
-| ------------------------- | ---------------------- | ---------------------------- |
-| Recursion depth tracking  | No                     | Yes                          |
-| Eager argument evaluation | No                     | Yes                          |
-
-This inconsistency is confusing and error-prone. If someone extends `FunctionTerm` directly instead of `CustomFunctionTerm`, they get unexpected behavior.
-
-### Current Code (term.dart:359-374)
-
-```dart
-Term apply(List<Term> arguments) {
-  if (parameters.length != arguments.length) {
-    throw InvalidArgumentCountError(
-      function: name,
-      expected: parameters.length,
-      actual: arguments.length,
-    );
-  }
-
-  final Bindings bindings = Bindings.from(
-    parameters: parameters,
-    arguments: arguments,
-  );
-
-  return substitute(bindings).reduce();
-}
-```
-
-### Proposed Solution
-
-Make `FunctionTerm` abstract and `apply()` abstract. This:
-
-1. Prevents accidental instantiation of bare `FunctionTerm`
-2. Forces subclasses to explicitly implement `apply()` semantics
-3. Documents that `FunctionTerm` is a base class, not a usable type
-
-### Changes Required
-
-**File: `lib/compiler/runtime/term.dart`**
-
-1. Change `class FunctionTerm` to `abstract class FunctionTerm`
-2. Change `apply()` method signature to `Term apply(List<Term> arguments);` (abstract)
-3. Remove the body of `apply()` from `FunctionTerm`
-
-**File: `lib/compiler/runtime/term.dart` (NativeFunctionTerm)**
-
-4. Add `apply()` override to `NativeFunctionTerm` that implements the current base behavior:
-
-```dart
-@override
-Term apply(List<Term> arguments) {
-  if (parameters.length != arguments.length) {
-    throw InvalidArgumentCountError(
-      function: name,
-      expected: parameters.length,
-      actual: arguments.length,
-    );
-  }
-
-  final Bindings bindings = Bindings.from(
-    parameters: parameters,
-    arguments: arguments,
-  );
-
-  return substitute(bindings).reduce();
-}
-```
-
-**Test files:**
-
-5. Update tests that instantiate bare `FunctionTerm` to use a concrete test double or `CustomFunctionTerm`
-
-### Files Affected
-
-- `lib/compiler/runtime/term.dart`
-- `test/runtime/core/term_test.dart`
-- `test/utils/mapper_test.dart`
-- `test/compiler/lowerer_expression_test.dart`
-
----
-
 ## Issue 2: `NativeFunctionTermWithArguments.reduce()` can be silently forgotten
 
 ### Problem
@@ -271,8 +179,8 @@ Recommended order based on dependencies and risk:
 
 1. **Issue 3** (simplify `getFunctionTerm`) - Low risk, isolated change
 2. **Issue 2** (make `NativeFunctionTermWithArguments` abstract) - Low risk, no behavior change
-3. **Issue 4** (rename `LiteralTerm` to `ValueTerm`) - Medium risk, touches multiple files but is a pure rename
-4. **Issue 1** (make `FunctionTerm` abstract) - Higher risk, requires test updates
+3. **Issue 1** (make `FunctionTerm` abstract) - Low risk, requires test fixture updates only
+4. **Issue 4** (rename `LiteralTerm` to `ValueTerm`) - Medium risk, touches multiple files but is a pure rename
 
 ---
 
@@ -282,4 +190,3 @@ After each change:
 
 1. Run existing tests: `dart test`
 2. Verify no regressions in integration tests
-3. For Issue 1, ensure test doubles properly exercise the `apply()` contract

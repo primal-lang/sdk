@@ -46,7 +46,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
         );
       }
       return a.value[index];
-    } else if ((a is MapTerm) && (b is LiteralTerm)) {
+    } else if ((a is MapTerm) && (b is ValueTerm)) {
       final Map<dynamic, Term> map = a.asMapWithKeys();
       final Term? term = map[b.value];
 
