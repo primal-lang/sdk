@@ -1,35 +1,3 @@
-### 2. ListIterator.back() silently does nothing at position 0
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/utils/list_iterator.dart`
-**Line**: 50-54
-
-- **Issue**: `back()` silently does nothing when already at position 0, which could mask bugs in calling code.
-- **Impact**: Minor - current usage in the lexer is correct, but future changes could introduce subtle bugs.
-- **Suggestion**: Consider throwing an error or returning a boolean indicating success.
-
-**Follow-up**:
-
-- **Tests**: Current behavior is intentional for the lexer's usage pattern
-- **Docs**: No doc changes needed
-
----
-
-### 3. String concatenation in loop in error message construction
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_remove_at.dart`
-**Line**: 50
-
-- **Issue**: Uses `+` for string concatenation: `chars.take(index).toString() + chars.skip(index + 1).toString()`. This is in a single operation, not a loop, so performance impact is negligible.
-- **Impact**: None in practice - this is a false positive based on the audit criteria. The concatenation happens once per function call, not in a loop.
-- **Suggestion**: No change needed.
-
-**Follow-up**:
-
-- **Tests**: N/A
-- **Docs**: No doc changes needed
-
----
-
 ### 4. try() function catches all exceptions including OutOfMemoryError
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/control/try.dart`
