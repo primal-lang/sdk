@@ -178,6 +178,55 @@ void main() {
       checkResult(runtime, {2});
     });
 
+    test('set.difference of two empty sets returns empty set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference(set.new([]), set.new([]))',
+      );
+      checkResult(runtime, {});
+    });
+
+    test('set.difference with empty second set returns first set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference(set.new([1, 2]), set.new([]))',
+      );
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set.difference with empty first set returns empty set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference(set.new([]), set.new([1, 2]))',
+      );
+      checkResult(runtime, {});
+    });
+
+    test('set.difference of disjoint sets returns first set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference(set.new([1, 2]), set.new([3, 4]))',
+      );
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set.difference removes common elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference(set.new([1, 2, 3]), set.new([2, 3]))',
+      );
+      checkResult(runtime, {1});
+    });
+
+    test('set.difference is not commutative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference(set.new([2, 3]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, {});
+    });
+
+    test('set - set performs set difference', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2, 3]) - set.new([2])',
+      );
+      checkResult(runtime, {1, 3});
+    });
+
     test('set.variable', () {
       final RuntimeFacade runtime = getRuntime('''
 foo(values) = [set.add(values, 1)]
@@ -216,6 +265,27 @@ main = foo(set.new([2, 3]))
     test('set.union throws for non-set first arg', () {
       final RuntimeFacade runtime = getRuntime(
         'main = set.union([1, 2], set.new([3]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.difference throws for non-set first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference([1, 2], set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.difference throws for non-set second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference(set.new([1, 2]), [1])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('element - set throws error', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = 5 - set.new([1, 5, 10])',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });

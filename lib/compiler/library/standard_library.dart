@@ -168,6 +168,7 @@ import 'package:primal/compiler/library/queue/queue_peek.dart';
 import 'package:primal/compiler/library/queue/queue_reverse.dart';
 import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_contains.dart';
+import 'package:primal/compiler/library/set/set_difference.dart';
 import 'package:primal/compiler/library/set/set_intersection.dart';
 import 'package:primal/compiler/library/set/set_is_empty.dart';
 import 'package:primal/compiler/library/set/set_is_not_empty.dart';
@@ -443,6 +444,7 @@ class StandardLibrary {
     // Set
     const SetAdd(),
     const SetContains(),
+    const SetDifference(),
     const SetIntersection(),
     const SetIsEmpty(),
     const SetIsNotEmpty(),

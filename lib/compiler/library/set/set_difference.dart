@@ -1,17 +1,14 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/library/set/set_difference.dart';
-import 'package:primal/compiler/library/set/set_remove.dart';
-import 'package:primal/compiler/library/vector/vector_sub.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/node.dart';
 
-class OperatorSub extends NativeFunctionNode {
-  const OperatorSub()
+class SetDifference extends NativeFunctionNode {
+  const SetDifference()
     : super(
-        name: '-',
+        name: 'set.difference',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.set('a'),
+          Parameter.set('b'),
         ],
       );
 
@@ -21,6 +18,23 @@ class OperatorSub extends NativeFunctionNode {
     parameters: parameters,
     arguments: arguments,
   );
+
+  static SetNode execute({
+    required FunctionNode function,
+    required SetNode a,
+    required SetNode b,
+  }) {
+    final Set<dynamic> setB = b.native();
+    final Set<Node> result = {};
+
+    for (final Node node in a.value) {
+      if (!setB.contains(node.native())) {
+        result.add(node);
+      }
+    }
+
+    return SetNode(result);
+  }
 }
 
 class NodeWithArguments extends NativeFunctionNodeWithArguments {
@@ -35,22 +49,8 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node a = arguments[0].evaluate();
     final Node b = arguments[1].evaluate();
 
-    if ((a is NumberNode) && (b is NumberNode)) {
-      return NumberNode(a.value - b.value);
-    } else if ((a is VectorNode) && (b is VectorNode)) {
-      return VectorSub.execute(
-        function: this,
-        a: a,
-        b: b,
-      );
-    } else if ((a is SetNode) && (b is SetNode)) {
+    if ((a is SetNode) && (b is SetNode)) {
       return SetDifference.execute(
-        function: this,
-        a: a,
-        b: b,
-      );
-    } else if ((a is SetNode) && (b is! SetNode)) {
-      return SetRemove.execute(
         function: this,
         a: a,
         b: b,

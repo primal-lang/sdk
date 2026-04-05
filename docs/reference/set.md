@@ -59,6 +59,17 @@ set.union(set.new([1, 2]), set.new([2, 3])) // returns {1, 2, 3}
 set.intersection(set.new([1, 2, 3]), set.new([2, 3, 4])) // returns {2, 3}
 ```
 
+### Difference
+
+- **Signature:** `set.difference(a: Set, b: Set): Set`
+- **Input:** Two sets
+- **Output:** A new set containing elements from the first set that are not in the second set
+- **Example:**
+
+```
+set.difference(set.new([1, 2, 3]), set.new([2, 3])) // returns {1}
+```
+
 ## Properties
 
 ### Contains

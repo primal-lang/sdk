@@ -99,8 +99,8 @@
 - **Supported combinations:**
   - `Number - Number`
   - `Vector - Vector`
+  - `Set - Set` (set difference)
   - `Set - Any` (remove element)
-  - `Any - Set` (remove element)
 - **Example:**
 
 ```

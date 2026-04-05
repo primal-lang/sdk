@@ -1084,11 +1084,11 @@ void main() {
       checkResult(runtime, '{1, 3}');
     });
 
-    test('element minus set', () {
+    test('element minus set throws error', () {
       final RuntimeFacade runtime = getRuntime(
         'main = 2 - set.new([1, 2, 3])',
       );
-      checkResult(runtime, '{1, 3}');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });
 }
