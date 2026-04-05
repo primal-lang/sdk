@@ -674,7 +674,7 @@ The analyzer operates in two passes:
 
 | Step | Action                           | Result                                                           |
 | ---- | -------------------------------- | ---------------------------------------------------------------- |
-| 1    | Load standard library signatures | 70+ built-in functions including `*`, `>=`, `if`, `+`, `-`, etc. |
+| 1    | Load standard library signatures | 200+ built-in functions including `*`, `>=`, `if`, `+`, `-`, etc. |
 | 2    | Extract `square` signature       | `FunctionSignature(name: "square", parameters: [n])`             |
 | 3    | Extract `max` signature          | `FunctionSignature(name: "max", parameters: [a, b])`             |
 | 4    | Extract `main` signature         | `FunctionSignature(name: "main", parameters: [])`                |
@@ -847,7 +847,7 @@ IntermediateRepresentation(
     "*": FunctionSignature(name: "*", arity: 2),
     ">=": FunctionSignature(name: ">=", arity: 2),
     "if": FunctionSignature(name: "if", arity: 3),
-    ... (70+ more)
+    ... (200+ more)
   },
   warnings: []
 )
@@ -875,7 +875,7 @@ IntermediateRepresentation(
 | Input type                           | `List<FunctionDefinition>` |
 | Output type                          | `IntermediateRepresentation`         |
 | Custom functions analyzed            | 3                          |
-| Standard library functions available | 70+                        |
+| Standard library functions available | 200+                       |
 | Identifiers resolved                 | 10                         |
 | Bound variables created              | 6                          |
 | Function references created          | 6                          |
