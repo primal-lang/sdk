@@ -50,6 +50,32 @@ void main() {
       );
       checkResult(runtime, 3);
     });
+
+    test('try catches division by zero', () {
+      final RuntimeFacade runtime = getRuntime('main = try(1 / 0, -1)');
+      checkResult(runtime, -1);
+    });
+
+    test('try catches parse error', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = try(to.number("abc"), 0)',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('try catches empty collection error', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = try(stack.pop(stack.new([])), "empty")',
+      );
+      checkResult(runtime, '"empty"');
+    });
+
+    test('try catches invalid map index error', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = try(map.at({}, "x"), "missing")',
+      );
+      checkResult(runtime, '"missing"');
+    });
   });
 
   group('Error', () {
