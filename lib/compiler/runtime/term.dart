@@ -405,10 +405,16 @@ class CustomFunctionTerm extends FunctionTerm {
 
     FunctionTerm.incrementDepth();
     try {
+      // Eagerly evaluate all arguments once before binding (call-by-value).
+      final List<Term> evaluatedArguments = arguments
+          .map((argument) => argument.reduce())
+          .toList();
+
       final Bindings bindings = Bindings.from(
         parameters: parameters,
-        arguments: arguments,
+        arguments: evaluatedArguments,
       );
+
       return substitute(bindings).reduce();
     } finally {
       FunctionTerm.decrementDepth();

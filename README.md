@@ -37,9 +37,7 @@ The language is designed primarily for educational purposes. It aims to teach pr
 
 The language has the following characteristics:
 
-- Lazy evaluated
 - Dynamically typed
-- Immutable
 - Single threaded
 - Interpreted
 - Expression oriented
