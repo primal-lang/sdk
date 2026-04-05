@@ -1202,4 +1202,367 @@ main = max(square(3), square(4))
 
 ## Stage 6: Runtime
 
-**coming soon**
+**Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/term.dart`, `lib/compiler/runtime/bindings.dart`
+
+The runtime evaluates the compiled program by applying **term substitution and reduction**. This is a substitution-based evaluation model consistent with lambda calculus beta-reduction.
+
+### Transformation
+
+**Input**: `Map<String, FunctionTerm>` (runtime functions from lowerer)
+
+**Output**: `Term` (evaluated result)
+
+### Evaluation Model
+
+The runtime follows these steps for each function application:
+
+1. **Reduce the callee** — resolve `FunctionReferenceTerm` to get the actual `FunctionTerm`
+2. **Create bindings** — map parameter names to argument terms
+3. **Substitute** — replace all `BoundVariableTerm` instances in the function body with their bound values
+4. **Reduce** — evaluate the resulting term
+
+### Evaluating `main`
+
+The entry point is `main`, a nullary function that evaluates to the final result.
+
+**Initial Term (from Stage 5):**
+
+```
+CallTerm(
+  callee: FunctionReferenceTerm("max"),
+  arguments: [
+    CallTerm(
+      callee: FunctionReferenceTerm("square"),
+      arguments: [NumberTerm(3)]
+    ),
+    CallTerm(
+      callee: FunctionReferenceTerm("square"),
+      arguments: [NumberTerm(4)]
+    )
+  ]
+)
+```
+
+### Step-by-Step Evaluation
+
+The evaluation proceeds depth-first, reducing the outer call by first evaluating its callee and arguments.
+
+#### Step 1: Reduce the Outer Call's Callee
+
+| Action                                | Result                  |
+| ------------------------------------- | ----------------------- |
+| Reduce `FunctionReferenceTerm("max")` | Lookup in functions map |
+| Returns `CustomFunctionTerm("max")`   | Function ready to apply |
+
+#### Step 2: Evaluate First Argument — `square(3)`
+
+**2a. Reduce the callee:**
+
+| Action                                   | Result                  |
+| ---------------------------------------- | ----------------------- |
+| Reduce `FunctionReferenceTerm("square")` | Lookup in functions map |
+| Returns `CustomFunctionTerm("square")`   | Function ready to apply |
+
+**2b. Create bindings:**
+
+| Parameter | Argument        |
+| --------- | --------------- |
+| `n`       | `NumberTerm(3)` |
+
+**2c. Substitute into `square`'s body:**
+
+Before substitution:
+
+```
+CallTerm(
+  callee: FunctionReferenceTerm("*"),
+  arguments: [
+    BoundVariableTerm("n"),
+    BoundVariableTerm("n")
+  ]
+)
+```
+
+After substitution (bindings: `{n → NumberTerm(3)}`):
+
+```
+CallTerm(
+  callee: FunctionReferenceTerm("*"),
+  arguments: [
+    NumberTerm(3),
+    NumberTerm(3)
+  ]
+)
+```
+
+**2d. Reduce the substituted term:**
+
+| Action                                        | Result                                   |
+| --------------------------------------------- | ---------------------------------------- |
+| Reduce `FunctionReferenceTerm("*")`           | Lookup returns `NativeFunctionTerm("*")` |
+| Apply `*` to `[NumberTerm(3), NumberTerm(3)]` | Native function evaluates `3 * 3`        |
+| Native implementation returns                 | `NumberTerm(9)`                          |
+
+**Result of `square(3)`**: `NumberTerm(9)`
+
+#### Step 3: Evaluate Second Argument — `square(4)`
+
+**3a. Reduce the callee:**
+
+| Action                                   | Result                                 |
+| ---------------------------------------- | -------------------------------------- |
+| Reduce `FunctionReferenceTerm("square")` | Returns `CustomFunctionTerm("square")` |
+
+**3b. Create bindings:**
+
+| Parameter | Argument        |
+| --------- | --------------- |
+| `n`       | `NumberTerm(4)` |
+
+**3c. Substitute into `square`'s body:**
+
+After substitution (bindings: `{n → NumberTerm(4)}`):
+
+```
+CallTerm(
+  callee: FunctionReferenceTerm("*"),
+  arguments: [
+    NumberTerm(4),
+    NumberTerm(4)
+  ]
+)
+```
+
+**3d. Reduce the substituted term:**
+
+| Action                                        | Result                                   |
+| --------------------------------------------- | ---------------------------------------- |
+| Reduce `FunctionReferenceTerm("*")`           | Lookup returns `NativeFunctionTerm("*")` |
+| Apply `*` to `[NumberTerm(4), NumberTerm(4)]` | Native function evaluates `4 * 4`        |
+| Native implementation returns                 | `NumberTerm(16)`                         |
+
+**Result of `square(4)`**: `NumberTerm(16)`
+
+#### Step 4: Apply `max` to Evaluated Arguments
+
+**4a. Create bindings:**
+
+| Parameter | Argument         |
+| --------- | ---------------- |
+| `a`       | `NumberTerm(9)`  |
+| `b`       | `NumberTerm(16)` |
+
+**4b. Substitute into `max`'s body:**
+
+Before substitution:
+
+```
+CallTerm(
+  callee: FunctionReferenceTerm("if"),
+  arguments: [
+    CallTerm(                              // condition
+      callee: FunctionReferenceTerm(">="),
+      arguments: [
+        BoundVariableTerm("a"),
+        BoundVariableTerm("b")
+      ]
+    ),
+    BoundVariableTerm("a"),                // ifTrue
+    BoundVariableTerm("b")                 // ifFalse
+  ]
+)
+```
+
+After substitution (bindings: `{a → NumberTerm(9), b → NumberTerm(16)}`):
+
+```
+CallTerm(
+  callee: FunctionReferenceTerm("if"),
+  arguments: [
+    CallTerm(                              // condition
+      callee: FunctionReferenceTerm(">="),
+      arguments: [
+        NumberTerm(9),
+        NumberTerm(16)
+      ]
+    ),
+    NumberTerm(9),                         // ifTrue
+    NumberTerm(16)                         // ifFalse
+  ]
+)
+```
+
+**4c. Reduce the substituted term:**
+
+The `if` function is a native function that implements lazy evaluation — it only evaluates the branch that will be taken.
+
+| Action                               | Result                                   |
+| ------------------------------------ | ---------------------------------------- |
+| Reduce `FunctionReferenceTerm("if")` | Returns `NativeFunctionTerm("if")`       |
+| Evaluate condition first             | Must reduce `>=(9, 16)` before branching |
+
+**4d. Evaluate the condition — `>=(9, 16)`:**
+
+| Action                                          | Result                             |
+| ----------------------------------------------- | ---------------------------------- |
+| Reduce `FunctionReferenceTerm(">=")`            | Returns `NativeFunctionTerm(">=")` |
+| Apply `>=` to `[NumberTerm(9), NumberTerm(16)]` | Native evaluates `9 >= 16`         |
+| Native implementation returns                   | `BooleanTerm(false)`               |
+
+**4e. Complete `if` evaluation:**
+
+| Action                                             | Result                    |
+| -------------------------------------------------- | ------------------------- |
+| Condition is `BooleanTerm(false)`                  | Take the `ifFalse` branch |
+| Return `NumberTerm(16)` (lazy — not reduced again) | Already a value           |
+
+**Result of `max(9, 16)`**: `NumberTerm(16)`
+
+#### Step 5: Final Result
+
+The evaluation of `main` completes:
+
+| Expression                  | Evaluates To         |
+| --------------------------- | -------------------- |
+| `square(3)`                 | `NumberTerm(9)`      |
+| `square(4)`                 | `NumberTerm(16)`     |
+| `>=(9, 16)`                 | `BooleanTerm(false)` |
+| `if(false, 9, 16)`          | `NumberTerm(16)`     |
+| `max(square(3), square(4))` | `NumberTerm(16)`     |
+
+**Final output**: `16`
+
+### Evaluation Trace Visualization
+
+```
+main
+└─ CallTerm(max, [square(3), square(4)])
+   │
+   ├─ Resolve max → CustomFunctionTerm("max")
+   │
+   ├─ Evaluate argument 1: square(3)
+   │  ├─ Resolve square → CustomFunctionTerm("square")
+   │  ├─ Bindings: {n → 3}
+   │  ├─ Substitute: *(n, n) → *(3, 3)
+   │  └─ Reduce: *(3, 3)
+   │     ├─ Resolve * → NativeFunctionTerm("*")
+   │     └─ Native: 3 * 3 = 9
+   │
+   ├─ Evaluate argument 2: square(4)
+   │  ├─ Resolve square → CustomFunctionTerm("square")
+   │  ├─ Bindings: {n → 4}
+   │  ├─ Substitute: *(n, n) → *(4, 4)
+   │  └─ Reduce: *(4, 4)
+   │     ├─ Resolve * → NativeFunctionTerm("*")
+   │     └─ Native: 4 * 4 = 16
+   │
+   ├─ Bindings: {a → 9, b → 16}
+   │
+   ├─ Substitute: if(>=(a, b), a, b) → if(>=(9, 16), 9, 16)
+   │
+   └─ Reduce: if(>=(9, 16), 9, 16)
+      ├─ Resolve if → NativeFunctionTerm("if")
+      ├─ Evaluate condition: >=(9, 16)
+      │  ├─ Resolve >= → NativeFunctionTerm(">=")
+      │  └─ Native: 9 >= 16 = false
+      ├─ Condition is false → take ifFalse branch
+      └─ Return: 16
+
+Result: 16
+```
+
+### Native Function Execution
+
+Native functions like `*`, `>=`, and `if` delegate to Dart implementations. Each follows a two-class pattern:
+
+**Definition class** — declares the function signature:
+
+```dart
+class OperatorMul extends NativeFunctionTerm {
+  const OperatorMul()
+    : super(
+        name: '*',
+        parameters: const [
+          Parameter.number('a'),
+          Parameter.number('b'),
+        ],
+      );
+
+  @override
+  Term term(List<Term> arguments) => TermWithArguments(...);
+}
+```
+
+**Evaluation class** — implements the logic:
+
+```dart
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  @override
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+
+    if ((a is NumberTerm) && (b is NumberTerm)) {
+      return NumberTerm(a.value * b.value);
+    } else {
+      throw InvalidArgumentTypesError(...);
+    }
+  }
+}
+```
+
+### Lazy Evaluation in `if`
+
+The `if` function demonstrates lazy evaluation — a key feature of the runtime:
+
+```dart
+@override
+Term reduce() {
+  final Term a = arguments[0].reduce();  // Only condition is evaluated first
+  final Term b = arguments[1];           // ifTrue branch (not reduced yet)
+  final Term c = arguments[2];           // ifFalse branch (not reduced yet)
+
+  if (a is BooleanTerm) {
+    if (a.value) {
+      return b.reduce();                 // Only reduce if taken
+    } else {
+      return c.reduce();                 // Only reduce if taken
+    }
+  }
+  // ...
+}
+```
+
+This ensures that only the selected branch is evaluated, enabling:
+
+- Short-circuit evaluation
+- Infinite data structures (when combined with recursion)
+- Efficient conditional computation
+
+### Summary
+
+| Property                   | Value                               |
+| -------------------------- | ----------------------------------- |
+| Input type                 | `Map<String, FunctionTerm>`         |
+| Output type                | `Term` (evaluated result)           |
+| Entry point                | `main` function                     |
+| Evaluation model           | Substitution-based (beta reduction) |
+| Function calls evaluated   | 6                                   |
+| Substitutions performed    | 3                                   |
+| Native operations executed | 3 (`*` x2, `>=` x1)                 |
+| Lazy branches skipped      | 1 (`ifTrue` branch)                 |
+| Final result               | `NumberTerm(16)`                    |
+
+### Key Observations
+
+1. **Substitution-based evaluation**: The runtime implements beta reduction from lambda calculus. When a function is applied, its body is copied with bound variables replaced by argument values, then reduced.
+
+2. **Eager argument evaluation**: Arguments to custom functions are evaluated before substitution. In `max(square(3), square(4))`, both `square` calls are evaluated before `max`'s body is substituted.
+
+3. **Lazy conditional branches**: The `if` function only evaluates the condition eagerly. The selected branch is evaluated only when needed, while the other branch remains unevaluated.
+
+4. **Two term types for functions**: `CustomFunctionTerm` (user-defined, uses substitution) and `NativeFunctionTerm` (built-in, delegates to Dart) share the same interface but have different evaluation strategies.
+
+5. **Recursion tracking**: The runtime tracks call depth via `FunctionTerm.incrementDepth()` and enforces a maximum recursion limit (1000) to prevent stack overflow.
+
+6. **Deferred resolution**: `FunctionReferenceTerm` holds a reference to the functions map rather than the resolved function. Resolution happens at evaluation time via `reduce()`, enabling forward references and mutual recursion.
