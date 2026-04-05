@@ -185,3 +185,26 @@ true | false // returns true
 ```
 !true // returns false
 ```
+
+## Access Operators
+
+### Element At
+
+- **Symbol:** `@`
+- **Input:** A collection and an index/key
+- **Output:** The element at the specified position or key
+- **Supported combinations:**
+  - `List @ Number` (element at index)
+  - `String @ Number` (character at index)
+  - `Map @ Key` (value for key)
+- **Errors:**
+  - Throws if index is negative
+  - Throws if index is out of bounds
+  - Throws if key is not found in map
+- **Example:**
+
+```
+[1, 2, 3] @ 0      // returns 1
+"hello" @ 1        // returns "e"
+{"a": 1, "b": 2} @ "a"  // returns 1
+```
