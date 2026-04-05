@@ -653,4 +653,251 @@ main = max(square(3), square(4))
 
 ## Stage 4: Semantic Analyzer
 
+**File**: `lib/compiler/semantic/semantic_analyzer.dart`
+
+The semantic analyzer validates function definitions and produces `IntermediateCode` containing a **semantic IR** that preserves source locations and resolved references. This stage performs identifier resolution, arity checking, and duplicate detection.
+
+### Transformation
+
+**Input**: `List<FunctionDefinition>` (3 function definitions with expression trees)
+
+**Output**: `IntermediateCode` (semantic IR with resolved references)
+
+### Two-Pass Analysis
+
+The analyzer operates in two passes:
+
+1. **First pass** — Extract function signatures, check for duplicates
+2. **Second pass** — Build semantic IR, resolve identifiers, validate calls
+
+#### First Pass: Signature Extraction
+
+| Step | Action                           | Result                                                           |
+| ---- | -------------------------------- | ---------------------------------------------------------------- |
+| 1    | Load standard library signatures | 70+ built-in functions including `*`, `>=`, `if`, `+`, `-`, etc. |
+| 2    | Extract `square` signature       | `FunctionSignature(name: "square", parameters: [n])`             |
+| 3    | Extract `max` signature          | `FunctionSignature(name: "max", parameters: [a, b])`             |
+| 4    | Extract `main` signature         | `FunctionSignature(name: "main", parameters: [])`                |
+| 5    | Check for duplicate functions    | None found (no conflicts with stdlib or each other)              |
+| 6    | Check for duplicate parameters   | None found within any function                                   |
+
+The combined signature map now contains all custom and standard library functions for identifier resolution.
+
+#### Second Pass: Semantic IR Construction
+
+For each function, the analyzer:
+
+1. Tracks available parameters (the function's parameter names)
+2. Recursively processes the expression tree
+3. Resolves each identifier to either a bound variable or a function reference
+4. Validates call arity for direct function calls
+5. Tracks used parameters to detect unused ones
+
+### Processing Function 1: `square(n) = n * n`
+
+**Context:**
+
+- Available parameters: `{"n"}`
+- Used parameters: `{}` (initially empty)
+
+**Expression Tree (from Stage 3):**
+
+```
+CallExpression
+├─ callee: IdentifierExpression("*")
+└─ arguments:
+   ├─ IdentifierExpression("n")
+   └─ IdentifierExpression("n")
+```
+
+**Semantic Analysis Trace:**
+
+| Step | Expression                  | Check                             | Result                                      |
+| ---- | --------------------------- | --------------------------------- | ------------------------------------------- |
+| 1    | `CallExpression`            | Process arguments first           | —                                           |
+| 2    | `IdentifierExpression("n")` | Is "n" a parameter? Yes           | `SemanticBoundVariableNode("n")`, mark used |
+| 3    | `IdentifierExpression("n")` | Is "n" a parameter? Yes           | `SemanticBoundVariableNode("n")`            |
+| 4    | `IdentifierExpression("*")` | Is "\*" a parameter? No           | Check functions                             |
+| 5    | `IdentifierExpression("*")` | Is "\*" a function? Yes (stdlib)  | `SemanticIdentifierNode("*", signature)`    |
+| 6    | `CallExpression`            | Arity check: `*` expects 2, got 2 | ✓ Valid                                     |
+| 7    | —                           | Build `SemanticCallNode`          | Complete                                    |
+
+**Unused Parameter Check:**
+
+- Parameters: `["n"]`
+- Used: `{"n"}`
+- Result: No warnings
+
+**Semantic IR Output:**
+
+```
+SemanticFunction(
+  name: "square",
+  parameters: [Parameter("n")],
+  body: SemanticCallNode [1, 15]
+    ├─ callee: SemanticIdentifierNode("*", signature=*(a, b))
+    └─ arguments:
+       ├─ SemanticBoundVariableNode("n") [1, 13]
+       └─ SemanticBoundVariableNode("n") [1, 17]
+)
+```
+
+### Processing Function 2: `max(a, b) = if (a >= b) a else b`
+
+**Context:**
+
+- Available parameters: `{"a", "b"}`
+- Used parameters: `{}` (initially empty)
+
+**Semantic Analysis Trace:**
+
+| Step | Expression                         | Check                        | Result                           |
+| ---- | ---------------------------------- | ---------------------------- | -------------------------------- |
+| 1    | Outer `CallExpression`             | Process arguments            | —                                |
+| 2    | Inner `CallExpression` (condition) | Process `>=(a, b)`           | —                                |
+| 3    | `IdentifierExpression("a")`        | Parameter? Yes               | `SemanticBoundVariableNode("a")` |
+| 4    | `IdentifierExpression("b")`        | Parameter? Yes               | `SemanticBoundVariableNode("b")` |
+| 5    | `IdentifierExpression(">=")`       | Function? Yes (stdlib)       | `SemanticIdentifierNode(">=")`   |
+| 6    | Inner call                         | Arity: `>=` expects 2, got 2 | ✓ Valid                          |
+| 7    | `IdentifierExpression("a")`        | Parameter? Yes               | `SemanticBoundVariableNode("a")` |
+| 8    | `IdentifierExpression("b")`        | Parameter? Yes               | `SemanticBoundVariableNode("b")` |
+| 9    | `IdentifierExpression("if")`       | Function? Yes (stdlib)       | `SemanticIdentifierNode("if")`   |
+| 10   | Outer call                         | Arity: `if` expects 3, got 3 | ✓ Valid                          |
+
+**Unused Parameter Check:**
+
+- Parameters: `["a", "b"]`
+- Used: `{"a", "b"}`
+- Result: No warnings
+
+**Semantic IR Output:**
+
+```
+SemanticFunction(
+  name: "max",
+  parameters: [Parameter("a"), Parameter("b")],
+  body: SemanticCallNode [2, 13]
+    ├─ callee: SemanticIdentifierNode("if", signature=if(c, t, f))
+    └─ arguments:
+       ├─ SemanticCallNode [2, 19]
+       │  ├─ callee: SemanticIdentifierNode(">=", signature=>=(a, b))
+       │  └─ arguments:
+       │     ├─ SemanticBoundVariableNode("a") [2, 17]
+       │     └─ SemanticBoundVariableNode("b") [2, 22]
+       ├─ SemanticBoundVariableNode("a") [2, 25]
+       └─ SemanticBoundVariableNode("b") [2, 32]
+)
+```
+
+### Processing Function 3: `main = max(square(3), square(4))`
+
+**Context:**
+
+- Available parameters: `{}` (nullary function)
+- Used parameters: `{}` (initially empty)
+
+**Semantic Analysis Trace:**
+
+| Step | Expression                       | Check                            | Result                             |
+| ---- | -------------------------------- | -------------------------------- | ---------------------------------- |
+| 1    | Outer `CallExpression`           | Process arguments                | —                                  |
+| 2    | Inner `CallExpression`           | Process `square(3)`              | —                                  |
+| 3    | `NumberExpression(3)`            | Literal                          | `SemanticNumberNode(3)`            |
+| 4    | `IdentifierExpression("square")` | Function? Yes (custom)           | `SemanticIdentifierNode("square")` |
+| 5    | Inner call                       | Arity: `square` expects 1, got 1 | ✓ Valid                            |
+| 6    | Inner `CallExpression`           | Process `square(4)`              | —                                  |
+| 7    | `NumberExpression(4)`            | Literal                          | `SemanticNumberNode(4)`            |
+| 8    | `IdentifierExpression("square")` | Function? Yes (custom)           | `SemanticIdentifierNode("square")` |
+| 9    | Inner call                       | Arity: `square` expects 1, got 1 | ✓ Valid                            |
+| 10   | `IdentifierExpression("max")`    | Function? Yes (custom)           | `SemanticIdentifierNode("max")`    |
+| 11   | Outer call                       | Arity: `max` expects 2, got 2    | ✓ Valid                            |
+
+**Semantic IR Output:**
+
+```
+SemanticFunction(
+  name: "main",
+  parameters: [],
+  body: SemanticCallNode [3, 8]
+    ├─ callee: SemanticIdentifierNode("max", signature=max(a, b))
+    └─ arguments:
+       ├─ SemanticCallNode [3, 12]
+       │  ├─ callee: SemanticIdentifierNode("square", signature=square(n))
+       │  └─ arguments:
+       │     └─ SemanticNumberNode(3) [3, 19]
+       └─ SemanticCallNode [3, 23]
+          ├─ callee: SemanticIdentifierNode("square", signature=square(n))
+          └─ arguments:
+             └─ SemanticNumberNode(4) [3, 30]
+)
+```
+
+### Complete Output
+
+The `SemanticAnalyzer` produces an `IntermediateCode` object:
+
+```
+IntermediateCode(
+  customFunctions: {
+    "square": SemanticFunction(...),
+    "max": SemanticFunction(...),
+    "main": SemanticFunction(...)
+  },
+  standardLibrarySignatures: {
+    "*": FunctionSignature(name: "*", arity: 2),
+    ">=": FunctionSignature(name: ">=", arity: 2),
+    "if": FunctionSignature(name: "if", arity: 3),
+    ... (70+ more)
+  },
+  warnings: []
+)
+```
+
+### Identifier Resolution Summary
+
+| Expression      | Location         | Resolved To     | Type                        |
+| --------------- | ---------------- | --------------- | --------------------------- |
+| `n` (in square) | [1, 13], [1, 17] | Parameter "n"   | `SemanticBoundVariableNode` |
+| `*`             | [1, 15]          | Stdlib function | `SemanticIdentifierNode`    |
+| `a` (in max)    | [2, 17], [2, 25] | Parameter "a"   | `SemanticBoundVariableNode` |
+| `b` (in max)    | [2, 22], [2, 32] | Parameter "b"   | `SemanticBoundVariableNode` |
+| `>=`            | [2, 19]          | Stdlib function | `SemanticIdentifierNode`    |
+| `if`            | [2, 13]          | Stdlib function | `SemanticIdentifierNode`    |
+| `square`        | [3, 12], [3, 23] | Custom function | `SemanticIdentifierNode`    |
+| `max`           | [3, 8]           | Custom function | `SemanticIdentifierNode`    |
+| `3`             | [3, 19]          | Number literal  | `SemanticNumberNode`        |
+| `4`             | [3, 30]          | Number literal  | `SemanticNumberNode`        |
+
+### Summary
+
+| Property                             | Value                      |
+| ------------------------------------ | -------------------------- |
+| Input type                           | `List<FunctionDefinition>` |
+| Output type                          | `IntermediateCode`         |
+| Custom functions analyzed            | 3                          |
+| Standard library functions available | 70+                        |
+| Identifiers resolved                 | 10                         |
+| Bound variables created              | 6                          |
+| Function references created          | 6                          |
+| Arity checks performed               | 6                          |
+| Warnings generated                   | 0                          |
+
+### Key Observations
+
+1. **Two-pass design**: The first pass collects all signatures before the second pass resolves identifiers. This allows forward references — `main` can call `square` even though `square` is defined earlier.
+
+2. **Parameter vs function resolution**: Each identifier is first checked against available parameters, then against the combined function map. This shadowing rule means a parameter named `foo` would hide any function named `foo` (custom or stdlib).
+
+3. **Arity validation**: Direct calls (where the callee is an identifier) have their argument count validated at compile time. Indirect calls (e.g., `f()(x)` where `f` returns a function) are deferred to runtime.
+
+4. **Semantic nodes preserve locations**: Unlike the runtime nodes produced later, semantic nodes retain source positions for error reporting and debugging.
+
+5. **Bound variables vs identifiers**: Parameters become `SemanticBoundVariableNode` (a runtime substitution target), while functions become `SemanticIdentifierNode` (a reference to be resolved at runtime).
+
+6. **No runtime dependencies**: The semantic IR uses `FunctionSignature` instead of `FunctionNode`, keeping the semantic phase independent of the runtime system.
+
+---
+
+## Stage 5: Lowerer
+
 _Coming soon..._

@@ -1,18 +1,3 @@
-# Bug Audit Report
-
-**Scope**: Entire `lib/` directory
-**Date**: April 5, 2026
-
-## Summary
-
-| Severity | Count |
-| :------- | ----: |
-| Critical |     1 |
-| Warning  |     3 |
-| Info     |     2 |
-
-## Critical Issues
-
 ### 1. Missing Recursion Depth Tracking in `FunctionNode.apply`
 
 **File**: `lib/compiler/runtime/node.dart`
