@@ -115,5 +115,25 @@ main = infinite(1)
       final String result = runtime.evaluate(safeCall);
       expect(result, equals('42'));
     });
+
+    test('sequential evaluations each start at depth 0', () {
+      final RuntimeFacade runtime = getRuntime('''
+countdown(n) = if (n <= 0) 0 else countdown(n - 1)
+main = countdown(500)
+''');
+
+      // First evaluation uses ~500 depth
+      checkResult(runtime, 0);
+
+      // Second evaluation should also succeed, proving depth was reset
+      final Expression secondCall = getExpression('countdown(500)');
+      final String result = runtime.evaluate(secondCall);
+      expect(result, equals('0'));
+
+      // Third evaluation at higher depth still within limit
+      final Expression thirdCall = getExpression('countdown(800)');
+      final String thirdResult = runtime.evaluate(thirdCall);
+      expect(thirdResult, equals('0'));
+    });
   });
 }

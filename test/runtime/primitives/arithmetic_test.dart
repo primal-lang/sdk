@@ -586,6 +586,61 @@ void main() {
       checkResult(runtime, 1);
     });
 
+    test(
+      'num.pow throws InvalidNumericOperationError for negative base with fractional exponent',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = num.pow(-1, 0.5)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(
+                contains('num.pow'),
+                contains('negative'),
+                contains('fractional'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'num.pow throws InvalidNumericOperationError for zero to negative power',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = num.pow(0, -1)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(contains('num.pow'), contains('not a finite number')),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'num.pow throws InvalidNumericOperationError for overflow to infinity',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = num.pow(10, 308.5)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(contains('num.pow'), contains('not a finite number')),
+            ),
+          ),
+        );
+      },
+    );
+
     test('num.sin(0) returns 0', () {
       final RuntimeFacade runtime = getRuntime('main = num.sin(0)');
       checkResult(runtime, 0.0);

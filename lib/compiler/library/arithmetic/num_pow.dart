@@ -34,7 +34,20 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
     final Node b = arguments[1].evaluate();
 
     if ((a is NumberNode) && (b is NumberNode)) {
-      return NumberNode(pow(a.value, b.value));
+      if (a.value < 0 && b.value != b.value.truncate()) {
+        throw InvalidNumericOperationError(
+          function: name,
+          reason: 'cannot raise negative number to fractional power',
+        );
+      }
+      final num result = pow(a.value, b.value);
+      if (result.isNaN || result.isInfinite) {
+        throw InvalidNumericOperationError(
+          function: name,
+          reason: 'result is not a finite number',
+        );
+      }
+      return NumberNode(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

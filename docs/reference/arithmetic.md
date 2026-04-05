@@ -152,6 +152,7 @@ num.mod(10, 3) // returns 1
 - **Signature:** `num.pow(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The first number raised to the power of the second
+- **Constraints:** Throws an error if the base is negative and the exponent is fractional, or if the result is not a finite number (e.g., overflow to infinity)
 - **Example:**
 
 ```

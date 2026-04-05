@@ -307,6 +307,13 @@ class CallNode extends Node {
   dynamic native() => evaluate().native();
 }
 
+/// Represents a user-defined function in the runtime.
+///
+/// **Threading assumption**: The static recursion tracking (`_currentDepth`)
+/// assumes single-threaded execution. The Primal runtime is designed for
+/// single-threaded use only. Do not share a [RuntimeFacade] across threads
+/// or call evaluation methods concurrently, as this will cause incorrect
+/// recursion limit enforcement.
 class FunctionNode extends Node {
   static const int maxRecursionDepth = 1000;
   static int _currentDepth = 0;
