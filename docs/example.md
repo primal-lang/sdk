@@ -585,6 +585,8 @@ The `SyntacticAnalyzer` produces a `List<FunctionDefinition>` with **3 definitio
 
 ### Expression Tree Visualization
 
+Brackets `[row, col]` indicate the source location of each expression node.
+
 ```
 square(n) = n * n
 ─────────────────
