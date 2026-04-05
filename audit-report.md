@@ -1,19 +1,3 @@
-### 1. Missing const constructors on immutable Type subclasses
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/models/type.dart`
-**Lines**: 1-108
-
-- **Issue**: The base `Type` class and all its subclasses have only `final` fields (none in this case) but don't override `==` and `hashCode`. While the current code uses `const` constructors which works with `identical`, explicit equality would be more robust.
-- **Impact**: Type comparisons rely on object identity rather than structural equality. This works because all instances are `const`, but is fragile if non-const instances are ever created.
-- **Suggestion**: Add `==` and `hashCode` overrides to `Type` subclasses for defensive programming.
-
-**Follow-up**:
-
-- **Tests**: Verify type equality works as expected
-- **Docs**: No doc changes needed
-
----
-
 ### 2. ListIterator.back() silently does nothing at position 0
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/utils/list_iterator.dart`
