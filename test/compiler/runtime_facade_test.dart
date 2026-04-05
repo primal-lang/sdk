@@ -89,6 +89,24 @@ void main() {
         final Expression expression = runtime.mainExpression(['x', 'y']);
         expect(expression.toString(), 'main("x", "y")');
       });
+
+      test('escapes double quotes in arguments', () {
+        final RuntimeFacade runtime = getRuntime('main(a) = a');
+        final String result = runtime.executeMain(['hello "world"']);
+        expect(result, '"hello "world""');
+      });
+
+      test('escapes backslashes in arguments', () {
+        final RuntimeFacade runtime = getRuntime('main(a) = a');
+        final String result = runtime.executeMain([r'path\to\file']);
+        expect(result, r'"path\to\file"');
+      });
+
+      test('escapes both quotes and backslashes in arguments', () {
+        final RuntimeFacade runtime = getRuntime('main(a) = a');
+        final String result = runtime.executeMain([r'say "hello\" world']);
+        expect(result, r'"say "hello\" world"');
+      });
     });
   });
 }

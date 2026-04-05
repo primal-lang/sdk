@@ -51,9 +51,13 @@ class RuntimeFacade {
     final FunctionNode? main = _runtimeInput.getFunction('main');
 
     if ((main != null) && main.parameters.isNotEmpty) {
-      return _parseExpression(
-        'main(${arguments.map((e) => '"$e"').join(', ')})',
-      );
+      final String escapedArgs = arguments
+          .map(
+            (String e) =>
+                '"${e.replaceAll('\\', '\\\\').replaceAll('"', '\\"')}"',
+          )
+          .join(', ');
+      return _parseExpression('main($escapedArgs)');
     } else {
       return _parseExpression('main()');
     }
