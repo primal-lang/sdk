@@ -95,5 +95,37 @@ void main() {
       const Parameter p = Parameter.number('myParam');
       expect(p.toString(), 'myParam');
     });
+
+    group('equality', () {
+      test('identical parameters are equal', () {
+        const Parameter p = Parameter.number('x');
+        expect(p == p, isTrue);
+      });
+
+      test('parameters with same name and type are equal', () {
+        const Parameter p1 = Parameter.number('x');
+        const Parameter p2 = Parameter.number('x');
+        expect(p1 == p2, isTrue);
+        expect(p1.hashCode, p2.hashCode);
+      });
+
+      test('parameters with different names are not equal', () {
+        const Parameter p1 = Parameter.number('x');
+        const Parameter p2 = Parameter.number('y');
+        expect(p1 == p2, isFalse);
+      });
+
+      test('parameters with same name but different types are not equal', () {
+        const Parameter p1 = Parameter.number('x');
+        const Parameter p2 = Parameter.string('x');
+        expect(p1 == p2, isFalse);
+      });
+
+      test('parameter is not equal to non-Parameter object', () {
+        const Parameter p = Parameter.number('x');
+        const Object other = 'x';
+        expect(p == other, isFalse);
+      });
+    });
   });
 }

@@ -49,5 +49,13 @@ class Parameter {
   const Parameter.any(String name) : this._(name: name, type: const AnyType());
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Parameter && name == other.name && type == other.type;
+
+  @override
+  int get hashCode => Object.hash(name, type);
+
+  @override
   String toString() => name;
 }
