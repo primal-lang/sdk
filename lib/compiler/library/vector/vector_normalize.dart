@@ -32,25 +32,20 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     final Term a = arguments[0].reduce();
 
     if (a is VectorTerm) {
-      final List<num> list = a.native().cast<num>();
+      final List<num> values = a.native().cast<num>();
 
-      if (list.isEmpty) {
+      if (values.isEmpty) {
         return a;
       }
 
-      final NumberTerm magnitude = VectorMagnitude.execute(
-        function: this,
-        a: a,
-      );
+      final double magnitude = VectorMagnitude.computeMagnitude(values);
 
-      if (magnitude.value == 0) {
+      if (magnitude == 0) {
         throw DivisionByZeroError(function: name);
       }
 
       return VectorTerm(
-        list
-            .map((num element) => NumberTerm(element / magnitude.value))
-            .toList(),
+        values.map((num element) => NumberTerm(element / magnitude)).toList(),
       );
     } else {
       throw InvalidArgumentTypesError(

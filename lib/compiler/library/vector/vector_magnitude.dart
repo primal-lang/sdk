@@ -19,19 +19,25 @@ class VectorMagnitude extends NativeFunctionTerm {
     arguments: arguments,
   );
 
+  /// Computes the magnitude (Euclidean norm) of a vector from its native list.
+  static double computeMagnitude(List<num> values) {
+    double sumOfSquares = 0;
+
+    for (final num element in values) {
+      sumOfSquares += element * element;
+    }
+
+    return sqrt(sumOfSquares);
+  }
+
   static NumberTerm execute({
     required FunctionTerm function,
     required Term a,
   }) {
     if (a is VectorTerm) {
-      double magnitude = 0;
-      final List list = a.native();
+      final List<num> values = a.native().cast<num>();
 
-      for (final dynamic element in list) {
-        magnitude += element * element;
-      }
-
-      return NumberTerm(sqrt(magnitude));
+      return NumberTerm(computeMagnitude(values));
     } else {
       throw InvalidArgumentTypesError(
         function: function.name,

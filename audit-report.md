@@ -1,16 +1,3 @@
-### 1. Inefficient Evaluation in Vector Operations
-
-**Files**: `lib/compiler/library/vector/vector_magnitude.dart`, `lib/compiler/library/vector/vector_angle.dart`, `lib/compiler/library/vector/vector_normalize.dart`
-
-- **Issue**: These functions call `a.native()` to perform calculations. `a.native()` recursively converts the entire `VectorTerm` (a list of `Term`s) into a `List<dynamic>` of native types. In `VectorNormalize`, `a.native()` is called, and then `VectorMagnitude.execute(a)` is called, which calls `a.native()` _again_.
-- **Impact**: Significant performance penalty and unnecessary memory allocations on "hot paths" for vector math, especially for large vectors or in tight loops.
-- **Fix**: Access `a.value` directly (which is `List<Term>`) and reduce/extract native values during the loop, or ensure `a.native()` is only called once.
-
-**Follow-up**:
-
-- **Tests**: Performance benchmarks for large vectors.
-- **Docs**: No doc changes needed.
-
 ### 2. Error Propagation in `ListSort`
 
 **File**: `lib/compiler/library/list/list_sort.dart`
