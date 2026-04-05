@@ -1,31 +1,3 @@
-### 2. `list.zip` reports incomplete type information in error
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_zip.dart`
-**Line**: 57-63
-
-- **Issue**: When throwing `InvalidArgumentTypesError`, only `a.type` is passed to the `actual` parameter, but all three types (`a.type, b.type, c.type`) should be included for accurate error reporting.
-
-- **Impact**: Error messages will be confusing and incomplete when invalid argument types are passed to `list.zip`.
-
-- **Fix**:
-
-```dart
-throw InvalidArgumentTypesError(
-  function: name,
-  expected: parameterTypes,
-  actual: [a.type, b.type, c.type],  // Include all three types
-);
-```
-
-**Follow-up**:
-
-- **Tests**:
-  - Success case: Test `list.zip` with valid arguments
-  - Failure case: Test error message includes all argument types when given invalid types
-- **Docs**: No doc changes needed
-
----
-
 ### 3. Static mutable state for recursion depth counter
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/runtime/node.dart`
