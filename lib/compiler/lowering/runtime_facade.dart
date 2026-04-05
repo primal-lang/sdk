@@ -74,6 +74,10 @@ class RuntimeFacade {
   ///
   /// Used by tests that need to inspect the node type.
   Node evaluateToNode(Expression expression) {
+    // Reset recursion depth at the start to clear any stale state from
+    // previous failed evaluations.
+    FunctionNode.resetDepth();
+
     const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
     final Lowerer lowerer = Lowerer(_runtimeInput.functions);
 
@@ -87,7 +91,6 @@ class RuntimeFacade {
     );
 
     final Node lowered = lowerer.lowerNode(semanticNode);
-    FunctionNode.resetDepth();
     return lowered.evaluate();
   }
 

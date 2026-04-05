@@ -1,23 +1,3 @@
-### 3. Static mutable state for recursion depth counter
-
-**File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/runtime/node.dart`
-**Line**: 311-349
-
-- **Issue**: `FunctionNode._currentDepth` is a static mutable field shared across all evaluations. While `resetDepth()` exists, there's no guarantee it will be called before each evaluation. If an exception occurs during evaluation (after depth was incremented), the depth counter might not be properly decremented, leaving stale state that could affect subsequent evaluations.
-
-- **Impact**: In scenarios with multiple sequential evaluations (REPL, test suite, web server), a failed evaluation could leave the depth counter in an incorrect state, potentially causing premature `RecursionLimitError` in subsequent evaluations.
-
-- **Fix**: Ensure `resetDepth()` is called at the start of every top-level evaluation, or consider using a context object passed through the evaluation chain instead of static state.
-
-**Follow-up**:
-
-- **Tests**:
-  - Success case: Multiple sequential evaluations work correctly
-  - Failure case: After an evaluation that throws mid-recursion, subsequent evaluations still work
-- **Docs**: No doc changes needed
-
----
-
 ### 4. Inconsistent behavior between `list.take`/`list.drop` and `str.take`/`str.drop`
 
 **File**: `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/list/list_take.dart`, `/home/max/Repositories/personal/primal-sdk/lib/compiler/library/string/str_take.dart` (and corresponding `drop` files)

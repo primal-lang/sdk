@@ -3,6 +3,7 @@ library;
 
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';
@@ -97,6 +98,22 @@ countdown(n) = if (n <= 0) 0 else countdown(n - 1)
 main = countdown(500)
 ''');
       checkResult(runtime, 0);
+    });
+
+    test('subsequent evaluation works after RecursionLimitError', () {
+      final RuntimeFacade runtime = getRuntime('''
+infinite(x) = infinite(x)
+safe(x) = x + 1
+main = infinite(1)
+''');
+
+      // First call triggers RecursionLimitError
+      expect(runtime.executeMain, throwsA(isA<RecursionLimitError>()));
+
+      // Subsequent evaluation should work correctly (depth reset)
+      final Expression safeCall = getExpression('safe(41)');
+      final String result = runtime.evaluate(safeCall);
+      expect(result, equals('42'));
     });
   });
 }
