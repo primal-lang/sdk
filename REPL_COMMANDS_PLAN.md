@@ -1,0 +1,367 @@
+# REPL Commands Implementation Plan
+
+This document outlines the implementation plan for adding REPL commands to the Primal CLI. Commands are sorted from easiest to most complex.
+
+---
+
+## Overview of Current Architecture
+
+- **`main_cli.dart`**: Entry point with `_runRepl()` function that handles the REPL loop
+- **`Console`**: Handles input/output via `prompt()` method which loops indefinitely
+- **`RuntimeFacade`**: Manages function definitions with `_userDefinedFunctions` set and `_runtimeInput.functions` map
+- **`Compiler`**: Parses source code into `IntermediateRepresentation` or individual `FunctionDefinition`
+
+---
+
+## Commands (Sorted by Implementation Complexity)
+
+### 2. `:help` (Trivial)
+
+**Difficulty**: Trivial
+**Estimated Lines**: ~20
+
+**Description**: Show REPL-specific help listing all available commands.
+
+**Implementation**:
+1. Add a constant `replHelpText` with all command descriptions
+2. In `_runRepl`, check if input is `:help`
+3. Print the help text and return early
+
+**Files to Modify**:
+- `lib/main/main_cli.dart`
+
+**Changes**:
+```
+- Add `replHelpText` constant near the existing `helpText`
+- Add command check in prompt handler
+```
+
+---
+
+### 3. `:quit` / `:q` / `:exit` (Easy)
+
+**Difficulty**: Easy
+**Estimated Lines**: ~10
+
+**Description**: Exit the REPL gracefully.
+
+**Implementation**:
+1. The current `Console.prompt()` runs an infinite `while (true)` loop
+2. Modify `_runRepl` to use `promptOnce` in a loop instead, or have the handler return a bool
+3. Check for `:quit`, `:q`, or `:exit` commands
+4. When detected, break out of the REPL loop (likely via `exit(0)` or throwing a special exception)
+
+**Files to Modify**:
+- `lib/main/main_cli.dart`
+- Possibly `lib/utils/console.dart`
+
+**Approach Options**:
+- **Option A**: Call `exit(0)` from `dart:io` directly in the command handler
+- **Option B**: Have the handler return a `bool` indicating whether to continue
+- **Option C**: Throw a custom `ReplExitException` and catch it outside the loop
+
+**Recommended**: Option A is simplest - just call `exit(0)`
+
+---
+
+### 4. `:clear` (Easy)
+
+**Difficulty**: Easy
+**Estimated Lines**: ~5
+
+**Description**: Clear the terminal screen.
+
+**Implementation**:
+1. Check for `:clear` command
+2. Print ANSI escape sequence `\x1b[2J\x1b[H` to clear screen and move cursor to top-left
+
+**Files to Modify**:
+- `lib/main/main_cli.dart`
+
+**Note**: This uses ANSI escape codes which work on most modern terminals but may not work on Windows CMD (PowerShell should be fine).
+
+---
+
+### 5. `:debug on/off` (Easy)
+
+**Difficulty**: Easy
+**Estimated Lines**: ~10
+
+**Description**: Toggle debug mode on or off.
+
+**Implementation**:
+1. The `debug` variable is currently a local `final bool` in `runCli`
+2. Change it to a non-final variable that can be mutated
+3. Parse `:debug on` or `:debug off` commands
+4. Update the `debug` flag accordingly
+5. Print confirmation message
+
+**Files to Modify**:
+- `lib/main/main_cli.dart`
+
+**Changes**:
+```
+- Change `final bool debug` to `bool debug` in the scope accessible to the REPL handler
+- Add command parsing for `:debug on` and `:debug off`
+```
+
+---
+
+### 6. `:list` (Medium)
+
+**Difficulty**: Medium
+**Estimated Lines**: ~15
+
+**Description**: Show all user-defined functions in the current session.
+
+**Implementation**:
+1. `RuntimeFacade` has private `_userDefinedFunctions` set - need to expose it
+2. Add a getter `Set<String> get userDefinedFunctions => _userDefinedFunctions`
+3. In the command handler, iterate over the set and print each function name
+4. Consider also printing the function signature (parameters)
+
+**Files to Modify**:
+- `lib/compiler/lowering/runtime_facade.dart` (add getter)
+- `lib/main/main_cli.dart` (add command handler)
+
+**Output Format Options**:
+- Simple: Just function names, one per line
+- Detailed: Function names with parameter count or full signatures
+
+**Recommended**: Include signatures for better usability, e.g.:
+```
+double(x)
+add(a, b)
+main()
+```
+
+**Additional Consideration**: To show signatures, also need to expose `_allSignatures` or store parameter info in `_userDefinedFunctions`.
+
+---
+
+### 7. `:reset` (Medium)
+
+**Difficulty**: Medium
+**Estimated Lines**: ~15
+
+**Description**: Clear all user-defined functions.
+
+**Implementation**:
+1. Add a method `void reset()` to `RuntimeFacade`
+2. This method should:
+   - Clear `_userDefinedFunctions` set
+   - Remove all user-defined functions from `_runtimeInput.functions`
+   - Remove their signatures from `_allSignatures`
+3. Call this method when `:reset` is entered
+4. Print confirmation message
+
+**Files to Modify**:
+- `lib/compiler/lowering/runtime_facade.dart` (add `reset()` method)
+- `lib/main/main_cli.dart` (add command handler)
+
+**Implementation Detail**:
+```dart
+void reset() {
+  for (final String name in _userDefinedFunctions) {
+    _runtimeInput.functions.remove(name);
+    _allSignatures.remove(name);
+  }
+  _userDefinedFunctions.clear();
+}
+```
+
+---
+
+### 8. `:delete <name>` (Medium)
+
+**Difficulty**: Medium
+**Estimated Lines**: ~25
+
+**Description**: Remove a specific user-defined function.
+
+**Implementation**:
+1. Add a method `void deleteFunction(String name)` to `RuntimeFacade`
+2. This method should:
+   - Validate that the function exists and is user-defined (not standard library)
+   - Remove from `_userDefinedFunctions`, `_runtimeInput.functions`, and `_allSignatures`
+   - Throw an error if function doesn't exist or is a standard library function
+3. Parse the command to extract the function name
+4. Print confirmation or error message
+
+**Files to Modify**:
+- `lib/compiler/lowering/runtime_facade.dart` (add `deleteFunction()` method)
+- `lib/main/main_cli.dart` (add command handler)
+
+**Error Cases**:
+- Function doesn't exist
+- Function is a standard library function (cannot delete)
+
+---
+
+### 9. `:rename <old> <new>` (Medium-Hard)
+
+**Difficulty**: Medium-Hard
+**Estimated Lines**: ~35
+
+**Description**: Rename a user-defined function.
+
+**Implementation**:
+1. Add a method `void renameFunction(String oldName, String newName)` to `RuntimeFacade`
+2. This method should:
+   - Validate `oldName` exists and is user-defined
+   - Validate `newName` is not already in use (user-defined or standard library)
+   - Get the function term from `_runtimeInput.functions[oldName]`
+   - Create a new entry with `newName` and remove the old one
+   - Update `_allSignatures` similarly
+   - Update `_userDefinedFunctions` (remove old, add new)
+3. Parse the command to extract both names
+4. Print confirmation or error message
+
+**Files to Modify**:
+- `lib/compiler/lowering/runtime_facade.dart` (add `renameFunction()` method)
+- `lib/main/main_cli.dart` (add command handler)
+
+**Error Cases**:
+- Old function doesn't exist
+- Old function is a standard library function
+- New name already exists (user-defined or standard library)
+- Invalid identifier syntax for new name (optional validation)
+
+**Note**: This does NOT update references to the old function in other user-defined functions. Those will fail at runtime with "undefined function" errors. Document this limitation.
+
+---
+
+### 10. `:load <file>` (Hard)
+
+**Difficulty**: Hard
+**Estimated Lines**: ~50
+
+**Description**: Import definitions from a file without running main. Clears all previous definitions (reset).
+
+**Implementation**:
+1. Parse the command to extract the file path
+2. Call the existing `reset()` functionality first
+3. Read the file using the injected `readFile` function or `FileReader.read`
+4. Compile the file using `compiler.compile(source)`
+5. For each function in the `IntermediateRepresentation.customFunctions`:
+   - Need to convert back to a format that can be added to the runtime
+   - Or: Add a method to `RuntimeFacade` to bulk-load from an `IntermediateRepresentation`
+6. Handle warnings from compilation
+7. Print confirmation with count of loaded functions
+
+**Files to Modify**:
+- `lib/compiler/lowering/runtime_facade.dart` (add bulk load method)
+- `lib/main/main_cli.dart` (add command handler)
+
+**Key Challenge**: The current architecture creates a new `RuntimeFacade` from an `IntermediateRepresentation`. For `:load`, we need to merge new definitions into an existing runtime. Options:
+- **Option A**: Add a method `loadFromIntermediateRepresentation(IntermediateRepresentation ir)` to `RuntimeFacade`
+- **Option B**: Create a new `RuntimeFacade` and replace the existing one in `_runRepl`
+
+**Recommended**: Option B is cleaner - recreate the runtime with the loaded file, similar to how it's done when starting the CLI with a file argument. This requires:
+- Pass the `sourceReader` function to `_runRepl`
+- When `:load` is called, compile the file and create a new `RuntimeFacade`
+
+**Alternative Approach**: Keep the current runtime and iterate over each function definition from the file, calling `defineFunction()` for each. This requires converting `SemanticFunction` back to `FunctionDefinition`.
+
+---
+
+### 11. `:run <file>` (Hard)
+
+**Difficulty**: Hard
+**Estimated Lines**: ~60 (including `:load` reuse)
+
+**Description**: Same as `:load` but also runs the main function if available.
+
+**Implementation**:
+1. Implement `:load` first
+2. After loading, check if the runtime `hasMain`
+3. If main exists, call `_executeMain` or `runtime.executeMain()`
+4. Handle the case where main doesn't exist (just load, no error)
+
+**Files to Modify**:
+- Same as `:load`
+
+**Reuse**: Most of the implementation is shared with `:load`. Consider extracting a helper function `_loadFile(String filePath)` that both commands can use.
+
+---
+
+## Refactoring Considerations
+
+### Command Parser
+
+As the number of commands grows, consider extracting command parsing into a separate class or function:
+
+```dart
+class ReplCommand {
+  final String name;
+  final List<String> arguments;
+
+  static ReplCommand? parse(String input) {
+    if (!input.startsWith(':')) return null;
+    final parts = input.substring(1).split(' ');
+    return ReplCommand(name: parts.first, arguments: parts.skip(1).toList());
+  }
+}
+```
+
+### RuntimeFacade Extensions
+
+New methods to add to `RuntimeFacade`:
+1. `Set<String> get userDefinedFunctions` - getter for listing
+2. `Map<String, FunctionSignature> get userDefinedSignatures` - for detailed listing
+3. `void reset()` - clear all user-defined functions
+4. `void deleteFunction(String name)` - remove specific function
+5. `void renameFunction(String oldName, String newName)` - rename function
+6. `void loadFromSource(String source, Compiler compiler)` - bulk load from source
+
+### Console Extensions
+
+Potentially add:
+1. `void clear()` - convenience method for clearing screen
+
+---
+
+## Implementation Order (Recommended)
+
+1. **Phase 1 - Simple Commands** (can be done in one session):
+   - `:version`
+   - `:help`
+   - `:quit` / `:q` / `:exit`
+   - `:clear`
+   - `:debug on/off`
+
+2. **Phase 2 - Function Management** (requires RuntimeFacade changes):
+   - `:list`
+   - `:reset`
+   - `:delete <name>`
+   - `:rename <old> <new>`
+
+3. **Phase 3 - File Operations** (requires significant changes):
+   - `:load <file>`
+   - `:run <file>`
+
+---
+
+## Testing Strategy
+
+Each command should have unit tests covering:
+1. Basic functionality (happy path)
+2. Error cases (invalid arguments, non-existent functions, etc.)
+3. Edge cases (empty function list, special characters in names, etc.)
+
+Tests should use the existing `Console` injection pattern with a mock console to capture output.
+
+---
+
+## Error Messages
+
+Standardize error messages for REPL commands:
+
+```
+Error: Unknown command ':foo'. Type :help for available commands.
+Error: Function 'bar' does not exist.
+Error: Cannot delete standard library function 'add'.
+Error: Function 'baz' already exists.
+Error: File not found: 'missing.pri'
+Error: Usage: :delete <function_name>
+```

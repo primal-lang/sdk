@@ -144,6 +144,12 @@ void _runRepl({
         console.print('[debug] Input: $input');
       }
 
+      // Handle REPL commands
+      if (input == ':version') {
+        console.print(version);
+        return;
+      }
+
       // Try to parse as a function definition first
       final FunctionDefinition? functionDefinition = compiler
           .functionDefinition(input);
