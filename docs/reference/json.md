@@ -7,6 +7,7 @@
 - **Signature:** `json.encode(a: Map): String`
 - **Input:** One map
 - **Output:** A JSON string encoding of the map
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -18,6 +19,7 @@ json.encode({"name": "Alice", "age": 30}) // returns '{"name":"Alice","age":30}'
 - **Signature:** `json.decode(a: String): Map`
 - **Input:** One JSON string
 - **Output:** A map parsed from the JSON string
+- **Purity:** Pure
 - **Example:**
 
 ```

@@ -7,6 +7,7 @@
 - **Signature:** `console.write(a: Any): Any`
 - **Input:** One argument of any type
 - **Output:** The argument, after writing it to standard output
+- **Purity:** Impure
 - **Example:**
 
 ```
@@ -18,6 +19,7 @@ console.write("hello") // prints "hello" and returns "hello"
 - **Signature:** `console.writeLn(a: Any): Any`
 - **Input:** One argument of any type
 - **Output:** The argument, after writing it followed by a newline to standard output
+- **Purity:** Impure
 - **Example:**
 
 ```
@@ -31,6 +33,7 @@ console.writeLn("hello") // prints "hello\n" and returns "hello"
 - **Signature:** `console.read(): String`
 - **Input:** None
 - **Output:** A line read from standard input as a string
+- **Purity:** Impure
 
 Note: This function is not available on the web platform.
 

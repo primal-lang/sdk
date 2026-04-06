@@ -7,6 +7,7 @@
 - **Symbol:** `==`
 - **Input:** Two arguments of any type
 - **Output:** True if equal, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -18,6 +19,7 @@
 - **Symbol:** `!=`
 - **Input:** Two arguments of any type
 - **Output:** True if not equal, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -29,6 +31,7 @@
 - **Symbol:** `>`
 - **Input:** Two numbers
 - **Output:** True if first number exceeds the second, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -40,6 +43,7 @@
 - **Symbol:** `<`
 - **Input:** Two numbers
 - **Output:** True if first number is less than second, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -51,6 +55,7 @@
 - **Symbol:** `>=`
 - **Input:** Two numbers
 - **Output:** True if first number is greater than or equal to second, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -62,6 +67,7 @@
 - **Symbol:** `<=`
 - **Input:** Two numbers
 - **Output:** True if first number is less than or equal to second, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -85,6 +91,7 @@
   - `Set + Set` (union)
   - `Set + Any` (add element)
   - `Any + Set` (add element)
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -101,6 +108,7 @@
   - `Vector - Vector`
   - `Set - Set` (set difference)
   - `Set - Any` (remove element)
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -112,6 +120,7 @@
 - **Symbol:** `-`
 - **Input:** One number
 - **Output:** The negated number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -123,6 +132,7 @@
 - **Symbol:** `*`
 - **Input:** Two numbers
 - **Output:** The product of the numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -134,6 +144,7 @@
 - **Symbol:** `/`
 - **Input:** Two numbers
 - **Output:** The quotient
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -145,6 +156,7 @@
 - **Symbol:** `%`
 - **Input:** Two numbers
 - **Output:** The remainder of division
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -158,6 +170,7 @@
 - **Symbol:** `&`
 - **Input:** Two boolean arguments
 - **Output:** True only if both arguments are true, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -169,6 +182,7 @@ true & false // returns false
 - **Symbol:** `|`
 - **Input:** Two boolean arguments
 - **Output:** True if at least one argument is true, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -180,6 +194,7 @@ true | false // returns true
 - **Symbol:** `!`
 - **Input:** One boolean argument
 - **Output:** True if argument is false; false if argument is true
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -201,6 +216,7 @@ true | false // returns true
   - Throws if index is negative
   - Throws if index is out of bounds
   - Throws if key is not found in map
+- **Purity:** Pure
 - **Example:**
 
 ```

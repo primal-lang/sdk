@@ -7,6 +7,7 @@
 - **Syntax:** `[Any, Any, Any, ...]: List`
 - **Input:** Comma-separated elements
 - **Output:** A list containing the elements
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -18,6 +19,7 @@
 - **Syntax:** `List[Number]: Any`
 - **Input:** A list and an index
 - **Output:** The element at the specified index position
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -29,6 +31,7 @@
 - **Signature:** `list.filled(a: Number, b: Any): List`
 - **Input:** A number and a value
 - **Output:** A list with the value repeated the specified number of times
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -42,6 +45,7 @@ list.filled(3, 0) // returns [0, 0, 0]
 - **Signature:** `list.at(a: List, b: Number): Any`
 - **Input:** A list and an index
 - **Output:** The element at the given index
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -53,6 +57,7 @@ list.at([10, 20, 30], 1) // returns 20
 - **Signature:** `list.first(a: List): Any`
 - **Input:** One list
 - **Output:** The first element of the list
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -64,6 +69,7 @@ list.first([10, 20, 30]) // returns 10
 - **Signature:** `list.last(a: List): Any`
 - **Input:** One list
 - **Output:** The last element of the list
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -75,6 +81,7 @@ list.last([10, 20, 30]) // returns 30
 - **Signature:** `list.sublist(a: List, b: Number, c: Number): List`
 - **Input:** A list, a start index, and an end index
 - **Output:** A new list spanning from start to end indices
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -86,6 +93,7 @@ list.sublist([10, 20, 30, 40], 1, 3) // returns [20, 30]
 - **Signature:** `list.init(a: List): List`
 - **Input:** One list
 - **Output:** A new list excluding the last element
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -97,6 +105,7 @@ list.init([1, 2, 3]) // returns [1, 2]
 - **Signature:** `list.rest(a: List): List`
 - **Input:** One list
 - **Output:** A new list excluding the first element
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -108,6 +117,7 @@ list.rest([1, 2, 3]) // returns [2, 3]
 - **Signature:** `list.take(a: List, b: Number): List`
 - **Input:** A list and a number
 - **Output:** A new list containing the first n elements
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -119,6 +129,7 @@ list.take([1, 2, 3, 4], 2) // returns [1, 2]
 - **Signature:** `list.drop(a: List, b: Number): List`
 - **Input:** A list and a number
 - **Output:** A new list excluding the first n elements
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -132,6 +143,7 @@ list.drop([1, 2, 3, 4], 2) // returns [3, 4]
 - **Signature:** `list.set(a: List, b: Number, c: Any): List`
 - **Input:** A list, an index, and a value
 - **Output:** A new list with the value assigned at the specified index
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -143,6 +155,7 @@ list.set([1, 2, 3], 1, 99) // returns [1, 99, 3]
 - **Signature:** `list.concat(a: List, b: List): List`
 - **Input:** Two lists
 - **Output:** The two lists combined into a single new list
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -154,6 +167,7 @@ list.concat([1, 2], [3, 4]) // returns [1, 2, 3, 4]
 - **Signature:** `list.insertStart(a: List, b: Any): List`
 - **Input:** A list and a value
 - **Output:** A new list with the value added at the beginning
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -165,6 +179,7 @@ list.insertStart([2, 3], 1) // returns [1, 2, 3]
 - **Signature:** `list.insertEnd(a: List, b: Any): List`
 - **Input:** A list and a value
 - **Output:** A new list with the value added at the end
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -176,6 +191,7 @@ list.insertEnd([1, 2], 3) // returns [1, 2, 3]
 - **Signature:** `list.remove(a: List, b: Any): List`
 - **Input:** A list and a value
 - **Output:** A new list with all occurrences of the value removed
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -187,6 +203,7 @@ list.remove([1, 2, 3, 2], 2) // returns [1, 3]
 - **Signature:** `list.removeAt(a: List, b: Number): List`
 - **Input:** A list and an index
 - **Output:** A new list with the element at the index removed
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -198,6 +215,7 @@ list.removeAt([1, 2, 3], 1) // returns [1, 3]
 - **Signature:** `list.reverse(a: List): List`
 - **Input:** One list
 - **Output:** A new list with elements in reverse order
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -209,6 +227,7 @@ list.reverse([1, 2, 3]) // returns [3, 2, 1]
 - **Signature:** `list.swap(a: List, b: Number, c: Number): List`
 - **Input:** A list and two indices
 - **Output:** A new list with the elements at the given indices exchanged
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -220,6 +239,7 @@ list.swap([1, 2, 3], 0, 2) // returns [3, 2, 1]
 - **Signature:** `list.join(a: List, b: String): String`
 - **Input:** A list and a separator string
 - **Output:** The list elements concatenated into a string with the separator
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -233,6 +253,7 @@ list.join(["a", "b", "c"], ", ") // returns "a, b, c"
 - **Signature:** `list.length(a: List): Number`
 - **Input:** One list
 - **Output:** The count of elements in the list
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -244,6 +265,7 @@ list.length([1, 2, 3]) // returns 3
 - **Signature:** `list.isEmpty(a: List): Boolean`
 - **Input:** One list
 - **Output:** True if the list contains no elements, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -255,6 +277,7 @@ list.isEmpty([]) // returns true
 - **Signature:** `list.isNotEmpty(a: List): Boolean`
 - **Input:** One list
 - **Output:** True if the list contains at least one element, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -266,6 +289,7 @@ list.isNotEmpty([1, 2]) // returns true
 - **Signature:** `list.contains(a: List, b: Any): Boolean`
 - **Input:** A list and a value
 - **Output:** True if the value exists in the list, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -277,6 +301,7 @@ list.contains([1, 2, 3], 2) // returns true
 - **Signature:** `list.indexOf(a: List, b: Any): Number`
 - **Input:** A list and a value
 - **Output:** The position of the first occurrence, or -1 if absent
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -290,6 +315,7 @@ list.indexOf([10, 20, 30], 20) // returns 1
 - **Signature:** `list.map(a: List, b: Function): List`
 - **Input:** A list and a function
 - **Output:** A new list with the function applied to each element
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -301,6 +327,7 @@ list.map([1, 2, 3], double) // returns [2, 4, 6]
 - **Signature:** `list.filter(a: List, b: Function): List`
 - **Input:** A list and a function
 - **Output:** A new list containing only elements satisfying the condition
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -312,6 +339,7 @@ list.filter([1, 2, 3, 4], isEven) // returns [2, 4]
 - **Signature:** `list.reduce(a: List, b: Any, c: Function): Any`
 - **Input:** A list, an initial value, and a function
 - **Output:** A single value accumulated by applying the function across elements
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -323,6 +351,7 @@ list.reduce([1, 2, 3], 0, num.add) // returns 6
 - **Signature:** `list.all(a: List, b: Function): Boolean`
 - **Input:** A list and a function
 - **Output:** True if the condition holds for every element, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -334,6 +363,7 @@ list.all([2, 4, 6], num.isEven) // returns true
 - **Signature:** `list.none(a: List, b: Function): Boolean`
 - **Input:** A list and a function
 - **Output:** True if the condition is false for all elements, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -345,6 +375,7 @@ list.none([1, 3, 5], num.isEven) // returns true
 - **Signature:** `list.any(a: List, b: Function): Boolean`
 - **Input:** A list and a function
 - **Output:** True if the condition is true for at least one element, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -356,6 +387,7 @@ list.any([1, 2, 3], num.isEven) // returns true
 - **Signature:** `list.zip(a: List, b: List, c: Function): List`
 - **Input:** Two lists and a function
 - **Output:** A new list from pairing elements and applying the function to each pair
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -369,6 +401,7 @@ list.zip([1, 2], [3, 4], num.add) // returns [4, 6]
 - **Signature:** `list.sort(a: List, b: Function): List`
 - **Input:** A list and a comparison function
 - **Output:** A new list with elements ordered by the comparison function
+- **Purity:** Pure
 - **Example:**
 
 ```

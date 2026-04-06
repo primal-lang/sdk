@@ -7,6 +7,7 @@
 - **Signature:** `num.abs(a: Number): Number`
 - **Input:** One number
 - **Output:** The absolute value of the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -18,6 +19,7 @@ num.abs(-5) // returns 5
 - **Signature:** `num.negative(a: Number): Number`
 - **Input:** One number
 - **Output:** The negative value of the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -29,6 +31,7 @@ num.negative(3) // returns -3
 - **Signature:** `num.inc(a: Number): Number`
 - **Input:** One number
 - **Output:** The number incremented by one
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -40,6 +43,7 @@ num.inc(4) // returns 5
 - **Signature:** `num.dec(a: Number): Number`
 - **Input:** One number
 - **Output:** The number decremented by one
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -51,6 +55,7 @@ num.dec(4) // returns 3
 - **Signature:** `num.sign(a: Number): Number`
 - **Input:** One number
 - **Output:** 1 for positive, -1 for negative, or 0 for zero
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -62,6 +67,7 @@ num.sign(-7) // returns -1
 - **Signature:** `num.fraction(a: Number): Number`
 - **Input:** One number
 - **Output:** The fractional part of the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -73,6 +79,7 @@ num.fraction(3.75) // returns 0.75
 - **Signature:** `num.infinity(): Number`
 - **Input:** None
 - **Output:** Positive infinity
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -86,6 +93,7 @@ num.infinity() // returns infinity
 - **Signature:** `num.add(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The sum of the numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -97,6 +105,7 @@ num.add(3, 4) // returns 7
 - **Signature:** `num.sum(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The sum of the numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -108,6 +117,7 @@ num.sum(3, 4) // returns 7
 - **Signature:** `num.sub(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The difference between the numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -119,6 +129,7 @@ num.sub(10, 3) // returns 7
 - **Signature:** `num.mul(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The product of the numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -130,6 +141,7 @@ num.mul(3, 4) // returns 12
 - **Signature:** `num.div(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The quotient of the numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -141,6 +153,7 @@ num.div(10, 2) // returns 5
 - **Signature:** `num.mod(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The remainder of dividing the numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -153,6 +166,7 @@ num.mod(10, 3) // returns 1
 - **Input:** Two numbers
 - **Output:** The first number raised to the power of the second
 - **Constraints:** Throws an error if the base is negative and the exponent is fractional, or if the result is not a finite number (e.g., overflow to infinity)
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -164,6 +178,7 @@ num.pow(2, 3) // returns 8
 - **Signature:** `num.sqrt(a: Number): Number`
 - **Input:** One number
 - **Output:** The square root of the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -177,6 +192,7 @@ num.sqrt(9) // returns 3
 - **Signature:** `num.round(a: Number): Number`
 - **Input:** One number
 - **Output:** The number rounded to the nearest integer
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -188,6 +204,7 @@ num.round(3.6) // returns 4
 - **Signature:** `num.floor(a: Number): Number`
 - **Input:** One number
 - **Output:** The largest integer less than or equal to the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -199,6 +216,7 @@ num.floor(3.9) // returns 3
 - **Signature:** `num.ceil(a: Number): Number`
 - **Input:** One number
 - **Output:** The smallest integer greater than or equal to the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -212,6 +230,7 @@ num.ceil(3.1) // returns 4
 - **Signature:** `num.min(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The smaller of the two numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -223,6 +242,7 @@ num.min(3, 7) // returns 3
 - **Signature:** `num.max(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The larger of the two numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -234,6 +254,7 @@ num.max(3, 7) // returns 7
 - **Signature:** `num.clamp(a: Number, b: Number, c: Number): Number`
 - **Input:** Three numbers
 - **Output:** The first number constrained within the range defined by the second and third numbers
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -247,6 +268,7 @@ num.clamp(15, 0, 10) // returns 10
 - **Signature:** `num.sin(a: Number): Number`
 - **Input:** One number in radians
 - **Output:** The sine of the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -258,6 +280,7 @@ num.sin(0) // returns 0
 - **Signature:** `num.cos(a: Number): Number`
 - **Input:** One number in radians
 - **Output:** The cosine of the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -269,6 +292,7 @@ num.cos(0) // returns 1
 - **Signature:** `num.tan(a: Number): Number`
 - **Input:** One number in radians
 - **Output:** The tangent of the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -280,6 +304,7 @@ num.tan(0) // returns 0
 - **Signature:** `num.log(a: Number): Number`
 - **Input:** One number
 - **Output:** The natural logarithm of the number
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -291,6 +316,7 @@ num.log(1) // returns 0
 - **Signature:** `num.asRadians(a: Number): Number`
 - **Input:** One number in degrees
 - **Output:** The angle converted to radians
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -302,6 +328,7 @@ num.asRadians(180) // returns 3.14159...
 - **Signature:** `num.asDegrees(a: Number): Number`
 - **Input:** One number in radians
 - **Output:** The angle converted to degrees
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -315,6 +342,7 @@ num.asDegrees(3.14159) // returns 180
 - **Signature:** `num.isNegative(a: Number): Boolean`
 - **Input:** One number
 - **Output:** True if the number is negative, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -326,6 +354,7 @@ num.isNegative(-3) // returns true
 - **Signature:** `num.isPositive(a: Number): Boolean`
 - **Input:** One number
 - **Output:** True if the number is positive, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -337,6 +366,7 @@ num.isPositive(5) // returns true
 - **Signature:** `num.isZero(a: Number): Boolean`
 - **Input:** One number
 - **Output:** True if the number is zero, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -348,6 +378,7 @@ num.isZero(0) // returns true
 - **Signature:** `num.isEven(a: Number): Boolean`
 - **Input:** One number
 - **Output:** True if the number is even, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -359,6 +390,7 @@ num.isEven(4) // returns true
 - **Signature:** `num.isOdd(a: Number): Boolean`
 - **Input:** One number
 - **Output:** True if the number is odd, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -372,6 +404,7 @@ num.isOdd(3) // returns true
 - **Signature:** `num.integerRandom(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** A random integer between the two numbers (inclusive)
+- **Purity:** Impure
 - **Example:**
 
 ```
@@ -383,6 +416,7 @@ num.integerRandom(1, 10) // returns a random integer from 1 to 10
 - **Signature:** `num.decimalRandom(): Number`
 - **Input:** None
 - **Output:** A random decimal number between 0 and 1
+- **Purity:** Impure
 - **Example:**
 
 ```
@@ -396,6 +430,7 @@ num.decimalRandom() // returns a random decimal like 0.7291...
 - **Signature:** `num.compare(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** 1 if the first number is larger, -1 if smaller, or 0 if equal
+- **Purity:** Pure
 - **Example:**
 
 ```
