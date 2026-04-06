@@ -36,5 +36,7 @@ end
 # CLI
 
 ```bash
-primal script.prm --javascript
+primal --compile=javascript script.prm
 ```
+
+Update the CLI help to include the new flags for the supported languages.
