@@ -111,6 +111,7 @@ Raised during compilation and abort the pipeline:
 | Syntactic | `InvalidTokenError`                  | Unexpected token in context             |
 | Syntactic | `ExpectedTokenError`                 | Missing required token                  |
 | Syntactic | `UnexpectedEndOfFileError`           | Premature end of input                  |
+| Syntactic | `UnexpectedTokenError`               | Trailing tokens after complete expression |
 | Semantic  | `DuplicatedFunctionError`            | Two functions with the same name        |
 | Semantic  | `DuplicatedParameterError`           | Repeated parameter in a function        |
 | Semantic  | `UndefinedIdentifierError`           | Reference to unknown variable/function  |

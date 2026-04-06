@@ -1,3 +1,4 @@
+import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/reader/character.dart';
@@ -39,7 +40,13 @@ class Compiler {
       ListIterator(tokens),
     );
 
-    return expressionParser.expression();
+    final Expression result = expressionParser.expression();
+
+    if (!expressionParser.iterator.isAtEnd) {
+      throw UnexpectedTokenError(expressionParser.iterator.peek!);
+    }
+
+    return result;
   }
 
   /// Tries to parse the input as a single function definition.

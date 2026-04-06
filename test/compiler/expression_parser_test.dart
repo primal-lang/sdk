@@ -1,6 +1,7 @@
 @Tags(['compiler'])
 library;
 
+import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
@@ -640,6 +641,61 @@ void main() {
       parser.advance();
       expect(parser.previous, isA<IdentifierToken>());
       expect(parser.previous.value, equals('x'));
+    });
+  });
+
+  group('Compiler.expression() trailing token errors', () {
+    Expression compileExpression(String input) {
+      const Compiler compiler = Compiler();
+      return compiler.expression(input);
+    }
+
+    test('trailing identifier after boolean throws UnexpectedTokenError', () {
+      expect(
+        () => compileExpression('true fake true'),
+        throwsA(isA<UnexpectedTokenError>()),
+      );
+    });
+
+    test('trailing identifier after number throws UnexpectedTokenError', () {
+      expect(
+        () => compileExpression('42 extra'),
+        throwsA(isA<UnexpectedTokenError>()),
+      );
+    });
+
+    test('trailing number after expression throws UnexpectedTokenError', () {
+      expect(
+        () => compileExpression('1 + 2 3'),
+        throwsA(isA<UnexpectedTokenError>()),
+      );
+    });
+
+    test('trailing boolean after number throws UnexpectedTokenError', () {
+      expect(
+        () => compileExpression('42 true'),
+        throwsA(isA<UnexpectedTokenError>()),
+      );
+    });
+
+    test('trailing string after expression throws UnexpectedTokenError', () {
+      expect(
+        () => compileExpression('1 "extra"'),
+        throwsA(isA<UnexpectedTokenError>()),
+      );
+    });
+
+    test('trailing identifier after string throws UnexpectedTokenError', () {
+      expect(
+        () => compileExpression('"hello" world'),
+        throwsA(isA<UnexpectedTokenError>()),
+      );
+    });
+
+    test('valid expression without trailing tokens succeeds', () {
+      expect(compileExpression('true').toString(), 'true');
+      expect(compileExpression('1 + 2').toString(), '+(1, 2)');
+      expect(compileExpression('foo(1, 2)').toString(), 'foo(1, 2)');
     });
   });
 }
