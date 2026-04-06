@@ -162,15 +162,20 @@ void _runRepl({
       }
 
       // Handle REPL commands
-      switch (input) {
-        case ':version':
-          console.print(version);
-          return;
-        case ':help':
-          console.print(replHelpText);
-          return;
-        case ':quit' || ':q' || ':exit':
-          exit(0);
+      if (input.startsWith(':')) {
+        switch (input) {
+          case ':version':
+            console.print(version);
+          case ':help':
+            console.print(replHelpText);
+          case ':quit' || ':q' || ':exit':
+            exit(0);
+          default:
+            console.error(
+              "Unknown command '$input'. Type :help for available commands.",
+            );
+        }
+        return;
       }
 
       // Try to parse as a function definition first
