@@ -15,28 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 11. `:run <file>` (Hard)
-
-**Difficulty**: Hard
-**Estimated Lines**: ~60 (including `:load` reuse)
-
-**Description**: Same as `:load` but also runs the main function if available.
-
-**Implementation**:
-
-1. Implement `:load` first
-2. After loading, check if the runtime `hasMain`
-3. If main exists, call `_executeMain` or `runtime.executeMain()`
-4. Handle the case where main doesn't exist (just load, no error)
-
-**Files to Modify**:
-
-- Same as `:load`
-
-**Reuse**: Most of the implementation is shared with `:load`. Consider extracting a helper function `_loadFile(String filePath)` that both commands can use.
-
----
-
 ## Refactoring Considerations
 
 ### Command Parser

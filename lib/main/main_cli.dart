@@ -293,6 +293,32 @@ bool _handleReplCommand({
     return true;
   }
 
+  if (input == ':run' || input.startsWith(':run ')) {
+    final String filePath = input.length > ':run '.length
+        ? input.substring(':run '.length).trim()
+        : '';
+    if (filePath.isEmpty) {
+      console.error('Usage: :run <file_path>');
+    } else {
+      final String source = sourceReader(filePath);
+      final IntermediateRepresentation representation = compiler.compile(
+        source,
+      );
+      for (final GenericWarning warning in representation.warnings) {
+        console.warning(warning);
+      }
+      final int count = runtime.loadFromIntermediateRepresentation(
+        representation,
+      );
+      console.print('Loaded $count function(s) from $filePath.');
+      if (runtime.hasMain) {
+        final String result = runtime.executeMain();
+        console.print(result);
+      }
+    }
+    return true;
+  }
+
   // Commands without arguments
   switch (input) {
     case ':version':
