@@ -124,6 +124,45 @@ void runCli(
   }
 }
 
+void _printBanner(Console console) {
+  final String directory = _shortenHomePath(Directory.current.path);
+
+  // Truncate directory if too long (max 45 chars to fit in box)
+  final String truncatedDirectory = directory.length > 45
+      ? '...${directory.substring(directory.length - 42)}'
+      : directory;
+
+  const int boxWidth = 58;
+  final String horizontal = '\u2500' * boxWidth;
+  final String topBorder = '\u250c$horizontal\u2510';
+  final String bottomBorder = '\u2514$horizontal\u2518';
+  const String vertical = '\u2502';
+
+  // Block letter "PRIMAL" logo - each block character is 1 display cell wide
+  final List<String> lines = [
+    '\u2588\u2580\u2588 \u2588\u2580\u2588 \u2588 \u2588\u2580\u2584\u2580\u2588 \u2588\u2580\u2588 \u2588',
+    '\u2588\u2580\u2580 \u2588\u2580\u2584 \u2588 \u2588 \u2580 \u2588 \u2588\u2580\u2588 \u2588\u2584\u2584',
+    'v$version \u2022 $truncatedDirectory',
+    ':help \u2022 :load <file> \u2022 :quit',
+  ];
+
+  console.print(topBorder);
+  for (final String line in lines) {
+    // padRight works correctly since all characters are 1 display cell wide
+    console.print('$vertical ${line.padRight(boxWidth - 1)}$vertical');
+  }
+  console.print(bottomBorder);
+}
+
+String _shortenHomePath(String path) {
+  // Only shorten on Unix-like systems (where HOME is typically set)
+  final String? home = Platform.environment['HOME'];
+  if (home != null && path.startsWith(home)) {
+    return '~${path.substring(home.length)}';
+  }
+  return path;
+}
+
 void _executeMain({
   required RuntimeFacade runtime,
   required List<String> args,
@@ -158,6 +197,8 @@ void _runRepl({
   required String Function(String) sourceReader,
 }) {
   bool debugMode = debug;
+
+  _printBanner(console);
 
   console.prompt((input) {
     try {

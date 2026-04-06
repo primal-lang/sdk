@@ -9,6 +9,53 @@ import '../helpers/console_fakes.dart';
 
 void main() {
   group('runCli()', () {
+    group('REPL banner', () {
+      test('prints banner on REPL start', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 0,
+        );
+
+        runCli([], console: console);
+
+        // Banner: top border + 4 content lines + bottom border
+        expect(platformConsole.outLines.length, equals(6));
+        expect(platformConsole.outLines[0], startsWith('\u250c')); // ┌
+        expect(platformConsole.outLines[5], startsWith('\u2514')); // └
+      });
+
+      test('banner contains version and commands', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 0,
+        );
+
+        runCli([], console: console);
+
+        final String allLines = platformConsole.outLines.join('\n');
+        expect(allLines, contains('v0.'));
+        expect(allLines, contains(':help'));
+        expect(allLines, contains(':load'));
+        expect(allLines, contains(':quit'));
+      });
+
+      test('does not print banner when executing main', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm'],
+          console: console,
+          readFile: (_) => 'main = 42',
+        );
+
+        // Only the result should be printed, no banner
+        expect(platformConsole.outLines, equals(['42']));
+      });
+    });
+
     test('prints main result without subprocess', () {
       final FakePlatformConsole platformConsole = FakePlatformConsole();
       final Console console = Console(platformConsole);
@@ -53,7 +100,9 @@ void main() {
       );
 
       expect(platformConsole.outWrites, equals(['> ']));
-      expect(platformConsole.outLines, equals(['6']));
+      // Banner (6 lines) + result
+      expect(platformConsole.outLines.length, equals(7));
+      expect(platformConsole.outLines.last, equals('6'));
       expect(platformConsole.errorLines, isEmpty);
     });
 
@@ -69,7 +118,8 @@ void main() {
       runCli([], console: console);
 
       expect(platformConsole.outWrites, equals(['> ']));
-      expect(platformConsole.outLines, isEmpty);
+      // Banner only (6 lines), no result due to error
+      expect(platformConsole.outLines.length, equals(6));
       expect(platformConsole.errorLines.single, contains('Error'));
     });
 
