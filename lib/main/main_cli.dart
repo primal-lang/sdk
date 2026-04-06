@@ -24,6 +24,21 @@ Examples:
   primal -d                  Start the REPL in debug mode
 ''';
 
+const String replHelpText = '''
+REPL Commands:
+  :help                Show this help
+  :version             Show version info
+  :clear               Clear the screen
+  :quit, :q, :exit     Exit the REPL
+  :debug on/off        Toggle debug mode
+  :list                Show all user-defined functions
+  :delete <name>       Remove a user-defined function
+  :rename <old> <new>  Rename a user-defined function
+  :load <file>         Load definitions from a file (resets session)
+  :run <file>          Load definitions and run main if available
+  :reset               Clear all user-defined functions
+''';
+
 void main(List<String> args) => runCli(args);
 
 void runCli(
@@ -147,6 +162,11 @@ void _runRepl({
       // Handle REPL commands
       if (input == ':version') {
         console.print(version);
+        return;
+      }
+
+      if (input == ':help') {
+        console.print(replHelpText);
         return;
       }
 
