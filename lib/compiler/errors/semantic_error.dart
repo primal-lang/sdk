@@ -88,3 +88,15 @@ class FunctionNotFoundError extends SemanticError {
     required String function,
   }) : super('Function "$function" not found');
 }
+
+class CannotRenameStandardLibraryError extends SemanticError {
+  const CannotRenameStandardLibraryError({
+    required String function,
+  }) : super('Cannot rename standard library function "$function"');
+}
+
+class FunctionAlreadyExistsError extends SemanticError {
+  const FunctionAlreadyExistsError({
+    required String function,
+  }) : super('Function "$function" already exists');
+}

@@ -106,6 +106,53 @@ class RuntimeFacade {
     _allSignatures.remove(name);
   }
 
+  /// Renames a user-defined function.
+  ///
+  /// Throws [FunctionNotFoundError] if [oldName] doesn't exist.
+  /// Throws [CannotRenameStandardLibraryError] if [oldName] is a standard
+  /// library function.
+  /// Throws [FunctionAlreadyExistsError] if [newName] is already in use.
+  ///
+  /// Note: This does not update references to the old function in other
+  /// user-defined functions. Those will fail at runtime.
+  void renameFunction(String oldName, String newName) {
+    // Validate old name
+    if (intermediateRepresentation.standardLibrarySignatures.containsKey(
+      oldName,
+    )) {
+      throw CannotRenameStandardLibraryError(function: oldName);
+    }
+
+    if (!_userDefinedFunctions.contains(oldName)) {
+      throw FunctionNotFoundError(function: oldName);
+    }
+
+    // Validate new name
+    if (_allSignatures.containsKey(newName)) {
+      throw FunctionAlreadyExistsError(function: newName);
+    }
+
+    // Get existing function and signature
+    final FunctionTerm functionTerm = _runtimeInput.functions[oldName]!;
+    final FunctionSignature oldSignature = _allSignatures[oldName]!;
+
+    // Create new signature with updated name
+    final FunctionSignature newSignature = FunctionSignature(
+      name: newName,
+      parameters: oldSignature.parameters,
+    );
+
+    // Remove old entries
+    _userDefinedFunctions.remove(oldName);
+    _runtimeInput.functions.remove(oldName);
+    _allSignatures.remove(oldName);
+
+    // Add new entries
+    _userDefinedFunctions.add(newName);
+    _runtimeInput.functions[newName] = functionTerm;
+    _allSignatures[newName] = newSignature;
+  }
+
   Expression mainExpression(List<String> arguments) {
     final FunctionTerm? main = _runtimeInput.getFunction('main');
 

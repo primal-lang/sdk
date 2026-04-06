@@ -15,42 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 9. `:rename <old> <new>` (Medium-Hard)
-
-**Difficulty**: Medium-Hard
-**Estimated Lines**: ~35
-
-**Description**: Rename a user-defined function.
-
-**Implementation**:
-
-1. Add a method `void renameFunction(String oldName, String newName)` to `RuntimeFacade`
-2. This method should:
-   - Validate `oldName` exists and is user-defined
-   - Validate `newName` is not already in use (user-defined or standard library)
-   - Get the function term from `_runtimeInput.functions[oldName]`
-   - Create a new entry with `newName` and remove the old one
-   - Update `_allSignatures` similarly
-   - Update `_userDefinedFunctions` (remove old, add new)
-3. Parse the command to extract both names
-4. Print confirmation or error message
-
-**Files to Modify**:
-
-- `lib/compiler/lowering/runtime_facade.dart` (add `renameFunction()` method)
-- `lib/main/main_cli.dart` (add command handler)
-
-**Error Cases**:
-
-- Old function doesn't exist
-- Old function is a standard library function
-- New name already exists (user-defined or standard library)
-- Invalid identifier syntax for new name (optional validation)
-
-**Note**: This does NOT update references to the old function in other user-defined functions. Those will fail at runtime with "undefined function" errors. Document this limitation.
-
----
-
 ### 10. `:load <file>` (Hard)
 
 **Difficulty**: Hard

@@ -170,53 +170,13 @@ void _runRepl({
       }
 
       // Handle REPL commands
-      if (input.startsWith(':')) {
-        // Commands with arguments
-        if (input == ':delete' || input.startsWith(':delete ')) {
-          final String name = input.length > ':delete '.length
-              ? input.substring(':delete '.length).trim()
-              : '';
-          if (name.isEmpty) {
-            console.error('Usage: :delete <function_name>');
-          } else {
-            runtime.deleteFunction(name);
-            console.print("Function '$name' deleted.");
-          }
-          return;
-        }
-
-        // Commands without arguments
-        switch (input) {
-          case ':version':
-            console.print(version);
-          case ':help':
-            console.print(replHelpText);
-          case ':quit' || ':q' || ':exit':
-            exit(0);
-          case ':clear':
-            console.print('\x1b[2J\x1b[H');
-          case ':debug on':
-            debugMode = true;
-            console.print('Debug mode enabled.');
-          case ':debug off':
-            debugMode = false;
-            console.print('Debug mode disabled.');
-          case ':list':
-            final List<String> signatures =
-                runtime.userDefinedFunctionSignatures;
-            if (signatures.isEmpty) {
-              console.print('No user-defined functions.');
-            } else {
-              console.print(signatures.join('\n'));
-            }
-          case ':reset':
-            runtime.reset();
-            console.print('All user-defined functions cleared.');
-          default:
-            console.error(
-              "Unknown command '$input'. Type :help for available commands.",
-            );
-        }
+      if (_handleReplCommand(
+        input: input,
+        runtime: runtime,
+        console: console,
+        debugMode: debugMode,
+        setDebugMode: (bool value) => debugMode = value,
+      )) {
         return;
       }
 
@@ -261,4 +221,80 @@ void _runRepl({
       }
     }
   });
+}
+
+/// Handles REPL commands (inputs starting with ':').
+///
+/// Returns true if the input was handled as a command, false otherwise.
+bool _handleReplCommand({
+  required String input,
+  required RuntimeFacade runtime,
+  required Console console,
+  required bool debugMode,
+  required void Function(bool) setDebugMode,
+}) {
+  if (!input.startsWith(':')) {
+    return false;
+  }
+
+  // Commands with arguments
+  if (input == ':delete' || input.startsWith(':delete ')) {
+    final String name = input.length > ':delete '.length
+        ? input.substring(':delete '.length).trim()
+        : '';
+    if (name.isEmpty) {
+      console.error('Usage: :delete <function_name>');
+    } else {
+      runtime.deleteFunction(name);
+      console.print("Function '$name' deleted.");
+    }
+    return true;
+  }
+
+  if (input == ':rename' || input.startsWith(':rename ')) {
+    final String arguments = input.length > ':rename '.length
+        ? input.substring(':rename '.length).trim()
+        : '';
+    final List<String> parts = arguments.split(RegExp(r'\s+'));
+    if (parts.length != 2 || parts[0].isEmpty || parts[1].isEmpty) {
+      console.error('Usage: :rename <old_name> <new_name>');
+    } else {
+      runtime.renameFunction(parts[0], parts[1]);
+      console.print("Function '${parts[0]}' renamed to '${parts[1]}'.");
+    }
+    return true;
+  }
+
+  // Commands without arguments
+  switch (input) {
+    case ':version':
+      console.print(version);
+    case ':help':
+      console.print(replHelpText);
+    case ':quit' || ':q' || ':exit':
+      exit(0);
+    case ':clear':
+      console.print('\x1b[2J\x1b[H');
+    case ':debug on':
+      setDebugMode(true);
+      console.print('Debug mode enabled.');
+    case ':debug off':
+      setDebugMode(false);
+      console.print('Debug mode disabled.');
+    case ':list':
+      final List<String> signatures = runtime.userDefinedFunctionSignatures;
+      if (signatures.isEmpty) {
+        console.print('No user-defined functions.');
+      } else {
+        console.print(signatures.join('\n'));
+      }
+    case ':reset':
+      runtime.reset();
+      console.print('All user-defined functions cleared.');
+    default:
+      console.error(
+        "Unknown command '$input'. Type :help for available commands.",
+      );
+  }
+  return true;
 }
