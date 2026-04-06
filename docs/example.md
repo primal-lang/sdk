@@ -72,7 +72,7 @@ The input is scanned for `\r\n` (Windows) and `\r` (old Mac) line endings, which
 
 #### Step 2: Split into Rows
 
-The normalized string is split by `\n`:
+The normalized string is split by `\n`. If the last element is empty (from a trailing newline), it is removed to avoid generating a spurious empty row:
 
 | Row Index | Content                            |
 | --------- | ---------------------------------- |
@@ -209,6 +209,7 @@ The output preserves every character from the source (including whitespace and n
 2. **Newline injection**: A `\n` is appended after every row, ensuring consistent line boundaries.
 3. **Whitespace preserved**: Spaces are kept as separate `Character` objects—they will be skipped by the lexer.
 4. **Grapheme-aware**: The reader uses `package:characters` to handle multi-codepoint characters correctly (e.g., emoji would be treated as single characters).
+5. **Shebang skipping**: If the first row starts with `#!`, it is skipped entirely. This allows Primal scripts to use Unix shebang lines (e.g., `#!/usr/bin/env primal`) without affecting compilation.
 
 ---
 

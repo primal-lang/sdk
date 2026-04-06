@@ -82,7 +82,7 @@ Collection terms extend `ValueTerm`, override `substitute` to recurse into their
 **Recursion tracking**: `FunctionTerm` maintains a static recursion depth counter (`maxRecursionDepth = 1000`). This assumes single-threaded execution.
 
 - `resetDepth()` - resets the counter to zero. Called before starting evaluation.
-- `incrementDepth()` - increments the counter. Throws `RecursionLimitError` if the limit is exceeded.
+- `incrementDepth()` - increments the counter and returns `true`. Throws `RecursionLimitError` if the limit is exceeded.
 - `decrementDepth()` - decrements the counter.
 
 **Instance members**:

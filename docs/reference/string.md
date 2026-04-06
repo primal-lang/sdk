@@ -72,7 +72,7 @@ str.last("hello") // returns "o"
 - **Signature:** `str.substring(a: String, b: Number, c: Number): String`
 - **Input:** A string, a start index, and an end index
 - **Output:** The extracted portion of the string
-- **Constraints:** Throws an error if the start index is negative, or if the start or end index is out of bounds
+- **Constraints:** Throws an error if the start index is negative, if the end index is less than the start index, or if the start or end index is out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -358,7 +358,7 @@ str.isNotEmpty("hello") // returns true
 
 - **Signature:** `str.bytes(a: String): List`
 - **Input:** One string
-- **Output:** A list containing the byte values of the string
+- **Output:** A list containing the UTF-8 byte values of the string
 - **Purity:** Pure
 - **Example:**
 

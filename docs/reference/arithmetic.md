@@ -66,7 +66,7 @@ num.sign(-7) // returns -1
 
 - **Signature:** `num.fraction(a: Number): Number`
 - **Input:** One number
-- **Output:** The fractional part of the number
+- **Output:** The fractional part of the absolute value of the number (always non-negative)
 - **Purity:** Pure
 - **Example:**
 

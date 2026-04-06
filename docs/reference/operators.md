@@ -7,6 +7,19 @@
 - **Symbol:** `==`
 - **Input:** Two arguments of any type
 - **Output:** True if equal, false otherwise
+- **Supported combinations:**
+  - `Boolean == Boolean`
+  - `Number == Number`
+  - `String == String`
+  - `Timestamp == Timestamp`
+  - `File == File` (compares absolute paths)
+  - `Directory == Directory` (compares absolute paths)
+  - `List == List` (element-wise)
+  - `Vector == Vector` (element-wise)
+  - `Stack == Stack` (element-wise)
+  - `Queue == Queue` (element-wise)
+  - `Set == Set`
+  - `Map == Map` (key-wise and value-wise)
 - **Purity:** Pure
 - **Example:**
 
@@ -19,6 +32,19 @@
 - **Symbol:** `!=`
 - **Input:** Two arguments of any type
 - **Output:** True if not equal, false otherwise
+- **Supported combinations:**
+  - `Boolean != Boolean`
+  - `Number != Number`
+  - `String != String`
+  - `Timestamp != Timestamp`
+  - `File != File` (compares absolute paths)
+  - `Directory != Directory` (compares absolute paths)
+  - `List != List` (element-wise)
+  - `Vector != Vector` (element-wise)
+  - `Stack != Stack` (element-wise)
+  - `Queue != Queue` (element-wise)
+  - `Set != Set`
+  - `Map != Map` (key-wise and value-wise)
 - **Purity:** Pure
 - **Example:**
 
@@ -95,8 +121,8 @@
 ### Addition
 
 - **Symbol:** `+`
-- **Input:** Two numbers
-- **Output:** The sum of the numbers
+- **Input:** Two arguments of any type
+- **Output:** The combined result
 - **Supported combinations:**
   - `Number + Number`
   - `String + String`
@@ -117,8 +143,8 @@
 ### Subtraction
 
 - **Symbol:** `-`
-- **Input:** Two numbers
-- **Output:** The difference of the numbers
+- **Input:** Two arguments of any type
+- **Output:** The result of the subtraction
 - **Supported combinations:**
   - `Number - Number`
   - `Vector - Vector`
@@ -148,6 +174,7 @@
 - **Symbol:** `/`
 - **Input:** Two numbers
 - **Output:** The quotient
+- **Errors:** Throws `DivisionByZeroError` if the divisor is zero
 - **Purity:** Pure
 - **Example:**
 
@@ -160,6 +187,7 @@
 - **Symbol:** `%`
 - **Input:** Two numbers
 - **Output:** The remainder of division
+- **Errors:** Throws `DivisionByZeroError` if the divisor is zero
 - **Purity:** Pure
 - **Example:**
 

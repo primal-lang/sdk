@@ -20,6 +20,7 @@ json.encode([1, 2, 3]) // returns '[1,2,3]'
 - **Signature:** `json.decode(a: String): Any`
 - **Input:** One JSON string
 - **Output:** A value parsed from the JSON string (map, list, number, string, or boolean)
+- **Constraints:** Throws an error if the string is not valid JSON
 - **Purity:** Pure
 - **Example:**
 

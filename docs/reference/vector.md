@@ -7,6 +7,7 @@
 - **Signature:** `vector.new(a: List): Vector`
 - **Input:** One list of numbers
 - **Output:** A vector created from the list
+- **Constraints:** Throws an error if any element in the list is not a number
 - **Purity:** Pure
 - **Example:**
 
@@ -47,7 +48,7 @@ vector.sub(vector.new([5, 7]), vector.new([2, 3])) // returns <3, 4>
 - **Signature:** `vector.normalize(a: Vector): Vector`
 - **Input:** One vector
 - **Output:** A vector with the same direction but with a magnitude of 1
-- **Constraints:** Throws an error if the vector has zero magnitude
+- **Constraints:** Throws an error if the vector has zero magnitude. Returns the vector unchanged if it is empty
 - **Purity:** Pure
 - **Example:**
 

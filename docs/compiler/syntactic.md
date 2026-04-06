@@ -10,7 +10,7 @@ The syntactic analyzer (parser) converts the token list into a list of `Function
 
 ```
 program            → functionDefinition*
-functionDefinition → IDENTIFIER "=" expression | IDENTIFIER "(" parameters ")" "=" expression
+functionDefinition → IDENTIFIER "=" expression | IDENTIFIER "(" parameters? ")" "=" expression
 parameters         → IDENTIFIER ( "," IDENTIFIER )*
 ```
 

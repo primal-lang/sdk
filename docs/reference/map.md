@@ -33,6 +33,7 @@
 - **Signature:** `map.at(a: Map, b: Any): Any`
 - **Input:** A map and a key
 - **Output:** The value associated with the key
+- **Constraints:** Throws an error if the key is not found in the map
 - **Purity:** Pure
 - **Example:**
 

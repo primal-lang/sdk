@@ -31,7 +31,9 @@ class Located {
 }
 ```
 
-Extended by `Character`, `Token`, `Lexeme`, `Expression`, `MapEntryExpression`, and other AST types.
+Equality is based on `location`.
+
+Extended by `Character`, `Token<T>`, `Lexeme`, `Expression`, `MapEntryExpression`, and other AST types.
 
 ## Parameter
 
