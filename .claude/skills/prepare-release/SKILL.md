@@ -41,6 +41,7 @@ description: Prepares the next SDK release by updating version, syncing document
 
 5. **Manual Steps Reminder**: Inform the user of the remaining manual steps:
    - **Website updates**: Run the skill `sync-sdk` in the website repository
+   - **Deploy website**: Deploy the updated website
    - **Desktop binaries**: Generate binaries for all desktop platforms (macOS, Windows, Linux)
    - **Git workflow**: Merge the release branch into `main`
    - **GitHub release**: Create a new GitHub release tagged with the version number
