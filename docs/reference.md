@@ -20,7 +20,7 @@ Primal includes a rich set of core functions that provide essential tools for de
 - [Directory](reference/directory.md)
 - [Casting](reference/casting.md)
 - [JSON](reference/json.md)
-- [Hashing](reference/hashing.md)
+- [Hash](reference/hash.md)
 - [Console](reference/console.md)
 - [Environment](reference/environment.md)
 

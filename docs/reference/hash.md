@@ -1,4 +1,4 @@
-# Hashing
+# Hash
 
 ## Functions
 

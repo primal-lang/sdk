@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 0.4.2 - Copper Chisel
+
+### Language
+
+- Added `RecursionLimitError` for detecting excessive recursion depth
+- Added specific runtime error types for better error messages
+
+### Standard Library
+
+- Added `set.difference` function
+- Added `is.file` and `is.directory` type checking functions
+- Added division by zero checking to `num.div` and `/` operator
+
 ## 0.4.1 - Copper Chisel
 
 ### Language
