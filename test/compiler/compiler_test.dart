@@ -6,6 +6,7 @@ import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -114,6 +115,85 @@ void main() {
         () => compiler.expression('= = ='),
         throwsA(isA<SyntacticError>()),
       );
+    });
+  });
+
+  group('Compiler.functionDefinition()', () {
+    test('returns FunctionDefinition for constant definition', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        'pi = 3.14',
+      );
+
+      expect(definition, isNotNull);
+      expect(definition!.name, equals('pi'));
+      expect(definition.parameters, isEmpty);
+    });
+
+    test('returns FunctionDefinition for function with parameters', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        'double(x) = x * 2',
+      );
+
+      expect(definition, isNotNull);
+      expect(definition!.name, equals('double'));
+      expect(definition.parameters, equals(['x']));
+    });
+
+    test(
+      'returns FunctionDefinition for function with multiple parameters',
+      () {
+        final FunctionDefinition? definition = compiler.functionDefinition(
+          'add(a, b, c) = a + b + c',
+        );
+
+        expect(definition, isNotNull);
+        expect(definition!.name, equals('add'));
+        expect(definition.parameters, equals(['a', 'b', 'c']));
+      },
+    );
+
+    test('returns null for simple expression', () {
+      final FunctionDefinition? definition = compiler.functionDefinition('42');
+
+      expect(definition, isNull);
+    });
+
+    test('returns null for function call expression', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        'add(1, 2)',
+      );
+
+      expect(definition, isNull);
+    });
+
+    test('returns null for binary operation', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        '1 + 2',
+      );
+
+      expect(definition, isNull);
+    });
+
+    test('returns null for identifier expression', () {
+      final FunctionDefinition? definition = compiler.functionDefinition('foo');
+
+      expect(definition, isNull);
+    });
+
+    test('returns null for invalid syntax', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        '= = =',
+      );
+
+      expect(definition, isNull);
+    });
+
+    test('returns null for multiple function definitions', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        'a = 1\nb = 2',
+      );
+
+      expect(definition, isNull);
     });
   });
 }

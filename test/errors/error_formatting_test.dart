@@ -193,6 +193,17 @@ void main() {
         ),
       );
     });
+
+    test('toString() omits function context when inFunction is null', () {
+      final UndefinedIdentifierError error = UndefinedIdentifierError(
+        identifier: 'myVar',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Undefined identifier "myVar"'),
+      );
+    });
   });
 
   group('UndefinedFunctionError', () {
@@ -207,6 +218,29 @@ void main() {
         equals(
           'Error: Undefined function "compute" in function "main"',
         ),
+      );
+    });
+
+    test('toString() omits function context when inFunction is null', () {
+      final UndefinedFunctionError error = UndefinedFunctionError(
+        function: 'compute',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Undefined function "compute"'),
+      );
+    });
+  });
+
+  group('CannotRedefineStandardLibraryError', () {
+    test('toString() includes the function name', () {
+      const CannotRedefineStandardLibraryError error =
+          CannotRedefineStandardLibraryError(function: 'print');
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot redefine standard library function "print"'),
       );
     });
   });
