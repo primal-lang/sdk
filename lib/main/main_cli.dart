@@ -186,6 +186,14 @@ void _runRepl({
           case ':debug off':
             debugMode = false;
             console.print('Debug mode disabled.');
+          case ':list':
+            final List<String> signatures =
+                runtime.userDefinedFunctionSignatures;
+            if (signatures.isEmpty) {
+              console.print('No user-defined functions.');
+            } else {
+              console.print(signatures.join('\n'));
+            }
           default:
             console.error(
               "Unknown command '$input'. Type :help for available commands.",

@@ -67,6 +67,15 @@ class RuntimeFacade {
 
   bool get hasMain => intermediateRepresentation.containsFunction('main');
 
+  /// Returns the signatures of all user-defined functions.
+  List<String> get userDefinedFunctionSignatures {
+    final List<String> signatures = _userDefinedFunctions
+        .map((String name) => _allSignatures[name]!.toString())
+        .toList();
+    signatures.sort();
+    return signatures;
+  }
+
   Expression mainExpression(List<String> arguments) {
     final FunctionTerm? main = _runtimeInput.getFunction('main');
 

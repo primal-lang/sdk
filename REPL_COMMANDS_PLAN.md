@@ -15,42 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 6. `:list` (Medium)
-
-**Difficulty**: Medium
-**Estimated Lines**: ~15
-
-**Description**: Show all user-defined functions in the current session.
-
-**Implementation**:
-
-1. `RuntimeFacade` has private `_userDefinedFunctions` set - need to expose it
-2. Add a getter `Set<String> get userDefinedFunctions => _userDefinedFunctions`
-3. In the command handler, iterate over the set and print each function name
-4. Consider also printing the function signature (parameters)
-
-**Files to Modify**:
-
-- `lib/compiler/lowering/runtime_facade.dart` (add getter)
-- `lib/main/main_cli.dart` (add command handler)
-
-**Output Format Options**:
-
-- Simple: Just function names, one per line
-- Detailed: Function names with parameter count or full signatures
-
-**Recommended**: Include signatures for better usability, e.g.:
-
-```
-double(x)
-add(a, b)
-main()
-```
-
-**Additional Consideration**: To show signatures, also need to expose `_allSignatures` or store parameter info in `_userDefinedFunctions`.
-
----
-
 ### 7. `:reset` (Medium)
 
 **Difficulty**: Medium
