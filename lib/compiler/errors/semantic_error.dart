@@ -70,3 +70,9 @@ class NotIndexableError extends SemanticError {
     required String type,
   }) : super('Cannot index $type literal "$value"');
 }
+
+class CannotRedefineStandardLibraryError extends SemanticError {
+  const CannotRedefineStandardLibraryError({
+    required String function,
+  }) : super('Cannot redefine standard library function "$function"');
+}

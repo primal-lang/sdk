@@ -2,6 +2,7 @@ import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
@@ -139,11 +140,25 @@ void _runRepl({
 }) {
   console.prompt((input) {
     try {
+      if (debug) {
+        console.print('[debug] Input: $input');
+      }
+
+      // Try to parse as a function definition first
+      final FunctionDefinition? functionDefinition = compiler
+          .functionDefinition(input);
+
+      if (functionDefinition != null) {
+        // Define the function and continue (no output)
+        runtime.defineFunction(functionDefinition);
+        return;
+      }
+
+      // Otherwise, evaluate as an expression
       final Stopwatch parseWatch = Stopwatch();
       final Stopwatch evalWatch = Stopwatch();
 
       if (debug) {
-        console.print('[debug] Input: $input');
         parseWatch.start();
       }
 

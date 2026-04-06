@@ -1,6 +1,8 @@
+import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/lowering/lowerer.dart';
 import 'package:primal/compiler/lowering/runtime_input_builder.dart';
 import 'package:primal/compiler/models/function_signature.dart';
+import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/runtime.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
 import 'package:primal/compiler/runtime/term.dart';
@@ -9,6 +11,7 @@ import 'package:primal/compiler/semantic/semantic_analyzer.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/syntactic/function_definition.dart';
 
 /// Parses a string into an [Expression].
 typedef ExpressionParser = Expression Function(String input);
@@ -19,12 +22,14 @@ class RuntimeFacade {
   final RuntimeInput _runtimeInput;
   final Runtime _runtime;
   final Map<String, FunctionSignature> _allSignatures;
+  final Set<String> _userDefinedFunctions;
 
   RuntimeFacade._internal(
     this.intermediateRepresentation,
     this._parseExpression,
     this._runtimeInput,
     this._allSignatures,
+    this._userDefinedFunctions,
   ) : _runtime = Runtime(_runtimeInput);
 
   factory RuntimeFacade(
@@ -46,11 +51,17 @@ class RuntimeFacade {
         ),
     };
 
+    // Track user-defined functions (from file and REPL)
+    final Set<String> userDefinedFunctions = {
+      ...intermediateRepresentation.customFunctions.keys,
+    };
+
     return RuntimeFacade._internal(
       intermediateRepresentation,
       parseExpression,
       input,
       allSignatures,
+      userDefinedFunctions,
     );
   }
 
@@ -108,4 +119,95 @@ class RuntimeFacade {
   }
 
   dynamic format(dynamic value) => _runtime.format(value);
+
+  /// Defines a new function in the runtime.
+  ///
+  /// This allows REPL users to define functions on the fly.
+  /// User-defined functions can be redefined, but standard library
+  /// functions cannot be overwritten.
+  ///
+  /// Throws [CannotRedefineStandardLibraryError] if trying to redefine
+  /// a standard library function.
+  void defineFunction(FunctionDefinition definition) {
+    final String name = definition.name;
+
+    // Check if trying to redefine a standard library function
+    if (intermediateRepresentation.standardLibrarySignatures.containsKey(
+          name,
+        ) &&
+        !_userDefinedFunctions.contains(name)) {
+      throw CannotRedefineStandardLibraryError(function: name);
+    }
+
+    // Build signature and parameters
+    final List<Parameter> parameters = definition.parameters
+        .map(Parameter.any)
+        .toList();
+    final FunctionSignature signature = FunctionSignature(
+      name: name,
+      parameters: parameters,
+    );
+
+    // Check for duplicate parameters
+    _checkDuplicateParameters(name, definition.parameters);
+
+    // Add the signature to _allSignatures before semantic analysis so that
+    // recursive calls can resolve the function's own signature.
+    final FunctionSignature? previousSignature = _allSignatures[name];
+    _allSignatures[name] = signature;
+
+    // Perform semantic analysis on the function body
+    SemanticNode body;
+    try {
+      const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
+      final Set<String> usedParameters = {};
+      body = analyzer.checkExpression(
+        expression: definition.expression,
+        currentFunction: name,
+        availableParameters: definition.parameters.toSet(),
+        usedParameters: usedParameters,
+        allSignatures: _allSignatures,
+      );
+    } catch (error) {
+      // Restore previous signature on failure
+      if (previousSignature != null) {
+        _allSignatures[name] = previousSignature;
+      } else {
+        _allSignatures.remove(name);
+      }
+      rethrow;
+    }
+
+    // Create semantic function
+    final SemanticFunction semanticFunction = SemanticFunction(
+      name: name,
+      parameters: parameters,
+      body: body,
+      location: definition.expression.location,
+    );
+
+    // Lower to runtime term
+    final Lowerer lowerer = Lowerer(_runtimeInput.functions);
+    final CustomFunctionTerm functionTerm = lowerer.lowerFunction(
+      semanticFunction,
+    );
+
+    // Update runtime state (signature was already added before semantic analysis)
+    _runtimeInput.functions[name] = functionTerm;
+    _userDefinedFunctions.add(name);
+  }
+
+  void _checkDuplicateParameters(String functionName, List<String> parameters) {
+    final Set<String> seen = {};
+    for (final String parameter in parameters) {
+      if (seen.contains(parameter)) {
+        throw DuplicatedParameterError(
+          function: functionName,
+          parameter: parameter,
+          parameters: parameters,
+        );
+      }
+      seen.add(parameter);
+    }
+  }
 }
