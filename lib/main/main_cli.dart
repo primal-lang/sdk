@@ -161,6 +161,12 @@ void _runRepl({
         console.print('[debug] Input: $input');
       }
 
+      // Handle Ctrl+L (form feed) to clear screen
+      if (input == '\x0c') {
+        console.print('\x1b[2J\x1b[H');
+        return;
+      }
+
       // Handle REPL commands
       if (input.startsWith(':')) {
         switch (input) {
@@ -170,6 +176,8 @@ void _runRepl({
             console.print(replHelpText);
           case ':quit' || ':q' || ':exit':
             exit(0);
+          case ':clear':
+            console.print('\x1b[2J\x1b[H');
           default:
             console.error(
               "Unknown command '$input'. Type :help for available commands.",

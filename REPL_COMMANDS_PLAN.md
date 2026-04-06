@@ -15,26 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 4. `:clear` (Easy)
-
-**Difficulty**: Easy
-**Estimated Lines**: ~5
-
-**Description**: Clear the terminal screen.
-
-**Implementation**:
-
-1. Check for `:clear` command
-2. Print ANSI escape sequence `\x1b[2J\x1b[H` to clear screen and move cursor to top-left
-
-**Files to Modify**:
-
-- `lib/main/main_cli.dart`
-
-**Note**: This uses ANSI escape codes which work on most modern terminals but may not work on Windows CMD (PowerShell should be fine).
-
----
-
 ### 5. `:debug on/off` (Easy)
 
 **Difficulty**: Easy
