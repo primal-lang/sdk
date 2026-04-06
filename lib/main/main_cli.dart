@@ -63,7 +63,7 @@ void runCli(
         currentConsole.print(helpText);
         return;
       case '--version' || '-v':
-        currentConsole.print('Primal $version');
+        currentConsole.print(version);
         return;
       case '--debug' || '-d':
         debug = true;
