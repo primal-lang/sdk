@@ -155,9 +155,11 @@ void _runRepl({
   required Console console,
   required bool debug,
 }) {
+  bool debugMode = debug;
+
   console.prompt((input) {
     try {
-      if (debug) {
+      if (debugMode) {
         console.print('[debug] Input: $input');
       }
 
@@ -178,6 +180,12 @@ void _runRepl({
             exit(0);
           case ':clear':
             console.print('\x1b[2J\x1b[H');
+          case ':debug on':
+            debugMode = true;
+            console.print('Debug mode enabled.');
+          case ':debug off':
+            debugMode = false;
+            console.print('Debug mode disabled.');
           default:
             console.error(
               "Unknown command '$input'. Type :help for available commands.",
@@ -200,13 +208,13 @@ void _runRepl({
       final Stopwatch parseWatch = Stopwatch();
       final Stopwatch evalWatch = Stopwatch();
 
-      if (debug) {
+      if (debugMode) {
         parseWatch.start();
       }
 
       final Expression expression = compiler.expression(input);
 
-      if (debug) {
+      if (debugMode) {
         parseWatch.stop();
         console.print('[debug] Parsing: ${parseWatch.elapsedMilliseconds}ms');
         evalWatch.start();
@@ -214,7 +222,7 @@ void _runRepl({
 
       final String result = runtime.evaluate(expression);
 
-      if (debug) {
+      if (debugMode) {
         evalWatch.stop();
         console.print('[debug] Evaluation: ${evalWatch.elapsedMilliseconds}ms');
       }
@@ -222,7 +230,7 @@ void _runRepl({
       console.print(result);
     } catch (e, stackTrace) {
       console.error(e);
-      if (debug) {
+      if (debugMode) {
         console.print('[debug] Stack trace:\n$stackTrace');
       }
     }

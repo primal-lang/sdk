@@ -15,34 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 5. `:debug on/off` (Easy)
-
-**Difficulty**: Easy
-**Estimated Lines**: ~10
-
-**Description**: Toggle debug mode on or off.
-
-**Implementation**:
-
-1. The `debug` variable is currently a local `final bool` in `runCli`
-2. Change it to a non-final variable that can be mutated
-3. Parse `:debug on` or `:debug off` commands
-4. Update the `debug` flag accordingly
-5. Print confirmation message
-
-**Files to Modify**:
-
-- `lib/main/main_cli.dart`
-
-**Changes**:
-
-```
-- Change `final bool debug` to `bool debug` in the scope accessible to the REPL handler
-- Add command parsing for `:debug on` and `:debug off`
-```
-
----
-
 ### 6. `:list` (Medium)
 
 **Difficulty**: Medium
