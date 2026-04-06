@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
@@ -167,6 +169,8 @@ void _runRepl({
         case ':help':
           console.print(replHelpText);
           return;
+        case ':quit' || ':q' || ':exit':
+          exit(0);
       }
 
       // Try to parse as a function definition first

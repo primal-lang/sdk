@@ -15,35 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 3. `:quit` / `:q` / `:exit` (Easy)
-
-**Difficulty**: Easy
-**Estimated Lines**: ~10
-
-**Description**: Exit the REPL gracefully.
-
-**Implementation**:
-
-1. The current `Console.prompt()` runs an infinite `while (true)` loop
-2. Modify `_runRepl` to use `promptOnce` in a loop instead, or have the handler return a bool
-3. Check for `:quit`, `:q`, or `:exit` commands
-4. When detected, break out of the REPL loop (likely via `exit(0)` or throwing a special exception)
-
-**Files to Modify**:
-
-- `lib/main/main_cli.dart`
-- Possibly `lib/utils/console.dart`
-
-**Approach Options**:
-
-- **Option A**: Call `exit(0)` from `dart:io` directly in the command handler
-- **Option B**: Have the handler return a `bool` indicating whether to continue
-- **Option C**: Throw a custom `ReplExitException` and catch it outside the loop
-
-**Recommended**: Option A is simplest - just call `exit(0)`
-
----
-
 ### 4. `:clear` (Easy)
 
 **Difficulty**: Easy
