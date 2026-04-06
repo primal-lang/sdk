@@ -46,6 +46,18 @@ The language has the following characteristics:
 
 ## Getting started
 
+### Quick install
+
+Run this command to install the latest version:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/primal-lang/sdk/main/scripts/install.sh | bash
+```
+
+This installs the `primal` binary to `~/.local/bin` and updates your shell configuration.
+
+### Manual installation
+
 Pre-built binaries are available for Linux, macOS, and Windows. Download the appropriate release from the [GitHub releases](https://github.com/primal-lang/sdk/releases) page, extract it, and add the `bin` folder to your PATH. Then run the interpreter with a source file as an argument:
 
 ```bash
