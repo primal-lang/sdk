@@ -160,14 +160,13 @@ void _runRepl({
       }
 
       // Handle REPL commands
-      if (input == ':version') {
-        console.print(version);
-        return;
-      }
-
-      if (input == ':help') {
-        console.print(replHelpText);
-        return;
+      switch (input) {
+        case ':version':
+          console.print(version);
+          return;
+        case ':help':
+          console.print(replHelpText);
+          return;
       }
 
       // Try to parse as a function definition first
