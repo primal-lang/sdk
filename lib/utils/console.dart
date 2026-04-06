@@ -33,6 +33,8 @@ class Console {
     }
   }
 
+  void write(String message) => _platformConsole.outWrite(message);
+
   void print(String message) => _platformConsole.outWriteLn(message);
 
   void warning(GenericWarning warning) =>

@@ -322,7 +322,7 @@ bool _handleReplCommand({
     case ':quit' || ':q' || ':exit':
       exit(0);
     case ':clear':
-      console.print('\x1b[2J\x1b[H');
+      console.write('\x1b[2J\x1b[H');
     case ':debug on':
       setDebugMode(true);
       console.print('Debug mode enabled.');
