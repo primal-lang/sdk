@@ -171,6 +171,21 @@ void _runRepl({
 
       // Handle REPL commands
       if (input.startsWith(':')) {
+        // Commands with arguments
+        if (input == ':delete' || input.startsWith(':delete ')) {
+          final String name = input.length > ':delete '.length
+              ? input.substring(':delete '.length).trim()
+              : '';
+          if (name.isEmpty) {
+            console.error('Usage: :delete <function_name>');
+          } else {
+            runtime.deleteFunction(name);
+            console.print("Function '$name' deleted.");
+          }
+          return;
+        }
+
+        // Commands without arguments
         switch (input) {
           case ':version':
             console.print(version);

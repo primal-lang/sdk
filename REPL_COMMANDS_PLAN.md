@@ -15,35 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 8. `:delete <name>` (Medium)
-
-**Difficulty**: Medium
-**Estimated Lines**: ~25
-
-**Description**: Remove a specific user-defined function.
-
-**Implementation**:
-
-1. Add a method `void deleteFunction(String name)` to `RuntimeFacade`
-2. This method should:
-   - Validate that the function exists and is user-defined (not standard library)
-   - Remove from `_userDefinedFunctions`, `_runtimeInput.functions`, and `_allSignatures`
-   - Throw an error if function doesn't exist or is a standard library function
-3. Parse the command to extract the function name
-4. Print confirmation or error message
-
-**Files to Modify**:
-
-- `lib/compiler/lowering/runtime_facade.dart` (add `deleteFunction()` method)
-- `lib/main/main_cli.dart` (add command handler)
-
-**Error Cases**:
-
-- Function doesn't exist
-- Function is a standard library function (cannot delete)
-
----
-
 ### 9. `:rename <old> <new>` (Medium-Hard)
 
 **Difficulty**: Medium-Hard

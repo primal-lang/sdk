@@ -76,3 +76,15 @@ class CannotRedefineStandardLibraryError extends SemanticError {
     required String function,
   }) : super('Cannot redefine standard library function "$function"');
 }
+
+class CannotDeleteStandardLibraryError extends SemanticError {
+  const CannotDeleteStandardLibraryError({
+    required String function,
+  }) : super('Cannot delete standard library function "$function"');
+}
+
+class FunctionNotFoundError extends SemanticError {
+  const FunctionNotFoundError({
+    required String function,
+  }) : super('Function "$function" not found');
+}

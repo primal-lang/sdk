@@ -85,6 +85,27 @@ class RuntimeFacade {
     _userDefinedFunctions.clear();
   }
 
+  /// Deletes a user-defined function by name.
+  ///
+  /// Throws [FunctionNotFoundError] if the function doesn't exist.
+  /// Throws [CannotDeleteStandardLibraryError] if trying to delete
+  /// a standard library function.
+  void deleteFunction(String name) {
+    if (intermediateRepresentation.standardLibrarySignatures.containsKey(
+      name,
+    )) {
+      throw CannotDeleteStandardLibraryError(function: name);
+    }
+
+    if (!_userDefinedFunctions.contains(name)) {
+      throw FunctionNotFoundError(function: name);
+    }
+
+    _userDefinedFunctions.remove(name);
+    _runtimeInput.functions.remove(name);
+    _allSignatures.remove(name);
+  }
+
   Expression mainExpression(List<String> arguments) {
     final FunctionTerm? main = _runtimeInput.getFunction('main');
 
