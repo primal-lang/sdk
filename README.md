@@ -51,7 +51,7 @@ The language has the following characteristics:
 Run this command to install the latest version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/primal-lang/sdk/main/scripts/install.sh | bash
+curl -fsSL https://primal-lang.org/install.sh | bash
 ```
 
 This installs the `primal` binary to `~/.local/bin` and updates your shell configuration.
