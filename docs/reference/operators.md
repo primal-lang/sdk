@@ -199,26 +199,30 @@
 
 ### And
 
-- **Symbol:** `&`
+- **Symbols:** `&`, `&&`, `and`
 - **Input:** Two boolean arguments
 - **Output:** True only if both arguments are true, false otherwise
 - **Purity:** Pure
 - **Example:**
 
 ```
-true & false // returns false
+true & false   // returns false
+true && false  // returns false
+true and false // returns false
 ```
 
 ### Or
 
-- **Symbol:** `|`
+- **Symbols:** `|`, `||`, `or`
 - **Input:** Two boolean arguments
 - **Output:** True if at least one argument is true, false otherwise
 - **Purity:** Pure
 - **Example:**
 
 ```
-true | false // returns true
+true | false   // returns true
+true || false  // returns true
+true or false  // returns true
 ```
 
 ### Not

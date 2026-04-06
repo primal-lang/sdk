@@ -24,6 +24,14 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
   if (lexeme.value.isElse) {
     return ElseToken(lexeme);
   }
+  if (lexeme.value.isAnd) {
+    // Use canonical operator name '&' for 'and' keyword
+    return AmpersandToken(Lexeme(value: '&', location: lexeme.location));
+  }
+  if (lexeme.value.isOr) {
+    // Use canonical operator name '|' for 'or' keyword
+    return PipeToken(Lexeme(value: '|', location: lexeme.location));
+  }
   return IdentifierToken(lexeme);
 }
 
@@ -622,7 +630,10 @@ class PipeState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isOperatorDelimiter) {
+    if (input.value.isPipe) {
+      // Consume the second '|' but keep the canonical operator name '|'
+      return ResultState(iterator, PipeToken(output));
+    } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, PipeToken(output));
     } else {
@@ -636,7 +647,10 @@ class AmpersandState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isOperatorDelimiter) {
+    if (input.value.isAmpersand) {
+      // Consume the second '&' but keep the canonical operator name '&'
+      return ResultState(iterator, AmpersandToken(output));
+    } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, AmpersandToken(output));
     } else {

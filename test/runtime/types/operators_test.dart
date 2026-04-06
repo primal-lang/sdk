@@ -740,6 +740,50 @@ void main() {
       checkResult(runtime, false);
     });
 
+    test('&& returns true when both are true', () {
+      final RuntimeFacade runtime = getRuntime('main = true && true');
+      checkResult(runtime, true);
+    });
+
+    test('&& returns false when right is false', () {
+      final RuntimeFacade runtime = getRuntime('main = true && false');
+      checkResult(runtime, false);
+    });
+
+    test('&& returns false when left is false', () {
+      final RuntimeFacade runtime = getRuntime('main = false && true');
+      checkResult(runtime, false);
+    });
+
+    test('&& short-circuits on false left operand', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = false && error.throw(-1, "Error")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('and returns true when both are true', () {
+      final RuntimeFacade runtime = getRuntime('main = true and true');
+      checkResult(runtime, true);
+    });
+
+    test('and returns false when right is false', () {
+      final RuntimeFacade runtime = getRuntime('main = true and false');
+      checkResult(runtime, false);
+    });
+
+    test('and returns false when left is false', () {
+      final RuntimeFacade runtime = getRuntime('main = false and true');
+      checkResult(runtime, false);
+    });
+
+    test('and short-circuits on false left operand', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = false and error.throw(-1, "Error")',
+      );
+      checkResult(runtime, false);
+    });
+
     test('| returns true when both are true', () {
       final RuntimeFacade runtime = getRuntime('main = true | true');
       checkResult(runtime, true);
@@ -763,6 +807,50 @@ void main() {
     test('| short-circuits on true left operand', () {
       final RuntimeFacade runtime = getRuntime(
         'main = true | error.throw(-1, "Error")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('|| returns true when both are true', () {
+      final RuntimeFacade runtime = getRuntime('main = true || true');
+      checkResult(runtime, true);
+    });
+
+    test('|| returns true when right is false', () {
+      final RuntimeFacade runtime = getRuntime('main = true || false');
+      checkResult(runtime, true);
+    });
+
+    test('|| returns true when left is false', () {
+      final RuntimeFacade runtime = getRuntime('main = false || true');
+      checkResult(runtime, true);
+    });
+
+    test('|| short-circuits on true left operand', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = true || error.throw(-1, "Error")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('or returns true when both are true', () {
+      final RuntimeFacade runtime = getRuntime('main = true or true');
+      checkResult(runtime, true);
+    });
+
+    test('or returns true when right is false', () {
+      final RuntimeFacade runtime = getRuntime('main = true or false');
+      checkResult(runtime, true);
+    });
+
+    test('or returns true when left is false', () {
+      final RuntimeFacade runtime = getRuntime('main = false or true');
+      checkResult(runtime, true);
+    });
+
+    test('or short-circuits on true left operand', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = true or error.throw(-1, "Error")',
       );
       checkResult(runtime, true);
     });

@@ -865,6 +865,48 @@ void main() {
       ]);
     });
 
+    test('Logical operator aliases', () {
+      final List<Token> tokens = getTokens('|| && and or');
+      checkTokens(tokens, [
+        PipeToken(
+          const Lexeme(
+            value: '|',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        AmpersandToken(
+          const Lexeme(
+            value: '&',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
+          ),
+        ),
+        AmpersandToken(
+          const Lexeme(
+            value: '&',
+            location: Location(
+              row: 1,
+              column: 7,
+            ),
+          ),
+        ),
+        PipeToken(
+          const Lexeme(
+            value: '|',
+            location: Location(
+              row: 1,
+              column: 11,
+            ),
+          ),
+        ),
+      ]);
+    });
+
     test('Comparison operators', () {
       final List<Token> tokens = getTokens('== != > >= < <=');
       checkTokens(tokens, [
