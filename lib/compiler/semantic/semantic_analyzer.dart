@@ -1,382 +1,367 @@
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/library/standard_library.dart';
 import 'package:primal/compiler/models/analyzer.dart';
+import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
+import 'package:primal/compiler/semantic/semantic_function.dart';
+import 'package:primal/compiler/semantic/semantic_node.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/compiler/warnings/semantic_warning.dart';
-import 'package:primal/utils/mapper.dart';
 
 class SemanticAnalyzer
-    extends Analyzer<List<FunctionDefinition>, IntermediateCode> {
+    extends Analyzer<List<FunctionDefinition>, IntermediateRepresentation> {
   const SemanticAnalyzer(super.input);
 
-  /// Validates an expression node against available functions.
-  /// Used by [Runtime.evaluate] to ensure ad-hoc expressions undergo
-  /// the same semantic checks as compiled top-level functions.
-  static Node validateExpression(
-    Node node,
-    Map<String, FunctionNode> functions,
-  ) {
-    const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
-
-    return analyzer.checkNode(
-      node: node,
-      currentFunction: '<expression>',
-      availableParameters: {},
-      usedParameters: {},
-      allFunctions: functions,
-    );
-  }
-
   @override
-  IntermediateCode analyze() {
+  IntermediateRepresentation analyze() {
     final List<GenericWarning> warnings = [];
 
-    final List<FunctionNode> standardLibrary = StandardLibrary.get();
-    final List<CustomFunctionNode> customFunctions = getCustomFunctions(input);
-    final List<FunctionNode> allFunctions = [
-      ...customFunctions,
-      ...standardLibrary,
-    ];
+    // Get standard library signatures for semantic analysis
+    final List<FunctionSignature> standardLibraryList =
+        StandardLibrary.getSignatures();
+    final Map<String, FunctionSignature> standardLibrarySignatures = {
+      for (final FunctionSignature sig in standardLibraryList) sig.name: sig,
+    };
 
-    checkDuplicatedFunctions(allFunctions);
-    checkDuplicatedParameters(allFunctions);
-
-    final List<CustomFunctionNode> checkedFunctions = checkCustomFunctions(
-      customFunctions: customFunctions,
-      allFunctions: Mapper.toMap(allFunctions),
-      warnings: warnings,
-    );
-
-    return IntermediateCode(
-      functions: Mapper.toMap([
-        ...checkedFunctions,
-        ...standardLibrary,
-      ]),
-      warnings: warnings,
-    );
-  }
-
-  List<CustomFunctionNode> getCustomFunctions(
-    List<FunctionDefinition> functions,
-  ) {
-    final List<CustomFunctionNode> result = [];
-
-    for (final FunctionDefinition function in functions) {
-      result.add(
-        CustomFunctionNode(
-          name: function.name,
-          parameters: function.parameters.map(Parameter.any).toList(),
-          node: function.expression.toNode(),
-        ),
+    // First pass: extract function signatures and check for duplicates
+    final Map<String, FunctionSignature> customSignatures = {};
+    for (final FunctionDefinition function in input) {
+      final FunctionSignature signature = FunctionSignature(
+        name: function.name,
+        parameters: function.parameters.map(Parameter.any).toList(),
       );
-    }
 
-    return result;
-  }
-
-  void checkDuplicatedFunctions(List<FunctionNode> functions) {
-    final Map<String, FunctionNode> seen = {};
-
-    for (final FunctionNode function in functions) {
-      final String name = function.name;
-
-      if (seen.containsKey(name)) {
+      // Check for duplicate custom function
+      if (customSignatures.containsKey(function.name)) {
         throw DuplicatedFunctionError(
-          function1: seen[name]!,
-          function2: function,
+          function1: customSignatures[function.name]!,
+          function2: signature,
         );
       }
 
-      seen[name] = function;
-    }
-  }
-
-  void checkDuplicatedParameters(List<FunctionNode> functions) {
-    for (final FunctionNode function in functions) {
-      final Set<String> seen = {};
-
-      for (final Parameter parameter in function.parameters) {
-        if (seen.contains(parameter.name)) {
-          throw DuplicatedParameterError(
-            function: function.name,
-            parameter: parameter.name,
-            parameters: function.parameters.map((e) => e.name).toList(),
-          );
-        }
-
-        seen.add(parameter.name);
+      // Check for conflict with standard library
+      if (standardLibrarySignatures.containsKey(function.name)) {
+        throw DuplicatedFunctionError(
+          function1: standardLibrarySignatures[function.name]!,
+          function2: signature,
+        );
       }
+
+      customSignatures[function.name] = signature;
     }
-  }
 
-  List<CustomFunctionNode> checkCustomFunctions({
-    required List<CustomFunctionNode> customFunctions,
-    required Map<String, FunctionNode> allFunctions,
-    required List<GenericWarning> warnings,
-  }) {
-    final List<CustomFunctionNode> result = [];
+    // Check for duplicate parameters
+    _checkDuplicatedParameters(customSignatures.values);
 
-    for (final CustomFunctionNode function in customFunctions) {
+    // Build combined signature map for lookups
+    final Map<String, FunctionSignature> allSignatures = {
+      ...standardLibrarySignatures,
+      ...customSignatures,
+    };
+
+    // Second pass: semantic analysis producing SemanticFunction
+    final Map<String, SemanticFunction> customFunctions = {};
+    for (final FunctionDefinition function in input) {
       final Set<String> usedParameters = {};
+      final Set<String> availableParameters = function.parameters.toSet();
 
-      final Node node = checkNode(
-        node: function.node,
+      final SemanticNode body = checkExpression(
+        expression: function.expression,
         currentFunction: function.name,
-        availableParameters: function.parameters.map((e) => e.name).toSet(),
+        availableParameters: availableParameters,
         usedParameters: usedParameters,
-        allFunctions: allFunctions,
+        allSignatures: allSignatures,
       );
 
-      for (final Parameter parameter in function.parameters) {
-        if (!usedParameters.contains(parameter.name)) {
+      // Check for unused parameters
+      for (final String parameter in function.parameters) {
+        if (!usedParameters.contains(parameter)) {
           warnings.add(
             UnusedParameterWarning(
               function: function.name,
-              parameter: parameter.name,
+              parameter: parameter,
             ),
           );
         }
       }
 
-      result.add(
-        CustomFunctionNode(
-          name: function.name,
-          parameters: function.parameters,
-          node: node,
-        ),
+      customFunctions[function.name] = SemanticFunction(
+        name: function.name,
+        parameters: customSignatures[function.name]!.parameters,
+        body: body,
+        location: function.expression.location,
       );
     }
 
-    return result;
+    return IntermediateRepresentation(
+      customFunctions: customFunctions,
+      standardLibrarySignatures: standardLibrarySignatures,
+      warnings: warnings,
+    );
   }
 
-  Node checkNode({
-    required Node node,
+  void _checkDuplicatedParameters(Iterable<FunctionSignature> signatures) {
+    for (final FunctionSignature signature in signatures) {
+      final Set<String> seen = {};
+
+      for (final Parameter parameter in signature.parameters) {
+        if (seen.contains(parameter.name)) {
+          throw DuplicatedParameterError(
+            function: signature.name,
+            parameter: parameter.name,
+            parameters: signature.parameters.map((e) => e.name).toList(),
+          );
+        }
+        seen.add(parameter.name);
+      }
+    }
+  }
+
+  /// Converts an [Expression] to a [SemanticNode], performing semantic checks.
+  SemanticNode checkExpression({
+    required Expression expression,
     required String currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
-    required Map<String, FunctionNode> allFunctions,
-  }) => switch (node) {
-    // BoundVariableNode must come before IdentifierNode since it extends it
-    BoundVariableNode() => throw StateError(
-      'BoundVariableNode should not exist before semantic analysis',
+    required Map<String, FunctionSignature> allSignatures,
+  }) => switch (expression) {
+    BooleanExpression() => SemanticBooleanNode(
+      location: expression.location,
+      value: expression.value,
     ),
-    IdentifierNode() => _checkIdentifier(
-      node: node,
+    NumberExpression() => SemanticNumberNode(
+      location: expression.location,
+      value: expression.value,
+    ),
+    StringExpression() => SemanticStringNode(
+      location: expression.location,
+      value: expression.value,
+    ),
+    ListExpression() => _checkListExpression(
+      expression: expression,
       currentFunction: currentFunction,
       availableParameters: availableParameters,
       usedParameters: usedParameters,
-      allFunctions: allFunctions,
+      allSignatures: allSignatures,
     ),
-    CallNode() => _checkCall(
-      node: node,
+    MapExpression() => _checkMapExpression(
+      expression: expression,
       currentFunction: currentFunction,
       availableParameters: availableParameters,
       usedParameters: usedParameters,
-      allFunctions: allFunctions,
+      allSignatures: allSignatures,
     ),
-    ListNode() => _checkList(
-      node: node,
+    IdentifierExpression() => _checkIdentifierExpression(
+      expression: expression,
       currentFunction: currentFunction,
       availableParameters: availableParameters,
       usedParameters: usedParameters,
-      allFunctions: allFunctions,
+      allSignatures: allSignatures,
     ),
-    MapNode() => _checkMap(
-      node: node,
+    CallExpression() => _checkCallExpression(
+      expression: expression,
       currentFunction: currentFunction,
       availableParameters: availableParameters,
       usedParameters: usedParameters,
-      allFunctions: allFunctions,
+      allSignatures: allSignatures,
     ),
-    // Literals contain no identifiers and need no checking
-    BooleanNode() || NumberNode() || StringNode() => node,
     _ => throw StateError(
-      'Unexpected node type in semantic analysis: ${node.runtimeType}',
+      'Unexpected expression type in semantic analysis: ${expression.runtimeType}',
     ),
   };
 
-  Node _checkIdentifier({
-    required IdentifierNode node,
+  SemanticNode _checkListExpression({
+    required ListExpression expression,
     required String currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
-    required Map<String, FunctionNode> allFunctions,
+    required Map<String, FunctionSignature> allSignatures,
   }) {
-    if (availableParameters.contains(node.value)) {
-      usedParameters.add(node.value);
-      return BoundVariableNode(node.value);
-    } else if (allFunctions.containsKey(node.value)) {
-      return node;
+    final List<SemanticNode> elements = expression.value
+        .map(
+          (e) => checkExpression(
+            expression: e,
+            currentFunction: currentFunction,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            allSignatures: allSignatures,
+          ),
+        )
+        .toList();
+
+    return SemanticListNode(
+      location: expression.location,
+      value: elements,
+    );
+  }
+
+  SemanticNode _checkMapExpression({
+    required MapExpression expression,
+    required String currentFunction,
+    required Set<String> availableParameters,
+    required Set<String> usedParameters,
+    required Map<String, FunctionSignature> allSignatures,
+  }) {
+    final List<SemanticMapEntryNode> entries = expression.value
+        .map(
+          (e) => SemanticMapEntryNode(
+            key: checkExpression(
+              expression: e.key,
+              currentFunction: currentFunction,
+              availableParameters: availableParameters,
+              usedParameters: usedParameters,
+              allSignatures: allSignatures,
+            ),
+            value: checkExpression(
+              expression: e.value,
+              currentFunction: currentFunction,
+              availableParameters: availableParameters,
+              usedParameters: usedParameters,
+              allSignatures: allSignatures,
+            ),
+          ),
+        )
+        .toList();
+
+    return SemanticMapNode(
+      location: expression.location,
+      value: entries,
+    );
+  }
+
+  SemanticNode _checkIdentifierExpression({
+    required IdentifierExpression expression,
+    required String currentFunction,
+    required Set<String> availableParameters,
+    required Set<String> usedParameters,
+    required Map<String, FunctionSignature> allSignatures,
+  }) {
+    final String name = expression.value;
+
+    if (availableParameters.contains(name)) {
+      usedParameters.add(name);
+      return SemanticBoundVariableNode(
+        location: expression.location,
+        name: name,
+      );
+    } else if (allSignatures.containsKey(name)) {
+      return SemanticIdentifierNode(
+        location: expression.location,
+        name: name,
+        resolvedSignature: allSignatures[name],
+      );
     } else {
       throw UndefinedIdentifierError(
-        identifier: node.value,
+        identifier: name,
         inFunction: currentFunction,
       );
     }
   }
 
-  Node _checkCall({
-    required CallNode node,
+  SemanticNode _checkCallExpression({
+    required CallExpression expression,
     required String currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
-    required Map<String, FunctionNode> allFunctions,
+    required Map<String, FunctionSignature> allSignatures,
   }) {
-    // `callee` holds the checked/transformed callee for the output CallNode.
-    // Literal checks below use `node.callee` (the original) to detect shape errors.
-    Node callee = node.callee;
-
-    // First, recursively check callee if it's a CallNode to surface nested errors
-    if (callee is CallNode) {
-      callee = checkNode(
-        node: callee,
-        currentFunction: currentFunction,
-        availableParameters: availableParameters,
-        usedParameters: usedParameters,
-        allFunctions: allFunctions,
-      );
-    }
-
-    // Next, recursively check all arguments to surface nested errors
-    final List<Node> newArguments = node.arguments
+    // First, recursively check all arguments
+    final List<SemanticNode> checkedArguments = expression.arguments
         .map(
-          (argument) => checkNode(
-            node: argument,
+          (argument) => checkExpression(
+            expression: argument,
             currentFunction: currentFunction,
             availableParameters: availableParameters,
             usedParameters: usedParameters,
-            allFunctions: allFunctions,
+            allSignatures: allSignatures,
           ),
         )
         .toList();
 
     // Check for non-callable literals (e.g., 5(1))
-    if (_isNonCallableLiteral(node.callee)) {
+    if (_isNonCallableLiteral(expression.callee)) {
       throw NotCallableError(
-        value: node.callee.toString(),
-        type: _literalTypeName(node.callee),
+        value: expression.callee.toString(),
+        type: _literalTypeName(expression.callee),
       );
     }
 
-    // Note: Arity checking only works for direct calls (e.g., foo(1, 2)).
-    // Indirect calls (e.g., f()(x)) cannot be statically checked without
-    // return type information and are validated at runtime instead.
-
     // Check for @ operator with non-indexable first argument (e.g., 5[0])
-    if (node.callee is IdentifierNode &&
-        (node.callee as IdentifierNode).value == '@' &&
-        newArguments.isNotEmpty) {
-      final Node target = newArguments[0];
+    if (expression.callee is IdentifierExpression &&
+        (expression.callee as IdentifierExpression).value == '@' &&
+        checkedArguments.isNotEmpty) {
+      final Expression target = expression.arguments[0];
       if (_isNonIndexableLiteral(target)) {
         throw NotIndexableError(
-          value: node.arguments[0].toString(),
+          value: expression.arguments[0].toString(),
           type: _literalTypeName(target),
         );
       }
     }
 
-    // Finally, check callee identifier for validity and arity
-    if (node.callee is IdentifierNode) {
+    // Check the callee
+    SemanticNode callee;
+    if (expression.callee is IdentifierExpression) {
       callee = _checkCalleeIdentifier(
-        node: node,
-        callee: node.callee as IdentifierNode,
+        expression: expression,
+        callee: expression.callee as IdentifierExpression,
         currentFunction: currentFunction,
         availableParameters: availableParameters,
         usedParameters: usedParameters,
-        allFunctions: allFunctions,
+        allSignatures: allSignatures,
+      );
+    } else {
+      callee = checkExpression(
+        expression: expression.callee,
+        currentFunction: currentFunction,
+        availableParameters: availableParameters,
+        usedParameters: usedParameters,
+        allSignatures: allSignatures,
       );
     }
 
-    return CallNode(
+    return SemanticCallNode(
+      location: expression.location,
       callee: callee,
-      arguments: newArguments,
+      arguments: checkedArguments,
     );
   }
 
-  Node _checkList({
-    required ListNode node,
+  SemanticNode _checkCalleeIdentifier({
+    required CallExpression expression,
+    required IdentifierExpression callee,
     required String currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
-    required Map<String, FunctionNode> allFunctions,
-  }) {
-    final List<Node> elements = node.value
-        .map(
-          (element) => checkNode(
-            node: element,
-            currentFunction: currentFunction,
-            availableParameters: availableParameters,
-            usedParameters: usedParameters,
-            allFunctions: allFunctions,
-          ),
-        )
-        .toList();
-
-    return ListNode(elements);
-  }
-
-  Node _checkMap({
-    required MapNode node,
-    required String currentFunction,
-    required Set<String> availableParameters,
-    required Set<String> usedParameters,
-    required Map<String, FunctionNode> allFunctions,
-  }) {
-    final Map<Node, Node> elements = {};
-
-    for (final MapEntry<Node, Node> entry in node.value.entries) {
-      final Node key = checkNode(
-        node: entry.key,
-        currentFunction: currentFunction,
-        availableParameters: availableParameters,
-        usedParameters: usedParameters,
-        allFunctions: allFunctions,
-      );
-
-      final Node value = checkNode(
-        node: entry.value,
-        currentFunction: currentFunction,
-        availableParameters: availableParameters,
-        usedParameters: usedParameters,
-        allFunctions: allFunctions,
-      );
-
-      elements[key] = value;
-    }
-
-    return MapNode(elements);
-  }
-
-  Node _checkCalleeIdentifier({
-    required CallNode node,
-    required IdentifierNode callee,
-    required String currentFunction,
-    required Set<String> availableParameters,
-    required Set<String> usedParameters,
-    required Map<String, FunctionNode> allFunctions,
+    required Map<String, FunctionSignature> allSignatures,
   }) {
     final String functionName = callee.value;
 
     if (availableParameters.contains(functionName)) {
       usedParameters.add(functionName);
-      return BoundVariableNode(functionName);
-    } else if (allFunctions.containsKey(functionName)) {
-      final FunctionNode function = allFunctions[functionName]!;
+      return SemanticBoundVariableNode(
+        location: callee.location,
+        name: functionName,
+      );
+    } else if (allSignatures.containsKey(functionName)) {
+      final FunctionSignature signature = allSignatures[functionName]!;
 
-      if (function.parameters.length != node.arguments.length) {
+      if (signature.arity != expression.arguments.length) {
         throw InvalidNumberOfArgumentsError(
           function: functionName,
-          expected: function.parameters.length,
-          actual: node.arguments.length,
+          expected: signature.arity,
+          actual: expression.arguments.length,
         );
       }
 
-      return callee;
+      return SemanticIdentifierNode(
+        location: callee.location,
+        name: functionName,
+        resolvedSignature: signature,
+      );
     } else {
       throw UndefinedFunctionError(
         function: functionName,
@@ -385,28 +370,28 @@ class SemanticAnalyzer
     }
   }
 
-  bool _isNonCallableLiteral(Node node) {
-    return node is NumberNode ||
-        node is BooleanNode ||
-        node is StringNode ||
-        node is ListNode ||
-        node is MapNode;
+  bool _isNonCallableLiteral(Expression expression) {
+    return expression is NumberExpression ||
+        expression is BooleanExpression ||
+        expression is StringExpression ||
+        expression is ListExpression ||
+        expression is MapExpression;
   }
 
-  bool _isNonIndexableLiteral(Node node) {
-    return node is NumberNode || node is BooleanNode;
+  bool _isNonIndexableLiteral(Expression expression) {
+    return expression is NumberExpression || expression is BooleanExpression;
   }
 
-  String _literalTypeName(Node node) {
-    if (node is NumberNode) {
+  String _literalTypeName(Expression expression) {
+    if (expression is NumberExpression) {
       return 'number';
-    } else if (node is BooleanNode) {
+    } else if (expression is BooleanExpression) {
       return 'boolean';
-    } else if (node is StringNode) {
+    } else if (expression is StringExpression) {
       return 'string';
-    } else if (node is ListNode) {
+    } else if (expression is ListExpression) {
       return 'list';
-    } else if (node is MapNode) {
+    } else if (expression is MapExpression) {
       return 'map';
     }
     return 'unknown';

@@ -1,6 +1,6 @@
 import 'package:primal/compiler/compiler.dart';
-import 'package:primal/compiler/runtime/runtime.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/lowering/runtime_facade.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
@@ -39,8 +39,8 @@ void runCli(
   bool debug = false;
   final List<String> remainingArgs = [];
 
-  for (final String arg in args) {
-    switch (arg) {
+  for (final String argument in args) {
+    switch (argument) {
       case '--help' || '-h':
         currentConsole.print(helpText);
         return;
@@ -50,7 +50,7 @@ void runCli(
       case '--debug' || '-d':
         debug = true;
       default:
-        remainingArgs.add(arg);
+        remainingArgs.add(argument);
     }
   }
 
@@ -61,9 +61,10 @@ void runCli(
       compileWatch.start();
     }
 
-    final IntermediateCode intermediateCode = remainingArgs.isNotEmpty
+    final IntermediateRepresentation intermediateRepresentation =
+        remainingArgs.isNotEmpty
         ? compiler.compile(sourceReader(remainingArgs[0]))
-        : IntermediateCode.empty();
+        : IntermediateRepresentation.empty();
 
     if (debug && remainingArgs.isNotEmpty) {
       compileWatch.stop();
@@ -72,11 +73,14 @@ void runCli(
       );
     }
 
-    for (final GenericWarning warning in intermediateCode.warnings) {
+    for (final GenericWarning warning in intermediateRepresentation.warnings) {
       currentConsole.warning(warning);
     }
 
-    final Runtime runtime = Runtime(intermediateCode);
+    final RuntimeFacade runtime = RuntimeFacade(
+      intermediateRepresentation,
+      compiler.expression,
+    );
 
     if (runtime.hasMain) {
       _executeMain(
@@ -102,7 +106,7 @@ void runCli(
 }
 
 void _executeMain({
-  required Runtime runtime,
+  required RuntimeFacade runtime,
   required List<String> args,
   required Console console,
   required bool debug,
@@ -128,7 +132,7 @@ void _executeMain({
 }
 
 void _runRepl({
-  required Runtime runtime,
+  required RuntimeFacade runtime,
   required Compiler compiler,
   required Console console,
   required bool debug,

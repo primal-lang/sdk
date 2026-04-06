@@ -1,12 +1,12 @@
 # Compiler Architecture
 
-The Primal compiler is a four-stage pipeline that transforms source code into an executable intermediate representation. It is implemented in Dart and supports both CLI and web targets.
+The Primal compiler is a five-stage pipeline that transforms source code into an executable representation. It is implemented in Dart and supports both CLI and web targets.
 
 ```
 Source Code
     |
     v
- SourceReader ........ Characters with locations          → compiler/source_reader.md
+ SourceReader ........ Characters with locations          → compiler/reader.md
     |
     v
  Lexical Analyzer .... Tokens (keywords, literals, ...)   → compiler/lexical.md
@@ -15,13 +15,16 @@ Source Code
  Syntactic Analyzer .. Function definitions with ASTs     → compiler/syntactic.md
     |
     v
- Semantic Analyzer ... Validated, scope-resolved functions → compiler/semantic.md
+ Semantic Analyzer ... Semantic IR with FunctionSignature → compiler/semantic.md
     |
     v
- Runtime ............. Evaluation via node substitution    → compiler/runtime.md
+ Lowerer ............. Runtime terms for evaluation       → compiler/semantic.md
+    |
+    v
+ Runtime ............. Evaluation via term substitution   → compiler/runtime.md
 ```
 
-The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateCode` is then handed to the `Runtime` for execution.
+The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateRepresentation` contains semantic IR (with source locations and resolved references). The `Runtime` then lowers this to runtime terms for execution.
 
 Each pipeline stage is documented in its own file under [`compiler/`](compiler/).
 
@@ -61,55 +64,28 @@ Type checking is **dynamic** - it happens at runtime when native functions valid
 
 The standard library provides 230+ built-in functions, organized by namespace:
 
-| Namespace    | Count | Examples                                                |
-| ------------ | ----- | ------------------------------------------------------- |
-| `num.*`      | 35    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`           |
-| `str.*`      | 28    | `str.length`, `str.split`, `str.replace`, `str.reverse` |
-| `list.*`     | 31    | `list.map`, `list.filter`, `list.reduce`, `list.sort`   |
-| `bool.*`     | 4     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`           |
-| `comp.*`     | 6     | `comp.eq`, `comp.lt`, `comp.ge`                         |
-| `map.*`      | 9     | `map.at`, `map.set`, `map.keys`, `map.values`           |
-| `set.*`      | 8+    | `set.add`, `set.union`, `set.intersection`              |
-| `stack.*`    | 8     | `stack.push`, `stack.pop`, `stack.peek`                 |
-| `queue.*`    | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`          |
-| `vector.*`   | 6     | `vector.add`, `vector.magnitude`, `vector.normalize`    |
-| `time.*`     | 12    | `time.now`, `time.from.iso`, `time.year`                |
-| `file.*`     | 13    | `file.read`, `file.write`, `file.exists`                |
-| `dir.*`      | 11    | `dir.create`, `dir.list`, `dir.exists`                  |
-| `hash.*`     | 4     | `hash.md5`, `hash.sha256`                               |
-| `json.*`     | 2     | `json.encode`, `json.decode`                            |
-| `console.*`  | 3     | `console.write`, `console.read`                         |
-| Casting      | 22    | `is.boolean`, `to.string`, `to.integer`                 |
-| Operators    | 14    | `operator.add`, `operator.eq`, `operator.not`           |
-| Control flow | 2     | `if`, `try`                                             |
-| Other        | 3     | `@`, `env.get`, `throw`                                 |
-
-### Implementation Pattern
-
-Each native function follows a two-class pattern:
-
-```dart
-// 1. Definition class - declares name, parameters, and types
-class FunctionName extends NativeFunctionNode {
-  FunctionName() : super(
-    name: 'namespace.function',
-    parameters: [Parameter.type('arg1'), Parameter.any('arg2')],
-  );
-
-  @override
-  Node node(List<Node> arguments) => _Node(
-    name: name, parameters: parameters, arguments: arguments,
-  );
-}
-
-// 2. Evaluation class - implements the actual logic
-class _Node extends NativeFunctionNodeWithArguments {
-  @override
-  Node evaluate() {
-    // Validate argument types, compute result, return a Node
-  }
-}
-```
+| Namespace     | Count | Examples                                                 |
+| ------------- | ----- | -------------------------------------------------------- |
+| `num.*`       | 35    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`            |
+| `str.*`       | 28    | `str.length`, `str.split`, `str.replace`, `str.reverse`  |
+| `list.*`      | 31    | `list.map`, `list.filter`, `list.reduce`, `list.sort`    |
+| `bool.*`      | 4     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`            |
+| `comp.*`      | 6     | `comp.eq`, `comp.lt`, `comp.ge`                          |
+| `map.*`       | 9     | `map.at`, `map.set`, `map.keys`, `map.values`            |
+| `set.*`       | 9     | `set.add`, `set.union`, `set.intersection`               |
+| `stack.*`     | 8     | `stack.push`, `stack.pop`, `stack.peek`                  |
+| `queue.*`     | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`           |
+| `vector.*`    | 6     | `vector.add`, `vector.magnitude`, `vector.normalize`     |
+| `time.*`      | 12    | `time.now`, `time.from.iso`, `time.year`                 |
+| `file.*`      | 14    | `file.read`, `file.write`, `file.exists`                 |
+| `directory.*` | 11    | `directory.create`, `directory.list`, `directory.exists` |
+| `hash.*`      | 4     | `hash.md5`, `hash.sha256`                                |
+| `json.*`      | 2     | `json.encode`, `json.decode`                             |
+| `console.*`   | 3     | `console.write`, `console.read`                          |
+| Casting       | 22    | `is.boolean`, `to.string`, `to.integer`                  |
+| Operators     | 14    | `operator.add`, `operator.eq`, `operator.not`            |
+| Control flow  | 2     | `if`, `try`                                              |
+| Other         | 3     | `@`, `env.get`, `error.throw`                            |
 
 ---
 
@@ -141,24 +117,26 @@ Raised during compilation and abort the pipeline:
 
 Raised during execution:
 
-| Error                               | Cause                                       |
-| ----------------------------------- | ------------------------------------------- |
-| `InvalidArgumentTypesError`         | Wrong argument types for a native function  |
-| `InvalidArgumentCountError`         | Wrong number of arguments at runtime        |
-| `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `zip`) |
-| `InvalidLiteralValueError`          | Invalid literal value                       |
-| `InvalidValueError`                 | Invalid computed value                      |
-| `InvalidMapIndexError`              | Key not found in map                        |
-| `ElementNotFoundError`              | Element not in collection                   |
-| `NotFoundInScopeError`              | Function not found in runtime scope         |
-| `InvalidFunctionError`              | Callee is not a function                    |
-| `UnimplementedFunctionWebError`     | I/O function called on web platform         |
-
-### Warnings
-
-Non-fatal diagnostics collected during semantic analysis:
-
-- `UnusedParameterWarning` - a declared parameter is never used in the function body.
+| Error                               | Cause                                              |
+| ----------------------------------- | -------------------------------------------------- |
+| `InvalidArgumentTypesError`         | Wrong argument types for a native function         |
+| `InvalidArgumentCountError`         | Wrong number of arguments at runtime               |
+| `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `vector.add`) |
+| `InvalidLiteralValueError`          | Invalid literal value                              |
+| `InvalidValueError`                 | Invalid computed value                             |
+| `InvalidMapIndexError`              | Key not found in map                               |
+| `ElementNotFoundError`              | Element not in collection                          |
+| `NotFoundInScopeError`              | Function not found in runtime scope                |
+| `InvalidFunctionError`              | Callee is not a function                           |
+| `UnimplementedFunctionWebError`     | I/O function called on web platform                |
+| `EmptyCollectionError`              | Attempting to access an empty collection           |
+| `IndexOutOfBoundsError`             | Index outside collection range                     |
+| `NegativeIndexError`                | Negative index provided where disallowed           |
+| `DivisionByZeroError`               | Division by zero                                   |
+| `InvalidNumericOperationError`      | Domain error (e.g., `log(-1)`, `sqrt(-1)`)         |
+| `ParseError`                        | Failed string conversion                           |
+| `JsonParseError`                    | Invalid JSON string                                |
+| `CustomError`                       | Explicitly raised via `error.throw`                |
 
 ---
 
@@ -179,12 +157,12 @@ The compiler uses a **strategy pattern** to abstract platform-specific operation
 
 ### Implementations
 
-|                | CLI                       | Web                                                  |
-| -------------- | ------------------------- | ---------------------------------------------------- |
-| Console output | `stdout` / `stderr`       | `print()`                                            |
-| Console input  | `stdin.readLineSync()`    | Unsupported                                          |
-| File system    | `dart:io` synchronous API | Unsupported (throws `UnimplementedFunctionWebError`) |
-| Environment    | `Platform.environment`    | Unsupported                                          |
+|                | CLI                       | Web         |
+| -------------- | ------------------------- | ----------- |
+| Console output | `stdout` / `stderr`       | `print()`   |
+| Console input  | `stdin.readLineSync()`    | Unsupported |
+| File system    | `dart:io` synchronous API | Unsupported |
+| Environment    | `Platform.environment`    | Unsupported |
 
 The active platform is selected at startup based on the entry point (`main_cli.dart` or `main_web.dart`).
 
@@ -198,7 +176,7 @@ The active platform is selected at startup based on the entry point (`main_cli.d
 2. Compiles the source via `Compiler().compile()`.
 3. Prints any warnings to the console.
 4. If a `main` function is defined, executes it with the remaining CLI arguments.
-5. Otherwise, enters a **REPL** loop where the user can type expressions and see their evaluated results.
+5. Otherwise, enters a **REPL** loop where the user can type expressions and see their reduced results.
 
 ### Web (`lib/main/main_web.dart`)
 
@@ -209,7 +187,10 @@ Exposes the compiler as a set of JavaScript-callable functions via Dart's JS int
 - `runtimeWarnings(code)` - extracts warnings from compiled code.
 - `runtimeHasMain(code)` - checks if a main function exists.
 - `runtimeExecuteMain(code)` - executes the main function.
-- `runtimeReduce(code, expression)` - evaluates an expression.
+- `runtimeReduce(code, expression)` - reduces an expression.
+- `intermediateRepresentationEmpty()` - returns an empty intermediate representation handle.
+- `disposeCode(code)` - frees a compiled code handle.
+- `disposeExpression(expression)` - frees a parsed expression handle.
 
 Each call creates a fresh `Runtime` instance (stateless).
 
@@ -222,10 +203,10 @@ Each call creates a fresh `Runtime` instance (stateless).
 Supporting infrastructure used across compiler stages:
 
 - **`ListIterator`** - a cursor over a list with `next`, `peek`, `previous`, `advance()`, and `back()`. Used by the lexical and syntactic analyzers to traverse their input sequences.
-- **`Stack`** - a generic LIFO data structure. Used internally during parsing.
+- **`Stack`** - a generic LIFO data structure.
 - **`FileReader`** - reads source files from disk (CLI only).
 - **`Console`** - wraps platform console with colored output helpers (`warning()`, `error()`).
-- **`Mapper`** - converts a `List<FunctionNode>` into a `Map<String, FunctionNode>` keyed by function name.
+- **`Mapper`** - converts a `List<FunctionTerm>` into a `Map<String, FunctionTerm>` keyed by function name.
 - **String extensions** - character classification methods (`isDigit`, `isLetter`, `isWhitespace`, `isOperator`, `isDelimiter`, etc.) used extensively by the reader and lexer.
 
 ---

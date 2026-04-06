@@ -1,30 +1,30 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class VectorAdd extends NativeFunctionNode {
-  VectorAdd()
+class VectorAdd extends NativeFunctionTerm {
+  const VectorAdd()
     : super(
         name: 'vector.add',
-        parameters: [
+        parameters: const [
           Parameter.vector('a'),
           Parameter.vector('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 
-  static VectorNode execute({
-    required FunctionNode function,
-    required Node a,
-    required Node b,
+  static VectorTerm execute({
+    required FunctionTerm function,
+    required Term a,
+    required Term b,
   }) {
-    if ((a is VectorNode) && (b is VectorNode)) {
+    if ((a is VectorTerm) && (b is VectorTerm)) {
       if (a.value.length != b.value.length) {
         throw IterablesWithDifferentLengthError(
           iterable1: a.native(),
@@ -32,34 +32,34 @@ class VectorAdd extends NativeFunctionNode {
         );
       }
 
-      final List<Node> value = [];
+      final List<Term> value = [];
 
       for (int i = 0; i < a.value.length; i++) {
-        value.add(NumberNode(a.value[i].native() + b.value[i].native()));
+        value.add(NumberTerm(a.value[i].native() + b.value[i].native()));
       }
 
-      return VectorNode(value);
+      return VectorTerm(value);
     } else {
       throw InvalidArgumentTypesError(
         function: function.name,
         expected: function.parameterTypes,
-        actual: [a.type],
+        actual: [a.type, b.type],
       );
     }
   }
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
     return VectorAdd.execute(
       function: this,

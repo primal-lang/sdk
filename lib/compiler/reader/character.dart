@@ -1,5 +1,4 @@
-import 'package:primal/compiler/lexical/lexeme.dart';
-import 'package:primal/compiler/models/location.dart';
+import 'package:primal/compiler/models/located.dart';
 
 class Character extends Located {
   final String value;
@@ -8,11 +7,6 @@ class Character extends Located {
     required this.value,
     required super.location,
   });
-
-  Lexeme get lexeme => Lexeme(
-    value: value,
-    location: location,
-  );
 
   @override
   bool operator ==(Object other) =>

@@ -7,6 +7,7 @@
 - **Syntax:** `{Any: Any, ...}: Map`
 - **Input:** A list of pairs separated by comma
 - **Output:** A map containing all the pairs
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -18,6 +19,7 @@
 - **Syntax:** `Map[Any]: Any`
 - **Input:** A map and a key
 - **Output:** The value associated with the key
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -31,6 +33,7 @@
 - **Signature:** `map.at(a: Map, b: Any): Any`
 - **Input:** A map and a key
 - **Output:** The value associated with the key
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -42,6 +45,7 @@ map.at({"name": "Alice"}, "name") // returns "Alice"
 - **Signature:** `map.keys(a: Map): List`
 - **Input:** One map
 - **Output:** A list containing all the keys
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -53,6 +57,7 @@ map.keys({"a": 1, "b": 2}) // returns ["a", "b"]
 - **Signature:** `map.values(a: Map): List`
 - **Input:** One map
 - **Output:** A list containing all the values
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -66,6 +71,7 @@ map.values({"a": 1, "b": 2}) // returns [1, 2]
 - **Signature:** `map.set(a: Map, b: Any, c: Any): Map`
 - **Input:** A map, a key, and a value
 - **Output:** A new map containing the new key-value pair
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -77,6 +83,7 @@ map.set({"a": 1}, "b", 2) // returns {"a": 1, "b": 2}
 - **Signature:** `map.removeAt(a: Map, b: Any): Map`
 - **Input:** A map and a key
 - **Output:** A new map with the key removed
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -90,6 +97,7 @@ map.removeAt({"a": 1, "b": 2}, "a") // returns {"b": 2}
 - **Signature:** `map.containsKey(a: Map, b: Any): Boolean`
 - **Input:** A map and a key
 - **Output:** True if the key is in the map, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -101,6 +109,7 @@ map.containsKey({"a": 1}, "a") // returns true
 - **Signature:** `map.isEmpty(a: Map): Boolean`
 - **Input:** One map
 - **Output:** True if the map is empty, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -112,6 +121,7 @@ map.isEmpty({}) // returns true
 - **Signature:** `map.isNotEmpty(a: Map): Boolean`
 - **Input:** One map
 - **Output:** True if the map is not empty, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -123,6 +133,7 @@ map.isNotEmpty({"a": 1}) // returns true
 - **Signature:** `map.length(a: Map): Number`
 - **Input:** One map
 - **Output:** The number of key-value pairs in the map
+- **Purity:** Pure
 - **Example:**
 
 ```

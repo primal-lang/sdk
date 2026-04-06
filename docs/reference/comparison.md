@@ -7,6 +7,7 @@
 - **Signature:** `comp.eq(a: Any, b: Any): Boolean`
 - **Input:** Two arguments of any type
 - **Output:** True if the two arguments are equal, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -18,6 +19,7 @@ comp.eq(5, 5) // returns true
 - **Signature:** `comp.neq(a: Any, b: Any): Boolean`
 - **Input:** Two arguments of any type
 - **Output:** True if the two arguments are not equal, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -29,6 +31,7 @@ comp.neq(5, 3) // returns true
 - **Signature:** `comp.gt(a: Any, b: Any): Boolean`
 - **Input:** Two arguments of any type
 - **Output:** True if the first argument is greater than the second, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -40,6 +43,7 @@ comp.gt(5, 3) // returns true
 - **Signature:** `comp.lt(a: Any, b: Any): Boolean`
 - **Input:** Two arguments of any type
 - **Output:** True if the first argument is less than the second, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -51,6 +55,7 @@ comp.lt(3, 5) // returns true
 - **Signature:** `comp.ge(a: Any, b: Any): Boolean`
 - **Input:** Two arguments of any type
 - **Output:** True if the first argument is greater than or equal to the second, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```
@@ -62,6 +67,7 @@ comp.ge(5, 5) // returns true
 - **Signature:** `comp.le(a: Any, b: Any): Boolean`
 - **Input:** Two arguments of any type
 - **Output:** True if the first argument is less than or equal to the second, false otherwise
+- **Purity:** Pure
 - **Example:**
 
 ```

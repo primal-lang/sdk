@@ -1,51 +1,51 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ListMap extends NativeFunctionNode {
-  ListMap()
+class ListMap extends NativeFunctionTerm {
+  const ListMap()
     : super(
         name: 'list.map',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if ((a is ListNode) && (b is FunctionNode)) {
-      final List<Node> result = [];
+    if ((a is ListTerm) && (b is FunctionTerm)) {
+      final List<Term> result = [];
 
-      for (final Node element in a.value) {
-        final Node value = b.apply([element]);
+      for (final Term element in a.value) {
+        final Term value = b.apply([element]);
         result.add(value);
       }
 
-      return ListNode(result);
+      return ListTerm(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [a.type],
+        actual: [a.type, b.type],
       );
     }
   }

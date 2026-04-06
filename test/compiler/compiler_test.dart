@@ -4,7 +4,7 @@ library;
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
+import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:test/test.dart';
 
@@ -12,17 +12,19 @@ void main() {
   const Compiler compiler = Compiler();
 
   group('Compiler.compile()', () {
-    test('Simple program returns IntermediateCode with main', () {
-      final IntermediateCode code = compiler.compile('main = 42');
-      expect(code.functions.containsKey('main'), isTrue);
+    test('Simple program returns IntermediateRepresentation with main', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = 42');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Function definitions create correct functions', () {
-      final IntermediateCode code = compiler.compile(
-        'double(x) = x * 2\nmain = double(5)',
-      );
-      expect(code.functions.containsKey('double'), isTrue);
-      expect(code.functions.containsKey('main'), isTrue);
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'double(x) = x * 2\nmain = double(5)',
+          );
+      expect(intermediateRepresentation.containsFunction('double'), isTrue);
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Invalid syntax throws a compilation error', () {
@@ -40,69 +42,71 @@ void main() {
     });
 
     test('Warnings are populated for unused parameters', () {
-      final IntermediateCode code = compiler.compile(
-        'f(x, y) = x\nmain = f(1, 2)',
-      );
-      expect(code.warnings.length, equals(1));
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'f(x, y) = x\nmain = f(1, 2)',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(1));
     });
 
     test('Program without main compiles successfully', () {
-      final IntermediateCode code = compiler.compile('f(x) = x * 2');
-      expect(code.functions.containsKey('f'), isTrue);
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('f(x) = x * 2');
+      expect(intermediateRepresentation.containsFunction('f'), isTrue);
     });
   });
 
   group('Compiler.expression()', () {
     test('Number literal returns NumberExpression', () {
-      final Expression expr = compiler.expression('42');
-      expect(expr, isA<NumberExpression>());
-      expect((expr as NumberExpression).value, equals(42));
+      final Expression expression = compiler.expression('42');
+      expect(expression, isA<NumberExpression>());
+      expect((expression as NumberExpression).value, equals(42));
     });
 
     test('String literal returns StringExpression', () {
-      final Expression expr = compiler.expression('"hello"');
-      expect(expr, isA<StringExpression>());
-      expect((expr as StringExpression).value, equals('hello'));
+      final Expression expression = compiler.expression('"hello"');
+      expect(expression, isA<StringExpression>());
+      expect((expression as StringExpression).value, equals('hello'));
     });
 
     test('Boolean literal returns BooleanExpression', () {
-      final Expression exprTrue = compiler.expression('true');
-      expect(exprTrue, isA<BooleanExpression>());
-      expect((exprTrue as BooleanExpression).value, isTrue);
+      final Expression expressionTrue = compiler.expression('true');
+      expect(expressionTrue, isA<BooleanExpression>());
+      expect((expressionTrue as BooleanExpression).value, isTrue);
 
-      final Expression exprFalse = compiler.expression('false');
-      expect(exprFalse, isA<BooleanExpression>());
-      expect((exprFalse as BooleanExpression).value, isFalse);
+      final Expression expressionFalse = compiler.expression('false');
+      expect(expressionFalse, isA<BooleanExpression>());
+      expect((expressionFalse as BooleanExpression).value, isFalse);
     });
 
     test('Binary operation returns CallExpression', () {
-      final Expression expr = compiler.expression('1 + 2');
-      expect(expr, isA<CallExpression>());
-      expect(expr.toString(), equals('+(1, 2)'));
+      final Expression expression = compiler.expression('1 + 2');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), equals('+(1, 2)'));
     });
 
     test('Function call returns CallExpression', () {
-      final Expression expr = compiler.expression('foo(1, 2)');
-      expect(expr, isA<CallExpression>());
-      expect(expr.toString(), equals('foo(1, 2)'));
+      final Expression expression = compiler.expression('foo(1, 2)');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), equals('foo(1, 2)'));
     });
 
     test('List literal returns ListExpression', () {
-      final Expression expr = compiler.expression('[1, 2, 3]');
-      expect(expr, isA<ListExpression>());
-      expect((expr as ListExpression).value.length, equals(3));
+      final Expression expression = compiler.expression('[1, 2, 3]');
+      expect(expression, isA<ListExpression>());
+      expect((expression as ListExpression).value.length, equals(3));
     });
 
     test('Map literal returns MapExpression', () {
-      final Expression expr = compiler.expression('{"a": 1, "b": 2}');
-      expect(expr, isA<MapExpression>());
-      expect((expr as MapExpression).value.length, equals(2));
+      final Expression expression = compiler.expression('{"a": 1, "b": 2}');
+      expect(expression, isA<MapExpression>());
+      expect((expression as MapExpression).value.length, equals(2));
     });
 
     test('If/else returns CallExpression', () {
-      final Expression expr = compiler.expression('if (true) 1 else 2');
-      expect(expr, isA<CallExpression>());
-      expect(expr.toString(), equals('if(true, 1, 2)'));
+      final Expression expression = compiler.expression('if (true) 1 else 2');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), equals('if(true, 1, 2)'));
     });
 
     test('Invalid input throws error', () {

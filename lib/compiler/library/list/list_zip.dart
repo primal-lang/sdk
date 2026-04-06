@@ -1,13 +1,13 @@
 import 'dart:math';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ListZip extends NativeFunctionNode {
-  ListZip()
+class ListZip extends NativeFunctionTerm {
+  const ListZip()
     : super(
         name: 'list.zip',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.list('b'),
           Parameter.function('c'),
@@ -15,36 +15,36 @@ class ListZip extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
-    final Node c = arguments[2].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+    final Term c = arguments[2].reduce();
 
-    if ((a is ListNode) && (b is ListNode) && (c is FunctionNode)) {
-      final List<Node> result = [];
+    if ((a is ListTerm) && (b is ListTerm) && (c is FunctionTerm)) {
+      final List<Term> result = [];
       final int maxLength = max(a.value.length, b.value.length);
 
       for (int i = 0; i < maxLength; i++) {
-        final Node? elementA = i < a.value.length ? a.value[i] : null;
-        final Node? elementB = i < b.value.length ? b.value[i] : null;
+        final Term? elementA = i < a.value.length ? a.value[i] : null;
+        final Term? elementB = i < b.value.length ? b.value[i] : null;
 
         if (elementA != null && elementB != null) {
-          final Node value = c.apply([elementA, elementB]);
+          final Term value = c.apply([elementA, elementB]);
           result.add(value);
         } else if (elementA != null) {
           result.add(elementA);
@@ -53,12 +53,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         }
       }
 
-      return ListNode(result);
+      return ListTerm(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
-        actual: [a.type],
+        actual: [a.type, b.type, c.type],
       );
     }
   }

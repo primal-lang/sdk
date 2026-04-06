@@ -1,43 +1,51 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class Throw extends NativeFunctionNode {
-  Throw()
+class Throw extends NativeFunctionTerm {
+  const Throw()
     : super(
         name: 'error.throw',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.string('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    throw CustomError(a, b.toString());
+    if (b is StringTerm) {
+      throw CustomError(a, b.value);
+    } else {
+      throw InvalidArgumentTypesError(
+        function: name,
+        expected: parameterTypes,
+        actual: [a.type, b.type],
+      );
+    }
   }
 }
 
 class CustomError extends RuntimeError {
-  final Node code;
+  final Term code;
 
   const CustomError(this.code, super.message);
 }

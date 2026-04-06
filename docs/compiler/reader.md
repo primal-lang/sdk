@@ -1,6 +1,6 @@
 # SourceReader
 
-**File**: `lib/compiler/reader/source_reader.dart`
+**File**: `lib/compiler/reader/reader.dart`
 
 The source reader is the first stage of the compiler pipeline. It converts a raw input string into a flat list of `Character` objects, each annotated with its row and column position.
 
@@ -10,7 +10,7 @@ The source reader is the first stage of the compiler pipeline. It converts a raw
 
 ## Splitting Strategy
 
-The reader first normalizes line endings by converting `\r\n` and `\r` to `\n`, then splits into rows. If the final row is empty (trailing newline in source), it is removed before processing. It then iterates by grapheme cluster within each row using `package:characters`. This ensures that multi-codepoint sequences like emoji (e.g., `👨‍👩‍👧`) are treated as single characters with correct column positions. Each grapheme is wrapped in a `Character(value, location)`. Tab characters are treated as single characters occupying one column, not expanded to spaces.
+The reader first normalizes line endings by converting `\r\n` and `\r` to `\n`, then splits into rows. If the final row is empty (trailing newline in source), it is removed before processing. It then iterates by grapheme cluster within each row using `package:characters`. This ensures that multi-codepoint sequences like emoji (e.g., `💾`) are treated as single characters with correct column positions. Each grapheme is wrapped in a `Character(value, location)`. Tab characters are treated as single characters occupying one column, not expanded to spaces.
 
 ## Location Tracking
 

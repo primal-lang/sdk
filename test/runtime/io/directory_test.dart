@@ -3,9 +3,11 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as path;
-import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
+
 import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';
 import '../../helpers/temp_helpers.dart';
@@ -30,14 +32,14 @@ void main() {
     });
 
     test('directory.fromPath', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.fromPath(${primalString(existingDirectory.path)})',
       );
       checkResult(runtime, primalString(existingDirectory.absolute.path));
     });
 
     test('directory.exists returns true for existing directory', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.exists(directory.fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(runtime, true);
@@ -47,7 +49,7 @@ void main() {
       final Directory missingDirectory = Directory(
         path.join(tempDir.path, 'missing'),
       );
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.exists(directory.fromPath(${primalString(missingDirectory.path)}))',
       );
       checkResult(runtime, false);
@@ -57,7 +59,7 @@ void main() {
       final Directory createdDirectory = Directory(
         path.join(tempDir.path, 'created', 'child'),
       );
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.create(directory.fromPath(${primalString(createdDirectory.path)}))',
       );
       checkResult(runtime, true);
@@ -69,7 +71,7 @@ void main() {
         path.join(tempDir.path, 'delete-me'),
       );
       deletableDirectory.createSync();
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.delete(directory.fromPath(${primalString(deletableDirectory.path)}))',
       );
       checkResult(runtime, true);
@@ -80,7 +82,7 @@ void main() {
       final Directory missingDirectory = Directory(
         path.join(tempDir.path, 'missing'),
       );
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.delete(directory.fromPath(${primalString(missingDirectory.path)}))',
       );
       checkResult(runtime, false);
@@ -90,7 +92,7 @@ void main() {
       final Directory destinationDirectory = Directory(
         path.join(tempDir.path, 'copy'),
       );
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.copy(directory.fromPath(${primalString(existingDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
       );
       checkResult(runtime, true);
@@ -116,7 +118,7 @@ void main() {
       final Directory destinationDirectory = Directory(
         path.join(tempDir.path, 'move-target'),
       );
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.move(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
       );
       checkResult(runtime, true);
@@ -129,7 +131,7 @@ void main() {
         path.join(tempDir.path, 'rename-me'),
       );
       sourceDirectory.createSync();
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.rename(directory.fromPath(${primalString(sourceDirectory.path)}), ${primalString('renamed')})',
       );
       checkResult(runtime, true);
@@ -140,21 +142,21 @@ void main() {
     });
 
     test('directory.path', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.path(directory.fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(runtime, primalString(existingDirectory.absolute.path));
     });
 
     test('directory.name', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.name(directory.fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(runtime, primalString('source'));
     });
 
     test('directory.parent', () {
-      final Runtime runtime = getRuntime(
+      final RuntimeFacade runtime = getRuntime(
         'main = directory.parent(directory.fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(
@@ -166,11 +168,11 @@ void main() {
     test(
       'directory.list returns files and directories without order assumptions',
       () {
-        final Runtime runtime = getRuntime(
+        final RuntimeFacade runtime = getRuntime(
           'main = directory.list(directory.fromPath(${primalString(existingDirectory.path)}))',
         );
         final List<dynamic> children =
-            runtime.mainExpression([]).toNode().evaluate().native()
+            runtime.evaluateToTerm(runtime.mainExpression([])).native()
                 as List<dynamic>;
         final List<String> paths = children
             .map((child) => (child as FileSystemEntity).absolute.path)

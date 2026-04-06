@@ -34,13 +34,24 @@ class ListIterator<T> {
     }
   }
 
-  T get last => _list.last;
-
-  void advance() {
-    _index++;
+  T get last {
+    if (_list.isEmpty) {
+      throw const UnexpectedEndOfFileError();
+    }
+    return _list.last;
   }
 
-  void back() {
-    _index--;
+  void advance() {
+    if (hasNext) {
+      _index++;
+    }
+  }
+
+  bool back() {
+    if (_index > 0) {
+      _index--;
+      return true;
+    }
+    return false;
   }
 }

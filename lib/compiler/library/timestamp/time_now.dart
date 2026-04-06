@@ -1,12 +1,12 @@
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class TimeNow extends NativeFunctionNode {
-  TimeNow()
+class TimeNow extends NativeFunctionTerm {
+  const TimeNow()
     : super(
         name: 'time.now',
-        parameters: [],
+        parameters: const [],
       );
 
   @override
-  Node node(List<Node> arguments) => TimestampNode(DateTime.now());
+  Term term(List<Term> arguments) => TimestampTerm(DateTime.now());
 }

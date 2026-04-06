@@ -1,37 +1,37 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class QueueReverse extends NativeFunctionNode {
-  QueueReverse()
+class QueueReverse extends NativeFunctionTerm {
+  const QueueReverse()
     : super(
         name: 'queue.reverse',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is QueueNode) {
-      return QueueNode(a.value.reversed.toList());
+    if (a is QueueTerm) {
+      return QueueTerm(a.value.reversed.toList());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

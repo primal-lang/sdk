@@ -34,6 +34,14 @@ void main() {
       final ListIterator<int> iterator = ListIterator([]);
       expect(iterator.previous, null);
     });
+
+    test('last throws UnexpectedEndOfFileError', () {
+      final ListIterator<int> iterator = ListIterator([]);
+      expect(
+        () => iterator.last,
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
   });
 
   group('ListIterator - single element', () {
@@ -143,6 +151,24 @@ void main() {
       final ListIterator<int> iterator = ListIterator([1, 2, 3]);
       iterator.advance();
       expect(iterator.next, 2);
+    });
+
+    test('back() at index zero does not go negative', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      iterator.back();
+      expect(iterator.peek, 1);
+      expect(iterator.hasNext, true);
+    });
+
+    test('advance() at end does not go past bounds', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      iterator.advance();
+      iterator.advance();
+      iterator.advance();
+      expect(iterator.isAtEnd, true);
+      iterator.advance();
+      expect(iterator.isAtEnd, true);
+      expect(iterator.peek, null);
     });
   });
 

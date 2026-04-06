@@ -1,50 +1,50 @@
 import 'package:primal/compiler/library/comparison/comp_eq.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class CompNeq extends NativeFunctionNode {
-  CompNeq()
+class CompNeq extends NativeFunctionTerm {
+  const CompNeq()
     : super(
         name: 'comp.neq',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.any('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 
-  static Node execute({
-    required FunctionNode function,
-    required Node a,
-    required Node b,
+  static Term execute({
+    required FunctionTerm function,
+    required Term a,
+    required Term b,
   }) {
-    final BooleanNode comparison = CompEq.execute(
+    final BooleanTerm comparison = CompEq.execute(
       function: function,
       a: a,
       b: b,
     );
 
-    return BooleanNode(!comparison.value);
+    return BooleanTerm(!comparison.value);
   }
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
     return CompNeq.execute(
       function: this,

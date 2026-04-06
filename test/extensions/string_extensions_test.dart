@@ -285,8 +285,8 @@ void main() {
           '*',
           '%',
         ];
-        for (final String op in binaryOps) {
-          expect(true, equals(op.isBinaryOperator));
+        for (final String operator in binaryOps) {
+          expect(true, equals(operator.isBinaryOperator));
         }
         expect(false, equals('a'.isBinaryOperator));
         expect(false, equals('0'.isBinaryOperator));

@@ -1,13 +1,13 @@
 import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class StrSubstring extends NativeFunctionNode {
-  StrSubstring()
+class StrSubstring extends NativeFunctionTerm {
+  const StrSubstring()
     : super(
         name: 'str.substring',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),
           Parameter.number('c'),
@@ -15,32 +15,39 @@ class StrSubstring extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
-    final Node c = arguments[2].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+    final Term c = arguments[2].reduce();
 
-    if ((a is StringNode) && (b is NumberNode) && (c is NumberNode)) {
+    if ((a is StringTerm) && (b is NumberTerm) && (c is NumberTerm)) {
       final int start = b.value.toInt();
       final int end = c.value.toInt();
       final Characters chars = a.value.characters;
       if (start < 0) {
         throw NegativeIndexError(function: name, index: start);
+      }
+      if (start > chars.length) {
+        throw IndexOutOfBoundsError(
+          function: name,
+          index: start,
+          length: chars.length,
+        );
       }
       if (end < start) {
         throw IndexOutOfBoundsError(
@@ -56,7 +63,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
           length: chars.length,
         );
       }
-      return StringNode(chars.skip(start).take(end - start).toString());
+      return StringTerm(chars.skip(start).take(end - start).toString());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

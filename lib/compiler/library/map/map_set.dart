@@ -1,12 +1,12 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class MapSet extends NativeFunctionNode {
-  MapSet()
+class MapSet extends NativeFunctionTerm {
+  const MapSet()
     : super(
         name: 'map.set',
-        parameters: [
+        parameters: const [
           Parameter.map('a'),
           Parameter.any('b'),
           Parameter.any('c'),
@@ -14,36 +14,36 @@ class MapSet extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
-    final Node c = arguments[2];
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+    final Term c = arguments[2];
 
-    if ((a is MapNode) && (b is LiteralNode)) {
-      final Map<dynamic, Node> map = a.asMapWithKeys();
-      map[b.value] = c.evaluate();
+    if ((a is MapTerm) && (b is ValueTerm)) {
+      final Map<dynamic, Term> map = a.asMapWithKeys();
+      map[b.value] = c.reduce();
 
-      final Map<Node, Node> newMap = {};
+      final Map<Term, Term> newMap = {};
       map.forEach((key, value) {
-        newMap[LiteralNode.from(key)] = value;
+        newMap[ValueTerm.from(key)] = value;
       });
 
-      return MapNode(newMap);
+      return MapTerm(newMap);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

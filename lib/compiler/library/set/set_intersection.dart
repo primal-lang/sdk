@@ -1,48 +1,48 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class SetIntersection extends NativeFunctionNode {
-  SetIntersection()
+class SetIntersection extends NativeFunctionTerm {
+  const SetIntersection()
     : super(
         name: 'set.intersection',
-        parameters: [
+        parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if ((a is SetNode) && (b is SetNode)) {
+    if ((a is SetTerm) && (b is SetTerm)) {
       final Set<dynamic> setA = a.native();
-      final Set<Node> set = {};
+      final Set<Term> set = {};
 
-      for (final Node node in b.value) {
-        if (setA.contains(node.native())) {
-          set.add(node);
+      for (final Term element in b.value) {
+        if (setA.contains(element.native())) {
+          set.add(element);
         }
       }
 
-      return SetNode(set);
+      return SetTerm(set);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

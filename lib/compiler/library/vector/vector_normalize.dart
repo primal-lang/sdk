@@ -1,45 +1,51 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/library/vector/vector_magnitude.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class VectorNormalize extends NativeFunctionNode {
-  VectorNormalize()
+class VectorNormalize extends NativeFunctionTerm {
+  const VectorNormalize()
     : super(
         name: 'vector.normalize',
-        parameters: [
+        parameters: const [
           Parameter.vector('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is VectorNode) {
-      final NumberNode magnitude = VectorMagnitude.execute(
-        function: this,
-        a: a,
-      );
-      final List list = a.native();
+    if (a is VectorTerm) {
+      final List<num> values = a.native().cast<num>();
 
-      return VectorNode(
-        list.map((element) => NumberNode(element / magnitude.value)).toList(),
+      if (values.isEmpty) {
+        return a;
+      }
+
+      final double magnitude = VectorMagnitude.computeMagnitude(values);
+
+      if (magnitude == 0) {
+        throw DivisionByZeroError(function: name);
+      }
+
+      return VectorTerm(
+        values.map((num element) => NumberTerm(element / magnitude)).toList(),
       );
     } else {
       throw InvalidArgumentTypesError(

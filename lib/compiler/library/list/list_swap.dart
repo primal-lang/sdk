@@ -1,12 +1,12 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ListSwap extends NativeFunctionNode {
-  ListSwap()
+class ListSwap extends NativeFunctionTerm {
+  const ListSwap()
     : super(
         name: 'list.swap',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),
           Parameter.number('c'),
@@ -14,27 +14,27 @@ class ListSwap extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
-    final Node c = arguments[2].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+    final Term c = arguments[2].reduce();
 
-    if ((a is ListNode) && (b is NumberNode) && (c is NumberNode)) {
+    if ((a is ListTerm) && (b is NumberTerm) && (c is NumberTerm)) {
       final int indexB = b.value.toInt();
       final int indexC = c.value.toInt();
       if (indexB < 0) {
@@ -57,12 +57,12 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
           length: a.value.length,
         );
       }
-      final List<Node> result = [];
-      final Node valueAtB = a.value[indexB];
-      final Node valueAtC = a.value[indexC];
+      final List<Term> result = [];
+      final Term valueAtB = a.value[indexB];
+      final Term valueAtC = a.value[indexC];
 
       for (int i = 0; i < a.value.length; i++) {
-        final Node element = a.value[i];
+        final Term element = a.value[i];
 
         if (i == indexB) {
           result.add(valueAtC);
@@ -73,7 +73,7 @@ class NodeWithArguments extends NativeFunctionNodeWithArguments {
         }
       }
 
-      return ListNode(result);
+      return ListTerm(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

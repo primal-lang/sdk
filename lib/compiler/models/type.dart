@@ -1,5 +1,11 @@
 class Type {
   const Type();
+
+  @override
+  bool operator ==(Object other) => runtimeType == other.runtimeType;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
 }
 
 class BooleanType extends Type {

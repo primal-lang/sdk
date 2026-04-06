@@ -1,39 +1,39 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ListConcat extends NativeFunctionNode {
-  ListConcat()
+class ListConcat extends NativeFunctionTerm {
+  const ListConcat()
     : super(
         name: 'list.concat',
-        parameters: [
+        parameters: const [
           Parameter.list('a'),
           Parameter.list('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if ((a is ListNode) && (b is ListNode)) {
-      return ListNode([...a.value, ...b.value]);
+    if ((a is ListTerm) && (b is ListTerm)) {
+      return ListTerm([...a.value, ...b.value]);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

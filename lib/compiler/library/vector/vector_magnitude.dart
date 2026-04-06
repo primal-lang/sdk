@@ -1,37 +1,43 @@
 import 'dart:math';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class VectorMagnitude extends NativeFunctionNode {
-  VectorMagnitude()
+class VectorMagnitude extends NativeFunctionTerm {
+  const VectorMagnitude()
     : super(
         name: 'vector.magnitude',
-        parameters: [
+        parameters: const [
           Parameter.vector('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 
-  static NumberNode execute({
-    required FunctionNode function,
-    required Node a,
+  /// Computes the magnitude (Euclidean norm) of a vector from its native list.
+  static double computeMagnitude(List<num> values) {
+    double sumOfSquares = 0;
+
+    for (final num element in values) {
+      sumOfSquares += element * element;
+    }
+
+    return sqrt(sumOfSquares);
+  }
+
+  static NumberTerm execute({
+    required FunctionTerm function,
+    required Term a,
   }) {
-    if (a is VectorNode) {
-      double magnitude = 0;
-      final List list = a.native();
+    if (a is VectorTerm) {
+      final List<num> values = a.native().cast<num>();
 
-      for (final dynamic element in list) {
-        magnitude += element * element;
-      }
-
-      return NumberNode(sqrt(magnitude));
+      return NumberTerm(computeMagnitude(values));
     } else {
       throw InvalidArgumentTypesError(
         function: function.name,
@@ -42,16 +48,16 @@ class VectorMagnitude extends NativeFunctionNode {
   }
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
     return VectorMagnitude.execute(
       function: this,

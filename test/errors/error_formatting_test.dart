@@ -6,11 +6,12 @@ import 'package:primal/compiler/errors/lexical_error.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/errors/syntactic_error.dart';
+import 'package:primal/compiler/lexical/token.dart';
+import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/reader/character.dart';
-import 'package:primal/compiler/runtime/node.dart';
 import 'package:test/test.dart';
 
 import '../helpers/token_factories.dart';
@@ -56,7 +57,7 @@ void main() {
         value: '@',
         location: Location(row: 1, column: 5),
       );
-      final error = InvalidCharacterError(character);
+      final InvalidCharacterError error = InvalidCharacterError(character);
 
       expect(
         error.toString(),
@@ -69,7 +70,7 @@ void main() {
         value: '!',
         location: Location(row: 2, column: 3),
       );
-      final error = InvalidCharacterError(character, '=');
+      final InvalidCharacterError error = InvalidCharacterError(character, '=');
 
       expect(
         error.toString(),
@@ -86,8 +87,8 @@ void main() {
 
   group('InvalidTokenError', () {
     test('without expected', () {
-      final token = identifierToken('foo', 1, 1);
-      final error = InvalidTokenError(token);
+      final IdentifierToken token = identifierToken('foo', 1, 1);
+      final InvalidTokenError error = InvalidTokenError(token);
 
       expect(
         error.toString(),
@@ -96,8 +97,8 @@ void main() {
     });
 
     test('with expected', () {
-      final token = identifierToken('bar', 3, 7);
-      final error = InvalidTokenError(token, ')');
+      final IdentifierToken token = identifierToken('bar', 3, 7);
+      final InvalidTokenError error = InvalidTokenError(token, ')');
 
       expect(
         error.toString(),
@@ -110,8 +111,8 @@ void main() {
 
   group('ExpectedTokenError', () {
     test('toString() includes token and expected', () {
-      final token = numberToken(42, 5, 10);
-      final error = ExpectedTokenError(token, '(');
+      final NumberToken token = numberToken(42, 5, 10);
+      final ExpectedTokenError error = ExpectedTokenError(token, '(');
 
       expect(
         error.toString(),
@@ -139,15 +140,15 @@ void main() {
 
   group('DuplicatedFunctionError', () {
     test('toString() lists both parameter sets', () {
-      final function1 = FunctionNode(
+      const FunctionSignature function1 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('x'), Parameter.number('y')],
       );
-      final function2 = FunctionNode(
+      const FunctionSignature function2 = FunctionSignature(
         name: 'add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
-      final error = DuplicatedFunctionError(
+      final DuplicatedFunctionError error = DuplicatedFunctionError(
         function1: function1,
         function2: function2,
       );
@@ -163,7 +164,7 @@ void main() {
 
   group('DuplicatedParameterError', () {
     test('toString() includes function name and duplicated parameter', () {
-      final error = DuplicatedParameterError(
+      final DuplicatedParameterError error = DuplicatedParameterError(
         function: 'add',
         parameter: 'x',
         parameters: ['x', 'x'],
@@ -233,7 +234,7 @@ void main() {
 
   group('InvalidArgumentTypesError', () {
     test('toString() lists expected and actual types', () {
-      final error = InvalidArgumentTypesError(
+      final InvalidArgumentTypesError error = InvalidArgumentTypesError(
         function: 'add',
         expected: [const NumberType(), const NumberType()],
         actual: [const StringType(), const BooleanType()],
@@ -250,7 +251,7 @@ void main() {
 
   group('InvalidArgumentCountError', () {
     test('toString() shows expected and actual counts', () {
-      final error = InvalidArgumentCountError(
+      final InvalidArgumentCountError error = InvalidArgumentCountError(
         function: 'multiply',
         expected: 2,
         actual: 3,

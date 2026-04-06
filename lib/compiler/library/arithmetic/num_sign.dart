@@ -1,37 +1,37 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class NumSign extends NativeFunctionNode {
-  NumSign()
+class NumSign extends NativeFunctionTerm {
+  const NumSign()
     : super(
         name: 'num.sign',
-        parameters: [
+        parameters: const [
           Parameter.number('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is NumberNode) {
-      return NumberNode(a.value.sign.toInt());
+    if (a is NumberTerm) {
+      return NumberTerm(a.value.sign.toInt());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

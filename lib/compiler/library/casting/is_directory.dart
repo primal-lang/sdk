@@ -1,34 +1,34 @@
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class IsDirectory extends NativeFunctionNode {
-  IsDirectory()
+class IsDirectory extends NativeFunctionTerm {
+  const IsDirectory()
     : super(
         name: 'is.directory',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    return BooleanNode(a is DirectoryNode);
+    return BooleanTerm(a is DirectoryTerm);
   }
 }

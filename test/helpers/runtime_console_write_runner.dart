@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'pipeline_helpers.dart';
 
 void main(List<String> args) {
   final String source = args[0];
-  final Runtime runtime = getRuntime(source);
+  final RuntimeFacade runtime = getRuntime(source);
 
   stderr.writeln(runtime.executeMain());
 }

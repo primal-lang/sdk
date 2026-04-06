@@ -1,40 +1,40 @@
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class Try extends NativeFunctionNode {
-  Try()
+class Try extends NativeFunctionTerm {
+  const Try()
     : super(
         name: 'try',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.any('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0];
-    final Node b = arguments[1];
+  Term reduce() {
+    final Term a = arguments[0];
+    final Term b = arguments[1];
 
     try {
-      return a.evaluate();
-    } catch (e) {
-      return b;
+      return a.reduce();
+    } catch (_) {
+      return b.reduce();
     }
   }
 }

@@ -2,40 +2,40 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/platform/base/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class FilePath extends NativeFunctionNode {
-  FilePath()
+class FilePath extends NativeFunctionTerm {
+  const FilePath()
     : super(
         name: 'file.path',
-        parameters: [
+        parameters: const [
           Parameter.file('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is FileNode) {
+    if (a is FileTerm) {
       final String path = PlatformInterface().file.path(a.value);
 
-      return StringNode(path);
+      return StringTerm(path);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

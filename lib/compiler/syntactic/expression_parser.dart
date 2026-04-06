@@ -232,11 +232,11 @@ class ExpressionParser {
   }
 
   Expression call() {
-    Expression exp = primary();
+    Expression result = primary();
 
     while (true) {
       if (matchSingle(_isOpenParen)) {
-        exp = finishCall(exp);
+        result = finishCall(result);
       } else if (matchSingle(_isOpenBracket)) {
         final Token operator = AtToken(
           Lexeme(
@@ -244,19 +244,19 @@ class ExpressionParser {
             location: previous.location,
           ),
         );
-        final Expression idx = expression();
+        final Expression index = expression();
         consume(_isCloseBracket, ']');
-        exp = CallExpression.fromBinaryOperation(
+        result = CallExpression.fromBinaryOperation(
           operator: operator,
-          left: exp,
-          right: idx,
+          left: result,
+          right: index,
         );
       } else {
         break;
       }
     }
 
-    return exp;
+    return result;
   }
 
   Expression finishCall(Expression callee) {
@@ -283,9 +283,9 @@ class ExpressionParser {
     } else if (matchSingle(_isIdentifier)) {
       return IdentifierExpression(previous);
     } else if (matchSingle(_isOpenParen)) {
-      final Expression expr = expression();
+      final Expression groupedExpression = expression();
       consume(_isCloseParen, ')');
-      return expr;
+      return groupedExpression;
     } else if (matchSingle(_isOpenBracket)) {
       return list(previous);
     } else if (matchSingle(_isOpenBraces)) {
@@ -335,7 +335,7 @@ class ExpressionParser {
   }
 
   bool match(List<bool Function(Token)> predicates) {
-    for (final predicate in predicates) {
+    for (final bool Function(Token) predicate in predicates) {
       if (check(predicate)) {
         advance();
         return true;

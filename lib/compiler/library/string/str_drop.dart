@@ -1,52 +1,46 @@
 import 'package:characters/characters.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class StrDrop extends NativeFunctionNode {
-  StrDrop()
+class StrDrop extends NativeFunctionTerm {
+  const StrDrop()
     : super(
         name: 'str.drop',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
-    if ((a is StringNode) && (b is NumberNode)) {
+    if ((a is StringTerm) && (b is NumberTerm)) {
       final int count = b.value.toInt();
       final Characters chars = a.value.characters;
       if (count < 0) {
         throw NegativeIndexError(function: name, index: count);
       }
-      if (count > chars.length) {
-        throw IndexOutOfBoundsError(
-          function: name,
-          index: count,
-          length: chars.length,
-        );
-      }
-      return StringNode(chars.skip(count).toString());
+      // Characters.skip() already clamps to available length
+      return StringTerm(chars.skip(count).toString());
     } else {
       throw InvalidArgumentTypesError(
         function: name,

@@ -1,37 +1,37 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class BoolOr extends NativeFunctionNode {
-  BoolOr()
+class BoolOr extends NativeFunctionTerm {
+  const BoolOr()
     : super(
         name: 'bool.or',
-        parameters: [
+        parameters: const [
           Parameter.boolean('a'),
           Parameter.boolean('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 
-  static BooleanNode execute({
-    required FunctionNode function,
-    required List<Node> arguments,
+  static BooleanTerm execute({
+    required FunctionTerm function,
+    required List<Term> arguments,
   }) {
-    final Node a = arguments[0].evaluate();
+    final Term a = arguments[0].reduce();
 
-    if (a is BooleanNode) {
+    if (a is BooleanTerm) {
       if (a.value) {
-        return const BooleanNode(true);
+        return const BooleanTerm(true);
       } else {
-        final Node b = arguments[1].evaluate();
+        final Term b = arguments[1].reduce();
 
-        if (b is BooleanNode) {
+        if (b is BooleanTerm) {
           return b;
         } else {
           throw InvalidArgumentTypesError(
@@ -51,15 +51,15 @@ class BoolOr extends NativeFunctionNode {
   }
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() => BoolOr.execute(
+  Term reduce() => BoolOr.execute(
     function: this,
     arguments: arguments,
   );

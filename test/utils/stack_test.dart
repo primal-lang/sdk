@@ -40,9 +40,19 @@ void main() {
       expect(stack.length, 3);
     });
 
-    test('pop returns last pushed element', () {
+    test('pop returns last pushed element and new stack', () {
       final Stack<int> stack = Stack<int>().push(1).push(2).push(3);
-      expect(stack.pop(), 3);
+      final (int value, Stack<int> newStack) = stack.pop();
+      expect(value, 3);
+      expect(newStack.length, 2);
+      expect(newStack.peek, 2);
+    });
+
+    test('pop does not modify original stack', () {
+      final Stack<int> stack = Stack<int>().push(1).push(2).push(3);
+      stack.pop();
+      expect(stack.length, 3);
+      expect(stack.peek, 3);
     });
 
     test('peek returns last element without removing', () {
@@ -54,6 +64,11 @@ void main() {
     test('peek on empty stack throws StateError', () {
       final Stack<int> stack = Stack();
       expect(() => stack.peek, throwsStateError);
+    });
+
+    test('pop on empty stack throws StateError', () {
+      final Stack<int> stack = Stack();
+      expect(stack.pop, throwsStateError);
     });
 
     test('isNotEmpty is true after push', () {

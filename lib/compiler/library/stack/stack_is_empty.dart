@@ -1,37 +1,37 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class StackIsEmpty extends NativeFunctionNode {
-  StackIsEmpty()
+class StackIsEmpty extends NativeFunctionTerm {
+  const StackIsEmpty()
     : super(
         name: 'stack.isEmpty',
-        parameters: [
+        parameters: const [
           Parameter.stack('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is StackNode) {
-      return BooleanNode(a.value.isEmpty);
+    if (a is StackTerm) {
+      return BooleanTerm(a.value.isEmpty);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

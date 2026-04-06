@@ -1,12 +1,12 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class StrReplace extends NativeFunctionNode {
-  StrReplace()
+class StrReplace extends NativeFunctionTerm {
+  const StrReplace()
     : super(
         name: 'str.replace',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),
           Parameter.string('c'),
@@ -14,28 +14,28 @@ class StrReplace extends NativeFunctionNode {
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
-    final Node c = arguments[2].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+    final Term c = arguments[2].reduce();
 
-    if ((a is StringNode) && (b is StringNode) && (c is StringNode)) {
-      return StringNode(a.value.replaceAll(RegExp(b.value), c.value));
+    if ((a is StringTerm) && (b is StringTerm) && (c is StringTerm)) {
+      return StringTerm(a.value.replaceAll(RegExp(b.value), c.value));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

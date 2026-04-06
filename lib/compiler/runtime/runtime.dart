@@ -1,53 +1,15 @@
 import 'dart:io';
-import 'package:primal/compiler/compiler.dart';
+
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/runtime/node.dart';
-import 'package:primal/compiler/runtime/scope.dart';
-import 'package:primal/compiler/semantic/intermediate_code.dart';
-import 'package:primal/compiler/semantic/semantic_analyzer.dart';
-import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/runtime/runtime_input.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
 class Runtime {
-  final IntermediateCode intermediateCode;
+  final RuntimeInput input;
 
-  // TODO(momo): pass it as a parameter
-  static Scope<FunctionNode> SCOPE = const Scope();
+  const Runtime(this.input);
 
-  Runtime(this.intermediateCode) {
-    SCOPE = Scope(intermediateCode.functions);
-  }
-
-  bool get hasMain => intermediateCode.functions.containsKey('main');
-
-  Expression mainExpression(List<String> arguments) {
-    const Compiler compiler = Compiler();
-
-    final FunctionNode? main = intermediateCode.functions['main'];
-
-    if ((main != null) && main.parameters.isNotEmpty) {
-      return compiler.expression(
-        'main(${arguments.map((e) => '"$e"').join(', ')})',
-      );
-    } else {
-      return compiler.expression('main()');
-    }
-  }
-
-  String executeMain([List<String>? arguments]) {
-    final Expression expression = mainExpression(arguments ?? []);
-
-    return evaluate(expression);
-  }
-
-  String evaluate(Expression expression) {
-    final Node validated = SemanticAnalyzer.validateExpression(
-      expression.toNode(),
-      intermediateCode.functions,
-    );
-    final Node result = validated.evaluate();
-
-    return format(result.native()).toString();
-  }
+  Term reduceTerm(Term term) => term.reduce();
 
   dynamic format(dynamic value) {
     if (value is bool) {

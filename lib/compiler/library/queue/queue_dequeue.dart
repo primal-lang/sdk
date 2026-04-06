@@ -1,41 +1,41 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class QueueDequeue extends NativeFunctionNode {
-  QueueDequeue()
+class QueueDequeue extends NativeFunctionTerm {
+  const QueueDequeue()
     : super(
         name: 'queue.dequeue',
-        parameters: [
+        parameters: const [
           Parameter.queue('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is QueueNode) {
+    if (a is QueueTerm) {
       if (a.value.isEmpty) {
         throw const RuntimeError('Cannot dequeue from an empty queue');
       }
 
-      return QueueNode(a.value.sublist(1));
+      return QueueTerm(a.value.sublist(1));
     } else {
       throw InvalidArgumentTypesError(
         function: name,

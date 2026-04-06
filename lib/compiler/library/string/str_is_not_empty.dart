@@ -1,37 +1,37 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class StrIsNotEmpty extends NativeFunctionNode {
-  StrIsNotEmpty()
+class StrIsNotEmpty extends NativeFunctionTerm {
+  const StrIsNotEmpty()
     : super(
         name: 'str.isNotEmpty',
-        parameters: [
+        parameters: const [
           Parameter.string('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
 
-    if (a is StringNode) {
-      return BooleanNode(a.value.isNotEmpty);
+    if (a is StringTerm) {
+      return BooleanTerm(a.value.isNotEmpty);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

@@ -37,9 +37,7 @@ The language is designed primarily for educational purposes. It aims to teach pr
 
 The language has the following characteristics:
 
-- Lazy evaluated
 - Dynamically typed
-- Immutable
 - Single threaded
 - Interpreted
 - Expression oriented
@@ -58,9 +56,11 @@ If no source file is provided, the interpreter starts in interactive mode.
 
 ## Philosophy
 
-Everything in `Primal` is a function, which can be composed to create more complex functions. Functions cannot be overloaded (i.e. only one function with a given name can exist in a program). The full list of functions can be found in the [reference](https://primal-lang.org/reference) page.
+Everything in `Primal` is a function, which can be composed to create more complex functions. Functions are first-class values, meaning they can be passed as arguments to other functions and returned as results. The language includes a comprehensive set of over 200 core functions, providing developers with a wide range of useful tools. The full list can be found in the [reference](https://primal-lang.org/reference) page.
 
 Being a functional language, `Primal` does not have loop constructions. Instead, it uses recursion to perform repetitive tasks, allowing for a more declarative style of programming.
+
+All values in `Primal` are immutable. Once a value is created, it cannot be changed. This design choice simplifies reasoning about programs and avoids common bugs related to shared mutable state.
 
 ## Syntax
 
@@ -88,6 +88,12 @@ And here is an example of a function without parameters:
 pi = 3.14159;
 ```
 
+Here is an example of a conditional expression:
+
+```javascript
+abs(n) = if (n >= 0) n else -n
+```
+
 ## Main function
 
 There is a special function in the language called main, which serves as the entry point of a program when it is run. The main function is optional and can be declared with any number of parameters, including none. If present, it can call other functions and perform computations to produce a result.
@@ -102,18 +108,26 @@ This approach offers flexibility and ease of use but relies on runtime checks to
 
 These are the available types at runtime:
 
+Primitives:
+
 - Boolean
 - Number
 - String
-- Timestamp
+
+Collections:
+
 - List
 - Map
 - Set
 - Stack
 - Queue
 - Vector
+
+System:
+
 - File
 - Directory
+- Timestamp
 - Function
 
 ## Runtime

@@ -1,72 +1,72 @@
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class CompEq extends NativeFunctionNode {
-  CompEq()
+class CompEq extends NativeFunctionTerm {
+  const CompEq()
     : super(
         name: 'comp.eq',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
           Parameter.any('b'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 
-  static BooleanNode execute({
-    required FunctionNode function,
-    required Node a,
-    required Node b,
+  static BooleanTerm execute({
+    required FunctionTerm function,
+    required Term a,
+    required Term b,
   }) {
-    if ((a is BooleanNode) && (b is BooleanNode)) {
-      return BooleanNode(a.value == b.value);
-    } else if ((a is NumberNode) && (b is NumberNode)) {
-      return BooleanNode(a.value == b.value);
-    } else if ((a is StringNode) && (b is StringNode)) {
-      return BooleanNode(a.value == b.value);
-    } else if ((a is TimestampNode) && (b is TimestampNode)) {
-      return BooleanNode(a.value.compareTo(b.value) == 0);
-    } else if ((a is FileNode) && (b is FileNode)) {
-      return BooleanNode(a.value.absolute.path == b.value.absolute.path);
-    } else if ((a is DirectoryNode) && (b is DirectoryNode)) {
-      return BooleanNode(a.value.absolute.path == b.value.absolute.path);
-    } else if ((a is ListNode) && (b is ListNode)) {
+    if ((a is BooleanTerm) && (b is BooleanTerm)) {
+      return BooleanTerm(a.value == b.value);
+    } else if ((a is NumberTerm) && (b is NumberTerm)) {
+      return BooleanTerm(a.value == b.value);
+    } else if ((a is StringTerm) && (b is StringTerm)) {
+      return BooleanTerm(a.value == b.value);
+    } else if ((a is TimestampTerm) && (b is TimestampTerm)) {
+      return BooleanTerm(a.value.compareTo(b.value) == 0);
+    } else if ((a is FileTerm) && (b is FileTerm)) {
+      return BooleanTerm(a.value.absolute.path == b.value.absolute.path);
+    } else if ((a is DirectoryTerm) && (b is DirectoryTerm)) {
+      return BooleanTerm(a.value.absolute.path == b.value.absolute.path);
+    } else if ((a is ListTerm) && (b is ListTerm)) {
       return compareLists(
         function: function,
         listA: a.value,
         listB: b.value,
       );
-    } else if ((a is VectorNode) && (b is VectorNode)) {
+    } else if ((a is VectorTerm) && (b is VectorTerm)) {
       return compareLists(
         function: function,
         listA: a.value,
         listB: b.value,
       );
-    } else if ((a is StackNode) && (b is StackNode)) {
+    } else if ((a is StackTerm) && (b is StackTerm)) {
       return compareLists(
         function: function,
         listA: a.value,
         listB: b.value,
       );
-    } else if ((a is QueueNode) && (b is QueueNode)) {
+    } else if ((a is QueueTerm) && (b is QueueTerm)) {
       return compareLists(
         function: function,
         listA: a.value,
         listB: b.value,
       );
-    } else if ((a is SetNode) && (b is SetNode)) {
+    } else if ((a is SetTerm) && (b is SetTerm)) {
       return compareSets(
         function: function,
         setA: a.native(),
         setB: b.native(),
       );
-    } else if ((a is MapNode) && (b is MapNode)) {
+    } else if ((a is MapTerm) && (b is MapTerm)) {
       return compareMaps(
         function: function,
         a: a,
@@ -81,58 +81,58 @@ class CompEq extends NativeFunctionNode {
     }
   }
 
-  static BooleanNode compareLists({
-    required FunctionNode function,
+  static BooleanTerm compareLists({
+    required FunctionTerm function,
     required List listA,
     required List listB,
   }) {
     if (listA.length != listB.length) {
-      return const BooleanNode(false);
+      return const BooleanTerm(false);
     } else {
       for (int i = 0; i < listA.length; i++) {
-        final BooleanNode comparison = execute(
+        final BooleanTerm comparison = execute(
           function: function,
-          a: listA[i].evaluate(),
-          b: listB[i].evaluate(),
+          a: listA[i].reduce(),
+          b: listB[i].reduce(),
         );
 
         if (!comparison.value) {
-          return const BooleanNode(false);
+          return const BooleanTerm(false);
         }
       }
 
-      return const BooleanNode(true);
+      return const BooleanTerm(true);
     }
   }
 
-  static BooleanNode compareSets({
-    required FunctionNode function,
+  static BooleanTerm compareSets({
+    required FunctionTerm function,
     required Set setA,
     required Set setB,
   }) {
     if (setA.length != setB.length) {
-      return const BooleanNode(false);
+      return const BooleanTerm(false);
     } else {
       for (final dynamic element in setA) {
         if (!setB.contains(element)) {
-          return const BooleanNode(false);
+          return const BooleanTerm(false);
         }
       }
 
-      return const BooleanNode(true);
+      return const BooleanTerm(true);
     }
   }
 
-  static BooleanNode compareMaps({
-    required FunctionNode function,
-    required MapNode a,
-    required MapNode b,
+  static BooleanTerm compareMaps({
+    required FunctionTerm function,
+    required MapTerm a,
+    required MapTerm b,
   }) {
     if (a.value.length != b.value.length) {
-      return const BooleanNode(false);
+      return const BooleanTerm(false);
     } else {
-      final Map<dynamic, Node> mapA = a.asMapWithKeys();
-      final Map<dynamic, Node> mapB = b.asMapWithKeys();
+      final Map<dynamic, Term> mapA = a.asMapWithKeys();
+      final Map<dynamic, Term> mapB = b.asMapWithKeys();
 
       final Set<dynamic> keys = {
         ...mapA.keys,
@@ -141,36 +141,36 @@ class CompEq extends NativeFunctionNode {
 
       for (final dynamic key in keys) {
         if (!mapA.containsKey(key) || !mapB.containsKey(key)) {
-          return const BooleanNode(false);
+          return const BooleanTerm(false);
         }
 
-        final BooleanNode comparison = execute(
+        final BooleanTerm comparison = execute(
           function: function,
-          a: mapA[key]!.evaluate(),
-          b: mapB[key]!.evaluate(),
+          a: mapA[key]!.reduce(),
+          b: mapB[key]!.reduce(),
         );
 
         if (!comparison.value) {
-          return const BooleanNode(false);
+          return const BooleanTerm(false);
         }
       }
 
-      return const BooleanNode(true);
+      return const BooleanTerm(true);
     }
   }
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
-    final Node b = arguments[1].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
 
     return CompEq.execute(
       function: this,

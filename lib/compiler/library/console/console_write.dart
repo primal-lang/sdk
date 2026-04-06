@@ -1,35 +1,35 @@
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/platform/base/platform_cli.dart'
     if (dart.library.html) 'package:primal/compiler/platform/base/platform_web.dart';
-import 'package:primal/compiler/runtime/node.dart';
+import 'package:primal/compiler/runtime/term.dart';
 
-class ConsoleWrite extends NativeFunctionNode {
-  ConsoleWrite()
+class ConsoleWrite extends NativeFunctionTerm {
+  const ConsoleWrite()
     : super(
         name: 'console.write',
-        parameters: [
+        parameters: const [
           Parameter.any('a'),
         ],
       );
 
   @override
-  Node node(List<Node> arguments) => NodeWithArguments(
+  Term term(List<Term> arguments) => TermWithArguments(
     name: name,
     parameters: parameters,
     arguments: arguments,
   );
 }
 
-class NodeWithArguments extends NativeFunctionNodeWithArguments {
-  const NodeWithArguments({
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
     required super.name,
     required super.parameters,
     required super.arguments,
   });
 
   @override
-  Node evaluate() {
-    final Node a = arguments[0].evaluate();
+  Term reduce() {
+    final Term a = arguments[0].reduce();
     PlatformInterface().console.outWrite(a.toString());
 
     return a;
