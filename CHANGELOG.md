@@ -57,7 +57,7 @@
   - File
   - Directory
   - JSON
-  - Hashing
+  - Hash
   - Environment
 
 ### Runtime
