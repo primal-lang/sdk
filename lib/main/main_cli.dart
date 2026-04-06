@@ -194,6 +194,9 @@ void _runRepl({
             } else {
               console.print(signatures.join('\n'));
             }
+          case ':reset':
+            runtime.reset();
+            console.print('All user-defined functions cleared.');
           default:
             console.error(
               "Unknown command '$input'. Type :help for available commands.",

@@ -15,42 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 7. `:reset` (Medium)
-
-**Difficulty**: Medium
-**Estimated Lines**: ~15
-
-**Description**: Clear all user-defined functions.
-
-**Implementation**:
-
-1. Add a method `void reset()` to `RuntimeFacade`
-2. This method should:
-   - Clear `_userDefinedFunctions` set
-   - Remove all user-defined functions from `_runtimeInput.functions`
-   - Remove their signatures from `_allSignatures`
-3. Call this method when `:reset` is entered
-4. Print confirmation message
-
-**Files to Modify**:
-
-- `lib/compiler/lowering/runtime_facade.dart` (add `reset()` method)
-- `lib/main/main_cli.dart` (add command handler)
-
-**Implementation Detail**:
-
-```dart
-void reset() {
-  for (final String name in _userDefinedFunctions) {
-    _runtimeInput.functions.remove(name);
-    _allSignatures.remove(name);
-  }
-  _userDefinedFunctions.clear();
-}
-```
-
----
-
 ### 8. `:delete <name>` (Medium)
 
 **Difficulty**: Medium

@@ -76,6 +76,15 @@ class RuntimeFacade {
     return signatures;
   }
 
+  /// Clears all user-defined functions from the runtime.
+  void reset() {
+    for (final String name in _userDefinedFunctions) {
+      _runtimeInput.functions.remove(name);
+      _allSignatures.remove(name);
+    }
+    _userDefinedFunctions.clear();
+  }
+
   Expression mainExpression(List<String> arguments) {
     final FunctionTerm? main = _runtimeInput.getFunction('main');
 
