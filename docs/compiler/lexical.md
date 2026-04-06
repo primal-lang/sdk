@@ -188,7 +188,7 @@ Single-character delimiters (`(`, `)`, `[`, `]`, `{`, `}`, `,`, `:`) are emitted
 Both comment styles are recognized and discarded (they produce no tokens):
 
 - **Single-line** (`//`): `ForwardSlashState` sees a second `/` and enters `SingleLineCommentState`, which consumes characters until a newline, then returns to `InitState`.
-- **Multi-line** (`/* */`): `ForwardSlashState` sees `*` and enters `StartMultiLineCommentState`, which scans for `*`. When `*` is found, it transitions to `ClosingMultiLineCommentState`, which checks for `/`. If `/` follows, the comment is closed and the machine returns to `InitState`. If not, it falls back to `StartMultiLineCommentState` to keep scanning.
+- **Multi-line** (`/* */`): `ForwardSlashState` sees `*` and enters `StartMultiLineCommentState`, which scans for `*`. When `*` is found, it transitions to `ClosingMultiLineCommentState`, which checks for `/`. If `/` follows, the comment is closed and the machine returns to `InitState`. If the next character is another `*`, the state stays in `ClosingMultiLineCommentState` (handling consecutive `*` characters such as in `/***/`). Otherwise, it falls back to `StartMultiLineCommentState` to keep scanning.
 
 ## Error Handling
 
@@ -199,6 +199,8 @@ When a state encounters an unexpected character, it throws `InvalidCharacterErro
 - `DecimalState` expects `'digit or underscore'`
 - `ExponentInitState` expects `'digit or sign'`
 - `ExponentSignState` and `ExponentState` expect `'digit'`
+
+Additionally, `IntegerState`, `DecimalState`, and `ExponentState` throw `InvalidCharacterError` with expected `'digit'` when a non-digit character follows an underscore (e.g., after an underscore before a dot, exponent, or delimiter).
 
 All other states throw a generic `InvalidCharacterError` with just the offending character.
 
@@ -223,6 +225,7 @@ All tokens extend `Token<T>` and carry a typed value plus location:
 | Assignment  | `AssignToken` (`=`)                                                                                                                                                                                                           | `String`                |
 | Binary ops  | `PlusToken`, `MinusToken`, `AsteriskToken`, `ForwardSlashToken`, `PercentToken`, `PipeToken`, `AmpersandToken`, `EqualToken`, `NotEqualToken`, `GreaterThanToken`, `GreaterOrEqualToken`, `LessThanToken`, `LessOrEqualToken` | `String`                |
 | Unary ops   | `BangToken`                                                                                                                                                                                                                   | `String`                |
+| Symbols     | `AtToken` (`@`)                                                                                                                                                                                                               | `String`                |
 | Delimiters  | `OpenParenthesisToken`, `CloseParenthesisToken`, `OpenBracketToken`, `CloseBracketToken`, `OpenBracesToken`, `CloseBracesToken`, `CommaToken`, `ColonToken`                                                                   | `String`                |
 
 `NumberToken` parses the lexeme string to `num` and `BooleanToken` parses to `bool` at construction time. All other token types store the raw lexeme string.

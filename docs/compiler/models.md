@@ -19,17 +19,19 @@ Used by all phases to track source positions for error reporting.
 
 ## Located
 
-**File**: `lib/compiler/models/location.dart`
+**File**: `lib/compiler/models/located.dart`
 
-Mixin/base class for objects that have a source location:
+Base class for objects that have a source location:
 
 ```dart
-mixin class Located {
+class Located {
   final Location location;
+
+  const Located({required this.location});
 }
 ```
 
-Extended by `Character`, `Token`, `Expression`, `SemanticNode`, and other AST types.
+Extended by `Character`, `Token`, `Lexeme`, `Expression`, `MapEntryExpression`, and other AST types.
 
 ## Parameter
 
@@ -44,10 +46,19 @@ Represents a function parameter:
 
 Factory constructors provide convenient creation:
 
+- `Parameter.boolean(name)` - boolean parameter
 - `Parameter.number(name)` - numeric parameter
 - `Parameter.string(name)` - string parameter
-- `Parameter.boolean(name)` - boolean parameter
+- `Parameter.file(name)` - file parameter
+- `Parameter.directory(name)` - directory parameter
+- `Parameter.timestamp(name)` - timestamp parameter
 - `Parameter.list(name)` - list parameter
+- `Parameter.vector(name)` - vector parameter
+- `Parameter.set(name)` - set parameter
+- `Parameter.stack(name)` - stack parameter
+- `Parameter.queue(name)` - queue parameter
+- `Parameter.map(name)` - map parameter
+- `Parameter.function(name)` - function parameter
 - `Parameter.any(name)` - accepts any type
 
 ## FunctionSignature
@@ -89,10 +100,40 @@ Base class for type representations. See [compiler.md](../compiler.md#1-type-sys
 Abstract base class for pipeline stages:
 
 ```dart
-abstract class Analyzer<Input, Output> {
-  const Analyzer();
-  Output analyze();
+abstract class Analyzer<I, O> {
+  final I input;
+
+  const Analyzer(this.input);
+
+  O analyze();
 }
 ```
 
 Implemented by `SourceReader`, `LexicalAnalyzer`, `SyntacticAnalyzer`, and `SemanticAnalyzer`.
+
+## State
+
+**File**: `lib/compiler/models/state.dart`
+
+Pairs a `ListIterator` with an accumulated output value, used during parsing to thread iterator position through recursive descent:
+
+```dart
+class State<I, O> {
+  final O output;
+  final ListIterator<I> iterator;
+
+  const State(this.iterator, this.output);
+
+  State get next => process(iterator.next);
+
+  State process(I input) => this;
+}
+```
+
+| Field      | Type              | Description                          |
+| ---------- | ----------------- | ------------------------------------ |
+| `output`   | `O`               | Accumulated result of processing     |
+| `iterator` | `ListIterator<I>` | Current position in the input stream |
+
+- `next` - advances the iterator and processes the next element
+- `process(input)` - base implementation returns `this` unchanged; subclasses override to define state transitions

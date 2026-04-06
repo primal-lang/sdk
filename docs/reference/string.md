@@ -33,6 +33,7 @@
 - **Signature:** `str.at(a: String, b: Number): String`
 - **Input:** A string and an index
 - **Output:** The character at the specified index
+- **Constraints:** Throws an error if the index is negative or out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -45,6 +46,7 @@ str.at("hello", 1) // returns "e"
 - **Signature:** `str.first(a: String): String`
 - **Input:** One string
 - **Output:** The first character of the string
+- **Constraints:** Throws an error if the string is empty
 - **Purity:** Pure
 - **Example:**
 
@@ -57,6 +59,7 @@ str.first("hello") // returns "h"
 - **Signature:** `str.last(a: String): String`
 - **Input:** One string
 - **Output:** The last character of the string
+- **Constraints:** Throws an error if the string is empty
 - **Purity:** Pure
 - **Example:**
 
@@ -69,6 +72,7 @@ str.last("hello") // returns "o"
 - **Signature:** `str.substring(a: String, b: Number, c: Number): String`
 - **Input:** A string, a start index, and an end index
 - **Output:** The extracted portion of the string
+- **Constraints:** Throws an error if the start index is negative, or if the start or end index is out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -105,6 +109,7 @@ str.rest("hello") // returns "ello"
 - **Signature:** `str.take(a: String, b: Number): String`
 - **Input:** A string and a number
 - **Output:** The first n characters from the string
+- **Constraints:** Throws an error if the number is negative
 - **Purity:** Pure
 - **Example:**
 
@@ -117,6 +122,7 @@ str.take("hello", 3) // returns "hel"
 - **Signature:** `str.drop(a: String, b: Number): String`
 - **Input:** A string and a number
 - **Output:** A new string omitting the first n characters
+- **Constraints:** Throws an error if the number is negative
 - **Purity:** Pure
 - **Example:**
 
@@ -141,8 +147,8 @@ str.concat("hello", " world") // returns "hello world"
 ### Replace
 
 - **Signature:** `str.replace(a: String, b: String, c: String): String`
-- **Input:** A string, a target substring, and a replacement substring
-- **Output:** A new string with all instances of the target replaced
+- **Input:** A string, a regex pattern, and a replacement string
+- **Output:** A new string with all matches of the pattern replaced
 - **Purity:** Pure
 - **Example:**
 
@@ -191,6 +197,7 @@ str.trim("  hello  ") // returns "hello"
 - **Signature:** `str.removeAt(a: String, b: Number): String`
 - **Input:** A string and an index
 - **Output:** A new string with the character at the specified index removed
+- **Constraints:** Throws an error if the index is negative or out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -289,6 +296,7 @@ str.endsWith("hello", "llo") // returns true
 - **Signature:** `str.match(a: String, b: String): Boolean`
 - **Input:** A string and a regex pattern
 - **Output:** True if the string matches the pattern, false otherwise
+- **Constraints:** Throws an error if the pattern is not a valid regex
 - **Purity:** Pure
 - **Example:**
 
@@ -298,9 +306,9 @@ str.match("hello123", "[a-z]+[0-9]+") // returns true
 
 ### Index Of
 
-- **Signature:** `str.indexOf(a: String, b: Any): Number`
-- **Input:** A string and a value
-- **Output:** The position of the first occurrence, or -1 if not found
+- **Signature:** `str.indexOf(a: String, b: String): Number`
+- **Input:** Two strings
+- **Output:** The position of the first occurrence of the second string, or -1 if not found
 - **Purity:** Pure
 - **Example:**
 

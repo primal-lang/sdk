@@ -33,6 +33,7 @@ queue.enqueue(queue.new([1, 2]), 3) // returns a queue [1, 2, 3]
 - **Signature:** `queue.dequeue(a: Queue): Queue`
 - **Input:** One queue
 - **Output:** A new queue with the front element removed
+- **Constraints:** Throws an error if the queue is empty
 - **Purity:** Pure
 - **Example:**
 
@@ -45,6 +46,7 @@ queue.dequeue(queue.new([1, 2, 3])) // returns a queue [2, 3]
 - **Signature:** `queue.peek(a: Queue): Any`
 - **Input:** One queue
 - **Output:** The element at the front of the queue
+- **Constraints:** Throws an error if the queue is empty
 - **Purity:** Pure
 - **Example:**
 

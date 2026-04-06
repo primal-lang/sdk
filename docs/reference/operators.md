@@ -29,8 +29,12 @@
 ### Greater Than
 
 - **Symbol:** `>`
-- **Input:** Two numbers
-- **Output:** True if first number exceeds the second, false otherwise
+- **Input:** Two arguments of the same type
+- **Output:** True if first argument exceeds the second, false otherwise
+- **Supported combinations:**
+  - `Number > Number`
+  - `String > String` (lexicographic)
+  - `Timestamp > Timestamp`
 - **Purity:** Pure
 - **Example:**
 
@@ -41,8 +45,12 @@
 ### Less Than
 
 - **Symbol:** `<`
-- **Input:** Two numbers
-- **Output:** True if first number is less than second, false otherwise
+- **Input:** Two arguments of the same type
+- **Output:** True if first argument is less than second, false otherwise
+- **Supported combinations:**
+  - `Number < Number`
+  - `String < String` (lexicographic)
+  - `Timestamp < Timestamp`
 - **Purity:** Pure
 - **Example:**
 
@@ -53,8 +61,12 @@
 ### Greater Than or Equal
 
 - **Symbol:** `>=`
-- **Input:** Two numbers
-- **Output:** True if first number is greater than or equal to second, false otherwise
+- **Input:** Two arguments of the same type
+- **Output:** True if first argument is greater than or equal to second, false otherwise
+- **Supported combinations:**
+  - `Number >= Number`
+  - `String >= String` (lexicographic)
+  - `Timestamp >= Timestamp`
 - **Purity:** Pure
 - **Example:**
 
@@ -65,8 +77,12 @@
 ### Less Than or Equal
 
 - **Symbol:** `<=`
-- **Input:** Two numbers
-- **Output:** True if first number is less than or equal to second, false otherwise
+- **Input:** Two arguments of the same type
+- **Output:** True if first argument is less than or equal to second, false otherwise
+- **Supported combinations:**
+  - `Number <= Number`
+  - `String <= String` (lexicographic)
+  - `Timestamp <= Timestamp`
 - **Purity:** Pure
 - **Example:**
 
@@ -113,18 +129,6 @@
 
 ```
 10 - 3 // returns 7
-```
-
-### Negation
-
-- **Symbol:** `-`
-- **Input:** One number
-- **Output:** The negated number
-- **Purity:** Pure
-- **Example:**
-
-```
--5 // returns -5
 ```
 
 ### Multiplication
@@ -199,28 +203,4 @@ true | false // returns true
 
 ```
 !true // returns false
-```
-
-## Access Operators
-
-### Element At
-
-- **Symbol:** `@`
-- **Input:** A collection and an index/key
-- **Output:** The element at the specified position or key
-- **Supported combinations:**
-  - `List @ Number` (element at index)
-  - `String @ Number` (character at index)
-  - `Map @ Key` (value for key)
-- **Errors:**
-  - Throws if index is negative
-  - Throws if index is out of bounds
-  - Throws if key is not found in map
-- **Purity:** Pure
-- **Example:**
-
-```
-[1, 2, 3] @ 0      // returns 1
-"hello" @ 1        // returns "e"
-{"a": 1, "b": 2} @ "a"  // returns 1
 ```

@@ -6,9 +6,7 @@ This document walks through the complete compilation and evaluation of a Primal 
 
 ```primal
 square(n) = n * n
-
 max(a, b) = if (a >= b) a else b
-
 main = max(square(3), square(4))
 ```
 
@@ -777,7 +775,7 @@ SemanticFunction(
   name: "max",
   parameters: [Parameter("a"), Parameter("b")],
   body: SemanticCallNode [2, 13]
-    ├─ callee: SemanticIdentifierNode("if", signature=if(c, t, f))
+    ├─ callee: SemanticIdentifierNode("if", signature=if(a, b, c))
     └─ arguments:
        ├─ SemanticCallNode [2, 19]
        │  ├─ callee: SemanticIdentifierNode(">=", signature=>=(a, b))
@@ -964,7 +962,7 @@ SemanticFunction(
 CustomFunctionTerm(
   name: "square",
   parameters: [Parameter("n")],
-  node: CallTerm(
+  term: CallTerm(
     callee: FunctionReferenceTerm("*", functions),
     arguments: [
       BoundVariableTerm("n"),
@@ -983,7 +981,7 @@ SemanticFunction(
   name: "max",
   parameters: [Parameter("a"), Parameter("b")],
   body: SemanticCallNode [2, 13]
-    ├─ callee: SemanticIdentifierNode("if", signature=if(c, t, f))
+    ├─ callee: SemanticIdentifierNode("if", signature=if(a, b, c))
     └─ arguments:
        ├─ SemanticCallNode [2, 19]
        │  ├─ callee: SemanticIdentifierNode(">=", signature=>=(a, b))
@@ -1018,7 +1016,7 @@ SemanticFunction(
 CustomFunctionTerm(
   name: "max",
   parameters: [Parameter("a"), Parameter("b")],
-  node: CallTerm(
+  term: CallTerm(
     callee: FunctionReferenceTerm("if", functions),
     arguments: [
       CallTerm(                              // condition
@@ -1081,7 +1079,7 @@ SemanticFunction(
 CustomFunctionTerm(
   name: "main",
   parameters: [],
-  node: CallTerm(
+  term: CallTerm(
     callee: FunctionReferenceTerm("max", functions),
     arguments: [
       CallTerm(
@@ -1107,17 +1105,17 @@ The `Lowerer` produces a `Map<String, FunctionTerm>` combining custom and standa
   "square": CustomFunctionTerm(
     name: "square",
     parameters: [Parameter("n")],
-    node: CallTerm(FunctionReferenceTerm("*"), [BoundVariableTerm("n"), BoundVariableTerm("n")])
+    term: CallTerm(FunctionReferenceTerm("*"), [BoundVariableTerm("n"), BoundVariableTerm("n")])
   ),
   "max": CustomFunctionTerm(
     name: "max",
     parameters: [Parameter("a"), Parameter("b")],
-    node: CallTerm(FunctionReferenceTerm("if"), [CallTerm(...), BoundVariableTerm("a"), BoundVariableTerm("b")])
+    term: CallTerm(FunctionReferenceTerm("if"), [CallTerm(...), BoundVariableTerm("a"), BoundVariableTerm("b")])
   ),
   "main": CustomFunctionTerm(
     name: "main",
     parameters: [],
-    node: CallTerm(FunctionReferenceTerm("max"), [CallTerm(...), CallTerm(...)])
+    term: CallTerm(FunctionReferenceTerm("max"), [CallTerm(...), CallTerm(...)])
   ),
 
   // Standard library functions (from StandardLibrary.get())
@@ -1136,7 +1134,7 @@ Source locations are stripped; the tree shows only runtime structure.
 square(n) = n * n
 ─────────────────
       CustomFunctionTerm("square")
-      └─ node: CallTerm
+      └─ term: CallTerm
          ├─ callee: FunctionReferenceTerm("*") → functions map
          └─ arguments:
             ├─ BoundVariableTerm("n")
@@ -1145,7 +1143,7 @@ square(n) = n * n
 max(a, b) = if (a >= b) a else b
 ────────────────────────────────
       CustomFunctionTerm("max")
-      └─ node: CallTerm
+      └─ term: CallTerm
          ├─ callee: FunctionReferenceTerm("if") → functions map
          └─ arguments:
             ├─ CallTerm                    ← condition
@@ -1159,7 +1157,7 @@ max(a, b) = if (a >= b) a else b
 main = max(square(3), square(4))
 ────────────────────────────────
       CustomFunctionTerm("main")
-      └─ node: CallTerm
+      └─ term: CallTerm
          ├─ callee: FunctionReferenceTerm("max") → functions map
          └─ arguments:
             ├─ CallTerm

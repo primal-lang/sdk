@@ -141,6 +141,7 @@ num.mul(3, 4) // returns 12
 - **Signature:** `num.div(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The quotient of the numbers
+- **Constraints:** Throws an error if the divisor is zero
 - **Purity:** Pure
 - **Example:**
 
@@ -153,6 +154,7 @@ num.div(10, 2) // returns 5
 - **Signature:** `num.mod(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** The remainder of dividing the numbers
+- **Constraints:** Throws an error if the divisor is zero
 - **Purity:** Pure
 - **Example:**
 
@@ -178,6 +180,7 @@ num.pow(2, 3) // returns 8
 - **Signature:** `num.sqrt(a: Number): Number`
 - **Input:** One number
 - **Output:** The square root of the number
+- **Constraints:** Throws an error if the number is negative
 - **Purity:** Pure
 - **Example:**
 
@@ -304,6 +307,7 @@ num.tan(0) // returns 0
 - **Signature:** `num.log(a: Number): Number`
 - **Input:** One number
 - **Output:** The natural logarithm of the number
+- **Constraints:** Throws an error if the number is not positive
 - **Purity:** Pure
 - **Example:**
 
@@ -404,6 +408,7 @@ num.isOdd(3) // returns true
 - **Signature:** `num.integerRandom(a: Number, b: Number): Number`
 - **Input:** Two numbers
 - **Output:** A random integer between the two numbers (inclusive)
+- **Constraints:** Throws an error if the second number is less than the first, or if the range overflows
 - **Purity:** Impure
 - **Example:**
 

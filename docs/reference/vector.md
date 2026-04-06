@@ -21,6 +21,7 @@ vector.new([1, 2, 3]) // returns a vector <1, 2, 3>
 - **Signature:** `vector.add(a: Vector, b: Vector): Vector`
 - **Input:** Two vectors
 - **Output:** The sum of the two vectors
+- **Constraints:** Throws an error if the vectors have different lengths
 - **Purity:** Pure
 - **Example:**
 
@@ -33,6 +34,7 @@ vector.add(vector.new([1, 2]), vector.new([3, 4])) // returns <4, 6>
 - **Signature:** `vector.sub(a: Vector, b: Vector): Vector`
 - **Input:** Two vectors
 - **Output:** The difference of the two vectors
+- **Constraints:** Throws an error if the vectors have different lengths
 - **Purity:** Pure
 - **Example:**
 
@@ -45,6 +47,7 @@ vector.sub(vector.new([5, 7]), vector.new([2, 3])) // returns <3, 4>
 - **Signature:** `vector.normalize(a: Vector): Vector`
 - **Input:** One vector
 - **Output:** A vector with the same direction but with a magnitude of 1
+- **Constraints:** Throws an error if the vector has zero magnitude
 - **Purity:** Pure
 - **Example:**
 
@@ -71,6 +74,7 @@ vector.magnitude(vector.new([3, 4])) // returns 5
 - **Signature:** `vector.angle(a: Vector, b: Vector): Number`
 - **Input:** Two vectors
 - **Output:** The angle between the two vectors in radians
+- **Constraints:** Throws an error if the vectors have different lengths, if either vector is empty, or if either vector has zero magnitude
 - **Purity:** Pure
 - **Example:**
 

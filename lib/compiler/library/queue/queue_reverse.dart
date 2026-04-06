@@ -7,7 +7,7 @@ class QueueReverse extends NativeFunctionTerm {
     : super(
         name: 'queue.reverse',
         parameters: const [
-          Parameter.stack('a'),
+          Parameter.queue('a'),
         ],
       );
 

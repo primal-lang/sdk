@@ -33,6 +33,7 @@ stack.push(stack.new([1, 2]), 3) // returns a stack with 3 at the top
 - **Signature:** `stack.pop(a: Stack): Stack`
 - **Input:** One stack
 - **Output:** A new stack with the top element removed
+- **Constraints:** Throws an error if the stack is empty
 - **Purity:** Pure
 - **Example:**
 
@@ -45,6 +46,7 @@ stack.pop(stack.new([1, 2, 3])) // returns a stack with 2 at the top
 - **Signature:** `stack.peek(a: Stack): Any`
 - **Input:** One stack
 - **Output:** The element at the top of the stack
+- **Constraints:** Throws an error if the stack is empty
 - **Purity:** Pure
 - **Example:**
 
