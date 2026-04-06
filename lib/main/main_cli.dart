@@ -165,12 +165,6 @@ void _runRepl({
         console.print('[debug] Input: $input');
       }
 
-      // Handle Ctrl+L (form feed) to clear screen
-      if (input == '\x0c') {
-        console.print('\x1b[2J\x1b[H');
-        return;
-      }
-
       // Handle REPL commands
       if (_handleReplCommand(
         input: input,

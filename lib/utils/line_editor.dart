@@ -85,6 +85,16 @@ class LineEditor {
         continue;
       }
 
+      if (byte == 12) {
+        // Ctrl+L (clear screen)
+        stdout.write('\x1b[2J\x1b[H$_prompt${String.fromCharCodes(buffer)}');
+        final int moveBack = buffer.length - cursorPosition;
+        if (moveBack > 0) {
+          stdout.write('\x1b[${moveBack}D');
+        }
+        continue;
+      }
+
       if (byte == 27) {
         // Escape sequence
         final int next = stdin.readByteSync();
