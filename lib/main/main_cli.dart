@@ -113,6 +113,7 @@ void runCli(
         compiler: compiler,
         console: currentConsole,
         debug: debug,
+        sourceReader: sourceReader,
       );
     }
   } catch (e, stackTrace) {
@@ -154,6 +155,7 @@ void _runRepl({
   required Compiler compiler,
   required Console console,
   required bool debug,
+  required String Function(String) sourceReader,
 }) {
   bool debugMode = debug;
 
@@ -173,9 +175,11 @@ void _runRepl({
       if (_handleReplCommand(
         input: input,
         runtime: runtime,
+        compiler: compiler,
         console: console,
         debugMode: debugMode,
         setDebugMode: (bool value) => debugMode = value,
+        sourceReader: sourceReader,
       )) {
         return;
       }
@@ -229,9 +233,11 @@ void _runRepl({
 bool _handleReplCommand({
   required String input,
   required RuntimeFacade runtime,
+  required Compiler compiler,
   required Console console,
   required bool debugMode,
   required void Function(bool) setDebugMode,
+  required String Function(String) sourceReader,
 }) {
   if (!input.startsWith(':')) {
     return false;
@@ -261,6 +267,28 @@ bool _handleReplCommand({
     } else {
       runtime.renameFunction(parts[0], parts[1]);
       console.print("Function '${parts[0]}' renamed to '${parts[1]}'.");
+    }
+    return true;
+  }
+
+  if (input == ':load' || input.startsWith(':load ')) {
+    final String filePath = input.length > ':load '.length
+        ? input.substring(':load '.length).trim()
+        : '';
+    if (filePath.isEmpty) {
+      console.error('Usage: :load <file_path>');
+    } else {
+      final String source = sourceReader(filePath);
+      final IntermediateRepresentation representation = compiler.compile(
+        source,
+      );
+      for (final GenericWarning warning in representation.warnings) {
+        console.warning(warning);
+      }
+      final int count = runtime.loadFromIntermediateRepresentation(
+        representation,
+      );
+      console.print('Loaded $count function(s) from $filePath.');
     }
     return true;
   }

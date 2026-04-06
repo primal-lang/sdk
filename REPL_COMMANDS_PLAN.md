@@ -15,44 +15,6 @@ This document outlines the implementation plan for adding REPL commands to the P
 
 ## Commands (Sorted by Implementation Complexity)
 
-### 10. `:load <file>` (Hard)
-
-**Difficulty**: Hard
-**Estimated Lines**: ~50
-
-**Description**: Import definitions from a file without running main. Clears all previous definitions (reset).
-
-**Implementation**:
-
-1. Parse the command to extract the file path
-2. Call the existing `reset()` functionality first
-3. Read the file using the injected `readFile` function or `FileReader.read`
-4. Compile the file using `compiler.compile(source)`
-5. For each function in the `IntermediateRepresentation.customFunctions`:
-   - Need to convert back to a format that can be added to the runtime
-   - Or: Add a method to `RuntimeFacade` to bulk-load from an `IntermediateRepresentation`
-6. Handle warnings from compilation
-7. Print confirmation with count of loaded functions
-
-**Files to Modify**:
-
-- `lib/compiler/lowering/runtime_facade.dart` (add bulk load method)
-- `lib/main/main_cli.dart` (add command handler)
-
-**Key Challenge**: The current architecture creates a new `RuntimeFacade` from an `IntermediateRepresentation`. For `:load`, we need to merge new definitions into an existing runtime. Options:
-
-- **Option A**: Add a method `loadFromIntermediateRepresentation(IntermediateRepresentation ir)` to `RuntimeFacade`
-- **Option B**: Create a new `RuntimeFacade` and replace the existing one in `_runRepl`
-
-**Recommended**: Option B is cleaner - recreate the runtime with the loaded file, similar to how it's done when starting the CLI with a file argument. This requires:
-
-- Pass the `sourceReader` function to `_runRepl`
-- When `:load` is called, compile the file and create a new `RuntimeFacade`
-
-**Alternative Approach**: Keep the current runtime and iterate over each function definition from the file, calling `defineFunction()` for each. This requires converting `SemanticFunction` back to `FunctionDefinition`.
-
----
-
 ### 11. `:run <file>` (Hard)
 
 **Difficulty**: Hard

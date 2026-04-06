@@ -85,6 +85,39 @@ class RuntimeFacade {
     _userDefinedFunctions.clear();
   }
 
+  /// Loads functions from an [IntermediateRepresentation].
+  ///
+  /// This clears all existing user-defined functions first, then loads
+  /// all custom functions from the provided IR.
+  ///
+  /// Returns the number of functions loaded.
+  int loadFromIntermediateRepresentation(
+    IntermediateRepresentation representation,
+  ) {
+    reset();
+
+    final Lowerer lowerer = Lowerer(_runtimeInput.functions);
+
+    for (final SemanticFunction function
+        in representation.customFunctions.values) {
+      // Add signature
+      final FunctionSignature signature = FunctionSignature(
+        name: function.name,
+        parameters: function.parameters,
+      );
+      _allSignatures[function.name] = signature;
+
+      // Lower and add function term
+      final CustomFunctionTerm functionTerm = lowerer.lowerFunction(function);
+      _runtimeInput.functions[function.name] = functionTerm;
+
+      // Track as user-defined
+      _userDefinedFunctions.add(function.name);
+    }
+
+    return representation.customFunctions.length;
+  }
+
   /// Deletes a user-defined function by name.
   ///
   /// Throws [FunctionNotFoundError] if the function doesn't exist.
