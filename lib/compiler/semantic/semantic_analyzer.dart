@@ -121,9 +121,12 @@ class SemanticAnalyzer
   }
 
   /// Converts an [Expression] to a [SemanticNode], performing semantic checks.
+  ///
+  /// The [currentFunction] parameter is optional and is used for error messages.
+  /// When null (e.g., in REPL mode), error messages omit the function context.
   SemanticNode checkExpression({
     required Expression expression,
-    required String currentFunction,
+    required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionSignature> allSignatures,
@@ -175,7 +178,7 @@ class SemanticAnalyzer
 
   SemanticNode _checkListExpression({
     required ListExpression expression,
-    required String currentFunction,
+    required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionSignature> allSignatures,
@@ -200,7 +203,7 @@ class SemanticAnalyzer
 
   SemanticNode _checkMapExpression({
     required MapExpression expression,
-    required String currentFunction,
+    required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionSignature> allSignatures,
@@ -234,7 +237,7 @@ class SemanticAnalyzer
 
   SemanticNode _checkIdentifierExpression({
     required IdentifierExpression expression,
-    required String currentFunction,
+    required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionSignature> allSignatures,
@@ -263,7 +266,7 @@ class SemanticAnalyzer
 
   SemanticNode _checkCallExpression({
     required CallExpression expression,
-    required String currentFunction,
+    required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionSignature> allSignatures,
@@ -333,7 +336,7 @@ class SemanticAnalyzer
   SemanticNode _checkCalleeIdentifier({
     required CallExpression expression,
     required IdentifierExpression callee,
-    required String currentFunction,
+    required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
     required Map<String, FunctionSignature> allSignatures,

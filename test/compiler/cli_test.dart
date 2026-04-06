@@ -66,7 +66,7 @@ void main() {
       );
       final ProcessResult result = await runCli([tmpFile.path]);
 
-      expect(result.stderr.toString(), contains('Compilation error'));
+      expect(result.stderr.toString(), contains('Error'));
     });
 
     test('reports warnings on stderr for unused parameters', () async {

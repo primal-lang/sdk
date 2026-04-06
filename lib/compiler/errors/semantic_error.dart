@@ -25,17 +25,25 @@ class DuplicatedParameterError extends SemanticError {
 }
 
 class UndefinedIdentifierError extends SemanticError {
-  const UndefinedIdentifierError({
+  UndefinedIdentifierError({
     required String identifier,
-    required String inFunction,
-  }) : super('Undefined identifier "$identifier" in function "$inFunction"');
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Undefined identifier "$identifier" in function "$inFunction"'
+             : 'Undefined identifier "$identifier"',
+       );
 }
 
 class UndefinedFunctionError extends SemanticError {
-  const UndefinedFunctionError({
+  UndefinedFunctionError({
     required String function,
-    required String inFunction,
-  }) : super('Undefined function "$function" in function "$inFunction"');
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Undefined function "$function" in function "$inFunction"'
+             : 'Undefined function "$function"',
+       );
 }
 
 class InvalidNumberOfArgumentsError extends SemanticError {

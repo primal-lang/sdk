@@ -33,8 +33,8 @@ void main() {
     test('has errorType "Compilation error"', () {
       const error = CompilationError('bad syntax');
 
-      expect(error.errorType, equals('Compilation error'));
-      expect(error.toString(), equals('Compilation error: bad syntax'));
+      expect(error.errorType, equals('Error'));
+      expect(error.toString(), equals('Error: bad syntax'));
     });
   });
 
@@ -61,7 +61,7 @@ void main() {
 
       expect(
         error.toString(),
-        equals('Compilation error: Invalid character "@" at [1, 5]'),
+        equals('Error: Invalid character "@" at [1, 5]'),
       );
     });
 
@@ -75,7 +75,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid character "!" at [2, 3]. Expected: =',
+          'Error: Invalid character "!" at [2, 3]. Expected: =',
         ),
       );
     });
@@ -92,7 +92,7 @@ void main() {
 
       expect(
         error.toString(),
-        equals('Compilation error: Invalid token "foo" at [1, 1]'),
+        equals('Error: Invalid token "foo" at [1, 1]'),
       );
     });
 
@@ -103,7 +103,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid token "bar" at [3, 7]. Expected: )',
+          'Error: Invalid token "bar" at [3, 7]. Expected: )',
         ),
       );
     });
@@ -117,7 +117,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid token "42" at [5, 10]. Expected: (',
+          'Error: Invalid token "42" at [5, 10]. Expected: (',
         ),
       );
     });
@@ -129,7 +129,7 @@ void main() {
 
       expect(
         error.toString(),
-        equals('Compilation error: Unexpected end of file'),
+        equals('Error: Unexpected end of file'),
       );
     });
   });
@@ -156,7 +156,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Duplicated function "add" with parameters (x, y) and (a, b)',
+          'Error: Duplicated function "add" with parameters (x, y) and (a, b)',
         ),
       );
     });
@@ -173,7 +173,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Duplicated parameter "x" in function "add(x, x)"',
+          'Error: Duplicated parameter "x" in function "add(x, x)"',
         ),
       );
     });
@@ -181,7 +181,7 @@ void main() {
 
   group('UndefinedIdentifierError', () {
     test('toString() includes identifier name and function context', () {
-      const error = UndefinedIdentifierError(
+      final UndefinedIdentifierError error = UndefinedIdentifierError(
         identifier: 'myVar',
         inFunction: 'calculate',
       );
@@ -189,7 +189,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Undefined identifier "myVar" in function "calculate"',
+          'Error: Undefined identifier "myVar" in function "calculate"',
         ),
       );
     });
@@ -197,7 +197,7 @@ void main() {
 
   group('UndefinedFunctionError', () {
     test('toString() includes function name and context', () {
-      const error = UndefinedFunctionError(
+      final UndefinedFunctionError error = UndefinedFunctionError(
         function: 'compute',
         inFunction: 'main',
       );
@@ -205,7 +205,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Undefined function "compute" in function "main"',
+          'Error: Undefined function "compute" in function "main"',
         ),
       );
     });
@@ -222,7 +222,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid number of arguments calling function "process": expected 2, got 3',
+          'Error: Invalid number of arguments calling function "process": expected 2, got 3',
         ),
       );
     });

@@ -70,7 +70,7 @@ void main() {
 
       expect(platformConsole.outWrites, equals(['> ']));
       expect(platformConsole.outLines, isEmpty);
-      expect(platformConsole.errorLines.single, contains('Compilation error'));
+      expect(platformConsole.errorLines.single, contains('Error'));
     });
 
     test('reports file read errors through the console', () {

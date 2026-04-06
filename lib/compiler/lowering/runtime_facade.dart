@@ -97,7 +97,7 @@ class RuntimeFacade {
     // Proper pipeline: Expression → SemanticNode → Term → evaluate
     final SemanticNode semanticNode = analyzer.checkExpression(
       expression: expression,
-      currentFunction: '<expression>',
+      currentFunction: null,
       availableParameters: {},
       usedParameters: {},
       allSignatures: _allSignatures,
