@@ -19,8 +19,23 @@ Audit the test files in a user-specified folder, identify gaps in test coverage,
    a. Read and understand its assigned test file
    b. Identify the corresponding source files in `lib/` being tested (infer from imports and test subjects)
    c. Read all relevant source files to understand the full implementation
-   d. Analyze existing tests for completeness
-   e. Implement missing tests directly in the assigned test file
+   d. Consult relevant documentation in `docs/` if needed (see mappings below) to understand expected behavior
+   e. Analyze existing tests for completeness
+   f. Implement missing tests directly in the assigned test file
+
+## Documentation Reference
+
+Agents may consult these docs to understand expected behavior:
+
+| Source directory              | Documentation                |
+| ----------------------------- | ---------------------------- |
+| `lib/compiler/reader/`        | `docs/compiler/reader.md`    |
+| `lib/compiler/lexical/`       | `docs/compiler/lexical.md`   |
+| `lib/compiler/syntactic/`     | `docs/compiler/syntactic.md` |
+| `lib/compiler/semantic/`      | `docs/compiler/semantic.md`  |
+| `lib/compiler/runtime/`       | `docs/compiler/runtime.md`   |
+| `lib/compiler/models/`        | `docs/compiler/models.md`    |
+| `lib/compiler/library/<name>` | `docs/reference/<name>.md`   |
 
 ## Coverage Rules
 
