@@ -2,6 +2,7 @@
 @TestOn('vm')
 library;
 
+import 'package:primal/compiler/platform/environment/platform_environment_base.dart';
 import 'package:primal/compiler/platform/environment/platform_environment_cli.dart';
 import 'package:test/test.dart';
 
@@ -32,6 +33,47 @@ void main() {
       final String result = environment.getVariable('HOME');
 
       expect(result, isNotEmpty);
+    });
+
+    test('getVariable returns empty string for empty variable name', () {
+      final String result = environment.getVariable('');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable returns consistent results for repeated calls', () {
+      final String firstResult = environment.getVariable('PATH');
+      final String secondResult = environment.getVariable('PATH');
+
+      expect(firstResult, equals(secondResult));
+    });
+
+    test('getVariable is case sensitive', () {
+      // PATH exists, path typically does not on Unix systems
+      final String upperCase = environment.getVariable('PATH');
+      final String lowerCase = environment.getVariable('path');
+
+      expect(upperCase, isNotEmpty);
+      expect(lowerCase, equals(''));
+    });
+
+    test(
+      'getVariable returns empty for variable name with special characters',
+      () {
+        final String result = environment.getVariable('!@#\$%^&*()');
+
+        expect(result, equals(''));
+      },
+    );
+
+    test('getVariable returns USER', () {
+      final String result = environment.getVariable('USER');
+
+      expect(result, isNotEmpty);
+    });
+
+    test('extends PlatformEnvironmentBase', () {
+      expect(environment, isA<PlatformEnvironmentBase>());
     });
   });
 }

@@ -1,6 +1,7 @@
 @Tags(['compiler'])
 library;
 
+import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/reader/character.dart';
 import 'package:primal/compiler/reader/source_reader.dart';
 import 'package:test/test.dart';
@@ -138,6 +139,184 @@ void main() {
       expect(result[5].value, equals('\n'));
       expect(result[5].location.row, equals(2));
       expect(result[5].location.column, equals(3));
+    });
+
+    test('Windows line endings are normalized to newlines', () {
+      final List<Character> result = const SourceReader('a\r\nb').analyze();
+      // 'a' at row 1, col 1
+      expect(result[0].value, equals('a'));
+      expect(result[0].location.row, equals(1));
+      expect(result[0].location.column, equals(1));
+      // trailing \n for row 1
+      expect(result[1].value, equals('\n'));
+      expect(result[1].location.row, equals(1));
+      // 'b' at row 2, col 1
+      expect(result[2].value, equals('b'));
+      expect(result[2].location.row, equals(2));
+      expect(result[2].location.column, equals(1));
+    });
+
+    test('Trailing newline in source is handled correctly', () {
+      final List<Character> result = const SourceReader('a\n').analyze();
+      // Should have 'a' and trailing '\n' for row 1
+      expect(result.length, equals(2));
+      expect(result[0].value, equals('a'));
+      expect(result[1].value, equals('\n'));
+      expect(result[1].location.row, equals(1));
+    });
+
+    test('Multiple consecutive newlines create multiple rows', () {
+      final List<Character> result = const SourceReader('a\n\nb').analyze();
+      // Row 1: 'a', '\n'
+      // Row 2: '\n' (empty row still gets trailing newline)
+      // Row 3: 'b', '\n'
+      expect(result[0].value, equals('a'));
+      expect(result[0].location.row, equals(1));
+      expect(result[1].value, equals('\n'));
+      expect(result[1].location.row, equals(1));
+      expect(result[2].value, equals('\n'));
+      expect(result[2].location.row, equals(2));
+      expect(result[2].location.column, equals(1));
+      expect(result[3].value, equals('b'));
+      expect(result[3].location.row, equals(3));
+    });
+
+    test('Only newline character as input returns trailing newline', () {
+      final List<Character> result = const SourceReader('\n').analyze();
+      // Split produces ['', ''], last empty removed, leaving ['']
+      // Empty row still gets a trailing newline
+      expect(result.length, equals(1));
+      expect(result[0].value, equals('\n'));
+      expect(result[0].location.row, equals(1));
+      expect(result[0].location.column, equals(1));
+    });
+
+    test('Only whitespace input preserves spaces', () {
+      final List<Character> result = const SourceReader('   ').analyze();
+      expect(result.length, equals(4)); // 3 spaces + trailing newline
+      expect(result[0].value, equals(' '));
+      expect(result[1].value, equals(' '));
+      expect(result[2].value, equals(' '));
+      expect(result[3].value, equals('\n'));
+    });
+
+    test('Shebang only input returns empty list', () {
+      final List<Character> result = const SourceReader(
+        '#!/usr/bin/env primal',
+      ).analyze();
+      expect(result.length, equals(0));
+    });
+
+    test('Shebang with trailing newline returns empty list', () {
+      final List<Character> result = const SourceReader(
+        '#!/usr/bin/env primal\n',
+      ).analyze();
+      expect(result.length, equals(0));
+    });
+
+    test('Empty lines between content are preserved', () {
+      final List<Character> result = const SourceReader('a\n\n\nb').analyze();
+      // Row 1: 'a', '\n'
+      // Row 2: '\n' (empty)
+      // Row 3: '\n' (empty)
+      // Row 4: 'b', '\n'
+      expect(result.length, equals(6));
+      expect(result[0].value, equals('a'));
+      expect(result[0].location.row, equals(1));
+      expect(result[2].value, equals('\n'));
+      expect(result[2].location.row, equals(2));
+      expect(result[3].value, equals('\n'));
+      expect(result[3].location.row, equals(3));
+      expect(result[4].value, equals('b'));
+      expect(result[4].location.row, equals(4));
+    });
+
+    test('Mixed Windows and Unix line endings are normalized', () {
+      final List<Character> result = const SourceReader(
+        'a\r\nb\nc\rd',
+      ).analyze();
+      // All line endings should become \n
+      final List<Character> newlines = result
+          .where((Character c) => c.value == '\n')
+          .toList();
+      expect(newlines.length, equals(4)); // 4 rows = 4 trailing newlines
+    });
+  });
+
+  group('Character', () {
+    test('Equality compares value and location', () {
+      const Character character1 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character2 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character3 = Character(
+        value: 'b',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character4 = Character(
+        value: 'a',
+        location: Location(row: 2, column: 1),
+      );
+      expect(character1, equals(character2));
+      expect(character1, isNot(equals(character3)));
+      expect(character1, isNot(equals(character4)));
+    });
+
+    test('Identical instances are equal', () {
+      const Character character = Character(
+        value: 'x',
+        location: Location(row: 1, column: 1),
+      );
+      expect(character == character, isTrue);
+    });
+
+    test('Not equal to non-Character objects', () {
+      const Character character = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      // Use dynamic to test the equality operator with different types
+      expect(character == ('a' as dynamic), isFalse);
+      expect(character == (1 as dynamic), isFalse);
+      expect(character == (null as dynamic), isFalse);
+    });
+
+    test('hashCode is consistent with equality', () {
+      const Character character1 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character2 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      expect(character1.hashCode, equals(character2.hashCode));
+    });
+
+    test('toString returns value and location', () {
+      const Character character = Character(
+        value: 'a',
+        location: Location(row: 1, column: 2),
+      );
+      expect(character.toString(), equals('"a" at [1, 2]'));
+    });
+
+    test('toString handles special characters', () {
+      const Character newlineCharacter = Character(
+        value: '\n',
+        location: Location(row: 1, column: 1),
+      );
+      expect(newlineCharacter.toString(), contains('\n'));
+
+      const Character tabCharacter = Character(
+        value: '\t',
+        location: Location(row: 1, column: 1),
+      );
+      expect(tabCharacter.toString(), contains('\t'));
     });
   });
 }

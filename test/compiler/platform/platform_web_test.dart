@@ -46,10 +46,31 @@ void main() {
       );
     });
 
+    test('readLine throws RuntimeError', () {
+      expect(
+        () => console.readLine(),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
     test('outWrite delegates to print', () {
       final List<String> prints = capturePrints(() => console.outWrite('test'));
 
       expect(prints, equals(['test']));
+    });
+
+    test('outWrite handles empty string', () {
+      final List<String> prints = capturePrints(() => console.outWrite(''));
+
+      expect(prints, equals(['']));
+    });
+
+    test('outWrite handles multiline string', () {
+      final List<String> prints = capturePrints(
+        () => console.outWrite('line1\nline2'),
+      );
+
+      expect(prints, equals(['line1\nline2']));
     });
 
     test('outWriteLn delegates to print', () {
@@ -60,6 +81,20 @@ void main() {
       expect(prints, equals(['test']));
     });
 
+    test('outWriteLn handles empty string', () {
+      final List<String> prints = capturePrints(() => console.outWriteLn(''));
+
+      expect(prints, equals(['']));
+    });
+
+    test('outWriteLn handles multiline string', () {
+      final List<String> prints = capturePrints(
+        () => console.outWriteLn('line1\nline2'),
+      );
+
+      expect(prints, equals(['line1\nline2']));
+    });
+
     test('errorWrite delegates to print', () {
       final List<String> prints = capturePrints(
         () => console.errorWrite('test'),
@@ -68,12 +103,40 @@ void main() {
       expect(prints, equals(['test']));
     });
 
+    test('errorWrite handles empty string', () {
+      final List<String> prints = capturePrints(() => console.errorWrite(''));
+
+      expect(prints, equals(['']));
+    });
+
+    test('errorWrite handles multiline string', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWrite('line1\nline2'),
+      );
+
+      expect(prints, equals(['line1\nline2']));
+    });
+
     test('errorWriteLn delegates to print', () {
       final List<String> prints = capturePrints(
         () => console.errorWriteLn('test'),
       );
 
       expect(prints, equals(['test']));
+    });
+
+    test('errorWriteLn handles empty string', () {
+      final List<String> prints = capturePrints(() => console.errorWriteLn(''));
+
+      expect(prints, equals(['']));
+    });
+
+    test('errorWriteLn handles multiline string', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWriteLn('line1\nline2'),
+      );
+
+      expect(prints, equals(['line1\nline2']));
     });
   });
 
@@ -92,6 +155,20 @@ void main() {
             contains('file.fromPath'),
           ),
         ),
+      );
+    });
+
+    test('fromPath throws RuntimeError', () {
+      expect(
+        () => platform.fromPath('test'),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('fromPath throws with empty path', () {
+      expect(
+        () => platform.fromPath(''),
+        throwsA(isA<UnimplementedFunctionWebError>()),
       );
     });
 
@@ -263,6 +340,20 @@ void main() {
         ),
       );
     });
+
+    test('write throws with empty content', () {
+      expect(
+        () => platform.write(File('dummy'), ''),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('rename throws with empty name', () {
+      expect(
+        () => platform.rename(File('dummy'), ''),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
   });
 
   group('PlatformDirectoryWeb', () {
@@ -280,6 +371,20 @@ void main() {
             contains('directory.fromPath'),
           ),
         ),
+      );
+    });
+
+    test('fromPath throws RuntimeError', () {
+      expect(
+        () => platform.fromPath('test'),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('fromPath throws with empty path', () {
+      expect(
+        () => platform.fromPath(''),
+        throwsA(isA<UnimplementedFunctionWebError>()),
       );
     });
 
@@ -412,6 +517,13 @@ void main() {
         ),
       );
     });
+
+    test('rename throws with empty name', () {
+      expect(
+        () => platform.rename(Directory('dummy'), ''),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
   });
 
   group('PlatformEnvironmentWeb', () {
@@ -430,6 +542,62 @@ void main() {
           ),
         ),
       );
+    });
+
+    test('getVariable throws RuntimeError', () {
+      expect(
+        () => platform.getVariable('HOME'),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('getVariable throws with empty variable name', () {
+      expect(
+        () => platform.getVariable(''),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+  });
+
+  group('UnimplementedFunctionWebError', () {
+    test('error message contains function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'test.function',
+      );
+
+      expect(error.toString(), contains('test.function'));
+    });
+
+    test('error message indicates web platform', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'test.function',
+      );
+
+      expect(error.toString(), contains('web platform'));
+    });
+
+    test('error message indicates not implemented', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'test.function',
+      );
+
+      expect(error.toString(), contains('not implemented'));
+    });
+
+    test('error is a RuntimeError', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'test.function',
+      );
+
+      expect(error, isA<RuntimeError>());
+    });
+
+    test('error with empty function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        '',
+      );
+
+      expect(error.toString(), contains('""'));
     });
   });
 }

@@ -224,5 +224,158 @@ void main() {
         isTrue,
       );
     });
+
+    test('allFunctionNames with empty() only contains standard library', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          IntermediateRepresentation.empty();
+
+      expect(intermediateRepresentation.allFunctionNames, isNotEmpty);
+      expect(
+        intermediateRepresentation.allFunctionNames.contains('num.add'),
+        isTrue,
+      );
+      expect(
+        intermediateRepresentation.customFunctions,
+        isEmpty,
+      );
+    });
+
+    test('getStandardLibrarySignature returns null for unknown function', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          IntermediateRepresentation.empty();
+
+      expect(
+        intermediateRepresentation.getStandardLibrarySignature('unknown'),
+        isNull,
+      );
+    });
+
+    test('getCustomFunction returns the custom function', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'double(x) = x * 2\nmain = double(5)',
+          );
+      final SemanticFunction? doubleFn = intermediateRepresentation
+          .getCustomFunction('double');
+
+      expect(doubleFn, isNotNull);
+      expect(doubleFn, isA<SemanticFunction>());
+      expect(doubleFn!.name, equals('double'));
+      expect(doubleFn.parameters.length, equals(1));
+    });
+
+    test('getCustomFunction returns null for unknown function', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'main = 42',
+          );
+
+      expect(
+        intermediateRepresentation.getCustomFunction('unknown'),
+        isNull,
+      );
+    });
+
+    test('getCustomFunction returns null for standard library function', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'main = 42',
+          );
+
+      expect(
+        intermediateRepresentation.getCustomFunction('num.add'),
+        isNull,
+      );
+    });
+
+    test('function with multiple parameters has correct parameter count', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(a, b, c, d, e) = a + b + c + d + e\nmain = f(1, 2, 3, 4, 5)',
+          );
+      final SemanticFunction fFn =
+          intermediateRepresentation.customFunctions['f']!;
+
+      expect(fFn.parameters.length, equals(5));
+    });
+
+    test('multiple custom functions are all accessible', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'add(x, y) = x + y\nmul(x, y) = x * y\nmain = add(1, mul(2, 3))',
+          );
+
+      expect(intermediateRepresentation.customFunctions.length, equals(3));
+      expect(
+        intermediateRepresentation.customFunctions.containsKey('add'),
+        isTrue,
+      );
+      expect(
+        intermediateRepresentation.customFunctions.containsKey('mul'),
+        isTrue,
+      );
+      expect(
+        intermediateRepresentation.customFunctions.containsKey('main'),
+        isTrue,
+      );
+    });
+
+    test('custom function body is a SemanticNode', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'main = 42',
+          );
+      final SemanticFunction mainFn =
+          intermediateRepresentation.customFunctions['main']!;
+
+      expect(mainFn.body, isNotNull);
+    });
+
+    test('custom function has location information', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'main = 42',
+          );
+      final SemanticFunction mainFn =
+          intermediateRepresentation.customFunctions['main']!;
+
+      expect(mainFn.location, isNotNull);
+      expect(mainFn.location.row, equals(1));
+    });
+
+    test('constructor creates instance with provided values', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          IntermediateRepresentation(
+            customFunctions: {},
+            standardLibrarySignatures: {},
+            warnings: [],
+          );
+
+      expect(intermediateRepresentation.customFunctions, isEmpty);
+      expect(intermediateRepresentation.standardLibrarySignatures, isEmpty);
+      expect(intermediateRepresentation.warnings, isEmpty);
+    });
+
+    test('containsFunction returns false with empty representations', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          IntermediateRepresentation(
+            customFunctions: {},
+            standardLibrarySignatures: {},
+            warnings: [],
+          );
+
+      expect(intermediateRepresentation.containsFunction('anything'), isFalse);
+    });
+
+    test('allFunctionNames is empty when no functions exist', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          IntermediateRepresentation(
+            customFunctions: {},
+            standardLibrarySignatures: {},
+            warnings: [],
+          );
+
+      expect(intermediateRepresentation.allFunctionNames, isEmpty);
+    });
   });
 }

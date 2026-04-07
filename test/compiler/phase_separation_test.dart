@@ -43,21 +43,98 @@ void main() {
       expect(violations, isEmpty, reason: violations.join('\n'));
     });
 
-    test('semantic core does not import from runtime', () {
-      // These files bridge semantic → runtime and legitimately import runtime:
-      // - lowerer.dart: converts SemanticNode → Term
-      // - runtime_input_builder.dart: builds RuntimeInput from IntermediateRepresentation
-      // - runtime_facade.dart: orchestrates runtime execution
+    test('semantic does not import from runtime', () {
       final List<String> violations = _checkImports(
         'lib/compiler/semantic',
         ['runtime/'],
-        exclude: [
-          'lowerer.dart',
-          'runtime_input_builder.dart',
-          'runtime_facade.dart',
-        ],
       );
       expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('runtime does not import from reader, lexical, or syntactic', () {
+      final List<String> violations = _checkImports('lib/compiler/runtime', [
+        'reader/',
+        'lexical/',
+        'syntactic/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('lowering core does not import from reader or lexical', () {
+      // The lowering phase bridges semantic → runtime
+      // runtime_facade.dart legitimately imports from syntactic/ to accept
+      // Expression and FunctionDefinition as inputs from the compiler pipeline
+      final List<String> violations = _checkImports(
+        'lib/compiler/lowering',
+        ['reader/', 'lexical/'],
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('lowering core does not import from syntactic', () {
+      // Exclude runtime_facade.dart which serves as the pipeline entry point
+      // and needs to accept syntactic types
+      final List<String> violations = _checkImports(
+        'lib/compiler/lowering',
+        ['syntactic/'],
+        exclude: ['runtime_facade.dart'],
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('library does not import from reader, lexical, or syntactic', () {
+      // Library functions are runtime implementations
+      // They should not depend on compilation phases
+      final List<String> violations = _checkImports('lib/compiler/library', [
+        'reader/',
+        'lexical/',
+        'syntactic/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('errors does not import from runtime', () {
+      // Error definitions should not depend on runtime
+      // to avoid circular dependencies
+      final List<String> violations = _checkImports(
+        'lib/compiler/errors',
+        ['runtime/'],
+        exclude: ['runtime_error.dart'],
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+  });
+
+  group('_checkImports helper', () {
+    test('returns error message for non-existent directory', () {
+      final List<String> result = _checkImports(
+        'lib/compiler/nonexistent_directory',
+        ['something/'],
+      );
+      expect(result, hasLength(1));
+      expect(
+        result.first,
+        contains('Directory does not exist'),
+      );
+    });
+
+    test('returns empty list when no forbidden imports found', () {
+      // reader/ exists and should have no imports from its own forbidden list
+      final List<String> result = _checkImports('lib/compiler/reader', [
+        'some_nonexistent_path/',
+      ]);
+      expect(result, isEmpty);
+    });
+
+    test('excludes specified files from checking', () {
+      // This test verifies the exclude parameter works correctly
+      // by excluding all dart files in reader that import from models/
+      final List<String> result = _checkImports(
+        'lib/compiler/reader',
+        ['models/'], // reader imports from models
+        exclude: ['source_reader.dart', 'character.dart'],
+      );
+      expect(result, isEmpty);
     });
   });
 }

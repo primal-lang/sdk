@@ -115,5 +115,240 @@ void main() {
 
       expect(lexeme.toString(), equals('"hello" at [3, 7]'));
     });
+
+    test('toString() with empty value', () {
+      const lexeme = Lexeme(
+        value: '',
+        location: Location(row: 1, column: 1),
+      );
+
+      expect(lexeme.toString(), equals('"" at [1, 1]'));
+    });
+
+    test('toString() with special characters', () {
+      const lexeme = Lexeme(
+        value: 'a\tb\nc',
+        location: Location(row: 2, column: 5),
+      );
+
+      expect(lexeme.toString(), equals('"a\tb\nc" at [2, 5]'));
+    });
+
+    group('equality edge cases', () {
+      test('self-equality with identical object', () {
+        const lexeme = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme == lexeme, isTrue);
+      });
+
+      test('different value same location', () {
+        const lexeme1 = Lexeme(
+          value: 'abc',
+          location: Location(row: 1, column: 1),
+        );
+        const lexeme2 = Lexeme(
+          value: 'xyz',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme1, isNot(equals(lexeme2)));
+      });
+
+      test('same value different column', () {
+        const lexeme1 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const lexeme2 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 5),
+        );
+
+        expect(lexeme1, isNot(equals(lexeme2)));
+      });
+
+      test('equality with non-Lexeme object returns false', () {
+        const Lexeme lexeme = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        // Use dynamic to test the equality operator with different types
+        expect(lexeme == ('test' as dynamic), isFalse);
+        expect(lexeme == (42 as dynamic), isFalse);
+        expect(lexeme == (Object() as dynamic), isFalse);
+      });
+    });
+
+    group('hashCode edge cases', () {
+      test('different values produce different hashCodes', () {
+        const lexeme1 = Lexeme(
+          value: 'abc',
+          location: Location(row: 1, column: 1),
+        );
+        const lexeme2 = Lexeme(
+          value: 'xyz',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme1.hashCode, isNot(equals(lexeme2.hashCode)));
+      });
+
+      test('different locations produce different hashCodes', () {
+        const lexeme1 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const lexeme2 = Lexeme(
+          value: 'test',
+          location: Location(row: 2, column: 3),
+        );
+
+        expect(lexeme1.hashCode, isNot(equals(lexeme2.hashCode)));
+      });
+    });
+
+    group('constructor edge cases', () {
+      test('empty value', () {
+        const lexeme = Lexeme(
+          value: '',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme.value, equals(''));
+        expect(lexeme.location, equals(const Location(row: 1, column: 1)));
+      });
+
+      test('special characters in value', () {
+        const lexeme = Lexeme(
+          value: '\t\n\r',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme.value, equals('\t\n\r'));
+      });
+
+      test('unicode characters in value', () {
+        const lexeme = Lexeme(
+          value: '\u{1F600}\u03B1',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme.value, equals('\u{1F600}\u03B1'));
+      });
+
+      test('boundary location values', () {
+        const lexeme = Lexeme(
+          value: 'test',
+          location: Location(row: 0, column: 0),
+        );
+
+        expect(lexeme.location.row, equals(0));
+        expect(lexeme.location.column, equals(0));
+      });
+
+      test('large location values', () {
+        const lexeme = Lexeme(
+          value: 'test',
+          location: Location(row: 999999, column: 999999),
+        );
+
+        expect(lexeme.location.row, equals(999999));
+        expect(lexeme.location.column, equals(999999));
+      });
+    });
+
+    group('add() edge cases', () {
+      test('add() with special characters', () {
+        const lexeme = Lexeme(
+          value: 'line1',
+          location: Location(row: 1, column: 1),
+        );
+
+        final Lexeme result = lexeme.add('\n').add('line2');
+
+        expect(result.value, equals('line1\nline2'));
+      });
+
+      test('add() with unicode characters', () {
+        const lexeme = Lexeme(
+          value: 'smile: ',
+          location: Location(row: 1, column: 1),
+        );
+
+        final Lexeme result = lexeme.add('\u{1F600}');
+
+        expect(result.value, equals('smile: \u{1F600}'));
+      });
+
+      test('add() with tab character', () {
+        const lexeme = Lexeme(
+          value: 'col1',
+          location: Location(row: 1, column: 1),
+        );
+
+        final Lexeme result = lexeme.add('\t').add('col2');
+
+        expect(result.value, equals('col1\tcol2'));
+      });
+
+      test('add() starting from empty builds complete string', () {
+        const lexeme = Lexeme(
+          value: '',
+          location: Location(row: 1, column: 1),
+        );
+
+        final Lexeme result = lexeme
+            .add('h')
+            .add('e')
+            .add('l')
+            .add('l')
+            .add('o');
+
+        expect(result.value, equals('hello'));
+        expect(result.location, equals(const Location(row: 1, column: 1)));
+      });
+
+      test('add() does not modify original when chained', () {
+        const original = Lexeme(
+          value: 'a',
+          location: Location(row: 1, column: 1),
+        );
+
+        final Lexeme step1 = original.add('b');
+        final Lexeme step2 = step1.add('c');
+
+        expect(original.value, equals('a'));
+        expect(step1.value, equals('ab'));
+        expect(step2.value, equals('abc'));
+      });
+    });
+
+    group('value property', () {
+      test('value is accessible', () {
+        const lexeme = Lexeme(
+          value: 'myvalue',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme.value, equals('myvalue'));
+      });
+    });
+
+    group('location property', () {
+      test('location is accessible', () {
+        const location = Location(row: 10, column: 20);
+        const lexeme = Lexeme(
+          value: 'test',
+          location: location,
+        );
+
+        expect(lexeme.location, equals(location));
+        expect(lexeme.location.row, equals(10));
+        expect(lexeme.location.column, equals(20));
+      });
+    });
   });
 }

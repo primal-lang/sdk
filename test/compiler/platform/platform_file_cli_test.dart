@@ -139,5 +139,199 @@ void main() {
 
       expect(platform.parent(file).path, equals(tempDir.path));
     });
+
+    group('create', () {
+      test('creates file in nested non-existent directories', () {
+        final File file = File('${tempDir.path}/nested/deep/file.txt');
+
+        expect(platform.create(file), isTrue);
+        expect(file.existsSync(), isTrue);
+      });
+    });
+
+    group('write', () {
+      test('creates nested directories when writing', () {
+        final File file = File('${tempDir.path}/nested/path/write.txt');
+
+        expect(platform.write(file, 'nested content'), isTrue);
+        expect(file.readAsStringSync(), equals('nested content'));
+      });
+
+      test('overwrites existing file content', () {
+        final File file = File('${tempDir.path}/overwrite.txt')
+          ..writeAsStringSync('original');
+
+        expect(platform.write(file, 'updated'), isTrue);
+        expect(file.readAsStringSync(), equals('updated'));
+      });
+
+      test('writes empty content', () {
+        final File file = File('${tempDir.path}/empty_write.txt');
+
+        expect(platform.write(file, ''), isTrue);
+        expect(file.readAsStringSync(), equals(''));
+      });
+    });
+
+    group('read', () {
+      test('throws exception for non-existent file', () {
+        final File file = File('${tempDir.path}/nonexistent.txt');
+
+        expect(() => platform.read(file), throwsA(isA<FileSystemException>()));
+      });
+
+      test('returns empty string for empty file', () {
+        final File file = File('${tempDir.path}/empty.txt')..createSync();
+
+        expect(platform.read(file), equals(''));
+      });
+
+      test('reads file with multiple lines', () {
+        final File file = File('${tempDir.path}/multiline.txt')
+          ..writeAsStringSync('line1\nline2\nline3');
+
+        expect(platform.read(file), equals('line1\nline2\nline3'));
+      });
+
+      test('reads file with unicode content', () {
+        final File file = File('${tempDir.path}/unicode.txt')
+          ..writeAsStringSync('Hello \u4e16\u754c \u{1F600}');
+
+        expect(platform.read(file), equals('Hello \u4e16\u754c \u{1F600}'));
+      });
+    });
+
+    group('length', () {
+      test('returns zero for empty file', () {
+        final File file = File('${tempDir.path}/empty_len.txt')..createSync();
+
+        expect(platform.length(file), equals(0));
+      });
+
+      test('throws exception for non-existent file', () {
+        final File file = File('${tempDir.path}/nonexistent_len.txt');
+
+        expect(
+          () => platform.length(file),
+          throwsA(isA<FileSystemException>()),
+        );
+      });
+    });
+
+    group('rename', () {
+      test('returns false for non-existent file', () {
+        final File file = File('${tempDir.path}/nonexistent_rename.txt');
+
+        expect(platform.rename(file, 'new_name.txt'), isFalse);
+      });
+
+      test('renames file preserving content', () {
+        final File file = File('${tempDir.path}/rename_content.txt')
+          ..writeAsStringSync('preserved');
+
+        expect(platform.rename(file, 'renamed_content.txt'), isTrue);
+
+        final File renamedFile = File('${tempDir.path}/renamed_content.txt');
+        expect(renamedFile.readAsStringSync(), equals('preserved'));
+      });
+    });
+
+    group('copy', () {
+      test('returns false for non-existent source file', () {
+        final File source = File('${tempDir.path}/nonexistent_copy.txt');
+        final File destination = File('${tempDir.path}/copy_dest.txt');
+
+        expect(platform.copy(source, destination), isFalse);
+      });
+
+      test('overwrites existing destination file', () {
+        final File source = File('${tempDir.path}/copy_src.txt')
+          ..writeAsStringSync('new data');
+        final File destination = File('${tempDir.path}/copy_existing.txt')
+          ..writeAsStringSync('old data');
+
+        expect(platform.copy(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals('new data'));
+      });
+    });
+
+    group('move', () {
+      test('returns false for non-existent source file', () {
+        final File source = File('${tempDir.path}/nonexistent_move.txt');
+        final File destination = File('${tempDir.path}/move_dest.txt');
+
+        expect(platform.move(source, destination), isFalse);
+      });
+    });
+
+    group('extension', () {
+      test('returns last extension for file with multiple dots', () {
+        final File file = File('${tempDir.path}/archive.tar.gz');
+
+        expect(platform.extension(file), equals('gz'));
+      });
+
+      test('returns extension for hidden file with extension', () {
+        final File file = File('${tempDir.path}/.hidden.txt');
+
+        expect(platform.extension(file), equals('txt'));
+      });
+
+      test('returns empty string for hidden file without extension', () {
+        final File file = File('${tempDir.path}/.hidden');
+
+        expect(platform.extension(file), equals(''));
+      });
+    });
+
+    group('fromPath', () {
+      test('handles path with spaces', () {
+        final File file = platform.fromPath(
+          '${tempDir.path}/file with spaces.txt',
+        );
+
+        expect(file.path, equals('${tempDir.path}/file with spaces.txt'));
+      });
+
+      test('handles path with special characters', () {
+        final File file = platform.fromPath(
+          '${tempDir.path}/file-name_123.txt',
+        );
+
+        expect(file.path, equals('${tempDir.path}/file-name_123.txt'));
+      });
+    });
+
+    group('path', () {
+      test('returns absolute path for relative path input', () {
+        final File file = File('relative.txt');
+
+        final String absolutePath = platform.path(file);
+        expect(absolutePath.startsWith('/'), isTrue);
+        expect(absolutePath.endsWith('relative.txt'), isTrue);
+      });
+    });
+
+    group('name', () {
+      test('returns filename from deeply nested path', () {
+        final File file = File('${tempDir.path}/a/b/c/d/deep.txt');
+
+        expect(platform.name(file), equals('deep.txt'));
+      });
+
+      test('returns filename for hidden file', () {
+        final File file = File('${tempDir.path}/.gitignore');
+
+        expect(platform.name(file), equals('.gitignore'));
+      });
+    });
+
+    group('parent', () {
+      test('returns parent for deeply nested file', () {
+        final File file = File('${tempDir.path}/a/b/c/nested.txt');
+
+        expect(platform.parent(file).path, equals('${tempDir.path}/a/b/c'));
+      });
+    });
   });
 }

@@ -3505,5 +3505,1441 @@ pi = 3.14
         );
       });
     });
+
+    // --- Additional edge cases: end-of-input states ---
+
+    group('End-of-input state handling', () {
+      test('Exponent number at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('1e10');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1e10',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Decimal exponent at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('3.14e2');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '3.14e2',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('and keyword at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('and');
+        checkTokens(tokens, [
+          AmpersandToken(
+            const Lexeme(
+              value: '&',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('or keyword at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('or');
+        checkTokens(tokens, [
+          PipeToken(
+            const Lexeme(
+              value: '|',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Incomplete exponent with minus sign at end of input', () {
+        expect(() => getTokensDirect('1e-'), throwsA(isA<LexicalError>()));
+      });
+
+      test('Integer with underscore at end of input', () {
+        final List<Token> tokens = getTokensDirect('1_000');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1000',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Decimal with underscore at end of input', () {
+        final List<Token> tokens = getTokensDirect('3.14_15');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '3.1415',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Exponent with underscore at end of input', () {
+        final List<Token> tokens = getTokensDirect('1e1_0');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1e10',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Exponent trailing underscore at end of input', () {
+        expect(() => getTokensDirect('1e10_'), throwsA(isA<LexicalError>()));
+      });
+    });
+
+    // --- Whitespace edge cases ---
+
+    group('Whitespace edge cases', () {
+      test('Carriage return normalized to newline by source reader', () {
+        // Note: SourceReader normalizes \r and \r\n to \n before lexing
+        // So 'x\r=\ry' becomes 'x\n=\ny' and splits into 3 rows
+        final List<Token> tokens = getTokens('x\r=\ry');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          AssignToken(
+            const Lexeme(
+              value: '=',
+              location: Location(row: 2, column: 1),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'y',
+              location: Location(row: 3, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Newline only input', () {
+        final List<Token> tokens = getTokens('\n');
+        checkTokens(tokens, []);
+      });
+
+      test('Mixed whitespace characters', () {
+        // Note: \r\n is normalized to single \n by source reader
+        final List<Token> tokens = getTokens('x \t\r\n y');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'y',
+              location: Location(row: 2, column: 2),
+            ),
+          ),
+        ]);
+      });
+    });
+
+    // --- Comment edge cases ---
+
+    group('Comment edge cases', () {
+      test('Single line comment at end of input without newline', () {
+        final List<Token> tokens = getTokens('x = 1 // comment');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          AssignToken(
+            const Lexeme(
+              value: '=',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '1',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+        ]);
+      });
+
+      test('Empty single line comment', () {
+        final List<Token> tokens = getTokens('//\nx');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 2, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Empty multi-line comment', () {
+        final List<Token> tokens = getTokens('/**/x');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+        ]);
+      });
+
+      test('Multi-line comment with asterisk in content', () {
+        final List<Token> tokens = getTokens('/* a * b */x');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 12),
+            ),
+          ),
+        ]);
+      });
+
+      test('Unterminated multi-line comment ending with asterisk', () {
+        expect(
+          () => getTokens('/* comment *'),
+          throwsA(isA<UnterminatedCommentError>()),
+        );
+      });
+
+      test('Division followed by division (not comment)', () {
+        final List<Token> tokens = getTokens('a / b / c');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'a',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          ForwardSlashToken(
+            const Lexeme(
+              value: '/',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'b',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          ForwardSlashToken(
+            const Lexeme(
+              value: '/',
+              location: Location(row: 1, column: 7),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'c',
+              location: Location(row: 1, column: 9),
+            ),
+          ),
+        ]);
+      });
+
+      test('Multiplication not starting comment', () {
+        final List<Token> tokens = getTokens('a * b');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'a',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          AsteriskToken(
+            const Lexeme(
+              value: '*',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'b',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+        ]);
+      });
+    });
+
+    // --- Operator boundary cases ---
+
+    group('Operator boundary cases', () {
+      test('Double equals followed by identifier', () {
+        final List<Token> tokens = getTokens('==x');
+        checkTokens(tokens, [
+          EqualToken(
+            const Lexeme(
+              value: '==',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+        ]);
+      });
+
+      test('Not equals followed by identifier', () {
+        final List<Token> tokens = getTokens('!=x');
+        checkTokens(tokens, [
+          NotEqualToken(
+            const Lexeme(
+              value: '!=',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+        ]);
+      });
+
+      test('Greater or equal followed by number', () {
+        final List<Token> tokens = getTokens('>=5');
+        checkTokens(tokens, [
+          GreaterOrEqualToken(
+            const Lexeme(
+              value: '>=',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '5',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+        ]);
+      });
+
+      test('Less or equal followed by number', () {
+        final List<Token> tokens = getTokens('<=5');
+        checkTokens(tokens, [
+          LessOrEqualToken(
+            const Lexeme(
+              value: '<=',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '5',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+        ]);
+      });
+
+      test('Pipe followed by open parenthesis', () {
+        final List<Token> tokens = getTokens('|(x)');
+        checkTokens(tokens, [
+          PipeToken(
+            const Lexeme(
+              value: '|',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Ampersand followed by open parenthesis', () {
+        final List<Token> tokens = getTokens('&(x)');
+        checkTokens(tokens, [
+          AmpersandToken(
+            const Lexeme(
+              value: '&',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Minus followed by open parenthesis', () {
+        final List<Token> tokens = getTokens('-(x)');
+        checkTokens(tokens, [
+          MinusToken(
+            const Lexeme(
+              value: '-',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Plus followed by open parenthesis', () {
+        final List<Token> tokens = getTokens('+(x)');
+        checkTokens(tokens, [
+          PlusToken(
+            const Lexeme(
+              value: '+',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Percent followed by number', () {
+        final List<Token> tokens = getTokens('%5');
+        checkTokens(tokens, [
+          PercentToken(
+            const Lexeme(
+              value: '%',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '5',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Asterisk followed by number', () {
+        final List<Token> tokens = getTokens('*5');
+        checkTokens(tokens, [
+          AsteriskToken(
+            const Lexeme(
+              value: '*',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '5',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+
+      test('Forward slash followed by number', () {
+        final List<Token> tokens = getTokens('/5');
+        checkTokens(tokens, [
+          ForwardSlashToken(
+            const Lexeme(
+              value: '/',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '5',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+        ]);
+      });
+    });
+
+    // --- Token equality and string representation ---
+
+    group('Token equality and representation', () {
+      test('Token equality with same values', () {
+        final Token token1 = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        final Token token2 = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        expect(token1, equals(token2));
+      });
+
+      test('Token inequality with different values', () {
+        final Token token1 = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        final Token token2 = NumberToken(
+          const Lexeme(
+            value: '43',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        expect(token1, isNot(equals(token2)));
+      });
+
+      test('Token inequality with different locations', () {
+        final Token token1 = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        final Token token2 = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 2),
+          ),
+        );
+        expect(token1, isNot(equals(token2)));
+      });
+
+      test('Token inequality with different types', () {
+        final Token token1 = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        final Token token2 = IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        expect(token1, isNot(equals(token2)));
+      });
+
+      test('Token toString returns formatted string', () {
+        final Token token = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        expect(token.toString(), equals('"42" at [1, 1]'));
+      });
+
+      test('Token hashCode consistency', () {
+        final Token token1 = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        final Token token2 = NumberToken(
+          const Lexeme(
+            value: '42',
+            location: Location(row: 1, column: 1),
+          ),
+        );
+        expect(token1.hashCode, equals(token2.hashCode));
+      });
+    });
+
+    // --- Number edge cases ---
+
+    group('Number edge cases', () {
+      test('Single digit zero', () {
+        final List<Token> tokens = getTokens('0');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '0',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Decimal with single digit after dot', () {
+        final List<Token> tokens = getTokens('3.1');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '3.1',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Exponent with zero', () {
+        final List<Token> tokens = getTokens('1e0');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1e0',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Decimal with zero fractional part', () {
+        final List<Token> tokens = getTokens('1.0');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1.0',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Zero with exponent', () {
+        final List<Token> tokens = getTokens('0e5');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '0e5',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Zero decimal with exponent', () {
+        final List<Token> tokens = getTokens('0.0e1');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '0.0e1',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Very large exponent', () {
+        final List<Token> tokens = getTokens('1e999');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1e999',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Very small exponent', () {
+        final List<Token> tokens = getTokens('1e-999');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1e-999',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Number followed by open bracket', () {
+        final List<Token> tokens = getTokens('42[0]');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '42',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenBracketToken(
+            const Lexeme(
+              value: '[',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '0',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+        ]);
+      });
+
+      test('Number followed by close parenthesis', () {
+        final List<Token> tokens = getTokens('(42)');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '42',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Number followed by comma', () {
+        final List<Token> tokens = getTokens('1,2');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CommaToken(
+            const Lexeme(
+              value: ',',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '2',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+        ]);
+      });
+
+      test('Number followed by colon', () {
+        final List<Token> tokens = getTokens('1:2');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          ColonToken(
+            const Lexeme(
+              value: ':',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '2',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+        ]);
+      });
+    });
+
+    // --- Identifier edge cases ---
+
+    group('Identifier edge cases', () {
+      test('Single letter identifier', () {
+        final List<Token> tokens = getTokens('x');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier with leading uppercase', () {
+        final List<Token> tokens = getTokens('MyVar');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'MyVar',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier with multiple dots', () {
+        final List<Token> tokens = getTokens('a.b.c');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'a.b.c',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier with multiple underscores', () {
+        final List<Token> tokens = getTokens('a__b');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'a__b',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier with trailing underscore', () {
+        final List<Token> tokens = getTokens('x_');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x_',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier with trailing dot', () {
+        final List<Token> tokens = getTokens('x.');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'x.',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier followed by open parenthesis', () {
+        final List<Token> tokens = getTokens('foo(x)');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'foo',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 6),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier followed by open bracket', () {
+        final List<Token> tokens = getTokens('arr[0]');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'arr',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenBracketToken(
+            const Lexeme(
+              value: '[',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '0',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 6),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier containing and', () {
+        final List<Token> tokens = getTokens('expand');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'expand',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier containing or', () {
+        final List<Token> tokens = getTokens('origin');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'origin',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+    });
+
+    // --- String edge cases ---
+
+    group('String edge cases', () {
+      test('String with only escape sequences', () {
+        final List<Token> tokens = getTokens('"\\n\\t"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '\n\t',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('String with consecutive escapes', () {
+        final List<Token> tokens = getTokens('"\\n\\n\\n"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '\n\n\n',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('String with spaces', () {
+        final List<Token> tokens = getTokens('"  "');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: '  ',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('String with mixed unicode and regular escapes', () {
+        final List<Token> tokens = getTokens('"\\x41\\n\\u0042"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'A\nB',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('String containing actual newline character', () {
+        // Note: this uses a literal newline within the string in source code
+        // which should be preserved by the lexer
+        final List<Token> tokens = getTokens('"line1\nline2"');
+        checkTokens(tokens, [
+          StringToken(
+            const Lexeme(
+              value: 'line1\nline2',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+    });
+
+    // --- Lexeme equality ---
+
+    group('Lexeme class', () {
+      test('Lexeme equality with same values', () {
+        const Lexeme lexeme1 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme2 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        expect(lexeme1, equals(lexeme2));
+      });
+
+      test('Lexeme inequality with different values', () {
+        const Lexeme lexeme1 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme2 = Lexeme(
+          value: 'other',
+          location: Location(row: 1, column: 1),
+        );
+        expect(lexeme1, isNot(equals(lexeme2)));
+      });
+
+      test('Lexeme inequality with different locations', () {
+        const Lexeme lexeme1 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme2 = Lexeme(
+          value: 'test',
+          location: Location(row: 2, column: 1),
+        );
+        expect(lexeme1, isNot(equals(lexeme2)));
+      });
+
+      test('Lexeme hashCode consistency', () {
+        const Lexeme lexeme1 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme2 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        expect(lexeme1.hashCode, equals(lexeme2.hashCode));
+      });
+
+      test('Lexeme add method creates new lexeme', () {
+        const Lexeme lexeme = Lexeme(
+          value: 'ab',
+          location: Location(row: 1, column: 1),
+        );
+        final Lexeme newLexeme = lexeme.add('c');
+        expect(newLexeme.value, equals('abc'));
+        expect(newLexeme.location, equals(lexeme.location));
+        expect(lexeme.value, equals('ab')); // Original unchanged
+      });
+    });
+
+    // --- Scientific notation edge cases ---
+
+    group('Scientific notation edge cases', () {
+      test('Exponent with negative sign immediately followed by digit', () {
+        final List<Token> tokens = getTokens('5e-2');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '5e-2',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Exponent with positive sign immediately followed by digit', () {
+        final List<Token> tokens = getTokens('5e+2');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '5e+2',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Invalid character in exponent after digit', () {
+        expect(() => getTokens('1e5x'), throwsA(isA<InvalidCharacterError>()));
+      });
+
+      test('Double e in number', () {
+        expect(() => getTokens('1ee5'), throwsA(isA<InvalidCharacterError>()));
+      });
+
+      test('E after decimal without following exponent', () {
+        expect(() => getTokens('1.2e'), throwsA(isA<LexicalError>()));
+      });
+
+      test('Lowercase e exponent followed by delimiter', () {
+        final List<Token> tokens = getTokens('1e5)');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1e5',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+
+      test('Uppercase E exponent followed by delimiter', () {
+        final List<Token> tokens = getTokens('1E5]');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1E5',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          CloseBracketToken(
+            const Lexeme(
+              value: ']',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+        ]);
+      });
+    });
+
+    // --- Complex expressions ---
+
+    group('Complex expressions', () {
+      test('Nested function call', () {
+        final List<Token> tokens = getTokens('f(g(x))');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'f',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'g',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 6),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 7),
+            ),
+          ),
+        ]);
+      });
+
+      test('Chained comparison', () {
+        final List<Token> tokens = getTokens('a==b!=c');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'a',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          EqualToken(
+            const Lexeme(
+              value: '==',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'b',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          NotEqualToken(
+            const Lexeme(
+              value: '!=',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'c',
+              location: Location(row: 1, column: 7),
+            ),
+          ),
+        ]);
+      });
+
+      test('Lambda-like expression', () {
+        final List<Token> tokens = getTokens('(x) = x + 1');
+        checkTokens(tokens, [
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          AssignToken(
+            const Lexeme(
+              value: '=',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'x',
+              location: Location(row: 1, column: 7),
+            ),
+          ),
+          PlusToken(
+            const Lexeme(
+              value: '+',
+              location: Location(row: 1, column: 9),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '1',
+              location: Location(row: 1, column: 11),
+            ),
+          ),
+        ]);
+      });
+
+      test('Multiple binary operators', () {
+        final List<Token> tokens = getTokens('1+2-3*4/5%6');
+        checkTokens(tokens, [
+          NumberToken(
+            const Lexeme(
+              value: '1',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          PlusToken(
+            const Lexeme(
+              value: '+',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '2',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          MinusToken(
+            const Lexeme(
+              value: '-',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '3',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+          AsteriskToken(
+            const Lexeme(
+              value: '*',
+              location: Location(row: 1, column: 6),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '4',
+              location: Location(row: 1, column: 7),
+            ),
+          ),
+          ForwardSlashToken(
+            const Lexeme(
+              value: '/',
+              location: Location(row: 1, column: 8),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '5',
+              location: Location(row: 1, column: 9),
+            ),
+          ),
+          PercentToken(
+            const Lexeme(
+              value: '%',
+              location: Location(row: 1, column: 10),
+            ),
+          ),
+          NumberToken(
+            const Lexeme(
+              value: '6',
+              location: Location(row: 1, column: 11),
+            ),
+          ),
+        ]);
+      });
+
+      test('Multiple logical operators', () {
+        final List<Token> tokens = getTokens('a|b&c');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'a',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+          PipeToken(
+            const Lexeme(
+              value: '|',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'b',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
+          AmpersandToken(
+            const Lexeme(
+              value: '&',
+              location: Location(row: 1, column: 4),
+            ),
+          ),
+          IdentifierToken(
+            const Lexeme(
+              value: 'c',
+              location: Location(row: 1, column: 5),
+            ),
+          ),
+        ]);
+      });
+    });
   });
 }
