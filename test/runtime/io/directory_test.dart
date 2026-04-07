@@ -187,5 +187,113 @@ void main() {
         );
       },
     );
+
+    test('directory.list returns empty list for empty directory', () {
+      final Directory emptyDirectory = Directory(
+        path.join(tempDir.path, 'empty'),
+      );
+      emptyDirectory.createSync();
+      final RuntimeFacade runtime = getRuntime(
+        'main = directory.list(directory.fromPath(${primalString(emptyDirectory.path)}))',
+      );
+      checkResult(runtime, '[]');
+    });
+
+    test('directory.create returns true when directory already exists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = directory.create(directory.fromPath(${primalString(existingDirectory.path)}))',
+      );
+      checkResult(runtime, true);
+      expect(existingDirectory.existsSync(), isTrue);
+    });
+
+    test('directory.copy returns false for non-existing source', () {
+      final Directory missingSource = Directory(
+        path.join(tempDir.path, 'missing-source'),
+      );
+      final Directory destinationDirectory = Directory(
+        path.join(tempDir.path, 'copy-destination'),
+      );
+      final RuntimeFacade runtime = getRuntime(
+        'main = directory.copy(directory.fromPath(${primalString(missingSource.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('directory.move returns false for non-existing source', () {
+      final Directory missingSource = Directory(
+        path.join(tempDir.path, 'missing-move-source'),
+      );
+      final Directory destinationDirectory = Directory(
+        path.join(tempDir.path, 'move-destination'),
+      );
+      final RuntimeFacade runtime = getRuntime(
+        'main = directory.move(directory.fromPath(${primalString(missingSource.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('directory.rename returns false for non-existing directory', () {
+      final Directory missingDirectory = Directory(
+        path.join(tempDir.path, 'missing-rename'),
+      );
+      final RuntimeFacade runtime = getRuntime(
+        'main = directory.rename(directory.fromPath(${primalString(missingDirectory.path)}), ${primalString('new-name')})',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('directory.delete removes directory with nested content', () {
+      final Directory directoryWithContent = Directory(
+        path.join(tempDir.path, 'delete-recursive'),
+      );
+      directoryWithContent.createSync();
+      final Directory nestedDirectory = Directory(
+        path.join(directoryWithContent.path, 'nested'),
+      );
+      nestedDirectory.createSync();
+      File(path.join(nestedDirectory.path, 'file.txt')).writeAsStringSync(
+        'content',
+      );
+      final RuntimeFacade runtime = getRuntime(
+        'main = directory.delete(directory.fromPath(${primalString(directoryWithContent.path)}))',
+      );
+      checkResult(runtime, true);
+      expect(directoryWithContent.existsSync(), isFalse);
+    });
+
+    test('directory.copy preserves nested directory structure', () {
+      final Directory sourceDirectory = Directory(
+        path.join(tempDir.path, 'deep-source'),
+      );
+      sourceDirectory.createSync();
+      final Directory level1 = Directory(
+        path.join(sourceDirectory.path, 'level1'),
+      );
+      level1.createSync();
+      final Directory level2 = Directory(path.join(level1.path, 'level2'));
+      level2.createSync();
+      File(path.join(level2.path, 'deep.txt')).writeAsStringSync('deep');
+
+      final Directory destinationDirectory = Directory(
+        path.join(tempDir.path, 'deep-copy'),
+      );
+      final RuntimeFacade runtime = getRuntime(
+        'main = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+      );
+      checkResult(runtime, true);
+      expect(
+        File(
+          path.join(destinationDirectory.path, 'level1', 'level2', 'deep.txt'),
+        ).existsSync(),
+        isTrue,
+      );
+      expect(
+        File(
+          path.join(destinationDirectory.path, 'level1', 'level2', 'deep.txt'),
+        ).readAsStringSync(),
+        equals('deep'),
+      );
+    });
   });
 }

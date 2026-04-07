@@ -939,4 +939,290 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });
+
+  group('Division Error Cases', () {
+    test('/ throws on division by zero', () {
+      final RuntimeFacade runtime = getRuntime('main = 10 / 0');
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('/ throws on invalid argument types', () {
+      final RuntimeFacade runtime = getRuntime('main = "10" / 2');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Modulo Error Cases', () {
+    test('% throws on division by zero', () {
+      final RuntimeFacade runtime = getRuntime('main = 10 % 0');
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('% throws on invalid argument types', () {
+      final RuntimeFacade runtime = getRuntime('main = "10" % 2');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Multiplication Error Cases', () {
+    test('* throws on invalid argument types', () {
+      final RuntimeFacade runtime = getRuntime('main = "10" * 2');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Addition with Lists', () {
+    test('+ concatenates two empty lists', () {
+      final RuntimeFacade runtime = getRuntime('main = [] + []');
+      checkResult(runtime, []);
+    });
+
+    test('+ concatenates two non-empty lists', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2] + [3, 4]');
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('+ appends element to empty list from right', () {
+      final RuntimeFacade runtime = getRuntime('main = [] + 1');
+      checkResult(runtime, [1]);
+    });
+
+    test('+ appends element to non-empty list from right', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2] + 3');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('+ prepends element to empty list from left', () {
+      final RuntimeFacade runtime = getRuntime('main = 1 + []');
+      checkResult(runtime, [1]);
+    });
+
+    test('+ prepends element to non-empty list from left', () {
+      final RuntimeFacade runtime = getRuntime('main = 1 + [2, 3]');
+      checkResult(runtime, [1, 2, 3]);
+    });
+  });
+
+  group('Addition Error Cases', () {
+    test('+ throws on invalid argument types', () {
+      final RuntimeFacade runtime = getRuntime('main = true + 1');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Subtraction with Sets', () {
+    test('- computes difference of two empty sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([]) - set.new([])',
+      );
+      checkResult(runtime, {});
+    });
+
+    test('- computes difference of non-empty set with empty set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2, 3]) - set.new([])',
+      );
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('- computes difference of two overlapping sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2, 3]) - set.new([2, 3, 4])',
+      );
+      checkResult(runtime, {1});
+    });
+
+    test('- removes existing element from set', () {
+      final RuntimeFacade runtime = getRuntime('main = set.new([1, 2, 3]) - 2');
+      checkResult(runtime, {1, 3});
+    });
+
+    test('- removes non-existing element from set', () {
+      final RuntimeFacade runtime = getRuntime('main = set.new([1, 2, 3]) - 5');
+      checkResult(runtime, {1, 2, 3});
+    });
+  });
+
+  group('Subtraction Error Cases', () {
+    test('- throws on invalid argument types', () {
+      final RuntimeFacade runtime = getRuntime('main = "10" - 2');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Comparison Operator Edge Cases', () {
+    test('> returns false when numbers are equal', () {
+      final RuntimeFacade runtime = getRuntime('main = 5 > 5');
+      checkResult(runtime, false);
+    });
+
+    test('< returns false when numbers are equal', () {
+      final RuntimeFacade runtime = getRuntime('main = 5 < 5');
+      checkResult(runtime, false);
+    });
+
+    test('> returns false when strings are equal', () {
+      final RuntimeFacade runtime = getRuntime('main = "Hello" > "Hello"');
+      checkResult(runtime, false);
+    });
+
+    test('< returns false when strings are equal', () {
+      final RuntimeFacade runtime = getRuntime('main = "Hello" < "Hello"');
+      checkResult(runtime, false);
+    });
+
+    test('> returns false when timestamps are equal', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = time.fromIso("2024-09-01T00:00:00") > time.fromIso("2024-09-01T00:00:00")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('< returns false when timestamps are equal', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = time.fromIso("2024-09-01T00:00:00") < time.fromIso("2024-09-01T00:00:00")',
+      );
+      checkResult(runtime, false);
+    });
+  });
+
+  group('Comparison Operator Error Cases', () {
+    test('> throws on mismatched types', () {
+      final RuntimeFacade runtime = getRuntime('main = 5 > "5"');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('< throws on mismatched types', () {
+      final RuntimeFacade runtime = getRuntime('main = 5 < "5"');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('>= throws on mismatched types', () {
+      final RuntimeFacade runtime = getRuntime('main = 5 >= "5"');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('<= throws on mismatched types', () {
+      final RuntimeFacade runtime = getRuntime('main = 5 <= "5"');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('> throws on unsupported type', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2] > [1]');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('< throws on unsupported type', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2] < [1]');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('>= throws on unsupported type', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2] >= [1]');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('<= throws on unsupported type', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2] <= [1]');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Equality Edge Cases', () {
+    test('== returns false for lists with different element values', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2, 3] == [1, 2, 4]');
+      checkResult(runtime, false);
+    });
+
+    test('== returns false for maps with different keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = {"a": 1, "b": 2} == {"a": 1, "c": 2}',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('== returns false for maps with different values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = {"a": 1, "b": 2} == {"a": 1, "b": 3}',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('== returns true for nested lists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = [[1, 2], [3, 4]] == [[1, 2], [3, 4]]',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('== returns false for different nested lists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = [[1, 2], [3, 4]] == [[1, 2], [3, 5]]',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('== returns true for nested maps', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = {"a": {"x": 1}} == {"a": {"x": 1}}',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('== returns false for different nested maps', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = {"a": {"x": 1}} == {"a": {"x": 2}}',
+      );
+      checkResult(runtime, false);
+    });
+  });
+
+  group('Logical Operator Error Cases', () {
+    test('& throws on non-boolean first argument', () {
+      final RuntimeFacade runtime = getRuntime('main = 1 & true');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('& throws on non-boolean second argument', () {
+      final RuntimeFacade runtime = getRuntime('main = true & 1');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('| throws on non-boolean first argument', () {
+      final RuntimeFacade runtime = getRuntime('main = 1 | false');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('| throws on non-boolean second argument', () {
+      final RuntimeFacade runtime = getRuntime('main = false | 1');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('! throws on non-boolean argument', () {
+      final RuntimeFacade runtime = getRuntime('main = !1');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Logical Operator Additional Cases', () {
+    test('&& returns false when both are false', () {
+      final RuntimeFacade runtime = getRuntime('main = false && false');
+      checkResult(runtime, false);
+    });
+
+    test('|| returns false when both are false', () {
+      final RuntimeFacade runtime = getRuntime('main = false || false');
+      checkResult(runtime, false);
+    });
+
+    test('or returns false when both are false', () {
+      final RuntimeFacade runtime = getRuntime('main = false or false');
+      checkResult(runtime, false);
+    });
+
+    test('and returns false when both are false', () {
+      final RuntimeFacade runtime = getRuntime('main = false and false');
+      checkResult(runtime, false);
+    });
+  });
 }

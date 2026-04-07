@@ -394,6 +394,56 @@ void main() {
   });
 
   group('Arithmetic Type Mismatches', () {
+    test('num.pow with strings', () {
+      final RuntimeFacade runtime = getRuntime('main = num.pow("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.sqrt with string', () {
+      final RuntimeFacade runtime = getRuntime('main = num.sqrt("hello")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.floor with string', () {
+      final RuntimeFacade runtime = getRuntime('main = num.floor("hello")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.ceil with string', () {
+      final RuntimeFacade runtime = getRuntime('main = num.ceil("hello")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.round with string', () {
+      final RuntimeFacade runtime = getRuntime('main = num.round("hello")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.add with strings', () {
+      final RuntimeFacade runtime = getRuntime('main = num.add("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.sub with strings', () {
+      final RuntimeFacade runtime = getRuntime('main = num.sub("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.mul with strings', () {
+      final RuntimeFacade runtime = getRuntime('main = num.mul("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.div with strings', () {
+      final RuntimeFacade runtime = getRuntime('main = num.div("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('num.mod with strings', () {
+      final RuntimeFacade runtime = getRuntime('main = num.mod("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
     test('num.sin with string', () {
       final RuntimeFacade runtime = getRuntime('main = num.sin("hello")');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
@@ -513,6 +563,48 @@ void main() {
     });
   });
 
+  group('Logic Function Type Mismatches', () {
+    test('bool.and with numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.and(1, 2)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.and first argument non-boolean', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.and(5, true)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.and second argument non-boolean when first is true', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.and(true, 5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.or with numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.or(1, 2)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.or first argument non-boolean', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.or(5, false)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.or second argument non-boolean when first is false', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.or(false, 5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.xor with numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.xor(1, 2)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.not with number', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.not(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
   group('String Type Mismatches', () {
     test('str.first with number', () {
       final RuntimeFacade runtime = getRuntime('main = str.first(5)');
@@ -602,6 +694,43 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         'main = str.removeAt(true, true)',
       );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.lowercase with number', () {
+      final RuntimeFacade runtime = getRuntime('main = str.lowercase(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.trim with number', () {
+      final RuntimeFacade runtime = getRuntime('main = str.trim(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.reverse with number', () {
+      final RuntimeFacade runtime = getRuntime('main = str.reverse(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.replace with numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = str.replace(5, 5, 5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.split with numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = str.split(5, 5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.substring with booleans', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.substring(true, true, true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.indexOf with numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = str.indexOf(5, 5)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });
@@ -723,6 +852,35 @@ void main() {
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
+
+    test('list.isEmpty with number', () {
+      final RuntimeFacade runtime = getRuntime('main = list.isEmpty(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('list.last with number', () {
+      final RuntimeFacade runtime = getRuntime('main = list.last(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('list.contains with non-list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.contains(5, 5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('list.reduce with non-list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reduce(5, 0, num.add)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('list.sort with non-list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort(5, num.compare)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
   });
 
   group('Map Type Mismatches', () {
@@ -739,6 +897,28 @@ void main() {
     test('map.set with non-map', () {
       final RuntimeFacade runtime = getRuntime(
         'main = map.set(5, "key", "val")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.isEmpty with number', () {
+      final RuntimeFacade runtime = getRuntime('main = map.isEmpty(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.at with non-map', () {
+      final RuntimeFacade runtime = getRuntime('main = map.at(5, "key")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.length with number', () {
+      final RuntimeFacade runtime = getRuntime('main = map.length(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.containsKey with non-map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey(5, "k")',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
@@ -764,6 +944,26 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = queue.reverse(5)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
+
+    test('queue.enqueue with non-queue', () {
+      final RuntimeFacade runtime = getRuntime('main = queue.enqueue(5, 1)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('queue.dequeue with number', () {
+      final RuntimeFacade runtime = getRuntime('main = queue.dequeue(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('queue.peek with number', () {
+      final RuntimeFacade runtime = getRuntime('main = queue.peek(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('queue.length with number', () {
+      final RuntimeFacade runtime = getRuntime('main = queue.length(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
   });
 
   group('Stack Type Mismatches', () {
@@ -786,6 +986,26 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = stack.reverse(5)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
+
+    test('stack.push with non-stack', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.push(5, 1)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.pop with number', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.pop(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.peek with number', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.peek(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.length with number', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.length(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
   });
 
   group('Set Type Mismatches', () {
@@ -806,6 +1026,36 @@ void main() {
 
     test('set.intersection with non-sets', () {
       final RuntimeFacade runtime = getRuntime('main = set.intersection(5, 5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.add with non-set', () {
+      final RuntimeFacade runtime = getRuntime('main = set.add(5, 1)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.contains with non-set', () {
+      final RuntimeFacade runtime = getRuntime('main = set.contains(5, 1)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.union with non-sets', () {
+      final RuntimeFacade runtime = getRuntime('main = set.union(5, 5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.difference with non-sets', () {
+      final RuntimeFacade runtime = getRuntime('main = set.difference(5, 5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.length with number', () {
+      final RuntimeFacade runtime = getRuntime('main = set.length(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.remove with non-set', () {
+      final RuntimeFacade runtime = getRuntime('main = set.remove(5, 1)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });
@@ -1072,6 +1322,43 @@ void main() {
   group('JSON Type Mismatches', () {
     test('json.decode with number', () {
       final RuntimeFacade runtime = getRuntime('main = json.decode(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('json.encode with number', () {
+      final RuntimeFacade runtime = getRuntime('main = json.encode(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('json.encode with string', () {
+      final RuntimeFacade runtime = getRuntime('main = json.encode("hello")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('json.encode with boolean', () {
+      final RuntimeFacade runtime = getRuntime('main = json.encode(true)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Hash Type Mismatches', () {
+    test('hash.md5 with number', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.md5(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('hash.sha1 with number', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha1(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('hash.sha256 with number', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha256(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('hash.sha512 with number', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha512(5)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });

@@ -130,9 +130,42 @@ void main() {
       );
       checkResult(runtime, [3, 2, 1]);
     });
+
+    test('stack.reverse on single-element stack returns same stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.reverse(stack.new([42]))',
+      );
+      checkResult(runtime, [42]);
+    });
+
+    test('stack.length returns one for single-element stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.new([1]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('stack.isEmpty returns false for single-element stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isEmpty(stack.new([1]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('stack.isNotEmpty returns true for single-element stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isNotEmpty(stack.new([1]))',
+      );
+      checkResult(runtime, true);
+    });
   });
 
   group('Stack Type Errors', () {
+    test('stack.new throws for non-list arg', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.new(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
     test('stack.push throws for non-stack first arg', () {
       final RuntimeFacade runtime = getRuntime('main = stack.push([1, 2], 3)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
@@ -148,8 +181,25 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
+    test('stack.isEmpty throws for non-stack arg', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.isEmpty([1, 2])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isNotEmpty throws for non-stack arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isNotEmpty([1, 2])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
     test('stack.length throws for non-stack arg', () {
       final RuntimeFacade runtime = getRuntime('main = stack.length([1, 2])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.reverse throws for non-stack arg', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.reverse([1, 2])');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });

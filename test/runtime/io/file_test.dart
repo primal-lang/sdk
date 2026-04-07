@@ -155,5 +155,118 @@ void main() {
       checkResult(runtime, true);
       expect(File(path.join(tempDir.path, 'renamed.txt')).existsSync(), isTrue);
     });
+
+    group('edge cases', () {
+      test('file.read returns empty string for empty file', () {
+        final File emptyFile = File(path.join(tempDir.path, 'empty.txt'));
+        emptyFile.writeAsStringSync('');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.read(file.fromPath(${primalString(emptyFile.path)}))',
+        );
+        checkResult(runtime, primalString(''));
+      });
+
+      test('file.write with empty string', () {
+        final File targetFile = File(
+          path.join(tempDir.path, 'empty-write.txt'),
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.write(file.fromPath(${primalString(targetFile.path)}), ${primalString('')})',
+        );
+        checkResult(runtime, true);
+        expect(targetFile.readAsStringSync(), equals(''));
+      });
+
+      test('file.write overwrites existing file', () {
+        final File targetFile = File(path.join(tempDir.path, 'overwrite.txt'));
+        targetFile.writeAsStringSync('original content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.write(file.fromPath(${primalString(targetFile.path)}), ${primalString('new content')})',
+        );
+        checkResult(runtime, true);
+        expect(targetFile.readAsStringSync(), equals('new content'));
+      });
+
+      test('file.length returns 0 for empty file', () {
+        final File emptyFile = File(path.join(tempDir.path, 'zero-length.txt'));
+        emptyFile.writeAsStringSync('');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.length(file.fromPath(${primalString(emptyFile.path)}))',
+        );
+        checkResult(runtime, 0);
+      });
+
+      test('file.extension returns empty string for file without extension', () {
+        final File noExtFile = File(path.join(tempDir.path, 'noextension'));
+        noExtFile.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.extension(file.fromPath(${primalString(noExtFile.path)}))',
+        );
+        checkResult(runtime, primalString(''));
+      });
+
+      test('file.extension returns last extension for multiple dots', () {
+        final File multiDotFile = File(
+          path.join(tempDir.path, 'archive.tar.gz'),
+        );
+        multiDotFile.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.extension(file.fromPath(${primalString(multiDotFile.path)}))',
+        );
+        checkResult(runtime, primalString('gz'));
+      });
+
+      test('file.extension returns extension for hidden file with extension', () {
+        final File hiddenFile = File(path.join(tempDir.path, '.hidden.txt'));
+        hiddenFile.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.extension(file.fromPath(${primalString(hiddenFile.path)}))',
+        );
+        checkResult(runtime, primalString('txt'));
+      });
+
+      test('file.name returns full name for hidden file', () {
+        final File hiddenFile = File(path.join(tempDir.path, '.gitignore'));
+        hiddenFile.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.name(file.fromPath(${primalString(hiddenFile.path)}))',
+        );
+        checkResult(runtime, primalString('.gitignore'));
+      });
+
+      test('file.copy returns false when source does not exist', () {
+        final File missingFile = File(path.join(tempDir.path, 'missing.txt'));
+        final File destinationFile = File(path.join(tempDir.path, 'dest.txt'));
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.copy(file.fromPath(${primalString(missingFile.path)}), file.fromPath(${primalString(destinationFile.path)}))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('file.move returns false when source does not exist', () {
+        final File missingFile = File(path.join(tempDir.path, 'missing.txt'));
+        final File destinationFile = File(path.join(tempDir.path, 'dest.txt'));
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.move(file.fromPath(${primalString(missingFile.path)}), file.fromPath(${primalString(destinationFile.path)}))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('file.rename returns false when source does not exist', () {
+        final File missingFile = File(path.join(tempDir.path, 'missing.txt'));
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.rename(file.fromPath(${primalString(missingFile.path)}), ${primalString('renamed.txt')})',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('file.create returns true when file already exists', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.create(file.fromPath(${primalString(existingFile.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(existingFile.existsSync(), isTrue);
+      });
+    });
   });
 }

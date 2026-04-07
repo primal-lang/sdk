@@ -359,5 +359,185 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = to.list([1, 2, 3])');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
+
+    test('to.list with string throws', () {
+      final RuntimeFacade runtime = getRuntime('main = to.list("hello")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.list with boolean throws', () {
+      final RuntimeFacade runtime = getRuntime('main = to.list(true)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.list with map throws', () {
+      final RuntimeFacade runtime = getRuntime('main = to.list({"a": 1})');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.list converts empty set to empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = to.list(set.new([]))');
+      checkResult(runtime, <dynamic>[]);
+    });
+
+    test('to.list converts empty vector to empty list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = to.list(vector.new([]))',
+      );
+      checkResult(runtime, <dynamic>[]);
+    });
+
+    test('to.list converts empty stack to empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = to.list(stack.new([]))');
+      checkResult(runtime, <dynamic>[]);
+    });
+
+    test('to.list converts empty queue to empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = to.list(queue.new([]))');
+      checkResult(runtime, <dynamic>[]);
+    });
+
+    test('to.number throws ParseError for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main = to.number("")');
+      expect(runtime.executeMain, throwsA(isA<ParseError>()));
+    });
+
+    test('to.integer converts negative integer unchanged', () {
+      final RuntimeFacade runtime = getRuntime('main = to.integer(-5)');
+      checkResult(runtime, -5);
+    });
+
+    test('to.integer truncates negative decimal toward zero', () {
+      final RuntimeFacade runtime = getRuntime('main = to.integer(-3.7)');
+      checkResult(runtime, -3);
+    });
+
+    test('to.integer converts negative string to integer', () {
+      final RuntimeFacade runtime = getRuntime('main = to.integer("-42")');
+      checkResult(runtime, -42);
+    });
+
+    test('to.decimal returns decimal unchanged', () {
+      final RuntimeFacade runtime = getRuntime('main = to.decimal(3.14)');
+      checkResult(runtime, 3.14);
+    });
+
+    test('to.string converts list to string', () {
+      final RuntimeFacade runtime = getRuntime('main = to.string([1, 2, 3])');
+      checkResult(runtime, '"[1, 2, 3]"');
+    });
+
+    test('to.string converts map to string', () {
+      final RuntimeFacade runtime = getRuntime('main = to.string({"a": 1})');
+      checkResult(runtime, '"{a: 1}"');
+    });
+
+    test('to.string converts decimal to string', () {
+      final RuntimeFacade runtime = getRuntime('main = to.string(3.14)');
+      checkResult(runtime, '"3.14"');
+    });
+
+    test('to.boolean returns false for whitespace-only string', () {
+      final RuntimeFacade runtime = getRuntime('main = to.boolean("   ")');
+      checkResult(runtime, false);
+    });
+
+    test('to.boolean returns true for string with leading whitespace', () {
+      final RuntimeFacade runtime = getRuntime('main = to.boolean("  a")');
+      checkResult(runtime, true);
+    });
+
+    test('to.boolean returns true for decimal zero', () {
+      final RuntimeFacade runtime = getRuntime('main = to.boolean(0.0)');
+      checkResult(runtime, false);
+    });
+
+    test('to.boolean returns true for small decimal', () {
+      final RuntimeFacade runtime = getRuntime('main = to.boolean(0.001)');
+      checkResult(runtime, true);
+    });
+  });
+
+  group('Is (additional type checks)', () {
+    test('is.integer returns false for string', () {
+      final RuntimeFacade runtime = getRuntime('main = is.integer("42")');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer returns false for boolean', () {
+      final RuntimeFacade runtime = getRuntime('main = is.integer(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer returns false for list', () {
+      final RuntimeFacade runtime = getRuntime('main = is.integer([1, 2])');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer returns false for negative decimal', () {
+      final RuntimeFacade runtime = getRuntime('main = is.integer(-3.5)');
+      checkResult(runtime, false);
+    });
+
+    test('is.integer returns true for negative integer', () {
+      final RuntimeFacade runtime = getRuntime('main = is.integer(-42)');
+      checkResult(runtime, true);
+    });
+
+    test('is.decimal returns true for whole decimal', () {
+      final RuntimeFacade runtime = getRuntime('main = is.decimal(12.0)');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal returns false for string', () {
+      final RuntimeFacade runtime = getRuntime('main = is.decimal("3.14")');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal returns false for boolean', () {
+      final RuntimeFacade runtime = getRuntime('main = is.decimal(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal returns false for list', () {
+      final RuntimeFacade runtime = getRuntime('main = is.decimal([1.5])');
+      checkResult(runtime, false);
+    });
+
+    test('is.decimal returns true for negative decimal', () {
+      final RuntimeFacade runtime = getRuntime('main = is.decimal(-3.14)');
+      checkResult(runtime, true);
+    });
+
+    test('is.infinite returns true for negative infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.infinite(num.negative(num.infinity()))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('is.infinite returns false for string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.infinite("infinity")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('is.infinite returns false for boolean', () {
+      final RuntimeFacade runtime = getRuntime('main = is.infinite(true)');
+      checkResult(runtime, false);
+    });
+
+    test('is.infinite returns false for zero', () {
+      final RuntimeFacade runtime = getRuntime('main = is.infinite(0)');
+      checkResult(runtime, false);
+    });
+
+    test('is.infinite returns false for large number', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.infinite(999999999999)',
+      );
+      checkResult(runtime, false);
+    });
   });
 }

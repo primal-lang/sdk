@@ -682,6 +682,100 @@ main = list.sort([3, 1, 5, 2, 4], decimalCompare)
 ''');
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
+
+    test('list.init returns empty list for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.init([1])');
+      checkResult(runtime, []);
+    });
+
+    test('list.init returns empty list for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.init([])');
+      checkResult(runtime, []);
+    });
+
+    test('list.rest returns empty list for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.rest([1])');
+      checkResult(runtime, []);
+    });
+
+    test('list.reverse returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main = list.reverse([])');
+      checkResult(runtime, []);
+    });
+
+    test('list.reverse returns same list for single element', () {
+      final RuntimeFacade runtime = getRuntime('main = list.reverse([42])');
+      checkResult(runtime, [42]);
+    });
+
+    test('list.indexOf returns -1 for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.indexOf([], 1)');
+      checkResult(runtime, -1);
+    });
+
+    test('list.join returns element string for single element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.join(["hello"], ", ")',
+      );
+      checkResult(runtime, '"hello"');
+    });
+
+    test('list.sublist returns empty list for equal start and end', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], 1, 1)',
+      );
+      checkResult(runtime, []);
+    });
+
+    test('list.sublist returns full list for zero to length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], 0, 3)',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.swap with same index returns unchanged list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3], 1, 1)',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.remove returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main = list.remove([], 1)');
+      checkResult(runtime, []);
+    });
+
+    test('list.first returns element for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.first([42])');
+      checkResult(runtime, 42);
+    });
+
+    test('list.last returns element for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.last([42])');
+      checkResult(runtime, 42);
+    });
+
+    test('list.zip with first list empty returns second list elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip([], [1, 2, 3], num.add)',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.zip with second list empty returns first list elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip([1, 2, 3], [], num.add)',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.sort returns single element list unchanged', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([42], num.compare)',
+      );
+      checkResult(runtime, [42]);
+    });
   });
 
   group('List Type Errors', () {
@@ -766,6 +860,211 @@ main = list.sort([3, 1, 2], badCompare)
           ),
         ),
       );
+    });
+
+    test('list.isNotEmpty throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.isNotEmpty("hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.init throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = list.init("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.rest throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = list.rest("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.concat throws for wrong first argument type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.concat("hello", [1, 2])',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.concat throws for wrong second argument type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.concat([1, 2], "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.take throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime('main = list.take("hello", 2)');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.drop throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime('main = list.drop("hello", 2)');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.at throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime('main = list.at("hello", 1)');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.set throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set("hello", 1, 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.sublist throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist("hello", 0, 2)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.swap throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap("hello", 0, 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.remove throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.remove("hello", "l")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.removeAt throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt("hello", 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.indexOf throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.indexOf("hello", "l")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.insertStart throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.insertStart("hello", 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.insertEnd throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.insertEnd("hello", 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.join throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.join("hello", ",")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.join throws for wrong separator type', () {
+      final RuntimeFacade runtime = getRuntime('main = list.join([1, 2], 42)');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.filter throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filter("hello", num.isEven)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.filter throws for wrong function type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filter([1, 2, 3], 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.reduce throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reduce("hello", 0, num.add)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.all throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all("hello", num.isEven)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.all throws for wrong function type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all([1, 2, 3], 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.any throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.any("hello", num.isEven)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.any throws for wrong function type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.any([1, 2, 3], 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.none throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.none("hello", num.isEven)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.none throws for wrong function type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.none([1, 2, 3], 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.zip throws for wrong first list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip("hello", [1, 2], num.add)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.zip throws for wrong second list type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip([1, 2], "hello", num.add)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.zip throws for wrong function type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip([1, 2], [3, 4], 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.filled throws for wrong count type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filled("hello", 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
   });
 
@@ -914,6 +1213,279 @@ main = list.sort([3, 1, 2], badCompare)
           ),
         ),
       );
+    });
+
+    test('list.set throws NegativeIndexError for negative index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], -1, 42)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (NegativeIndexError e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.set'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.set throws IndexOutOfBoundsError for out-of-bounds index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], 10, 42)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (IndexOutOfBoundsError e) => e.toString(),
+            'message',
+            allOf(
+              contains('10'),
+              contains('length: 3'),
+              contains('list.set'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.sublist throws NegativeIndexError for negative start', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], -1, 2)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (NegativeIndexError e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.sublist'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'list.sublist throws IndexOutOfBoundsError when start exceeds length',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.sublist([1, 2, 3], 10, 12)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (IndexOutOfBoundsError e) => e.toString(),
+              'message',
+              allOf(
+                contains('10'),
+                contains('length: 3'),
+                contains('list.sublist'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'list.sublist throws IndexOutOfBoundsError when end is less than start',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.sublist([1, 2, 3], 2, 1)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (IndexOutOfBoundsError e) => e.toString(),
+              'message',
+              allOf(
+                contains('1'),
+                contains('list.sublist'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'list.sublist throws IndexOutOfBoundsError when end exceeds length',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.sublist([1, 2, 3], 0, 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (IndexOutOfBoundsError e) => e.toString(),
+              'message',
+              allOf(
+                contains('10'),
+                contains('length: 3'),
+                contains('list.sublist'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('list.swap throws NegativeIndexError for negative first index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3], -1, 2)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (NegativeIndexError e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.swap'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.swap throws NegativeIndexError for negative second index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3], 0, -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (NegativeIndexError e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.swap'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'list.swap throws IndexOutOfBoundsError for out-of-bounds first index',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.swap([1, 2, 3], 10, 1)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (IndexOutOfBoundsError e) => e.toString(),
+              'message',
+              allOf(
+                contains('10'),
+                contains('length: 3'),
+                contains('list.swap'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'list.swap throws IndexOutOfBoundsError for out-of-bounds second index',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.swap([1, 2, 3], 0, 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (IndexOutOfBoundsError e) => e.toString(),
+              'message',
+              allOf(
+                contains('10'),
+                contains('length: 3'),
+                contains('list.swap'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('list.removeAt throws NegativeIndexError for negative index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([1, 2, 3], -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (NegativeIndexError e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.removeAt'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'list.removeAt throws IndexOutOfBoundsError for out-of-bounds index',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.removeAt([1, 2, 3], 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (IndexOutOfBoundsError e) => e.toString(),
+              'message',
+              allOf(
+                contains('10'),
+                contains('length: 3'),
+                contains('list.removeAt'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('list.removeAt removes first element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([1, 2, 3], 0)',
+      );
+      checkResult(runtime, [2, 3]);
+    });
+
+    test('list.removeAt removes last element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([1, 2, 3], 2)',
+      );
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('list.removeAt on single element list returns empty list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([42], 0)',
+      );
+      checkResult(runtime, []);
     });
   });
 }

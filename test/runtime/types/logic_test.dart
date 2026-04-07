@@ -86,8 +86,38 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
+    test('bool.and throws when first is boolean but second is number', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.and(true, 1)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.and throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.and("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.and throws for list arguments', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.and([1], [2])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
     test('bool.or throws for number arguments', () {
       final RuntimeFacade runtime = getRuntime('main = bool.or(1, 2)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.or throws when first is false but second is number', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.or(false, 1)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.or throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.or("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.or throws for list arguments', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.or([1], [2])');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
@@ -96,8 +126,33 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
+    test('bool.not throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.not("a")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.not throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.not([1])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
     test('bool.xor throws for string arguments', () {
       final RuntimeFacade runtime = getRuntime('main = bool.xor("a", "b")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.xor throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.xor(1, 2)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.xor throws for list arguments', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.xor([1], [2])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.xor throws when first is boolean but second is number', () {
+      final RuntimeFacade runtime = getRuntime('main = bool.xor(true, 1)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });

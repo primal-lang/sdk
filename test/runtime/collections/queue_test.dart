@@ -130,9 +130,20 @@ void main() {
       );
       checkResult(runtime, [3, 2, 1]);
     });
+
+    test('queue.reverse on single-element queue returns same queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.reverse(queue.new([1]))',
+      );
+      checkResult(runtime, [1]);
+    });
   });
 
   group('Queue Type Errors', () {
+    test('queue.new throws for non-list arg', () {
+      final RuntimeFacade runtime = getRuntime('main = queue.new(1)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
     test('queue.enqueue throws for non-queue first arg', () {
       final RuntimeFacade runtime = getRuntime(
         'main = queue.enqueue([1, 2], 3)',
@@ -152,6 +163,23 @@ void main() {
 
     test('queue.length throws for non-queue arg', () {
       final RuntimeFacade runtime = getRuntime('main = queue.length([1, 2])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('queue.isEmpty throws for non-queue arg', () {
+      final RuntimeFacade runtime = getRuntime('main = queue.isEmpty([1, 2])');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('queue.isNotEmpty throws for non-queue arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.isNotEmpty([1, 2])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('queue.reverse throws for non-queue arg', () {
+      final RuntimeFacade runtime = getRuntime('main = queue.reverse([1, 2])');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });

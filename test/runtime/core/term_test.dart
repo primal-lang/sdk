@@ -5,6 +5,7 @@ library;
 import 'dart:io';
 
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/bindings.dart';
@@ -14,6 +15,20 @@ import 'package:test/test.dart';
 /// Test double for [FunctionTerm] since it is abstract.
 class TestFunctionTerm extends FunctionTerm {
   const TestFunctionTerm({required super.name, required super.parameters});
+}
+
+/// Test double for [NativeFunctionTerm] since it is abstract.
+class TestNativeFunctionTerm extends NativeFunctionTerm {
+  final Term Function(List<Term>) termFunction;
+
+  const TestNativeFunctionTerm({
+    required super.name,
+    required super.parameters,
+    required this.termFunction,
+  });
+
+  @override
+  Term term(List<Term> arguments) => termFunction(arguments);
 }
 
 void main() {
@@ -609,6 +624,661 @@ void main() {
         arguments: [NumberTerm(1)],
       );
       expect(call.toString(), '42(1)');
+    });
+
+    test('toString() with multiple arguments', () {
+      const CallTerm call = CallTerm(
+        callee: NumberTerm(42),
+        arguments: [NumberTerm(1), StringTerm('a'), BooleanTerm(true)],
+      );
+      expect(call.toString(), '42(1, a, true)');
+    });
+
+    test('toString() with no arguments', () {
+      const CallTerm call = CallTerm(
+        callee: NumberTerm(42),
+        arguments: [],
+      );
+      expect(call.toString(), '42()');
+    });
+
+    test('substitute() substitutes callee and arguments', () {
+      const CallTerm call = CallTerm(
+        callee: BoundVariableTerm('f'),
+        arguments: [BoundVariableTerm('x'), NumberTerm(2)],
+      );
+      final TestNativeFunctionTerm function = TestNativeFunctionTerm(
+        name: 'testFunc',
+        parameters: const [Parameter.number('a'), Parameter.number('b')],
+        termFunction: (List<Term> arguments) => const NumberTerm(100),
+      );
+      final Bindings bindings = Bindings({
+        'f': function,
+        'x': const NumberTerm(99),
+      });
+      final Term result = call.substitute(bindings);
+      expect(result, isA<CallTerm>());
+      final CallTerm substituted = result as CallTerm;
+      expect(substituted.callee, same(function));
+      expect((substituted.arguments[0] as NumberTerm).value, 99);
+      expect((substituted.arguments[1] as NumberTerm).value, 2);
+    });
+
+    test('reduce() calls function with arguments', () {
+      final TestNativeFunctionTerm function = TestNativeFunctionTerm(
+        name: 'identity',
+        parameters: const [Parameter.number('x')],
+        termFunction: (List<Term> arguments) => arguments[0],
+      );
+      final CallTerm call = CallTerm(
+        callee: function,
+        arguments: const [NumberTerm(42)],
+      );
+      final Term result = call.reduce();
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 42);
+    });
+
+    test('native() reduces and returns native value', () {
+      final TestNativeFunctionTerm function = TestNativeFunctionTerm(
+        name: 'getValue',
+        parameters: const [],
+        termFunction: (List<Term> arguments) => const StringTerm('result'),
+      );
+      final CallTerm call = CallTerm(
+        callee: function,
+        arguments: const [],
+      );
+      expect(call.native(), 'result');
+    });
+
+    test('reduce() with FunctionReferenceTerm callee', () {
+      final TestNativeFunctionTerm function = TestNativeFunctionTerm(
+        name: 'double',
+        parameters: const [Parameter.number('x')],
+        termFunction: (List<Term> arguments) {
+          final num value = (arguments[0] as NumberTerm).value;
+          return NumberTerm(value * 2);
+        },
+      );
+      final Map<String, FunctionTerm> functions = {'double': function};
+      final FunctionReferenceTerm reference = FunctionReferenceTerm(
+        'double',
+        functions,
+      );
+      final CallTerm call = CallTerm(
+        callee: reference,
+        arguments: const [NumberTerm(21)],
+      );
+      final Term result = call.reduce();
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 42);
+    });
+  });
+
+  group('FunctionReferenceTerm additional', () {
+    test('reduce() throws NotFoundInScopeError when function not found', () {
+      final Map<String, FunctionTerm> functions = {};
+      final FunctionReferenceTerm reference = FunctionReferenceTerm(
+        'nonexistent',
+        functions,
+      );
+      expect(reference.reduce, throwsA(isA<NotFoundInScopeError>()));
+    });
+
+    test('substitute() returns itself', () {
+      const TestFunctionTerm function = TestFunctionTerm(
+        name: 'f',
+        parameters: [],
+      );
+      final Map<String, FunctionTerm> functions = {'f': function};
+      final FunctionReferenceTerm reference = FunctionReferenceTerm(
+        'f',
+        functions,
+      );
+      const Bindings bindings = Bindings({'x': NumberTerm(1)});
+      expect(reference.substitute(bindings), same(reference));
+    });
+  });
+
+  group('FunctionTerm static methods', () {
+    setUp(FunctionTerm.resetDepth);
+
+    tearDown(FunctionTerm.resetDepth);
+
+    test('resetDepth() resets the counter', () {
+      FunctionTerm.incrementDepth();
+      FunctionTerm.incrementDepth();
+      FunctionTerm.resetDepth();
+      // Should not throw since depth is reset
+      expect(FunctionTerm.incrementDepth(), true);
+    });
+
+    test('incrementDepth() returns true when under limit', () {
+      expect(FunctionTerm.incrementDepth(), true);
+    });
+
+    test('decrementDepth() decrements the counter', () {
+      FunctionTerm.incrementDepth();
+      FunctionTerm.incrementDepth();
+      FunctionTerm.decrementDepth();
+      FunctionTerm.decrementDepth();
+      // Should not throw since we decremented
+      expect(FunctionTerm.incrementDepth(), true);
+    });
+
+    test('incrementDepth() throws RecursionLimitError at max depth', () {
+      for (int i = 0; i < FunctionTerm.maxRecursionDepth; i++) {
+        FunctionTerm.incrementDepth();
+      }
+      expect(
+        FunctionTerm.incrementDepth,
+        throwsA(isA<RecursionLimitError>()),
+      );
+    });
+  });
+
+  group('FunctionTerm toSignature()', () {
+    test('returns FunctionSignature with name and parameters', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'add',
+        parameters: [Parameter.number('a'), Parameter.number('b')],
+      );
+      final FunctionSignature signature = term.toSignature();
+      expect(signature.name, 'add');
+      expect(signature.parameters.length, 2);
+      expect(signature.parameters[0].name, 'a');
+      expect(signature.parameters[1].name, 'b');
+    });
+
+    test('arity matches parameter count', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'f',
+        parameters: [Parameter.number('x'), Parameter.string('y')],
+      );
+      final FunctionSignature signature = term.toSignature();
+      expect(signature.arity, 2);
+    });
+
+    test('empty parameters returns signature with empty list', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'noArgs',
+        parameters: [],
+      );
+      final FunctionSignature signature = term.toSignature();
+      expect(signature.parameters, isEmpty);
+      expect(signature.arity, 0);
+    });
+  });
+
+  group('CustomFunctionTerm', () {
+    setUp(FunctionTerm.resetDepth);
+
+    tearDown(FunctionTerm.resetDepth);
+
+    test('type is FunctionType', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'f',
+        parameters: [Parameter.number('x')],
+        term: BoundVariableTerm('x'),
+      );
+      expect(term.type, isA<FunctionType>());
+    });
+
+    test('apply() with correct argument count evaluates term', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'identity',
+        parameters: [Parameter.number('x')],
+        term: BoundVariableTerm('x'),
+      );
+      final Term result = term.apply(const [NumberTerm(42)]);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 42);
+    });
+
+    test('apply() with wrong argument count throws', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'f',
+        parameters: [Parameter.number('x')],
+        term: BoundVariableTerm('x'),
+      );
+      expect(
+        () => term.apply(const [NumberTerm(1), NumberTerm(2)]),
+        throwsA(isA<InvalidArgumentCountError>()),
+      );
+    });
+
+    test('apply() with fewer arguments throws', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'f',
+        parameters: [Parameter.number('x'), Parameter.number('y')],
+        term: BoundVariableTerm('x'),
+      );
+      expect(
+        () => term.apply(const [NumberTerm(1)]),
+        throwsA(isA<InvalidArgumentCountError>()),
+      );
+    });
+
+    test('substitute() substitutes inner term', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'f',
+        parameters: [Parameter.number('x')],
+        term: BoundVariableTerm('y'),
+      );
+      const Bindings bindings = Bindings({'y': NumberTerm(99)});
+      final Term result = term.substitute(bindings);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 99);
+    });
+
+    test('apply() manages recursion depth', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'f',
+        parameters: [],
+        term: NumberTerm(1),
+      );
+      // Apply multiple times and verify depth is properly managed
+      term.apply(const []);
+      term.apply(const []);
+      term.apply(const []);
+      // Should still be able to apply (depth resets after each call)
+      final Term result = term.apply(const []);
+      expect(result, isA<NumberTerm>());
+    });
+
+    test('apply() reduces arguments before binding (call-by-value)', () {
+      final TestNativeFunctionTerm innerFunction = TestNativeFunctionTerm(
+        name: 'getValue',
+        parameters: const [],
+        termFunction: (List<Term> arguments) => const NumberTerm(42),
+      );
+      final CallTerm callTerm = CallTerm(
+        callee: innerFunction,
+        arguments: const [],
+      );
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'wrapper',
+        parameters: [Parameter.number('x')],
+        term: BoundVariableTerm('x'),
+      );
+      final Term result = term.apply([callTerm]);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 42);
+    });
+
+    test('toString() includes name and parameters', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'add',
+        parameters: [Parameter.number('a'), Parameter.number('b')],
+        term: BoundVariableTerm('a'),
+      );
+      expect(term.toString(), 'add(a: Number, b: Number)');
+    });
+
+    test('native() returns string representation', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'f',
+        parameters: [Parameter.string('s')],
+        term: BoundVariableTerm('s'),
+      );
+      expect(term.native(), 'f(s: String)');
+    });
+  });
+
+  group('NativeFunctionTerm', () {
+    test('substitute() retrieves bindings and calls term()', () {
+      final TestNativeFunctionTerm term = TestNativeFunctionTerm(
+        name: 'sum',
+        parameters: const [Parameter.number('a'), Parameter.number('b')],
+        termFunction: (List<Term> arguments) {
+          final num a = (arguments[0] as NumberTerm).value;
+          final num b = (arguments[1] as NumberTerm).value;
+          return NumberTerm(a + b);
+        },
+      );
+      const Bindings bindings = Bindings({
+        'a': NumberTerm(10),
+        'b': NumberTerm(20),
+      });
+      final Term result = term.substitute(bindings);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 30);
+    });
+
+    test('apply() works with correct arguments', () {
+      final TestNativeFunctionTerm term = TestNativeFunctionTerm(
+        name: 'identity',
+        parameters: const [Parameter.number('x')],
+        termFunction: (List<Term> arguments) => arguments[0],
+      );
+      final Term result = term.apply(const [NumberTerm(42)]);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 42);
+    });
+  });
+
+  group('NumberTerm edge cases', () {
+    test('NaN value', () {
+      const NumberTerm nanTerm = NumberTerm(double.nan);
+      expect(nanTerm.native().isNaN, true);
+    });
+
+    test('positive infinity', () {
+      const NumberTerm infTerm = NumberTerm(double.infinity);
+      expect(infTerm.native(), double.infinity);
+    });
+
+    test('negative infinity', () {
+      const NumberTerm negInfTerm = NumberTerm(double.negativeInfinity);
+      expect(negInfTerm.native(), double.negativeInfinity);
+    });
+
+    test('very large int', () {
+      const NumberTerm largeTerm = NumberTerm(9007199254740992);
+      expect(largeTerm.native(), 9007199254740992);
+    });
+
+    test('very small double', () {
+      const NumberTerm smallTerm = NumberTerm(0.0000000001);
+      expect(smallTerm.native(), 0.0000000001);
+    });
+  });
+
+  group('FileTerm additional', () {
+    test('native() returns File', () {
+      final File file = File('test.txt');
+      final FileTerm term = FileTerm(file);
+      expect(term.native(), same(file));
+    });
+
+    test('toString() returns file path', () {
+      final FileTerm term = FileTerm(File('/path/to/file.txt'));
+      expect(term.toString(), contains('file.txt'));
+    });
+
+    test('substitute() returns itself', () {
+      final FileTerm term = FileTerm(File('test.txt'));
+      const Bindings bindings = Bindings({});
+      expect(term.substitute(bindings), same(term));
+    });
+
+    test('reduce() returns itself', () {
+      final FileTerm term = FileTerm(File('test.txt'));
+      expect(term.reduce(), same(term));
+    });
+
+    test('value is correct', () {
+      final File file = File('myfile.txt');
+      final FileTerm term = FileTerm(file);
+      expect(term.value, same(file));
+    });
+  });
+
+  group('DirectoryTerm additional', () {
+    test('native() returns Directory', () {
+      final Directory directory = Directory('/test/dir');
+      final DirectoryTerm term = DirectoryTerm(directory);
+      expect(term.native(), same(directory));
+    });
+
+    test('toString() returns directory path', () {
+      final DirectoryTerm term = DirectoryTerm(Directory('/path/to/dir'));
+      expect(term.toString(), contains('dir'));
+    });
+
+    test('substitute() returns itself', () {
+      final DirectoryTerm term = DirectoryTerm(Directory('test'));
+      const Bindings bindings = Bindings({});
+      expect(term.substitute(bindings), same(term));
+    });
+
+    test('reduce() returns itself', () {
+      final DirectoryTerm term = DirectoryTerm(Directory('test'));
+      expect(term.reduce(), same(term));
+    });
+
+    test('value is correct', () {
+      final Directory directory = Directory('mydir');
+      final DirectoryTerm term = DirectoryTerm(directory);
+      expect(term.value, same(directory));
+    });
+  });
+
+  group('TimestampTerm additional', () {
+    test('toString() returns DateTime string', () {
+      final DateTime dt = DateTime(2024, 6, 15, 12, 30, 45);
+      final TimestampTerm term = TimestampTerm(dt);
+      expect(term.toString(), dt.toString());
+    });
+
+    test('substitute() returns itself', () {
+      final TimestampTerm term = TimestampTerm(DateTime.now());
+      const Bindings bindings = Bindings({});
+      expect(term.substitute(bindings), same(term));
+    });
+
+    test('reduce() returns itself', () {
+      final TimestampTerm term = TimestampTerm(DateTime.now());
+      expect(term.reduce(), same(term));
+    });
+
+    test('value is correct', () {
+      final DateTime dt = DateTime(2024, 1, 1);
+      final TimestampTerm term = TimestampTerm(dt);
+      expect(term.value, dt);
+    });
+  });
+
+  group('ListTerm additional', () {
+    test('reduce() returns itself', () {
+      const ListTerm term = ListTerm([NumberTerm(1)]);
+      expect(term.reduce(), same(term));
+    });
+
+    test('toString() returns list string', () {
+      const ListTerm term = ListTerm([NumberTerm(1), NumberTerm(2)]);
+      expect(term.toString(), '[1, 2]');
+    });
+
+    test('nested list native()', () {
+      const ListTerm inner = ListTerm([NumberTerm(1), NumberTerm(2)]);
+      const ListTerm outer = ListTerm([inner, NumberTerm(3)]);
+      expect(outer.native(), [
+        [1, 2],
+        3,
+      ]);
+    });
+
+    test('value is correct', () {
+      const List<Term> elements = [NumberTerm(1)];
+      const ListTerm term = ListTerm(elements);
+      expect(term.value, elements);
+    });
+  });
+
+  group('MapTerm additional', () {
+    test('reduce() returns itself', () {
+      const MapTerm term = MapTerm({StringTerm('a'): NumberTerm(1)});
+      expect(term.reduce(), same(term));
+    });
+
+    test('toString() returns map string', () {
+      const MapTerm term = MapTerm({StringTerm('a'): NumberTerm(1)});
+      expect(term.toString(), '{a: 1}');
+    });
+
+    test('substitute() substitutes both keys and values with variables', () {
+      const MapTerm term = MapTerm({
+        BoundVariableTerm('k'): BoundVariableTerm('v'),
+      });
+      const Bindings bindings = Bindings({
+        'k': StringTerm('key'),
+        'v': NumberTerm(100),
+      });
+      final Term result = term.substitute(bindings);
+      expect(result, isA<MapTerm>());
+      expect((result as MapTerm).native(), {'key': 100});
+    });
+
+    test('asMapWithKeys() with empty map', () {
+      const MapTerm term = MapTerm({});
+      final Map<dynamic, Term> result = term.asMapWithKeys();
+      expect(result, isEmpty);
+    });
+
+    test('native() with nested map', () {
+      const MapTerm inner = MapTerm({StringTerm('x'): NumberTerm(1)});
+      const MapTerm outer = MapTerm({StringTerm('nested'): inner});
+      expect(outer.native(), {
+        'nested': {'x': 1},
+      });
+    });
+  });
+
+  group('SetTerm additional', () {
+    test('reduce() returns itself', () {
+      const SetTerm term = SetTerm({NumberTerm(1)});
+      expect(term.reduce(), same(term));
+    });
+
+    test('toString() returns set string', () {
+      const SetTerm term = SetTerm({NumberTerm(1)});
+      expect(term.toString(), '{1}');
+    });
+
+    test('value is correct', () {
+      const Set<Term> elements = {NumberTerm(1), NumberTerm(2)};
+      const SetTerm term = SetTerm(elements);
+      expect(term.value, elements);
+    });
+  });
+
+  group('VectorTerm additional', () {
+    test('reduce() returns itself', () {
+      const VectorTerm term = VectorTerm([NumberTerm(1)]);
+      expect(term.reduce(), same(term));
+    });
+
+    test('toString() returns vector string', () {
+      const VectorTerm term = VectorTerm([NumberTerm(1), NumberTerm(2)]);
+      expect(term.toString(), '[1, 2]');
+    });
+
+    test('empty vector', () {
+      const VectorTerm term = VectorTerm([]);
+      expect(term.native(), []);
+      expect(term.toString(), '[]');
+    });
+
+    test('value is correct', () {
+      const List<Term> elements = [NumberTerm(1)];
+      const VectorTerm term = VectorTerm(elements);
+      expect(term.value, elements);
+    });
+  });
+
+  group('StackTerm additional', () {
+    test('reduce() returns itself', () {
+      const StackTerm term = StackTerm([NumberTerm(1)]);
+      expect(term.reduce(), same(term));
+    });
+
+    test('toString() returns stack string', () {
+      const StackTerm term = StackTerm([NumberTerm(1), NumberTerm(2)]);
+      expect(term.toString(), '[1, 2]');
+    });
+
+    test('empty stack', () {
+      const StackTerm term = StackTerm([]);
+      expect(term.native(), []);
+    });
+
+    test('value is correct', () {
+      const List<Term> elements = [NumberTerm(1)];
+      const StackTerm term = StackTerm(elements);
+      expect(term.value, elements);
+    });
+  });
+
+  group('QueueTerm additional', () {
+    test('reduce() returns itself', () {
+      const QueueTerm term = QueueTerm([NumberTerm(1)]);
+      expect(term.reduce(), same(term));
+    });
+
+    test('toString() returns queue string', () {
+      const QueueTerm term = QueueTerm([NumberTerm(1), NumberTerm(2)]);
+      expect(term.toString(), '[1, 2]');
+    });
+
+    test('empty queue', () {
+      const QueueTerm term = QueueTerm([]);
+      expect(term.native(), []);
+    });
+
+    test('value is correct', () {
+      const List<Term> elements = [NumberTerm(1)];
+      const QueueTerm term = QueueTerm(elements);
+      expect(term.value, elements);
+    });
+  });
+
+  group('BoundVariableTerm additional', () {
+    test('reduce() returns itself', () {
+      const BoundVariableTerm term = BoundVariableTerm('x');
+      expect(term.reduce(), same(term));
+    });
+
+    test('substitute() with empty bindings throws', () {
+      const BoundVariableTerm term = BoundVariableTerm('x');
+      const Bindings bindings = Bindings({});
+      expect(
+        () => term.substitute(bindings),
+        throwsA(isA<NotFoundInScopeError>()),
+      );
+    });
+  });
+
+  group('FunctionTerm apply with empty parameters', () {
+    test('apply() with empty parameters and empty arguments succeeds', () {
+      final TestNativeFunctionTerm term = TestNativeFunctionTerm(
+        name: 'noArgs',
+        parameters: const [],
+        termFunction: (List<Term> arguments) => const NumberTerm(42),
+      );
+      final Term result = term.apply(const []);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 42);
+    });
+
+    test('apply() with empty parameters but with arguments throws', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'noArgs',
+        parameters: [],
+      );
+      expect(
+        () => term.apply(const [NumberTerm(1)]),
+        throwsA(isA<InvalidArgumentCountError>()),
+      );
+    });
+  });
+
+  group('StringTerm additional', () {
+    test('string with special characters', () {
+      const StringTerm term = StringTerm('hello\nworld\ttab');
+      expect(term.native(), 'hello\nworld\ttab');
+    });
+
+    test('string with unicode', () {
+      const StringTerm term = StringTerm('\u{1F600}');
+      expect(term.native(), '\u{1F600}');
+    });
+
+    test('very long string', () {
+      final String longString = 'a' * 10000;
+      final StringTerm term = StringTerm(longString);
+      expect(term.native().length, 10000);
     });
   });
 }

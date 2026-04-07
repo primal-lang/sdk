@@ -92,5 +92,143 @@ void main() {
       expect((bindings.get('first') as NumberTerm).value, 100);
       expect((bindings.get('second') as NumberTerm).value, 200);
     });
+
+    test('fewer arguments than parameters throws RangeError', () {
+      expect(
+        () => Bindings.from(
+          parameters: [
+            const Parameter.number('a'),
+            const Parameter.number('b'),
+          ],
+          arguments: [const NumberTerm(1)],
+        ),
+        throwsRangeError,
+      );
+    });
+
+    test('more arguments than parameters ignores extra arguments', () {
+      final Bindings bindings = Bindings.from(
+        parameters: [const Parameter.number('a')],
+        arguments: [
+          const NumberTerm(1),
+          const NumberTerm(2),
+          const NumberTerm(3),
+        ],
+      );
+      expect(bindings.data.length, 1);
+      expect((bindings.get('a') as NumberTerm).value, 1);
+    });
+
+    test('duplicate parameter names use last value', () {
+      final Bindings bindings = Bindings.from(
+        parameters: [
+          const Parameter.number('x'),
+          const Parameter.number('x'),
+        ],
+        arguments: [const NumberTerm(1), const NumberTerm(2)],
+      );
+      expect(bindings.data.length, 1);
+      expect((bindings.get('x') as NumberTerm).value, 2);
+    });
+  });
+
+  group('Bindings data field', () {
+    test('data field returns the underlying map', () {
+      const Bindings bindings = Bindings({
+        'a': NumberTerm(1),
+        'b': StringTerm('two'),
+      });
+      expect(bindings.data, isA<Map<String, Term>>());
+      expect(bindings.data.length, 2);
+      expect(bindings.data.containsKey('a'), true);
+      expect(bindings.data.containsKey('b'), true);
+    });
+
+    test('data field for empty bindings returns empty map', () {
+      const Bindings bindings = Bindings({});
+      expect(bindings.data, isEmpty);
+    });
+  });
+
+  group('Bindings with various term types', () {
+    test('works with ListTerm', () {
+      const Bindings bindings = Bindings({
+        'list': ListTerm([NumberTerm(1), NumberTerm(2)]),
+      });
+      final Term result = bindings.get('list');
+      expect(result, isA<ListTerm>());
+      expect((result as ListTerm).value.length, 2);
+    });
+
+    test('works with MapTerm', () {
+      const Bindings bindings = Bindings({
+        'map': MapTerm({StringTerm('key'): NumberTerm(42)}),
+      });
+      final Term result = bindings.get('map');
+      expect(result, isA<MapTerm>());
+    });
+
+    test('works with SetTerm', () {
+      const Bindings bindings = Bindings({
+        'set': SetTerm({NumberTerm(1), NumberTerm(2)}),
+      });
+      final Term result = bindings.get('set');
+      expect(result, isA<SetTerm>());
+    });
+
+    test('works with mixed term types', () {
+      const Bindings bindings = Bindings({
+        'number': NumberTerm(42),
+        'string': StringTerm('hello'),
+        'boolean': BooleanTerm(true),
+        'list': ListTerm([NumberTerm(1)]),
+      });
+      expect(bindings.get('number'), isA<NumberTerm>());
+      expect(bindings.get('string'), isA<StringTerm>());
+      expect(bindings.get('boolean'), isA<BooleanTerm>());
+      expect(bindings.get('list'), isA<ListTerm>());
+    });
+  });
+
+  group('Bindings.from() with various parameter types', () {
+    test('works with list parameter', () {
+      final Bindings bindings = Bindings.from(
+        parameters: [const Parameter.list('items')],
+        arguments: [
+          const ListTerm([NumberTerm(1), NumberTerm(2)]),
+        ],
+      );
+      final Term result = bindings.get('items');
+      expect(result, isA<ListTerm>());
+    });
+
+    test('works with map parameter', () {
+      final Bindings bindings = Bindings.from(
+        parameters: [const Parameter.map('data')],
+        arguments: [
+          const MapTerm({StringTerm('key'): NumberTerm(1)}),
+        ],
+      );
+      final Term result = bindings.get('data');
+      expect(result, isA<MapTerm>());
+    });
+
+    test('works with any parameter type', () {
+      final Bindings bindings = Bindings.from(
+        parameters: [const Parameter.any('value')],
+        arguments: [const NumberTerm(42)],
+      );
+      final Term result = bindings.get('value');
+      expect(result, isA<NumberTerm>());
+    });
+
+    test('works with function parameter', () {
+      final Bindings bindings = Bindings.from(
+        parameters: [const Parameter.function('callback')],
+        arguments: [const BooleanTerm(true)],
+      );
+      final Term result = bindings.get('callback');
+      expect(result, isA<BooleanTerm>());
+    });
   });
 }

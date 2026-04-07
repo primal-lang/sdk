@@ -166,5 +166,131 @@ void main() {
       );
       expect(num.parse(runtime.executeMain()), closeTo(1.5707963, 0.000001));
     });
+
+    test('vector.angle throws for vectors with different lengths', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 2]), vector.new([3, 4, 5]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
+
+    test('vector.angle computes angle between single-element vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1]), vector.new([1]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(0, 0.000001));
+    });
+
+    test('vector.new creates single-element vector', () {
+      final RuntimeFacade runtime = getRuntime('main = vector.new([42])');
+      checkResult(runtime, [42]);
+    });
+
+    test('vector.new throws for list containing non-number', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1, "two", 3])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.magnitude computes length of single-element vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.new([5]))',
+      );
+      checkResult(runtime, 5.0);
+    });
+
+    test('vector.normalize returns unit vector for single-element vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.new([5]))',
+      );
+      checkResult(runtime, [1.0]);
+    });
+
+    test('vector.add sums single-element vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([3]), vector.new([7]))',
+      );
+      checkResult(runtime, [10]);
+    });
+
+    test('vector.sub subtracts single-element vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([10]), vector.new([4]))',
+      );
+      checkResult(runtime, [6]);
+    });
+
+    test('vector.magnitude returns magnitude for 2D vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.new([3, 4]))',
+      );
+      checkResult(runtime, 5.0);
+    });
+
+    test('vector.normalize handles negative components', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.new([-3, -4]))',
+      );
+      checkResult(runtime, [-0.6, -0.8]);
+    });
+
+    test('vector.add handles negative components', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([-1, -2]), vector.new([-3, -4]))',
+      );
+      checkResult(runtime, [-4, -6]);
+    });
+
+    test('vector.sub handles negative components', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([-1, -2]), vector.new([-3, -4]))',
+      );
+      checkResult(runtime, [2, 2]);
+    });
+
+    test('vector.new handles floating point numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1.5, 2.5, 3.5])',
+      );
+      checkResult(runtime, [1.5, 2.5, 3.5]);
+    });
+
+    test('vector.add handles floating point numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([1.5, 2.5]), vector.new([0.5, 0.5]))',
+      );
+      checkResult(runtime, [2.0, 3.0]);
+    });
+
+    test('vector.sub handles floating point numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([2.5, 3.5]), vector.new([0.5, 1.5]))',
+      );
+      checkResult(runtime, [2.0, 2.0]);
+    });
+
+    test('vector.angle handles second vector with zero magnitude', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 2, 3]), vector.new([0, 0, 0]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('vector.new throws for boolean in list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1, true, 3])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
   });
 }

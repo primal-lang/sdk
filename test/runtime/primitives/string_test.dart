@@ -470,6 +470,95 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = str.drop("Hi", 10)');
       checkResult(runtime, '""');
     });
+
+    test('str.init returns empty string for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main = str.init("")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.init returns empty string for single character', () {
+      final RuntimeFacade runtime = getRuntime('main = str.init("a")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.uppercase returns empty string for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main = str.uppercase("")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.lowercase returns empty string for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main = str.lowercase("")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.trim returns empty string for whitespace-only input', () {
+      final RuntimeFacade runtime = getRuntime('main = str.trim("   ")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.concat with empty strings', () {
+      final RuntimeFacade runtime = getRuntime('main = str.concat("", "")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.compare with empty strings', () {
+      final RuntimeFacade runtime = getRuntime('main = str.compare("", "")');
+      checkResult(runtime, 0);
+    });
+
+    test('str.startsWith returns true for empty prefix', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.startsWith("hello", "")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.endsWith returns true for empty suffix', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.endsWith("hello", "")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.length returns zero for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main = str.length("")');
+      checkResult(runtime, 0);
+    });
+
+    test('str.padLeft with empty padding string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.padLeft("ab", 5, "")',
+      );
+      checkResult(runtime, '"ab"');
+    });
+
+    test('str.padRight with empty padding string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.padRight("ab", 5, "")',
+      );
+      checkResult(runtime, '"ab"');
+    });
+
+    test('str.removeAt removes first character', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.removeAt("Hello", 0)',
+      );
+      checkResult(runtime, '"ello"');
+    });
+
+    test('str.substring returns empty string for equal indices', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.substring("Hello", 2, 2)',
+      );
+      checkResult(runtime, '""');
+    });
+
+    test('str.substring returns full string with zero and length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.substring("Hello", 0, 5)',
+      );
+      checkResult(runtime, '"Hello"');
+    });
   });
 
   group('String Type Errors', () {
@@ -514,6 +603,135 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = str.trim(42)');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
+
+    test(
+      'str.at throws InvalidArgumentTypesError for wrong first argument',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = str.at(42, 0)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+
+    test(
+      'str.at throws InvalidArgumentTypesError for wrong second argument',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = str.at("Hello", "x")');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+
+    test('str.bytes throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.bytes(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.concat throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.concat(42, "x")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.compare throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.compare(42, "x")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.startsWith throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.startsWith(42, "x")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.endsWith throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.endsWith(42, "x")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.padLeft throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.padLeft(42, 5, "0")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.padRight throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.padRight(42, 5, "0")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.match throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.match(42, "[a-z]+")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.first throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.first(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.last throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.last(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.init throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.init(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.rest throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.rest(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.isEmpty throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.isEmpty(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.isNotEmpty throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.isNotEmpty(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.take throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.take(42, 2)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.drop throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.drop(42, 2)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.removeAt throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = str.removeAt(42, 0)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test(
+      'str.contains throws InvalidArgumentTypesError for wrong second argument',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = str.contains("Hello", 42)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+
+    test(
+      'str.split throws InvalidArgumentTypesError for wrong second argument',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = str.split("Hello", 42)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
   });
 
   group('Unicode Escape Sequences', () {
@@ -757,5 +975,145 @@ void main() {
         ),
       );
     });
+
+    test('str.take throws NegativeIndexError for negative count', () {
+      final RuntimeFacade runtime = getRuntime('main = str.take("Hello", -1)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('str.take'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('str.drop throws NegativeIndexError for negative count', () {
+      final RuntimeFacade runtime = getRuntime('main = str.drop("Hello", -1)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('str.drop'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('str.removeAt throws NegativeIndexError for negative index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.removeAt("Hello", -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('str.removeAt'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'str.removeAt throws IndexOutOfBoundsError for out-of-bounds index',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = str.removeAt("Hello", 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('10'),
+                contains('length: 5'),
+                contains('str.removeAt'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('str.substring throws NegativeIndexError for negative start', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.substring("Hello", -1, 3)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('str.substring'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'str.substring throws IndexOutOfBoundsError when end is less than start',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = str.substring("Hello", 3, 1)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('1'),
+                contains('str.substring'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'str.substring throws IndexOutOfBoundsError when end exceeds length',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = str.substring("Hello", 0, 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<IndexOutOfBoundsError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('10'),
+                contains('length: 5'),
+                contains('str.substring'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   });
 }

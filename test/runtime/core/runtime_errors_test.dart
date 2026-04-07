@@ -464,4 +464,619 @@ main = getVal(true)[0]
       );
     });
   });
+
+  group('Empty Collection Errors (list/string)', () {
+    test('list.first on empty list throws EmptyCollectionError', () {
+      final RuntimeFacade runtime = getRuntime('main = list.first([])');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<EmptyCollectionError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('empty'), contains('list')),
+          ),
+        ),
+      );
+    });
+
+    test('list.last on empty list throws EmptyCollectionError', () {
+      final RuntimeFacade runtime = getRuntime('main = list.last([])');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<EmptyCollectionError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('empty'), contains('list')),
+          ),
+        ),
+      );
+    });
+
+    test('str.first on empty string throws EmptyCollectionError', () {
+      final RuntimeFacade runtime = getRuntime('main = str.first("")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<EmptyCollectionError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('empty'), contains('string')),
+          ),
+        ),
+      );
+    });
+
+    test('str.last on empty string throws EmptyCollectionError', () {
+      final RuntimeFacade runtime = getRuntime('main = str.last("")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<EmptyCollectionError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('empty'), contains('string')),
+          ),
+        ),
+      );
+    });
+  });
+
+  group('Index Out of Bounds Errors', () {
+    test('list.at with index out of bounds throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime('main = list.at([1, 2, 3], 5)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('5'), contains('out of bounds')),
+          ),
+        ),
+      );
+    });
+
+    test('list indexing with out of bounds throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2][10]');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IndexOutOfBoundsError>()),
+      );
+    });
+
+    test('str.at with index out of bounds throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime('main = str.at("abc", 5)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('5'), contains('out of bounds')),
+          ),
+        ),
+      );
+    });
+
+    test('string indexing with out of bounds throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime('main = "abc"[10]');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IndexOutOfBoundsError>()),
+      );
+    });
+
+    test('list.sublist with end > length throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], 0, 10)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IndexOutOfBoundsError>()),
+      );
+    });
+
+    test('str.substring with end > length throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.substring("abc", 0, 10)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IndexOutOfBoundsError>()),
+      );
+    });
+
+    test('list.set with index out of bounds throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], 10, 99)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IndexOutOfBoundsError>()),
+      );
+    });
+
+    test(
+      'list.removeAt with index out of bounds throws IndexOutOfBoundsError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.removeAt([1, 2, 3], 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(isA<IndexOutOfBoundsError>()),
+        );
+      },
+    );
+
+    test('list.swap with index out of bounds throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3], 0, 10)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IndexOutOfBoundsError>()),
+      );
+    });
+
+    test(
+      'str.removeAt with index out of bounds throws IndexOutOfBoundsError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = str.removeAt("abc", 10)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(isA<IndexOutOfBoundsError>()),
+        );
+      },
+    );
+  });
+
+  group('Negative Index Errors', () {
+    test('list.at with negative index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime('main = list.at([1, 2, 3], -1)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('-1'), contains('Negative')),
+          ),
+        ),
+      );
+    });
+
+    test('list indexing with negative index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2, 3][-1]');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('str.at with negative index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime('main = str.at("abc", -1)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('string indexing with negative index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime('main = "abc"[-1]');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('list.sublist with negative start throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], -1, 2)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('str.substring with negative start throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.substring("abc", -1, 2)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('list.take with negative count throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.take([1, 2, 3], -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('list.drop with negative count throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.drop([1, 2, 3], -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('str.take with negative count throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime('main = str.take("abc", -1)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('str.drop with negative count throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime('main = str.drop("abc", -1)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('list.set with negative index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], -1, 99)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('list.removeAt with negative index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([1, 2, 3], -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('list.swap with negative first index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3], -1, 1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('list.swap with negative second index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3], 0, -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('str.removeAt with negative index throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.removeAt("abc", -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+
+    test('list.filled with negative count throws NegativeIndexError', () {
+      final RuntimeFacade runtime = getRuntime('main = list.filled(-1, 0)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<NegativeIndexError>()),
+      );
+    });
+  });
+
+  group('Recursion Limit Errors', () {
+    test('infinite recursion throws RecursionLimitError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'loop(x) = loop(x)\nmain = loop(1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<RecursionLimitError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('recursion'),
+          ),
+        ),
+      );
+    });
+
+    test('mutual recursion exceeding limit throws RecursionLimitError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'ping(x) = pong(x)\npong(x) = ping(x)\nmain = ping(1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<RecursionLimitError>()),
+      );
+    });
+  });
+
+  group('Invalid Numeric Operation Errors', () {
+    test('num.log with zero throws InvalidNumericOperationError', () {
+      final RuntimeFacade runtime = getRuntime('main = num.log(0)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidNumericOperationError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('logarithm'), contains('non-positive')),
+          ),
+        ),
+      );
+    });
+
+    test('num.log with negative throws InvalidNumericOperationError', () {
+      final RuntimeFacade runtime = getRuntime('main = num.log(-5)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidNumericOperationError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('non-positive'),
+          ),
+        ),
+      );
+    });
+
+    test('num.sqrt with negative throws InvalidNumericOperationError', () {
+      final RuntimeFacade runtime = getRuntime('main = num.sqrt(-4)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidNumericOperationError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('square root'), contains('negative')),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'num.pow with negative base and fractional exponent throws InvalidNumericOperationError',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = num.pow(-2, 0.5)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(contains('negative'), contains('fractional')),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'num.integerRandom with max < min throws InvalidNumericOperationError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = num.integerRandom(10, 5)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (e) => e.toString(),
+              'message',
+              contains('must be >='),
+            ),
+          ),
+        );
+      },
+    );
+  });
+
+  group('JSON Parse Errors', () {
+    test('json.decode with invalid JSON throws JsonParseError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = json.decode("{invalid}")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<JsonParseError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Invalid JSON'),
+          ),
+        ),
+      );
+    });
+
+    test('json.decode with null value throws RuntimeError', () {
+      final RuntimeFacade runtime = getRuntime('main = json.decode("null")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<RuntimeError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('null'),
+          ),
+        ),
+      );
+    });
+  });
+
+  group('Element Not Found Errors', () {
+    test('map indexing with non-existent key throws ElementNotFoundError', () {
+      final RuntimeFacade runtime = getRuntime('main = {"a": 1}["missing"]');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ElementNotFoundError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('missing'),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'map indexing with non-existent numeric key throws ElementNotFoundError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = {1: "one", 2: "two"}[3]',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<ElementNotFoundError>().having(
+              (e) => e.toString(),
+              'message',
+              contains('3'),
+            ),
+          ),
+        );
+      },
+    );
+  });
+
+  group('Vector Operation Errors', () {
+    test('vector.normalize with zero vector throws DivisionByZeroError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.new([0, 0, 0]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<DivisionByZeroError>()),
+      );
+    });
+
+    test('vector.angle with empty vectors throws RuntimeError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([]), vector.new([]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<RuntimeError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('empty vectors'),
+          ),
+        ),
+      );
+    });
+
+    test('vector.angle with zero vectors throws DivisionByZeroError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([0, 0]), vector.new([1, 1]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<DivisionByZeroError>()),
+      );
+    });
+
+    test(
+      'vector.angle with different lengths throws IterablesWithDifferentLengthError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = vector.angle(vector.new([1, 2]), vector.new([1, 2, 3]))',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(isA<IterablesWithDifferentLengthError>()),
+        );
+      },
+    );
+  });
+
+  group('Parse Errors for Other Functions', () {
+    test('time.fromIso with invalid format throws ParseError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = time.fromIso("not-a-date")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('not-a-date'), contains('timestamp')),
+          ),
+        ),
+      );
+    });
+
+    test('str.match with invalid regex throws ParseError', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.match("test", "[invalid")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('[invalid'), contains('regex')),
+          ),
+        ),
+      );
+    });
+  });
+
+  group('Try Catches Various Runtime Errors', () {
+    test('try catches division by zero and returns fallback', () {
+      final RuntimeFacade runtime = getRuntime('main = try(1 / 0, 999)');
+      checkResult(runtime, 999);
+    });
+
+    test('try catches index out of bounds and returns fallback', () {
+      final RuntimeFacade runtime = getRuntime('main = try([1, 2][10], -1)');
+      checkResult(runtime, -1);
+    });
+
+    test('try catches parse error and returns fallback', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = try(to.integer("abc"), 0)',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('try catches empty collection error and returns fallback', () {
+      final RuntimeFacade runtime = getRuntime('main = try(list.first([]), 0)');
+      checkResult(runtime, 0);
+    });
+
+    test('try catches recursion limit and returns fallback', () {
+      final RuntimeFacade runtime = getRuntime(
+        'loop(x) = loop(x)\nmain = try(loop(1), "caught")',
+      );
+      checkResult(runtime, '"caught"');
+    });
+  });
 }

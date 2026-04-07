@@ -715,6 +715,126 @@ void main() {
       );
       checkResult(runtime, 5);
     });
+
+    test('num.inc with zero', () {
+      final RuntimeFacade runtime = getRuntime('main = num.inc(0)');
+      checkResult(runtime, 1);
+    });
+
+    test('num.dec with positive number', () {
+      final RuntimeFacade runtime = getRuntime('main = num.dec(5)');
+      checkResult(runtime, 4);
+    });
+
+    test('num.sqrt with non-perfect square', () {
+      final RuntimeFacade runtime = getRuntime('main = num.sqrt(2)');
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(1.4142135623730951, 0.0001),
+      );
+    });
+
+    test('num.min with equal values', () {
+      final RuntimeFacade runtime = getRuntime('main = num.min(5, 5)');
+      checkResult(runtime, 5);
+    });
+
+    test('num.max with equal values', () {
+      final RuntimeFacade runtime = getRuntime('main = num.max(5, 5)');
+      checkResult(runtime, 5);
+    });
+
+    test('num.log(1) returns 0', () {
+      final RuntimeFacade runtime = getRuntime('main = num.log(1)');
+      checkResult(runtime, 0.0);
+    });
+
+    test('num.isEven with negative even number', () {
+      final RuntimeFacade runtime = getRuntime('main = num.isEven(-4)');
+      checkResult(runtime, true);
+    });
+
+    test('num.isOdd with negative odd number', () {
+      final RuntimeFacade runtime = getRuntime('main = num.isOdd(-3)');
+      checkResult(runtime, true);
+    });
+
+    test('num.compare with decimal numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = num.compare(3.5, 3.5)');
+      checkResult(runtime, 0);
+    });
+
+    test('num.pow with negative base and integer exponent', () {
+      final RuntimeFacade runtime = getRuntime('main = num.pow(-2, 3)');
+      checkResult(runtime, -8);
+    });
+
+    test('num.pow with negative base and even integer exponent', () {
+      final RuntimeFacade runtime = getRuntime('main = num.pow(-2, 4)');
+      checkResult(runtime, 16);
+    });
+
+    test('num.mod with negative dividend', () {
+      final RuntimeFacade runtime = getRuntime('main = num.mod(-7, 3)');
+      checkResult(runtime, 2);
+    });
+
+    test('num.mod with negative divisor', () {
+      final RuntimeFacade runtime = getRuntime('main = num.mod(7, -3)');
+      checkResult(runtime, 1);
+    });
+
+    test('num.div with negative numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = num.div(-10, -2)');
+      checkResult(runtime, 5.0);
+    });
+
+    test('num.add with negative numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = num.add(-3, -7)');
+      checkResult(runtime, -10);
+    });
+
+    test('num.sub with negative numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = num.sub(-3, -7)');
+      checkResult(runtime, 4);
+    });
+
+    test('num.mul with negative numbers', () {
+      final RuntimeFacade runtime = getRuntime('main = num.mul(-3, 7)');
+      checkResult(runtime, -21);
+    });
+
+    test('num.clamp with decimal values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = num.clamp(2.5, 1.0, 5.0)',
+      );
+      checkResult(runtime, 2.5);
+    });
+
+    test('num.asRadians with negative degrees', () {
+      final RuntimeFacade runtime = getRuntime('main = num.asRadians(-90)');
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(-1.5707963267948966, 0.0001),
+      );
+    });
+
+    test('num.asDegrees with negative radians', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = num.asDegrees(-1.5707963267948966)',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(-90, 0.0001));
+    });
+
+    test('num.inc with decimal number', () {
+      final RuntimeFacade runtime = getRuntime('main = num.inc(1.5)');
+      checkResult(runtime, 2.5);
+    });
+
+    test('num.dec with decimal number', () {
+      final RuntimeFacade runtime = getRuntime('main = num.dec(1.5)');
+      checkResult(runtime, 0.5);
+    });
   });
 
   group('Arithmetic Type Errors', () {
@@ -770,6 +890,126 @@ void main() {
 
     test('num.floor throws for wrong type', () {
       final RuntimeFacade runtime = getRuntime('main = num.floor("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.sum throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.sum("hello", 1)');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.min throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.min("hello", 1)');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.max throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.max(1, "hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.sin throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.sin("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.cos throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.cos("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.tan throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.tan("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.log throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.log("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.inc throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.inc("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.dec throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.dec("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.negative throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.negative("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.isNegative throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = num.isNegative("hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.isPositive throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = num.isPositive("hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.isZero throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.isZero("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.isEven throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.isEven("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.isOdd throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.isOdd("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.sign throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.sign("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.fraction throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.fraction("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.clamp throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = num.clamp("hello", 1, 5)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.asRadians throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.asRadians("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.asDegrees throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main = num.asDegrees("hello")');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.compare throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = num.compare("hello", 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.integerRandom throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = num.integerRandom("hello", 10)',
+      );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
   });
