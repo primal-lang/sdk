@@ -1,5 +1,5 @@
 ---
-name: audit-tests
+name: audit-coverage
 description: Audits test coverage across all pipeline stages, identifies gaps, and implements missing tests to achieve 100% coverage.
 ---
 
