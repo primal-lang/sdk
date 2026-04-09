@@ -8,7 +8,7 @@ Audit the test files in a user-specified folder, identify gaps in test coverage,
 ## Initialization
 
 1. **Require a folder parameter** — if not provided, ask the user to specify a folder path before proceeding. Do not guess or assume a default folder.
-2. **Validate the folder** — verify the folder exists and contains `*_test.dart` files (search recursively).
+2. **Validate the folder** — verify the folder exists and contains `*_test.dart` files (only search in the specified folder, do not search recursively).
 3. **List test files** — use Glob to find all test files in the specified folder.
 
 ## Execution
