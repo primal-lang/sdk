@@ -5,7 +5,7 @@
 ### Equality
 
 - **Symbol:** `==`
-- **Input:** Two arguments of any type
+- **Input:** Two arguments of equatable type
 - **Output:** True if equal, false otherwise
 - **Supported combinations:**
   - `Boolean == Boolean`
@@ -30,7 +30,7 @@
 ### Inequality
 
 - **Symbol:** `!=`
-- **Input:** Two arguments of any type
+- **Input:** Two arguments of equatable type
 - **Output:** True if not equal, false otherwise
 - **Supported combinations:**
   - `Boolean != Boolean`
@@ -121,7 +121,7 @@
 ### Addition
 
 - **Symbol:** `+`
-- **Input:** Two arguments of any type
+- **Input:** Two arguments of addable type
 - **Output:** The combined result
 - **Supported combinations:**
   - `Number + Number`
@@ -143,7 +143,7 @@
 ### Subtraction
 
 - **Symbol:** `-`
-- **Input:** Two arguments of any type
+- **Input:** Two arguments of subtractable type
 - **Output:** The result of the subtraction
 - **Supported combinations:**
   - `Number - Number`

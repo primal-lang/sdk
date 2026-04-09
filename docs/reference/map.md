@@ -16,8 +16,8 @@
 
 ### Indexing
 
-- **Syntax:** `Map[Any]: Any`
-- **Input:** A map and a key
+- **Syntax:** `Map[Hashable]: Any`
+- **Input:** A map and a hashable key
 - **Output:** The value associated with the key
 - **Purity:** Pure
 - **Example:**
@@ -30,8 +30,8 @@
 
 ### At
 
-- **Signature:** `map.at(a: Map, b: Any): Any`
-- **Input:** A map and a key
+- **Signature:** `map.at(a: Map, b: Hashable): Any`
+- **Input:** A map and a hashable key
 - **Output:** The value associated with the key
 - **Constraints:** Throws an error if the key is not found in the map
 - **Purity:** Pure
@@ -69,8 +69,8 @@ map.values({"a": 1, "b": 2}) // returns [1, 2]
 
 ### Set
 
-- **Signature:** `map.set(a: Map, b: Any, c: Any): Map`
-- **Input:** A map, a key, and a value
+- **Signature:** `map.set(a: Map, b: Hashable, c: Any): Map`
+- **Input:** A map, a hashable key, and a value
 - **Output:** A new map containing the new key-value pair
 - **Purity:** Pure
 - **Example:**
@@ -95,8 +95,8 @@ map.removeAt({"a": 1, "b": 2}, "a") // returns {"b": 2}
 
 ### Contains Key
 
-- **Signature:** `map.containsKey(a: Map, b: Any): Boolean`
-- **Input:** A map and a key
+- **Signature:** `map.containsKey(a: Map, b: Hashable): Boolean`
+- **Input:** A map and a hashable key
 - **Output:** True if the key is in the map, false otherwise
 - **Purity:** Pure
 - **Example:**

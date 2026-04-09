@@ -196,8 +196,8 @@ list.insertEnd([1, 2], 3) // returns [1, 2, 3]
 
 ### Remove
 
-- **Signature:** `list.remove(a: List, b: Any): List`
-- **Input:** A list and a value
+- **Signature:** `list.remove(a: List, b: Equatable): List`
+- **Input:** A list and an equatable value
 - **Output:** A new list with all occurrences of the value removed
 - **Purity:** Pure
 - **Example:**
@@ -296,8 +296,8 @@ list.isNotEmpty([1, 2]) // returns true
 
 ### Contains
 
-- **Signature:** `list.contains(a: List, b: Any): Boolean`
-- **Input:** A list and a value
+- **Signature:** `list.contains(a: List, b: Equatable): Boolean`
+- **Input:** A list and an equatable value
 - **Output:** True if the value exists in the list, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -308,8 +308,8 @@ list.contains([1, 2, 3], 2) // returns true
 
 ### Index Of
 
-- **Signature:** `list.indexOf(a: List, b: Any): Number`
-- **Input:** A list and a value
+- **Signature:** `list.indexOf(a: List, b: Equatable): Number`
+- **Input:** A list and an equatable value
 - **Output:** The position of the first occurrence, or -1 if absent
 - **Purity:** Pure
 - **Example:**
