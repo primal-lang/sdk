@@ -95,6 +95,56 @@ void main() {
         final String allOutput = platformConsole.outLines.join('\n');
         expect(allOutput, contains('[debug] Stack trace:'));
       });
+
+      test('--watch is shown in help text', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['--help'], console: console);
+
+        expect(platformConsole.outLines.single, contains('--watch'));
+        expect(platformConsole.outLines.single, contains('-w'));
+      });
+
+      test('--watch without file shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['--watch'], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Watch mode requires a file argument.'),
+        );
+      });
+
+      test('-w without file shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['-w'], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Watch mode requires a file argument.'),
+        );
+      });
+
+      test('--watch with file without main shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--watch', 'library.prm'],
+          console: console,
+          readFile: (_) => 'double(x) = x * 2',
+        );
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Watch mode requires a file with a main function.'),
+        );
+      });
     });
 
     group('REPL banner', () {

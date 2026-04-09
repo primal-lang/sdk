@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:primal/compiler/compiler.dart';
@@ -18,12 +19,14 @@ Options:
   --help, -h       Show this help
   --version, -v    Print the version string
   --debug, -d      Enable debug mode (timing, trace, verbose errors)
+  --watch, -w      Watch file for changes and re-run on modification
 
 Examples:
   primal                     Start the REPL
   primal program.pri         Run a program with a main function
   primal program.pri arg1    Run a program with arguments
   primal -d                  Start the REPL in debug mode
+  primal -w program.pri      Watch and re-run on changes
 ''';
 
 const String replHelpText = '''
@@ -55,6 +58,7 @@ void runCli(
 
   // Parse flags
   bool debug = false;
+  bool watch = false;
   final List<String> remainingArgs = [];
 
   for (final String argument in args) {
@@ -67,9 +71,16 @@ void runCli(
         return;
       case '--debug' || '-d':
         debug = true;
+      case '--watch' || '-w':
+        watch = true;
       default:
         remainingArgs.add(argument);
     }
+  }
+
+  if (watch && remainingArgs.isEmpty) {
+    currentConsole.error('Watch mode requires a file argument.');
+    return;
   }
 
   try {
@@ -107,7 +118,24 @@ void runCli(
         console: currentConsole,
         debug: debug,
       );
+
+      if (watch) {
+        _watchFile(
+          filePath: remainingArgs[0],
+          args: remainingArgs,
+          compiler: compiler,
+          console: currentConsole,
+          debug: debug,
+          sourceReader: sourceReader,
+        );
+      }
     } else {
+      if (watch) {
+        currentConsole.error(
+          'Watch mode requires a file with a main function.',
+        );
+        return;
+      }
       _runRepl(
         runtime: runtime,
         compiler: compiler,
@@ -192,6 +220,79 @@ void _executeMain({
   }
 
   console.print(result);
+}
+
+void _watchFile({
+  required String filePath,
+  required List<String> args,
+  required Compiler compiler,
+  required Console console,
+  required bool debug,
+  required String Function(String) sourceReader,
+}) {
+  final File file = File(filePath);
+  final Stream<FileSystemEvent> watcher = file.watch(
+    events: FileSystemEvent.modify,
+  );
+
+  Timer? debounceTimer;
+
+  watcher.listen((_) {
+    // Debounce: cancel any pending reload and schedule a new one.
+    // This handles editors that trigger multiple events per save.
+    debounceTimer?.cancel();
+    debounceTimer = Timer(const Duration(milliseconds: 100), () {
+      console.write('\x1b[2J\x1b[H');
+      //console.print('File changed, reloading...\n');
+
+      try {
+        final Stopwatch compileWatch = Stopwatch();
+        if (debug) {
+          compileWatch.start();
+        }
+
+        final IntermediateRepresentation intermediateRepresentation = compiler
+            .compile(sourceReader(filePath));
+
+        if (debug) {
+          compileWatch.stop();
+          console.print(
+            '[debug] Compilation: ${compileWatch.elapsedMilliseconds}ms',
+          );
+        }
+
+        for (final GenericWarning warning
+            in intermediateRepresentation.warnings) {
+          console.warning(warning);
+        }
+
+        final RuntimeFacade runtime = RuntimeFacade(
+          intermediateRepresentation,
+          compiler.expression,
+        );
+
+        if (runtime.hasMain) {
+          _executeMain(
+            runtime: runtime,
+            args: args,
+            console: console,
+            debug: debug,
+          );
+        } else {
+          console.error('main function no longer found in $filePath');
+        }
+      } catch (e, stackTrace) {
+        console.error(e);
+        if (debug) {
+          console.print('[debug] Stack trace:\n$stackTrace');
+        }
+      }
+    });
+  });
+
+  // The stream subscription keeps the process alive.
+  // Handle Ctrl+C gracefully.
+  ProcessSignal.sigint.watch().first.then((_) => exit(0));
 }
 
 void _runRepl({
