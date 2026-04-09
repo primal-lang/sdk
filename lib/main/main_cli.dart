@@ -125,14 +125,19 @@ void runCli(
 }
 
 void _printBanner(Console console) {
+  // Get terminal width, fallback to 60 if not available
+  final int terminalWidth = stdout.hasTerminal ? stdout.terminalColumns : 60;
+  final int boxWidth = terminalWidth - 2 < 30 ? 30 : terminalWidth - 2;
+
   final String directory = _shortenHomePath(Directory.current.path);
 
-  // Truncate directory if too long (max 45 chars to fit in box)
-  final String truncatedDirectory = directory.length > 45
-      ? '...${directory.substring(directory.length - 42)}'
+  // Truncate directory if too long to fit in box
+  // Line format: "v$version • $directory" must fit in boxWidth - 1
+  // Prefix is: "v" (1) + version + " • " (3) = version.length + 4
+  final int maxDirectoryLength = boxWidth - version.length - 5;
+  final String truncatedDirectory = directory.length > maxDirectoryLength
+      ? '...${directory.substring(directory.length - (maxDirectoryLength - 3))}'
       : directory;
-
-  const int boxWidth = 58;
   final String horizontal = '\u2500' * boxWidth;
   final String topBorder = '\u250c$horizontal\u2510';
   final String bottomBorder = '\u2514$horizontal\u2518';
