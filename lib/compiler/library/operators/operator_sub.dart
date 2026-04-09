@@ -10,8 +10,8 @@ class OperatorSub extends NativeFunctionTerm {
     : super(
         name: '-',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.subtractable('a'),
+          Parameter.subtractable('b'),
         ],
       );
 

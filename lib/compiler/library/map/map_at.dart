@@ -8,7 +8,7 @@ class MapAt extends NativeFunctionTerm {
         name: 'map.at',
         parameters: const [
           Parameter.map('a'),
-          Parameter.any('b'),
+          Parameter.hashable('b'),
         ],
       );
 

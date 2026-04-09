@@ -9,7 +9,7 @@ class SetContains extends NativeFunctionTerm {
         name: 'set.contains',
         parameters: const [
           Parameter.set('a'),
-          Parameter.any('b'),
+          Parameter.hashable('b'),
         ],
       );
 

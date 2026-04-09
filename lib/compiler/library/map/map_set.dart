@@ -8,7 +8,7 @@ class MapSet extends NativeFunctionTerm {
         name: 'map.set',
         parameters: const [
           Parameter.map('a'),
-          Parameter.any('b'),
+          Parameter.hashable('b'),
           Parameter.any('c'),
         ],
       );

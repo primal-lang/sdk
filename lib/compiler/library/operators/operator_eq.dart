@@ -7,8 +7,8 @@ class OperatorEq extends NativeFunctionTerm {
     : super(
         name: '==',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.equatable('a'),
+          Parameter.equatable('b'),
         ],
       );
 

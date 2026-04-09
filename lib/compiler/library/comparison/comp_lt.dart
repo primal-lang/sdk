@@ -7,8 +7,8 @@ class CompLt extends NativeFunctionTerm {
     : super(
         name: 'comp.lt',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.ordered('a'),
+          Parameter.ordered('b'),
         ],
       );
 

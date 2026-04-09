@@ -8,7 +8,7 @@ class MapContainsKey extends NativeFunctionTerm {
         name: 'map.containsKey',
         parameters: const [
           Parameter.map('a'),
-          Parameter.any('b'),
+          Parameter.hashable('b'),
         ],
       );
 

@@ -10,8 +10,8 @@ class OperatorAdd extends NativeFunctionTerm {
     : super(
         name: '+',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.addable('a'),
+          Parameter.addable('b'),
         ],
       );
 

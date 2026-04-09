@@ -9,7 +9,7 @@ class ListIndexOf extends NativeFunctionTerm {
         name: 'list.indexOf',
         parameters: const [
           Parameter.list('a'),
-          Parameter.any('b'),
+          Parameter.equatable('b'),
         ],
       );
 
