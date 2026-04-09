@@ -2,6 +2,7 @@
 library;
 
 import 'package:primal/compiler/lexical/lexeme.dart';
+import 'package:primal/compiler/models/located.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:test/test.dart';
 
@@ -348,6 +349,144 @@ void main() {
         expect(lexeme.location, equals(location));
         expect(lexeme.location.row, equals(10));
         expect(lexeme.location.column, equals(20));
+      });
+    });
+
+    group('inheritance from Located', () {
+      test('Lexeme is a Located instance', () {
+        const Lexeme lexeme = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme, isA<Located>());
+      });
+
+      test('location is inherited from Located', () {
+        const location = Location(row: 5, column: 10);
+        const Lexeme lexeme = Lexeme(
+          value: 'test',
+          location: location,
+        );
+
+        const Located locatedReference = lexeme;
+
+        expect(locatedReference.location, equals(location));
+      });
+    });
+
+    group('const constructor', () {
+      test('identical const Lexemes are the same instance', () {
+        const Lexeme lexeme1 = Lexeme(
+          value: 'same',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme2 = Lexeme(
+          value: 'same',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(identical(lexeme1, lexeme2), isTrue);
+      });
+
+      test('different const Lexemes are not the same instance', () {
+        const Lexeme lexeme1 = Lexeme(
+          value: 'first',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme2 = Lexeme(
+          value: 'second',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(identical(lexeme1, lexeme2), isFalse);
+      });
+    });
+
+    group('long string handling', () {
+      test('constructor with very long value', () {
+        final String longValue = 'x' * 10000;
+        final Lexeme lexeme = Lexeme(
+          value: longValue,
+          location: const Location(row: 1, column: 1),
+        );
+
+        expect(lexeme.value.length, equals(10000));
+        expect(lexeme.value, equals(longValue));
+      });
+
+      test('add() with very long string', () {
+        const Lexeme lexeme = Lexeme(
+          value: 'prefix',
+          location: Location(row: 1, column: 1),
+        );
+
+        final String longSuffix = 'y' * 5000;
+        final Lexeme result = lexeme.add(longSuffix);
+
+        expect(result.value, equals('prefix$longSuffix'));
+        expect(result.value.length, equals(5006));
+      });
+
+      test('toString() with very long value', () {
+        final String longValue = 'a' * 100;
+        final Lexeme lexeme = Lexeme(
+          value: longValue,
+          location: const Location(row: 1, column: 1),
+        );
+
+        expect(lexeme.toString(), equals('"$longValue" at [1, 1]'));
+      });
+    });
+
+    group('whitespace value handling', () {
+      test('value containing only spaces', () {
+        const Lexeme lexeme = Lexeme(
+          value: '   ',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme.value, equals('   '));
+      });
+
+      test('value containing mixed whitespace', () {
+        const Lexeme lexeme = Lexeme(
+          value: ' \t \n ',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme.value, equals(' \t \n '));
+      });
+
+      test('add() whitespace to existing value', () {
+        const Lexeme lexeme = Lexeme(
+          value: 'word',
+          location: Location(row: 1, column: 1),
+        );
+
+        final Lexeme result = lexeme.add('   ');
+
+        expect(result.value, equals('word   '));
+      });
+    });
+
+    group('negative location values', () {
+      test('negative row value', () {
+        const Lexeme lexeme = Lexeme(
+          value: 'test',
+          location: Location(row: -1, column: 1),
+        );
+
+        expect(lexeme.location.row, equals(-1));
+      });
+
+      test('negative column value', () {
+        const Lexeme lexeme = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: -1),
+        );
+
+        expect(lexeme.location.column, equals(-1));
       });
     });
   });

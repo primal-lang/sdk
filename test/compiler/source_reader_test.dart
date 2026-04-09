@@ -7,6 +7,63 @@ import 'package:primal/compiler/reader/source_reader.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('Location', () {
+    test('Equality compares row and column', () {
+      const Location location1 = Location(row: 1, column: 2);
+      const Location location2 = Location(row: 1, column: 2);
+      const Location location3 = Location(row: 1, column: 3);
+      const Location location4 = Location(row: 2, column: 2);
+      expect(location1, equals(location2));
+      expect(location1, isNot(equals(location3)));
+      expect(location1, isNot(equals(location4)));
+    });
+
+    test('Identical instances are equal', () {
+      const Location location = Location(row: 5, column: 10);
+      expect(location == location, isTrue);
+    });
+
+    test('Not equal to non-Location objects', () {
+      const Location location = Location(row: 1, column: 1);
+      expect(location == ('1,1' as dynamic), isFalse);
+      expect(location == (1 as dynamic), isFalse);
+      expect(location == (null as dynamic), isFalse);
+    });
+
+    test('hashCode is consistent with equality', () {
+      const Location location1 = Location(row: 3, column: 4);
+      const Location location2 = Location(row: 3, column: 4);
+      expect(location1.hashCode, equals(location2.hashCode));
+    });
+
+    test('hashCode differs for different locations', () {
+      const Location location1 = Location(row: 1, column: 1);
+      const Location location2 = Location(row: 1, column: 2);
+      const Location location3 = Location(row: 2, column: 1);
+      // Different locations should have different hashCodes (not guaranteed but likely)
+      expect(
+        location1.hashCode != location2.hashCode ||
+            location1.hashCode != location3.hashCode,
+        isTrue,
+      );
+    });
+
+    test('toString returns row and column in brackets', () {
+      const Location location = Location(row: 5, column: 10);
+      expect(location.toString(), equals('[5, 10]'));
+    });
+
+    test('toString handles single digit positions', () {
+      const Location location = Location(row: 1, column: 1);
+      expect(location.toString(), equals('[1, 1]'));
+    });
+
+    test('toString handles large positions', () {
+      const Location location = Location(row: 999, column: 1000);
+      expect(location.toString(), equals('[999, 1000]'));
+    });
+  });
+
   group('SourceReader', () {
     test('Empty input returns empty list', () {
       final List<Character> result = const SourceReader('').analyze();
@@ -241,6 +298,100 @@ void main() {
           .toList();
       expect(newlines.length, equals(4)); // 4 rows = 4 trailing newlines
     });
+
+    test('Shebang followed by empty lines returns empty characters', () {
+      final List<Character> result = const SourceReader(
+        '#!/usr/bin/env primal\n\n',
+      ).analyze();
+      // Shebang line is skipped, remaining is one empty line
+      expect(result.length, equals(1));
+      expect(result[0].value, equals('\n'));
+      expect(result[0].location.row, equals(2));
+    });
+
+    test('Very long line tracks columns correctly', () {
+      final String longLine = 'a' * 100;
+      final List<Character> result = SourceReader(longLine).analyze();
+      // 100 characters + trailing newline
+      expect(result.length, equals(101));
+      expect(result[0].location.column, equals(1));
+      expect(result[49].location.column, equals(50));
+      expect(result[99].location.column, equals(100));
+      expect(result[100].value, equals('\n'));
+      expect(result[100].location.column, equals(101));
+    });
+
+    test('Multiple shebang-like lines only skip first', () {
+      final List<Character> result = const SourceReader(
+        '#!first\n#!second',
+      ).analyze();
+      // First line skipped, second line starting with #! is kept
+      expect(result[0].value, equals('#'));
+      expect(result[0].location.row, equals(2));
+      expect(result[1].value, equals('!'));
+    });
+
+    test('Carriage return only input is normalized', () {
+      final List<Character> result = const SourceReader('\r').analyze();
+      expect(result.length, equals(1));
+      expect(result[0].value, equals('\n'));
+      expect(result[0].location.row, equals(1));
+    });
+
+    test('Multiple carriage returns are each normalized', () {
+      final List<Character> result = const SourceReader('\r\r').analyze();
+      expect(result.length, equals(2));
+      expect(result[0].value, equals('\n'));
+      expect(result[0].location.row, equals(1));
+      expect(result[1].value, equals('\n'));
+      expect(result[1].location.row, equals(2));
+    });
+
+    test('Input preserves all special ASCII characters', () {
+      final List<Character> result = const SourceReader('!@#\$%^&*').analyze();
+      expect(result[0].value, equals('!'));
+      expect(result[1].value, equals('@'));
+      expect(result[2].value, equals('#'));
+      expect(result[3].value, equals('\$'));
+      expect(result[4].value, equals('%'));
+      expect(result[5].value, equals('^'));
+      expect(result[6].value, equals('&'));
+      expect(result[7].value, equals('*'));
+    });
+
+    test('Combining characters are grouped with base character', () {
+      // e followed by combining acute accent (U+0301) forms é
+      final List<Character> result = const SourceReader('e\u0301x').analyze();
+      // Should be 2 grapheme clusters (é and x) + trailing newline
+      expect(result.length, equals(3));
+      expect(result[0].value, equals('e\u0301'));
+      expect(result[0].location.column, equals(1));
+      expect(result[1].value, equals('x'));
+      expect(result[1].location.column, equals(2));
+    });
+
+    test('Zero-width joiner joins with preceding character', () {
+      // ZWJ (U+200D) joins with the preceding character in grapheme clustering
+      final List<Character> result = const SourceReader('a\u200Db').analyze();
+      // 'a' + ZWJ forms one grapheme cluster, 'b' is another, plus trailing newline
+      expect(result.length, equals(3));
+      expect(result[0].value, equals('a\u200D'));
+      expect(result[0].location.column, equals(1));
+      expect(result[1].value, equals('b'));
+      expect(result[1].location.column, equals(2));
+    });
+
+    test('Empty string after shebang with multiple empty lines', () {
+      final List<Character> result = const SourceReader(
+        '#!/bin/sh\n\n\n',
+      ).analyze();
+      // Shebang skipped, two empty lines remain
+      expect(result.length, equals(2));
+      expect(result[0].value, equals('\n'));
+      expect(result[0].location.row, equals(2));
+      expect(result[1].value, equals('\n'));
+      expect(result[1].location.row, equals(3));
+    });
   });
 
   group('Character', () {
@@ -317,6 +468,79 @@ void main() {
         location: Location(row: 1, column: 1),
       );
       expect(tabCharacter.toString(), contains('\t'));
+    });
+
+    test('hashCode differs for different characters', () {
+      const Character character1 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character2 = Character(
+        value: 'b',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character3 = Character(
+        value: 'a',
+        location: Location(row: 2, column: 1),
+      );
+      // Different characters should have different hashCodes (not guaranteed but likely)
+      expect(
+        character1.hashCode != character2.hashCode ||
+            character1.hashCode != character3.hashCode,
+        isTrue,
+      );
+    });
+
+    test('toString handles empty string value', () {
+      const Character character = Character(
+        value: '',
+        location: Location(row: 1, column: 1),
+      );
+      expect(character.toString(), equals('"" at [1, 1]'));
+    });
+
+    test('toString handles unicode value', () {
+      const Character character = Character(
+        value: '👨‍👩‍👧',
+        location: Location(row: 1, column: 1),
+      );
+      expect(character.toString(), equals('"👨‍👩‍👧" at [1, 1]'));
+    });
+
+    test('Equality with different value and same location returns false', () {
+      const Character character1 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character2 = Character(
+        value: 'b',
+        location: Location(row: 1, column: 1),
+      );
+      expect(character1, isNot(equals(character2)));
+    });
+
+    test('Equality with same value and different row returns false', () {
+      const Character character1 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character2 = Character(
+        value: 'a',
+        location: Location(row: 2, column: 1),
+      );
+      expect(character1, isNot(equals(character2)));
+    });
+
+    test('Equality with same value and different column returns false', () {
+      const Character character1 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 1),
+      );
+      const Character character2 = Character(
+        value: 'a',
+        location: Location(row: 1, column: 2),
+      );
+      expect(character1, isNot(equals(character2)));
     });
   });
 }

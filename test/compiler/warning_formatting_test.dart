@@ -47,6 +47,31 @@ void main() {
         equals('Warning: contains "quotes" and \$pecial chars'),
       );
     });
+
+    test('handles multiline message', () {
+      const warning = GenericWarning('line one\nline two\nline three');
+
+      expect(warning.message, equals('line one\nline two\nline three'));
+      expect(
+        warning.toString(),
+        equals('Warning: line one\nline two\nline three'),
+      );
+    });
+
+    test('const instances with same message are identical', () {
+      const warning1 = GenericWarning('same message');
+      const warning2 = GenericWarning('same message');
+
+      expect(identical(warning1, warning2), isTrue);
+    });
+
+    test('handles very long message', () {
+      final String longMessage = 'a' * 1000;
+      final GenericWarning warning = GenericWarning(longMessage);
+
+      expect(warning.message.length, equals(1000));
+      expect(warning.toString(), equals('Warning: $longMessage'));
+    });
   });
 
   group('SemanticWarning', () {
@@ -85,6 +110,30 @@ void main() {
 
       expect(warning.toString(), equals('Warning: '));
       expect(warning.message, equals(''));
+    });
+
+    test('handles message with special characters', () {
+      const warning = SemanticWarning('contains "quotes" and \$pecial chars');
+
+      expect(warning.message, equals('contains "quotes" and \$pecial chars'));
+      expect(
+        warning.toString(),
+        equals('Warning: contains "quotes" and \$pecial chars'),
+      );
+    });
+
+    test('handles multiline message', () {
+      const warning = SemanticWarning('line one\nline two');
+
+      expect(warning.message, equals('line one\nline two'));
+      expect(warning.toString(), equals('Warning: line one\nline two'));
+    });
+
+    test('const instances with same message are identical', () {
+      const warning1 = SemanticWarning('same message');
+      const warning2 = SemanticWarning('same message');
+
+      expect(identical(warning1, warning2), isTrue);
     });
   });
 
@@ -194,6 +243,71 @@ void main() {
       expect(
         warning.toString(),
         equals('Warning: Unused parameter "some_param" in function "test"'),
+      );
+    });
+
+    test('handles both empty function and parameter names', () {
+      const warning = UnusedParameterWarning(
+        function: '',
+        parameter: '',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "" in function ""'),
+      );
+    });
+
+    test('const instances with same parameters are identical', () {
+      const warning1 = UnusedParameterWarning(
+        function: 'func',
+        parameter: 'param',
+      );
+      const warning2 = UnusedParameterWarning(
+        function: 'func',
+        parameter: 'param',
+      );
+
+      expect(identical(warning1, warning2), isTrue);
+    });
+
+    test('handles long function and parameter names', () {
+      final String longFunctionName = 'f' * 100;
+      final String longParameterName = 'p' * 100;
+      final UnusedParameterWarning warning = UnusedParameterWarning(
+        function: longFunctionName,
+        parameter: longParameterName,
+      );
+
+      expect(
+        warning.message,
+        equals(
+          'Unused parameter "$longParameterName" in function "$longFunctionName"',
+        ),
+      );
+    });
+
+    test('handles function name with quotes', () {
+      const warning = UnusedParameterWarning(
+        function: 'with"quotes',
+        parameter: 'x',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "x" in function "with"quotes"'),
+      );
+    });
+
+    test('handles parameter name with quotes', () {
+      const warning = UnusedParameterWarning(
+        function: 'test',
+        parameter: 'has"quote',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "has"quote" in function "test"'),
       );
     });
   });

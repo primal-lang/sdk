@@ -801,6 +801,496 @@ void main() {
         expect(platformConsole.outLines, isEmpty);
         expect(platformConsole.errorLines, isNotEmpty);
       });
+
+      test('whitespace-only input is ignored', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['   ', '\t', '42'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli([], console: console);
+
+        // Whitespace should be skipped, only result from 42
+        expect(platformConsole.outLines.last, equals('42'));
+      });
+    });
+
+    group('REPL delete command error cases', () {
+      test(':delete on non-existent function shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':delete nonexistent'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Function "nonexistent" not found'),
+        );
+      });
+
+      test(':delete on standard library function shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':delete if'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Cannot delete standard library function'),
+        );
+      });
+    });
+
+    group('REPL rename command error cases', () {
+      test(':rename on non-existent function shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':rename nonexistent newname'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Function "nonexistent" not found'),
+        );
+      });
+
+      test(':rename on standard library function shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':rename if myif'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Cannot rename standard library function'),
+        );
+      });
+
+      test(':rename to existing function name shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['first(x) = x', 'second(x) = x * 2', ':rename first second'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Function "second" already exists'),
+        );
+      });
+
+      test(':rename to standard library function name shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['myfunction(x) = x', ':rename myfunction if'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 2,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Function "if" already exists'),
+        );
+      });
+    });
+
+    group('REPL load command error cases', () {
+      test(':load with file read error shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':load missing.prm'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => throw StateError('file not found'),
+        );
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Bad state: file not found'),
+        );
+      });
+
+      test(':load with compilation error shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':load bad.prm'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => 'invalid syntax = = =',
+        );
+
+        expect(platformConsole.errorLines, isNotEmpty);
+      });
+    });
+
+    group('REPL run command error cases', () {
+      test(':run with file read error shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':run missing.prm'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => throw StateError('file not found'),
+        );
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Bad state: file not found'),
+        );
+      });
+
+      test(':run with compilation error shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':run bad.prm'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => 'invalid syntax = = =',
+        );
+
+        expect(platformConsole.errorLines, isNotEmpty);
+      });
+    });
+
+    group('REPL function redefinition', () {
+      test('can redefine user-defined function', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['double(x) = x * 2', 'double(x) = x + x', 'double(5)'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli([], console: console);
+
+        // Redefinition should succeed and use the new definition
+        expect(platformConsole.outLines.last, equals('10'));
+        expect(platformConsole.errorLines, isEmpty);
+      });
+
+      test('cannot redefine standard library function', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['num.abs(x) = x'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Cannot redefine standard library function'),
+        );
+      });
+
+      test('function with duplicate parameters shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['bad(x, x) = x'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Duplicated parameter "x"'),
+        );
+      });
+    });
+
+    group('REPL debug mode with commands', () {
+      test(':debug without argument shows unknown command error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':debug'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains("Unknown command ':debug'"),
+        );
+      });
+
+      test(':debug with invalid argument shows unknown command error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':debug maybe'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains("Unknown command ':debug maybe'"),
+        );
+      });
+    });
+
+    group(':list command additional cases', () {
+      test(':list shows functions in sorted order', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['zeta(x) = x', 'alpha(x) = x', 'mid(x) = x', ':list'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 4,
+        );
+
+        runCli([], console: console);
+
+        final String lastOutput = platformConsole.outLines.last;
+        // Functions should be sorted alphabetically
+        final int alphaIndex = lastOutput.indexOf('alpha');
+        final int midIndex = lastOutput.indexOf('mid');
+        final int zetaIndex = lastOutput.indexOf('zeta');
+        expect(alphaIndex, lessThan(midIndex));
+        expect(midIndex, lessThan(zetaIndex));
+      });
+    });
+
+    group('main function argument handling', () {
+      test('main with no parameters ignores extra arguments', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm', 'arg1', 'arg2'],
+          console: console,
+          readFile: (_) => 'main = 42',
+        );
+
+        expect(platformConsole.outLines, equals(['42']));
+      });
+
+      test('main arguments with special characters are passed through', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm', 'hello"world', 'back\\slash'],
+          console: console,
+          readFile: (_) => 'main(a, b) = [a, b]',
+        );
+
+        // Arguments should be properly escaped in the generated expression,
+        // resulting in the original strings being passed through.
+        // The output shows the list with strings containing the special chars.
+        expect(platformConsole.outLines.single, contains('hello'));
+        expect(platformConsole.outLines.single, contains('world'));
+        expect(platformConsole.outLines.single, contains('back'));
+        expect(platformConsole.outLines.single, contains('slash'));
+      });
+    });
+
+    group('runtime error handling', () {
+      test('runtime error in main shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm'],
+          console: console,
+          readFile: (_) => 'main = 1 / 0',
+        );
+
+        expect(platformConsole.errorLines, isNotEmpty);
+      });
+
+      test('runtime error in REPL shows error and continues', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['1 / 0', '42'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 2,
+        );
+
+        runCli([], console: console);
+
+        // Should have error from first expression
+        expect(platformConsole.errorLines, isNotEmpty);
+        // Should continue and evaluate second expression
+        expect(platformConsole.outLines.last, equals('42'));
+      });
+    });
+
+    group('REPL semantic errors', () {
+      test('undefined function call in REPL shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['unknownFunction()'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Undefined function'),
+        );
+      });
+
+      test('undefined identifier in REPL shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['undefinedVariable'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Undefined identifier'),
+        );
+      });
+
+      test('wrong number of arguments shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['double(x) = x * 2', 'double(1, 2, 3)'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 2,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Invalid number of arguments'),
+        );
+      });
+    });
+
+    group('REPL function definition with undefined references', () {
+      test('function with undefined function reference shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['bad(x) = unknownFunction(x)'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Undefined function'),
+        );
+      });
+
+      test('function with undefined identifier reference shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['bad(x) = y'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Undefined identifier'),
+        );
+      });
+    });
+
+    group('recursive function definitions in REPL', () {
+      test('recursive function can be defined and called', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [
+            'fact(n) = if (n <= 1) 1 else n * fact(n - 1)',
+            'fact(5)',
+          ],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 2,
+        );
+
+        runCli([], console: console);
+
+        // Banner (6 lines) + result from fact(5) = 7 total
+        expect(platformConsole.outLines.length, equals(7));
+        expect(platformConsole.outLines.last, equals('120'));
+        expect(platformConsole.errorLines, isEmpty);
+      });
     });
   });
 }

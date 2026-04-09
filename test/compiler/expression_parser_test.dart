@@ -1173,4 +1173,560 @@ void main() {
       );
     });
   });
+
+  group('ListIterator edge cases', () {
+    test('next returns and advances to the next element', () {
+      final List<Token> tokens = getTokens('a b');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      expect(iterator.hasNext, isTrue);
+      final Token first = iterator.next;
+      expect(first, isA<IdentifierToken>());
+      expect(first.value, equals('a'));
+
+      expect(iterator.hasNext, isTrue);
+      final Token second = iterator.next;
+      expect(second, isA<IdentifierToken>());
+      expect(second.value, equals('b'));
+
+      expect(iterator.isAtEnd, isTrue);
+    });
+
+    test('next throws UnexpectedEndOfFileError when at end', () {
+      final List<Token> tokens = getTokens('x');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      iterator.next; // consume x
+      expect(
+        () => iterator.next,
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('last returns the last element in the list', () {
+      final List<Token> tokens = getTokens('a b c');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      final Token last = iterator.last;
+      expect(last, isA<IdentifierToken>());
+      expect(last.value, equals('c'));
+    });
+
+    test('last throws UnexpectedEndOfFileError for empty list', () {
+      final ListIterator<Token> iterator = ListIterator([]);
+
+      expect(
+        () => iterator.last,
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('back moves the iterator back one position', () {
+      final List<Token> tokens = getTokens('a b');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      iterator.next; // advance to after 'a'
+      iterator.next; // advance to after 'b'
+
+      final bool backResult = iterator.back();
+      expect(backResult, isTrue);
+      expect(iterator.peek?.value, equals('b'));
+    });
+
+    test('back returns false when at the beginning', () {
+      final List<Token> tokens = getTokens('x');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      final bool backResult = iterator.back();
+      expect(backResult, isFalse);
+    });
+
+    test('hasNext is true when elements remain', () {
+      final List<Token> tokens = getTokens('x');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      expect(iterator.hasNext, isTrue);
+    });
+
+    test('hasNext is false when no elements remain', () {
+      final List<Token> tokens = getTokens('x');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      iterator.advance();
+      expect(iterator.hasNext, isFalse);
+    });
+
+    test('previous is null at the beginning', () {
+      final List<Token> tokens = getTokens('x');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      expect(iterator.previous, isNull);
+    });
+
+    test('peek returns null when at end', () {
+      final List<Token> tokens = getTokens('x');
+      final ListIterator<Token> iterator = ListIterator(tokens);
+
+      iterator.advance();
+      expect(iterator.peek, isNull);
+    });
+  });
+
+  group('Empty and whitespace input', () {
+    Expression compileExpression(String input) {
+      const Compiler compiler = Compiler();
+      return compiler.expression(input);
+    }
+
+    test('empty input throws UnexpectedEndOfFileError', () {
+      expect(
+        () => compileExpression(''),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('whitespace only input throws UnexpectedEndOfFileError', () {
+      expect(
+        () => compileExpression('   '),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('newlines only input throws UnexpectedEndOfFileError', () {
+      expect(
+        () => compileExpression('\n\n'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('tabs and spaces input throws UnexpectedEndOfFileError', () {
+      expect(
+        () => compileExpression('\t  \t'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+  });
+
+  group('Expression location preservation', () {
+    test('MapEntryExpression preserves key location', () {
+      final Expression expression = getExpression('{"key": 1}');
+      expect(expression, isA<MapExpression>());
+      final MapExpression mapExpression = expression as MapExpression;
+      expect(mapExpression.value.length, equals(1));
+      final MapEntryExpression entry = mapExpression.value.first;
+      expect(entry.location, equals(entry.key.location));
+    });
+
+    test('CallExpression preserves callee location', () {
+      final Expression expression = getExpression('foo(1)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression callExpression = expression as CallExpression;
+      expect(callExpression.location, equals(callExpression.callee.location));
+    });
+
+    test(
+      'CallExpression from binary operation preserves operator location',
+      () {
+        final Expression expression = getExpression('1 + 2');
+        expect(expression, isA<CallExpression>());
+        final CallExpression callExpression = expression as CallExpression;
+        // The callee is an identifier for the operator
+        expect(callExpression.callee, isA<IdentifierExpression>());
+        expect(callExpression.location, equals(callExpression.callee.location));
+      },
+    );
+
+    test('ListExpression preserves opening bracket location', () {
+      final Expression expression = getExpression('[1, 2]');
+      expect(expression, isA<ListExpression>());
+      final ListExpression listExpression = expression as ListExpression;
+      // Location should be at column 1 (where the [ is)
+      expect(listExpression.location.column, equals(1));
+    });
+
+    test('MapExpression preserves opening brace location', () {
+      final Expression expression = getExpression('{"a": 1}');
+      expect(expression, isA<MapExpression>());
+      final MapExpression mapExpression = expression as MapExpression;
+      // Location should be at column 1 (where the { is)
+      expect(mapExpression.location.column, equals(1));
+    });
+  });
+
+  group('Match function edge cases', () {
+    test('match with empty predicates list returns false', () {
+      final List<Token> tokens = getTokens('x');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      final bool result = parser.match([]);
+      expect(result, isFalse);
+    });
+
+    test('matchSingle returns false when predicate does not match', () {
+      final List<Token> tokens = getTokens('x');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      // x is an identifier, not a number
+      final bool result = parser.matchSingle((Token t) => t is NumberToken);
+      expect(result, isFalse);
+    });
+
+    test('check returns true when predicate matches', () {
+      final List<Token> tokens = getTokens('x');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      final bool result = parser.check((Token t) => t is IdentifierToken);
+      expect(result, isTrue);
+    });
+
+    test('check returns false when predicate does not match', () {
+      final List<Token> tokens = getTokens('x');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      final bool result = parser.check((Token t) => t is NumberToken);
+      expect(result, isFalse);
+    });
+  });
+
+  group('Consume edge cases', () {
+    test('consume throws ExpectedTokenError when at end of file', () {
+      final List<Token> tokens = getTokens('x');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      parser.advance(); // consume 'x'
+
+      expect(
+        () => parser.consume((Token t) => t is IdentifierToken, 'identifier'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('consume returns and advances when predicate matches', () {
+      final List<Token> tokens = getTokens('x y');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      final Token consumed = parser.consume(
+        (Token t) => t is IdentifierToken,
+        'identifier',
+      );
+      expect(consumed.value, equals('x'));
+      expect(parser.peek.value, equals('y'));
+    });
+
+    test('consume throws ExpectedTokenError when predicate does not match', () {
+      final List<Token> tokens = getTokens('42');
+      final ExpressionParser parser = ExpressionParser(ListIterator(tokens));
+
+      expect(
+        () => parser.consume((Token t) => t is IdentifierToken, 'identifier'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+  });
+
+  group('Additional chained operations', () {
+    test('index then call then index', () {
+      final Expression expression = getExpression('a[0](1)[2]');
+      expect(expression.toString(), '@(@(a, 0)(1), 2)');
+    });
+
+    test('call then index then call then index', () {
+      final Expression expression = getExpression('f()[0](1)[2]');
+      expect(expression.toString(), '@(@(f(), 0)(1), 2)');
+    });
+
+    test('deeply chained mixed operations', () {
+      final Expression expression = getExpression('a[0]()[1]()[2]()');
+      expect(expression.toString(), '@(@(@(a, 0)(), 1)(), 2)()');
+    });
+
+    test('function call on grouped expression', () {
+      final Expression expression = getExpression('(a + b)(1)');
+      expect(expression.toString(), '+(a, b)(1)');
+    });
+
+    test('index on grouped binary expression', () {
+      final Expression expression = getExpression('(a + b)[0]');
+      expect(expression.toString(), '@(+(a, b), 0)');
+    });
+  });
+
+  group('Dot notation additional cases', () {
+    test('dot notation with multiple arguments', () {
+      final Expression expression = getExpression('obj.method(1, 2, 3)');
+      expect(expression.toString(), 'obj.method(1, 2, 3)');
+    });
+
+    test('dot notation chained with index', () {
+      final Expression expression = getExpression('obj.method()[0]');
+      expect(expression.toString(), '@(obj.method(), 0)');
+    });
+
+    test('dot notation with nested calls', () {
+      final Expression expression = getExpression('a.b(c.d())');
+      expect(expression.toString(), 'a.b(c.d())');
+    });
+
+    test('dot notation identifier with underscores', () {
+      final Expression expression = getExpression('obj.method_name()');
+      expect(expression.toString(), 'obj.method_name()');
+    });
+
+    test('dot notation with numbers in identifier', () {
+      final Expression expression = getExpression('lib.func2()');
+      expect(expression.toString(), 'lib.func2()');
+    });
+  });
+
+  group('Additional operator precedence tests', () {
+    test('mixed unary and binary with negation', () {
+      final Expression expression = getExpression('!a & -b');
+      expect(expression.toString(), '&(!(a), -(0, b))');
+    });
+
+    test('unary not on comparison result', () {
+      final Expression expression = getExpression('!(a > b)');
+      expect(expression.toString(), '!(>(a, b))');
+    });
+
+    test('unary negation on function call', () {
+      final Expression expression = getExpression('-foo()');
+      expect(expression.toString(), '-(0, foo())');
+    });
+
+    test('unary not on function call', () {
+      final Expression expression = getExpression('!foo()');
+      expect(expression.toString(), '!(foo())');
+    });
+
+    test('all comparison operators in one expression', () {
+      // Left-associative: ((((a > b) < c) >= d) <= e)
+      final Expression expression = getExpression('a > b < c >= d <= e');
+      expect(expression.toString(), '<=(>=(<(>(a, b), c), d), e)');
+    });
+
+    test('all arithmetic operators in one expression', () {
+      final Expression expression = getExpression('a + b - c * d / e % f');
+      expect(expression.toString(), '-(+(a, b), %(/(*(c, d), e), f))');
+    });
+
+    test('equality and comparison mixed', () {
+      final Expression expression = getExpression('a > b == c < d');
+      expect(expression.toString(), '==(>(a, b), <(c, d))');
+    });
+
+    test('not equal with comparison', () {
+      final Expression expression = getExpression('a >= b != c <= d');
+      expect(expression.toString(), '!=(>=(a, b), <=(c, d))');
+    });
+  });
+
+  group('Collection edge cases', () {
+    test('list with single element', () {
+      final Expression expression = getExpression('[42]');
+      expect(expression, isA<ListExpression>());
+      final ListExpression listExpression = expression as ListExpression;
+      expect(listExpression.value.length, equals(1));
+      expect(listExpression.toString(), '[42]');
+    });
+
+    test('map with single entry', () {
+      final Expression expression = getExpression('{"key": "value"}');
+      expect(expression, isA<MapExpression>());
+      final MapExpression mapExpression = expression as MapExpression;
+      expect(mapExpression.value.length, equals(1));
+    });
+
+    test('list with trailing expression after comma throws', () {
+      expect(
+        () => getExpression('[1, 2,]'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
+    test('map with trailing comma throws', () {
+      expect(
+        () => getExpression('{"a": 1,}'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
+    test('nested empty collections', () {
+      final Expression expression = getExpression('[[], {}, []]');
+      expect(expression.toString(), '[[], {}, []]');
+    });
+
+    test('map with list key', () {
+      final Expression expression = getExpression('{[1, 2]: "list key"}');
+      expect(expression.toString(), '{[1, 2]: "list key"}');
+    });
+
+    test('list with map values containing lists', () {
+      final Expression expression = getExpression(
+        '[{"a": [1, 2]}, {"b": [3, 4]}]',
+      );
+      expect(
+        expression.toString(),
+        '[{"a": [1, 2]}, {"b": [3, 4]}]',
+      );
+    });
+  });
+
+  group('If expression edge cases', () {
+    test('if with list as condition', () {
+      final Expression expression = getExpression('if ([]) 1 else 2');
+      expect(expression.toString(), 'if([], 1, 2)');
+    });
+
+    test('if with map as condition', () {
+      final Expression expression = getExpression('if ({}) 1 else 2');
+      expect(expression.toString(), 'if({}, 1, 2)');
+    });
+
+    test('if with function call as condition', () {
+      final Expression expression = getExpression('if (check()) 1 else 2');
+      expect(expression.toString(), 'if(check(), 1, 2)');
+    });
+
+    test('if with index as condition', () {
+      final Expression expression = getExpression('if (arr[0]) 1 else 2');
+      expect(expression.toString(), 'if(@(arr, 0), 1, 2)');
+    });
+
+    test('if returning list', () {
+      final Expression expression = getExpression(
+        'if (true) [1, 2] else [3, 4]',
+      );
+      expect(expression.toString(), 'if(true, [1, 2], [3, 4])');
+    });
+
+    test('if returning map', () {
+      final Expression expression = getExpression(
+        'if (true) {"a": 1} else {"b": 2}',
+      );
+      expect(expression.toString(), 'if(true, {"a": 1}, {"b": 2})');
+    });
+
+    test('if returning function call', () {
+      final Expression expression = getExpression('if (true) foo() else bar()');
+      expect(expression.toString(), 'if(true, foo(), bar())');
+    });
+
+    test('triple nested if', () {
+      final Expression expression = getExpression(
+        'if (a) if (b) if (c) 1 else 2 else 3 else 4',
+      );
+      expect(expression.toString(), 'if(a, if(b, if(c, 1, 2), 3), 4)');
+    });
+  });
+
+  group('Expression toString coverage', () {
+    test('ListExpression toString with expressions', () {
+      final Expression expression = getExpression('[1 + 2, 3 * 4]');
+      expect(expression, isA<ListExpression>());
+      expect(expression.toString(), '[+(1, 2), *(3, 4)]');
+    });
+
+    test('MapExpression toString with multiple entries', () {
+      final Expression expression = getExpression('{"a": 1, "b": 2, "c": 3}');
+      expect(expression, isA<MapExpression>());
+      expect(expression.toString(), '{"a": 1, "b": 2, "c": 3}');
+    });
+
+    test('CallExpression toString with no arguments', () {
+      final Expression expression = getExpression('foo()');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), 'foo()');
+    });
+
+    test('CallExpression toString with multiple arguments', () {
+      final Expression expression = getExpression('foo(1, 2, 3)');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), 'foo(1, 2, 3)');
+    });
+
+    test('Nested CallExpression toString', () {
+      final Expression expression = getExpression('foo(bar(baz()))');
+      expect(expression.toString(), 'foo(bar(baz()))');
+    });
+  });
+
+  group('Additional error cases', () {
+    test('double close parenthesis throws InvalidTokenError', () {
+      expect(
+        () => getExpression('))'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
+    test('double close bracket throws InvalidTokenError', () {
+      expect(
+        () => getExpression(']]'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
+    test('double close brace throws InvalidTokenError', () {
+      expect(
+        () => getExpression('}}'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
+    test('incomplete unary expression throws', () {
+      expect(
+        () => getExpression('!'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('incomplete negation throws', () {
+      expect(
+        () => getExpression('-'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('double minus followed by nothing throws', () {
+      expect(
+        () => getExpression('- -'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('double bang followed by nothing throws', () {
+      expect(
+        () => getExpression('! !'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('missing second operand in OR throws', () {
+      expect(
+        () => getExpression('a |'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('missing second operand in AND throws', () {
+      expect(
+        () => getExpression('a &'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('missing index closing bracket throws', () {
+      expect(
+        () => getExpression('a[0'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
+    });
+
+    test('map with missing value throws', () {
+      expect(
+        () => getExpression('{"key"}'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+  });
 }

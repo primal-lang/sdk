@@ -300,5 +300,239 @@ void main() {
       );
       expect(sig1, isNot(equals(sig2)));
     });
+
+    test('equality with empty name and empty parameters', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: '',
+        parameters: [],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: '',
+        parameters: [],
+      );
+      expect(sig1, equals(sig2));
+    });
+
+    test('hashCode with empty name', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: '',
+        parameters: [Parameter.any('x')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: '',
+        parameters: [Parameter.any('x')],
+      );
+      expect(sig1.hashCode, equals(sig2.hashCode));
+    });
+
+    test('hashCode with empty name and empty parameters', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: '',
+        parameters: [],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: '',
+        parameters: [],
+      );
+      expect(sig1.hashCode, equals(sig2.hashCode));
+    });
+
+    test('inequality when first parameter name differs', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [
+          Parameter.any('a'),
+          Parameter.any('b'),
+          Parameter.any('c'),
+        ],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [
+          Parameter.any('z'),
+          Parameter.any('b'),
+          Parameter.any('c'),
+        ],
+      );
+      expect(sig1, isNot(equals(sig2)));
+    });
+
+    test('inequality when parameter order differs', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('a'), Parameter.any('b')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('b'), Parameter.any('a')],
+      );
+      expect(sig1, isNot(equals(sig2)));
+    });
+
+    test('hashCode differs when parameter order differs', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('a'), Parameter.any('b')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('b'), Parameter.any('a')],
+      );
+      expect(sig1.hashCode, isNot(equals(sig2.hashCode)));
+    });
+
+    test('equality ignores parameter types across all type constructors', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [
+          Parameter.boolean('a'),
+          Parameter.number('b'),
+          Parameter.string('c'),
+          Parameter.file('d'),
+          Parameter.directory('e'),
+          Parameter.timestamp('f'),
+          Parameter.list('g'),
+          Parameter.vector('h'),
+          Parameter.set('i'),
+          Parameter.stack('j'),
+          Parameter.queue('k'),
+          Parameter.map('l'),
+          Parameter.function('m'),
+          Parameter.any('n'),
+        ],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [
+          Parameter.any('a'),
+          Parameter.any('b'),
+          Parameter.any('c'),
+          Parameter.any('d'),
+          Parameter.any('e'),
+          Parameter.any('f'),
+          Parameter.any('g'),
+          Parameter.any('h'),
+          Parameter.any('i'),
+          Parameter.any('j'),
+          Parameter.any('k'),
+          Parameter.any('l'),
+          Parameter.any('m'),
+          Parameter.any('n'),
+        ],
+      );
+      expect(sig1, equals(sig2));
+    });
+
+    test('toString with empty name and empty parameters', () {
+      const FunctionSignature sig = FunctionSignature(
+        name: '',
+        parameters: [],
+      );
+      expect(sig.toString(), equals('()'));
+    });
+
+    test('name getter returns constructor value', () {
+      const FunctionSignature sig = FunctionSignature(
+        name: 'myFunction',
+        parameters: [],
+      );
+      expect(sig.name, equals('myFunction'));
+    });
+
+    test('parameters getter returns constructor value', () {
+      const List<Parameter> params = [
+        Parameter.number('x'),
+        Parameter.string('y'),
+      ];
+      const FunctionSignature sig = FunctionSignature(
+        name: 'func',
+        parameters: params,
+      );
+      expect(sig.parameters, equals(params));
+    });
+
+    test('hashCode consistency across multiple calls', () {
+      const FunctionSignature sig = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x'), Parameter.any('y')],
+      );
+      final int hash1 = sig.hashCode;
+      final int hash2 = sig.hashCode;
+      final int hash3 = sig.hashCode;
+      expect(hash1, equals(hash2));
+      expect(hash2, equals(hash3));
+    });
+
+    test('equality is symmetric', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x')],
+      );
+      expect(sig1 == sig2, isTrue);
+      expect(sig2 == sig1, isTrue);
+    });
+
+    test('equality is transitive', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x')],
+      );
+      const FunctionSignature sig3 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x')],
+      );
+      expect(sig1 == sig2, isTrue);
+      expect(sig2 == sig3, isTrue);
+      expect(sig1 == sig3, isTrue);
+    });
+
+    test('can be used as map key', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'add',
+        parameters: [Parameter.number('a'), Parameter.number('b')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'add',
+        parameters: [Parameter.any('a'), Parameter.any('b')],
+      );
+      final Map<FunctionSignature, int> map = {sig1: 42};
+      expect(map[sig2], equals(42));
+    });
+
+    test('can be used in set', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x')],
+      );
+      final Set<FunctionSignature> sigSet = <FunctionSignature>{};
+      sigSet.add(sig1);
+      sigSet.add(sig2);
+      expect(sigSet.length, equals(1));
+    });
+
+    test('different signatures in set are distinct', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func1',
+        parameters: [Parameter.any('x')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func2',
+        parameters: [Parameter.any('x')],
+      );
+      final Set<FunctionSignature> sigSet = {sig1, sig2};
+      expect(sigSet.length, equals(2));
+    });
   });
 }

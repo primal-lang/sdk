@@ -2,6 +2,7 @@
 library;
 
 import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/runtime/term.dart';
@@ -918,6 +919,570 @@ void main() {
         runtime.defineFunction(apply);
 
         expect(runtime.evaluate(getExpression('apply(identity, 42)')), '42');
+      });
+    });
+
+    group('evaluateToTerm additional types', () {
+      test('returns SetTerm for set expression', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final Expression expression = getExpression('set.new([1, 2, 3])');
+
+        final Term result = runtime.evaluateToTerm(expression);
+
+        expect(result, isA<SetTerm>());
+        expect(result.native(), {1, 2, 3});
+      });
+
+      test('returns MapTerm for map expression', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final Expression expression = getExpression('{"a": 1}');
+
+        final Term result = runtime.evaluateToTerm(expression);
+
+        expect(result, isA<MapTerm>());
+        expect(result.native(), {'a': 1});
+      });
+
+      test('returns FunctionTerm for function reference', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final Expression expression = getExpression('num.add');
+
+        final Term result = runtime.evaluateToTerm(expression);
+
+        expect(result, isA<FunctionTerm>());
+      });
+
+      test('returns empty ListTerm for empty list', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final Expression expression = getExpression('[]');
+
+        final Term result = runtime.evaluateToTerm(expression);
+
+        expect(result, isA<ListTerm>());
+        expect(result.native(), isEmpty);
+      });
+    });
+
+    group('format additional types', () {
+      test('formats empty list', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.format([]).toString(), '[]');
+      });
+
+      test('formats set', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.format({1, 2, 3}).toString(), '{1, 2, 3}');
+      });
+
+      test('formats empty set', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.format(<dynamic>{}).toString(), '{}');
+      });
+
+      test('formats map', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        final dynamic result = runtime.format({'a': 1, 'b': 2});
+        expect(result, {'"a"': 1, '"b"': 2});
+      });
+
+      test('formats empty map', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.format(<String, int>{}).toString(), '{}');
+      });
+
+      test('formats mixed type list', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(
+          runtime.format([1, 'hello', true]).toString(),
+          '[1, "hello", true]',
+        );
+      });
+
+      test('formats negative numbers', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.format(-42), -42);
+        expect(runtime.format(-3.14), -3.14);
+      });
+
+      test('formats zero', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.format(0), 0);
+        expect(runtime.format(0.0), 0.0);
+      });
+
+      test('formats empty string', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.format(''), '""');
+      });
+    });
+
+    group('loadFromIntermediateRepresentation additional cases', () {
+      test('loads mutually dependent functions', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final IntermediateRepresentation representation =
+            getIntermediateRepresentation('''
+              isEven(n) = if (n == 0) true else isOdd(n - 1)
+              isOdd(n) = if (n == 0) false else isEven(n - 1)
+            ''');
+
+        final int count = runtime.loadFromIntermediateRepresentation(
+          representation,
+        );
+
+        expect(count, 2);
+        expect(runtime.evaluate(getExpression('isEven(4)')), 'true');
+        expect(runtime.evaluate(getExpression('isOdd(3)')), 'true');
+      });
+
+      test('functions from loaded IR can use standard library', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final IntermediateRepresentation representation =
+            getIntermediateRepresentation('square(x) = num.mul(x, x)');
+
+        runtime.loadFromIntermediateRepresentation(representation);
+
+        expect(runtime.evaluate(getExpression('square(5)')), '25');
+      });
+    });
+
+    group('hasMain edge cases', () {
+      test('returns true when main has parameters', () {
+        final RuntimeFacade runtime = getRuntime('main(x) = x');
+        expect(runtime.hasMain, true);
+      });
+
+      test('returns true when main is one of several functions', () {
+        final RuntimeFacade runtime = getRuntime('''
+          helper(x) = x * 2
+          main = helper(21)
+        ''');
+        expect(runtime.hasMain, true);
+      });
+    });
+
+    group('evaluate error handling', () {
+      test('throws DivisionByZeroError for division by zero', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(
+          () => runtime.evaluate(getExpression('1 / 0')),
+          throwsA(isA<DivisionByZeroError>()),
+        );
+      });
+
+      test('throws DivisionByZeroError for negative division by zero', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(
+          () => runtime.evaluate(getExpression('-1 / 0')),
+          throwsA(isA<DivisionByZeroError>()),
+        );
+      });
+    });
+
+    group('deleteFunction edge cases', () {
+      test('deletes function loaded from IR', () {
+        final RuntimeFacade runtime = getRuntime('myFunc(x) = x * 2');
+        expect(runtime.userDefinedFunctionSignatures, ['myFunc(x)']);
+
+        runtime.deleteFunction('myFunc');
+
+        expect(runtime.userDefinedFunctionSignatures, isEmpty);
+      });
+
+      test('allows deletion after renaming a function', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'original = 42',
+        )!;
+        runtime.defineFunction(definition);
+        runtime.renameFunction('original', 'renamed');
+
+        runtime.deleteFunction('renamed');
+
+        expect(runtime.userDefinedFunctionSignatures, isEmpty);
+      });
+    });
+
+    group('renameFunction edge cases', () {
+      test('renamed function executes correctly', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'double(x) = x * 2',
+        )!;
+        runtime.defineFunction(definition);
+
+        runtime.renameFunction('double', 'twice');
+
+        expect(runtime.evaluate(getExpression('twice(5)')), '10');
+      });
+
+      test('can rename to single character name', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'longName = 42',
+        )!;
+        runtime.defineFunction(definition);
+
+        runtime.renameFunction('longName', 'x');
+
+        expect(runtime.userDefinedFunctionSignatures, ['x()']);
+      });
+
+      test('can rename constant to function-like name', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'pi = 3.14',
+        )!;
+        runtime.defineFunction(definition);
+
+        runtime.renameFunction('pi', 'getPi');
+
+        expect(runtime.userDefinedFunctionSignatures, ['getPi()']);
+        expect(runtime.evaluate(getExpression('getPi()')), '3.14');
+      });
+    });
+
+    group('userDefinedFunctionSignatures edge cases', () {
+      test('excludes standard library functions', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.userDefinedFunctionSignatures, isEmpty);
+        // Standard library functions should still work
+        expect(runtime.evaluate(getExpression('num.add(1, 2)')), '3');
+      });
+
+      test('preserves function signature format with underscores', () {
+        final RuntimeFacade runtime = getRuntime(
+          'my_function(a_param) = a_param',
+        );
+        expect(runtime.userDefinedFunctionSignatures, ['my_function(a_param)']);
+      });
+    });
+
+    group('reset edge cases', () {
+      test('multiple resets are idempotent', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'value = 42',
+        )!;
+        runtime.defineFunction(definition);
+
+        runtime.reset();
+        runtime.reset();
+        runtime.reset();
+
+        expect(runtime.userDefinedFunctionSignatures, isEmpty);
+      });
+
+      test('reset on empty runtime does not throw', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.reset, returnsNormally);
+      });
+    });
+
+    group('mainExpression with null main', () {
+      test('returns main() call even when main does not exist', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        final Expression expression = runtime.mainExpression([]);
+
+        expect(expression.toString(), 'main()');
+      });
+
+      test('returns main() with no arguments even when arguments provided', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        final Expression expression = runtime.mainExpression([
+          'ignored',
+          'args',
+        ]);
+
+        expect(expression.toString(), 'main()');
+      });
+    });
+
+    group('defineFunction with complex expressions', () {
+      test('defines function using list operations', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'sumList(items) = list.reduce(items, 0, num.add)',
+        )!;
+
+        runtime.defineFunction(definition);
+
+        expect(runtime.evaluate(getExpression('sumList([1, 2, 3, 4])')), '10');
+      });
+
+      test('defines function with deeply nested conditionals', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'classify(n) = if (n < 0) "negative" else if (n == 0) "zero" else "positive"',
+        )!;
+
+        runtime.defineFunction(definition);
+
+        expect(runtime.evaluate(getExpression('classify(-5)')), '"negative"');
+        expect(runtime.evaluate(getExpression('classify(0)')), '"zero"');
+        expect(runtime.evaluate(getExpression('classify(5)')), '"positive"');
+      });
+    });
+
+    group('evaluate with various literal types', () {
+      test('evaluates negative number', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.evaluate(getExpression('-42')), '-42');
+      });
+
+      test('evaluates floating point number', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.evaluate(getExpression('3.14159')), '3.14159');
+      });
+
+      test('evaluates string with special characters', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(
+          runtime.evaluate(getExpression('"hello\\nworld"')),
+          '"hello\nworld"',
+        );
+      });
+
+      test('evaluates empty list', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.evaluate(getExpression('[]')), '[]');
+      });
+
+      test('evaluates single element list', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.evaluate(getExpression('[42]')), '[42]');
+      });
+
+      test('evaluates false boolean', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+
+        expect(runtime.evaluate(getExpression('false')), 'false');
+      });
+    });
+
+    group('executeMain with edge case arguments', () {
+      test('handles argument with only whitespace', () {
+        final RuntimeFacade runtime = getRuntime('main(a) = a');
+        final String result = runtime.executeMain(['   ']);
+        expect(result, '"   "');
+      });
+
+      test('handles argument with unicode characters', () {
+        final RuntimeFacade runtime = getRuntime('main(a) = a');
+        final String result = runtime.executeMain(['\u00e9\u00e0\u00fc']);
+        expect(result, '"\u00e9\u00e0\u00fc"');
+      });
+
+      test('handles very long argument', () {
+        final RuntimeFacade runtime = getRuntime('main(a) = a');
+        final String longString = 'x' * 1000;
+        final String result = runtime.executeMain([longString]);
+        expect(result, '"$longString"');
+      });
+
+      test('handles multiple empty string arguments', () {
+        final RuntimeFacade runtime = getRuntime('main(a, b, c) = a + b + c');
+        final String result = runtime.executeMain(['', '', '']);
+        expect(result, '""');
+      });
+    });
+
+    group('intermediateRepresentation property', () {
+      test('returns the intermediate representation passed to constructor', () {
+        final IntermediateRepresentation representation =
+            getIntermediateRepresentation('myFunc(x) = x');
+        final RuntimeFacade runtime = RuntimeFacade(
+          representation,
+          compiler.expression,
+        );
+
+        expect(runtime.intermediateRepresentation, same(representation));
+      });
+
+      test(
+        'empty intermediate representation has standard library signatures',
+        () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.intermediateRepresentation.standardLibrarySignatures,
+            isNotEmpty,
+          );
+          expect(
+            runtime.intermediateRepresentation.standardLibrarySignatures
+                .containsKey('num.add'),
+            isTrue,
+          );
+        },
+      );
+    });
+
+    group('defineFunction parameter validation', () {
+      test('throws for three duplicate parameters', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'bad(x, x, x) = x',
+        )!;
+
+        expect(
+          () => runtime.defineFunction(definition),
+          throwsA(isA<DuplicatedParameterError>()),
+        );
+      });
+
+      test('allows parameters with similar names', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'func(x, x1, x2) = x + x1 + x2',
+        )!;
+
+        runtime.defineFunction(definition);
+
+        expect(runtime.evaluate(getExpression('func(1, 2, 3)')), '6');
+      });
+
+      test('allows parameter with leading underscore', () {
+        final RuntimeFacade runtime = RuntimeFacade(
+          IntermediateRepresentation.empty(),
+          compiler.expression,
+        );
+        final FunctionDefinition definition = compiler.functionDefinition(
+          'constant(unused) = 42',
+        )!;
+
+        runtime.defineFunction(definition);
+
+        expect(runtime.evaluate(getExpression('constant(999)')), '42');
       });
     });
   });
