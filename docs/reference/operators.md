@@ -236,3 +236,24 @@ true or false  // returns true
 ```
 !true // returns false
 ```
+
+## Access Operators
+
+### Element At
+
+- **Symbol:** `@`
+- **Input:** An indexable value and a hashable index/key
+- **Output:** The element at the specified position or key
+- **Supported combinations:**
+  - `List @ Number` (element at index)
+  - `String @ Number` (character at index)
+  - `Map @ Hashable` (value for key)
+- **Errors:** Throws error if index is negative, out of bounds, or key not found
+- **Purity:** Pure
+- **Example:**
+
+```
+[10, 20, 30] @ 1    // returns 20
+"hello" @ 0        // returns "h"
+{"a": 1} @ "a"     // returns 1
+```
