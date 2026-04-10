@@ -62,6 +62,14 @@ Factory constructors provide convenient creation:
 - `Parameter.map(name)` - map parameter
 - `Parameter.function(name)` - function parameter
 - `Parameter.any(name)` - accepts any type
+- `Parameter.ordered(name)` - ordered parameter (Number, String, Timestamp)
+- `Parameter.equatable(name)` - equatable parameter
+- `Parameter.hashable(name)` - hashable parameter
+- `Parameter.indexable(name)` - indexable parameter (String, List, Map)
+- `Parameter.collection(name)` - collection parameter (List, Set, Stack, Queue, Map)
+- `Parameter.iterable(name)` - iterable parameter (String, List, Set, Stack, Queue)
+- `Parameter.addable(name)` - addable parameter (Number, String, Vector, List, Set)
+- `Parameter.subtractable(name)` - subtractable parameter (Number, Vector, Set)
 
 ## FunctionSignature
 

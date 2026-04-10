@@ -166,6 +166,11 @@ class RuntimeFacade {
   );
 
   bool get hasMain;
+  List<String> get userDefinedFunctionSignatures;
+  void reset();
+  int loadFromIntermediateRepresentation(IntermediateRepresentation representation);
+  void deleteFunction(String name);
+  void renameFunction(String oldName, String newName);
   Expression mainExpression(List<String> arguments);
   String executeMain([List<String>? arguments]);
   String evaluate(Expression expression);
@@ -180,6 +185,11 @@ class RuntimeFacade {
 Key behavior:
 
 - `hasMain` - checks if a `main` function exists in the intermediate representation.
+- `userDefinedFunctionSignatures` - returns a sorted list of user-defined function signatures as strings.
+- `reset()` - clears all user-defined functions from the runtime, removing their signatures and terms.
+- `loadFromIntermediateRepresentation(representation)` - clears existing user-defined functions, then loads all custom functions from the provided `IntermediateRepresentation`. Returns the number of functions loaded.
+- `deleteFunction(name)` - removes a user-defined function by name. Throws `FunctionNotFoundError` if the function does not exist. Throws `CannotDeleteStandardLibraryError` if attempting to delete a stdlib function.
+- `renameFunction(oldName, newName)` - renames a user-defined function. Throws `FunctionNotFoundError` if `oldName` does not exist. Throws `CannotRenameStandardLibraryError` if `oldName` is a stdlib function. Throws `FunctionAlreadyExistsError` if `newName` is already in use. Note: does not update references in other user-defined functions.
 - `mainExpression(arguments)` - builds a call expression for `main`, escaping string arguments. If `main` has no parameters, arguments are ignored.
 - `executeMain([arguments])` - evaluates `main` and returns the formatted result as a string.
 - `evaluate(expression)` - runs an expression through the full pipeline (semantic check, lowering, reduction, formatting) and returns the result as a string.

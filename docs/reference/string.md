@@ -245,12 +245,13 @@ str.padRight("hi", 5, ".") // returns "hi..."
 
 - **Signature:** `str.split(a: String, b: String): List`
 - **Input:** A string and a separator string
-- **Output:** A list of substrings divided by the separator
+- **Output:** A list of substrings divided by the separator. If the separator is empty, splits into individual characters.
 - **Purity:** Pure
 - **Example:**
 
 ```
 str.split("a,b,c", ",") // returns ["a", "b", "c"]
+str.split("hello", "") // returns ["h", "e", "l", "l", "o"]
 ```
 
 ## Search

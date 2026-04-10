@@ -82,13 +82,13 @@ map.set({"a": 1}, "b", 2) // returns {"a": 1, "b": 2}
 ### Remove At
 
 - **Signature:** `map.removeAt(a: Map, b: Number): Map`
-- **Input:** A map and a key
+- **Input:** A map and a number key
 - **Output:** A new map with the key removed
 - **Purity:** Pure
 - **Example:**
 
 ```
-map.removeAt({"a": 1, "b": 2}, "a") // returns {"b": 2}
+map.removeAt({1: "a", 2: "b"}, 1) // returns {2: "b"}
 ```
 
 ## Properties

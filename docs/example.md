@@ -60,9 +60,7 @@ The SourceReader is the first stage of the pipeline. It converts a raw input str
 
 ```
 square(n) = n * n
-
 max(a, b) = if (a >= b) a else b
-
 main = max(square(3), square(4))
 ```
 
@@ -363,7 +361,7 @@ The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
 | Output type           | `List<Token>`            |
 | Input length          | 84 characters            |
 | Output length         | 38 tokens                |
-| Whitespace characters | 46 (skipped)             |
+| Whitespace characters | 19 (skipped)             |
 | Identifiers           | 15                       |
 | Keywords              | 2 (`if`, `else`)         |
 | Numbers               | 2 (`3`, `4`)             |
@@ -372,7 +370,7 @@ The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
 
 ### Key Observations
 
-1. **Whitespace elimination**: All 46 whitespace characters (spaces and newlines) are discarded—they served only to delimit tokens.
+1. **Whitespace elimination**: All 19 whitespace characters (16 spaces and 3 newlines) are discarded—they served only to delimit tokens.
 
 2. **Keyword detection at boundary**: `if` and `else` are recognized as keywords only when the complete lexeme is checked. The lexer accumulates characters in `IdentifierState` and calls `_identifierOrKeywordToken()` at the delimiter.
 
