@@ -361,16 +361,28 @@ void main() {
       expect(expression.toString(), equals('==(1, 2)'));
     });
 
-    test('Logical and returns CallExpression', () {
+    test('Logical and (&&) returns CallExpression', () {
       final Expression expression = compiler.expression('true && false');
       expect(expression, isA<CallExpression>());
       expect(expression.toString(), equals('&&(true, false)'));
     });
 
-    test('Logical or returns CallExpression', () {
+    test('Logical and (&) returns CallExpression', () {
+      final Expression expression = compiler.expression('true & false');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), equals('&(true, false)'));
+    });
+
+    test('Logical or (||) returns CallExpression', () {
       final Expression expression = compiler.expression('true || false');
       expect(expression, isA<CallExpression>());
       expect(expression.toString(), equals('||(true, false)'));
+    });
+
+    test('Logical or (|) returns CallExpression', () {
+      final Expression expression = compiler.expression('true | false');
+      expect(expression, isA<CallExpression>());
+      expect(expression.toString(), equals('|(true, false)'));
     });
 
     test('Parenthesized expression parses correctly', () {
