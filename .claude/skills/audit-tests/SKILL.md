@@ -1,31 +1,41 @@
 ---
 name: audit-tests
-description: Audits test files in a specified folder, spawning parallel agents to identify missing test cases and edge cases.
+description: Audits test files in a specified folder or single file, spawning parallel agents for folders or handling directly for single files.
 ---
 
-Audit the test files in a user-specified folder, identify gaps in test coverage, and implement missing tests. Each test file is assigned to a dedicated subagent that runs in parallel.
+Audit test files, identify gaps in test coverage, and implement missing tests. Accepts either a folder path (spawns parallel subagents) or a single file path (handled directly by orchestrator).
 
 ## Initialization
 
-1. **Require a folder parameter** — if not provided, ask the user to specify a folder path before proceeding. Do not guess or assume a default folder.
-2. **Validate the folder** — verify the folder exists and contains `*_test.dart` files (only search in the specified folder, do not search recursively).
-3. **List test files** — use Glob to find all test files in the specified folder.
+1. **Require a path parameter** — if not provided, ask the user to specify a folder or file path before proceeding. Do not guess or assume a default.
+2. **Detect path type** — determine whether the path is a file or folder.
+3. **Validate the path**:
+   - If **file**: verify it exists and matches `*_test.dart`.
+   - If **folder**: verify it exists and contains `*_test.dart` files (only search in the specified folder, do not search recursively). Use Glob to list all test files.
 
 ## Execution
 
-1. **Spawn parallel agents** — one agent per test file found. All agents run concurrently.
+### Single File Mode
 
-2. **Each agent must**:
-   a. Read and understand its assigned test file
-   b. Identify the corresponding source files in `lib/` being tested (infer from imports and test subjects)
-   c. Read all relevant source files to understand the full implementation
-   d. Consult relevant documentation in `docs/` if needed (see mappings below) to understand expected behavior
-   e. Analyze existing tests for completeness
-   f. Implement missing tests directly in the assigned test file
+If a single file was provided, the orchestrator handles the audit directly following the audit process below.
+
+### Folder Mode
+
+If a folder was provided, spawn parallel agents — one agent per test file found. All agents run concurrently.
+
+### Audit Process
+
+Each audit (whether by orchestrator or agent) must:
+a. Read and understand its assigned test file
+b. Identify the corresponding source files in `lib/` being tested (infer from imports and test subjects)
+c. Read all relevant source files to understand the full implementation
+d. Consult relevant documentation in `docs/` if needed (see mappings below) to understand expected behavior
+e. Analyze existing tests for completeness
+f. Implement missing tests directly in the assigned test file
 
 ## Documentation Reference
 
-Agents may consult these docs to understand expected behavior:
+Consult these docs to understand expected behavior:
 
 | Source directory              | Documentation                |
 | ----------------------------- | ---------------------------- |
@@ -39,7 +49,7 @@ Agents may consult these docs to understand expected behavior:
 
 ## Coverage Rules
 
-Each agent should ensure the following are tested:
+Each audit should ensure the following are tested:
 
 **Functionality Coverage**:
 
@@ -72,7 +82,7 @@ Each agent should ensure the following are tested:
 
 ## Output
 
-When all agents complete, provide a summary:
+When the audit completes (all agents in folder mode, or directly in single file mode), provide a summary:
 
 ```
 # Test Audit Summary

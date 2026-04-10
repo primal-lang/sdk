@@ -181,6 +181,39 @@ void main() {
         expect(lexeme == (42 as dynamic), isFalse);
         expect(lexeme == (Object() as dynamic), isFalse);
       });
+
+      test('equality is symmetric', () {
+        const Lexeme lexeme1 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme2 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme1 == lexeme2, isTrue);
+        expect(lexeme2 == lexeme1, isTrue);
+      });
+
+      test('equality is transitive', () {
+        const Lexeme lexeme1 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme2 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+        const Lexeme lexeme3 = Lexeme(
+          value: 'test',
+          location: Location(row: 1, column: 1),
+        );
+
+        expect(lexeme1 == lexeme2, isTrue);
+        expect(lexeme2 == lexeme3, isTrue);
+        expect(lexeme1 == lexeme3, isTrue);
+      });
     });
 
     group('hashCode edge cases', () {
@@ -208,6 +241,20 @@ void main() {
         );
 
         expect(lexeme1.hashCode, isNot(equals(lexeme2.hashCode)));
+      });
+
+      test('hashCode is stable across multiple calls', () {
+        const Lexeme lexeme = Lexeme(
+          value: 'stable',
+          location: Location(row: 1, column: 1),
+        );
+
+        final int hash1 = lexeme.hashCode;
+        final int hash2 = lexeme.hashCode;
+        final int hash3 = lexeme.hashCode;
+
+        expect(hash1, equals(hash2));
+        expect(hash2, equals(hash3));
       });
     });
 
