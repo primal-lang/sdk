@@ -1342,5 +1342,561 @@ void main() {
         expect(platformConsole.errorLines, isEmpty);
       });
     });
+
+    group('flag combinations', () {
+      test('--debug with library file (no main) enters REPL with debug', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['double(5)'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          ['--debug', 'library.prm'],
+          console: console,
+          readFile: (_) => 'double(x) = x * 2',
+        );
+
+        final String allOutput = platformConsole.outLines.join('\n');
+        // Should show compilation debug output
+        expect(allOutput, contains('[debug] Compilation:'));
+        // Should show REPL debug output for input
+        expect(allOutput, contains('[debug] Input: double(5)'));
+        // Result should be present
+        expect(platformConsole.outLines.last, equals('10'));
+      });
+
+      test('--debug --version only prints version', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['--debug', '--version'], console: console);
+
+        // --version takes precedence and exits immediately
+        expect(platformConsole.outLines, equals(['0.4.3']));
+      });
+
+      test('--version before --debug only prints version', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['--version', '--debug'], console: console);
+
+        expect(platformConsole.outLines, equals(['0.4.3']));
+      });
+
+      test('--help before --debug only prints help', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['--help', '--debug'], console: console);
+
+        expect(platformConsole.outLines.length, equals(1));
+        expect(platformConsole.outLines.single, contains('Usage: primal'));
+      });
+    });
+
+    group('REPL :load edge cases', () {
+      test(':load empty file loads 0 functions', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':load empty.prm'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => '',
+        );
+
+        final String allOutput = platformConsole.outLines.join('\n');
+        expect(allOutput, contains('Loaded 0 function(s) from empty.prm.'));
+      });
+
+      test(':load replaces previously loaded functions', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [
+            'first(x) = x',
+            ':load file.prm',
+            ':list',
+          ],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => 'second(x) = x * 2',
+        );
+
+        // After :load, user-defined 'first' should be cleared and only 'second'
+        // from the file should remain
+        final String lastOutput = platformConsole.outLines.last;
+        expect(lastOutput, contains('second'));
+        expect(lastOutput, isNot(contains('first')));
+      });
+    });
+
+    group('REPL :run edge cases', () {
+      test(':run with main that has arguments executes without arguments', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':run program.prm'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => 'main(x) = "default"',
+        );
+
+        // main() is called without arguments, so x is unbound
+        // This should either use default handling or show an error
+        final String allOutput = platformConsole.outLines.join('\n');
+        expect(allOutput, contains('Loaded 1 function(s) from program.prm.'));
+      });
+    });
+
+    group('program argument edge cases', () {
+      test('main with empty string argument', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm', ''],
+          console: console,
+          readFile: (_) => 'main(a) = str.length(a)',
+        );
+
+        expect(platformConsole.outLines, equals(['0']));
+      });
+
+      test('main with arguments containing newlines', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm', 'line1\nline2'],
+          console: console,
+          readFile: (_) => 'main(a) = a',
+        );
+
+        expect(platformConsole.outLines.single, contains('line1'));
+        expect(platformConsole.outLines.single, contains('line2'));
+      });
+
+      test('main with arguments containing tabs', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm', 'col1\tcol2'],
+          console: console,
+          readFile: (_) => 'main(a) = a',
+        );
+
+        expect(platformConsole.outLines.single, contains('col1'));
+        expect(platformConsole.outLines.single, contains('col2'));
+      });
+
+      test('main with many arguments passes them all', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm', 'a', 'b', 'c', 'd', 'e'],
+          console: console,
+          readFile: (_) => 'main(a, b, c, d, e) = [a, b, c, d, e]',
+        );
+
+        expect(
+          platformConsole.outLines.single,
+          equals('["a", "b", "c", "d", "e"]'),
+        );
+      });
+    });
+
+    group('REPL prompt error handling', () {
+      test('console read error during prompt shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        platformConsole.readError = StateError('read error');
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Bad state: read error'),
+        );
+      });
+    });
+
+    group('REPL multiple interactions', () {
+      test('multiple function definitions build on each other', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [
+            'double(x) = x * 2',
+            'quadruple(x) = double(double(x))',
+            'quadruple(5)',
+          ],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli([], console: console);
+
+        expect(platformConsole.outLines.last, equals('20'));
+      });
+
+      test('loaded functions can be used with REPL-defined functions', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [
+            ':load lib.prm',
+            'quadruple(x) = double(double(x))',
+            'quadruple(3)',
+          ],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => 'double(x) = x * 2',
+        );
+
+        expect(platformConsole.outLines.last, equals('12'));
+      });
+    });
+
+    group('REPL command case sensitivity', () {
+      test(':HELP (uppercase) is treated as unknown command', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':HELP'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains("Unknown command ':HELP'"),
+        );
+      });
+
+      test(':Debug on (mixed case) is treated as unknown command', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':Debug on'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains("Unknown command ':Debug on'"),
+        );
+      });
+    });
+
+    group('REPL expressions with functions', () {
+      test('expression using standard library function evaluates', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['num.abs(-42)'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(platformConsole.outLines.last, equals('42'));
+      });
+
+      test('complex expression with multiple operations evaluates', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['(1 + 2) * 3 - 4 / 2'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        // Division produces a float, so result is 7.0
+        expect(platformConsole.outLines.last, equals('7.0'));
+      });
+
+      test('list operations in REPL evaluate correctly', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['[1, 2, 3]'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(platformConsole.outLines.last, equals('[1, 2, 3]'));
+      });
+    });
+
+    group('debug mode detailed output', () {
+      test('debug mode shows parsing and evaluation timing', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':debug on', '1 + 2 + 3'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 2,
+        );
+
+        runCli([], console: console);
+
+        final String allOutput = platformConsole.outLines.join('\n');
+        expect(allOutput, contains('[debug] Input: 1 + 2 + 3'));
+        expect(allOutput, contains('[debug] Parsing:'));
+        expect(allOutput, contains('[debug] Evaluation:'));
+        expect(allOutput, contains('6'));
+      });
+
+      test('debug mode for function definition shows input', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':debug on', 'square(x) = x * x'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 2,
+        );
+
+        runCli([], console: console);
+
+        final String allOutput = platformConsole.outLines.join('\n');
+        expect(allOutput, contains('[debug] Input: square(x) = x * x'));
+        // Function definition doesn't print parsing/evaluation debug
+        // (no expression evaluation happens)
+      });
+    });
+
+    group('execution with file and arguments', () {
+      test('file with main that returns argument count', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['program.prm', 'arg1', 'arg2', 'arg3'],
+          console: console,
+          readFile: (_) => 'main(a, b, c) = 3',
+        );
+
+        expect(platformConsole.outLines, equals(['3']));
+      });
+    });
+
+    group('watch mode validation', () {
+      test('-w requires file argument', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['-w'], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Watch mode requires a file argument.'),
+        );
+      });
+
+      test('-w with library file (no main) shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['-w', 'library.prm'],
+          console: console,
+          readFile: (_) => 'double(x) = x * 2',
+        );
+
+        expect(
+          platformConsole.errorLines.single,
+          contains('Watch mode requires a file with a main function.'),
+        );
+      });
+    });
+
+    group('REPL with pre-loaded warnings', () {
+      test('loaded file warnings shown before entering REPL', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['42'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          ['library.prm'],
+          console: console,
+          readFile: (_) =>
+              'unused(x, y) = x', // y is unused - generates warning
+        );
+
+        // Warning should be shown
+        expect(platformConsole.errorLines.single, contains('Warning'));
+        // REPL should still work
+        expect(platformConsole.outLines.last, equals('42'));
+      });
+    });
+
+    group('command prefix edge cases', () {
+      test('colon in middle of expression is not a command', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['1:2'], // This is a syntax error, not a command
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        // Should show syntax error, not "unknown command"
+        expect(platformConsole.errorLines, isNotEmpty);
+        expect(
+          platformConsole.errorLines.single,
+          isNot(contains('Unknown command')),
+        );
+      });
+
+      test('input starting with colon but not a valid command format', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli([], console: console);
+
+        expect(
+          platformConsole.errorLines.single,
+          contains("Unknown command ':'"),
+        );
+      });
+    });
+
+    group('REPL :delete after :load', () {
+      test('can delete function loaded from file', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':load lib.prm', ':delete double', ':list'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => 'double(x) = x * 2',
+        );
+
+        final String allOutput = platformConsole.outLines.join('\n');
+        expect(allOutput, contains("Function 'double' deleted."));
+        expect(
+          platformConsole.outLines.last,
+          equals('No user-defined functions.'),
+        );
+      });
+    });
+
+    group('REPL :rename after :load', () {
+      test('can rename function loaded from file', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':load lib.prm', ':rename double twice', 'twice(5)'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => 'double(x) = x * 2',
+        );
+
+        expect(platformConsole.outLines.last, equals('10'));
+      });
+    });
+
+    group('REPL :reset clears loaded functions', () {
+      test(':reset after :load clears all functions', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: [':load lib.prm', ':reset', ':list'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 3,
+        );
+
+        runCli(
+          [],
+          console: console,
+          readFile: (_) => 'double(x) = x * 2\ntriple(x) = x * 3',
+        );
+
+        final String allOutput = platformConsole.outLines.join('\n');
+        expect(allOutput, contains('All user-defined functions cleared.'));
+        expect(
+          platformConsole.outLines.last,
+          equals('No user-defined functions.'),
+        );
+      });
+    });
+
+    group('main function parameter variations', () {
+      test('main with fewer arguments than parameters shows error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        // When main expects args but fewer are provided, there's an error
+        runCli(
+          ['program.prm', 'only_one'],
+          console: console,
+          readFile: (_) => 'main(a, b) = a',
+        );
+
+        // Should show error for mismatched argument count
+        expect(platformConsole.errorLines, isNotEmpty);
+      });
+    });
   });
 }

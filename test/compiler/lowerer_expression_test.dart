@@ -142,6 +142,39 @@ void main() {
         expect(term, isA<BoundVariableTerm>());
         expect((term as BoundVariableTerm).name, equals('x'));
       });
+
+      test('lowers bound variable with longer name', () {
+        const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'myLongVariableName',
+        );
+        final Term term = lowerer.lowerTerm(semantic);
+
+        expect(term, isA<BoundVariableTerm>());
+        expect((term as BoundVariableTerm).name, equals('myLongVariableName'));
+      });
+
+      test('lowers bound variable with underscore', () {
+        const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'my_variable',
+        );
+        final Term term = lowerer.lowerTerm(semantic);
+
+        expect(term, isA<BoundVariableTerm>());
+        expect((term as BoundVariableTerm).name, equals('my_variable'));
+      });
+
+      test('lowers bound variable with single character name', () {
+        const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'a',
+        );
+        final Term term = lowerer.lowerTerm(semantic);
+
+        expect(term, isA<BoundVariableTerm>());
+        expect((term as BoundVariableTerm).name, equals('a'));
+      });
     });
 
     group('SemanticListNode', () {
@@ -532,6 +565,35 @@ void main() {
         final ListTerm list = term as ListTerm;
         expect(list.value[0], isA<FunctionReferenceTerm>());
       });
+
+      test('lowers list with map as element', () {
+        const SemanticListNode semantic = SemanticListNode(
+          location: defaultLocation,
+          value: [
+            SemanticMapNode(
+              location: defaultLocation,
+              value: [
+                SemanticMapEntryNode(
+                  key: SemanticStringNode(
+                    location: defaultLocation,
+                    value: 'key',
+                  ),
+                  value: SemanticNumberNode(
+                    location: defaultLocation,
+                    value: 42,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+        final Term term = lowerer.lowerTerm(semantic);
+
+        expect(term, isA<ListTerm>());
+        final ListTerm list = term as ListTerm;
+        expect(list.value.length, equals(1));
+        expect(list.value[0], isA<MapTerm>());
+      });
     });
 
     group('SemanticMapNode edge cases', () {
@@ -794,6 +856,81 @@ void main() {
         expect(term, isA<MapTerm>());
         final MapTerm map = term as MapTerm;
         expect(map.value.length, equals(3));
+      });
+
+      test('lowers map with map as key', () {
+        const SemanticMapNode semantic = SemanticMapNode(
+          location: defaultLocation,
+          value: [
+            SemanticMapEntryNode(
+              key: SemanticMapNode(
+                location: defaultLocation,
+                value: [
+                  SemanticMapEntryNode(
+                    key: SemanticStringNode(
+                      location: defaultLocation,
+                      value: 'inner',
+                    ),
+                    value: SemanticNumberNode(
+                      location: defaultLocation,
+                      value: 1,
+                    ),
+                  ),
+                ],
+              ),
+              value: SemanticStringNode(
+                location: defaultLocation,
+                value: 'outer_value',
+              ),
+            ),
+          ],
+        );
+        final Term term = lowerer.lowerTerm(semantic);
+
+        expect(term, isA<MapTerm>());
+        final MapTerm map = term as MapTerm;
+        expect(map.value.length, equals(1));
+        expect(map.value.keys.first, isA<MapTerm>());
+      });
+
+      test('lowers map with bound variable as value', () {
+        const SemanticMapNode semantic = SemanticMapNode(
+          location: defaultLocation,
+          value: [
+            SemanticMapEntryNode(
+              key: SemanticStringNode(location: defaultLocation, value: 'key'),
+              value: SemanticBoundVariableNode(
+                location: defaultLocation,
+                name: 'x',
+              ),
+            ),
+          ],
+        );
+        final Term term = lowerer.lowerTerm(semantic);
+
+        expect(term, isA<MapTerm>());
+        final MapTerm map = term as MapTerm;
+        expect(map.value.values.first, isA<BoundVariableTerm>());
+      });
+
+      test('lowers map with identifier as value', () {
+        const SemanticMapNode semantic = SemanticMapNode(
+          location: defaultLocation,
+          value: [
+            SemanticMapEntryNode(
+              key: SemanticStringNode(location: defaultLocation, value: 'key'),
+              value: SemanticIdentifierNode(
+                location: defaultLocation,
+                name: 'foo',
+              ),
+            ),
+          ],
+        );
+        final Term term = lowerer.lowerTerm(semantic);
+
+        expect(term, isA<MapTerm>());
+        final MapTerm map = term as MapTerm;
+        expect(map.value.values.first, isA<FunctionReferenceTerm>());
       });
     });
 
@@ -1328,6 +1465,304 @@ void main() {
       expect(term, isA<CallTerm>());
       final CallTerm call = term as CallTerm;
       expect(call.arguments[0], isA<FunctionReferenceTerm>());
+    });
+
+    test('lowers call with bound variable as argument', () {
+      final Map<String, FunctionTerm> functions = {
+        'identity': const TestFunctionTerm(
+          name: 'identity',
+          parameters: [Parameter.any('x')],
+        ),
+      };
+      const SemanticCallNode semantic = SemanticCallNode(
+        location: defaultLocation,
+        callee: SemanticIdentifierNode(
+          location: defaultLocation,
+          name: 'identity',
+        ),
+        arguments: [
+          SemanticBoundVariableNode(location: defaultLocation, name: 'y'),
+        ],
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<CallTerm>());
+      final CallTerm call = term as CallTerm;
+      expect(call.arguments.length, equals(1));
+      expect(call.arguments[0], isA<BoundVariableTerm>());
+      expect((call.arguments[0] as BoundVariableTerm).name, equals('y'));
+    });
+
+    test('lowers call with string argument', () {
+      final Map<String, FunctionTerm> functions = {
+        'print': const TestFunctionTerm(
+          name: 'print',
+          parameters: [Parameter.string('message')],
+        ),
+      };
+      const SemanticCallNode semantic = SemanticCallNode(
+        location: defaultLocation,
+        callee: SemanticIdentifierNode(
+          location: defaultLocation,
+          name: 'print',
+        ),
+        arguments: [
+          SemanticStringNode(location: defaultLocation, value: 'hello'),
+        ],
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<CallTerm>());
+      final CallTerm call = term as CallTerm;
+      expect(call.arguments[0], isA<StringTerm>());
+      expect((call.arguments[0] as StringTerm).value, equals('hello'));
+    });
+
+    test('lowers call with boolean argument', () {
+      final Map<String, FunctionTerm> functions = {
+        'not': const TestFunctionTerm(
+          name: 'not',
+          parameters: [Parameter.boolean('value')],
+        ),
+      };
+      const SemanticCallNode semantic = SemanticCallNode(
+        location: defaultLocation,
+        callee: SemanticIdentifierNode(location: defaultLocation, name: 'not'),
+        arguments: [
+          SemanticBooleanNode(location: defaultLocation, value: true),
+        ],
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<CallTerm>());
+      final CallTerm call = term as CallTerm;
+      expect(call.arguments[0], isA<BooleanTerm>());
+      expect((call.arguments[0] as BooleanTerm).value, isTrue);
+    });
+
+    test('lowers call where callee is lambda-like call', () {
+      final Map<String, FunctionTerm> functions = {
+        'makeAdder': const TestFunctionTerm(
+          name: 'makeAdder',
+          parameters: [Parameter.number('n')],
+        ),
+      };
+      const SemanticCallNode semantic = SemanticCallNode(
+        location: defaultLocation,
+        callee: SemanticCallNode(
+          location: defaultLocation,
+          callee: SemanticIdentifierNode(
+            location: defaultLocation,
+            name: 'makeAdder',
+          ),
+          arguments: [
+            SemanticNumberNode(location: defaultLocation, value: 5),
+          ],
+        ),
+        arguments: [
+          SemanticNumberNode(location: defaultLocation, value: 10),
+        ],
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<CallTerm>());
+      final CallTerm outerCall = term as CallTerm;
+      expect(outerCall.callee, isA<CallTerm>());
+      final CallTerm innerCall = outerCall.callee as CallTerm;
+      expect(innerCall.callee, isA<FunctionReferenceTerm>());
+      expect(
+        (innerCall.callee as FunctionReferenceTerm).name,
+        equals('makeAdder'),
+      );
+      expect(outerCall.arguments.length, equals(1));
+      expect((outerCall.arguments[0] as NumberTerm).value, equals(10));
+    });
+  });
+
+  group('Lowerer const constructor', () {
+    test('can be used as const', () {
+      const Lowerer lowerer = Lowerer({});
+      expect(lowerer.functions, isEmpty);
+    });
+
+    test('const lowerers with same empty map are identical', () {
+      const Lowerer lowerer1 = Lowerer({});
+      const Lowerer lowerer2 = Lowerer({});
+      expect(identical(lowerer1, lowerer2), isTrue);
+    });
+  });
+
+  group('Lowerer.lowerFunction edge cases', () {
+    test('lowers function where body references parameter multiple times', () {
+      const SemanticFunction function = SemanticFunction(
+        name: 'duplicate',
+        parameters: [Parameter.any('x')],
+        body: SemanticListNode(
+          location: Location(row: 1, column: 1),
+          value: [
+            SemanticBoundVariableNode(
+              location: Location(row: 1, column: 1),
+              name: 'x',
+            ),
+            SemanticBoundVariableNode(
+              location: Location(row: 1, column: 1),
+              name: 'x',
+            ),
+          ],
+        ),
+        location: Location(row: 1, column: 1),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final CustomFunctionTerm result = lowerer.lowerFunction(function);
+
+      expect(result.term, isA<ListTerm>());
+      final ListTerm list = result.term as ListTerm;
+      expect(list.value.length, equals(2));
+      expect(list.value[0], isA<BoundVariableTerm>());
+      expect(list.value[1], isA<BoundVariableTerm>());
+      expect((list.value[0] as BoundVariableTerm).name, equals('x'));
+      expect((list.value[1] as BoundVariableTerm).name, equals('x'));
+    });
+
+    test('lowers function with deeply nested call in body', () {
+      final Map<String, FunctionTerm> functions = {
+        'f': const TestFunctionTerm(
+          name: 'f',
+          parameters: [Parameter.any('x')],
+        ),
+      };
+      const SemanticFunction function = SemanticFunction(
+        name: 'nested',
+        parameters: [Parameter.any('x')],
+        body: SemanticCallNode(
+          location: Location(row: 1, column: 1),
+          callee: SemanticIdentifierNode(
+            location: Location(row: 1, column: 1),
+            name: 'f',
+          ),
+          arguments: [
+            SemanticCallNode(
+              location: Location(row: 1, column: 1),
+              callee: SemanticIdentifierNode(
+                location: Location(row: 1, column: 1),
+                name: 'f',
+              ),
+              arguments: [
+                SemanticCallNode(
+                  location: Location(row: 1, column: 1),
+                  callee: SemanticIdentifierNode(
+                    location: Location(row: 1, column: 1),
+                    name: 'f',
+                  ),
+                  arguments: [
+                    SemanticBoundVariableNode(
+                      location: Location(row: 1, column: 1),
+                      name: 'x',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        location: Location(row: 1, column: 1),
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final CustomFunctionTerm result = lowerer.lowerFunction(function);
+
+      expect(result.term, isA<CallTerm>());
+      final CallTerm call1 = result.term as CallTerm;
+      expect(call1.arguments[0], isA<CallTerm>());
+      final CallTerm call2 = call1.arguments[0] as CallTerm;
+      expect(call2.arguments[0], isA<CallTerm>());
+      final CallTerm call3 = call2.arguments[0] as CallTerm;
+      expect(call3.arguments[0], isA<BoundVariableTerm>());
+    });
+
+    test('lowers function with empty list body', () {
+      const SemanticFunction function = SemanticFunction(
+        name: 'emptyList',
+        parameters: [],
+        body: SemanticListNode(
+          location: Location(row: 1, column: 1),
+          value: [],
+        ),
+        location: Location(row: 1, column: 1),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final CustomFunctionTerm result = lowerer.lowerFunction(function);
+
+      expect(result.term, isA<ListTerm>());
+      expect((result.term as ListTerm).value, isEmpty);
+    });
+
+    test('lowers function with empty map body', () {
+      const SemanticFunction function = SemanticFunction(
+        name: 'emptyMap',
+        parameters: [],
+        body: SemanticMapNode(
+          location: Location(row: 1, column: 1),
+          value: [],
+        ),
+        location: Location(row: 1, column: 1),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final CustomFunctionTerm result = lowerer.lowerFunction(function);
+
+      expect(result.term, isA<MapTerm>());
+      expect((result.term as MapTerm).value, isEmpty);
+    });
+
+    test('lowers function with call as body that has no arguments', () {
+      final Map<String, FunctionTerm> functions = {
+        'getValue': const TestFunctionTerm(name: 'getValue', parameters: []),
+      };
+      const SemanticFunction function = SemanticFunction(
+        name: 'wrapper',
+        parameters: [],
+        body: SemanticCallNode(
+          location: Location(row: 1, column: 1),
+          callee: SemanticIdentifierNode(
+            location: Location(row: 1, column: 1),
+            name: 'getValue',
+          ),
+          arguments: [],
+        ),
+        location: Location(row: 1, column: 1),
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final CustomFunctionTerm result = lowerer.lowerFunction(function);
+
+      expect(result.term, isA<CallTerm>());
+      final CallTerm call = result.term as CallTerm;
+      expect(call.arguments, isEmpty);
+    });
+
+    test('lowers function that returns another function reference', () {
+      final Map<String, FunctionTerm> functions = {
+        'otherFunction': const TestFunctionTerm(
+          name: 'otherFunction',
+          parameters: [],
+        ),
+      };
+      const SemanticFunction function = SemanticFunction(
+        name: 'getFn',
+        parameters: [],
+        body: SemanticIdentifierNode(
+          location: Location(row: 1, column: 1),
+          name: 'otherFunction',
+        ),
+        location: Location(row: 1, column: 1),
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final CustomFunctionTerm result = lowerer.lowerFunction(function);
+
+      expect(result.term, isA<FunctionReferenceTerm>());
+      expect((result.term as FunctionReferenceTerm).name, 'otherFunction');
     });
   });
 }

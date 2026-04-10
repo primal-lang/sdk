@@ -534,5 +534,326 @@ void main() {
       final Set<FunctionSignature> sigSet = {sig1, sig2};
       expect(sigSet.length, equals(2));
     });
+
+    test('equality ignores type class parameter types', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [
+          Parameter.ordered('a'),
+          Parameter.equatable('b'),
+          Parameter.hashable('c'),
+          Parameter.indexable('d'),
+          Parameter.collection('e'),
+          Parameter.iterable('f'),
+          Parameter.addable('g'),
+          Parameter.subtractable('h'),
+        ],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [
+          Parameter.any('a'),
+          Parameter.any('b'),
+          Parameter.any('c'),
+          Parameter.any('d'),
+          Parameter.any('e'),
+          Parameter.any('f'),
+          Parameter.any('g'),
+          Parameter.any('h'),
+        ],
+      );
+      expect(sig1, equals(sig2));
+    });
+
+    test('hashCode ignores type class parameter types', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [
+          Parameter.ordered('x'),
+          Parameter.equatable('y'),
+        ],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [
+          Parameter.any('x'),
+          Parameter.any('y'),
+        ],
+      );
+      expect(sig1.hashCode, equals(sig2.hashCode));
+    });
+
+    test('toString with type class parameters', () {
+      const FunctionSignature sig = FunctionSignature(
+        name: 'compare',
+        parameters: [
+          Parameter.ordered('left'),
+          Parameter.ordered('right'),
+        ],
+      );
+      expect(sig.toString(), equals('compare(left, right)'));
+    });
+
+    test('arity with many parameters', () {
+      const FunctionSignature sig = FunctionSignature(
+        name: 'manyParams',
+        parameters: [
+          Parameter.any('a'),
+          Parameter.any('b'),
+          Parameter.any('c'),
+          Parameter.any('d'),
+          Parameter.any('e'),
+          Parameter.any('f'),
+          Parameter.any('g'),
+          Parameter.any('h'),
+          Parameter.any('i'),
+          Parameter.any('j'),
+        ],
+      );
+      expect(sig.arity, equals(10));
+    });
+
+    test('equality with special characters in function name', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'module.submodule.function',
+        parameters: [Parameter.any('x')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'module.submodule.function',
+        parameters: [Parameter.any('x')],
+      );
+      expect(sig1, equals(sig2));
+    });
+
+    test('inequality with different nested namespaces', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'a.b.c',
+        parameters: [],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'a.b.d',
+        parameters: [],
+      );
+      expect(sig1, isNot(equals(sig2)));
+    });
+
+    test('hashCode with deeply nested namespace', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'a.b.c.d.e',
+        parameters: [Parameter.any('x')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'a.b.c.d.e',
+        parameters: [Parameter.any('x')],
+      );
+      expect(sig1.hashCode, equals(sig2.hashCode));
+    });
+
+    test('toString with deeply nested namespace', () {
+      const FunctionSignature sig = FunctionSignature(
+        name: 'a.b.c.d.e',
+        parameters: [Parameter.any('x'), Parameter.any('y')],
+      );
+      expect(sig.toString(), equals('a.b.c.d.e(x, y)'));
+    });
+
+    test('equality with numeric-like parameter names', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('p1'), Parameter.any('p2')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('p1'), Parameter.any('p2')],
+      );
+      expect(sig1, equals(sig2));
+    });
+
+    test('inequality with similar numeric-like parameter names', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('p1')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('p2')],
+      );
+      expect(sig1, isNot(equals(sig2)));
+    });
+
+    test('equality is reflexive', () {
+      const FunctionSignature sig = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('x'), Parameter.any('y')],
+      );
+      expect(sig == sig, isTrue);
+    });
+
+    test('can look up signature in map with different parameter types', () {
+      const FunctionSignature key = FunctionSignature(
+        name: 'add',
+        parameters: [Parameter.number('a'), Parameter.number('b')],
+      );
+      const FunctionSignature lookup = FunctionSignature(
+        name: 'add',
+        parameters: [Parameter.string('a'), Parameter.string('b')],
+      );
+      final Map<FunctionSignature, String> map = {key: 'found'};
+      expect(map[lookup], equals('found'));
+    });
+
+    test(
+      'signatures with same name but different arity are distinct in set',
+      () {
+        const FunctionSignature sig1 = FunctionSignature(
+          name: 'func',
+          parameters: [Parameter.any('a')],
+        );
+        const FunctionSignature sig2 = FunctionSignature(
+          name: 'func',
+          parameters: [Parameter.any('a'), Parameter.any('b')],
+        );
+        final Set<FunctionSignature> sigSet = {sig1, sig2};
+        expect(sigSet.length, equals(2));
+      },
+    );
+
+    test(
+      'hashCode differs for signatures with same name but different arity',
+      () {
+        const FunctionSignature sig1 = FunctionSignature(
+          name: 'func',
+          parameters: [Parameter.any('a')],
+        );
+        const FunctionSignature sig2 = FunctionSignature(
+          name: 'func',
+          parameters: [Parameter.any('a'), Parameter.any('b')],
+        );
+        expect(sig1.hashCode, isNot(equals(sig2.hashCode)));
+      },
+    );
+
+    test('equality with case-sensitive function names', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'Function',
+        parameters: [],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'function',
+        parameters: [],
+      );
+      expect(sig1, isNot(equals(sig2)));
+    });
+
+    test('equality with case-sensitive parameter names', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('Value')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('value')],
+      );
+      expect(sig1, isNot(equals(sig2)));
+    });
+
+    test('hashCode differs for case-different function names', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'Function',
+        parameters: [],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'function',
+        parameters: [],
+      );
+      expect(sig1.hashCode, isNot(equals(sig2.hashCode)));
+    });
+
+    test('hashCode differs for case-different parameter names', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('Value')],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'func',
+        parameters: [Parameter.any('value')],
+      );
+      expect(sig1.hashCode, isNot(equals(sig2.hashCode)));
+    });
+
+    test('parameters list is accessible and correct length', () {
+      const List<Parameter> params = [
+        Parameter.number('a'),
+        Parameter.string('b'),
+        Parameter.boolean('c'),
+      ];
+      const FunctionSignature sig = FunctionSignature(
+        name: 'func',
+        parameters: params,
+      );
+      expect(sig.parameters.length, equals(3));
+      expect(sig.parameters[0].name, equals('a'));
+      expect(sig.parameters[1].name, equals('b'));
+      expect(sig.parameters[2].name, equals('c'));
+    });
+
+    test('equality with all type class parameter constructors mixed', () {
+      const FunctionSignature sig1 = FunctionSignature(
+        name: 'comprehensive',
+        parameters: [
+          Parameter.boolean('a'),
+          Parameter.number('b'),
+          Parameter.string('c'),
+          Parameter.file('d'),
+          Parameter.directory('e'),
+          Parameter.timestamp('f'),
+          Parameter.list('g'),
+          Parameter.vector('h'),
+          Parameter.set('i'),
+          Parameter.stack('j'),
+          Parameter.queue('k'),
+          Parameter.map('l'),
+          Parameter.function('m'),
+          Parameter.any('n'),
+          Parameter.ordered('o'),
+          Parameter.equatable('p'),
+          Parameter.hashable('q'),
+          Parameter.indexable('r'),
+          Parameter.collection('s'),
+          Parameter.iterable('t'),
+          Parameter.addable('u'),
+          Parameter.subtractable('v'),
+        ],
+      );
+      const FunctionSignature sig2 = FunctionSignature(
+        name: 'comprehensive',
+        parameters: [
+          Parameter.any('a'),
+          Parameter.any('b'),
+          Parameter.any('c'),
+          Parameter.any('d'),
+          Parameter.any('e'),
+          Parameter.any('f'),
+          Parameter.any('g'),
+          Parameter.any('h'),
+          Parameter.any('i'),
+          Parameter.any('j'),
+          Parameter.any('k'),
+          Parameter.any('l'),
+          Parameter.any('m'),
+          Parameter.any('n'),
+          Parameter.any('o'),
+          Parameter.any('p'),
+          Parameter.any('q'),
+          Parameter.any('r'),
+          Parameter.any('s'),
+          Parameter.any('t'),
+          Parameter.any('u'),
+          Parameter.any('v'),
+        ],
+      );
+      expect(sig1, equals(sig2));
+      expect(sig1.hashCode, equals(sig2.hashCode));
+    });
   });
 }

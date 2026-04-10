@@ -1331,4 +1331,596 @@ void main() {
       expect(expression.location.column, equals(1));
     });
   });
+
+  group('IntermediateRepresentation.empty()', () {
+    test('returns representation with no custom functions', () {
+      final IntermediateRepresentation representation =
+          IntermediateRepresentation.empty();
+      expect(representation.customFunctions, isEmpty);
+    });
+
+    test('returns representation with standard library signatures', () {
+      final IntermediateRepresentation representation =
+          IntermediateRepresentation.empty();
+      expect(representation.standardLibrarySignatures, isNotEmpty);
+    });
+
+    test('returns representation with empty warnings list', () {
+      final IntermediateRepresentation representation =
+          IntermediateRepresentation.empty();
+      expect(representation.warnings, isEmpty);
+    });
+
+    test('containsFunction returns true for standard library functions', () {
+      final IntermediateRepresentation representation =
+          IntermediateRepresentation.empty();
+      expect(representation.containsFunction('num.add'), isTrue);
+    });
+
+    test('containsFunction returns false for custom functions', () {
+      final IntermediateRepresentation representation =
+          IntermediateRepresentation.empty();
+      expect(representation.containsFunction('myFunc'), isFalse);
+    });
+  });
+
+  group('Expression toString methods', () {
+    test('NumberExpression toString returns value', () {
+      final Expression expression = compiler.expression('42');
+      expect(expression.toString(), equals('42'));
+    });
+
+    test('StringExpression toString returns quoted value', () {
+      final Expression expression = compiler.expression('"hello"');
+      expect(expression.toString(), equals('"hello"'));
+    });
+
+    test('BooleanExpression toString returns value', () {
+      final Expression expression = compiler.expression('true');
+      expect(expression.toString(), equals('true'));
+    });
+
+    test('ListExpression toString returns list representation', () {
+      final Expression expression = compiler.expression('[1, 2, 3]');
+      expect(expression.toString(), equals('[1, 2, 3]'));
+    });
+
+    test('MapExpression toString returns map representation', () {
+      final Expression expression = compiler.expression('{"a": 1}');
+      expect(expression.toString(), equals('{"a": 1}'));
+    });
+
+    test('IdentifierExpression toString returns identifier name', () {
+      final Expression expression = compiler.expression('foo');
+      expect(expression.toString(), equals('foo'));
+    });
+
+    test('CallExpression toString returns call representation', () {
+      final Expression expression = compiler.expression('foo(1, 2)');
+      expect(expression.toString(), equals('foo(1, 2)'));
+    });
+  });
+
+  group('Compiler.compile() - additional lexical errors', () {
+    test('Invalid code point in braced unicode escape throws LexicalError', () {
+      // Code point exceeding U+10FFFF
+      expect(
+        () => compiler.compile(r'main = "\u{FFFFFF}"'),
+        throwsA(isA<LexicalError>()),
+      );
+    });
+
+    test('Too many digits in braced unicode escape throws LexicalError', () {
+      expect(
+        () => compiler.compile(r'main = "\u{1234567}"'),
+        throwsA(isA<LexicalError>()),
+      );
+    });
+
+    test('Invalid character in braced unicode escape throws LexicalError', () {
+      expect(
+        () => compiler.compile(r'main = "\u{GG}"'),
+        throwsA(isA<LexicalError>()),
+      );
+    });
+
+    test('Double underscore in number throws LexicalError', () {
+      expect(
+        () => compiler.compile('main = 1__000'),
+        throwsA(isA<LexicalError>()),
+      );
+    });
+
+    test('Underscore before dot in number throws LexicalError', () {
+      expect(
+        () => compiler.compile('main = 1_.0'),
+        throwsA(isA<LexicalError>()),
+      );
+    });
+
+    test('Underscore before exponent throws LexicalError', () {
+      expect(
+        () => compiler.compile('main = 1_e10'),
+        throwsA(isA<LexicalError>()),
+      );
+    });
+
+    test('Invalid character after decimal point throws LexicalError', () {
+      expect(
+        () => compiler.compile('main = 1.a'),
+        throwsA(isA<LexicalError>()),
+      );
+    });
+  });
+
+  group('Compiler.compile() - additional syntactic errors', () {
+    test('ExpectedTokenError for missing closing bracket', () {
+      expect(
+        () => compiler.compile('main = [1, 2'),
+        throwsA(isA<SyntacticError>()),
+      );
+    });
+
+    test('ExpectedTokenError for missing closing brace', () {
+      expect(
+        () => compiler.compile('main = {"a": 1'),
+        throwsA(isA<SyntacticError>()),
+      );
+    });
+
+    test('InvalidTokenError for unexpected token in function definition', () {
+      expect(
+        () => compiler.compile('123(x) = x'),
+        throwsA(isA<SyntacticError>()),
+      );
+    });
+
+    test('UnexpectedEndOfFileError for incomplete program', () {
+      expect(
+        () => compiler.compile('foo('),
+        throwsA(isA<SyntacticError>()),
+      );
+    });
+
+    test('UnexpectedEndOfFileError for incomplete function body', () {
+      expect(
+        () => compiler.compile('foo(x) ='),
+        throwsA(isA<SyntacticError>()),
+      );
+    });
+  });
+
+  group('Compiler.compile() - additional semantic errors', () {
+    test(
+      'Indexing string literal with subscript syntax compiles successfully',
+      () {
+        // Strings are indexable in Primal (via the @ operator)
+        final IntermediateRepresentation intermediateRepresentation = compiler
+            .compile('main = "hello"[0]');
+        expect(intermediateRepresentation.containsFunction('main'), isTrue);
+      },
+    );
+
+    test('Zero arguments to function expecting one throws error', () {
+      expect(
+        () => compiler.compile('f(x) = x\nmain = f()'),
+        throwsA(isA<InvalidNumberOfArgumentsError>()),
+      );
+    });
+
+    test('Three arguments to function expecting two throws error', () {
+      expect(
+        () => compiler.compile('f(x, y) = x + y\nmain = f(1, 2, 3)'),
+        throwsA(isA<InvalidNumberOfArgumentsError>()),
+      );
+    });
+
+    test('UndefinedFunctionError includes function context', () {
+      try {
+        compiler.compile('f(x) = unknown(x)\nmain = f(1)');
+        fail('Expected UndefinedFunctionError');
+      } on UndefinedFunctionError catch (error) {
+        expect(error.message, contains('f'));
+        expect(error.message, contains('unknown'));
+      }
+    });
+
+    test('UndefinedIdentifierError includes function context', () {
+      try {
+        compiler.compile('f(x) = x + y\nmain = f(1)');
+        fail('Expected UndefinedIdentifierError');
+      } on UndefinedIdentifierError catch (error) {
+        expect(error.message, contains('f'));
+        expect(error.message, contains('y'));
+      }
+    });
+  });
+
+  group('Compiler.compile() - carriage return handling', () {
+    test('Windows line endings (CRLF) are handled correctly', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('f(x) = x\r\nmain = f(1)');
+      expect(intermediateRepresentation.containsFunction('f'), isTrue);
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Old Mac line endings (CR only) are handled correctly', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('f(x) = x\rmain = f(1)');
+      expect(intermediateRepresentation.containsFunction('f'), isTrue);
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+  });
+
+  group('Compiler.expression() - additional edge cases', () {
+    test('Map with boolean keys', () {
+      final Expression expression = compiler.expression('{true: 1, false: 2}');
+      expect(expression, isA<MapExpression>());
+      final MapExpression mapExpression = expression as MapExpression;
+      expect(mapExpression.value.length, equals(2));
+      expect(mapExpression.value[0].key, isA<BooleanExpression>());
+    });
+
+    test('List containing empty list', () {
+      final Expression expression = compiler.expression('[[]]');
+      expect(expression, isA<ListExpression>());
+      final ListExpression listExpression = expression as ListExpression;
+      expect(listExpression.value.length, equals(1));
+      expect(listExpression.value[0], isA<ListExpression>());
+      expect((listExpression.value[0] as ListExpression).value, isEmpty);
+    });
+
+    test('Map containing empty map', () {
+      final Expression expression = compiler.expression('{"a": {}}');
+      expect(expression, isA<MapExpression>());
+      final MapExpression mapExpression = expression as MapExpression;
+      expect(mapExpression.value.length, equals(1));
+      expect(mapExpression.value[0].value, isA<MapExpression>());
+      expect((mapExpression.value[0].value as MapExpression).value, isEmpty);
+    });
+
+    test('Very long identifier', () {
+      final String longIdentifier = 'abcdefghijklmnopqrstuvwxyz' * 10;
+      final Expression expression = compiler.expression(longIdentifier);
+      expect(expression, isA<IdentifierExpression>());
+      expect(
+        (expression as IdentifierExpression).value,
+        equals(longIdentifier),
+      );
+    });
+
+    test('Identifier with underscore', () {
+      final Expression expression = compiler.expression('my_var');
+      expect(expression, isA<IdentifierExpression>());
+      expect((expression as IdentifierExpression).value, equals('my_var'));
+    });
+
+    test('Identifier with digits', () {
+      final Expression expression = compiler.expression('var123');
+      expect(expression, isA<IdentifierExpression>());
+      expect((expression as IdentifierExpression).value, equals('var123'));
+    });
+
+    test('Dotted identifier', () {
+      final Expression expression = compiler.expression('foo.bar');
+      expect(expression, isA<IdentifierExpression>());
+      expect((expression as IdentifierExpression).value, equals('foo.bar'));
+    });
+
+    test('Call on dotted identifier', () {
+      final Expression expression = compiler.expression('num.add(1, 2)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression callExpression = expression as CallExpression;
+      expect(callExpression.callee, isA<IdentifierExpression>());
+      expect(
+        (callExpression.callee as IdentifierExpression).value,
+        equals('num.add'),
+      );
+    });
+
+    test('Index on identifier', () {
+      final Expression expression = compiler.expression('arr[0]');
+      expect(expression, isA<CallExpression>());
+    });
+
+    test('Index on map literal', () {
+      final Expression expression = compiler.expression('{"a": 1}["a"]');
+      expect(expression, isA<CallExpression>());
+    });
+
+    test('String concatenation simulation with index', () {
+      final Expression expression = compiler.expression('"hello" @ 0');
+      expect(expression, isA<CallExpression>());
+    });
+  });
+
+  group('Compiler.compile() - parameter handling', () {
+    test('Function with parameter name containing underscore', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('f(my_param) = my_param\nmain = f(1)');
+      expect(intermediateRepresentation.containsFunction('f'), isTrue);
+    });
+
+    test('Function with long parameter name', () {
+      final String longParameter = 'verylongparametername' * 3;
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('f($longParameter) = $longParameter\nmain = f(1)');
+      expect(intermediateRepresentation.containsFunction('f'), isTrue);
+    });
+
+    test('Function with many parameters', () {
+      final IntermediateRepresentation
+      intermediateRepresentation = compiler.compile(
+        'f(a, b, c, d, e, f, g, h, i, j) = a\nmain = f(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)',
+      );
+      expect(intermediateRepresentation.containsFunction('f'), isTrue);
+      expect(intermediateRepresentation.warnings.length, equals(9));
+    });
+
+    test('Function parameter shadows outer function', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'outer(x) = x\ninner(outer) = outer\nmain = inner(1)',
+          );
+      expect(intermediateRepresentation.containsFunction('outer'), isTrue);
+      expect(intermediateRepresentation.containsFunction('inner'), isTrue);
+    });
+  });
+
+  group('Compiler.compile() - complex expressions', () {
+    test('Deeply nested binary operations', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Mixed arithmetic and comparison', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = 1 + 2 < 3 * 4');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Chained comparisons with logical operators', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = 1 < 2 && 2 < 3 && 3 < 4');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Nested if/else expressions', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'main = if (true) if (false) 1 else 2 else if (true) 3 else 4',
+          );
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('List inside map inside list', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = [{"a": [1, 2, 3]}]');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Map inside list inside map', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = {"a": [{"b": 1}]}');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+  });
+
+  group('Compiler.functionDefinition() - edge cases', () {
+    test('returns null for shebang only', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        '#!/usr/bin/env primal',
+      );
+      expect(definition, isNull);
+    });
+
+    test('returns FunctionDefinition for function with deeply nested body', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        'f(x) = if (x > 0) if (x > 1) x else 1 else 0',
+      );
+      expect(definition, isNotNull);
+      expect(definition!.name, equals('f'));
+    });
+
+    test('returns FunctionDefinition for function with index in body', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        'f(arr) = arr[0]',
+      );
+      expect(definition, isNotNull);
+      expect(definition!.name, equals('f'));
+      expect(definition.parameters, equals(['arr']));
+    });
+
+    test('returns FunctionDefinition for function with call chain in body', () {
+      final FunctionDefinition? definition = compiler.functionDefinition(
+        'f(x) = g(h(i(x)))',
+      );
+      expect(definition, isNotNull);
+      expect(definition!.name, equals('f'));
+    });
+  });
+
+  group('SemanticFunction properties', () {
+    test('SemanticFunction has correct name', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('myFunc(x) = x * 2');
+      final semanticFunction =
+          intermediateRepresentation.customFunctions['myFunc'];
+      expect(semanticFunction, isNotNull);
+      expect(semanticFunction!.name, equals('myFunc'));
+    });
+
+    test('SemanticFunction has correct parameters', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('add(a, b) = a + b');
+      final semanticFunction =
+          intermediateRepresentation.customFunctions['add'];
+      expect(semanticFunction, isNotNull);
+      expect(semanticFunction!.parameters.length, equals(2));
+      expect(semanticFunction.parameters[0].name, equals('a'));
+      expect(semanticFunction.parameters[1].name, equals('b'));
+    });
+
+    test('SemanticFunction toString returns signature', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('myFunc(x, y) = x + y');
+      final semanticFunction =
+          intermediateRepresentation.customFunctions['myFunc'];
+      expect(semanticFunction, isNotNull);
+      expect(semanticFunction.toString(), equals('myFunc(x, y)'));
+    });
+  });
+
+  group('Error message formatting', () {
+    test('DuplicatedFunctionError message contains function name', () {
+      try {
+        compiler.compile('f(x) = x\nf(y) = y');
+        fail('Expected DuplicatedFunctionError');
+      } on DuplicatedFunctionError catch (error) {
+        expect(error.message, contains('f'));
+      }
+    });
+
+    test('DuplicatedParameterError message contains parameter name', () {
+      try {
+        compiler.compile('f(x, x) = x');
+        fail('Expected DuplicatedParameterError');
+      } on DuplicatedParameterError catch (error) {
+        expect(error.message, contains('x'));
+        expect(error.message, contains('f'));
+      }
+    });
+
+    test('InvalidNumberOfArgumentsError message contains counts', () {
+      try {
+        compiler.compile('f(x) = x\nmain = f(1, 2)');
+        fail('Expected InvalidNumberOfArgumentsError');
+      } on InvalidNumberOfArgumentsError catch (error) {
+        expect(error.message, contains('1'));
+        expect(error.message, contains('2'));
+      }
+    });
+
+    test('NotCallableError message contains type', () {
+      try {
+        compiler.compile('main = 5(1)');
+        fail('Expected NotCallableError');
+      } on NotCallableError catch (error) {
+        expect(error.message, contains('number'));
+      }
+    });
+
+    test('NotIndexableError message contains type', () {
+      try {
+        compiler.compile('main = 5[0]');
+        fail('Expected NotIndexableError');
+      } on NotIndexableError catch (error) {
+        expect(error.message, contains('number'));
+      }
+    });
+  });
+
+  group('Compiler.expression() - string edge cases', () {
+    test('String with backslash and quote escapes combined', () {
+      final Expression expression = compiler.expression('"path\\\\to\\\\"');
+      expect(expression, isA<StringExpression>());
+      expect((expression as StringExpression).value, equals('path\\to\\'));
+    });
+
+    test('Empty single-quoted string', () {
+      final Expression expression = compiler.expression("''");
+      expect(expression, isA<StringExpression>());
+      expect((expression as StringExpression).value, equals(''));
+    });
+
+    test('Single-quoted string with escaped single quote', () {
+      final Expression expression = compiler.expression("'it\\'s'");
+      expect(expression, isA<StringExpression>());
+      expect((expression as StringExpression).value, contains("'"));
+    });
+
+    test('Double-quoted string with multiple escapes', () {
+      final Expression expression = compiler.expression('"\\n\\t\\\\\\""');
+      expect(expression, isA<StringExpression>());
+      final StringExpression stringExpression = expression as StringExpression;
+      expect(stringExpression.value.contains('\n'), isTrue);
+      expect(stringExpression.value.contains('\t'), isTrue);
+      expect(stringExpression.value.contains('\\'), isTrue);
+      expect(stringExpression.value.contains('"'), isTrue);
+    });
+
+    test('String with unicode character', () {
+      final Expression expression = compiler.expression('"\\u{1F600}"');
+      expect(expression, isA<StringExpression>());
+    });
+
+    test('String with lowercase hex escape', () {
+      final Expression expression = compiler.expression('"\\x6a"');
+      expect(expression, isA<StringExpression>());
+      expect((expression as StringExpression).value, equals('j'));
+    });
+
+    test('String with uppercase hex escape', () {
+      final Expression expression = compiler.expression('"\\x6A"');
+      expect(expression, isA<StringExpression>());
+      expect((expression as StringExpression).value, equals('j'));
+    });
+  });
+
+  group('Compiler.expression() - number edge cases', () {
+    test('Very small decimal', () {
+      final Expression expression = compiler.expression('0.000001');
+      expect(expression, isA<NumberExpression>());
+      expect((expression as NumberExpression).value, equals(0.000001));
+    });
+
+    test('Negative zero', () {
+      final Expression expression = compiler.expression('-0');
+      expect(expression, isA<CallExpression>());
+    });
+
+    test('Scientific notation with capital E', () {
+      final Expression expression = compiler.expression('1E10');
+      expect(expression, isA<NumberExpression>());
+      expect((expression as NumberExpression).value, equals(1e10));
+    });
+
+    test('Very large number in scientific notation', () {
+      final Expression expression = compiler.expression('1e308');
+      expect(expression, isA<NumberExpression>());
+    });
+
+    test('Decimal with many digits', () {
+      final Expression expression = compiler.expression('3.141592653589793');
+      expect(expression, isA<NumberExpression>());
+    });
+  });
+
+  group('Compiler.compile() - whitespace handling', () {
+    test('Leading whitespace is ignored', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('   main = 42');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Trailing whitespace is ignored', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = 42   ');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Tab characters are treated as whitespace', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('\tmain\t=\t42');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Multiple blank lines between definitions', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('f(x) = x\n\n\n\nmain = f(1)');
+      expect(intermediateRepresentation.containsFunction('f'), isTrue);
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+  });
 }
