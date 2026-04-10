@@ -993,5 +993,209 @@ void main() {
         closeTo(0.28379410920832, 0.0001),
       );
     });
+
+    // Stress tests with 20-element vectors (manageable size)
+    test('vector.new handles 20-element vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])',
+      );
+      final String result = runtime.executeMain();
+      expect(result, startsWith('[1, '));
+      expect(result, endsWith(', 20]'));
+    });
+
+    test('vector.magnitude handles 16-element vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.new([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]))',
+      );
+      checkResult(runtime, 4.0);
+    });
+
+    test('vector.add handles 15-element vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), vector.new([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]))',
+      );
+      final String result = runtime.executeMain();
+      expect(result, equals('[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]'));
+    });
+
+    test('vector.sub handles 15-element vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]), vector.new([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]))',
+      );
+      final String result = runtime.executeMain();
+      expect(result, equals('[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]'));
+    });
+
+    test('vector.normalize handles 16-element vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.new([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]))',
+      );
+      final String result = runtime.executeMain();
+      // Each component should be 1/sqrt(16) = 0.25
+      expect(result, contains('0.25'));
+    });
+
+    test('vector.angle handles 10-element orthogonal vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 0, 0, 0, 0, 0, 0, 0, 0, 0]), vector.new([0, 1, 0, 0, 0, 0, 0, 0, 0, 0]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(1.5707963, 0.000001));
+    });
+
+    // Special numeric value tests (using num.infinity() function)
+    test('vector.new handles infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([num.infinity(), 1])',
+      );
+      final String result = runtime.executeMain();
+      expect(result, contains('Infinity'));
+    });
+
+    test('vector.new handles negative infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([num.negative(num.infinity()), 1])',
+      );
+      final String result = runtime.executeMain();
+      expect(result, contains('-Infinity'));
+    });
+
+    test('vector.magnitude with infinity returns infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.new([num.infinity(), 1]))',
+      );
+      final String result = runtime.executeMain();
+      expect(result, equals('Infinity'));
+    });
+
+    // Numerical edge cases
+    test('vector.add with opposite large values cancels to zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([1e10, -1e10]), vector.new([-1e10, 1e10]))',
+      );
+      checkResult(runtime, [0.0, 0.0]);
+    });
+
+    test('vector.sub with identical vectors returns zero vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([1.5, 2.5, 3.5]), vector.new([1.5, 2.5, 3.5]))',
+      );
+      checkResult(runtime, [0.0, 0.0, 0.0]);
+    });
+
+    test('vector.add preserves integer precision for small integers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([1, 2, 3]), vector.new([4, 5, 6]))',
+      );
+      checkResult(runtime, [5, 7, 9]);
+    });
+
+    test('vector.sub preserves integer precision for small integers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([10, 20, 30]), vector.new([1, 2, 3]))',
+      );
+      checkResult(runtime, [9, 18, 27]);
+    });
+
+    // Additional error case: list type validation
+    test('vector.new throws for list containing map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1, {"a": 1}, 3])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    // Verify angle symmetry
+    test('vector.angle is symmetric', () {
+      final RuntimeFacade runtime1 = getRuntime(
+        'main = vector.angle(vector.new([1, 2, 3]), vector.new([4, 5, 6]))',
+      );
+      final RuntimeFacade runtime2 = getRuntime(
+        'main = vector.angle(vector.new([4, 5, 6]), vector.new([1, 2, 3]))',
+      );
+      final double angle1 = num.parse(runtime1.executeMain()).toDouble();
+      final double angle2 = num.parse(runtime2.executeMain()).toDouble();
+      expect(angle1, closeTo(angle2, 0.000001));
+    });
+
+    // Verify normalization produces unit vector
+    test('vector.normalize produces unit magnitude vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.normalize(vector.new([3, 4, 5])))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(1.0, 0.000001));
+    });
+
+    test('vector.normalize produces unit magnitude for arbitrary vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.normalize(vector.new([17, -23, 42, 8])))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(1.0, 0.000001));
+    });
+
+    // Additional mathematical property tests
+    test('vector.add is commutative', () {
+      final RuntimeFacade runtime1 = getRuntime(
+        'main = vector.add(vector.new([1, 2, 3]), vector.new([4, 5, 6]))',
+      );
+      final RuntimeFacade runtime2 = getRuntime(
+        'main = vector.add(vector.new([4, 5, 6]), vector.new([1, 2, 3]))',
+      );
+      expect(runtime1.executeMain(), equals(runtime2.executeMain()));
+    });
+
+    test('vector.sub is anti-commutative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.sub(vector.new([1, 2]), vector.new([3, 4])), vector.sub(vector.new([3, 4]), vector.new([1, 2])))',
+      );
+      checkResult(runtime, [0, 0]);
+    });
+
+    test('vector.add with additive identity (zero vector)', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([5, 10, 15]), vector.new([0, 0, 0]))',
+      );
+      checkResult(runtime, [5, 10, 15]);
+    });
+
+    test('vector.sub with self returns zero vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([7, 14, 21]), vector.new([7, 14, 21]))',
+      );
+      checkResult(runtime, [0, 0, 0]);
+    });
+
+    test('vector.angle between same non-unit vector is zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([5, 10, 15]), vector.new([5, 10, 15]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(0, 0.000001));
+    });
+
+    test('vector.angle between scaled vectors is zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 2, 3]), vector.new([2, 4, 6]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(0, 0.000001));
+    });
+
+    test('vector.angle between opposite direction scaled vectors is pi', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 2, 3]), vector.new([-2, -4, -6]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(3.14159265, 0.000001));
+    });
+
+    // Double normalize should produce a unit vector
+    test('vector.normalize twice produces unit vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.normalize(vector.normalize(vector.new([3, 4, 5]))))',
+      );
+      // The magnitude of a normalized vector should be approximately 1
+      expect(num.parse(runtime.executeMain()), closeTo(1.0, 0.000001));
+    });
   });
 }

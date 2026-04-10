@@ -1700,6 +1700,605 @@ main = list.reduce([1, 2, 3], [], append)
       );
       checkResult(runtime, 20);
     });
+
+    test('list.filled with single element', () {
+      final RuntimeFacade runtime = getRuntime('main = list.filled(1, 42)');
+      checkResult(runtime, [42]);
+    });
+
+    test('list.at accesses last valid index', () {
+      final RuntimeFacade runtime = getRuntime('main = list.at([10, 20, 30], 2)');
+      checkResult(runtime, 30);
+    });
+
+    test('list.at accesses first index explicitly', () {
+      final RuntimeFacade runtime = getRuntime('main = list.at([10, 20, 30], 0)');
+      checkResult(runtime, 10);
+    });
+
+    test('list.sort with decimal numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([3.5, 1.2, 2.8, 1.1, 2.9], num.compare)',
+      );
+      checkResult(runtime, [1.1, 1.2, 2.8, 2.9, 3.5]);
+    });
+
+    test('list.sort with mixed integer and decimal numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([3, 1.5, 2, 1.1, 3.0], num.compare)',
+      );
+      checkResult(runtime, [1.1, 1.5, 2, 3, 3.0]);
+    });
+
+    test('list.reduce to build string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reduce(["a", "b", "c"], "", str.concat)',
+      );
+      checkResult(runtime, '"abc"');
+    });
+
+    test('list.reduce with num.max to find maximum', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reduce([3, 7, 2, 9, 1], 0, num.max)',
+      );
+      checkResult(runtime, 9);
+    });
+
+    test('list.reduce with num.min to find minimum', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reduce([3, 7, 2, 9, 1], 100, num.min)',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('list.filter with num.isPositive', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filter([-2, -1, 0, 1, 2], num.isPositive)',
+      );
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('list.filter with num.isNegative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filter([-2, -1, 0, 1, 2], num.isNegative)',
+      );
+      checkResult(runtime, [-2, -1]);
+    });
+
+    test('list.swap with reversed indices second less than first', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3, 4, 5], 3, 1)',
+      );
+      checkResult(runtime, [1, 4, 3, 2, 5]);
+    });
+
+    test('list.indexOf returns index of last element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.indexOf([10, 20, 30, 40], 40)',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('list.indexOf returns index of first element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.indexOf([10, 20, 30, 40], 10)',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('list concatenation with plus operator joins empty lists', () {
+      final RuntimeFacade runtime = getRuntime('main = [] + []');
+      checkResult(runtime, []);
+    });
+
+    test('list concatenation prepends to empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = 1 + []');
+      checkResult(runtime, [1]);
+    });
+
+    test('list concatenation appends to empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = [] + 1');
+      checkResult(runtime, [1]);
+    });
+
+    test('list indexing with expression as index', () {
+      final RuntimeFacade runtime = getRuntime('main = [10, 20, 30][1 + 1]');
+      checkResult(runtime, 30);
+    });
+
+    test('list indexing with function result as index', () {
+      final RuntimeFacade runtime = getRuntime('''
+getIndex(x) = x
+main = [10, 20, 30][getIndex(1)]
+''');
+      checkResult(runtime, 20);
+    });
+
+    test('list.set with consecutive updates', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set(list.set([1, 2, 3], 0, 10), 2, 30)',
+      );
+      checkResult(runtime, [10, 2, 30]);
+    });
+
+    test('list.concat with deeply nested lists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.concat([[[1, 2]]], [[[3, 4]]])',
+      );
+      checkResult(runtime, [
+        [
+          [1, 2],
+        ],
+        [
+          [3, 4],
+        ],
+      ]);
+    });
+
+    test('list.map preserves nested list structure', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.map([[1, 2], [3, 4]], list.length)',
+      );
+      checkResult(runtime, [2, 2]);
+    });
+
+    test('list.all with first element failing predicate', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all([1, 2, 4, 6], num.isEven)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list.any with only first element matching predicate', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.any([2, 1, 3, 5], num.isEven)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.none with first element matching predicate', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.none([2, 1, 3, 5], num.isEven)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list.filter preserves order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filter([5, 2, 8, 1, 4], num.isEven)',
+      );
+      checkResult(runtime, [2, 8, 4]);
+    });
+
+    test('list.reverse preserves element types', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reverse([1, "two", true, [4]])',
+      );
+      checkResult(runtime, [
+        [4],
+        true,
+        '"two"',
+        1,
+      ]);
+    });
+
+    test('list.sublist returns full list from start', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3, 4, 5], 0, 5)',
+      );
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.sublist returns single last element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3, 4, 5], 4, 5)',
+      );
+      checkResult(runtime, [5]);
+    });
+
+    test('list.sublist returns single first element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3, 4, 5], 0, 1)',
+      );
+      checkResult(runtime, [1]);
+    });
+
+    test('list.zip with division function', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip([10, 20, 30], [2, 4, 5], num.div)',
+      );
+      checkResult(runtime, [5.0, 5.0, 6.0]);
+    });
+
+    test('list.join with tab separator', () {
+      final RuntimeFacade runtime = getRuntime(
+        r'main = list.join(["a", "b", "c"], "\t")',
+      );
+      checkResult(runtime, '"a\tb\tc"');
+    });
+
+    test('list.join with nested lists converts to string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.join([[1, 2], [3, 4]], " | ")',
+      );
+      checkResult(runtime, '"[1, 2] | [3, 4]"');
+    });
+
+    test('list.length after multiple operations', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.length(list.concat(list.take([1, 2, 3], 2), list.drop([4, 5, 6], 1)))',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('list.isEmpty after filter removes all elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.isEmpty(list.filter([1, 3, 5], num.isEven))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.isNotEmpty after filter keeps some elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.isNotEmpty(list.filter([1, 2, 3], num.isEven))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.contains after insertStart', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.contains(list.insertStart([2, 3], 1), 1)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.contains after insertEnd', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.contains(list.insertEnd([1, 2], 3), 3)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.contains after remove', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.contains(list.remove([1, 2, 3], 2), 2)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list.indexOf after reverse', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.indexOf(list.reverse([10, 20, 30]), 10)',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('list.first after sort', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.first(list.sort([5, 3, 8, 1], num.compare))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('list.last after sort', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.last(list.sort([5, 3, 8, 1], num.compare))',
+      );
+      checkResult(runtime, 8);
+    });
+
+    test('list.reduce on nested list to flatten', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reduce([[1, 2], [3, 4], [5]], [], list.concat)',
+      );
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.map with num.negative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.map([1, 2, 3], num.negative)',
+      );
+      checkResult(runtime, [-1, -2, -3]);
+    });
+
+    test('list.map with num.inc', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.map([1, 2, 3], num.inc)',
+      );
+      checkResult(runtime, [2, 3, 4]);
+    });
+
+    test('list.map with num.abs', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.map([-1, -2, 3, -4], num.abs)',
+      );
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.filter with num.isOdd', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filter([1, 2, 3, 4, 5], num.isOdd)',
+      );
+      checkResult(runtime, [1, 3, 5]);
+    });
+
+    test('list.all with num.isPositive', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all([1, 2, 3, 4], num.isPositive)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.all with num.isPositive when one is zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all([1, 0, 3, 4], num.isPositive)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list.any with num.isNegative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.any([1, -2, 3, 4], num.isNegative)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.none with num.isNegative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.none([1, 2, 3, 4], num.isNegative)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.zip combining lists of different sizes with subtraction', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip([10, 20, 30, 40], [1, 2], num.sub)',
+      );
+      checkResult(runtime, [9, 18, 30, 40]);
+    });
+
+    test('list.sort with all equal elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([5, 5, 5, 5], num.compare)',
+      );
+      checkResult(runtime, [5, 5, 5, 5]);
+    });
+
+    test('list.sort with alternating elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([1, 9, 2, 8, 3, 7], num.compare)',
+      );
+      checkResult(runtime, [1, 2, 3, 7, 8, 9]);
+    });
+
+    test('list.filled with zero creates empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.filled(0, 42)');
+      checkResult(runtime, []);
+    });
+
+    test('list.insertStart preserves order of existing elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.insertStart([2, 3, 4], 1)',
+      );
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.insertEnd preserves order of existing elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.insertEnd([1, 2, 3], 4)',
+      );
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.removeAt from two element list removing first', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([1, 2], 0)',
+      );
+      checkResult(runtime, [2]);
+    });
+
+    test('list.removeAt from two element list removing second', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([1, 2], 1)',
+      );
+      checkResult(runtime, [1]);
+    });
+
+    test('list.init on three element list returns two elements', () {
+      final RuntimeFacade runtime = getRuntime('main = list.init([1, 2, 3])');
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('list.rest on three element list returns two elements', () {
+      final RuntimeFacade runtime = getRuntime('main = list.rest([1, 2, 3])');
+      checkResult(runtime, [2, 3]);
+    });
+
+    test('list constructor with multiple nested lists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = [[1, 2], [3, 4], [5, 6]]',
+      );
+      checkResult(runtime, [
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ]);
+    });
+
+    test('list constructor with empty nested list', () {
+      final RuntimeFacade runtime = getRuntime('main = [[]]');
+      checkResult(runtime, [[]]);
+    });
+
+    test('list constructor with multiple empty nested lists', () {
+      final RuntimeFacade runtime = getRuntime('main = [[], [], []]');
+      checkResult(runtime, [[], [], []]);
+    });
+
+    test('list.contains with empty nested list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.contains([[], [1]], [])',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.indexOf with empty nested list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.indexOf([[], [1], [2]], [])',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('list.remove removes empty nested list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.remove([[], [1], [], [2]], [])',
+      );
+      checkResult(runtime, [
+        [1],
+        [2],
+      ]);
+    });
+
+    test('list.reduce accumulating count of elements', () {
+      final RuntimeFacade runtime = getRuntime('''
+increment(acc, elem) = num.add(acc, 1)
+main = list.reduce([10, 20, 30, 40, 50], 0, increment)
+''');
+      checkResult(runtime, 5);
+    });
+
+    test('list.filter with custom predicate on strings', () {
+      final RuntimeFacade runtime = getRuntime('''
+isShort(s) = comp.lt(str.length(s), 4)
+main = list.filter(["hi", "hello", "hey", "howdy"], isShort)
+''');
+      checkResult(runtime, ['"hi"', '"hey"']);
+    });
+
+    test('list.map with str.length on strings', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.map(["a", "bb", "ccc"], str.length)',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.sort strings by length', () {
+      final RuntimeFacade runtime = getRuntime('''
+compareByLength(a, b) = num.sub(str.length(a), str.length(b))
+main = list.sort(["hello", "hi", "hey"], compareByLength)
+''');
+      checkResult(runtime, ['"hi"', '"hey"', '"hello"']);
+    });
+
+    test('list.zip with modulo function', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip([10, 15, 20], [3, 4, 6], num.mod)',
+      );
+      checkResult(runtime, [1, 3, 2]);
+    });
+
+    test('list.all on two element list both matching', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all([2, 4], num.isEven)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.any on two element list one matching', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.any([1, 2], num.isEven)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.none on two element list none matching', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.none([1, 3], num.isEven)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.swap swaps same index in two element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2], 1, 1)',
+      );
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('list.concat multiple times', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.concat(list.concat([1], [2]), [3])',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.take entire list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.take([1, 2, 3], 3)',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.drop entire list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.drop([1, 2, 3], 3)',
+      );
+      checkResult(runtime, []);
+    });
+
+    test('list.set at index zero in multi-element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3, 4, 5], 0, 10)',
+      );
+      checkResult(runtime, [10, 2, 3, 4, 5]);
+    });
+
+    test('list.set at last index in multi-element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3, 4, 5], 4, 50)',
+      );
+      checkResult(runtime, [1, 2, 3, 4, 50]);
+    });
+
+    test('list.join with multi-character separator', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.join(["a", "b", "c"], " => ")',
+      );
+      checkResult(runtime, '"a => b => c"');
+    });
+
+    test('list.reverse on string list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reverse(["a", "b", "c"])',
+      );
+      checkResult(runtime, ['"c"', '"b"', '"a"']);
+    });
+
+    test('list.reverse on boolean list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reverse([true, false, true])',
+      );
+      checkResult(runtime, [true, false, true]);
+    });
+
+    test('list concatenation multiple elements prepend', () {
+      final RuntimeFacade runtime = getRuntime('main = [1, 2] + [3, 4, 5]');
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list indexing returns last element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = [10, 20, 30, 40][3]',
+      );
+      checkResult(runtime, 40);
+    });
+
+    test('list indexing returns first element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = [10, 20, 30, 40][0]',
+      );
+      checkResult(runtime, 10);
+    });
   });
 
   group('List Type Errors', () {

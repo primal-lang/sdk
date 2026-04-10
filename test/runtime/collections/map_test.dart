@@ -1485,4 +1485,387 @@ main = map.at(result(), "a") + map.at(result(), "b") + map.at(result(), "c") + m
       checkResult(runtime, false);
     });
   });
+
+  group('Map Constructor Duplicate Keys', () {
+    test('map constructor with duplicate string keys uses last value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"a": 1, "b": 2, "a": 3}, "a")',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('map constructor with duplicate string keys has correct length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length({"a": 1, "b": 2, "a": 3})',
+      );
+      // Duplicate keys are stored separately in the constructor
+      checkResult(runtime, 3);
+    });
+
+    test('map constructor with duplicate numeric keys uses last value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({1: "first", 2: "second", 1: "third"}, 1)',
+      );
+      checkResult(runtime, '"third"');
+    });
+
+    test('map constructor with duplicate numeric keys has correct length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length({1: "first", 2: "second", 1: "third"})',
+      );
+      // Duplicate keys are stored separately in the constructor
+      checkResult(runtime, 3);
+    });
+
+    test('map constructor with duplicate boolean keys uses last value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({true: 1, false: 2, true: 3}, true)',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('map.keys with duplicate constructor keys returns unique keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.length(map.keys({"a": 1, "b": 2, "a": 3}))',
+      );
+      checkResult(runtime, 2);
+    });
+  });
+
+  group('Map Additional Type Errors for containsKey', () {
+    test('map.containsKey throws for number as first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey(42, "a")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.containsKey throws for boolean as first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey(true, "a")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.containsKey throws for function as first argument', () {
+      final RuntimeFacade runtime = getRuntime('''
+identity(x) = x
+main = map.containsKey(identity, "a")
+''');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Map Indexing Additional Error Cases', () {
+    test('map indexing with function key throws error', () {
+      final RuntimeFacade runtime = getRuntime('''
+identity(x) = x
+main = {"a": 1}[identity]
+''');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('indexing a function throws InvalidArgumentTypesError', () {
+      final RuntimeFacade runtime = getRuntime('''
+identity(x) = x
+main = identity["key"]
+''');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('indexing a string with non-numeric key throws error', () {
+      final RuntimeFacade runtime = getRuntime('main = "hello"["a"]');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+  });
+
+  group('Map with Complex Nested Structures', () {
+    test('map containing list containing map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(({"items": [{"name": "first"}, {"name": "second"}]}["items"])[0], "name")',
+      );
+      checkResult(runtime, '"first"');
+    });
+
+    test('list containing map containing list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.at(map.at([{"numbers": [1, 2, 3]}][0], "numbers"), 1)',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('four-level deep nested map access', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.at(map.at(map.at({"l1": {"l2": {"l3": {"l4": "deep"}}}}, "l1"), "l2"), "l3"), "l4")',
+      );
+      checkResult(runtime, '"deep"');
+    });
+
+    test('map with multiple nested maps at same level', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"a": {"x": 1}, "b": {"y": 2}}["b"], "y")',
+      );
+      checkResult(runtime, 2);
+    });
+  });
+
+  group('Map Empty Operations', () {
+    test('map.keys on empty map returns empty list that is empty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.isEmpty(map.keys({}))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('map.values on empty map returns empty list that is empty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.isEmpty(map.values({}))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('map.set on empty map creates single entry map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.isEmpty(map.set({}, "a", 1))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('map.length returns zero for map after removing all entries', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length(map.removeAt(map.removeAt({"a": 1, "b": 2}, "a"), "b"))',
+      );
+      checkResult(runtime, 0);
+    });
+  });
+
+  group('Map Key Comparison Semantics', () {
+    test('map stores integer and float keys separately', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length({1: "int", 1.0: "float"})',
+      );
+      // Integer and float keys are treated as distinct
+      checkResult(runtime, 2);
+    });
+
+    test('map.containsKey with integer key finds integer key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey({1: "value"}, 1)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('map.at retrieves value using matching key type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({1: "value"}, 1)',
+      );
+      checkResult(runtime, '"value"');
+    });
+  });
+
+  group('Map With Computed Keys and Values', () {
+    test('map with key from arithmetic expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({(2 * 3): "six"}, 6)',
+      );
+      checkResult(runtime, '"six"');
+    });
+
+    test('map with key from string concatenation', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({("hello" + "world"): 42}, "helloworld")',
+      );
+      checkResult(runtime, 42);
+    });
+
+    test('map with value from arithmetic expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"sum": 10 + 20 + 30}, "sum")',
+      );
+      checkResult(runtime, 60);
+    });
+
+    test('map with key and value both from expressions', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({(1 + 1): (2 * 2)}, 2)',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('map with conditional expression as value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"result": if (true) (1) else (2)}, "result")',
+      );
+      checkResult(runtime, 1);
+    });
+  });
+
+  group('Map Function Integration', () {
+    test('map passed through multiple function calls', () {
+      final RuntimeFacade runtime = getRuntime('''
+first(m) = second(m)
+second(m) = third(m)
+third(m) = map.at(m, "key")
+main = first({"key": 42})
+''');
+      checkResult(runtime, 42);
+    });
+
+    test('map created in function and modified in another', () {
+      final RuntimeFacade runtime = getRuntime('''
+create() = {"a": 1}
+modify(m) = map.set(m, "b", 2)
+main = map.length(modify(create()))
+''');
+      checkResult(runtime, 2);
+    });
+
+    test('map operations in recursive-like pattern', () {
+      final RuntimeFacade runtime = getRuntime('''
+addIfMissing(m, k, v) = if (map.containsKey(m, k)) (m) else (map.set(m, k, v))
+main = map.length(addIfMissing(addIfMissing({}, "a", 1), "a", 2))
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('map used as function return value in chain', () {
+      final RuntimeFacade runtime = getRuntime('''
+wrap(v) = {"value": v}
+unwrap(m) = map.at(m, "value")
+main = unwrap(wrap(42))
+''');
+      checkResult(runtime, 42);
+    });
+  });
+
+  group('Map Boundary Conditions', () {
+    test('map with very long key retrieves correctly', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"verylongkeynamethatisstillvalidandshouldbefoundwhenqueried": 99}, "verylongkeynamethatisstillvalidandshouldbefoundwhenqueried")',
+      );
+      checkResult(runtime, 99);
+    });
+
+    test('map.containsKey with very long key returns true', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey({"verylongkeynamethatisstillvalidandshouldbefoundwhenqueried": 1}, "verylongkeynamethatisstillvalidandshouldbefoundwhenqueried")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('map.removeAt with very long key removes entry', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.isEmpty(map.removeAt({"verylongkeynamethatisstillvalidandshouldbefoundwhenqueried": 1}, "verylongkeynamethatisstillvalidandshouldbefoundwhenqueried"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('map with whitespace in key value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"key with tabs	and newlines": 42}, "key with tabs	and newlines")',
+      );
+      checkResult(runtime, 42);
+    });
+  });
+
+  group('Map Multiple Operations Same Key', () {
+    test('set then remove then set same key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.set(map.removeAt(map.set({}, "k", 1), "k"), "k", 2), "k")',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('containsKey before and after removeAt', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = {"k": 1}
+removed = map.removeAt(original(), "k")
+main = [map.containsKey(original(), "k"), map.containsKey(removed(), "k")]
+''');
+      checkResult(runtime, [true, false]);
+    });
+
+    test('length before and after multiple set operations', () {
+      final RuntimeFacade runtime = getRuntime('''
+m1 = {}
+m2 = map.set(m1(), "a", 1)
+m3 = map.set(m2(), "b", 2)
+m4 = map.set(m3(), "a", 3)
+main = [map.length(m1()), map.length(m2()), map.length(m3()), map.length(m4())]
+''');
+      checkResult(runtime, [0, 1, 2, 2]);
+    });
+  });
+
+  group('Map With All Value Types', () {
+    test('map stores and retrieves string value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"type": "string"}, "type")',
+      );
+      checkResult(runtime, '"string"');
+    });
+
+    test('map stores and retrieves number value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"type": 42}, "type")',
+      );
+      checkResult(runtime, 42);
+    });
+
+    test('map stores and retrieves boolean true value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"type": true}, "type")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('map stores and retrieves boolean false value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"type": false}, "type")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('map stores and retrieves list value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.at(map.at({"type": [1, 2, 3]}, "type"), 0)',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('map stores and retrieves nested map value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.at({"type": {"nested": "value"}}, "type"), "nested")',
+      );
+      checkResult(runtime, '"value"');
+    });
+
+    test('map stores and retrieves negative number value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"type": -42}, "type")',
+      );
+      checkResult(runtime, -42);
+    });
+
+    test('map stores and retrieves decimal number value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"type": 3.14159}, "type")',
+      );
+      checkResult(runtime, 3.14159);
+    });
+  });
+
+  group('Map Error Message Verification', () {
+    test('InvalidMapIndexError for missing string key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"a": 1}, "nonexistent")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidMapIndexError>()));
+    });
+
+    test('ElementNotFoundError for indexing missing key', () {
+      final RuntimeFacade runtime = getRuntime('main = {"a": 1}["nonexistent"]');
+      expect(runtime.executeMain, throwsA(isA<ElementNotFoundError>()));
+    });
+  });
 }

@@ -798,6 +798,174 @@ void main() {
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
+
+    test('stack.new throws for queue arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.new(queue.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.push throws for queue first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.push(queue.new([1, 2]), 3)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.pop throws for queue arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.pop(queue.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.peek throws for queue arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(queue.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isEmpty throws for queue arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isEmpty(queue.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isNotEmpty throws for queue arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isNotEmpty(queue.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.length throws for queue arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(queue.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.reverse throws for queue arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.reverse(queue.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.new throws for set arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.new(set.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.push throws for set first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.push(set.new([1, 2]), 3)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.pop throws for set arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.pop(set.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.peek throws for set arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(set.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isEmpty throws for set arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isEmpty(set.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isNotEmpty throws for set arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isNotEmpty(set.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.length throws for set arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(set.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.reverse throws for set arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.reverse(set.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.new throws for vector arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.new(vector.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.push throws for vector first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.push(vector.new([1, 2]), 3)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.pop throws for vector arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.pop(vector.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.peek throws for vector arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(vector.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isEmpty throws for vector arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isEmpty(vector.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isNotEmpty throws for vector arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isNotEmpty(vector.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.length throws for vector arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(vector.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.reverse throws for vector arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.reverse(vector.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
   });
 
   group('Stack Error Messages', () {
@@ -928,6 +1096,42 @@ main = stack.length(stack.push(stack.new([]), double))
       );
       checkResult(runtime, [-1.5, 0.0, 1.5]);
     });
+
+    test('stack with functions maintains length', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+triple(x) = x * 3
+main = stack.length(stack.new([double, triple]))
+''');
+      checkResult(runtime, 2);
+    });
+
+    test('stack.pop removes element from stack with functions', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+triple(x) = x * 3
+main = stack.length(stack.pop(stack.new([double, triple])))
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('stack.reverse maintains length with functions', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+triple(x) = x * 3
+main = stack.length(stack.reverse(stack.new([double, triple])))
+''');
+      checkResult(runtime, 2);
+    });
+
+    test('stack.push adds function element', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+quadruple(x) = x * 4
+main = stack.length(stack.push(stack.new([double]), quadruple))
+''');
+      checkResult(runtime, 2);
+    });
   });
 
   group('Stack Stress Tests', () {
@@ -980,6 +1184,34 @@ main = stack.length(stack.push(stack.new([]), double))
       checkResult(runtime, [
         [5, 6],
       ]);
+    });
+
+    test('stack with 50 elements preserves all elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]))',
+      );
+      checkResult(runtime, 50);
+    });
+
+    test('stack.peek on 50 element stack returns last element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]))',
+      );
+      checkResult(runtime, 50);
+    });
+
+    test('stack.reverse on 50 element stack reverses order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.reverse(stack.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50])))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('stack.pop on 50 element stack returns 49 elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.pop(stack.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50])))',
+      );
+      checkResult(runtime, 49);
     });
   });
 

@@ -807,4 +807,265 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });
+
+  group('Queue Error Messages', () {
+    test(
+      'queue.dequeue on empty queue throws RuntimeError with correct message',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = queue.dequeue(queue.new([]))',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            allOf(
+              isA<RuntimeError>(),
+              predicate<RuntimeError>(
+                (error) => error.toString().contains('empty queue'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'queue.peek on empty queue throws RuntimeError with correct message',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = queue.peek(queue.new([]))',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            allOf(
+              isA<RuntimeError>(),
+              predicate<RuntimeError>(
+                (error) => error.toString().contains('empty queue'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  });
+
+  group('Queue with Special Values', () {
+    test('queue.new creates queue with map element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.new([{"a": 1}]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.enqueue adds map element to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.enqueue(queue.new([]), {"a": 1, "b": 2}))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.peek returns map from queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([{"a": 1}]))',
+      );
+      checkResult(runtime, '{"a": 1}');
+    });
+
+    test('queue.dequeue removes element from queue with map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.dequeue(queue.new([{"a": 1}, {"b": 2}])))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.new creates queue with function element', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+main = queue.length(queue.new([double]))
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('queue.enqueue adds function element to queue', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+main = queue.length(queue.enqueue(queue.new([]), double))
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('queue.new creates queue with whitespace string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new(["   "]))',
+      );
+      checkResult(runtime, '"   "');
+    });
+
+    test('queue.enqueue adds whitespace string to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.enqueue(queue.new([]), "  "))',
+      );
+      checkResult(runtime, '"  "');
+    });
+
+    test('queue.new creates queue with special float values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.new([0.0, 0.0, 1.7976931348623157e+308])',
+      );
+      checkResult(runtime, [0.0, 0.0, 1.7976931348623157e+308]);
+    });
+
+    test('queue.enqueue adds very small float to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.enqueue(queue.new([]), 2.2250738585072014e-308))',
+      );
+      checkResult(runtime, 2.2250738585072014e-308);
+    });
+
+    test('queue.peek returns very small float from queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([2.2250738585072014e-308]))',
+      );
+      checkResult(runtime, 2.2250738585072014e-308);
+    });
+
+    test('queue.new creates queue with newline in string', () {
+      final RuntimeFacade runtime = getRuntime(
+        r'main = queue.length(queue.new(["hello\nworld"]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.enqueue adds string with newline to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        r'main = queue.length(queue.enqueue(queue.new([]), "line1\nline2"))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.new creates queue with tab in string', () {
+      final RuntimeFacade runtime = getRuntime(
+        r'main = queue.length(queue.new(["hello\tworld"]))',
+      );
+      checkResult(runtime, 1);
+    });
+  });
+
+  group('Queue Stress Tests', () {
+    test('queue.new creates queue with many elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]))',
+      );
+      checkResult(runtime, 50);
+    });
+
+    test('queue.peek returns first of many elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.reverse with many elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.reverse(queue.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])))',
+      );
+      checkResult(runtime, 10);
+    });
+
+    test('queue.enqueue many times preserves FIFO order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.enqueue(queue.enqueue(queue.enqueue(queue.enqueue(queue.enqueue(queue.enqueue(queue.enqueue(queue.enqueue(queue.enqueue(queue.enqueue(queue.new([]), 1), 2), 3), 4), 5), 6), 7), 8), 9), 10))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.dequeue many times returns remaining elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.dequeue(queue.dequeue(queue.dequeue(queue.dequeue(queue.dequeue(queue.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])))))))',
+      );
+      checkResult(runtime, 6);
+    });
+
+    test('queue.length after many enqueues and dequeues', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.dequeue(queue.dequeue(queue.enqueue(queue.enqueue(queue.enqueue(queue.new([1, 2, 3]), 4), 5), 6))))',
+      );
+      checkResult(runtime, 4);
+    });
+  });
+
+  group('Queue Immutability', () {
+    test('queue.enqueue does not modify original queue', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = queue.new([1, 2, 3])
+modified = queue.enqueue(original(), 4)
+main = queue.length(original())
+''');
+      checkResult(runtime, 3);
+    });
+
+    test('queue.dequeue does not modify original queue', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = queue.new([1, 2, 3])
+modified = queue.dequeue(original())
+main = queue.length(original())
+''');
+      checkResult(runtime, 3);
+    });
+
+    test('queue.reverse does not modify original queue', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = queue.new([1, 2, 3])
+reversed = queue.reverse(original())
+main = queue.peek(original())
+''');
+      checkResult(runtime, 1);
+    });
+  });
+
+  group('Queue with Complex Nested Structures', () {
+    test('queue.new creates queue with nested maps', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.new([{"outer": {"inner": 1}}]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.enqueue adds nested map to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.enqueue(queue.new([]), {"a": {"b": {"c": 1}}}))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.peek returns nested list from queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([[[1, 2], [3, 4]], [[5, 6], [7, 8]]]))',
+      );
+      checkResult(runtime, [[1, 2], [3, 4]]);
+    });
+
+    test('queue.new creates queue with mixed nested structures', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.new([[1, 2], {"a": 1}, [3, [4, 5]]]))',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('queue.dequeue removes nested structure from queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.dequeue(queue.new([[1, 2], [3, 4], [5, 6]])))',
+      );
+      checkResult(runtime, [3, 4]);
+    });
+
+    test('queue.reverse with nested structures', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.reverse(queue.new([[1], [2], [3]])))',
+      );
+      checkResult(runtime, [3]);
+    });
+  });
 }
