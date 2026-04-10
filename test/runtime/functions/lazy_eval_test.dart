@@ -73,7 +73,7 @@ void main() {
   group('Short-Circuit Boolean Evaluation', () {
     test('and does not evaluate second argument when first is false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = false & error.throw(-1, "Should not evaluate")',
+        'main = false && error.throw(-1, "Should not evaluate")',
       );
       checkResult(runtime, false);
     });
@@ -87,7 +87,7 @@ void main() {
 
     test('or does not evaluate second argument when first is true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = true | error.throw(-1, "Should not evaluate")',
+        'main = true || error.throw(-1, "Should not evaluate")',
       );
       checkResult(runtime, true);
     });
@@ -100,39 +100,39 @@ void main() {
     });
 
     test('and evaluates second argument when first is true', () {
-      final RuntimeFacade runtime = getRuntime('main = true & true');
+      final RuntimeFacade runtime = getRuntime('main = true && true');
       checkResult(runtime, true);
     });
 
     test('or evaluates second argument when first is false', () {
-      final RuntimeFacade runtime = getRuntime('main = false | true');
+      final RuntimeFacade runtime = getRuntime('main = false || true');
       checkResult(runtime, true);
     });
 
     test('nested and with lazy evaluation', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = false & (false & error.throw(-1, "Error"))',
+        'main = false && (false && error.throw(-1, "Error"))',
       );
       checkResult(runtime, false);
     });
 
     test('nested or with lazy evaluation', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = true | (true | error.throw(-1, "Error"))',
+        'main = true || (true || error.throw(-1, "Error"))',
       );
       checkResult(runtime, true);
     });
 
     test('chained and short-circuits at first false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = true & false & error.throw(-1, "Error")',
+        'main = true && false && error.throw(-1, "Error")',
       );
       checkResult(runtime, false);
     });
 
     test('chained or short-circuits at first true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = false | true | error.throw(-1, "Error")',
+        'main = false || true || error.throw(-1, "Error")',
       );
       checkResult(runtime, true);
     });
@@ -141,14 +141,14 @@ void main() {
   group('Combined Lazy Constructs', () {
     test('if with lazy and in condition', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = if (false & error.throw(-1, "Error")) 1 else 2',
+        'main = if (false && error.throw(-1, "Error")) 1 else 2',
       );
       checkResult(runtime, 2);
     });
 
     test('if with lazy or in condition', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = if (true | error.throw(-1, "Error")) 1 else 2',
+        'main = if (true || error.throw(-1, "Error")) 1 else 2',
       );
       checkResult(runtime, 1);
     });

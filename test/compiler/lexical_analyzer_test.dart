@@ -6079,17 +6079,20 @@ pi = 3.14
         checkTokens(tokens, []);
       });
 
-      test('Double ampersand at end of input produces double ampersand token', () {
-        final List<Token> tokens = getTokensDirect('&&');
-        checkTokens(tokens, [
-          DoubleAmpersandToken(
-            const Lexeme(
-              value: '&&',
-              location: Location(row: 1, column: 1),
+      test(
+        'Double ampersand at end of input produces double ampersand token',
+        () {
+          final List<Token> tokens = getTokensDirect('&&');
+          checkTokens(tokens, [
+            DoubleAmpersandToken(
+              const Lexeme(
+                value: '&&',
+                location: Location(row: 1, column: 1),
+              ),
             ),
-          ),
-        ]);
-      });
+          ]);
+        },
+      );
 
       test('Bang at end of input is dropped (no flush)', () {
         final List<Token> tokens = getTokensDirect('!');
