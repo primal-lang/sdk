@@ -2523,6 +2523,13 @@ void main() {
       final CallExpression call = expression as CallExpression;
       expect((call.callee as IdentifierExpression).value, equals('!'));
     });
+
+    test('not keyword alias', () {
+      final Expression expression = getExpression('not a');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect((call.callee as IdentifierExpression).value, equals('!'));
+    });
   });
 
   group('Parser match function behavior', () {

@@ -147,6 +147,7 @@ void main() {
     test('isLogicalKeyword', () {
       expect(true, equals('and'.isAnd));
       expect(true, equals('or'.isOr));
+      expect(true, equals('not'.isNot));
     });
 
     group('Negative cases', () {
@@ -259,6 +260,12 @@ void main() {
         expect(false, equals('OR'.isOr));
         expect(false, equals('||'.isOr));
       });
+
+      test('isNot returns false for non-not strings', () {
+        expect(false, equals('and'.isNot));
+        expect(false, equals('NOT'.isNot));
+        expect(false, equals('!'.isNot));
+      });
     });
 
     group('Multi-character strings', () {
@@ -306,6 +313,12 @@ void main() {
         expect(false, equals('orange'.isOr));
         expect(false, equals('for'.isOr));
         expect(true, equals('or'.isOr));
+      });
+
+      test('isNot requires exact match', () {
+        expect(false, equals('nothing'.isNot));
+        expect(false, equals('knot'.isNot));
+        expect(true, equals('not'.isNot));
       });
     });
 

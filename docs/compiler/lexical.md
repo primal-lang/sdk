@@ -168,9 +168,12 @@ Keywords are not recognized by dedicated `InitState` branches. Instead, `Identif
 - `isBoolean` → `BooleanToken`
 - `isIf` → `IfToken`
 - `isElse` → `ElseToken`
+- `isAnd` → `AmpersandToken` (keyword alias for `&`)
+- `isOr` → `PipeToken` (keyword alias for `|`)
+- `isNot` → `BangToken` (keyword alias for `!`)
 - Otherwise → `IdentifierToken`
 
-This means keywords are identifiers that are reclassified at the boundary.
+This means keywords are identifiers that are reclassified at the boundary. The `and`, `or`, and `not` keywords are aliases that produce operator tokens with the canonical symbol (`&`, `|`, `!`) rather than the keyword text.
 
 ## Delimiter Predicates
 

@@ -864,6 +864,16 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = !true');
       checkResult(runtime, false);
     });
+
+    test('not negates false to true', () {
+      final RuntimeFacade runtime = getRuntime('main = not false');
+      checkResult(runtime, true);
+    });
+
+    test('not negates true to false', () {
+      final RuntimeFacade runtime = getRuntime('main = not true');
+      checkResult(runtime, false);
+    });
   });
 
   group('Operator Precedence', () {

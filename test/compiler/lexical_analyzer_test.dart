@@ -3557,6 +3557,18 @@ pi = 3.14
         ]);
       });
 
+      test('not keyword at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('not');
+        checkTokens(tokens, [
+          BangToken(
+            const Lexeme(
+              value: '!',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
       test('Incomplete exponent with minus sign at end of input', () {
         expect(() => getTokensDirect('1e-'), throwsA(isA<LexicalError>()));
       });

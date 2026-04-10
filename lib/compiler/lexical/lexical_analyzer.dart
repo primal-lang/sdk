@@ -32,6 +32,10 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
     // Use canonical operator name '|' for 'or' keyword
     return PipeToken(Lexeme(value: '|', location: lexeme.location));
   }
+  if (lexeme.value.isNot) {
+    // Use canonical operator name '!' for 'not' keyword
+    return BangToken(Lexeme(value: '!', location: lexeme.location));
+  }
   return IdentifierToken(lexeme);
 }
 

@@ -227,14 +227,15 @@ true or false  // returns true
 
 ### Not
 
-- **Symbol:** `!`
+- **Symbols:** `!`, `not`
 - **Input:** One boolean argument
 - **Output:** True if argument is false; false if argument is true
 - **Purity:** Pure
 - **Example:**
 
 ```
-!true // returns false
+!true    // returns false
+not true // returns false
 ```
 
 ## Access Operators

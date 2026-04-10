@@ -72,6 +72,8 @@ extension StringExtensions on String {
 
   bool get isOr => this == 'or';
 
+  bool get isNot => this == 'not';
+
   bool get isOperandDelimiter =>
       isWhitespace ||
       isBinaryOperator ||

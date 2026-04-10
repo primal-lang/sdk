@@ -1053,7 +1053,7 @@ void main() {
     });
   });
 
-  group('Compiler.compile() - and/or keywords', () {
+  group('Compiler.compile() - and/or/not keywords', () {
     test('and keyword works as logical and', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
           .compile('main = true and false');
@@ -1063,6 +1063,12 @@ void main() {
     test('or keyword works as logical or', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
           .compile('main = true or false');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('not keyword works as logical not', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main = not true');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
   });
