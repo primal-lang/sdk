@@ -364,13 +364,13 @@ void main() {
     test('Logical and returns CallExpression', () {
       final Expression expression = compiler.expression('true && false');
       expect(expression, isA<CallExpression>());
-      expect(expression.toString(), equals('&(true, false)'));
+      expect(expression.toString(), equals('&&(true, false)'));
     });
 
     test('Logical or returns CallExpression', () {
       final Expression expression = compiler.expression('true || false');
       expect(expression, isA<CallExpression>());
-      expect(expression.toString(), equals('|(true, false)'));
+      expect(expression.toString(), equals('||(true, false)'));
     });
 
     test('Parenthesized expression parses correctly', () {

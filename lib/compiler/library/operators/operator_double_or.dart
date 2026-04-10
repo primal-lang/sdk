@@ -1,11 +1,11 @@
-import 'package:primal/compiler/library/logic/bool_and_strict.dart';
+import 'package:primal/compiler/library/logic/bool_or.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/term.dart';
 
-class OperatorAnd extends NativeFunctionTerm {
-  const OperatorAnd()
+class OperatorDoubleOr extends NativeFunctionTerm {
+  const OperatorDoubleOr()
     : super(
-        name: '&',
+        name: '||',
         parameters: const [
           Parameter.boolean('a'),
           Parameter.boolean('b'),
@@ -28,7 +28,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
   });
 
   @override
-  Term reduce() => BoolAndStrict.execute(
+  Term reduce() => BoolOr.execute(
     function: this,
     arguments: arguments,
   );

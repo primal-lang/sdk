@@ -25,12 +25,12 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
     return ElseToken(lexeme);
   }
   if (lexeme.value.isAnd) {
-    // Use canonical operator name '&' for 'and' keyword
-    return AmpersandToken(Lexeme(value: '&', location: lexeme.location));
+    // Use canonical operator name '&&' for 'and' keyword (short-circuit)
+    return DoubleAmpersandToken(Lexeme(value: '&&', location: lexeme.location));
   }
   if (lexeme.value.isOr) {
-    // Use canonical operator name '|' for 'or' keyword
-    return PipeToken(Lexeme(value: '|', location: lexeme.location));
+    // Use canonical operator name '||' for 'or' keyword (short-circuit)
+    return DoublePipeToken(Lexeme(value: '||', location: lexeme.location));
   }
   if (lexeme.value.isNot) {
     // Use canonical operator name '!' for 'not' keyword
@@ -635,9 +635,13 @@ class PipeState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isPipe) {
-      // Consume the second '|' but keep the canonical operator name '|'
-      return ResultState(iterator, PipeToken(output));
+      // Double pipe '||' produces DoublePipeToken (short-circuit)
+      return ResultState(
+        iterator,
+        DoublePipeToken(output.add(input.value)),
+      );
     } else if (input.value.isOperatorDelimiter) {
+      // Single pipe '|' produces PipeToken (strict/eager)
       iterator.back();
       return ResultState(iterator, PipeToken(output));
     } else {
@@ -652,9 +656,13 @@ class AmpersandState extends State<Character, Lexeme> {
   @override
   State process(Character input) {
     if (input.value.isAmpersand) {
-      // Consume the second '&' but keep the canonical operator name '&'
-      return ResultState(iterator, AmpersandToken(output));
+      // Double ampersand '&&' produces DoubleAmpersandToken (short-circuit)
+      return ResultState(
+        iterator,
+        DoubleAmpersandToken(output.add(input.value)),
+      );
     } else if (input.value.isOperatorDelimiter) {
+      // Single ampersand '&' produces AmpersandToken (strict/eager)
       iterator.back();
       return ResultState(iterator, AmpersandToken(output));
     } else {

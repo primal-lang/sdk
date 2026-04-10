@@ -2,6 +2,7 @@
 library;
 
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
@@ -733,11 +734,11 @@ void main() {
       checkResult(runtime, false);
     });
 
-    test('& short-circuits on false left operand', () {
+    test('& does not short-circuit (strict evaluation)', () {
       final RuntimeFacade runtime = getRuntime(
         'main = false & error.throw(-1, "Error")',
       );
-      checkResult(runtime, false);
+      expect(runtime.executeMain, throwsA(isA<CustomError>()));
     });
 
     test('&& returns true when both are true', () {
@@ -804,11 +805,11 @@ void main() {
       checkResult(runtime, false);
     });
 
-    test('| short-circuits on true left operand', () {
+    test('| does not short-circuit (strict evaluation)', () {
       final RuntimeFacade runtime = getRuntime(
         'main = true | error.throw(-1, "Error")',
       );
-      checkResult(runtime, true);
+      expect(runtime.executeMain, throwsA(isA<CustomError>()));
     });
 
     test('|| returns true when both are true', () {

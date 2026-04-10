@@ -15,7 +15,9 @@ class ExpressionParser {
   static bool _isNotEqual(Token t) => t is NotEqualToken;
   static bool _isEqual(Token t) => t is EqualToken;
   static bool _isPipe(Token t) => t is PipeToken;
+  static bool _isDoublePipe(Token t) => t is DoublePipeToken;
   static bool _isAmpersand(Token t) => t is AmpersandToken;
+  static bool _isDoubleAmpersand(Token t) => t is DoubleAmpersandToken;
   static bool _isGreaterThan(Token t) => t is GreaterThanToken;
   static bool _isGreaterOrEqual(Token t) => t is GreaterOrEqualToken;
   static bool _isLessThan(Token t) => t is LessThanToken;
@@ -61,6 +63,14 @@ class ExpressionParser {
     _isBang,
     _isMinus,
   ];
+  static final List<bool Function(Token)> _logicOrPredicates = [
+    _isPipe,
+    _isDoublePipe,
+  ];
+  static final List<bool Function(Token)> _logicAndPredicates = [
+    _isAmpersand,
+    _isDoubleAmpersand,
+  ];
 
   Expression expression() => ifExpression();
 
@@ -105,7 +115,7 @@ class ExpressionParser {
   Expression logicOr() {
     Expression expression = logicAnd();
 
-    while (matchSingle(_isPipe)) {
+    while (match(_logicOrPredicates)) {
       final Token operator = previous;
       final Expression right = logicAnd();
 
@@ -122,7 +132,7 @@ class ExpressionParser {
   Expression logicAnd() {
     Expression expression = comparison();
 
-    while (matchSingle(_isAmpersand)) {
+    while (match(_logicAndPredicates)) {
       final Token operator = previous;
       final Expression right = comparison();
 

@@ -132,8 +132,10 @@ import 'package:primal/compiler/library/list/list_swap.dart';
 import 'package:primal/compiler/library/list/list_take.dart';
 import 'package:primal/compiler/library/list/list_zip.dart';
 import 'package:primal/compiler/library/logic/bool_and.dart';
+import 'package:primal/compiler/library/logic/bool_and_strict.dart';
 import 'package:primal/compiler/library/logic/bool_not.dart';
 import 'package:primal/compiler/library/logic/bool_or.dart';
+import 'package:primal/compiler/library/logic/bool_or_strict.dart';
 import 'package:primal/compiler/library/logic/bool_xor.dart';
 import 'package:primal/compiler/library/map/map_at.dart';
 import 'package:primal/compiler/library/map/map_contains_key.dart';
@@ -147,6 +149,8 @@ import 'package:primal/compiler/library/map/map_values.dart';
 import 'package:primal/compiler/library/operators/operator_add.dart';
 import 'package:primal/compiler/library/operators/operator_and.dart';
 import 'package:primal/compiler/library/operators/operator_div.dart';
+import 'package:primal/compiler/library/operators/operator_double_and.dart';
+import 'package:primal/compiler/library/operators/operator_double_or.dart';
 import 'package:primal/compiler/library/operators/operator_eq.dart';
 import 'package:primal/compiler/library/operators/operator_ge.dart';
 import 'package:primal/compiler/library/operators/operator_gt.dart';
@@ -400,8 +404,10 @@ class StandardLibrary {
 
     // Logic
     const BoolAnd(),
+    const BoolAndStrict(),
     const BoolNot(),
     const BoolOr(),
+    const BoolOrStrict(),
     const BoolXor(),
 
     // Map
@@ -419,6 +425,8 @@ class StandardLibrary {
     const OperatorAdd(),
     const OperatorAnd(),
     const OperatorDiv(),
+    const OperatorDoubleAnd(),
+    const OperatorDoubleOr(),
     const OperatorEq(),
     const OperatorGe(),
     const OperatorGt(),

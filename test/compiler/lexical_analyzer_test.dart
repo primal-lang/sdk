@@ -868,36 +868,36 @@ void main() {
     test('Logical operator aliases', () {
       final List<Token> tokens = getTokens('|| && and or');
       checkTokens(tokens, [
-        PipeToken(
+        DoublePipeToken(
           const Lexeme(
-            value: '|',
+            value: '||',
             location: Location(
               row: 1,
               column: 1,
             ),
           ),
         ),
-        AmpersandToken(
+        DoubleAmpersandToken(
           const Lexeme(
-            value: '&',
+            value: '&&',
             location: Location(
               row: 1,
               column: 4,
             ),
           ),
         ),
-        AmpersandToken(
+        DoubleAmpersandToken(
           const Lexeme(
-            value: '&',
+            value: '&&',
             location: Location(
               row: 1,
               column: 7,
             ),
           ),
         ),
-        PipeToken(
+        DoublePipeToken(
           const Lexeme(
-            value: '|',
+            value: '||',
             location: Location(
               row: 1,
               column: 11,
@@ -3536,9 +3536,9 @@ pi = 3.14
       test('and keyword at end of input (no trailing delimiter)', () {
         final List<Token> tokens = getTokensDirect('and');
         checkTokens(tokens, [
-          AmpersandToken(
+          DoubleAmpersandToken(
             const Lexeme(
-              value: '&',
+              value: '&&',
               location: Location(row: 1, column: 1),
             ),
           ),
@@ -3548,9 +3548,9 @@ pi = 3.14
       test('or keyword at end of input (no trailing delimiter)', () {
         final List<Token> tokens = getTokensDirect('or');
         checkTokens(tokens, [
-          PipeToken(
+          DoublePipeToken(
             const Lexeme(
-              value: '|',
+              value: '||',
               location: Location(row: 1, column: 1),
             ),
           ),
@@ -6062,12 +6062,12 @@ pi = 3.14
         checkTokens(tokens, []);
       });
 
-      test('Double pipe at end of input produces pipe token', () {
+      test('Double pipe at end of input produces double pipe token', () {
         final List<Token> tokens = getTokensDirect('||');
         checkTokens(tokens, [
-          PipeToken(
+          DoublePipeToken(
             const Lexeme(
-              value: '|',
+              value: '||',
               location: Location(row: 1, column: 1),
             ),
           ),
@@ -6079,12 +6079,12 @@ pi = 3.14
         checkTokens(tokens, []);
       });
 
-      test('Double ampersand at end of input produces ampersand token', () {
+      test('Double ampersand at end of input produces double ampersand token', () {
         final List<Token> tokens = getTokensDirect('&&');
         checkTokens(tokens, [
-          AmpersandToken(
+          DoubleAmpersandToken(
             const Lexeme(
-              value: '&',
+              value: '&&',
               location: Location(row: 1, column: 1),
             ),
           ),
@@ -6794,15 +6794,15 @@ pi = 3.14
       test('Logical operators with bang (bang is unary so valid after &&)', () {
         final List<Token> tokens = getTokens('||&&!x');
         checkTokens(tokens, [
-          PipeToken(
+          DoublePipeToken(
             const Lexeme(
-              value: '|',
+              value: '||',
               location: Location(row: 1, column: 1),
             ),
           ),
-          AmpersandToken(
+          DoubleAmpersandToken(
             const Lexeme(
-              value: '&',
+              value: '&&',
               location: Location(row: 1, column: 3),
             ),
           ),

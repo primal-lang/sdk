@@ -1,8 +1,6 @@
-- Constraint: none of the variables in the expression can be named the same as any of the parameters of the function
-- For each expression in the let block, perform the following steps:
-  - Resolve the expression using the current context
-  - Add the resolved variable to the context
-- Resolve the expression in the "in" part of the let expression using the updated context. That's the result of the "let expression"
+- Constraint: none of the variables in the expression can be named the same as any of the parameters of the function. is that a valid constraint?
+- What other things should we check?
+  - not declaring one variable more than once?
 
 Examples:
 
@@ -10,8 +8,10 @@ Examples:
 foo(n) = let
             x = bar(n)
          in
-             calculate(x, x + 1)
+            x + 1
 ```
+
+Let expression can be chained:
 
 ```primal
 foo(n) = let
@@ -20,24 +20,30 @@ foo(n) = let
              let
                  y = test(n)
              in
-                 calculate(x, x + 1, y, y + 1)
+                 x + y
 ```
+
+Let expressions can declare more than one variable:
 
 ```primal
 foo(n) = let
              x = bar(n)
              y = test(n)
          in
-             calculate(x, x + 1, y, y + 1)
+             x + y
 ```
+
+Declared variables can use previously declared variables:
 
 ```primal
 foo(a, b) = let
                 x = a + b
                 y = x * 2
             in
-                num.pow(y, 2)
+                y * 2
 ```
+
+The expression after "in" can be any expression, including an "if":
 
 ```primal
 foo(a, b) = let
@@ -49,10 +55,10 @@ foo(a, b) = let
                     console.write('Failure: ' + result.get(x))
 ```
 
-```primal
-frequency(list) = frequency.helper(list, {})
+Declared variables can be any expression, including an "if":
 
-frequency.helper(list, result) =
+```primal
+frequency(list, result) =
     if (list.isEmpty(list))
         result
     else
@@ -60,10 +66,11 @@ frequency.helper(list, result) =
             first = list.first(list)
             tail = list.tail(list)
         in
-            let count = if (map.containsKey(result, first))
+            let
+                count = if (map.containsKey(result, first))
                             result[first] + 1
                         else
                             1
             in
-                frequency.helper(tail, map.set(result, first, count))
+                frequency(tail, map.set(result, first, count))
 ```
