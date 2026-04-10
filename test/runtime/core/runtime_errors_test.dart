@@ -80,7 +80,7 @@ void main() {
           isA<RuntimeError>().having(
             (e) => e.toString(),
             'message',
-            contains('Cannot pop from an empty stack'),
+            contains('Cannot get element from empty stack'),
           ),
         ),
       );
@@ -96,7 +96,7 @@ void main() {
           isA<RuntimeError>().having(
             (e) => e.toString(),
             'message',
-            contains('Cannot peek from an empty stack'),
+            contains('Cannot get element from empty stack'),
           ),
         ),
       );
@@ -112,7 +112,7 @@ void main() {
           isA<RuntimeError>().having(
             (e) => e.toString(),
             'message',
-            contains('Cannot dequeue from an empty queue'),
+            contains('Cannot get element from empty queue'),
           ),
         ),
       );
@@ -128,7 +128,7 @@ void main() {
           isA<RuntimeError>().having(
             (e) => e.toString(),
             'message',
-            contains('Cannot peek from an empty queue'),
+            contains('Cannot get element from empty queue'),
           ),
         ),
       );

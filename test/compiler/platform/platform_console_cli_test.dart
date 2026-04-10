@@ -265,5 +265,290 @@ void main() {
 
       expect(stdout.trim(), isEmpty);
     });
+
+    test('errorWriteLn handles empty string', () async {
+      final ProcessResult result = await runConsoleWrite('errorWriteLn', '');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('\n'));
+    });
+
+    test('outWrite handles whitespace-only content', () async {
+      final ProcessResult result = await runConsoleWrite('outWrite', '   ');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('   '));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('outWriteLn handles whitespace-only content', () async {
+      final ProcessResult result = await runConsoleWrite('outWriteLn', '   ');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('   \n'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('errorWrite handles whitespace-only content', () async {
+      final ProcessResult result = await runConsoleWrite('errorWrite', '   ');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('   '));
+    });
+
+    test('errorWriteLn handles whitespace-only content', () async {
+      final ProcessResult result = await runConsoleWrite('errorWriteLn', '   ');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('   \n'));
+    });
+
+    test('outWrite handles tab characters', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'outWrite',
+        'col1\tcol2\tcol3',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('col1\tcol2\tcol3'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('outWriteLn handles tab characters', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'outWriteLn',
+        'col1\tcol2\tcol3',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('col1\tcol2\tcol3\n'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('errorWrite handles tab characters', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'errorWrite',
+        'col1\tcol2\tcol3',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('col1\tcol2\tcol3'));
+    });
+
+    test('errorWriteLn handles tab characters', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'errorWriteLn',
+        'col1\tcol2\tcol3',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('col1\tcol2\tcol3\n'));
+    });
+
+    test('outWrite handles numeric content', () async {
+      final ProcessResult result = await runConsoleWrite('outWrite', '12345');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('12345'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('errorWrite handles numeric content', () async {
+      final ProcessResult result = await runConsoleWrite('errorWrite', '12345');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('12345'));
+    });
+
+    test('outWrite handles single character', () async {
+      final ProcessResult result = await runConsoleWrite('outWrite', 'x');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('x'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('outWriteLn handles single character', () async {
+      final ProcessResult result = await runConsoleWrite('outWriteLn', 'x');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('x\n'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('errorWrite handles single character', () async {
+      final ProcessResult result = await runConsoleWrite('errorWrite', 'x');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('x'));
+    });
+
+    test('errorWriteLn handles single character', () async {
+      final ProcessResult result = await runConsoleWrite('errorWriteLn', 'x');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('x\n'));
+    });
+
+    test(
+      'readLine handles input with leading and trailing whitespace',
+      () async {
+        final Process process = await Process.start(
+          Platform.resolvedExecutable,
+          ['run', 'test/helpers/platform_console_read_runner.dart'],
+        );
+
+        process.stdin.writeln('  hello world  ');
+        await process.stdin.close();
+
+        final String stdout = await process.stdout
+            .transform(utf8.decoder)
+            .join();
+        final String stderr = await process.stderr
+            .transform(utf8.decoder)
+            .join();
+        final int exitCode = await process.exitCode;
+
+        if (exitCode != 0) {
+          fail('Process exited with code $exitCode: $stderr');
+        }
+
+        expect(stdout.trim(), equals('hello world'));
+      },
+    );
+
+    test('readLine handles single character input', () async {
+      final Process process = await Process.start(
+        Platform.resolvedExecutable,
+        ['run', 'test/helpers/platform_console_read_runner.dart'],
+      );
+
+      process.stdin.writeln('x');
+      await process.stdin.close();
+
+      final String stdout = await process.stdout.transform(utf8.decoder).join();
+      final String stderr = await process.stderr.transform(utf8.decoder).join();
+      final int exitCode = await process.exitCode;
+
+      if (exitCode != 0) {
+        fail('Process exited with code $exitCode: $stderr');
+      }
+
+      expect(stdout.trim(), equals('x'));
+    });
+
+    test('readLine handles numeric input', () async {
+      final Process process = await Process.start(
+        Platform.resolvedExecutable,
+        ['run', 'test/helpers/platform_console_read_runner.dart'],
+      );
+
+      process.stdin.writeln('12345');
+      await process.stdin.close();
+
+      final String stdout = await process.stdout.transform(utf8.decoder).join();
+      final String stderr = await process.stderr.transform(utf8.decoder).join();
+      final int exitCode = await process.exitCode;
+
+      if (exitCode != 0) {
+        fail('Process exited with code $exitCode: $stderr');
+      }
+
+      expect(stdout.trim(), equals('12345'));
+    });
+
+    test('readLine handles tab characters in input', () async {
+      final Process process = await Process.start(
+        Platform.resolvedExecutable,
+        ['run', 'test/helpers/platform_console_read_runner.dart'],
+      );
+
+      process.stdin.writeln('col1\tcol2');
+      await process.stdin.close();
+
+      final String stdout = await process.stdout.transform(utf8.decoder).join();
+      final String stderr = await process.stderr.transform(utf8.decoder).join();
+      final int exitCode = await process.exitCode;
+
+      if (exitCode != 0) {
+        fail('Process exited with code $exitCode: $stderr');
+      }
+
+      expect(stdout.trim(), equals('col1\tcol2'));
+    });
+
+    test('outWrite handles mixed content with numbers and symbols', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'outWrite',
+        'Price: \$123.45 (50% off!)',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('Price: \$123.45 (50% off!)'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test(
+      'errorWriteLn handles mixed content with numbers and symbols',
+      () async {
+        final ProcessResult result = await runConsoleWrite(
+          'errorWriteLn',
+          'Error #42: Failed at 100%',
+        );
+
+        expect(result.exitCode, equals(0));
+        expect(result.stdout.toString(), isEmpty);
+        expect(result.stderr.toString(), equals('Error #42: Failed at 100%\n'));
+      },
+    );
+
+    test('outWrite handles content with only newlines', () async {
+      final ProcessResult result = await runConsoleWrite('outWrite', '\n\n\n');
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('\n\n\n'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('errorWrite handles content with only newlines', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'errorWrite',
+        '\n\n\n',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('\n\n\n'));
+    });
+
+    test('outWrite handles content with carriage return', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'outWrite',
+        'line1\r\nline2',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), equals('line1\r\nline2'));
+      expect(result.stderr.toString(), isEmpty);
+    });
+
+    test('errorWrite handles content with carriage return', () async {
+      final ProcessResult result = await runConsoleWrite(
+        'errorWrite',
+        'line1\r\nline2',
+      );
+
+      expect(result.exitCode, equals(0));
+      expect(result.stdout.toString(), isEmpty);
+      expect(result.stderr.toString(), equals('line1\r\nline2'));
+    });
   });
 }

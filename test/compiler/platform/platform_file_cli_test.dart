@@ -332,6 +332,294 @@ void main() {
 
         expect(platform.parent(file).path, equals('${tempDir.path}/a/b/c'));
       });
+
+      test('returns parent for file in temp directory root', () {
+        final File file = File('${tempDir.path}/root_file.txt');
+
+        expect(platform.parent(file).path, equals(tempDir.path));
+      });
+    });
+
+    group('create (error handling)', () {
+      test('returns false when file cannot be created', () {
+        // Create a file where a directory would be needed
+        final File blocker = File('${tempDir.path}/blocker')..createSync();
+        final File file = File('${tempDir.path}/blocker/subdir/file.txt');
+
+        expect(platform.create(file), isFalse);
+        blocker.deleteSync();
+      });
+
+      test('creates file that already exists without error', () {
+        final File file = File('${tempDir.path}/existing.txt')..createSync();
+
+        expect(platform.create(file), isTrue);
+        expect(file.existsSync(), isTrue);
+      });
+    });
+
+    group('write (error handling)', () {
+      test('returns false when write fails due to path conflict', () {
+        // Create a file where a directory would be needed
+        final File blocker = File('${tempDir.path}/write_blocker')
+          ..createSync();
+        final File file = File('${tempDir.path}/write_blocker/subdir/file.txt');
+
+        expect(platform.write(file, 'content'), isFalse);
+        blocker.deleteSync();
+      });
+
+      test('writes unicode content correctly', () {
+        final File file = File('${tempDir.path}/unicode_write.txt');
+        const String unicodeContent =
+            'Hello \u4e16\u754c \u{1F600} \u03B1\u03B2\u03B3';
+
+        expect(platform.write(file, unicodeContent), isTrue);
+        expect(file.readAsStringSync(), equals(unicodeContent));
+      });
+
+      test('writes large content', () {
+        final File file = File('${tempDir.path}/large_write.txt');
+        final String largeContent = 'x' * 100000;
+
+        expect(platform.write(file, largeContent), isTrue);
+        expect(file.readAsStringSync(), equals(largeContent));
+      });
+
+      test('writes content with special characters', () {
+        final File file = File('${tempDir.path}/special_write.txt');
+        const String specialContent = 'Tab:\t Newline:\n Carriage:\r Quote:"\'';
+
+        expect(platform.write(file, specialContent), isTrue);
+        expect(file.readAsStringSync(), equals(specialContent));
+      });
+    });
+
+    group('move (additional cases)', () {
+      test('overwrites existing destination file', () {
+        final File source = File('${tempDir.path}/move_src_overwrite.txt')
+          ..writeAsStringSync('new data');
+        final File destination = File('${tempDir.path}/move_dst_existing.txt')
+          ..writeAsStringSync('old data');
+
+        expect(platform.move(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals('new data'));
+        expect(source.existsSync(), isFalse);
+      });
+
+      test('moves file to different directory', () {
+        final Directory subDir = Directory('${tempDir.path}/subdir')
+          ..createSync();
+        final File source = File('${tempDir.path}/move_to_subdir.txt')
+          ..writeAsStringSync('moving');
+        final File destination = File('${subDir.path}/moved.txt');
+
+        expect(platform.move(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals('moving'));
+        expect(source.existsSync(), isFalse);
+      });
+
+      test('returns false when destination directory does not exist', () {
+        final File source = File('${tempDir.path}/move_src_no_dest.txt')
+          ..writeAsStringSync('data');
+        final File destination = File(
+          '${tempDir.path}/nonexistent_dir/moved.txt',
+        );
+
+        expect(platform.move(source, destination), isFalse);
+        expect(source.existsSync(), isTrue);
+      });
+    });
+
+    group('copy (additional cases)', () {
+      test('copies file to different directory', () {
+        final Directory subDir = Directory('${tempDir.path}/copy_subdir')
+          ..createSync();
+        final File source = File('${tempDir.path}/copy_to_subdir.txt')
+          ..writeAsStringSync('copying');
+        final File destination = File('${subDir.path}/copied.txt');
+
+        expect(platform.copy(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals('copying'));
+        expect(source.existsSync(), isTrue);
+      });
+
+      test('copies empty file', () {
+        final File source = File('${tempDir.path}/empty_copy_src.txt')
+          ..createSync();
+        final File destination = File('${tempDir.path}/empty_copy_dst.txt');
+
+        expect(platform.copy(source, destination), isTrue);
+        expect(destination.existsSync(), isTrue);
+        expect(destination.readAsStringSync(), equals(''));
+      });
+
+      test('returns false when destination directory does not exist', () {
+        final File source = File('${tempDir.path}/copy_src_no_dest.txt')
+          ..writeAsStringSync('data');
+        final File destination = File(
+          '${tempDir.path}/nonexistent_copy_dir/copied.txt',
+        );
+
+        expect(platform.copy(source, destination), isFalse);
+      });
+
+      test('copies file with unicode content', () {
+        final File source = File('${tempDir.path}/unicode_copy_src.txt')
+          ..writeAsStringSync('Unicode: \u4e16\u754c \u{1F600}');
+        final File destination = File('${tempDir.path}/unicode_copy_dst.txt');
+
+        expect(platform.copy(source, destination), isTrue);
+        expect(
+          destination.readAsStringSync(),
+          equals('Unicode: \u4e16\u754c \u{1F600}'),
+        );
+      });
+    });
+
+    group('length (additional cases)', () {
+      test('returns byte count for unicode content', () {
+        final File file = File('${tempDir.path}/unicode_length.txt')
+          ..writeAsStringSync(
+            '\u4e16',
+          ); // Single Chinese character (3 bytes in UTF-8)
+
+        // UTF-8 encoded Chinese character is 3 bytes
+        expect(platform.length(file), equals(3));
+      });
+
+      test('returns correct length for multiline content', () {
+        final File file = File('${tempDir.path}/multiline_length.txt')
+          ..writeAsStringSync('a\nb\nc');
+
+        expect(platform.length(file), equals(5)); // 3 chars + 2 newlines
+      });
+    });
+
+    group('rename (additional cases)', () {
+      test('renames file overwriting existing file', () {
+        final File file = File('${tempDir.path}/rename_src.txt')
+          ..writeAsStringSync('source content');
+        File(
+          '${tempDir.path}/rename_target.txt',
+        ).writeAsStringSync('target content');
+
+        expect(platform.rename(file, 'rename_target.txt'), isTrue);
+
+        final File renamedFile = File('${tempDir.path}/rename_target.txt');
+        expect(renamedFile.readAsStringSync(), equals('source content'));
+        expect(file.existsSync(), isFalse);
+      });
+
+      test('renames file to same name succeeds', () {
+        final File file = File('${tempDir.path}/same_name.txt')..createSync();
+
+        expect(platform.rename(file, 'same_name.txt'), isTrue);
+        expect(File('${tempDir.path}/same_name.txt').existsSync(), isTrue);
+      });
+    });
+
+    group('fromPath (additional cases)', () {
+      test('handles empty path', () {
+        final File file = platform.fromPath('');
+
+        expect(file, isA<File>());
+        expect(file.path, equals(''));
+      });
+
+      test('handles path with unicode characters', () {
+        final File file = platform.fromPath('${tempDir.path}/\u6587\u4ef6.txt');
+
+        expect(file.path, equals('${tempDir.path}/\u6587\u4ef6.txt'));
+      });
+
+      test('handles path ending with separator', () {
+        final File file = platform.fromPath('${tempDir.path}/trailing/');
+
+        expect(file.path, equals('${tempDir.path}/trailing/'));
+      });
+    });
+
+    group('name (additional cases)', () {
+      test('returns filename without extension', () {
+        final File file = File('${tempDir.path}/noextension');
+
+        expect(platform.name(file), equals('noextension'));
+      });
+
+      test('returns filename with multiple dots', () {
+        final File file = File('${tempDir.path}/file.name.with.dots.txt');
+
+        expect(platform.name(file), equals('file.name.with.dots.txt'));
+      });
+    });
+
+    group('extension (additional cases)', () {
+      test('returns extension for uppercase extension', () {
+        final File file = File('${tempDir.path}/file.TXT');
+
+        expect(platform.extension(file), equals('TXT'));
+      });
+
+      test('returns empty string for file ending with dot', () {
+        final File file = File('${tempDir.path}/file.');
+
+        expect(platform.extension(file), equals(''));
+      });
+    });
+
+    group('exists (additional cases)', () {
+      test('returns false for directory path', () {
+        final Directory dir = Directory('${tempDir.path}/testdir')
+          ..createSync();
+        final File file = File(dir.path);
+
+        // File.existsSync returns false for directories
+        expect(platform.exists(file), isFalse);
+      });
+
+      test('returns true after file is created', () {
+        final File file = File('${tempDir.path}/created_later.txt');
+
+        expect(platform.exists(file), isFalse);
+        file.createSync();
+        expect(platform.exists(file), isTrue);
+      });
+
+      test('returns false after file is deleted', () {
+        final File file = File('${tempDir.path}/deleted_later.txt')
+          ..createSync();
+
+        expect(platform.exists(file), isTrue);
+        file.deleteSync();
+        expect(platform.exists(file), isFalse);
+      });
+    });
+
+    group('delete (additional cases)', () {
+      test('deletes file with content', () {
+        final File file = File('${tempDir.path}/delete_with_content.txt')
+          ..writeAsStringSync('content to delete');
+
+        expect(platform.delete(file), isTrue);
+        expect(file.existsSync(), isFalse);
+      });
+    });
+
+    group('path (additional cases)', () {
+      test('returns consistent path for same file', () {
+        final File file = File('${tempDir.path}/consistent.txt');
+        final String path1 = platform.path(file);
+        final String path2 = platform.path(file);
+
+        expect(path1, equals(path2));
+      });
+
+      test('returns path containing filename', () {
+        final File file = File('${tempDir.path}/inpath.txt');
+
+        expect(platform.path(file), contains('inpath.txt'));
+      });
     });
   });
 }

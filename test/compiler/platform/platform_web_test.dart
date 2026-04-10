@@ -95,6 +95,50 @@ void main() {
       expect(prints, equals(['line1\nline2']));
     });
 
+    test('outWrite handles special characters', () {
+      final List<String> prints = capturePrints(
+        () => console.outWrite('tab\there\u0000null'),
+      );
+
+      expect(prints, equals(['tab\there\u0000null']));
+    });
+
+    test('outWrite handles unicode characters', () {
+      final List<String> prints = capturePrints(
+        () => console.outWrite('\u{1F600} emoji \u{2603} snowman'),
+      );
+
+      expect(prints, equals(['\u{1F600} emoji \u{2603} snowman']));
+    });
+
+    test('outWrite handles single character', () {
+      final List<String> prints = capturePrints(() => console.outWrite('x'));
+
+      expect(prints, equals(['x']));
+    });
+
+    test('outWriteLn handles special characters', () {
+      final List<String> prints = capturePrints(
+        () => console.outWriteLn('tab\there\u0000null'),
+      );
+
+      expect(prints, equals(['tab\there\u0000null']));
+    });
+
+    test('outWriteLn handles unicode characters', () {
+      final List<String> prints = capturePrints(
+        () => console.outWriteLn('\u{1F600} emoji \u{2603} snowman'),
+      );
+
+      expect(prints, equals(['\u{1F600} emoji \u{2603} snowman']));
+    });
+
+    test('outWriteLn handles single character', () {
+      final List<String> prints = capturePrints(() => console.outWriteLn('a'));
+
+      expect(prints, equals(['a']));
+    });
+
     test('errorWrite delegates to print', () {
       final List<String> prints = capturePrints(
         () => console.errorWrite('test'),
@@ -137,6 +181,52 @@ void main() {
       );
 
       expect(prints, equals(['line1\nline2']));
+    });
+
+    test('errorWrite handles special characters', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWrite('tab\there\u0000null'),
+      );
+
+      expect(prints, equals(['tab\there\u0000null']));
+    });
+
+    test('errorWrite handles unicode characters', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWrite('\u{1F600} emoji \u{2603} snowman'),
+      );
+
+      expect(prints, equals(['\u{1F600} emoji \u{2603} snowman']));
+    });
+
+    test('errorWrite handles single character', () {
+      final List<String> prints = capturePrints(() => console.errorWrite('y'));
+
+      expect(prints, equals(['y']));
+    });
+
+    test('errorWriteLn handles special characters', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWriteLn('tab\there\u0000null'),
+      );
+
+      expect(prints, equals(['tab\there\u0000null']));
+    });
+
+    test('errorWriteLn handles unicode characters', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWriteLn('\u{1F600} emoji \u{2603} snowman'),
+      );
+
+      expect(prints, equals(['\u{1F600} emoji \u{2603} snowman']));
+    });
+
+    test('errorWriteLn handles single character', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWriteLn('z'),
+      );
+
+      expect(prints, equals(['z']));
     });
   });
 
@@ -354,6 +444,111 @@ void main() {
         throwsA(isA<UnimplementedFunctionWebError>()),
       );
     });
+
+    test('fromPath throws with whitespace-only path', () {
+      expect(
+        () => platform.fromPath('   '),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('fromPath throws with path containing special characters', () {
+      expect(
+        () => platform.fromPath('/path/with spaces/and\ttabs'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('exists throws RuntimeError', () {
+      expect(
+        () => platform.exists(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('read throws RuntimeError', () {
+      expect(
+        () => platform.read(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('write throws RuntimeError', () {
+      expect(
+        () => platform.write(File('dummy'), 'content'),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('length throws RuntimeError', () {
+      expect(
+        () => platform.length(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('create throws RuntimeError', () {
+      expect(
+        () => platform.create(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('delete throws RuntimeError', () {
+      expect(
+        () => platform.delete(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('path throws RuntimeError', () {
+      expect(
+        () => platform.path(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('name throws RuntimeError', () {
+      expect(
+        () => platform.name(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('rename throws RuntimeError', () {
+      expect(
+        () => platform.rename(File('dummy'), 'new'),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('extension throws RuntimeError', () {
+      expect(
+        () => platform.extension(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('copy throws RuntimeError', () {
+      expect(
+        () => platform.copy(File('a'), File('b')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('move throws RuntimeError', () {
+      expect(
+        () => platform.move(File('a'), File('b')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('parent throws RuntimeError', () {
+      expect(
+        () => platform.parent(File('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
   });
 
   group('PlatformDirectoryWeb', () {
@@ -524,6 +719,90 @@ void main() {
         throwsA(isA<UnimplementedFunctionWebError>()),
       );
     });
+
+    test('fromPath throws with whitespace-only path', () {
+      expect(
+        () => platform.fromPath('   '),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('fromPath throws with path containing special characters', () {
+      expect(
+        () => platform.fromPath('/path/with spaces/and\ttabs'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('exists throws RuntimeError', () {
+      expect(
+        () => platform.exists(Directory('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('create throws RuntimeError', () {
+      expect(
+        () => platform.create(Directory('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('delete throws RuntimeError', () {
+      expect(
+        () => platform.delete(Directory('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('copy throws RuntimeError', () {
+      expect(
+        () => platform.copy(Directory('a'), Directory('b')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('move throws RuntimeError', () {
+      expect(
+        () => platform.move(Directory('a'), Directory('b')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('rename throws RuntimeError', () {
+      expect(
+        () => platform.rename(Directory('dummy'), 'new'),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('path throws RuntimeError', () {
+      expect(
+        () => platform.path(Directory('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('name throws RuntimeError', () {
+      expect(
+        () => platform.name(Directory('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('parent throws RuntimeError', () {
+      expect(
+        () => platform.parent(Directory('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('list throws RuntimeError', () {
+      expect(
+        () => platform.list(Directory('dummy')),
+        throwsA(isA<RuntimeError>()),
+      );
+    });
   });
 
   group('PlatformEnvironmentWeb', () {
@@ -554,6 +833,27 @@ void main() {
     test('getVariable throws with empty variable name', () {
       expect(
         () => platform.getVariable(''),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('getVariable throws with whitespace-only variable name', () {
+      expect(
+        () => platform.getVariable('   '),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('getVariable throws with special characters in variable name', () {
+      expect(
+        () => platform.getVariable('VAR_WITH-SPECIAL.CHARS'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('getVariable throws with unicode variable name', () {
+      expect(
+        () => platform.getVariable('\u{1F600}_EMOJI_VAR'),
         throwsA(isA<UnimplementedFunctionWebError>()),
       );
     });
@@ -598,6 +898,44 @@ void main() {
       );
 
       expect(error.toString(), contains('""'));
+    });
+
+    test('error with special characters in function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'module.function-name',
+      );
+
+      expect(error.toString(), contains('module.function-name'));
+    });
+
+    test('error with whitespace in function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'function with spaces',
+      );
+
+      expect(error.toString(), contains('function with spaces'));
+    });
+
+    test('error message has expected format', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'test.function',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Function "test.function" is not implemented on the web platform',
+        ),
+      );
+    });
+
+    test('error preserves function name exactly', () {
+      const String functionName = 'exact.function.name';
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        functionName,
+      );
+
+      expect(error.toString(), contains('"$functionName"'));
     });
   });
 }
