@@ -81,6 +81,130 @@ void main() {
     });
   });
 
+  group('UnterminatedStringError', () {
+    test('toString() includes the starting location', () {
+      const Location location = Location(row: 5, column: 10);
+      final UnterminatedStringError error = UnterminatedStringError(location);
+
+      expect(
+        error.toString(),
+        equals('Error: Unterminated string starting at [5, 10]'),
+      );
+    });
+  });
+
+  group('UnterminatedCommentError', () {
+    test('toString() reports unterminated comment', () {
+      const UnterminatedCommentError error = UnterminatedCommentError();
+
+      expect(
+        error.toString(),
+        equals('Error: Unterminated multi-line comment'),
+      );
+    });
+  });
+
+  group('InvalidEscapeSequenceError', () {
+    test('toString() includes the escape character and location', () {
+      const Character character = Character(
+        value: 'q',
+        location: Location(row: 3, column: 8),
+      );
+      final InvalidEscapeSequenceError error = InvalidEscapeSequenceError(
+        character,
+      );
+
+      expect(
+        error.toString(),
+        equals("Error: Invalid escape sequence '\\q' at [3, 8]"),
+      );
+    });
+  });
+
+  group('InvalidHexEscapeError', () {
+    test('toString() includes escape type, expected digits, and actual', () {
+      const Character character = Character(
+        value: 'g',
+        location: Location(row: 2, column: 5),
+      );
+      final InvalidHexEscapeError error = InvalidHexEscapeError(
+        character,
+        'x',
+        2,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          "Error: Invalid hex escape: expected 2 hex digits after '\\x', got 'g' at [2, 5]",
+        ),
+      );
+    });
+
+    test('toString() for unicode escape with 4 digits', () {
+      const Character character = Character(
+        value: 'z',
+        location: Location(row: 1, column: 10),
+      );
+      final InvalidHexEscapeError error = InvalidHexEscapeError(
+        character,
+        'u',
+        4,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          "Error: Invalid hex escape: expected 4 hex digits after '\\u', got 'z' at [1, 10]",
+        ),
+      );
+    });
+  });
+
+  group('InvalidBracedEscapeError', () {
+    test('toString() includes the message and location', () {
+      final InvalidBracedEscapeError error = InvalidBracedEscapeError(
+        'Missing closing brace',
+        const Location(row: 4, column: 12),
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Missing closing brace at [4, 12]'),
+      );
+    });
+  });
+
+  group('InvalidCodePointError', () {
+    test('toString() includes the code point in hex and location', () {
+      final InvalidCodePointError error = InvalidCodePointError(
+        0x110000,
+        const Location(row: 1, column: 5),
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Invalid code point U+110000: exceeds maximum U+10FFFF at [1, 5]',
+        ),
+      );
+    });
+
+    test('toString() pads small code points to 4 digits', () {
+      final InvalidCodePointError error = InvalidCodePointError(
+        0x1FFFFF,
+        const Location(row: 2, column: 3),
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Invalid code point U+1FFFFF: exceeds maximum U+10FFFF at [2, 3]',
+        ),
+      );
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // Syntactic errors
   // ---------------------------------------------------------------------------
@@ -130,6 +254,18 @@ void main() {
       expect(
         error.toString(),
         equals('Error: Unexpected end of file'),
+      );
+    });
+  });
+
+  group('UnexpectedTokenError', () {
+    test('toString() includes the token', () {
+      final IdentifierToken token = identifierToken('extra', 5, 15);
+      final UnexpectedTokenError error = UnexpectedTokenError(token);
+
+      expect(
+        error.toString(),
+        equals('Error: Unexpected token "extra" at [5, 15] after expression'),
       );
     });
   });
@@ -241,6 +377,84 @@ void main() {
       expect(
         error.toString(),
         equals('Error: Cannot redefine standard library function "print"'),
+      );
+    });
+  });
+
+  group('CannotDeleteStandardLibraryError', () {
+    test('toString() includes the function name', () {
+      const CannotDeleteStandardLibraryError error =
+          CannotDeleteStandardLibraryError(function: 'map');
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot delete standard library function "map"'),
+      );
+    });
+  });
+
+  group('FunctionNotFoundError', () {
+    test('toString() includes the function name', () {
+      const FunctionNotFoundError error = FunctionNotFoundError(
+        function: 'missingFunc',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Function "missingFunc" not found'),
+      );
+    });
+  });
+
+  group('CannotRenameStandardLibraryError', () {
+    test('toString() includes the function name', () {
+      const CannotRenameStandardLibraryError error =
+          CannotRenameStandardLibraryError(function: 'filter');
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot rename standard library function "filter"'),
+      );
+    });
+  });
+
+  group('FunctionAlreadyExistsError', () {
+    test('toString() includes the function name', () {
+      const FunctionAlreadyExistsError error = FunctionAlreadyExistsError(
+        function: 'duplicate',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Function "duplicate" already exists'),
+      );
+    });
+  });
+
+  group('NotCallableError', () {
+    test('toString() includes value and type', () {
+      const NotCallableError error = NotCallableError(
+        value: '42',
+        type: 'Number',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot call Number literal "42"'),
+      );
+    });
+  });
+
+  group('NotIndexableError', () {
+    test('toString() includes value and type', () {
+      const NotIndexableError error = NotIndexableError(
+        value: 'true',
+        type: 'Boolean',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot index Boolean literal "true"'),
       );
     });
   });
@@ -393,6 +607,154 @@ void main() {
         equals(
           'Runtime error: Function "readFile" is not implemented on the web platform',
         ),
+      );
+    });
+  });
+
+  group('EmptyCollectionError', () {
+    test('toString() includes function and collection type', () {
+      final EmptyCollectionError error = EmptyCollectionError(
+        function: 'head',
+        collectionType: 'list',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Cannot get element from empty list in function "head"',
+        ),
+      );
+    });
+  });
+
+  group('IndexOutOfBoundsError', () {
+    test('toString() includes function, index, and length', () {
+      final IndexOutOfBoundsError error = IndexOutOfBoundsError(
+        function: 'at',
+        index: 10,
+        length: 5,
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Index 10 is out of bounds for at (length: 5)'),
+      );
+    });
+  });
+
+  group('NegativeIndexError', () {
+    test('toString() includes function and index', () {
+      final NegativeIndexError error = NegativeIndexError(
+        function: 'at',
+        index: -3,
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Negative index -3 is not allowed for at'),
+      );
+    });
+  });
+
+  group('DivisionByZeroError', () {
+    test('toString() includes the function name', () {
+      final DivisionByZeroError error = DivisionByZeroError(
+        function: 'divide',
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Division by zero is not allowed in "divide"'),
+      );
+    });
+  });
+
+  group('InvalidNumericOperationError', () {
+    test('toString() includes function and reason', () {
+      final InvalidNumericOperationError error = InvalidNumericOperationError(
+        function: 'sqrt',
+        reason: 'negative number',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid numeric operation in "sqrt": negative number',
+        ),
+      );
+    });
+  });
+
+  group('ParseError', () {
+    test('toString() includes function, input, and target type', () {
+      final ParseError error = ParseError(
+        function: 'toNumber',
+        input: 'abc',
+        targetType: 'Number',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Cannot parse "abc" as Number in "toNumber"',
+        ),
+      );
+    });
+  });
+
+  group('JsonParseError', () {
+    test('toString() includes details and input', () {
+      final JsonParseError error = JsonParseError(
+        input: '{"invalid": }',
+        details: 'Unexpected character',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Unexpected character. Input: "{"invalid": }"',
+        ),
+      );
+    });
+
+    test('toString() truncates long input to 50 characters', () {
+      final String longInput = 'a' * 100;
+      final JsonParseError error = JsonParseError(
+        input: longInput,
+        details: 'Parse failed',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Parse failed. Input: "${'a' * 50}..."',
+        ),
+      );
+    });
+
+    test('toString() does not truncate input of exactly 50 characters', () {
+      final String exactInput = 'b' * 50;
+      final JsonParseError error = JsonParseError(
+        input: exactInput,
+        details: 'Syntax error',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Syntax error. Input: "${'b' * 50}"',
+        ),
+      );
+    });
+  });
+
+  group('RecursionLimitError', () {
+    test('toString() includes the limit', () {
+      final RecursionLimitError error = RecursionLimitError(limit: 1000);
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Maximum recursion depth of 1000 exceeded'),
       );
     });
   });
