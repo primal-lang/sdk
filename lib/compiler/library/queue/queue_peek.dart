@@ -32,7 +32,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
 
     if (a is QueueTerm) {
       if (a.value.isEmpty) {
-        throw const RuntimeError('Cannot peek from an empty queue');
+        throw EmptyCollectionError(function: name, collectionType: 'queue');
       }
 
       return a.value.first;

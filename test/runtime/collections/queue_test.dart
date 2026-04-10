@@ -37,7 +37,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         'main = queue.dequeue(queue.new([]))',
       );
-      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+      expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
     test('queue.dequeue removes front element from queue', () {
@@ -58,7 +58,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         'main = queue.peek(queue.new([]))',
       );
-      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+      expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
     test('queue.peek returns front element of multi-element queue', () {
@@ -810,7 +810,7 @@ void main() {
 
   group('Queue Error Messages', () {
     test(
-      'queue.dequeue on empty queue throws RuntimeError with correct message',
+      'queue.dequeue on empty queue throws EmptyCollectionError with correct message',
       () {
         final RuntimeFacade runtime = getRuntime(
           'main = queue.dequeue(queue.new([]))',
@@ -818,10 +818,12 @@ void main() {
         expect(
           runtime.executeMain,
           throwsA(
-            allOf(
-              isA<RuntimeError>(),
-              predicate<RuntimeError>(
-                (error) => error.toString().contains('empty queue'),
+            isA<EmptyCollectionError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(
+                contains('empty queue'),
+                contains('queue.dequeue'),
               ),
             ),
           ),
@@ -830,7 +832,7 @@ void main() {
     );
 
     test(
-      'queue.peek on empty queue throws RuntimeError with correct message',
+      'queue.peek on empty queue throws EmptyCollectionError with correct message',
       () {
         final RuntimeFacade runtime = getRuntime(
           'main = queue.peek(queue.new([]))',
@@ -838,10 +840,12 @@ void main() {
         expect(
           runtime.executeMain,
           throwsA(
-            allOf(
-              isA<RuntimeError>(),
-              predicate<RuntimeError>(
-                (error) => error.toString().contains('empty queue'),
+            isA<EmptyCollectionError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(
+                contains('empty queue'),
+                contains('queue.peek'),
               ),
             ),
           ),

@@ -32,7 +32,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
 
     if (a is QueueTerm) {
       if (a.value.isEmpty) {
-        throw const RuntimeError('Cannot dequeue from an empty queue');
+        throw EmptyCollectionError(function: name, collectionType: 'queue');
       }
 
       return QueueTerm(a.value.sublist(1));

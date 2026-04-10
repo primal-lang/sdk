@@ -37,7 +37,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         'main = stack.pop(stack.new([]))',
       );
-      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+      expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
     test('stack.pop removes top element from stack', () {
@@ -58,7 +58,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         'main = stack.peek(stack.new([]))',
       );
-      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+      expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
     test('stack.peek returns top element of multi-element stack', () {
@@ -970,7 +970,7 @@ void main() {
 
   group('Stack Error Messages', () {
     test(
-      'stack.pop on empty stack throws RuntimeError with correct message',
+      'stack.pop on empty stack throws EmptyCollectionError with correct message',
       () {
         final RuntimeFacade runtime = getRuntime(
           'main = stack.pop(stack.new([]))',
@@ -978,10 +978,12 @@ void main() {
         expect(
           runtime.executeMain,
           throwsA(
-            allOf(
-              isA<RuntimeError>(),
-              predicate<RuntimeError>(
-                (error) => error.toString().contains('empty stack'),
+            isA<EmptyCollectionError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(
+                contains('empty stack'),
+                contains('stack.pop'),
               ),
             ),
           ),
@@ -990,7 +992,7 @@ void main() {
     );
 
     test(
-      'stack.peek on empty stack throws RuntimeError with correct message',
+      'stack.peek on empty stack throws EmptyCollectionError with correct message',
       () {
         final RuntimeFacade runtime = getRuntime(
           'main = stack.peek(stack.new([]))',
@@ -998,10 +1000,12 @@ void main() {
         expect(
           runtime.executeMain,
           throwsA(
-            allOf(
-              isA<RuntimeError>(),
-              predicate<RuntimeError>(
-                (error) => error.toString().contains('empty stack'),
+            isA<EmptyCollectionError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(
+                contains('empty stack'),
+                contains('stack.peek'),
               ),
             ),
           ),

@@ -32,7 +32,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
 
     if (a is StackTerm) {
       if (a.value.isEmpty) {
-        throw const RuntimeError('Cannot pop from an empty stack');
+        throw EmptyCollectionError(function: name, collectionType: 'stack');
       }
 
       return StackTerm(a.value.sublist(0, a.value.length - 1));
