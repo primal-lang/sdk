@@ -296,6 +296,28 @@ void main() {
         ),
       );
     });
+
+    test('toString() with empty parameter lists', () {
+      const FunctionSignature function1 = FunctionSignature(
+        name: 'getValue',
+        parameters: [],
+      );
+      const FunctionSignature function2 = FunctionSignature(
+        name: 'getValue',
+        parameters: [],
+      );
+      final DuplicatedFunctionError error = DuplicatedFunctionError(
+        function1: function1,
+        function2: function2,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Duplicated function "getValue" with parameters () and ()',
+        ),
+      );
+    });
   });
 
   group('DuplicatedParameterError', () {
@@ -474,6 +496,21 @@ void main() {
         ),
       );
     });
+
+    test('toString() with zero expected arguments', () {
+      const error = InvalidNumberOfArgumentsError(
+        function: 'noArgs',
+        expected: 0,
+        actual: 1,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Invalid number of arguments calling function "noArgs": expected 0, got 1',
+        ),
+      );
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -492,6 +529,36 @@ void main() {
         error.toString(),
         equals(
           'Runtime error: Invalid argument types for function "add". Expected: (Number, Number). Actual: (String, Boolean)',
+        ),
+      );
+    });
+
+    test('toString() with single argument type', () {
+      final InvalidArgumentTypesError error = InvalidArgumentTypesError(
+        function: 'negate',
+        expected: [const NumberType()],
+        actual: [const StringType()],
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid argument types for function "negate". Expected: (Number). Actual: (String)',
+        ),
+      );
+    });
+
+    test('toString() with empty type lists', () {
+      final InvalidArgumentTypesError error = InvalidArgumentTypesError(
+        function: 'getValue',
+        expected: [],
+        actual: [],
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid argument types for function "getValue". Expected: (). Actual: ()',
         ),
       );
     });
@@ -640,6 +707,19 @@ void main() {
         equals('Runtime error: Index 10 is out of bounds for at (length: 5)'),
       );
     });
+
+    test('toString() with zero length', () {
+      final IndexOutOfBoundsError error = IndexOutOfBoundsError(
+        function: 'first',
+        index: 0,
+        length: 0,
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Index 0 is out of bounds for first (length: 0)'),
+      );
+    });
   });
 
   group('NegativeIndexError', () {
@@ -744,6 +824,48 @@ void main() {
         equals(
           'Runtime error: Invalid JSON: Syntax error. Input: "${'b' * 50}"',
         ),
+      );
+    });
+
+    test('toString() does not truncate input of 49 characters', () {
+      final String shortInput = 'c' * 49;
+      final JsonParseError error = JsonParseError(
+        input: shortInput,
+        details: 'Unexpected end',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Unexpected end. Input: "${'c' * 49}"',
+        ),
+      );
+    });
+
+    test('toString() truncates input of 51 characters', () {
+      final String slightlyLongInput = 'd' * 51;
+      final JsonParseError error = JsonParseError(
+        input: slightlyLongInput,
+        details: 'Bad format',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Bad format. Input: "${'d' * 50}..."',
+        ),
+      );
+    });
+
+    test('toString() with empty input', () {
+      final JsonParseError error = JsonParseError(
+        input: '',
+        details: 'Empty input',
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Invalid JSON: Empty input. Input: ""'),
       );
     });
   });
