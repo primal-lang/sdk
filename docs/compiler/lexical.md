@@ -141,16 +141,23 @@ Numeric literals support underscore separators for readability (e.g., `1_000_000
 
 ## Two-Character Operators
 
-Four states peek at the next character to distinguish single-character tokens from two-character compound tokens:
+Several states peek at the next character to distinguish single-character tokens from two-character compound tokens:
 
-| State          | If next is `=`               | Otherwise (delimiter)    |
-| -------------- | ---------------------------- | ------------------------ |
-| `EqualsState`  | `EqualToken` (`==`)          | `AssignToken` (`=`)      |
-| `GreaterState` | `GreaterOrEqualToken` (`>=`) | `GreaterThanToken` (`>`) |
-| `LessState`    | `LessOrEqualToken` (`<=`)    | `LessThanToken` (`<`)    |
-| `BangState`    | `NotEqualToken` (`!=`)       | `BangToken` (`!`)        |
+| State            | If next is... | Token produced                      | Otherwise (delimiter)          |
+| ---------------- | ------------- | ----------------------------------- | ------------------------------ |
+| `EqualsState`    | `=`           | `EqualToken` (`==`)                 | `AssignToken` (`=`)            |
+| `GreaterState`   | `=`           | `GreaterOrEqualToken` (`>=`)        | `GreaterThanToken` (`>`)       |
+| `LessState`      | `=`           | `LessOrEqualToken` (`<=`)           | `LessThanToken` (`<`)          |
+| `BangState`      | `=`           | `NotEqualToken` (`!=`)              | `BangToken` (`!`)              |
+| `PipeState`      | `\|`          | `DoublePipeToken` (`\|\|`, lazy)    | `PipeToken` (`\|`, strict)     |
+| `AmpersandState` | `&`           | `DoubleAmpersandToken` (`&&`, lazy) | `AmpersandToken` (`&`, strict) |
 
-In all cases the lookahead pattern applies: if the next character is not `=`, `iterator.back()` un-consumes it.
+In all cases the lookahead pattern applies: if the next character does not form a compound token, `iterator.back()` un-consumes it.
+
+The logical operators have semantic differences:
+
+- `&` and `|` (single-character) are **strict** — both operands are always evaluated
+- `&&` and `||` (double-character) are **short-circuit** — the second operand is only evaluated if needed
 
 ## Identifiers and Keywords
 
@@ -168,12 +175,12 @@ Keywords are not recognized by dedicated `InitState` branches. Instead, `Identif
 - `isBoolean` → `BooleanToken`
 - `isIf` → `IfToken`
 - `isElse` → `ElseToken`
-- `isAnd` → `AmpersandToken` (keyword alias for `&`)
-- `isOr` → `PipeToken` (keyword alias for `|`)
+- `isAnd` → `DoubleAmpersandToken` (keyword alias for `&&`, short-circuit)
+- `isOr` → `DoublePipeToken` (keyword alias for `||`, short-circuit)
 - `isNot` → `BangToken` (keyword alias for `!`)
 - Otherwise → `IdentifierToken`
 
-This means keywords are identifiers that are reclassified at the boundary. The `and`, `or`, and `not` keywords are aliases that produce operator tokens with the canonical symbol (`&`, `|`, `!`) rather than the keyword text.
+This means keywords are identifiers that are reclassified at the boundary. The `and` and `or` keywords produce double-character operator tokens (`&&`, `||`) for short-circuit evaluation. The `not` keyword produces `BangToken` with the canonical symbol `!`.
 
 ## Delimiter Predicates
 
@@ -220,15 +227,15 @@ After the main loop completes, the analyzer checks for unterminated or incomplet
 
 All tokens extend `Token<T>` and carry a typed value plus location:
 
-| Category    | Tokens                                                                                                                                                                                                                        | Value type              |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| Literals    | `StringToken`, `NumberToken`, `BooleanToken`                                                                                                                                                                                  | `String`, `num`, `bool` |
-| Identifiers | `IdentifierToken`                                                                                                                                                                                                             | `String`                |
-| Keywords    | `IfToken`, `ElseToken`                                                                                                                                                                                                        | `String`                |
-| Assignment  | `AssignToken` (`=`)                                                                                                                                                                                                           | `String`                |
-| Binary ops  | `PlusToken`, `MinusToken`, `AsteriskToken`, `ForwardSlashToken`, `PercentToken`, `PipeToken`, `AmpersandToken`, `EqualToken`, `NotEqualToken`, `GreaterThanToken`, `GreaterOrEqualToken`, `LessThanToken`, `LessOrEqualToken` | `String`                |
-| Unary ops   | `BangToken`                                                                                                                                                                                                                   | `String`                |
-| Symbols     | `AtToken` (`@`)                                                                                                                                                                                                               | `String`                |
-| Delimiters  | `OpenParenthesisToken`, `CloseParenthesisToken`, `OpenBracketToken`, `CloseBracketToken`, `OpenBracesToken`, `CloseBracesToken`, `CommaToken`, `ColonToken`                                                                   | `String`                |
+| Category    | Tokens                                                                                                                                                                                                                                                                   | Value type              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| Literals    | `StringToken`, `NumberToken`, `BooleanToken`                                                                                                                                                                                                                             | `String`, `num`, `bool` |
+| Identifiers | `IdentifierToken`                                                                                                                                                                                                                                                        | `String`                |
+| Keywords    | `IfToken`, `ElseToken`                                                                                                                                                                                                                                                   | `String`                |
+| Assignment  | `AssignToken` (`=`)                                                                                                                                                                                                                                                      | `String`                |
+| Binary ops  | `PlusToken`, `MinusToken`, `AsteriskToken`, `ForwardSlashToken`, `PercentToken`, `PipeToken`, `DoublePipeToken`, `AmpersandToken`, `DoubleAmpersandToken`, `EqualToken`, `NotEqualToken`, `GreaterThanToken`, `GreaterOrEqualToken`, `LessThanToken`, `LessOrEqualToken` | `String`                |
+| Unary ops   | `BangToken`                                                                                                                                                                                                                                                              | `String`                |
+| Symbols     | `AtToken` (`@`)                                                                                                                                                                                                                                                          | `String`                |
+| Delimiters  | `OpenParenthesisToken`, `CloseParenthesisToken`, `OpenBracketToken`, `CloseBracketToken`, `OpenBracesToken`, `CloseBracesToken`, `CommaToken`, `ColonToken`                                                                                                              | `String`                |
 
 `NumberToken` parses the lexeme string to `num` and `BooleanToken` parses to `bool` at construction time. All other token types store the raw lexeme string.

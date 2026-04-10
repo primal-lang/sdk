@@ -197,32 +197,62 @@
 
 ## Logical Operators
 
-### And
+### And (Short-Circuit)
 
-- **Symbols:** `&`, `&&`, `and`
+- **Symbols:** `&&`, `and`
 - **Input:** Two boolean arguments
 - **Output:** True only if both arguments are true, false otherwise
+- **Evaluation:** Short-circuit (lazy) - the second operand is only evaluated if the first is true
 - **Purity:** Pure
 - **Example:**
 
 ```
-true & false   // returns false
 true && false  // returns false
 true and false // returns false
+false && error.throw(-1, "Not evaluated") // returns false (no error thrown)
 ```
 
-### Or
+### And (Strict)
 
-- **Symbols:** `|`, `||`, `or`
+- **Symbol:** `&`
 - **Input:** Two boolean arguments
-- **Output:** True if at least one argument is true, false otherwise
+- **Output:** True only if both arguments are true, false otherwise
+- **Evaluation:** Strict (eager) - both operands are always evaluated
 - **Purity:** Pure
 - **Example:**
 
 ```
-true | false   // returns true
+true & false // returns false
+false & true // returns false (both operands evaluated)
+```
+
+### Or (Short-Circuit)
+
+- **Symbols:** `||`, `or`
+- **Input:** Two boolean arguments
+- **Output:** True if at least one argument is true, false otherwise
+- **Evaluation:** Short-circuit (lazy) - the second operand is only evaluated if the first is false
+- **Purity:** Pure
+- **Example:**
+
+```
 true || false  // returns true
 true or false  // returns true
+true || error.throw(-1, "Not evaluated") // returns true (no error thrown)
+```
+
+### Or (Strict)
+
+- **Symbol:** `|`
+- **Input:** Two boolean arguments
+- **Output:** True if at least one argument is true, false otherwise
+- **Evaluation:** Strict (eager) - both operands are always evaluated
+- **Purity:** Pure
+- **Example:**
+
+```
+true | false  // returns true
+false | true  // returns true (both operands evaluated)
 ```
 
 ### Not
