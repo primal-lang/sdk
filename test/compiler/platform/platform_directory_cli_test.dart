@@ -507,5 +507,533 @@ void main() {
       expect(directory, isA<Directory>());
       expect(directory.path, equals('relative/path'));
     });
+
+    test('fromPath with trailing slash', () {
+      final String pathWithSlash = '${tempDir.path}/trailing/';
+      final Directory directory = platform.fromPath(pathWithSlash);
+
+      expect(directory, isA<Directory>());
+      expect(directory.path, equals(pathWithSlash));
+    });
+
+    test('fromPath with dot path', () {
+      final Directory directory = platform.fromPath('.');
+
+      expect(directory, isA<Directory>());
+      expect(directory.path, equals('.'));
+    });
+
+    test('fromPath with parent reference path', () {
+      final Directory directory = platform.fromPath('..');
+
+      expect(directory, isA<Directory>());
+      expect(directory.path, equals('..'));
+    });
+
+    test('fromPath with unicode characters', () {
+      final String unicodePath = '${tempDir.path}/директория_名前';
+      final Directory directory = platform.fromPath(unicodePath);
+
+      expect(directory, isA<Directory>());
+      expect(directory.path, equals(unicodePath));
+    });
+
+    test('exists returns true for directory just created', () {
+      final Directory directory = Directory('${tempDir.path}/just_created');
+      directory.createSync();
+
+      expect(platform.exists(directory), isTrue);
+    });
+
+    test('exists returns false after directory is deleted', () {
+      final Directory directory = Directory('${tempDir.path}/to_be_deleted')
+        ..createSync();
+      directory.deleteSync();
+
+      expect(platform.exists(directory), isFalse);
+    });
+
+    test('create with path containing unicode characters', () {
+      final Directory directory = Directory('${tempDir.path}/目录_каталог');
+
+      expect(platform.create(directory), isTrue);
+      expect(directory.existsSync(), isTrue);
+    });
+
+    test('create with very long path segment', () {
+      final String longName = 'a' * 100;
+      final Directory directory = Directory('${tempDir.path}/$longName');
+
+      expect(platform.create(directory), isTrue);
+      expect(directory.existsSync(), isTrue);
+    });
+
+    test('create deeply nested directories in one call', () {
+      final Directory directory = Directory(
+        '${tempDir.path}/l1/l2/l3/l4/l5/l6/l7/l8/l9/l10',
+      );
+
+      expect(platform.create(directory), isTrue);
+      expect(directory.existsSync(), isTrue);
+    });
+
+    test('delete directory with only subdirectories', () {
+      final Directory directory = Directory('${tempDir.path}/only_subdirs')
+        ..createSync();
+      Directory('${directory.path}/sub1').createSync();
+      Directory('${directory.path}/sub2').createSync();
+      Directory('${directory.path}/sub1/subsub').createSync();
+
+      expect(platform.delete(directory), isTrue);
+      expect(directory.existsSync(), isFalse);
+    });
+
+    test('delete directory with only files', () {
+      final Directory directory = Directory('${tempDir.path}/only_files')
+        ..createSync();
+      File('${directory.path}/file1.txt').createSync();
+      File('${directory.path}/file2.txt').createSync();
+
+      expect(platform.delete(directory), isTrue);
+      expect(directory.existsSync(), isFalse);
+    });
+
+    test('delete empty directory', () {
+      final Directory directory = Directory('${tempDir.path}/empty_del')
+        ..createSync();
+
+      expect(platform.delete(directory), isTrue);
+      expect(directory.existsSync(), isFalse);
+    });
+
+    test('copy source with many files', () {
+      final Directory source = Directory('${tempDir.path}/many_files_src')
+        ..createSync();
+      for (int index = 0; index < 20; index++) {
+        File(
+          '${source.path}/file_$index.txt',
+        ).writeAsStringSync('content_$index');
+      }
+      final Directory destination = Directory('${tempDir.path}/many_files_dst');
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(destination.listSync().length, equals(20));
+    });
+
+    test('copy preserves subdirectory structure', () {
+      final Directory source = Directory('${tempDir.path}/struct_src')
+        ..createSync();
+      Directory('${source.path}/a').createSync();
+      Directory('${source.path}/b').createSync();
+      Directory('${source.path}/a/c').createSync();
+      File('${source.path}/a/c/file.txt').writeAsStringSync('data');
+      final Directory destination = Directory('${tempDir.path}/struct_dst');
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(Directory('${destination.path}/a').existsSync(), isTrue);
+      expect(Directory('${destination.path}/b').existsSync(), isTrue);
+      expect(Directory('${destination.path}/a/c').existsSync(), isTrue);
+      expect(File('${destination.path}/a/c/file.txt').existsSync(), isTrue);
+    });
+
+    test('copy with unicode directory names', () {
+      final Directory source = Directory('${tempDir.path}/源目录')..createSync();
+      File('${source.path}/文件.txt').writeAsStringSync('内容');
+      final Directory destination = Directory('${tempDir.path}/目标目录');
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(
+        File('${destination.path}/文件.txt').readAsStringSync(),
+        equals('内容'),
+      );
+    });
+
+    test('move to destination in different parent directory', () {
+      final Directory parent1 = Directory('${tempDir.path}/parent1')
+        ..createSync();
+      final Directory parent2 = Directory('${tempDir.path}/parent2')
+        ..createSync();
+      final Directory source = Directory('${parent1.path}/source')
+        ..createSync();
+      File('${source.path}/file.txt').writeAsStringSync('data');
+      final Directory destination = Directory('${parent2.path}/destination');
+
+      expect(platform.move(source, destination), isTrue);
+      expect(destination.existsSync(), isTrue);
+      expect(source.existsSync(), isFalse);
+      expect(
+        File('${destination.path}/file.txt').readAsStringSync(),
+        equals('data'),
+      );
+    });
+
+    test('move directory with many files', () {
+      final Directory source = Directory('${tempDir.path}/mv_many_src')
+        ..createSync();
+      for (int index = 0; index < 10; index++) {
+        File('${source.path}/file_$index.txt').writeAsStringSync('content');
+      }
+      final Directory destination = Directory('${tempDir.path}/mv_many_dst');
+
+      expect(platform.move(source, destination), isTrue);
+      expect(destination.listSync().length, equals(10));
+      expect(source.existsSync(), isFalse);
+    });
+
+    test('rename with unicode characters', () {
+      final Directory directory = Directory('${tempDir.path}/rename_unicode')
+        ..createSync();
+
+      expect(platform.rename(directory, '新名字_новое'), isTrue);
+      expect(
+        Directory('${tempDir.path}/新名字_новое').existsSync(),
+        isTrue,
+      );
+    });
+
+    test('rename preserves nested structure', () {
+      final Directory directory = Directory('${tempDir.path}/rename_nested')
+        ..createSync();
+      Directory('${directory.path}/sub1/sub2').createSync(recursive: true);
+      File('${directory.path}/sub1/sub2/deep.txt').writeAsStringSync('deep');
+
+      expect(platform.rename(directory, 'renamed_nested'), isTrue);
+      expect(
+        File(
+          '${tempDir.path}/renamed_nested/sub1/sub2/deep.txt',
+        ).readAsStringSync(),
+        equals('deep'),
+      );
+    });
+
+    test('rename directory to same name succeeds', () {
+      final Directory directory = Directory('${tempDir.path}/same_name')
+        ..createSync();
+      final String originalName = platform.name(directory);
+
+      expect(platform.rename(directory, originalName), isTrue);
+      expect(Directory('${tempDir.path}/same_name').existsSync(), isTrue);
+    });
+
+    test('path returns consistent absolute path', () {
+      final Directory directory = Directory('${tempDir.path}/consistent');
+
+      final String result1 = platform.path(directory);
+      final String result2 = platform.path(directory);
+
+      expect(result1, equals(result2));
+    });
+
+    test('path for root directory', () {
+      final Directory root = Directory('/');
+
+      final String result = platform.path(root);
+
+      expect(result, equals('/'));
+    });
+
+    test('name for directory with trailing slash in path', () {
+      final Directory directory = Directory('${tempDir.path}/trailing_name/');
+
+      final String result = platform.name(directory);
+
+      expect(result, equals('trailing_name'));
+    });
+
+    test('name for single component path', () {
+      final Directory directory = Directory('single');
+
+      final String result = platform.name(directory);
+
+      expect(result, equals('single'));
+    });
+
+    test('name with dot in directory name', () {
+      final Directory directory = Directory('${tempDir.path}/name.with.dots')
+        ..createSync();
+
+      expect(platform.name(directory), equals('name.with.dots'));
+    });
+
+    test('parent of root returns root', () {
+      final Directory root = Directory('/');
+
+      final Directory parentDirectory = platform.parent(root);
+
+      expect(parentDirectory.path, equals('/'));
+    });
+
+    test('parent returns correct type', () {
+      final Directory directory = Directory('${tempDir.path}/type_test');
+
+      final Directory parentDirectory = platform.parent(directory);
+
+      expect(parentDirectory, isA<Directory>());
+    });
+
+    test('parent chain leads to root', () {
+      final Directory directory = Directory('${tempDir.path}/a/b/c')
+        ..createSync(recursive: true);
+
+      Directory current = directory;
+      int depth = 0;
+      while (current.path != '/' && depth < 100) {
+        current = platform.parent(current);
+        depth++;
+      }
+
+      expect(current.path, equals('/'));
+    });
+
+    test('list returns correct types for mixed contents', () {
+      final Directory directory = Directory('${tempDir.path}/type_list')
+        ..createSync();
+      File('${directory.path}/file.txt').createSync();
+      Directory('${directory.path}/dir').createSync();
+
+      final List<FileSystemEntity> contents = platform.list(directory);
+
+      expect(contents.any((FileSystemEntity entity) => entity is File), isTrue);
+      expect(
+        contents.any((FileSystemEntity entity) => entity is Directory),
+        isTrue,
+      );
+    });
+
+    test('list returns entities with correct paths', () {
+      final Directory directory = Directory('${tempDir.path}/path_list')
+        ..createSync();
+      File('${directory.path}/file.txt').createSync();
+
+      final List<FileSystemEntity> contents = platform.list(directory);
+
+      expect(contents.first.path, contains('file.txt'));
+    });
+
+    test('list directory with hidden files', () {
+      final Directory directory = Directory('${tempDir.path}/hidden_list')
+        ..createSync();
+      File('${directory.path}/.hidden').createSync();
+      File('${directory.path}/visible.txt').createSync();
+
+      final List<FileSystemEntity> contents = platform.list(directory);
+
+      expect(contents.length, equals(2));
+    });
+
+    test('list directory with unicode named files', () {
+      final Directory directory = Directory('${tempDir.path}/unicode_list')
+        ..createSync();
+      File('${directory.path}/文件.txt').createSync();
+      File('${directory.path}/файл.txt').createSync();
+
+      final List<FileSystemEntity> contents = platform.list(directory);
+
+      expect(contents.length, equals(2));
+    });
+
+    test('copy does not modify source directory', () {
+      final Directory source = Directory('${tempDir.path}/no_modify_src')
+        ..createSync();
+      File('${source.path}/original.txt').writeAsStringSync('original');
+      final Directory destination = Directory('${tempDir.path}/no_modify_dst');
+
+      platform.copy(source, destination);
+
+      expect(source.existsSync(), isTrue);
+      expect(
+        File('${source.path}/original.txt').readAsStringSync(),
+        equals('original'),
+      );
+    });
+
+    test('copy creates independent destination', () {
+      final Directory source = Directory('${tempDir.path}/independent_src')
+        ..createSync();
+      File('${source.path}/data.txt').writeAsStringSync('original');
+      final Directory destination = Directory(
+        '${tempDir.path}/independent_dst',
+      );
+
+      platform.copy(source, destination);
+      File('${destination.path}/data.txt').writeAsStringSync('modified');
+
+      expect(
+        File('${source.path}/data.txt').readAsStringSync(),
+        equals('original'),
+      );
+      expect(
+        File('${destination.path}/data.txt').readAsStringSync(),
+        equals('modified'),
+      );
+    });
+
+    test('exists with symbolic link to directory', () {
+      final Directory target = Directory('${tempDir.path}/link_target')
+        ..createSync();
+      final Link link = Link('${tempDir.path}/dir_link')
+        ..createSync(target.path);
+      final Directory directoryAtLink = Directory(link.path);
+
+      expect(platform.exists(directoryAtLink), isTrue);
+    });
+
+    test('exists returns false for broken symbolic link', () {
+      final Directory target = Directory('${tempDir.path}/broken_target')
+        ..createSync();
+      final Link link = Link('${tempDir.path}/broken_link')
+        ..createSync(target.path);
+      target.deleteSync();
+      final Directory directoryAtLink = Directory(link.path);
+
+      expect(platform.exists(directoryAtLink), isFalse);
+    });
+
+    test('create in nonexistent parent creates entire path', () {
+      final Directory directory = Directory(
+        '${tempDir.path}/nonexistent_parent/child/grandchild',
+      );
+
+      expect(platform.create(directory), isTrue);
+      expect(directory.existsSync(), isTrue);
+      expect(
+        Directory('${tempDir.path}/nonexistent_parent').existsSync(),
+        isTrue,
+      );
+      expect(
+        Directory('${tempDir.path}/nonexistent_parent/child').existsSync(),
+        isTrue,
+      );
+    });
+
+    test('move with source and destination in same directory', () {
+      final Directory source = Directory('${tempDir.path}/same_parent_src')
+        ..createSync();
+      File('${source.path}/file.txt').createSync();
+      final Directory destination = Directory(
+        '${tempDir.path}/same_parent_dst',
+      );
+
+      expect(platform.move(source, destination), isTrue);
+      expect(destination.existsSync(), isTrue);
+      expect(source.existsSync(), isFalse);
+    });
+
+    test('rename with very long name', () {
+      final Directory directory = Directory('${tempDir.path}/long_rename_src')
+        ..createSync();
+      final String longName = 'a' * 100;
+
+      expect(platform.rename(directory, longName), isTrue);
+      expect(Directory('${tempDir.path}/$longName').existsSync(), isTrue);
+    });
+
+    test('list preserves entity absolute paths', () {
+      final Directory directory = Directory('${tempDir.path}/abs_path_list')
+        ..createSync();
+      File('${directory.path}/test.txt').createSync();
+
+      final List<FileSystemEntity> contents = platform.list(directory);
+
+      expect(contents.first.path, startsWith('/'));
+    });
+
+    test('fromPath preserves exact path string', () {
+      const String exactPath = '/exact/path/to/directory';
+      final Directory directory = platform.fromPath(exactPath);
+
+      expect(directory.path, equals(exactPath));
+    });
+
+    test('copy with binary file content', () {
+      final Directory source = Directory('${tempDir.path}/binary_src')
+        ..createSync();
+      final List<int> binaryData = List<int>.generate(
+        256,
+        (int index) => index,
+      );
+      File('${source.path}/binary.dat').writeAsBytesSync(binaryData);
+      final Directory destination = Directory('${tempDir.path}/binary_dst');
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(
+        File('${destination.path}/binary.dat').readAsBytesSync(),
+        equals(binaryData),
+      );
+    });
+
+    test('copy with large file', () {
+      final Directory source = Directory('${tempDir.path}/large_src')
+        ..createSync();
+      final String largeContent = 'x' * 100000;
+      File('${source.path}/large.txt').writeAsStringSync(largeContent);
+      final Directory destination = Directory('${tempDir.path}/large_dst');
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(
+        File('${destination.path}/large.txt').readAsStringSync(),
+        equals(largeContent),
+      );
+    });
+
+    test('move preserves binary file content', () {
+      final Directory source = Directory('${tempDir.path}/mv_binary_src')
+        ..createSync();
+      final List<int> binaryData = List<int>.generate(
+        256,
+        (int index) => index,
+      );
+      File('${source.path}/binary.dat').writeAsBytesSync(binaryData);
+      final Directory destination = Directory('${tempDir.path}/mv_binary_dst');
+
+      expect(platform.move(source, destination), isTrue);
+      expect(
+        File('${destination.path}/binary.dat').readAsBytesSync(),
+        equals(binaryData),
+      );
+    });
+
+    test('delete directory with binary files', () {
+      final Directory directory = Directory('${tempDir.path}/del_binary')
+        ..createSync();
+      final List<int> binaryData = List<int>.generate(
+        256,
+        (int index) => index,
+      );
+      File('${directory.path}/binary.dat').writeAsBytesSync(binaryData);
+
+      expect(platform.delete(directory), isTrue);
+      expect(directory.existsSync(), isFalse);
+    });
+
+    test('path preserves symbolic path components', () {
+      final Directory directory = Directory('${tempDir.path}/./symbolic');
+
+      final String result = platform.path(directory);
+
+      expect(result, startsWith('/'));
+    });
+
+    test('multiple sequential operations on same directory', () {
+      final Directory directory = Directory('${tempDir.path}/sequential');
+
+      expect(platform.create(directory), isTrue);
+      expect(platform.exists(directory), isTrue);
+      expect(platform.path(directory), contains('sequential'));
+      expect(platform.name(directory), equals('sequential'));
+      expect(platform.list(directory), isEmpty);
+      expect(platform.delete(directory), isTrue);
+      expect(platform.exists(directory), isFalse);
+    });
+
+    test('create and delete same directory multiple times', () {
+      final Directory directory = Directory('${tempDir.path}/recreate');
+
+      expect(platform.create(directory), isTrue);
+      expect(platform.delete(directory), isTrue);
+      expect(platform.create(directory), isTrue);
+      expect(platform.delete(directory), isTrue);
+      expect(directory.existsSync(), isFalse);
+    });
   });
 }

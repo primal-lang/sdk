@@ -228,6 +228,186 @@ void main() {
 
       expect(prints, equals(['z']));
     });
+
+    test('outWrite handles very long string', () {
+      final String longString = 'a' * 10000;
+      final List<String> prints = capturePrints(
+        () => console.outWrite(longString),
+      );
+
+      expect(prints, equals([longString]));
+    });
+
+    test('outWriteLn handles very long string', () {
+      final String longString = 'b' * 10000;
+      final List<String> prints = capturePrints(
+        () => console.outWriteLn(longString),
+      );
+
+      expect(prints, equals([longString]));
+    });
+
+    test('errorWrite handles very long string', () {
+      final String longString = 'c' * 10000;
+      final List<String> prints = capturePrints(
+        () => console.errorWrite(longString),
+      );
+
+      expect(prints, equals([longString]));
+    });
+
+    test('errorWriteLn handles very long string', () {
+      final String longString = 'd' * 10000;
+      final List<String> prints = capturePrints(
+        () => console.errorWriteLn(longString),
+      );
+
+      expect(prints, equals([longString]));
+    });
+
+    test('outWrite handles whitespace-only string', () {
+      final List<String> prints = capturePrints(
+        () => console.outWrite('   \t\n   '),
+      );
+
+      expect(prints, equals(['   \t\n   ']));
+    });
+
+    test('outWriteLn handles whitespace-only string', () {
+      final List<String> prints = capturePrints(
+        () => console.outWriteLn('   \t\n   '),
+      );
+
+      expect(prints, equals(['   \t\n   ']));
+    });
+
+    test('errorWrite handles whitespace-only string', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWrite('   \t\n   '),
+      );
+
+      expect(prints, equals(['   \t\n   ']));
+    });
+
+    test('errorWriteLn handles whitespace-only string', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWriteLn('   \t\n   '),
+      );
+
+      expect(prints, equals(['   \t\n   ']));
+    });
+
+    test('multiple consecutive outWrite calls', () {
+      final List<String> prints = capturePrints(() {
+        console.outWrite('first');
+        console.outWrite('second');
+        console.outWrite('third');
+      });
+
+      expect(prints, equals(['first', 'second', 'third']));
+    });
+
+    test('multiple consecutive outWriteLn calls', () {
+      final List<String> prints = capturePrints(() {
+        console.outWriteLn('first');
+        console.outWriteLn('second');
+        console.outWriteLn('third');
+      });
+
+      expect(prints, equals(['first', 'second', 'third']));
+    });
+
+    test('multiple consecutive errorWrite calls', () {
+      final List<String> prints = capturePrints(() {
+        console.errorWrite('first');
+        console.errorWrite('second');
+        console.errorWrite('third');
+      });
+
+      expect(prints, equals(['first', 'second', 'third']));
+    });
+
+    test('multiple consecutive errorWriteLn calls', () {
+      final List<String> prints = capturePrints(() {
+        console.errorWriteLn('first');
+        console.errorWriteLn('second');
+        console.errorWriteLn('third');
+      });
+
+      expect(prints, equals(['first', 'second', 'third']));
+    });
+
+    test('mixed outWrite and errorWrite calls', () {
+      final List<String> prints = capturePrints(() {
+        console.outWrite('out1');
+        console.errorWrite('err1');
+        console.outWriteLn('out2');
+        console.errorWriteLn('err2');
+      });
+
+      expect(prints, equals(['out1', 'err1', 'out2', 'err2']));
+    });
+
+    test('outWrite handles string with carriage return', () {
+      final List<String> prints = capturePrints(
+        () => console.outWrite('line1\rline2'),
+      );
+
+      expect(prints, equals(['line1\rline2']));
+    });
+
+    test('outWriteLn handles string with carriage return', () {
+      final List<String> prints = capturePrints(
+        () => console.outWriteLn('line1\rline2'),
+      );
+
+      expect(prints, equals(['line1\rline2']));
+    });
+
+    test('errorWrite handles string with carriage return', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWrite('line1\rline2'),
+      );
+
+      expect(prints, equals(['line1\rline2']));
+    });
+
+    test('errorWriteLn handles string with carriage return', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWriteLn('line1\rline2'),
+      );
+
+      expect(prints, equals(['line1\rline2']));
+    });
+
+    test('outWrite handles string with only newlines', () {
+      final List<String> prints = capturePrints(
+        () => console.outWrite('\n\n\n'),
+      );
+
+      expect(prints, equals(['\n\n\n']));
+    });
+
+    test('errorWrite handles string with only newlines', () {
+      final List<String> prints = capturePrints(
+        () => console.errorWrite('\n\n\n'),
+      );
+
+      expect(prints, equals(['\n\n\n']));
+    });
+
+    test('readLine error contains correct function name', () {
+      expect(
+        () => console.readLine(),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"console.read"'),
+          ),
+        ),
+      );
+    });
   });
 
   group('PlatformFileWeb', () {
@@ -549,6 +729,218 @@ void main() {
         throwsA(isA<RuntimeError>()),
       );
     });
+
+    test('fromPath throws with very long path', () {
+      final String longPath = '/very/long/path/${'a' * 10000}';
+      expect(
+        () => platform.fromPath(longPath),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('fromPath throws with unicode path', () {
+      expect(
+        () => platform.fromPath('/path/\u{1F600}/file.txt'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('write throws with very long content', () {
+      final String longContent = 'content' * 10000;
+      expect(
+        () => platform.write(File('dummy'), longContent),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('rename throws with unicode name', () {
+      expect(
+        () => platform.rename(File('dummy'), '\u{1F600}_file.txt'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('fromPath error contains exact function name', () {
+      expect(
+        () => platform.fromPath('test'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.fromPath"'),
+          ),
+        ),
+      );
+    });
+
+    test('exists error contains exact function name', () {
+      expect(
+        () => platform.exists(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.exists"'),
+          ),
+        ),
+      );
+    });
+
+    test('read error contains exact function name', () {
+      expect(
+        () => platform.read(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.read"'),
+          ),
+        ),
+      );
+    });
+
+    test('write error contains exact function name', () {
+      expect(
+        () => platform.write(File('dummy'), 'content'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.write"'),
+          ),
+        ),
+      );
+    });
+
+    test('length error contains exact function name', () {
+      expect(
+        () => platform.length(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.length"'),
+          ),
+        ),
+      );
+    });
+
+    test('create error contains exact function name', () {
+      expect(
+        () => platform.create(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.create"'),
+          ),
+        ),
+      );
+    });
+
+    test('delete error contains exact function name', () {
+      expect(
+        () => platform.delete(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.delete"'),
+          ),
+        ),
+      );
+    });
+
+    test('path error contains exact function name', () {
+      expect(
+        () => platform.path(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.path"'),
+          ),
+        ),
+      );
+    });
+
+    test('name error contains exact function name', () {
+      expect(
+        () => platform.name(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.name"'),
+          ),
+        ),
+      );
+    });
+
+    test('rename error contains exact function name', () {
+      expect(
+        () => platform.rename(File('dummy'), 'new'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.rename"'),
+          ),
+        ),
+      );
+    });
+
+    test('extension error contains exact function name', () {
+      expect(
+        () => platform.extension(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.extension"'),
+          ),
+        ),
+      );
+    });
+
+    test('copy error contains exact function name', () {
+      expect(
+        () => platform.copy(File('a'), File('b')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.copy"'),
+          ),
+        ),
+      );
+    });
+
+    test('move error contains exact function name', () {
+      expect(
+        () => platform.move(File('a'), File('b')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.move"'),
+          ),
+        ),
+      );
+    });
+
+    test('parent error contains exact function name', () {
+      expect(
+        () => platform.parent(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"file.parent"'),
+          ),
+        ),
+      );
+    });
   });
 
   group('PlatformDirectoryWeb', () {
@@ -803,6 +1195,171 @@ void main() {
         throwsA(isA<RuntimeError>()),
       );
     });
+
+    test('fromPath throws with very long path', () {
+      final String longPath = '/very/long/path/${'a' * 10000}';
+      expect(
+        () => platform.fromPath(longPath),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('fromPath throws with unicode path', () {
+      expect(
+        () => platform.fromPath('/path/\u{1F600}/directory'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('rename throws with unicode name', () {
+      expect(
+        () => platform.rename(Directory('dummy'), '\u{1F600}_directory'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('fromPath error contains exact function name', () {
+      expect(
+        () => platform.fromPath('test'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.fromPath"'),
+          ),
+        ),
+      );
+    });
+
+    test('exists error contains exact function name', () {
+      expect(
+        () => platform.exists(Directory('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.exists"'),
+          ),
+        ),
+      );
+    });
+
+    test('create error contains exact function name', () {
+      expect(
+        () => platform.create(Directory('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.create"'),
+          ),
+        ),
+      );
+    });
+
+    test('delete error contains exact function name', () {
+      expect(
+        () => platform.delete(Directory('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.delete"'),
+          ),
+        ),
+      );
+    });
+
+    test('copy error contains exact function name', () {
+      expect(
+        () => platform.copy(Directory('a'), Directory('b')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.copy"'),
+          ),
+        ),
+      );
+    });
+
+    test('move error contains exact function name', () {
+      expect(
+        () => platform.move(Directory('a'), Directory('b')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.move"'),
+          ),
+        ),
+      );
+    });
+
+    test('rename error contains exact function name', () {
+      expect(
+        () => platform.rename(Directory('dummy'), 'new'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.rename"'),
+          ),
+        ),
+      );
+    });
+
+    test('path error contains exact function name', () {
+      expect(
+        () => platform.path(Directory('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.path"'),
+          ),
+        ),
+      );
+    });
+
+    test('name error contains exact function name', () {
+      expect(
+        () => platform.name(Directory('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.name"'),
+          ),
+        ),
+      );
+    });
+
+    test('parent error contains exact function name', () {
+      expect(
+        () => platform.parent(Directory('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.parent"'),
+          ),
+        ),
+      );
+    });
+
+    test('list error contains exact function name', () {
+      expect(
+        () => platform.list(Directory('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"directory.list"'),
+          ),
+        ),
+      );
+    });
   });
 
   group('PlatformEnvironmentWeb', () {
@@ -854,6 +1411,55 @@ void main() {
     test('getVariable throws with unicode variable name', () {
       expect(
         () => platform.getVariable('\u{1F600}_EMOJI_VAR'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('getVariable throws with very long variable name', () {
+      final String longName = 'VARIABLE_${'A' * 10000}';
+      expect(
+        () => platform.getVariable(longName),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('getVariable throws with numeric-only variable name', () {
+      expect(
+        () => platform.getVariable('12345'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('getVariable throws with single character variable name', () {
+      expect(
+        () => platform.getVariable('X'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('getVariable error contains exact function name', () {
+      expect(
+        () => platform.getVariable('HOME'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('"env.get"'),
+          ),
+        ),
+      );
+    });
+
+    test('getVariable throws with variable name containing equals sign', () {
+      expect(
+        () => platform.getVariable('VAR=VALUE'),
+        throwsA(isA<UnimplementedFunctionWebError>()),
+      );
+    });
+
+    test('getVariable throws with newline in variable name', () {
+      expect(
+        () => platform.getVariable('VAR\nNAME'),
         throwsA(isA<UnimplementedFunctionWebError>()),
       );
     });
@@ -936,6 +1542,103 @@ void main() {
       );
 
       expect(error.toString(), contains('"$functionName"'));
+    });
+
+    test('error with unicode function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        '\u{1F600}.emoji.function',
+      );
+
+      expect(error.toString(), contains('\u{1F600}.emoji.function'));
+    });
+
+    test('error with very long function name', () {
+      final String longFunctionName = 'module.${'a' * 1000}.function';
+      final UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        longFunctionName,
+      );
+
+      expect(error.toString(), contains(longFunctionName));
+    });
+
+    test('error with numeric function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        '12345.67890',
+      );
+
+      expect(error.toString(), contains('12345.67890'));
+    });
+
+    test('error with null-like string function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'null',
+      );
+
+      expect(error.toString(), contains('"null"'));
+    });
+
+    test('error with undefined-like string function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'undefined',
+      );
+
+      expect(error.toString(), contains('"undefined"'));
+    });
+
+    test('error with newline in function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'function\nname',
+      );
+
+      expect(error.toString(), contains('function\nname'));
+    });
+
+    test('error with tab in function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'function\tname',
+      );
+
+      expect(error.toString(), contains('function\tname'));
+    });
+
+    test('multiple errors have independent messages', () {
+      const UnimplementedFunctionWebError error1 =
+          UnimplementedFunctionWebError(
+            'first.function',
+          );
+      const UnimplementedFunctionWebError error2 =
+          UnimplementedFunctionWebError(
+            'second.function',
+          );
+
+      expect(error1.toString(), isNot(equals(error2.toString())));
+      expect(error1.toString(), contains('first.function'));
+      expect(error2.toString(), contains('second.function'));
+    });
+
+    test('error with single character function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'f',
+      );
+
+      expect(error.toString(), contains('"f"'));
+    });
+
+    test('error with dots only function name', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        '...',
+      );
+
+      expect(error.toString(), contains('"..."'));
+    });
+
+    test('error extends RuntimeError correctly', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'test.function',
+      );
+
+      expect(error, isA<RuntimeError>());
+      expect(error.toString(), startsWith('Runtime error:'));
     });
   });
 }

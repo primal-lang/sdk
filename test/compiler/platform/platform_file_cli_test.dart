@@ -604,6 +604,30 @@ void main() {
         expect(platform.delete(file), isTrue);
         expect(file.existsSync(), isFalse);
       });
+
+      test('deletes empty file', () {
+        final File file = File('${tempDir.path}/delete_empty.txt')
+          ..createSync();
+
+        expect(platform.delete(file), isTrue);
+        expect(file.existsSync(), isFalse);
+      });
+
+      test('deletes file with unicode name', () {
+        final File file = File('${tempDir.path}/\u6587\u4ef6_delete.txt')
+          ..createSync();
+
+        expect(platform.delete(file), isTrue);
+        expect(file.existsSync(), isFalse);
+      });
+
+      test('deletes file with spaces in name', () {
+        final File file = File('${tempDir.path}/file with spaces to delete.txt')
+          ..createSync();
+
+        expect(platform.delete(file), isTrue);
+        expect(file.existsSync(), isFalse);
+      });
     });
 
     group('path (additional cases)', () {
@@ -619,6 +643,342 @@ void main() {
         final File file = File('${tempDir.path}/inpath.txt');
 
         expect(platform.path(file), contains('inpath.txt'));
+      });
+
+      test('preserves path with double slashes', () {
+        final File file = File('${tempDir.path}//doubleslash.txt');
+        final String absolutePath = platform.path(file);
+
+        // The path method does not normalize double slashes
+        expect(absolutePath.contains('//'), isTrue);
+        expect(absolutePath.endsWith('doubleslash.txt'), isTrue);
+      });
+
+      test('returns path for file with unicode name', () {
+        final File file = File('${tempDir.path}/\u6587\u4ef6.txt');
+        final String absolutePath = platform.path(file);
+
+        expect(absolutePath.contains('\u6587\u4ef6.txt'), isTrue);
+      });
+    });
+
+    group('read (stress tests)', () {
+      test('reads large file content', () {
+        final String largeContent = 'x' * 100000;
+        final File file = File('${tempDir.path}/large_read.txt')
+          ..writeAsStringSync(largeContent);
+
+        expect(platform.read(file), equals(largeContent));
+      });
+
+      test('reads file with many lines', () {
+        final StringBuffer buffer = StringBuffer();
+        for (int i = 0; i < 1000; i++) {
+          buffer.writeln('Line $i');
+        }
+        final String content = buffer.toString();
+        final File file = File('${tempDir.path}/many_lines.txt')
+          ..writeAsStringSync(content);
+
+        expect(platform.read(file), equals(content));
+      });
+
+      test('reads file with only whitespace', () {
+        final File file = File('${tempDir.path}/whitespace.txt')
+          ..writeAsStringSync('   \t\n\n  \t  ');
+
+        expect(platform.read(file), equals('   \t\n\n  \t  '));
+      });
+
+      test('reads file with null bytes in string', () {
+        final File file = File('${tempDir.path}/nullbyte.txt')
+          ..writeAsStringSync('before\x00after');
+
+        expect(platform.read(file), equals('before\x00after'));
+      });
+    });
+
+    group('write (stress tests)', () {
+      test('writes content with many newlines', () {
+        final File file = File('${tempDir.path}/many_newlines.txt');
+        final String content = '\n' * 1000;
+
+        expect(platform.write(file, content), isTrue);
+        expect(file.readAsStringSync(), equals(content));
+      });
+
+      test('writes content with null bytes', () {
+        final File file = File('${tempDir.path}/null_bytes.txt');
+        const String content = 'before\x00after';
+
+        expect(platform.write(file, content), isTrue);
+        expect(file.readAsStringSync(), equals(content));
+      });
+
+      test('writes content with mixed line endings', () {
+        final File file = File('${tempDir.path}/mixed_endings.txt');
+        const String content = 'unix\nwindows\r\nold_mac\r';
+
+        expect(platform.write(file, content), isTrue);
+        expect(file.readAsStringSync(), equals(content));
+      });
+    });
+
+    group('length (stress tests)', () {
+      test('returns correct length for large file', () {
+        final String largeContent = 'x' * 100000;
+        final File file = File('${tempDir.path}/large_length.txt')
+          ..writeAsStringSync(largeContent);
+
+        expect(platform.length(file), equals(100000));
+      });
+
+      test('returns correct length for file with only newlines', () {
+        final File file = File('${tempDir.path}/newlines_length.txt')
+          ..writeAsStringSync('\n\n\n\n\n');
+
+        expect(platform.length(file), equals(5));
+      });
+    });
+
+    group('create (additional edge cases)', () {
+      test('creates file with unicode name', () {
+        final File file = File('${tempDir.path}/\u6587\u4ef6_create.txt');
+
+        expect(platform.create(file), isTrue);
+        expect(file.existsSync(), isTrue);
+      });
+
+      test('creates file with spaces in name', () {
+        final File file = File('${tempDir.path}/file with spaces.txt');
+
+        expect(platform.create(file), isTrue);
+        expect(file.existsSync(), isTrue);
+      });
+
+      test('creates file with very long name', () {
+        final String longName = 'a' * 200 + '.txt';
+        final File file = File('${tempDir.path}/$longName');
+
+        expect(platform.create(file), isTrue);
+        expect(file.existsSync(), isTrue);
+      });
+    });
+
+    group('rename (additional edge cases)', () {
+      test('renames file to unicode name', () {
+        final File file = File('${tempDir.path}/rename_to_unicode.txt')
+          ..createSync();
+
+        expect(platform.rename(file, '\u6587\u4ef6.txt'), isTrue);
+        expect(
+          File('${tempDir.path}/\u6587\u4ef6.txt').existsSync(),
+          isTrue,
+        );
+      });
+
+      test('renames file to name with spaces', () {
+        final File file = File('${tempDir.path}/rename_to_spaces.txt')
+          ..createSync();
+
+        expect(platform.rename(file, 'name with spaces.txt'), isTrue);
+        expect(
+          File('${tempDir.path}/name with spaces.txt').existsSync(),
+          isTrue,
+        );
+      });
+
+      test('renames file with content preserves content', () {
+        final File file = File('${tempDir.path}/rename_preserve.txt')
+          ..writeAsStringSync('preserved content \u4e16\u754c');
+
+        expect(platform.rename(file, 'renamed_preserve.txt'), isTrue);
+
+        final File renamedFile = File('${tempDir.path}/renamed_preserve.txt');
+        expect(
+          renamedFile.readAsStringSync(),
+          equals('preserved content \u4e16\u754c'),
+        );
+      });
+    });
+
+    group('copy (stress tests)', () {
+      test('copies large file', () {
+        final String largeContent = 'x' * 100000;
+        final File source = File('${tempDir.path}/large_copy_src.txt')
+          ..writeAsStringSync(largeContent);
+        final File destination = File('${tempDir.path}/large_copy_dst.txt');
+
+        expect(platform.copy(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals(largeContent));
+      });
+
+      test('copies file with unicode name', () {
+        final File source = File('${tempDir.path}/\u6587\u4ef6_copy_src.txt')
+          ..writeAsStringSync('unicode source');
+        final File destination = File(
+          '${tempDir.path}/\u6587\u4ef6_copy_dst.txt',
+        );
+
+        expect(platform.copy(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals('unicode source'));
+      });
+    });
+
+    group('move (stress tests)', () {
+      test('moves large file', () {
+        final String largeContent = 'x' * 100000;
+        final File source = File('${tempDir.path}/large_move_src.txt')
+          ..writeAsStringSync(largeContent);
+        final File destination = File('${tempDir.path}/large_move_dst.txt');
+
+        expect(platform.move(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals(largeContent));
+        expect(source.existsSync(), isFalse);
+      });
+
+      test('moves file with unicode name', () {
+        final File source = File('${tempDir.path}/\u6587\u4ef6_move_src.txt')
+          ..writeAsStringSync('unicode move');
+        final File destination = File(
+          '${tempDir.path}/\u6587\u4ef6_move_dst.txt',
+        );
+
+        expect(platform.move(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals('unicode move'));
+        expect(source.existsSync(), isFalse);
+      });
+
+      test('moves file to unicode destination name', () {
+        final File source = File('${tempDir.path}/move_to_unicode.txt')
+          ..writeAsStringSync('moving to unicode');
+        final File destination = File('${tempDir.path}/\u79fb\u52a8.txt');
+
+        expect(platform.move(source, destination), isTrue);
+        expect(destination.readAsStringSync(), equals('moving to unicode'));
+        expect(source.existsSync(), isFalse);
+      });
+    });
+
+    group('parent (additional edge cases)', () {
+      test('returns correct parent for file with unicode path', () {
+        final Directory unicodeDir = Directory(
+          '${tempDir.path}/\u6587\u4ef6\u5939',
+        )..createSync();
+        final File file = File('${unicodeDir.path}/child.txt');
+
+        expect(platform.parent(file).path, equals(unicodeDir.path));
+      });
+
+      test('returns correct parent for file with spaces in path', () {
+        final Directory spacesDir = Directory(
+          '${tempDir.path}/dir with spaces',
+        )..createSync();
+        final File file = File('${spacesDir.path}/child.txt');
+
+        expect(platform.parent(file).path, equals(spacesDir.path));
+      });
+    });
+
+    group('extension (boundary cases)', () {
+      test('returns empty string for dotfile only', () {
+        final File file = File('${tempDir.path}/.');
+
+        expect(platform.extension(file), equals(''));
+      });
+
+      test('returns extension for file with leading dots', () {
+        final File file = File('${tempDir.path}/..file.txt');
+
+        expect(platform.extension(file), equals('txt'));
+      });
+
+      test('returns very long extension', () {
+        final String longExtension = 'a' * 100;
+        final File file = File('${tempDir.path}/file.$longExtension');
+
+        expect(platform.extension(file), equals(longExtension));
+      });
+
+      test('returns extension with numbers', () {
+        final File file = File('${tempDir.path}/file.mp3');
+
+        expect(platform.extension(file), equals('mp3'));
+      });
+
+      test('returns extension for file with only extension', () {
+        final File file = File('${tempDir.path}/.extension');
+
+        expect(platform.extension(file), equals(''));
+      });
+    });
+
+    group('name (boundary cases)', () {
+      test('returns name for file with very long name', () {
+        final String longName = 'a' * 200 + '.txt';
+        final File file = File('${tempDir.path}/$longName');
+
+        expect(platform.name(file), equals(longName));
+      });
+
+      test('returns name for file with unicode characters', () {
+        final File file = File('${tempDir.path}/\u6587\u4ef6\u540d.txt');
+
+        expect(platform.name(file), equals('\u6587\u4ef6\u540d.txt'));
+      });
+
+      test('returns name for file with special characters', () {
+        final File file = File('${tempDir.path}/file-name_123.test.txt');
+
+        expect(platform.name(file), equals('file-name_123.test.txt'));
+      });
+    });
+
+    group('exists (boundary cases)', () {
+      test('returns false for file with invalid characters', () {
+        // NUL character in path - should not exist
+        final File file = File('${tempDir.path}/invalid\x00name.txt');
+
+        expect(platform.exists(file), isFalse);
+      });
+
+      test('returns true for file with unicode name', () {
+        final File file = File('${tempDir.path}/\u6587\u4ef6.txt')
+          ..createSync();
+
+        expect(platform.exists(file), isTrue);
+      });
+
+      test('returns true for file with spaces in name', () {
+        final File file = File('${tempDir.path}/file with spaces.txt')
+          ..createSync();
+
+        expect(platform.exists(file), isTrue);
+      });
+    });
+
+    group('fromPath (boundary cases)', () {
+      test('handles very long path', () {
+        final String longPath = '${tempDir.path}/${'a' * 200}.txt';
+        final File file = platform.fromPath(longPath);
+
+        expect(file.path, equals(longPath));
+      });
+
+      test('handles path with dot components', () {
+        final File file = platform.fromPath(
+          '${tempDir.path}/./subdir/../file.txt',
+        );
+
+        expect(file.path, equals('${tempDir.path}/./subdir/../file.txt'));
+      });
+
+      test('handles path with multiple extensions', () {
+        final File file = platform.fromPath(
+          '${tempDir.path}/archive.tar.gz.bak',
+        );
+
+        expect(file.path, equals('${tempDir.path}/archive.tar.gz.bak'));
       });
     });
   });
