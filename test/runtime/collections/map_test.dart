@@ -2,6 +2,7 @@
 library;
 
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
@@ -1118,6 +1119,370 @@ main = getOrDefault({"a": 1}, "a", 42)
         'main = map.length(map.set(map.set(map.set(map.set(map.set({}, "a", 1), "b", 2), "c", 3), "d", 4), "e", 5))',
       );
       checkResult(runtime, 5);
+    });
+  });
+
+  group('Map List Key Behavior', () {
+    test('map.set with list as key creates entry', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length(map.set({"a": 1}, [1, 2], 3))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('map.containsKey with list as key returns false when not present', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey({"a": 1}, [1, 2])',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('map.removeAt with list as key returns unchanged map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length(map.removeAt({"a": 1}, [1, 2]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('map.set with map as key creates entry', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length(map.set({"a": 1}, {"b": 2}, 3))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('map.containsKey with map as key returns false when not present', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey({"a": 1}, {"b": 2})',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('map.removeAt with map as key returns unchanged map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length(map.removeAt({"a": 1}, {"b": 2}))',
+      );
+      checkResult(runtime, 1);
+    });
+  });
+
+  group('Map Indexing Type Errors', () {
+    test('indexing a number throws NotIndexableError', () {
+      expect(
+        () => getRuntime('main = 42["key"]'),
+        throwsA(isA<NotIndexableError>()),
+      );
+    });
+
+    test('indexing a boolean throws NotIndexableError', () {
+      expect(
+        () => getRuntime('main = true["key"]'),
+        throwsA(isA<NotIndexableError>()),
+      );
+    });
+
+    test('indexing with list key throws error', () {
+      final RuntimeFacade runtime = getRuntime('main = {"a": 1}[[1, 2]]');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('indexing with map key throws error', () {
+      final RuntimeFacade runtime = getRuntime('main = {"a": 1}[{"b": 2}]');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+  });
+
+  group('Map Value Type Changes', () {
+    test('map.set changes value from number to string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.set({"key": 42}, "key", "hello"), "key")',
+      );
+      checkResult(runtime, '"hello"');
+    });
+
+    test('map.set changes value from string to number', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.set({"key": "hello"}, "key", 42), "key")',
+      );
+      checkResult(runtime, 42);
+    });
+
+    test('map.set changes value from boolean to list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.set({"key": true}, "key", [1, 2, 3]), "key")',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('map.set changes value from list to map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.at(map.set({"key": [1, 2]}, "key", {"inner": 99}), "key"), "inner")',
+      );
+      checkResult(runtime, 99);
+    });
+
+    test('map.set changes value from map to number', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.set({"key": {"inner": 1}}, "key", 42), "key")',
+      );
+      checkResult(runtime, 42);
+    });
+  });
+
+  group('Map Duplicate Key Handling', () {
+    test('map.set with same key twice uses last value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.set(map.set({}, "a", 1), "a", 2), "a")',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('map.set with same key multiple times results in single key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length(map.set(map.set({}, "a", 1), "a", 2))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('map.keys after duplicate set returns single key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.length(map.keys(map.set(map.set({}, "a", 1), "a", 2)))',
+      );
+      checkResult(runtime, 1);
+    });
+  });
+
+  group('Map Extreme Numeric Keys', () {
+    test('map with very large positive number key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({999999999: "large"}, 999999999)',
+      );
+      checkResult(runtime, '"large"');
+    });
+
+    test('map with very large negative number key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({-999999999: "negative large"}, -999999999)',
+      );
+      checkResult(runtime, '"negative large"');
+    });
+
+    test('map with very small decimal key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({0.0000001: "tiny"}, 0.0000001)',
+      );
+      checkResult(runtime, '"tiny"');
+    });
+  });
+
+  group('Map Mixed Key Type Operations', () {
+    test('map with string and numeric keys that look similar', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length({"1": "string one", 1: "number one"})',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('map.at distinguishes string key from numeric key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"1": "string", 1: "number"}, 1)',
+      );
+      checkResult(runtime, '"number"');
+    });
+
+    test('map.at retrieves string key not numeric key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"1": "string", 1: "number"}, "1")',
+      );
+      checkResult(runtime, '"string"');
+    });
+
+    test('map.containsKey distinguishes string from numeric key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey({1: "number"}, "1")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('map.containsKey finds numeric key not string key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey({"1": "string"}, 1)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('map.removeAt removes only matching key type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length(map.removeAt({"1": "string", 1: "number"}, 1))',
+      );
+      checkResult(runtime, 1);
+    });
+  });
+
+  group('Map Immutability Verification', () {
+    test('map.set returns new map without modifying original', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = {"a": 1}
+modified = map.set(original(), "b", 2)
+main = map.length(original())
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('map.removeAt returns new map without modifying original', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = {"a": 1, "b": 2}
+modified = map.removeAt(original(), "b")
+main = map.length(original())
+''');
+      checkResult(runtime, 2);
+    });
+
+    test('map.set allows accessing both original and modified', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = {"a": 1}
+modified = map.set(original(), "a", 2)
+main = map.at(original(), "a") + map.at(modified(), "a")
+''');
+      checkResult(runtime, 3);
+    });
+  });
+
+  group('Map With Null-like Values', () {
+    test('map with empty string value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"key": ""}, "key")',
+      );
+      checkResult(runtime, '""');
+    });
+
+    test('map with zero value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"key": 0}, "key")',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('map with false value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"key": false}, "key")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('map with empty list value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.length(map.at({"key": []}, "key"))',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('map with empty map value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.isEmpty(map.at({"key": {}}, "key"))',
+      );
+      checkResult(runtime, true);
+    });
+  });
+
+  group('Map Operations Return Type Verification', () {
+    test('map.keys returns list that can be filtered', () {
+      final RuntimeFacade runtime = getRuntime('''
+isA(x) = x == "a"
+main = list.length(list.filter(map.keys({"a": 1, "b": 2, "c": 3}), isA))
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('map.values returns list that can be mapped', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+add(a, b) = a + b
+main = list.reduce(list.map(map.values({"a": 1, "b": 2}), double), 0, add)
+''');
+      checkResult(runtime, 6);
+    });
+
+    test('map.length returns number that can be used in arithmetic', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length({"a": 1, "b": 2}) * 10',
+      );
+      checkResult(runtime, 20);
+    });
+
+    test('map.isEmpty returns boolean that can be used in conditional', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = if (map.isEmpty({})) ("empty") else ("not empty")',
+      );
+      checkResult(runtime, '"empty"');
+    });
+
+    test('map.containsKey returns boolean usable in logical operations', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey({"a": 1}, "a") && map.containsKey({"b": 2}, "b")',
+      );
+      checkResult(runtime, true);
+    });
+  });
+
+  group('Map With Special String Keys', () {
+    test('map with key containing spaces', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"key with spaces": 42}, "key with spaces")',
+      );
+      checkResult(runtime, 42);
+    });
+
+    test('map with key containing special characters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"key-with-dashes": 42}, "key-with-dashes")',
+      );
+      checkResult(runtime, 42);
+    });
+
+    test('map with key containing unicode', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"cle": 42}, "cle")',
+      );
+      checkResult(runtime, 42);
+    });
+
+    test('map with very long string key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at({"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz": 42}, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz")',
+      );
+      checkResult(runtime, 42);
+    });
+  });
+
+  group('Map Chaining Edge Cases', () {
+    test('deeply chained map.set operations preserve all entries', () {
+      final RuntimeFacade runtime = getRuntime('''
+result = map.set(map.set(map.set(map.set({}, "a", 1), "b", 2), "c", 3), "d", 4)
+main = map.at(result(), "a") + map.at(result(), "b") + map.at(result(), "c") + map.at(result(), "d")
+''');
+      checkResult(runtime, 10);
+    });
+
+    test('alternating set and removeAt operations', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.length(map.removeAt(map.set(map.removeAt(map.set({}, "a", 1), "a"), "b", 2), "b"))',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('map.set followed by map.at on same key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.at(map.set({}, "x", 100), "x")',
+      );
+      checkResult(runtime, 100);
+    });
+
+    test('map.removeAt followed by map.containsKey on same key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = map.containsKey(map.removeAt({"x": 1}, "x"), "x")',
+      );
+      checkResult(runtime, false);
     });
   });
 }

@@ -30,7 +30,9 @@ void main() {
     });
 
     test('set.new creates set with string elements', () {
-      final RuntimeFacade runtime = getRuntime('main = set.new(["a", "b", "c"])');
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new(["a", "b", "c"])',
+      );
       checkResult(runtime, {'"a"', '"b"', '"c"'});
     });
 
@@ -40,7 +42,9 @@ void main() {
     });
 
     test('set.new creates set with mixed element types', () {
-      final RuntimeFacade runtime = getRuntime('main = set.new([1, "two", true])');
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, "two", true])',
+      );
       checkResult(runtime, {1, '"two"', true});
     });
 
@@ -80,7 +84,9 @@ void main() {
     });
 
     test('set.add adds element to single-element set', () {
-      final RuntimeFacade runtime = getRuntime('main = set.add(set.new([1]), 2)');
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.add(set.new([1]), 2)',
+      );
       checkResult(runtime, {1, 2});
     });
 
@@ -620,21 +626,28 @@ main = foo(set.new([2, 3]))
       checkResult(runtime, 2);
     });
 
-    test('set.new with duplicate nested lists keeps all since lists are reference types', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main = set.length(set.new([[1, 2], [1, 2], [3, 4]]))',
-      );
-      // Lists are reference types, so duplicate lists are not deduplicated
-      checkResult(runtime, 3);
-    });
+    test(
+      'set.new with duplicate nested lists keeps all since lists are reference types',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = set.length(set.new([[1, 2], [1, 2], [3, 4]]))',
+        );
+        // Lists are reference types, so duplicate lists are not deduplicated
+        checkResult(runtime, 3);
+      },
+    );
 
     test('set with float elements', () {
-      final RuntimeFacade runtime = getRuntime('main = set.new([1.5, 2.5, 3.5])');
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1.5, 2.5, 3.5])',
+      );
       checkResult(runtime, {1.5, 2.5, 3.5});
     });
 
     test('set with negative numbers', () {
-      final RuntimeFacade runtime = getRuntime('main = set.new([-1, -2, 0, 1])');
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([-1, -2, 0, 1])',
+      );
       checkResult(runtime, {-1, -2, 0, 1});
     });
 
@@ -706,6 +719,330 @@ main = foo(set.new([2, 3]))
         'main = set.intersection(set.new([1, 2]), set.new(["a", "b"]))',
       );
       checkResult(runtime, {});
+    });
+
+    test('set + set performs set union', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2]) + set.new([2, 3])',
+      );
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('set + element adds element to set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2]) + 3',
+      );
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('element + set adds element to set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = 3 + set.new([1, 2])',
+      );
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('set + element does not duplicate existing element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2]) + 2',
+      );
+      checkResult(runtime, {1, 2});
+    });
+
+    test('element + set does not duplicate existing element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = 2 + set.new([1, 2])',
+      );
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set + set with empty first operand returns second set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([]) + set.new([1, 2])',
+      );
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set + set with empty second operand returns first set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2]) + set.new([])',
+      );
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set + set with two empty sets returns empty set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([]) + set.new([])',
+      );
+      checkResult(runtime, {});
+    });
+
+    test('set + element on empty set returns single-element set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([]) + 42',
+      );
+      checkResult(runtime, {42});
+    });
+
+    test('element + empty set returns single-element set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = 42 + set.new([])',
+      );
+      checkResult(runtime, {42});
+    });
+
+    test('set + string element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new(["a", "b"]) + "c"',
+      );
+      checkResult(runtime, {'"a"', '"b"', '"c"'});
+    });
+
+    test('string element + set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = "c" + set.new(["a", "b"])',
+      );
+      checkResult(runtime, {'"a"', '"b"', '"c"'});
+    });
+
+    test('set + boolean element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2]) + true',
+      );
+      checkResult(runtime, {1, 2, true});
+    });
+
+    test('boolean element + set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = true + set.new([1, 2])',
+      );
+      checkResult(runtime, {1, 2, true});
+    });
+
+    test('set + float element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2]) + 3.5',
+      );
+      checkResult(runtime, {1, 2, 3.5});
+    });
+
+    test('chained set + operations', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1]) + 2 + 3',
+      );
+      checkResult(runtime, {1, 2, 3});
+    });
+
+    test('set + set with single-element sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1]) + set.new([2])',
+      );
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set with zero value', () {
+      final RuntimeFacade runtime = getRuntime('main = set.new([0, 1, 2])');
+      checkResult(runtime, {0, 1, 2});
+    });
+
+    test('set.contains with zero value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.contains(set.new([0, 1, 2]), 0)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.remove with zero value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.remove(set.new([0, 1, 2]), 0)',
+      );
+      checkResult(runtime, {1, 2});
+    });
+
+    test('set with empty string element', () {
+      final RuntimeFacade runtime = getRuntime('main = set.new(["", "a"])');
+      checkResult(runtime, {'""', '"a"'});
+    });
+
+    test('set.contains with empty string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.contains(set.new(["", "a"]), "")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.remove with empty string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.remove(set.new(["", "a", "b"]), "")',
+      );
+      checkResult(runtime, {'"a"', '"b"'});
+    });
+
+    test('set with negative float values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([-1.5, -2.5, 0.0, 1.5])',
+      );
+      checkResult(runtime, {-1.5, -2.5, 0.0, 1.5});
+    });
+
+    test('set.union preserves order from first set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.length(set.union(set.new([1, 2, 3]), set.new([4, 5])))',
+      );
+      checkResult(runtime, 5);
+    });
+
+    test('set.intersection preserves elements from second set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.length(set.intersection(set.new([1, 2, 3, 4, 5]), set.new([2, 4])))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('set.difference with partial overlap', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.difference(set.new([1, 2, 3, 4, 5]), set.new([2, 4, 6]))',
+      );
+      checkResult(runtime, {1, 3, 5});
+    });
+
+    test('is.set returns true for empty set', () {
+      final RuntimeFacade runtime = getRuntime('main = is.set(set.new([]))');
+      checkResult(runtime, true);
+    });
+
+    test('is.set returns true for non-empty set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.set(set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('is.set returns false for list', () {
+      final RuntimeFacade runtime = getRuntime('main = is.set([1, 2, 3])');
+      checkResult(runtime, false);
+    });
+
+    test('is.set returns false for number', () {
+      final RuntimeFacade runtime = getRuntime('main = is.set(42)');
+      checkResult(runtime, false);
+    });
+
+    test('to.list converts set to list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = to.list(set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('to.list converts empty set to empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = to.list(set.new([]))');
+      checkResult(runtime, []);
+    });
+
+    test('set.length with large set', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.length(set.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]))',
+      );
+      checkResult(runtime, 20);
+    });
+
+    test('set operations preserve type after union', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.set(set.union(set.new([1]), set.new([2])))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set operations preserve type after intersection', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.set(set.intersection(set.new([1, 2]), set.new([2, 3])))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set operations preserve type after difference', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.set(set.difference(set.new([1, 2]), set.new([2])))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set operations preserve type after add', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.set(set.add(set.new([1]), 2))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set operations preserve type after remove', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.set(set.remove(set.new([1, 2]), 1))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set + operator preserves type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.set(set.new([1]) + set.new([2]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set - operator preserves type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.set(set.new([1, 2]) - set.new([1]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('complex set expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.length(set.union(set.difference(set.new([1, 2, 3, 4]), set.new([2, 4])), set.new([5, 6])))',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('set with all false booleans', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([false, false, false])',
+      );
+      checkResult(runtime, {false});
+    });
+
+    test('set with all true booleans', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([true, true, true])',
+      );
+      checkResult(runtime, {true});
+    });
+
+    test('set.add with list element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.length(set.add(set.new([1, 2]), [3, 4]))',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('set.contains with list element throws error', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.contains(set.new([1, 2]), [1, 2])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set - operator with single-element result', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2, 3]) - set.new([1, 3])',
+      );
+      checkResult(runtime, {2});
+    });
+
+    test('set.new deduplicates all elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.length(set.new([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]))',
+      );
+      checkResult(runtime, 5);
     });
   });
 
@@ -852,7 +1189,9 @@ main = foo(set.new([2, 3]))
     });
 
     test('set.isNotEmpty throws for string arg', () {
-      final RuntimeFacade runtime = getRuntime('main = set.isNotEmpty("hello")');
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.isNotEmpty("hello")',
+      );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
@@ -1137,6 +1476,13 @@ main = foo(set.new([2, 3]))
     test('map - set throws error', () {
       final RuntimeFacade runtime = getRuntime(
         'main = {"a": 1} - set.new(["a"])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.new throws for set arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new(set.new([1, 2]))',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });

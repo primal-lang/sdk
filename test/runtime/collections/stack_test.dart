@@ -558,29 +558,35 @@ void main() {
       checkResult(runtime, 2);
     });
 
-    test('isEmpty returns true and isNotEmpty returns false for empty stack', () {
-      final RuntimeFacade runtime1 = getRuntime(
-        'main = stack.isEmpty(stack.new([]))',
-      );
-      checkResult(runtime1, true);
+    test(
+      'isEmpty returns true and isNotEmpty returns false for empty stack',
+      () {
+        final RuntimeFacade runtime1 = getRuntime(
+          'main = stack.isEmpty(stack.new([]))',
+        );
+        checkResult(runtime1, true);
 
-      final RuntimeFacade runtime2 = getRuntime(
-        'main = stack.isNotEmpty(stack.new([]))',
-      );
-      checkResult(runtime2, false);
-    });
+        final RuntimeFacade runtime2 = getRuntime(
+          'main = stack.isNotEmpty(stack.new([]))',
+        );
+        checkResult(runtime2, false);
+      },
+    );
 
-    test('isEmpty returns false and isNotEmpty returns true for non-empty stack', () {
-      final RuntimeFacade runtime1 = getRuntime(
-        'main = stack.isEmpty(stack.new([1]))',
-      );
-      checkResult(runtime1, false);
+    test(
+      'isEmpty returns false and isNotEmpty returns true for non-empty stack',
+      () {
+        final RuntimeFacade runtime1 = getRuntime(
+          'main = stack.isEmpty(stack.new([1]))',
+        );
+        checkResult(runtime1, false);
 
-      final RuntimeFacade runtime2 = getRuntime(
-        'main = stack.isNotEmpty(stack.new([1]))',
-      );
-      checkResult(runtime2, true);
-    });
+        final RuntimeFacade runtime2 = getRuntime(
+          'main = stack.isNotEmpty(stack.new([1]))',
+        );
+        checkResult(runtime2, true);
+      },
+    );
   });
 
   group('Stack Type Errors', () {
@@ -741,6 +747,400 @@ void main() {
     test('stack.reverse throws for boolean arg', () {
       final RuntimeFacade runtime = getRuntime('main = stack.reverse(true)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.new throws for map arg', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.new({"a": 1})');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.push throws for map first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.push({"a": 1}, 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.pop throws for map arg', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.pop({"a": 1})');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.peek throws for map arg', () {
+      final RuntimeFacade runtime = getRuntime('main = stack.peek({"a": 1})');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isEmpty throws for map arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isEmpty({"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.isNotEmpty throws for map arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isNotEmpty({"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.length throws for map arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length({"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('stack.reverse throws for map arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.reverse({"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Stack Error Messages', () {
+    test(
+      'stack.pop on empty stack throws RuntimeError with correct message',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = stack.pop(stack.new([]))',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            allOf(
+              isA<RuntimeError>(),
+              predicate<RuntimeError>(
+                (error) => error.toString().contains('empty stack'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'stack.peek on empty stack throws RuntimeError with correct message',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = stack.peek(stack.new([]))',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            allOf(
+              isA<RuntimeError>(),
+              predicate<RuntimeError>(
+                (error) => error.toString().contains('empty stack'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  });
+
+  group('Stack with Special Values', () {
+    test('stack.new creates stack with map element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.new([{"a": 1}]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('stack.push adds map element to stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.push(stack.new([]), {"a": 1, "b": 2}))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('stack.peek returns map from stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.new([{"a": 1}]))',
+      );
+      checkResult(runtime, '{"a": 1}');
+    });
+
+    test('stack.new creates stack with function element', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+main = stack.length(stack.new([double]))
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('stack.push adds function element to stack', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+main = stack.length(stack.push(stack.new([]), double))
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('stack.new creates stack with unicode strings', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.new(["hello", "world"]))',
+      );
+      checkResult(runtime, '"world"');
+    });
+
+    test('stack.push adds unicode string to stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.push(stack.new([]), "test"))',
+      );
+      checkResult(runtime, '"test"');
+    });
+
+    test('stack.new creates stack with whitespace string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.new(["   "]))',
+      );
+      checkResult(runtime, '"   "');
+    });
+
+    test('stack.push adds whitespace string to stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.push(stack.new([]), "  "))',
+      );
+      checkResult(runtime, '"  "');
+    });
+
+    test('stack.new creates stack with special float values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.new([0.0, 0.0, 1.7976931348623157e+308])',
+      );
+      checkResult(runtime, [0.0, 0.0, 1.7976931348623157e+308]);
+    });
+
+    test('stack.push adds very small float to stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.push(stack.new([]), 2.2250738585072014e-308))',
+      );
+      checkResult(runtime, 2.2250738585072014e-308);
+    });
+
+    test('stack.new creates stack with mixed positive and negative floats', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.new([-1.5, 0.0, 1.5])',
+      );
+      checkResult(runtime, [-1.5, 0.0, 1.5]);
+    });
+  });
+
+  group('Stack Stress Tests', () {
+    test('stack.new with many elements preserves length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]))',
+      );
+      checkResult(runtime, 20);
+    });
+
+    test('stack.push many times builds correct stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.push(stack.push(stack.push(stack.push(stack.push(stack.push(stack.push(stack.push(stack.push(stack.push(stack.new([]), 1), 2), 3), 4), 5), 6), 7), 8), 9), 10))',
+      );
+      checkResult(runtime, 10);
+    });
+
+    test('stack.pop many times reduces stack correctly', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.pop(stack.pop(stack.pop(stack.pop(stack.pop(stack.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])))))))',
+      );
+      checkResult(runtime, 5);
+    });
+
+    test('stack.peek after many pushes returns last pushed element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.push(stack.push(stack.push(stack.push(stack.push(stack.new([]), 1), 2), 3), 4), 99))',
+      );
+      checkResult(runtime, 99);
+    });
+
+    test('stack.reverse with many elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.reverse(stack.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('stack with deeply nested structures', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.new([[[1]], [[2]], [[3]]]))',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('stack.peek with deeply nested structure returns correct element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.new([[[1, 2]], [[3, 4]], [[5, 6]]]))',
+      );
+      checkResult(runtime, [
+        [5, 6],
+      ]);
+    });
+  });
+
+  group('Stack Immutability', () {
+    test('stack.push does not modify original stack', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = stack.new([1, 2, 3])
+modified = stack.push(original(), 4)
+main = stack.length(original())
+''');
+      checkResult(runtime, 3);
+    });
+
+    test('stack.pop does not modify original stack', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = stack.new([1, 2, 3])
+modified = stack.pop(original())
+main = stack.length(original())
+''');
+      checkResult(runtime, 3);
+    });
+
+    test('stack.reverse does not modify original stack', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = stack.new([1, 2, 3])
+reversed = stack.reverse(original())
+main = stack.peek(original())
+''');
+      checkResult(runtime, 3);
+    });
+  });
+
+  group('Stack Boundary Cases', () {
+    test('stack.pop immediately after push on empty stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isEmpty(stack.pop(stack.push(stack.new([]), 1)))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('stack.peek immediately after push on empty stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.push(stack.new([]), 42))',
+      );
+      checkResult(runtime, 42);
+    });
+
+    test('stack.length after push then pop equals original length', () {
+      final RuntimeFacade runtime = getRuntime('''
+original = stack.new([1, 2, 3])
+pushed = stack.push(original(), 4)
+popped = stack.pop(pushed())
+main = stack.length(popped())
+''');
+      checkResult(runtime, 3);
+    });
+
+    test('stack.reverse preserves element values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.reverse(stack.new([1, 2, 3])))',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('stack.isEmpty and isNotEmpty are inverses for empty stack', () {
+      final RuntimeFacade runtime1 = getRuntime(
+        'main = stack.isEmpty(stack.new([]))',
+      );
+      checkResult(runtime1, true);
+
+      final RuntimeFacade runtime2 = getRuntime(
+        'main = stack.isNotEmpty(stack.new([]))',
+      );
+      checkResult(runtime2, false);
+    });
+
+    test('stack.isEmpty and isNotEmpty are inverses for non-empty stack', () {
+      final RuntimeFacade runtime1 = getRuntime(
+        'main = stack.isEmpty(stack.new([1]))',
+      );
+      checkResult(runtime1, false);
+
+      final RuntimeFacade runtime2 = getRuntime(
+        'main = stack.isNotEmpty(stack.new([1]))',
+      );
+      checkResult(runtime2, true);
+    });
+
+    test('stack.new from empty list equals empty stack', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.isEmpty(stack.new([]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('chained multiple pops throw on empty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.pop(stack.pop(stack.pop(stack.new([1, 2]))))',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('stack.peek on stack created from single-element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.new([999]))',
+      );
+      checkResult(runtime, 999);
+    });
+
+    test(
+      'stack.pop on stack created from single-element list returns empty',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = stack.isEmpty(stack.pop(stack.new([1])))',
+        );
+        checkResult(runtime, true);
+      },
+    );
+  });
+
+  group('Stack with Duplicate Elements', () {
+    test('stack.new creates stack with duplicate elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.new([1, 1, 1, 1, 1])',
+      );
+      checkResult(runtime, [1, 1, 1, 1, 1]);
+    });
+
+    test('stack.push adds duplicate element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.new([1, 1, 1])',
+      );
+      checkResult(runtime, [1, 1, 1]);
+    });
+
+    test('stack.length counts duplicate elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.length(stack.new([1, 1, 1, 1]))',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('stack.pop removes one of duplicate top elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.pop(stack.new([1, 2, 2]))',
+      );
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('stack.peek returns top duplicate element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.peek(stack.new([1, 2, 2]))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('stack.reverse preserves duplicate elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = stack.reverse(stack.new([1, 1, 2, 2]))',
+      );
+      checkResult(runtime, [2, 2, 1, 1]);
     });
   });
 }

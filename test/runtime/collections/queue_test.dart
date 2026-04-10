@@ -378,6 +378,270 @@ void main() {
       );
       checkResult(runtime, 3);
     });
+
+    test('queue.new creates queue from list of floats', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.new([1.5, 2.5, 3.5])',
+      );
+      checkResult(runtime, [1.5, 2.5, 3.5]);
+    });
+
+    test('queue.enqueue adds float element to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.enqueue(queue.new([1.0]), 2.5)',
+      );
+      checkResult(runtime, [1.0, 2.5]);
+    });
+
+    test('queue.peek returns float from queue of floats', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([1.1, 2.2, 3.3]))',
+      );
+      checkResult(runtime, 1.1);
+    });
+
+    test('queue.dequeue removes element from queue of floats', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.dequeue(queue.new([1.1, 2.2, 3.3]))',
+      );
+      checkResult(runtime, [2.2, 3.3]);
+    });
+
+    test('queue.new creates queue from list of negative numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.new([-1, -2, -3])',
+      );
+      checkResult(runtime, [-1, -2, -3]);
+    });
+
+    test('queue.enqueue adds negative number to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.enqueue(queue.new([1, 2]), -3)',
+      );
+      checkResult(runtime, [1, 2, -3]);
+    });
+
+    test('queue.peek returns negative number from queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([-1, -2, -3]))',
+      );
+      checkResult(runtime, -1);
+    });
+
+    test('queue.new creates queue with zero element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.new([0])',
+      );
+      checkResult(runtime, [0]);
+    });
+
+    test('queue.enqueue adds zero to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.enqueue(queue.new([1, 2]), 0)',
+      );
+      checkResult(runtime, [1, 2, 0]);
+    });
+
+    test('queue.peek returns zero from queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([0, 1, 2]))',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('queue.new creates queue with empty string element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.new([""])',
+      );
+      checkResult(runtime, ['""']);
+    });
+
+    test('queue.enqueue adds empty string to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.enqueue(queue.new(["a"]), "")',
+      );
+      checkResult(runtime, ['"a"', '""']);
+    });
+
+    test('queue.peek returns empty string from queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new(["", "a"]))',
+      );
+      checkResult(runtime, '""');
+    });
+
+    test('queue.new creates queue with empty list element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.new([[]])',
+      );
+      checkResult(runtime, ['[]']);
+    });
+
+    test('queue.enqueue adds empty list to queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.enqueue(queue.new([1]), [])',
+      );
+      checkResult(runtime, [1, '[]']);
+    });
+
+    test('queue.peek returns empty list from queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([[], [1, 2]]))',
+      );
+      checkResult(runtime, []);
+    });
+
+    test(
+      'queue.dequeue from two-element queue returns single-element queue',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = queue.dequeue(queue.new([1, 2]))',
+        );
+        checkResult(runtime, [2]);
+      },
+    );
+
+    test('queue.peek on two-element queue returns front element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([1, 2]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.length returns two for two-element queue', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.new([1, 2]))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('multiple dequeues until empty then check isEmpty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.isEmpty(queue.dequeue(queue.dequeue(queue.new([1, 2]))))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('multiple enqueues to empty queue then check length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.enqueue(queue.enqueue(queue.new([]), 1), 2))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('enqueue then peek returns front element not enqueued', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.enqueue(queue.new([1]), 42))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('dequeue then peek returns new front element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.dequeue(queue.new([1, 2, 3])))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('reverse then dequeue removes original last element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.dequeue(queue.reverse(queue.new([1, 2, 3])))',
+      );
+      checkResult(runtime, [2, 1]);
+    });
+
+    test('reverse then peek returns original last element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.reverse(queue.new([10, 20, 30])))',
+      );
+      checkResult(runtime, 30);
+    });
+
+    test('dequeue then reverse on remaining elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.reverse(queue.dequeue(queue.new([1, 2, 3])))',
+      );
+      checkResult(runtime, [3, 2]);
+    });
+
+    test('queue operations with large numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.new([999999999, 1000000000, 1000000001])',
+      );
+      checkResult(runtime, [999999999, 1000000000, 1000000001]);
+    });
+
+    test('queue.peek with large number', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.new([999999999, 2, 3]))',
+      );
+      checkResult(runtime, 999999999);
+    });
+
+    test('queue.enqueue with deeply nested list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.enqueue(queue.new([]), [[1, 2], [3, [4, 5]]])',
+      );
+      checkResult(runtime, ['[[1, 2], [3, [4, 5]]]']);
+    });
+
+    test('queue.new with queue element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.new([queue.new([1, 2])]))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.enqueue with queue as element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.length(queue.enqueue(queue.new([1]), queue.new([2, 3])))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test(
+      'isEmpty returns true and isNotEmpty returns false for empty queue',
+      () {
+        final RuntimeFacade runtime1 = getRuntime(
+          'main = queue.isEmpty(queue.new([]))',
+        );
+        checkResult(runtime1, true);
+
+        final RuntimeFacade runtime2 = getRuntime(
+          'main = queue.isNotEmpty(queue.new([]))',
+        );
+        checkResult(runtime2, false);
+      },
+    );
+
+    test(
+      'isEmpty returns false and isNotEmpty returns true for non-empty queue',
+      () {
+        final RuntimeFacade runtime1 = getRuntime(
+          'main = queue.isEmpty(queue.new([1]))',
+        );
+        checkResult(runtime1, false);
+
+        final RuntimeFacade runtime2 = getRuntime(
+          'main = queue.isNotEmpty(queue.new([1]))',
+        );
+        checkResult(runtime2, true);
+      },
+    );
+
+    test('queue.enqueue preserves FIFO order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.enqueue(queue.enqueue(queue.enqueue(queue.new([]), 1), 2), 3))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('queue.dequeue removes elements in FIFO order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = queue.peek(queue.dequeue(queue.dequeue(queue.new([1, 2, 3, 4]))))',
+      );
+      checkResult(runtime, 3);
+    });
   });
 
   group('Queue Type Errors', () {

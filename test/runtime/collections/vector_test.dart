@@ -577,5 +577,421 @@ void main() {
       );
       expect(num.parse(runtime.executeMain()), closeTo(0, 0.000001));
     });
+
+    // Additional edge case tests for vector.new
+    test('vector.new handles very large numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1e100, 2e100, 3e100])',
+      );
+      checkResult(runtime, [1e100, 2e100, 3e100]);
+    });
+
+    test('vector.new handles very small numbers close to zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1e-100, 2e-100, 3e-100])',
+      );
+      checkResult(runtime, [1e-100, 2e-100, 3e-100]);
+    });
+
+    test('vector.new handles negative zero as zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([-0.0, 0.0])',
+      );
+      checkResult(runtime, [0.0, 0.0]);
+    });
+
+    test('vector.new throws for function argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new(num.abs)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.new throws for map argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new({"a": 1})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.new throws for list containing function', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1, num.abs, 3])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    // Additional edge case tests for vector.magnitude
+    test('vector.magnitude throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude("hello")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.magnitude throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(true)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.magnitude throws for map argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude({"a": 1})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.magnitude handles large components', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.new([1e50, 1e50]))',
+      );
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(1.4142135623730951e50, 1e40),
+      );
+    });
+
+    // Additional edge case tests for vector.normalize
+    test('vector.normalize throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize("hello")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.normalize throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(true)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.normalize throws for map argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize({"a": 1})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.normalize returns already normalized vector unchanged', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.new([1, 0, 0]))',
+      );
+      checkResult(runtime, [1.0, 0.0, 0.0]);
+    });
+
+    test('vector.normalize handles 2D unit vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.new([0.6, 0.8]))',
+      );
+      checkResult(runtime, [0.6, 0.8]);
+    });
+
+    // Additional edge case tests for vector.add
+    test('vector.add throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add("hello", "world")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.add throws for boolean arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(true, false)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.add throws for map arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add({"a": 1}, {"b": 2})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.add throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(42, 43)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.add with first vector non-empty and second empty throws', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([1, 2]), vector.new([]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
+
+    test('vector.add handles very large numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.new([1e100, 2e100]), vector.new([3e100, 4e100]))',
+      );
+      final String result = runtime.executeMain();
+      expect(result, startsWith('[4e+100,'));
+      expect(result, contains('e+100]'));
+    });
+
+    // Additional edge case tests for vector.sub
+    test('vector.sub throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub("hello", "world")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.sub throws for boolean arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(true, false)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.sub throws for map arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub({"a": 1}, {"b": 2})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.sub throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(42, 43)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.sub with first vector non-empty and second empty throws', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([1, 2]), vector.new([]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
+
+    test('vector.sub handles very large numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([5e100, 6e100]), vector.new([1e100, 2e100]))',
+      );
+      final String result = runtime.executeMain();
+      expect(result, startsWith('[4e+100,'));
+      expect(result, contains('e+100]'));
+    });
+
+    test('vector.sub results in zero vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.new([5, 10, 15]), vector.new([5, 10, 15]))',
+      );
+      checkResult(runtime, [0, 0, 0]);
+    });
+
+    // Additional edge case tests for vector.angle
+    test('vector.angle throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle("hello", "world")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.angle throws for boolean arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(true, false)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.angle throws for map arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle({"a": 1}, {"b": 2})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.angle throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(42, 43)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.angle with first empty and second non-empty throws', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([]), vector.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('vector.angle with first non-empty and second empty throws', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 2]), vector.new([]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
+
+    test('vector.angle handles both zero vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([0, 0]), vector.new([0, 0]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('vector.angle computes angle between 45 degree vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([1, 0]), vector.new([1, 1]))',
+      );
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(0.7853981633974483, 0.000001),
+      );
+    });
+
+    test('vector.angle handles scaled vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([2, 0]), vector.new([0, 100]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(1.5707963, 0.000001));
+    });
+
+    test('vector.angle handles negative and positive vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.new([-1, 1]), vector.new([1, 1]))',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(1.5707963, 0.000001));
+    });
+
+    // Composition tests
+    test('vector operations can be chained: add then magnitude', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.magnitude(vector.add(vector.new([1, 2]), vector.new([2, 2])))',
+      );
+      checkResult(runtime, 5.0);
+    });
+
+    test('vector operations can be chained: sub then normalize', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.sub(vector.new([4, 4]), vector.new([1, 0])))',
+      );
+      // [4, 4] - [1, 0] = [3, 4], normalized = [0.6, 0.8]
+      checkResult(runtime, [0.6, 0.8]);
+    });
+
+    test('vector operations can be chained: add then normalize', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.normalize(vector.add(vector.new([1, 0]), vector.new([0, 1])))',
+      );
+      expect(
+        num.parse(
+          runtime.executeMain().substring(
+            1,
+            runtime.executeMain().indexOf(','),
+          ),
+        ),
+        closeTo(0.7071067811865475, 0.000001),
+      );
+    });
+
+    test('vector operations can be chained: multiple adds', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.add(vector.add(vector.new([1, 1]), vector.new([2, 2])), vector.new([3, 3]))',
+      );
+      checkResult(runtime, [6, 6]);
+    });
+
+    test('vector operations can be chained: multiple subs', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.sub(vector.new([10, 10]), vector.new([3, 3])), vector.new([2, 2]))',
+      );
+      checkResult(runtime, [5, 5]);
+    });
+
+    test('vector operations can be chained: add and sub', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.sub(vector.add(vector.new([5, 5]), vector.new([3, 3])), vector.new([4, 4]))',
+      );
+      checkResult(runtime, [4, 4]);
+    });
+
+    test('vector.angle with normalized vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.angle(vector.normalize(vector.new([3, 4])), vector.normalize(vector.new([4, 3])))',
+      );
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(0.28379410920832, 0.0001),
+      );
+    });
   });
 }
