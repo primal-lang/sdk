@@ -1864,7 +1864,9 @@ main = [map.length(m1()), map.length(m2()), map.length(m3()), map.length(m4())]
     });
 
     test('ElementNotFoundError for indexing missing key', () {
-      final RuntimeFacade runtime = getRuntime('main = {"a": 1}["nonexistent"]');
+      final RuntimeFacade runtime = getRuntime(
+        'main = {"a": 1}["nonexistent"]',
+      );
       expect(runtime.executeMain, throwsA(isA<ElementNotFoundError>()));
     });
   });

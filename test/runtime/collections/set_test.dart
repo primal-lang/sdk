@@ -1707,13 +1707,16 @@ main = foo(set.new([2, 3]))
       checkResult(runtime, 2);
     });
 
-    test('set with duplicate maps keeps all since maps are reference types', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main = set.length(set.new([{"a": 1}, {"a": 1}]))',
-      );
-      // Maps are reference types, so duplicate maps are not deduplicated
-      checkResult(runtime, 2);
-    });
+    test(
+      'set with duplicate maps keeps all since maps are reference types',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = set.length(set.new([{"a": 1}, {"a": 1}]))',
+        );
+        // Maps are reference types, so duplicate maps are not deduplicated
+        checkResult(runtime, 2);
+      },
+    );
 
     test('set.add with map element', () {
       final RuntimeFacade runtime = getRuntime(

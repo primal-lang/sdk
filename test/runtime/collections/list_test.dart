@@ -1707,12 +1707,16 @@ main = list.reduce([1, 2, 3], [], append)
     });
 
     test('list.at accesses last valid index', () {
-      final RuntimeFacade runtime = getRuntime('main = list.at([10, 20, 30], 2)');
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.at([10, 20, 30], 2)',
+      );
       checkResult(runtime, 30);
     });
 
     test('list.at accesses first index explicitly', () {
-      final RuntimeFacade runtime = getRuntime('main = list.at([10, 20, 30], 0)');
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.at([10, 20, 30], 0)',
+      );
       checkResult(runtime, 10);
     });
 

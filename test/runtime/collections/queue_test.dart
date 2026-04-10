@@ -1044,7 +1044,10 @@ main = queue.peek(original())
       final RuntimeFacade runtime = getRuntime(
         'main = queue.peek(queue.new([[[1, 2], [3, 4]], [[5, 6], [7, 8]]]))',
       );
-      checkResult(runtime, [[1, 2], [3, 4]]);
+      checkResult(runtime, [
+        [1, 2],
+        [3, 4],
+      ]);
     });
 
     test('queue.new creates queue with mixed nested structures', () {
