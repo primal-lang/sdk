@@ -776,6 +776,338 @@ main = list.sort([3, 1, 5, 2, 4], decimalCompare)
       );
       checkResult(runtime, [42]);
     });
+
+    test('list.sort handles list with duplicate values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([3, 1, 2, 1, 3], num.compare)',
+      );
+      checkResult(runtime, [1, 1, 2, 3, 3]);
+    });
+
+    test('list.sort handles already sorted list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([1, 2, 3, 4, 5], num.compare)',
+      );
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.sort handles reverse sorted list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([5, 4, 3, 2, 1], num.compare)',
+      );
+      checkResult(runtime, [1, 2, 3, 4, 5]);
+    });
+
+    test('list.at on empty list throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime('main = list.at([], 0)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (IndexOutOfBoundsError e) => e.toString(),
+            'message',
+            allOf(
+              contains('0'),
+              contains('length: 0'),
+              contains('list.at'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.set on empty list throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime('main = list.set([], 0, 42)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (IndexOutOfBoundsError e) => e.toString(),
+            'message',
+            allOf(
+              contains('0'),
+              contains('length: 0'),
+              contains('list.set'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.sublist on empty list with zero indices returns empty list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([], 0, 0)',
+      );
+      checkResult(runtime, []);
+    });
+
+    test('list.sublist throws NegativeIndexError for negative end index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], 0, -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (IndexOutOfBoundsError e) => e.toString(),
+            'message',
+            allOf(
+              contains('-1'),
+              contains('list.sublist'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.swap first and last elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3, 4, 5], 0, 4)',
+      );
+      checkResult(runtime, [5, 2, 3, 4, 1]);
+    });
+
+    test('list.swap in two element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2], 0, 1)',
+      );
+      checkResult(runtime, [2, 1]);
+    });
+
+    test('list.take on empty list returns empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.take([], 5)');
+      checkResult(runtime, []);
+    });
+
+    test('list.drop on empty list returns empty list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.drop([], 5)');
+      checkResult(runtime, []);
+    });
+
+    test('list.reduce with single element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reduce([5], 10, num.add)',
+      );
+      checkResult(runtime, 15);
+    });
+
+    test('list.zip with single element lists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.zip([1], [2], num.add)',
+      );
+      checkResult(runtime, [3]);
+    });
+
+    test('list.indexOf returns first occurrence with duplicates', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.indexOf([1, 2, 2, 3], 2)',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('list.contains returns true for single element list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.contains([42], 42)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.contains returns false for single element list when not found',
+        () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.contains([42], 99)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list.length returns one for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.length([42])');
+      checkResult(runtime, 1);
+    });
+
+    test('list.join concatenates numbers with separator', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.join([1, 2, 3], "-")',
+      );
+      checkResult(runtime, '"1-2-3"');
+    });
+
+    test('list.join with empty separator', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.join(["a", "b", "c"], "")',
+      );
+      checkResult(runtime, '"abc"');
+    });
+
+    test('list.filled with boolean value', () {
+      final RuntimeFacade runtime = getRuntime('main = list.filled(3, true)');
+      checkResult(runtime, [true, true, true]);
+    });
+
+    test('list.filled with string value', () {
+      final RuntimeFacade runtime = getRuntime('main = list.filled(2, "x")');
+      checkResult(runtime, ['"x"', '"x"']);
+    });
+
+    test('list.filled with list value', () {
+      final RuntimeFacade runtime = getRuntime('main = list.filled(2, [1, 2])');
+      checkResult(runtime, [
+        [1, 2],
+        [1, 2],
+      ]);
+    });
+
+    test('list.remove from single element list when element matches', () {
+      final RuntimeFacade runtime = getRuntime('main = list.remove([42], 42)');
+      checkResult(runtime, []);
+    });
+
+    test('list.remove from single element list when element does not match',
+        () {
+      final RuntimeFacade runtime = getRuntime('main = list.remove([42], 99)');
+      checkResult(runtime, [42]);
+    });
+
+    test('list.isEmpty returns true for single element list is false', () {
+      final RuntimeFacade runtime = getRuntime('main = list.isEmpty([1])');
+      checkResult(runtime, false);
+    });
+
+    test('list.isNotEmpty returns true for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.isNotEmpty([1])');
+      checkResult(runtime, true);
+    });
+
+    test('list.init on two element list returns single element', () {
+      final RuntimeFacade runtime = getRuntime('main = list.init([1, 2])');
+      checkResult(runtime, [1]);
+    });
+
+    test('list.rest on two element list returns single element', () {
+      final RuntimeFacade runtime = getRuntime('main = list.rest([1, 2])');
+      checkResult(runtime, [2]);
+    });
+
+    test('list.concat with nested lists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.concat([[1, 2]], [[3, 4]])',
+      );
+      checkResult(runtime, [
+        [1, 2],
+        [3, 4],
+      ]);
+    });
+
+    test('list.map with identity function', () {
+      final RuntimeFacade runtime = getRuntime('''
+identity(x) = x
+main = list.map([1, 2, 3], identity)
+''');
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.filter keeps all elements when all match', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.filter([2, 4, 6], num.isEven)',
+      );
+      checkResult(runtime, [2, 4, 6]);
+    });
+
+    test('list.all returns true for single element matching predicate', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all([2], num.isEven)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.all returns false for single element not matching predicate',
+        () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.all([3], num.isEven)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list.any returns true for single element matching predicate', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.any([2], num.isEven)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.any returns false for single element not matching predicate',
+        () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.any([3], num.isEven)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list.none returns false for single element matching predicate', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.none([2], num.isEven)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('list.none returns true for single element not matching predicate',
+        () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.none([3], num.isEven)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('list.reverse on two element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.reverse([1, 2])');
+      checkResult(runtime, [2, 1]);
+    });
+
+    test('list.insertStart with nested list element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.insertStart([1, 2], [0])',
+      );
+      checkResult(runtime, [
+        [0],
+        1,
+        2,
+      ]);
+    });
+
+    test('list.insertEnd with nested list element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.insertEnd([1, 2], [3])',
+      );
+      checkResult(runtime, [
+        1,
+        2,
+        [3],
+      ]);
+    });
+
+    test('list.removeAt in middle of list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([1, 2, 3, 4, 5], 2)',
+      );
+      checkResult(runtime, [1, 2, 4, 5]);
+    });
+
+    test('list.take from single element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.take([1], 1)');
+      checkResult(runtime, [1]);
+    });
+
+    test('list.drop from single element list', () {
+      final RuntimeFacade runtime = getRuntime('main = list.drop([1], 1)');
+      checkResult(runtime, []);
+    });
+
+    test('list.sublist extracts single element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3, 4, 5], 2, 3)',
+      );
+      checkResult(runtime, [3]);
+    });
   });
 
   group('List Type Errors', () {
@@ -1063,6 +1395,93 @@ main = list.sort([3, 1, 2], badCompare)
     test('list.filled throws for wrong count type', () {
       final RuntimeFacade runtime = getRuntime(
         'main = list.filled("hello", 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.map throws for wrong function type', () {
+      final RuntimeFacade runtime = getRuntime('main = list.map([1, 2, 3], 42)');
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.sort throws for wrong function type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sort([1, 2, 3], "compare")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.at throws for wrong index type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.at([1, 2, 3], "one")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.set throws for wrong index type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.set([1, 2, 3], "one", 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.sublist throws for wrong start index type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], "one", 2)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.sublist throws for wrong end index type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([1, 2, 3], 0, "two")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.swap throws for wrong first index type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3], "one", 2)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.swap throws for wrong second index type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([1, 2, 3], 0, "two")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.take throws for wrong count type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.take([1, 2, 3], "two")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.drop throws for wrong count type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.drop([1, 2, 3], "two")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.removeAt throws for wrong index type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([1, 2, 3], "one")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('list.filled throws for non-integer count', () {
+      final RuntimeFacade runtime = getRuntime('main = list.filled(2.5, 1)');
+      checkResult(runtime, [1, 1]);
+    });
+
+    test('list.reduce throws for wrong initial value type when function expects specific type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.reduce([1, 2, 3], "zero", num.add)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
@@ -1486,6 +1905,66 @@ main = list.sort([3, 1, 2], badCompare)
         'main = list.removeAt([42], 0)',
       );
       checkResult(runtime, []);
+    });
+
+    test('list.swap throws IndexOutOfBoundsError on empty list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.swap([], 0, 0)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (IndexOutOfBoundsError e) => e.toString(),
+            'message',
+            allOf(
+              contains('0'),
+              contains('length: 0'),
+              contains('list.swap'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.removeAt throws IndexOutOfBoundsError on empty list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.removeAt([], 0)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (IndexOutOfBoundsError e) => e.toString(),
+            'message',
+            allOf(
+              contains('0'),
+              contains('length: 0'),
+              contains('list.removeAt'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('list.sublist throws IndexOutOfBoundsError on empty list with non-zero indices', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = list.sublist([], 0, 1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<IndexOutOfBoundsError>().having(
+            (IndexOutOfBoundsError e) => e.toString(),
+            'message',
+            allOf(
+              contains('1'),
+              contains('length: 0'),
+              contains('list.sublist'),
+            ),
+          ),
+        ),
+      );
     });
   });
 }
