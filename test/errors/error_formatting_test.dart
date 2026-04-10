@@ -51,6 +51,15 @@ void main() {
   // Lexical errors
   // ---------------------------------------------------------------------------
 
+  group('LexicalError', () {
+    test('has errorType "Error"', () {
+      const LexicalError error = LexicalError('lexical problem');
+
+      expect(error.errorType, equals('Error'));
+      expect(error.toString(), equals('Error: lexical problem'));
+    });
+  });
+
   group('InvalidCharacterError', () {
     test('without expected', () {
       const character = Character(
@@ -203,11 +212,34 @@ void main() {
         ),
       );
     });
+
+    test('toString() formats 6-digit code point correctly', () {
+      final InvalidCodePointError error = InvalidCodePointError(
+        0x1100FF,
+        const Location(row: 1, column: 1),
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Invalid code point U+1100FF: exceeds maximum U+10FFFF at [1, 1]',
+        ),
+      );
+    });
   });
 
   // ---------------------------------------------------------------------------
   // Syntactic errors
   // ---------------------------------------------------------------------------
+
+  group('SyntacticError', () {
+    test('has errorType "Error"', () {
+      const SyntacticError error = SyntacticError('syntactic problem');
+
+      expect(error.errorType, equals('Error'));
+      expect(error.toString(), equals('Error: syntactic problem'));
+    });
+  });
 
   group('InvalidTokenError', () {
     test('without expected', () {
@@ -274,6 +306,15 @@ void main() {
   // Semantic errors
   // ---------------------------------------------------------------------------
 
+  group('SemanticError', () {
+    test('has errorType "Error"', () {
+      const SemanticError error = SemanticError('semantic problem');
+
+      expect(error.errorType, equals('Error'));
+      expect(error.toString(), equals('Error: semantic problem'));
+    });
+  });
+
   group('DuplicatedFunctionError', () {
     test('toString() lists both parameter sets', () {
       const FunctionSignature function1 = FunctionSignature(
@@ -318,6 +359,28 @@ void main() {
         ),
       );
     });
+
+    test('toString() with single parameter in each function', () {
+      const FunctionSignature function1 = FunctionSignature(
+        name: 'negate',
+        parameters: [Parameter.number('x')],
+      );
+      const FunctionSignature function2 = FunctionSignature(
+        name: 'negate',
+        parameters: [Parameter.number('value')],
+      );
+      final DuplicatedFunctionError error = DuplicatedFunctionError(
+        function1: function1,
+        function2: function2,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Duplicated function "negate" with parameters (x) and (value)',
+        ),
+      );
+    });
   });
 
   group('DuplicatedParameterError', () {
@@ -332,6 +395,21 @@ void main() {
         error.toString(),
         equals(
           'Error: Duplicated parameter "x" in function "add(x, x)"',
+        ),
+      );
+    });
+
+    test('toString() with multiple parameters including duplicate', () {
+      final DuplicatedParameterError error = DuplicatedParameterError(
+        function: 'process',
+        parameter: 'value',
+        parameters: ['input', 'value', 'output', 'value'],
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Duplicated parameter "value" in function "process(input, value, output, value)"',
         ),
       );
     });
@@ -562,6 +640,21 @@ void main() {
         ),
       );
     });
+
+    test('toString() with list and function types', () {
+      final InvalidArgumentTypesError error = InvalidArgumentTypesError(
+        function: 'map',
+        expected: [const ListType(), const FunctionType()],
+        actual: [const StringType(), const NumberType()],
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid argument types for function "map". Expected: (List, Function). Actual: (String, Number)',
+        ),
+      );
+    });
   });
 
   group('InvalidArgumentCountError', () {
@@ -692,6 +785,34 @@ void main() {
         ),
       );
     });
+
+    test('toString() with string collection type', () {
+      final EmptyCollectionError error = EmptyCollectionError(
+        function: 'first',
+        collectionType: 'string',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Cannot get element from empty string in function "first"',
+        ),
+      );
+    });
+
+    test('toString() with map collection type', () {
+      final EmptyCollectionError error = EmptyCollectionError(
+        function: 'values',
+        collectionType: 'map',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Cannot get element from empty map in function "values"',
+        ),
+      );
+    });
   });
 
   group('IndexOutOfBoundsError', () {
@@ -732,6 +853,18 @@ void main() {
       expect(
         error.toString(),
         equals('Runtime error: Negative index -3 is not allowed for at'),
+      );
+    });
+
+    test('toString() with -1 index', () {
+      final NegativeIndexError error = NegativeIndexError(
+        function: 'charAt',
+        index: -1,
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Negative index -1 is not allowed for charAt'),
       );
     });
   });
