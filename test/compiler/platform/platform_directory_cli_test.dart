@@ -3,6 +3,7 @@
 library;
 
 import 'dart:io';
+import 'package:path/path.dart' as path_lib;
 import 'package:primal/compiler/platform/directory/platform_directory_cli.dart';
 import 'package:test/test.dart';
 
@@ -1034,6 +1035,373 @@ void main() {
       expect(platform.create(directory), isTrue);
       expect(platform.delete(directory), isTrue);
       expect(directory.existsSync(), isFalse);
+    });
+
+    test('copy with symbolic link in source directory', () {
+      final Directory source = Directory('${tempDir.path}/link_copy_src')
+        ..createSync();
+      final Directory linkTarget = Directory('${tempDir.path}/link_copy_target')
+        ..createSync();
+      File('${linkTarget.path}/target_file.txt').writeAsStringSync('linked');
+      Link('${source.path}/symlink').createSync(linkTarget.path);
+      File('${source.path}/regular.txt').writeAsStringSync('regular');
+      final Directory destination = Directory('${tempDir.path}/link_copy_dst');
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(File('${destination.path}/regular.txt').existsSync(), isTrue);
+    });
+
+    test('list includes symbolic links', () {
+      final Directory directory = Directory('${tempDir.path}/link_list')
+        ..createSync();
+      final Directory linkTarget = Directory('${tempDir.path}/link_list_target')
+        ..createSync();
+      File('${directory.path}/file.txt').createSync();
+      Link('${directory.path}/symlink').createSync(linkTarget.path);
+
+      final List<FileSystemEntity> contents = platform.list(directory);
+
+      expect(contents.length, equals(2));
+    });
+
+    test('rename with empty string fails', () {
+      final Directory directory = Directory('${tempDir.path}/rename_empty')
+        ..createSync();
+
+      // Renaming to empty string fails as it creates invalid path
+      expect(platform.rename(directory, ''), isFalse);
+      expect(directory.existsSync(), isTrue);
+    });
+
+    test('copy handles empty file correctly', () {
+      final Directory source = Directory('${tempDir.path}/empty_file_src')
+        ..createSync();
+      File('${source.path}/empty.txt').createSync();
+      final Directory destination = Directory('${tempDir.path}/empty_file_dst');
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(File('${destination.path}/empty.txt').existsSync(), isTrue);
+      expect(File('${destination.path}/empty.txt').lengthSync(), equals(0));
+    });
+
+    test('move handles directory with symbolic links', () {
+      final Directory source = Directory('${tempDir.path}/mv_link_src')
+        ..createSync();
+      final Directory linkTarget = Directory('${tempDir.path}/mv_link_target')
+        ..createSync();
+      Link('${source.path}/link').createSync(linkTarget.path);
+      final Directory destination = Directory('${tempDir.path}/mv_link_dst');
+
+      expect(platform.move(source, destination), isTrue);
+      expect(destination.existsSync(), isTrue);
+      expect(source.existsSync(), isFalse);
+    });
+
+    test('name for empty path returns empty string', () {
+      final Directory directory = Directory('');
+
+      final String result = platform.name(directory);
+
+      expect(result, equals(''));
+    });
+
+    test('parent of single component relative path', () {
+      final Directory directory = Directory('single_component');
+
+      final Directory parentDirectory = platform.parent(directory);
+
+      expect(parentDirectory.path, equals('.'));
+    });
+
+    test('exists returns true for symbolic link to directory', () {
+      final Directory target = Directory(
+        '${tempDir.path}/symlink_exists_target',
+      )..createSync();
+      final Link link = Link('${tempDir.path}/symlink_exists')
+        ..createSync(target.path);
+      final Directory directoryAtLink = Directory(link.path);
+
+      expect(platform.exists(directoryAtLink), isTrue);
+      expect(target.existsSync(), isTrue);
+    });
+
+    test('delete symbolic link removes only link not target', () {
+      final Directory target = Directory(
+        '${tempDir.path}/symlink_delete_target',
+      )..createSync();
+      File('${target.path}/file.txt').writeAsStringSync('content');
+      final Link link = Link('${tempDir.path}/symlink_delete')
+        ..createSync(target.path);
+      final Directory directoryAtLink = Directory(link.path);
+
+      expect(platform.delete(directoryAtLink), isTrue);
+      expect(link.existsSync(), isFalse);
+      expect(target.existsSync(), isTrue);
+      expect(File('${target.path}/file.txt').existsSync(), isTrue);
+    });
+
+    test('create directory at path where file exists returns false', () {
+      final File file = File('${tempDir.path}/file_exists.txt')..createSync();
+      final Directory directory = Directory(file.path);
+
+      expect(platform.create(directory), isFalse);
+    });
+
+    test('copy with file having no read permissions fails gracefully', () {
+      final Directory source = Directory('${tempDir.path}/no_read_src')
+        ..createSync();
+      final File file = File('${source.path}/restricted.txt')
+        ..writeAsStringSync('restricted');
+      // Remove read permissions
+      Process.runSync('chmod', ['000', file.path]);
+      final Directory destination = Directory('${tempDir.path}/no_read_dst');
+
+      // Should return false due to permission error
+      final bool result = platform.copy(source, destination);
+
+      // Restore permissions for cleanup
+      Process.runSync('chmod', ['644', file.path]);
+
+      expect(result, isFalse);
+    });
+
+    test('move to existing non-empty directory path fails', () {
+      final Directory source = Directory('${tempDir.path}/mv_exists_src')
+        ..createSync();
+      File('${source.path}/source_file.txt').writeAsStringSync('source');
+      final Directory destination = Directory('${tempDir.path}/mv_exists_dst')
+        ..createSync();
+      File('${destination.path}/dest_file.txt').writeAsStringSync('dest');
+
+      // Move fails when destination is non-empty directory
+      expect(platform.move(source, destination), isFalse);
+      expect(source.existsSync(), isTrue);
+      expect(destination.existsSync(), isTrue);
+    });
+
+    test('move to existing empty directory path succeeds', () {
+      final Directory source = Directory('${tempDir.path}/mv_empty_exists_src')
+        ..createSync();
+      File('${source.path}/file.txt').writeAsStringSync('data');
+      final Directory destination = Directory(
+        '${tempDir.path}/mv_empty_exists_dst',
+      )..createSync();
+
+      expect(platform.move(source, destination), isTrue);
+      expect(destination.existsSync(), isTrue);
+      expect(source.existsSync(), isFalse);
+      expect(File('${destination.path}/file.txt').existsSync(), isTrue);
+    });
+
+    test('rename to existing non-empty directory name fails', () {
+      final Directory directory = Directory('${tempDir.path}/rename_exists_src')
+        ..createSync();
+      File('${directory.path}/src_file.txt').writeAsStringSync('source');
+      final Directory existing = Directory('${tempDir.path}/rename_exists_dst')
+        ..createSync();
+      File('${existing.path}/dst_file.txt').writeAsStringSync('dest');
+
+      // Rename fails when target directory is non-empty
+      expect(platform.rename(directory, 'rename_exists_dst'), isFalse);
+      expect(directory.existsSync(), isTrue);
+      expect(existing.existsSync(), isTrue);
+    });
+
+    test('rename to existing empty directory name succeeds', () {
+      final Directory directory = Directory(
+        '${tempDir.path}/rename_empty_exists_src',
+      )..createSync();
+      File('${directory.path}/file.txt').writeAsStringSync('data');
+      Directory('${tempDir.path}/rename_empty_exists_dst').createSync();
+
+      expect(platform.rename(directory, 'rename_empty_exists_dst'), isTrue);
+      expect(
+        Directory('${tempDir.path}/rename_empty_exists_dst').existsSync(),
+        isTrue,
+      );
+      expect(directory.existsSync(), isFalse);
+      expect(
+        File(
+          '${tempDir.path}/rename_empty_exists_dst/file.txt',
+        ).existsSync(),
+        isTrue,
+      );
+    });
+
+    test('fromPath with multiple consecutive slashes', () {
+      final String pathWithSlashes = '${tempDir.path}//double//slashes';
+      final Directory directory = platform.fromPath(pathWithSlashes);
+
+      expect(directory, isA<Directory>());
+      expect(directory.path, equals(pathWithSlashes));
+    });
+
+    test('name handles multiple consecutive slashes in path', () {
+      final Directory directory = Directory('${tempDir.path}//test');
+
+      final String result = platform.name(directory);
+
+      expect(result, equals('test'));
+    });
+
+    test('path preserves parent reference components', () {
+      final Directory directory = Directory(
+        '${tempDir.path}/../${path_lib.basename(tempDir.path)}/test',
+      );
+
+      final String result = platform.path(directory);
+
+      // The implementation uses directory.absolute.path which preserves ..
+      expect(result, startsWith('/'));
+      expect(result, contains('..'));
+    });
+
+    test('list empty directory returns modifiable list', () {
+      final Directory directory = Directory('${tempDir.path}/modifiable_list')
+        ..createSync();
+
+      final List<FileSystemEntity> contents = platform.list(directory);
+
+      expect(() => contents.add(directory), returnsNormally);
+    });
+
+    test('copy with many nested empty directories', () {
+      final Directory source = Directory('${tempDir.path}/nested_empty_src')
+        ..createSync();
+      Directory('${source.path}/a/b/c').createSync(recursive: true);
+      Directory('${source.path}/d/e/f').createSync(recursive: true);
+      Directory('${source.path}/g').createSync();
+      final Directory destination = Directory(
+        '${tempDir.path}/nested_empty_dst',
+      );
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(Directory('${destination.path}/a/b/c').existsSync(), isTrue);
+      expect(Directory('${destination.path}/d/e/f').existsSync(), isTrue);
+      expect(Directory('${destination.path}/g').existsSync(), isTrue);
+    });
+
+    test('rename directory containing subdirectories preserves structure', () {
+      final Directory directory = Directory('${tempDir.path}/rename_struct')
+        ..createSync();
+      Directory('${directory.path}/sub1').createSync();
+      Directory('${directory.path}/sub2').createSync();
+      Directory('${directory.path}/sub1/nested').createSync();
+
+      expect(platform.rename(directory, 'renamed_struct'), isTrue);
+      expect(
+        Directory('${tempDir.path}/renamed_struct/sub1').existsSync(),
+        isTrue,
+      );
+      expect(
+        Directory('${tempDir.path}/renamed_struct/sub2').existsSync(),
+        isTrue,
+      );
+      expect(
+        Directory('${tempDir.path}/renamed_struct/sub1/nested').existsSync(),
+        isTrue,
+      );
+    });
+
+    test('move directory with read-only file succeeds', () {
+      final Directory source = Directory('${tempDir.path}/mv_readonly_src')
+        ..createSync();
+      final File file = File('${source.path}/readonly.txt')
+        ..writeAsStringSync('readonly');
+      Process.runSync('chmod', ['444', file.path]);
+      final Directory destination = Directory(
+        '${tempDir.path}/mv_readonly_dst',
+      );
+
+      final bool result = platform.move(source, destination);
+
+      // Restore permissions for cleanup if move failed
+      if (!result) {
+        Process.runSync('chmod', ['644', file.path]);
+      }
+
+      expect(result, isTrue);
+      expect(destination.existsSync(), isTrue);
+    });
+
+    test('exists for directory with no execute permission', () {
+      final Directory directory = Directory('${tempDir.path}/no_exec')
+        ..createSync();
+      Process.runSync('chmod', ['000', directory.path]);
+
+      final bool result = platform.exists(directory);
+
+      // Restore permissions for cleanup
+      Process.runSync('chmod', ['755', directory.path]);
+
+      expect(result, isTrue);
+    });
+
+    test('list directory with no read permission throws exception', () {
+      final Directory directory = Directory('${tempDir.path}/no_read_list')
+        ..createSync();
+      File('${directory.path}/file.txt').createSync();
+      Process.runSync('chmod', ['000', directory.path]);
+
+      expect(
+        () => platform.list(directory),
+        throwsA(isA<FileSystemException>()),
+      );
+
+      // Restore permissions for cleanup
+      Process.runSync('chmod', ['755', directory.path]);
+    });
+
+    test('copy with hidden directory', () {
+      final Directory source = Directory('${tempDir.path}/hidden_dir_src')
+        ..createSync();
+      final Directory hiddenDir = Directory('${source.path}/.hidden')
+        ..createSync();
+      File('${hiddenDir.path}/file.txt').writeAsStringSync('hidden');
+      final Directory destination = Directory('${tempDir.path}/hidden_dir_dst');
+
+      expect(platform.copy(source, destination), isTrue);
+      expect(Directory('${destination.path}/.hidden').existsSync(), isTrue);
+      expect(
+        File('${destination.path}/.hidden/file.txt').readAsStringSync(),
+        equals('hidden'),
+      );
+    });
+
+    test('delete directory with hidden files and directories', () {
+      final Directory directory = Directory('${tempDir.path}/del_hidden')
+        ..createSync();
+      File('${directory.path}/.hidden_file').createSync();
+      Directory('${directory.path}/.hidden_dir').createSync();
+
+      expect(platform.delete(directory), isTrue);
+      expect(directory.existsSync(), isFalse);
+    });
+
+    test('fromPath with null byte in path creates directory object', () {
+      final String pathWithNull = '${tempDir.path}/path\x00null';
+      final Directory directory = platform.fromPath(pathWithNull);
+
+      expect(directory, isA<Directory>());
+      expect(directory.path, equals(pathWithNull));
+    });
+
+    test('path returns absolute path even for complex relative path', () {
+      final Directory directory = Directory('./a/../b/./c');
+
+      final String result = platform.path(directory);
+
+      expect(result, startsWith('/'));
+    });
+
+    test('name for path ending with multiple slashes', () {
+      final Directory directory = Directory(
+        '${tempDir.path}/trailing_multi///',
+      );
+
+      final String result = platform.name(directory);
+
+      expect(result, equals('trailing_multi'));
     });
   });
 }

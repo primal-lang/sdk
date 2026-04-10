@@ -310,5 +310,258 @@ void main() {
       // LOGNAME is usually set on Unix systems, similar to USER
       expect(result, anyOf(isNotEmpty, equals('')));
     });
+
+    test('getVariable handles variable name with dollar sign prefix', () {
+      final String result = environment.getVariable('\$PATH');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with dollar sign and braces', () {
+      final String result = environment.getVariable('\${PATH}');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with backticks', () {
+      final String result = environment.getVariable('`VAR`');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with single quotes', () {
+      final String result = environment.getVariable("'VAR'");
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with double quotes', () {
+      final String result = environment.getVariable('"VAR"');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with vertical tab', () {
+      final String result = environment.getVariable('VAR\x0BNAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with form feed', () {
+      final String result = environment.getVariable('VAR\x0CNAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with bell character', () {
+      final String result = environment.getVariable('VAR\x07NAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with asterisk', () {
+      final String result = environment.getVariable('VAR*NAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with question mark', () {
+      final String result = environment.getVariable('VAR?NAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with ampersand', () {
+      final String result = environment.getVariable('VAR&NAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with pipe', () {
+      final String result = environment.getVariable('VAR|NAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with percent sign', () {
+      final String result = environment.getVariable('%VAR%');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with tilde', () {
+      final String result = environment.getVariable('~VAR');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with parentheses', () {
+      final String result = environment.getVariable('VAR(NAME)');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with braces', () {
+      final String result = environment.getVariable('{VAR}');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with square brackets', () {
+      final String result = environment.getVariable('VAR[0]');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with angle brackets', () {
+      final String result = environment.getVariable('VAR<NAME>');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with semicolon', () {
+      final String result = environment.getVariable('VAR;NAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with exclamation mark', () {
+      final String result = environment.getVariable('VAR!NAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with at sign only', () {
+      final String result = environment.getVariable('@');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with hash only', () {
+      final String result = environment.getVariable('#');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable always returns String type', () {
+      final String existingVariable = environment.getVariable('PATH');
+      final String nonExistingVariable = environment.getVariable(
+        'NONEXISTENT_VAR_XYZ',
+      );
+
+      expect(existingVariable, isA<String>());
+      expect(nonExistingVariable, isA<String>());
+    });
+
+    test('getVariable returns empty string not null for missing variable', () {
+      final String result = environment.getVariable('DEFINITELY_NOT_SET_VAR');
+
+      expect(result, isNot(isNull));
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles escape sequences in variable name', () {
+      final String result = environment.getVariable('VAR\\nNAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with high unicode codepoint', () {
+      final String result = environment.getVariable('VAR_\u{1F600}');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with combining characters', () {
+      final String result = environment.getVariable('VAR_e\u0301');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with zero-width characters', () {
+      final String result = environment.getVariable('VAR\u200BNAME');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles repeated special characters', () {
+      final String result = environment.getVariable('!!!');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name with all valid characters', () {
+      final String result = environment.getVariable(
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789',
+      );
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles lowercase variable name', () {
+      final String result = environment.getVariable('lowercase_var');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles mixed case variable name', () {
+      final String result = environment.getVariable('MixedCase_Var_123');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles XDG_RUNTIME_DIR', () {
+      final String result = environment.getVariable('XDG_RUNTIME_DIR');
+
+      // XDG_RUNTIME_DIR may or may not be set
+      expect(result, isA<String>());
+    });
+
+    test('getVariable handles DISPLAY', () {
+      final String result = environment.getVariable('DISPLAY');
+
+      // DISPLAY may or may not be set depending on environment
+      expect(result, isA<String>());
+    });
+
+    test('getVariable handles TMPDIR', () {
+      final String result = environment.getVariable('TMPDIR');
+
+      // TMPDIR may or may not be set
+      expect(result, isA<String>());
+    });
+
+    test('getVariable handles variable name ending with underscore', () {
+      final String result = environment.getVariable('VAR_');
+
+      expect(result, equals(''));
+    });
+
+    test('getVariable handles variable name starting with underscore', () {
+      final String result = environment.getVariable('_VAR');
+
+      // Variables starting with underscore may exist
+      expect(result, isA<String>());
+    });
+
+    test('getVariable handles double underscore prefix', () {
+      final String result = environment.getVariable('__VAR');
+
+      expect(result, isA<String>());
+    });
+
+    test('getVariable handles triple underscore variable name', () {
+      final String result = environment.getVariable('___');
+
+      expect(result, isA<String>());
+    });
+
+    test('getVariable result length is non-negative', () {
+      final String existingResult = environment.getVariable('PATH');
+      final String missingResult = environment.getVariable('MISSING_VAR_XYZ');
+
+      expect(existingResult.length, greaterThanOrEqualTo(0));
+      expect(missingResult.length, equals(0));
+    });
   });
 }

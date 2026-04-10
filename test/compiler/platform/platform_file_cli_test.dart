@@ -369,6 +369,13 @@ void main() {
         blocker.deleteSync();
       });
 
+      test('returns false when parent path has invalid character', () {
+        // NUL character in directory path should fail
+        final File file = File('${tempDir.path}/invalid\x00dir/file.txt');
+
+        expect(platform.write(file, 'content'), isFalse);
+      });
+
       test('writes unicode content correctly', () {
         final File file = File('${tempDir.path}/unicode_write.txt');
         const String unicodeContent =
@@ -597,6 +604,13 @@ void main() {
     });
 
     group('delete (additional cases)', () {
+      test('returns false for file with invalid path character', () {
+        // NUL character in path should return false (exception caught)
+        final File file = File('${tempDir.path}/delete\x00invalid.txt');
+
+        expect(platform.delete(file), isFalse);
+      });
+
       test('deletes file with content', () {
         final File file = File('${tempDir.path}/delete_with_content.txt')
           ..writeAsStringSync('content to delete');
@@ -766,6 +780,25 @@ void main() {
     });
 
     group('rename (additional edge cases)', () {
+      test('renames file with path separator moves to new location', () {
+        final Directory subDir = Directory('${tempDir.path}/rename_subdir')
+          ..createSync();
+        final File file = File('${tempDir.path}/rename_with_path.txt')
+          ..writeAsStringSync('content');
+
+        // When new name includes path separator, file is moved to that location
+        expect(platform.rename(file, 'rename_subdir/moved.txt'), isTrue);
+        expect(
+          File('${subDir.path}/moved.txt').existsSync(),
+          isTrue,
+        );
+        expect(
+          File('${subDir.path}/moved.txt').readAsStringSync(),
+          equals('content'),
+        );
+        expect(file.existsSync(), isFalse);
+      });
+
       test('renames file to unicode name', () {
         final File file = File('${tempDir.path}/rename_to_unicode.txt')
           ..createSync();

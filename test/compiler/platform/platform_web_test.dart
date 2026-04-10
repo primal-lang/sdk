@@ -6,9 +6,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/platform/console/platform_console_base.dart';
 import 'package:primal/compiler/platform/console/platform_console_web.dart';
+import 'package:primal/compiler/platform/directory/platform_directory_base.dart';
 import 'package:primal/compiler/platform/directory/platform_directory_web.dart';
+import 'package:primal/compiler/platform/environment/platform_environment_base.dart';
 import 'package:primal/compiler/platform/environment/platform_environment_web.dart';
+import 'package:primal/compiler/platform/file/platform_file_base.dart';
 import 'package:primal/compiler/platform/file/platform_file_web.dart';
 import 'package:test/test.dart';
 
@@ -1639,6 +1643,82 @@ void main() {
 
       expect(error, isA<RuntimeError>());
       expect(error.toString(), startsWith('Runtime error:'));
+    });
+
+    test('error implements Exception', () {
+      const UnimplementedFunctionWebError error = UnimplementedFunctionWebError(
+        'test.function',
+      );
+
+      expect(error, isA<Exception>());
+    });
+
+    test('error can be caught as Exception', () {
+      bool caught = false;
+
+      try {
+        throw const UnimplementedFunctionWebError('test.function');
+      } on Exception {
+        caught = true;
+      }
+
+      expect(caught, isTrue);
+    });
+
+    test('error can be caught as RuntimeError', () {
+      bool caught = false;
+
+      try {
+        throw const UnimplementedFunctionWebError('test.function');
+      } on RuntimeError {
+        caught = true;
+      }
+
+      expect(caught, isTrue);
+    });
+
+    test('error can be caught as UnimplementedFunctionWebError', () {
+      bool caught = false;
+
+      try {
+        throw const UnimplementedFunctionWebError('test.function');
+      } on UnimplementedFunctionWebError {
+        caught = true;
+      }
+
+      expect(caught, isTrue);
+    });
+  });
+
+  group('PlatformConsoleWeb inheritance', () {
+    test('extends PlatformConsoleBase', () {
+      final PlatformConsoleWeb console = PlatformConsoleWeb();
+
+      expect(console, isA<PlatformConsoleBase>());
+    });
+  });
+
+  group('PlatformFileWeb inheritance', () {
+    test('extends PlatformFileBase', () {
+      final PlatformFileWeb platform = PlatformFileWeb();
+
+      expect(platform, isA<PlatformFileBase>());
+    });
+  });
+
+  group('PlatformDirectoryWeb inheritance', () {
+    test('extends PlatformDirectoryBase', () {
+      final PlatformDirectoryWeb platform = PlatformDirectoryWeb();
+
+      expect(platform, isA<PlatformDirectoryBase>());
+    });
+  });
+
+  group('PlatformEnvironmentWeb inheritance', () {
+    test('extends PlatformEnvironmentBase', () {
+      final PlatformEnvironmentWeb platform = PlatformEnvironmentWeb();
+
+      expect(platform, isA<PlatformEnvironmentBase>());
     });
   });
 }
