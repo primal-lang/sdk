@@ -543,6 +543,27 @@ void main() {
       checkResult(runtime, 5);
     });
 
+    test(
+      'num.clamp throws InvalidNumericOperationError when min > max',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = num.clamp(5, 10, 3)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception e) => e.toString(),
+              'message',
+              allOf(
+                contains('num.clamp'),
+                contains('min bound'),
+                contains('max bound'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
     test('num.log throws InvalidNumericOperationError for zero', () {
       final RuntimeFacade runtime = getRuntime('main = num.log(0)');
       expect(

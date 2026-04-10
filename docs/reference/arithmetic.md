@@ -257,6 +257,7 @@ num.max(3, 7) // returns 7
 - **Signature:** `num.clamp(a: Number, b: Number, c: Number): Number`
 - **Input:** Three numbers
 - **Output:** The first number constrained within the range defined by the second and third numbers
+- **Constraints:** Throws an error if the min bound is greater than the max bound
 - **Purity:** Pure
 - **Example:**
 
