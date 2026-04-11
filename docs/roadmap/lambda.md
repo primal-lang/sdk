@@ -58,18 +58,137 @@ Note: The `parameters` rule allows zero or more parameters. `() -> 5` is valid (
 
 It cannot appear as an operand to binary operators without parentheses (e.g., `5 + (x) -> x` is invalid; use `5 + ((x) -> x)`).
 
-**Disambiguation**: After `(`, the parser must determine whether the content is a lambda parameter list or a grouped expression. The strategy:
+**Disambiguation**: After `(`, the parser must determine whether the content is a lambda parameter list or a grouped expression. The parser uses **multi-token lookahead** (not backtracking) to make this determination before consuming any tokens.
 
-1. See `(`
-2. If immediately followed by `)` then `->`, parse as zero-parameter lambda
-3. Otherwise, attempt to parse as comma-separated identifiers
-4. If `)` followed by `->`, commit to lambda and parse body
-5. Otherwise, backtrack and parse as grouped expression
+**Key insight**: Lambda parameter lists have a restricted form—zero or more comma-separated identifiers followed by `)` then `->`. A grouped expression can contain arbitrary expressions. We can distinguish these by scanning ahead without consuming.
 
-**Parser predicates**: Add this static predicate to `ExpressionParser` (following the existing pattern at lines 13-43):
+**ListIterator extension**: Add a `peekAt()` method to `lib/utils/list_iterator.dart`:
+
+```dart
+/// Peeks at the token [offset] positions ahead without consuming.
+/// Returns null if the offset is beyond the end of the list.
+T? peekAt(int offset) {
+  final int targetIndex = _index + offset;
+  if (targetIndex < _list.length) {
+    return _list[targetIndex];
+  }
+  return null;
+}
+```
+
+**Parser predicates**: Add these static predicates to `ExpressionParser` (following the existing pattern at lines 12-43):
 
 ```dart
 static bool _isArrow(Token token) => token is ArrowToken;
+```
+
+**Disambiguation helper**: Add this method to `ExpressionParser`:
+
+```dart
+/// Checks if the current position starts a lambda expression.
+/// Uses lookahead only—does not consume any tokens.
+///
+/// Returns the number of parameters if this is a lambda, or -1 if not.
+/// This allows the caller to know how many identifiers to consume.
+int _checkLambdaStart() {
+  // Must start with '('
+  if (!check(_isOpenParen)) {
+    return -1;
+  }
+
+  int offset = 1; // Skip past '('
+  int parameterCount = 0;
+
+  // Check for zero-parameter lambda: () ->
+  Token? token = iterator.peekAt(offset);
+  if (token != null && _isCloseParen(token)) {
+    // Saw '(' ')' — check for '->'
+    Token? arrow = iterator.peekAt(offset + 1);
+    if (arrow != null && _isArrow(arrow)) {
+      return 0; // Zero-parameter lambda
+    }
+    return -1; // Just '()' without '->', not a lambda
+  }
+
+  // Check for one or more parameters: (id, id, ...) ->
+  while (true) {
+    token = iterator.peekAt(offset);
+    if (token == null) {
+      return -1; // Unexpected end
+    }
+
+    // Expect identifier
+    if (!_isIdentifier(token)) {
+      return -1; // Not an identifier, so not a lambda parameter list
+    }
+    parameterCount++;
+    offset++;
+
+    // After identifier, expect ',' or ')'
+    token = iterator.peekAt(offset);
+    if (token == null) {
+      return -1;
+    }
+
+    if (_isCloseParen(token)) {
+      // End of parameter list — check for '->'
+      Token? arrow = iterator.peekAt(offset + 1);
+      if (arrow != null && _isArrow(arrow)) {
+        return parameterCount;
+      }
+      return -1; // ')' not followed by '->', not a lambda
+    } else if (_isComma(token)) {
+      offset++; // Skip comma, continue to next parameter
+    } else {
+      return -1; // Unexpected token in parameter list
+    }
+  }
+}
+```
+
+**Parsing strategy** (no backtracking required):
+
+1. At `lambdaExpression()`, call `_checkLambdaStart()`
+2. If it returns >= 0, we have a lambda—consume `(`, parameters, `)`, `->`, then parse body
+3. If it returns -1, fall through to `letExpression()` (which eventually reaches `primary()` for grouped expressions)
+
+The lookahead scan in `_checkLambdaStart()` examines tokens without consuming them. Only after the scan confirms a lambda pattern do we commit to parsing it. This is **not backtracking** because:
+
+- We never consume tokens during the check phase
+- We never need to "undo" any parsing state
+- The iterator position remains unchanged until we commit
+
+**Lambda parsing method**:
+
+```dart
+Expression lambdaExpression() {
+  final int parameterCount = _checkLambdaStart();
+
+  if (parameterCount >= 0) {
+    final Token openParen = advance(); // Consume '('
+    final List<String> parameters = [];
+
+    if (parameterCount > 0) {
+      // Consume comma-separated identifiers
+      do {
+        final Token identifier = consume(_isIdentifier, 'identifier');
+        parameters.add(identifier.value as String);
+      } while (matchSingle(_isComma));
+    }
+
+    consume(_isCloseParen, ')');
+    consume(_isArrow, '->');
+    final Expression body = expression(); // Recursive: lambda body can contain lambdas
+
+    return LambdaExpression(
+      location: openParen.location,
+      parameters: parameters,
+      body: body,
+    );
+  } else {
+    return letExpression();
+  }
+}
 ```
 
 **Whitespace**: Not significant. Indentation in examples is purely for readability. These are equivalent:
