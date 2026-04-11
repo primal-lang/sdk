@@ -81,6 +81,8 @@ The lookahead in `lambdaExpression()` (via `_checkLambdaStart()`) determines whe
 - In a `let` binding or body: `let f = (x) -> x * 2 in f(5)`
 - As the callee of an immediate invocation: `((x) -> x + 1)(5)`
 
+**Why immediate invocation needs double parentheses**: Because lambda has the lowest precedence and its body extends to the end of the expression, `(x) -> x + 1(5)` parses as `(x) -> (x + 1(5))`—the `(5)` becomes part of the lambda body, calling `1` as a function. The outer parentheses in `((x) -> x + 1)(5)` group the entire lambda as a single expression, then `(5)` calls that expression.
+
 It cannot appear as an operand to binary operators without parentheses (e.g., `5 + (x) -> x` is invalid; use `5 + ((x) -> x)`).
 
 **Disambiguation**: After `(`, the parser must determine whether the content is a lambda parameter list or a grouped expression. The parser uses **multi-token lookahead** (not backtracking) to make this determination before consuming any tokens.
