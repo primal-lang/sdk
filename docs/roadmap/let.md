@@ -475,12 +475,12 @@ final SemanticNode body = checkExpression(
 LetExpression
   bindings: List<LetBindingExpression>
   body: Expression
-  location: Location
+  location: Location    // location of 'let' token
 
 LetBindingExpression
   name: String
   value: Expression
-  location: Location
+  location: Location    // location of identifier token (follows MapEntryExpression pattern)
 ```
 
 **Semantic (IR)**:
@@ -489,12 +489,12 @@ LetBindingExpression
 SemanticLetNode
   bindings: List<SemanticLetBindingNode>
   body: SemanticNode
-  location: Location
+  location: Location    // propagated from LetExpression
 
 SemanticLetBindingNode
   name: String
   value: SemanticNode
-  location: Location
+  location: Location    // propagated from LetBindingExpression
 ```
 
 **Modified existing node** (add field to `lib/compiler/semantic/semantic_node.dart`):

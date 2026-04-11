@@ -1,29 +1,3 @@
-MEDIUM: Bindings constructor approach differs from spec
-
-What is wrong: The spec shows (line 314):
-final Term substituted = term.substitute(Bindings(Map.of(bindingMap)));
-
-But the current Bindings class (bindings.dart:8):
-const Bindings(this.data);
-
-Uses a constructor that takes the map directly. Map.of() creates a copy, which
-is correct for snapshot semantics. But the spec uses Bindings(Map.of(...))
-while the existing code uses Bindings.from() factory. Inconsistent API usage.
-
----
-MEDIUM: LetBindingExpression location semantics unclear
-
-What is wrong: Line 375-379 shows:
-LetBindingExpression
-name: String
-value: Expression
-location: Location
-
-What location does this use? The = token? The identifier token? The value's
-location? The existing MapEntryExpression (expression.dart:54-62) uses
-location: key.location. The spec should clarify.
-
----
 LOW: Example typo/inconsistency
 
 What is wrong: Line 260 shows:
