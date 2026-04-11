@@ -400,6 +400,29 @@ LetTerm
   body: Term
 ```
 
+### Lowering Implementation
+
+Add the following case to the `lowerTerm` switch in `lib/compiler/lowering/lowerer.dart`:
+
+```dart
+Term lowerTerm(SemanticNode semanticNode) => switch (semanticNode) {
+  // ... existing cases ...
+  SemanticLetNode() => _lowerLet(semanticNode),
+  // ... existing default case ...
+};
+
+Term _lowerLet(SemanticLetNode semanticNode) {
+  final List<(String, Term)> loweredBindings = semanticNode.bindings
+      .map((binding) => (binding.name, lowerTerm(binding.value)))
+      .toList();
+
+  return LetTerm(
+    bindings: loweredBindings,
+    body: lowerTerm(semanticNode.body),
+  );
+}
+```
+
 ### Implementation Complexity
 
 **Medium**

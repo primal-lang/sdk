@@ -20,13 +20,22 @@ class LineEditor {
       return stdin.readLineSync()?.trim() ?? '';
     }
 
-    final bool wasLineMode = stdin.lineMode;
-    final bool wasEchoMode = stdin.echoMode;
-
+    // On Windows, stdin.hasTerminal may return true even when terminal mode
+    // changes fail (e.g., in Git Bash, mintty, or certain IDEs). We attempt
+    // raw mode for history navigation, but fall back to simple line reading.
+    late bool wasLineMode;
+    late bool wasEchoMode;
     try {
+      wasLineMode = stdin.lineMode;
+      wasEchoMode = stdin.echoMode;
       stdin.lineMode = false;
       stdin.echoMode = false;
+    } on StdinException {
+      // Terminal mode changes not supported; fall back to simple reading
+      return stdin.readLineSync()?.trim() ?? '';
+    }
 
+    try {
       final String line = _readLineRaw();
 
       if (line.isNotEmpty) {
