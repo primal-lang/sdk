@@ -1123,7 +1123,7 @@ Term _lowerLet(SemanticLetNode semanticNode) {
 
 ### Implementation Complexity
 
-**Medium**
+**High**
 
 | Component         | Effort                                                                          |
 | ----------------- | ------------------------------------------------------------------------------- |
