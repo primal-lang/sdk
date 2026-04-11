@@ -1192,10 +1192,10 @@ New tests required for `isLetBinding: true` producing `LetBoundVariableTerm` (co
 
 Tests in `test/compiler/intermediate_representation_test.dart`:
 
-| Existing Test                                                               | Impact               | Notes                                                |
-| --------------------------------------------------------------------------- | -------------------- | ---------------------------------------------------- |
-| `parameter reference creates SemanticBoundVariableNode` (line 798)          | **No change needed** | Parameters still produce `SemanticBoundVariableNode` |
-| `lowering SemanticBoundVariableNode produces BoundVariableTerm` (line 1412) | **No change needed** | Default `isLetBinding: false` preserves behavior     |
+| Existing Test                                                   | Impact               | Notes                                                |
+| --------------------------------------------------------------- | -------------------- | ---------------------------------------------------- |
+| `parameter reference creates SemanticBoundVariableNode`         | **No change needed** | Parameters still produce `SemanticBoundVariableNode` |
+| `lowering SemanticBoundVariableNode produces BoundVariableTerm` | **No change needed** | Default `isLetBinding: false` preserves behavior     |
 
 New tests required to verify `SemanticBoundVariableNode.isLetBinding` field is correctly set (covered below).
 
