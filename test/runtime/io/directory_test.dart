@@ -295,5 +295,325 @@ void main() {
         equals('deep'),
       );
     });
+
+    group('edge cases', () {
+      test('directory.fromPath with relative path resolves to absolute', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.fromPath(${primalString('.')})',
+        );
+        final String result = runtime.executeMain();
+        expect(result.startsWith('"'), isTrue);
+        expect(result.endsWith('"'), isTrue);
+        expect(result.contains('/'), isTrue);
+      });
+
+      test('directory.fromPath with path containing spaces', () {
+        final Directory directoryWithSpaces = Directory(
+          path.join(tempDir.path, 'directory with spaces'),
+        );
+        directoryWithSpaces.createSync();
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.fromPath(${primalString(directoryWithSpaces.path)})',
+        );
+        checkResult(runtime, primalString(directoryWithSpaces.absolute.path));
+      });
+
+      test('directory.name for hidden directory', () {
+        final Directory hiddenDirectory = Directory(
+          path.join(tempDir.path, '.hidden'),
+        );
+        hiddenDirectory.createSync();
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.name(directory.fromPath(${primalString(hiddenDirectory.path)}))',
+        );
+        checkResult(runtime, primalString('.hidden'));
+      });
+
+      test('directory.name for directory with spaces', () {
+        final Directory directoryWithSpaces = Directory(
+          path.join(tempDir.path, 'name with spaces'),
+        );
+        directoryWithSpaces.createSync();
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.name(directory.fromPath(${primalString(directoryWithSpaces.path)}))',
+        );
+        checkResult(runtime, primalString('name with spaces'));
+      });
+
+      test('directory.list returns only files when no subdirectories', () {
+        final Directory filesOnlyDirectory = Directory(
+          path.join(tempDir.path, 'files-only'),
+        );
+        filesOnlyDirectory.createSync();
+        File(path.join(filesOnlyDirectory.path, 'a.txt')).writeAsStringSync(
+          'a',
+        );
+        File(path.join(filesOnlyDirectory.path, 'b.txt')).writeAsStringSync(
+          'b',
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.list(directory.fromPath(${primalString(filesOnlyDirectory.path)}))',
+        );
+        final List<dynamic> children =
+            runtime.evaluateToTerm(runtime.mainExpression([])).native()
+                as List<dynamic>;
+        expect(children.length, equals(2));
+        expect(children.every((child) => child is File), isTrue);
+      });
+
+      test('directory.list returns only directories when no files', () {
+        final Directory directoriesOnlyDirectory = Directory(
+          path.join(tempDir.path, 'directories-only'),
+        );
+        directoriesOnlyDirectory.createSync();
+        Directory(
+          path.join(directoriesOnlyDirectory.path, 'sub1'),
+        ).createSync();
+        Directory(
+          path.join(directoriesOnlyDirectory.path, 'sub2'),
+        ).createSync();
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.list(directory.fromPath(${primalString(directoriesOnlyDirectory.path)}))',
+        );
+        final List<dynamic> children =
+            runtime.evaluateToTerm(runtime.mainExpression([])).native()
+                as List<dynamic>;
+        expect(children.length, equals(2));
+        expect(children.every((child) => child is Directory), isTrue);
+      });
+
+      test('directory.copy overwrites existing destination', () {
+        final Directory sourceDirectory = Directory(
+          path.join(tempDir.path, 'copy-source-overwrite'),
+        );
+        sourceDirectory.createSync();
+        File(path.join(sourceDirectory.path, 'new.txt')).writeAsStringSync(
+          'new content',
+        );
+
+        final Directory destinationDirectory = Directory(
+          path.join(tempDir.path, 'copy-destination-overwrite'),
+        );
+        destinationDirectory.createSync();
+        File(path.join(destinationDirectory.path, 'old.txt')).writeAsStringSync(
+          'old content',
+        );
+
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(
+          File(path.join(destinationDirectory.path, 'new.txt')).existsSync(),
+          isTrue,
+        );
+        expect(
+          File(
+            path.join(destinationDirectory.path, 'new.txt'),
+          ).readAsStringSync(),
+          equals('new content'),
+        );
+      });
+
+      test('directory.copy to nested non-existing path', () {
+        final Directory sourceDirectory = Directory(
+          path.join(tempDir.path, 'copy-source-nested'),
+        );
+        sourceDirectory.createSync();
+        File(path.join(sourceDirectory.path, 'data.txt')).writeAsStringSync(
+          'data',
+        );
+
+        final Directory destinationDirectory = Directory(
+          path.join(tempDir.path, 'nested', 'path', 'destination'),
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(destinationDirectory.existsSync(), isTrue);
+        expect(
+          File(
+            path.join(destinationDirectory.path, 'data.txt'),
+          ).readAsStringSync(),
+          equals('data'),
+        );
+      });
+
+      test('directory.move preserves file content', () {
+        final Directory sourceDirectory = Directory(
+          path.join(tempDir.path, 'move-source-content'),
+        );
+        sourceDirectory.createSync();
+        File(path.join(sourceDirectory.path, 'content.txt')).writeAsStringSync(
+          'preserved content',
+        );
+
+        final Directory destinationDirectory = Directory(
+          path.join(tempDir.path, 'move-destination-content'),
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.move(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(sourceDirectory.existsSync(), isFalse);
+        expect(
+          File(
+            path.join(destinationDirectory.path, 'content.txt'),
+          ).readAsStringSync(),
+          equals('preserved content'),
+        );
+      });
+
+      test('directory.rename with name containing spaces', () {
+        final Directory sourceDirectory = Directory(
+          path.join(tempDir.path, 'rename-spaces'),
+        );
+        sourceDirectory.createSync();
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.rename(directory.fromPath(${primalString(sourceDirectory.path)}), ${primalString('name with spaces')})',
+        );
+        checkResult(runtime, true);
+        expect(
+          Directory(path.join(tempDir.path, 'name with spaces')).existsSync(),
+          isTrue,
+        );
+      });
+
+      test('directory.parent returns parent directory', () {
+        final Directory nestedDirectory = Directory(
+          path.join(tempDir.path, 'parent-test', 'child'),
+        );
+        nestedDirectory.createSync(recursive: true);
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.path(directory.parent(directory.fromPath(${primalString(nestedDirectory.path)})))',
+        );
+        checkResult(
+          runtime,
+          primalString(nestedDirectory.parent.absolute.path),
+        );
+      });
+
+      test('directory.parent of parent navigates up hierarchy', () {
+        final Directory deepDirectory = Directory(
+          path.join(tempDir.path, 'level1', 'level2', 'level3'),
+        );
+        deepDirectory.createSync(recursive: true);
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.path(directory.parent(directory.parent(directory.fromPath(${primalString(deepDirectory.path)}))))',
+        );
+        checkResult(
+          runtime,
+          primalString(deepDirectory.parent.parent.absolute.path),
+        );
+      });
+
+      test('directory.create with deeply nested path', () {
+        final Directory deeplyNestedDirectory = Directory(
+          path.join(tempDir.path, 'a', 'b', 'c', 'd', 'e'),
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.create(directory.fromPath(${primalString(deeplyNestedDirectory.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(deeplyNestedDirectory.existsSync(), isTrue);
+      });
+
+      test('directory.exists returns false for file path', () {
+        final File file = File(path.join(tempDir.path, 'not-a-directory.txt'));
+        file.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.exists(directory.fromPath(${primalString(file.path)}))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('directory.list includes hidden files', () {
+        final Directory directoryWithHidden = Directory(
+          path.join(tempDir.path, 'hidden-test'),
+        );
+        directoryWithHidden.createSync();
+        File(path.join(directoryWithHidden.path, '.hidden')).writeAsStringSync(
+          'hidden',
+        );
+        File(
+          path.join(directoryWithHidden.path, 'visible.txt'),
+        ).writeAsStringSync(
+          'visible',
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.list(directory.fromPath(${primalString(directoryWithHidden.path)}))',
+        );
+        final List<dynamic> children =
+            runtime.evaluateToTerm(runtime.mainExpression([])).native()
+                as List<dynamic>;
+        expect(children.length, equals(2));
+      });
+
+      test('directory.delete on empty directory', () {
+        final Directory emptyDirectory = Directory(
+          path.join(tempDir.path, 'empty-delete'),
+        );
+        emptyDirectory.createSync();
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.delete(directory.fromPath(${primalString(emptyDirectory.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(emptyDirectory.existsSync(), isFalse);
+      });
+
+      test('directory.copy preserves file content', () {
+        final Directory sourceDirectory = Directory(
+          path.join(tempDir.path, 'copy-content-source'),
+        );
+        sourceDirectory.createSync();
+        File(path.join(sourceDirectory.path, 'data.txt')).writeAsStringSync(
+          'specific content to verify',
+        );
+
+        final Directory destinationDirectory = Directory(
+          path.join(tempDir.path, 'copy-content-destination'),
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(
+          File(
+            path.join(destinationDirectory.path, 'data.txt'),
+          ).readAsStringSync(),
+          equals('specific content to verify'),
+        );
+      });
+
+      test('directory.copy does not modify source', () {
+        final Directory sourceDirectory = Directory(
+          path.join(tempDir.path, 'copy-no-modify-source'),
+        );
+        sourceDirectory.createSync();
+        File(path.join(sourceDirectory.path, 'original.txt')).writeAsStringSync(
+          'original',
+        );
+
+        final Directory destinationDirectory = Directory(
+          path.join(tempDir.path, 'copy-no-modify-destination'),
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(sourceDirectory.existsSync(), isTrue);
+        expect(
+          File(path.join(sourceDirectory.path, 'original.txt')).existsSync(),
+          isTrue,
+        );
+        expect(
+          File(
+            path.join(sourceDirectory.path, 'original.txt'),
+          ).readAsStringSync(),
+          equals('original'),
+        );
+      });
+    });
   });
 }

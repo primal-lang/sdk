@@ -4,6 +4,7 @@ library;
 
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
 import '../../helpers/assertion_helpers.dart';
@@ -266,6 +267,366 @@ void main() {
         );
         checkResult(runtime, true);
         expect(existingFile.existsSync(), isTrue);
+      });
+
+      test('file.write with newline characters', () {
+        final File targetFile = File(
+          path.join(tempDir.path, 'special-chars.txt'),
+        );
+        const String content = 'Line1\nLine2\nLine3';
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.write(file.fromPath(${primalString(targetFile.path)}), ${primalString(content)})',
+        );
+        checkResult(runtime, true);
+        expect(targetFile.readAsStringSync(), equals(content));
+      });
+
+      test('file.write with tab characters', () {
+        final File targetFile = File(
+          path.join(tempDir.path, 'tabbed.txt'),
+        );
+        const String content = 'Column1\tColumn2\tColumn3';
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.write(file.fromPath(${primalString(targetFile.path)}), ${primalString(content)})',
+        );
+        checkResult(runtime, true);
+        expect(targetFile.readAsStringSync(), equals(content));
+      });
+
+      test('file.write with unicode characters', () {
+        final File targetFile = File(
+          path.join(tempDir.path, 'unicode.txt'),
+        );
+        const String content = 'Hello World';
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.write(file.fromPath(${primalString(targetFile.path)}), ${primalString(content)})',
+        );
+        checkResult(runtime, true);
+        expect(targetFile.readAsStringSync(), equals(content));
+      });
+
+      test('file.read returns content with newlines', () {
+        final File specialFile = File(
+          path.join(tempDir.path, 'read-newlines.txt'),
+        );
+        const String content = 'Line1\nLine2\nLine3';
+        specialFile.writeAsStringSync(content);
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.read(file.fromPath(${primalString(specialFile.path)}))',
+        );
+        // The result is a quoted string with escaped newlines
+        final String result = runtime.executeMain();
+        expect(result.startsWith('"'), isTrue);
+        expect(result.endsWith('"'), isTrue);
+        expect(result.contains('Line1'), isTrue);
+        expect(result.contains('Line2'), isTrue);
+      });
+
+      test('file.copy overwrites existing destination', () {
+        final File destinationFile = File(
+          path.join(tempDir.path, 'dest-overwrite.txt'),
+        );
+        destinationFile.writeAsStringSync('old content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.copy(file.fromPath(${primalString(existingFile.path)}), file.fromPath(${primalString(destinationFile.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(destinationFile.readAsStringSync(), equals('Hello, world!'));
+      });
+
+      test('file.move overwrites existing destination', () {
+        final File sourceFile = File(
+          path.join(tempDir.path, 'move-source-overwrite.txt'),
+        );
+        sourceFile.writeAsStringSync('new content');
+        final File destinationFile = File(
+          path.join(tempDir.path, 'move-dest-overwrite.txt'),
+        );
+        destinationFile.writeAsStringSync('old content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.move(file.fromPath(${primalString(sourceFile.path)}), file.fromPath(${primalString(destinationFile.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(sourceFile.existsSync(), isFalse);
+        expect(destinationFile.readAsStringSync(), equals('new content'));
+      });
+
+      test(
+        'file.extension returns empty string for hidden file without extension',
+        () {
+          final File hiddenFile = File(path.join(tempDir.path, '.gitignore'));
+          hiddenFile.writeAsStringSync('content');
+          final RuntimeFacade runtime = getRuntime(
+            'main = file.extension(file.fromPath(${primalString(hiddenFile.path)}))',
+          );
+          checkResult(runtime, primalString(''));
+        },
+      );
+
+      test('file.name returns name without path', () {
+        final File deepFile = File(
+          path.join(tempDir.path, 'sub', 'deep', 'nested.txt'),
+        );
+        deepFile.parent.createSync(recursive: true);
+        deepFile.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.name(file.fromPath(${primalString(deepFile.path)}))',
+        );
+        checkResult(runtime, primalString('nested.txt'));
+      });
+
+      test('file.parent returns parent directory for nested file', () {
+        final File deepFile = File(
+          path.join(tempDir.path, 'parent-test', 'child.txt'),
+        );
+        deepFile.parent.createSync(recursive: true);
+        deepFile.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.parent(file.fromPath(${primalString(deepFile.path)}))',
+        );
+        checkResult(runtime, primalString(deepFile.parent.absolute.path));
+      });
+
+      test('file.rename preserves content', () {
+        final File sourceFile = File(
+          path.join(tempDir.path, 'rename-content.txt'),
+        );
+        sourceFile.writeAsStringSync('preserve me');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.rename(file.fromPath(${primalString(sourceFile.path)}), ${primalString('renamed-content.txt')})',
+        );
+        checkResult(runtime, true);
+        final File renamedFile = File(
+          path.join(tempDir.path, 'renamed-content.txt'),
+        );
+        expect(renamedFile.readAsStringSync(), equals('preserve me'));
+      });
+
+      test('file.fromPath with relative path resolves correctly', () {
+        final String relativePath = path.relative(existingFile.path);
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.path(file.fromPath(${primalString(relativePath)}))',
+        );
+        // The result should be an absolute path
+        final String result = runtime.executeMain();
+        expect(result.startsWith('"'), isTrue);
+        expect(result.endsWith('"'), isTrue);
+      });
+
+      test('file.length with large file', () {
+        final File largeFile = File(path.join(tempDir.path, 'large.txt'));
+        final String content = 'x' * 10000;
+        largeFile.writeAsStringSync(content);
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.length(file.fromPath(${primalString(largeFile.path)}))',
+        );
+        checkResult(runtime, 10000);
+      });
+
+      test('file.read with large file', () {
+        final File largeFile = File(path.join(tempDir.path, 'read-large.txt'));
+        final String content = 'abcdefghij' * 1000;
+        largeFile.writeAsStringSync(content);
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.read(file.fromPath(${primalString(largeFile.path)}))',
+        );
+        checkResult(runtime, primalString(content));
+      });
+
+      test('file.extension with multiple consecutive dots', () {
+        final File dotFile = File(path.join(tempDir.path, 'file..txt'));
+        dotFile.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.extension(file.fromPath(${primalString(dotFile.path)}))',
+        );
+        checkResult(runtime, primalString('txt'));
+      });
+
+      test('file.extension with dot only at end', () {
+        final File dotEndFile = File(path.join(tempDir.path, 'file.'));
+        dotEndFile.writeAsStringSync('content');
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.extension(file.fromPath(${primalString(dotEndFile.path)}))',
+        );
+        checkResult(runtime, primalString(''));
+      });
+
+      test('file.create in deeply nested non-existing directory', () {
+        final File deepFile = File(
+          path.join(tempDir.path, 'a', 'b', 'c', 'd', 'deep.txt'),
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.create(file.fromPath(${primalString(deepFile.path)}))',
+        );
+        checkResult(runtime, true);
+        expect(deepFile.existsSync(), isTrue);
+      });
+    });
+
+    group('type errors', () {
+      test('file.fromPath throws for number argument', () {
+        final RuntimeFacade runtime = getRuntime('main = file.fromPath(123)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.fromPath throws for boolean argument', () {
+        final RuntimeFacade runtime = getRuntime('main = file.fromPath(true)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.fromPath throws for list argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.fromPath([1, 2, 3])',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.exists throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.exists("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.exists throws for number argument', () {
+        final RuntimeFacade runtime = getRuntime('main = file.exists(42)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.read throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.read("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.read throws for number argument', () {
+        final RuntimeFacade runtime = getRuntime('main = file.read(123)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.write throws for string first argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.write("not a file", "content")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.write throws for number second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.write(file.fromPath(${primalString(existingFile.path)}), 123)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.write throws for boolean second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.write(file.fromPath(${primalString(existingFile.path)}), true)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.length throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.length("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.create throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.create("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.delete throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.delete("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.path throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.path("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.name throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.name("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.extension throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.extension("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.copy throws for string first argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.copy("not a file", file.fromPath(${primalString(existingFile.path)}))',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.copy throws for string second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.copy(file.fromPath(${primalString(existingFile.path)}), "not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.copy throws for number arguments', () {
+        final RuntimeFacade runtime = getRuntime('main = file.copy(1, 2)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.move throws for string first argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.move("not a file", file.fromPath(${primalString(existingFile.path)}))',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.move throws for string second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.move(file.fromPath(${primalString(existingFile.path)}), "not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.parent throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.parent("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.rename throws for string first argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.rename("not a file", "newname.txt")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.rename throws for number second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.rename(file.fromPath(${primalString(existingFile.path)}), 123)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.rename throws for file second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = file.rename(file.fromPath(${primalString(existingFile.path)}), file.fromPath(${primalString(existingFile.path)}))',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
       });
     });
   });

@@ -22,6 +22,19 @@ Available types:
 - `Integer` -> `Number`?
 - `Decimal` -> `Number`?
 
+Haskell uses Type Classes
+
+| Type Class    | Purpose                                   | Key Methods                     |
+| :------------ | :---------------------------------------- | :------------------------------ |
+| **`Eq`**      | Equality testing                          | `(==)`, `(/=)`                  |
+| **`Ord`**     | Total ordering (comparison)               | `compare`, `(<)`, `(<=)`, `max` |
+| **`Show`**    | String conversion (for debugging)         | `show`                          |
+| **`Read`**    | String parsing                            | `read`, `readMaybe`             |
+| **`Enum`**    | Sequential types (things you can "count") | `succ`, `pred`, `[1..10]`       |
+| **`Bounded`** | Types with a min and max limit            | `minBound`, `maxBound`          |
+
+---
+
 ```primal
 type NumberList = List<Number>
 type Stack<T> = List<T>
