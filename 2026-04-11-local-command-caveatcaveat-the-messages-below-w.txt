@@ -1,33 +1,3 @@
-HIGH: usedParameters tracking approach is under-specified
-
-What is wrong: Document lines 343-353 say:
-usedParameters Tracking: The existing usedParameters set tracks which function
-parameters are referenced. Let bindings are added to availableParameters but 
-are NOT function parameters. When an identifier is resolved:
-- If it's a function parameter → add to usedParameters
-- If it's a let binding → do not add to usedParameters
-
-The document suggests two options but doesn't mandate one. Looking at
-semantic_analyzer.dart:247-252:
-if (availableParameters.contains(name)) {
-usedParameters.add(name);
-return SemanticBoundVariableNode(...);
-}
-
-Currently, any name in availableParameters gets added to usedParameters. With
-let bindings in availableParameters, this would cause false positives
-(treating let bindings as "used parameters").
-
-Practical consequence: Unused parameter warnings would break - let binding
-usage would suppress warnings for actual unused parameters if they share names
-(which is disallowed anyway), but more critically, the logic to distinguish
-parameters from let bindings needs explicit implementation.
-
-Missing from spec: The spec doesn't provide the actual code diff for
-semantic_analyzer.dart to handle this distinction. It mentions "option 1" but
-doesn't commit to it.
-
----
 MEDIUM: Error message format inconsistency
 
 What is wrong: Proposed error messages (lines 157-187):

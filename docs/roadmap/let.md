@@ -355,17 +355,58 @@ When processing a `LetExpression`:
 
 **Error Priority**: Shadowing is checked before duplicate detection. Both are checked before the value expression is analyzed. This means if a binding name shadows a parameter AND the value references itself, the shadowing error is thrown first.
 
-**usedParameters Tracking**: The existing `usedParameters` set tracks which function parameters are referenced. Let bindings are added to `availableParameters` but are NOT function parameters. When an identifier is resolved:
+**usedParameters Tracking**: The existing `usedParameters` set tracks which function parameters are referenced. Let bindings are added to `availableParameters` but are NOT function parameters and should NOT be added to `usedParameters`.
 
-- If it's a function parameter → add to `usedParameters`
-- If it's a let binding → do not add to `usedParameters` (no warning for unused let bindings)
+To distinguish parameters from let bindings, add a new `letBindingNames` parameter to `checkExpression()`:
 
-This distinction requires checking whether an identifier in `availableParameters` is a function parameter or a let binding. Options:
+```dart
+SemanticNode checkExpression({
+  required Expression expression,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,  // NEW: tracks let binding names in scope
+  required Map<String, FunctionSignature> allSignatures,
+})
+```
 
-1. Track let binding names separately and check both sets
-2. Use a more structured scope model (e.g., `Map<String, BindingKind>`)
+Modify `_checkIdentifierExpression()` to only add to `usedParameters` for function parameters:
 
-The simpler approach (option 1) maintains backward compatibility with the existing analyzer structure.
+```dart
+SemanticNode _checkIdentifierExpression({...}) {
+  final String name = expression.value;
+
+  if (availableParameters.contains(name)) {
+    // Only track usage for function parameters, not let bindings
+    if (!letBindingNames.contains(name)) {
+      usedParameters.add(name);
+    }
+    return SemanticBoundVariableNode(
+      location: expression.location,
+      name: name,
+    );
+  } else if (allSignatures.containsKey(name)) {
+    // ... existing function reference handling
+  } else {
+    throw UndefinedIdentifierError(...);
+  }
+}
+```
+
+When processing a `LetExpression`, the `letBindingNames` set is extended with each binding name before recursing into subsequent bindings and the body. The initial call from `analyze()` passes an empty set:
+
+```dart
+final SemanticNode body = checkExpression(
+  expression: function.expression,
+  currentFunction: function.name,
+  availableParameters: availableParameters,
+  usedParameters: usedParameters,
+  letBindingNames: {},  // Empty at function level
+  allSignatures: allSignatures,
+);
+```
+
+**Design Decision**: Unused let bindings do NOT produce warnings. This is intentional—let bindings are local to an expression and their "unused" status is often a transitional state during development. Future versions may add an optional lint for unused let bindings.
 
 ### Compiler Pipeline Impact
 
