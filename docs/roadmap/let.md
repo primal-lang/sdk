@@ -88,16 +88,16 @@ bad(n) = let x = 1 x = 2 in x
 
 ### Shadowing
 
-Bindings may shadow function parameters and outer `let` bindings. A warning is emitted when shadowing occurs:
+Bindings may shadow function parameters and outer `let` bindings. A warning is emitted when shadowing occurs. Shadowing is permanent within the inner scope—the outer binding becomes inaccessible:
 
 ```primal
 // Valid but emits ShadowedBindingWarning
-shadow(x) = let x = 10 in x  // returns 10
+shadow(x) = let x = 10 in x  // returns 10, parameter x is inaccessible
 
-// Valid: inner let shadows outer
+// Valid: inner let shadows outer permanently
 nested(n) =
     let x = 1 in
-        let x = 2 in x  // returns 2
+        let x = 2 in x  // returns 2, outer x = 1 is inaccessible here
 ```
 
 ### Evaluation Order
@@ -132,6 +132,7 @@ Two new keywords: `let` and `in`.
 
 | Error                       | Condition                                      |
 | --------------------------- | ---------------------------------------------- |
+| `EmptyLetBindingsError`     | No bindings provided between `let` and `in`    |
 | `DuplicatedLetBindingError` | Same variable bound twice in one `let`         |
 | `UndefinedIdentifierError`  | Binding references itself or an undefined name |
 | `ExpectedTokenError('in')`  | `in` keyword missing after bindings            |
@@ -190,6 +191,10 @@ chain(a, b) = let x = a + b in let y = x * 2 in y
 ### Invalid
 
 ```primal
+// ERROR: Empty bindings
+bad0(n) = let in n
+// → EmptyLetBindingsError: let expression requires at least one binding
+
 // ERROR: Duplicate binding
 bad1(n) = let x = 1 x = 2 in x
 // → DuplicatedLetBindingError: 'x' is already bound in this let expression
