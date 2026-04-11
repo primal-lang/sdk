@@ -1006,7 +1006,7 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 | File                                          | Potential Impact                                                       |
 | --------------------------------------------- | ---------------------------------------------------------------------- |
-| `test/compiler/term_test.dart`                | May need new test group for `LambdaTerm` and `LambdaBoundVariableTerm` |
+| `test/runtime/core/term_test.dart`            | May need new test group for `LambdaTerm` and `LambdaBoundVariableTerm` |
 | Tests using exhaustive `switch` on term types | Add cases for new term types                                           |
 
 ### Test Specification
