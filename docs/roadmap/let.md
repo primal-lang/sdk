@@ -35,6 +35,21 @@ binding        → IDENTIFIER "=" expression
 
 **Position**: `let` can appear anywhere an expression is expected.
 
+**Whitespace**: Not significant. Indentation in examples is purely for readability. These are equivalent:
+
+```primal
+// Multi-line (formatted for readability)
+foo(a, b) =
+    let
+        x = a + 1
+        y = b + 2
+    in
+        x + y
+
+// Single-line (compact)
+foo(a, b) = let x = a + 1 y = b + 2 in x + y
+```
+
 ## Semantics
 
 ### Binding Scope
