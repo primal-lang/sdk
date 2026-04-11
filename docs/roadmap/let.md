@@ -220,6 +220,22 @@ The `let` expression is implemented via a `LetTerm` in the runtime that performs
 
 This is semantically equivalent to nested immediately-applied functions, but implemented directly without synthesizing intermediate function terms.
 
+### Semantic Analysis Algorithm
+
+When processing a `LetExpression`:
+
+1. Create an extended scope starting with the current `availableParameters`
+2. For each binding in order:
+   - If the name is already in `boundNames`, throw `DuplicatedLetBindingError`
+   - Add the name to `boundNames`
+   - Check the binding's value expression against the current extended scope
+   - Add the name to the extended scope (for subsequent bindings)
+   - If the name shadows a parameter, emit `ShadowedBindingWarning`
+3. Check the body expression against the fully extended scope
+4. Return a `SemanticLetNode` with the checked bindings and body
+
+This ensures each binding only sees previous bindings, not itself or later ones.
+
 ### Compiler Pipeline Impact
 
 | Stage     | Changes                                                                                      |
@@ -229,3 +245,41 @@ This is semantically equivalent to nested immediately-applied functions, but imp
 | Semantic  | Extend scope with bindings, check for duplicates and self-reference, emit shadowing warnings |
 | Lowering  | Convert `SemanticLetNode` to `LetTerm`                                                       |
 | Runtime   | Add `LetTerm` with sequential binding evaluation                                             |
+
+### New Node Types
+
+**Syntactic (AST)**:
+
+```
+LetExpression
+  bindings: List<LetBindingExpression>
+  body: Expression
+  location: Location
+
+LetBindingExpression
+  name: String
+  value: Expression
+  location: Location
+```
+
+**Semantic (IR)**:
+
+```
+SemanticLetNode
+  bindings: List<SemanticLetBindingNode>
+  body: SemanticNode
+  location: Location
+
+SemanticLetBindingNode
+  name: String
+  value: SemanticNode
+  location: Location
+```
+
+**Runtime (Terms)**:
+
+```
+LetTerm
+  bindings: List<(String, Term)>
+  body: Term
+```
