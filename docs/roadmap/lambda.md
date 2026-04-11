@@ -1,216 +1,1039 @@
 # Lambda Functions
 
+## Prerequisites
+
+This specification assumes the `let` expression feature has been implemented per `docs/roadmap/reviewed/let.md`. Specifically, this feature depends on:
+
+- `isLetBinding` field on `SemanticBoundVariableNode`
+- `LetBoundVariableTerm` runtime term
+- `letBindingNames` parameter in `checkExpression()`
+
+If implementing lambda before `let`, remove the `isLetBinding` checks and `LetBoundVariableTerm` references from the lowering section.
+
 ## Overview
 
 Lambda functions are anonymous inline function expressions. They allow defining functions at the expression level without top-level declarations, primarily benefiting higher-order functions like `list.map`, `list.filter`, and `list.reduce`.
 
-## Syntax
-
-```
-lambdaExpression → "(" parameters? ")" "->" expression
-parameters       → IDENTIFIER ( "," IDENTIFIER )*
-```
-
-Examples:
-
 ```primal
-() -> 5                    // zero parameters
-(x) -> x + 1               // one parameter
-(x, y) -> x + y            // two parameters
-(a, b, c) -> a + b + c     // three parameters
+// Before: requires a separate named function
+double(x) = x * 2
+main = list.map([1, 2, 3], double)  // [2, 4, 6]
+
+// After: inline lambda
+main = list.map([1, 2, 3], (x) -> x * 2)  // [2, 4, 6]
 ```
 
-Parentheses are always required around parameters, even for single-parameter lambdas.
+## Pros
 
-## Lexical Changes
+1. Reduces boilerplate: Eliminates the need to define single-use helper functions at the top level.
+2. Improves locality: The transformation logic appears at the point of use, making code easier to read.
+3. Enables closures: Lambdas can capture variables from their enclosing scope, enabling powerful patterns like partial application and function factories.
+4. Aligns with functional style: A natural fit for expression-oriented, higher-order programming.
+5. Educational value: Demonstrates lambda calculus concepts that are foundational to functional programming.
 
-Add `ArrowToken` (`->`) as a two-character token.
-
-In `MinusState`, if the next character is `>`, emit `ArrowToken`. Otherwise, proceed with existing `MinusToken` logic.
-
-| State        | If next is | Token produced |
-| ------------ | ---------- | -------------- |
-| `MinusState` | `>`        | `ArrowToken`   |
-
-## Syntactic Changes
-
-Extend the `primary` rule:
+## Grammar
 
 ```
-primary → BOOLEAN
-        | NUMBER
-        | STRING
-        | IDENTIFIER
-        | "(" expression ")"
-        | "(" parameters? ")" "->" expression
-        | "[" elements? "]"
-        | "{" pairs? "}"
+expression        → lambdaExpression
+lambdaExpression  → "(" parameters? ")" "->" expression | letExpression
+parameters        → IDENTIFIER ( "," IDENTIFIER )*
 ```
 
-### Disambiguation
+Note: The `parameters` rule allows zero or more parameters. `() -> 5` is valid (zero-parameter lambda). Single-parameter lambdas require parentheses: `(x) -> x + 1`, not `x -> x + 1`.
 
-After `(`, if content is comma-separated identifiers followed by `) ->`, parse as lambda. Otherwise, parse as grouped expression.
+**Precedence**: Lambda has the lowest precedence, binding more loosely than all other operators including `let` and `if`. This means `(x) -> x + 1` parses as `(x) -> (x + 1)`, and `(x) -> if (x > 0) x else 0` parses as `(x) -> (if (x > 0) x else 0)`.
 
-Parsing strategy:
+**Associativity**: Right-associative. Nested lambdas parse naturally: `(x) -> (y) -> x + y` parses as `(x) -> ((y) -> (x + y))`.
+
+**Position**: Lambda expressions can appear in any expression context:
+
+- Function body (top-level expression after `=`)
+- Within parentheses: `((x) -> x + 1)`
+- As a list element: `[(x) -> x, (x) -> x + 1]`
+- As a map value: `{"double": (x) -> x * 2}`
+- As a function argument: `list.map([1, 2, 3], (x) -> x * 2)`
+- In either branch of an `if` expression: `if (c) (x) -> x else (x) -> x + 1`
+- In a `let` binding or body: `let f = (x) -> x * 2 in f(5)`
+- As the callee of an immediate invocation: `((x) -> x + 1)(5)`
+
+It cannot appear as an operand to binary operators without parentheses (e.g., `5 + (x) -> x` is invalid; use `5 + ((x) -> x)`).
+
+**Disambiguation**: After `(`, the parser must determine whether the content is a lambda parameter list or a grouped expression. The strategy:
 
 1. See `(`
-2. Attempt to parse as comma-separated identifiers
-3. If `)` followed by `->`, commit to lambda and parse body
-4. Otherwise, backtrack and parse as grouped expression
+2. If immediately followed by `)` then `->`, parse as zero-parameter lambda
+3. Otherwise, attempt to parse as comma-separated identifiers
+4. If `)` followed by `->`, commit to lambda and parse body
+5. Otherwise, backtrack and parse as grouped expression
 
-## Semantic Rules
+**Parser predicates**: Add this static predicate to `ExpressionParser` (following the existing pattern at lines 13-43):
 
-1. Lambda creates an anonymous function with a generated name (e.g., `<lambda@1:5>` indicating line:column)
-2. Parameters become `SemanticBoundVariableNode` within the lambda body
-3. Free variables in the lambda body that reference outer scope parameters are captured at lambda construction time
-4. Duplicate parameter names raise `DuplicatedParameterError`
-5. Undefined free variables raise `UndefinedIdentifierError`
+```dart
+static bool _isArrow(Token token) => token is ArrowToken;
+```
+
+**Whitespace**: Not significant. Indentation in examples is purely for readability. These are equivalent:
+
+```primal
+// Multi-line (formatted for readability)
+transform = (x, y) ->
+    let
+        sum = x + y
+    in
+        sum * 2
+
+// Single-line (compact)
+transform = (x, y) -> let sum = x + y in sum * 2
+```
+
+**Interaction with `if` and `let`**: The lambda body is a full expression, so `if` and `let` can appear without parentheses:
+
+```primal
+// if in body: parses as (x) -> (if (...) ... else ...)
+(x) -> if (x > 0) x else -x
+
+// let in body: parses as (x) -> (let ... in ...)
+(x) -> let y = x * 2 in y + 1
+
+// Both: let with if in body
+(x) -> let abs = if (x < 0) -x else x in abs * 2
+```
+
+The `->` unambiguously marks the start of the body. Despite `-> if` or `-> let` appearing adjacent in the token stream, there is no syntactic ambiguity.
+
+## Semantics
+
+### Parameter Scope
+
+Lambda parameters are visible only within the lambda body:
+
+```primal
+// x is only in scope within the lambda body
+f = (x) -> x + 1
+f(5)  // 6
+```
+
+### No Self-Reference
+
+Lambdas are anonymous and cannot reference themselves. Use named functions for recursion:
+
+```primal
+// ERROR: No way to refer to the lambda itself
+bad = (n) -> if (n == 0) 1 else n * ???(n - 1)
+
+// Use a named function instead
+factorial(n) = if (n == 0) 1 else n * factorial(n - 1)
+```
+
+### No Duplicate Parameters
+
+Multiple parameters with the same name are an error:
+
+```primal
+// ERROR: x appears twice
+bad = (x, x) -> x
+// → DuplicatedLambdaParameterError: Duplicated lambda parameter "x"
+```
+
+### No Shadowing
+
+Lambda parameters cannot shadow function parameters, let bindings, or outer lambda parameters. This simplifies implementation and avoids confusion about which binding is referenced:
+
+```primal
+// ERROR: x shadows function parameter
+bad(x) = (x) -> x + 1
+// → ShadowedLambdaParameterError: Shadowed lambda parameter "x"
+
+// ERROR: x shadows let binding
+bad(n) = let x = 1 in (x) -> x + 1
+// → ShadowedLambdaParameterError: Shadowed lambda parameter "x"
+
+// ERROR: inner x shadows outer lambda parameter
+bad = (x) -> (x) -> x
+// → ShadowedLambdaParameterError: Shadowed lambda parameter "x"
+```
+
+### Function Name Shadowing (Allowed)
+
+Lambda parameters MAY shadow function names (both custom and standard library). This is consistent with existing parameter and let binding behavior:
+
+```primal
+// Valid: num.abs shadows the function num.abs
+f = (num.abs) -> num.abs + 1
+f(5)  // 6
+
+// Valid: double shadows a user-defined function
+double(x) = x * 2
+g = (double) -> double + 1
+g(5)  // 6
+```
 
 ### Closures
 
-Lambdas capture variables from enclosing scope by value at construction time:
+Lambdas capture variables from their enclosing scope by value at creation time:
 
 ```primal
 multiplier(n) = (x) -> x * n
 double = multiplier(2)
+triple = multiplier(3)
 double(5)  // 10
+triple(5)  // 15
 ```
 
-When `multiplier(2)` is called, the lambda `(x) -> x * n` captures `n = 2`. The returned closure remembers this binding.
+When `multiplier(2)` is called:
 
-## Runtime Representation
+1. The lambda `(x) -> x * n` is evaluated in a scope where `n = 2`
+2. The captured variable `n` is substituted with `2`
+3. The resulting closure `(x) -> x * 2` is returned
 
-Lambdas lower to `CustomFunctionTerm`:
-
-- `name`: Generated anonymous name (for error messages)
-- `parameters`: List of `Parameter.any(name)` for each parameter
-- `term`: Body with parameters as `BoundVariableTerm`, captured variables already substituted
-
-### String Representation
-
-When converted to string (e.g., via `to.string`), lambdas display as:
-
-```
-<lambda(x, y)>
-```
-
-## Precedence
-
-`->` is part of lambda syntax, not a binary operator. The lambda body extends as far right as possible (greedy):
+Captured variables are resolved at lambda creation time, not call time:
 
 ```primal
-(x) -> x + 1           // body is (x + 1)
-(x) -> (y) -> x + y    // body is ((y) -> (x + y))
+// Captures happen when the lambda is created
+maker(n) = (x) -> x + n
+f = maker(10)
+// Even if there were a way to change n, f would still use 10
+f(5)  // 15
 ```
 
-To limit the body, use parentheses:
+### Evaluation Order
+
+Lambda parameters are evaluated left-to-right when the lambda is called (call-by-value):
 
 ```primal
-((x) -> x) + 1         // lambda is (x) -> x, then error: cannot add function
+f = (a, b) -> a - b
+f(10, 3)  // Arguments evaluated: 10 then 3. Result: 7
 ```
+
+### Higher-Order Behavior
+
+Lambdas are first-class values and can be used anywhere a function is expected:
+
+```primal
+// Lambda as argument to higher-order function
+list.map([1, 2, 3], (x) -> x * 2)  // [2, 4, 6]
+list.filter([1, 2, 3, 4], (x) -> x > 2)  // [3, 4]
+list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)  // 6
+
+// Lambda returning lambda
+compose = (f) -> (g) -> (x) -> f(g(x))
+
+// Lambda stored in collection
+ops = [(x) -> x + 1, (x) -> x * 2, (x) -> x - 1]
+ops[1](5)  // 10
+
+// Lambda in map
+handlers = {"double": (x) -> x * 2, "triple": (x) -> x * 3}
+handlers["double"](5)  // 10
+
+// Immediately invoked lambda
+((x) -> x + 1)(5)  // 6
+
+// Lambda returned from function
+makeAdder(n) = (x) -> x + n
+add5 = makeAdder(5)
+add5(10)  // 15
+```
+
+### Error Propagation
+
+Errors during lambda invocation propagate immediately:
+
+```primal
+// Error propagates from lambda body
+f = (x) -> x / 0
+f(5)  // → DivisionByZeroError
+
+// Errors can be caught with try
+try(((x) -> x / 0)(5), 0)  // returns 0
+```
+
+## Lexical Changes
+
+One new token: `->` (arrow).
+
+### Implementation
+
+**1. Add token class** in `lib/compiler/lexical/token.dart`:
+
+```dart
+class ArrowToken extends Token<String> {
+  ArrowToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+```
+
+**2. Update `MinusState`** in `lib/compiler/lexical/lexical_analyzer.dart`:
+
+The existing `MinusState` handles the `-` character. Extend it to recognize `->`:
+
+```dart
+class MinusState extends State<Character, LexicalState> {
+  final Lexeme lexeme;
+
+  const MinusState(this.lexeme);
+
+  @override
+  LexicalState process(ListIterator<Character> iterator) {
+    final Character character = iterator.current!;
+
+    if (character.value == '>') {
+      // Consume '>' and emit ArrowToken
+      return ResultState(
+        ArrowToken(lexeme.add(character.value)),
+      );
+    } else if (character.value.isOperatorDelimiter) {
+      iterator.back();
+      return ResultState(MinusToken(lexeme));
+    } else {
+      throw InvalidCharacterError(character);
+    }
+  }
+}
+```
+
+**Token table update**:
+
+| State        | If next is | Token produced |
+| ------------ | ---------- | -------------- |
+| `MinusState` | `>`        | `ArrowToken`   |
+| `MinusState` | delimiter  | `MinusToken`   |
 
 ## Error Conditions
 
-| Error                       | Condition                                    |
-| --------------------------- | -------------------------------------------- |
-| `DuplicatedParameterError`  | Repeated parameter name in lambda            |
-| `UndefinedIdentifierError`  | Free variable not in scope                   |
-| `InvalidArgumentCountError` | Lambda called with wrong number of arguments |
-| `InvalidArgumentTypesError` | Lambda passed where incompatible type needed |
+**Notation convention**: This section uses exception class names (e.g., `DuplicatedLambdaParameterError`) for implementation reference. The actual user-visible messages include an `Error:` prefix and location information. For example:
 
-## Recursion
+| Exception Class                                                 | User-Visible Message                                   |
+| --------------------------------------------------------------- | ------------------------------------------------------ |
+| `DuplicatedLambdaParameterError(parameter: 'x')`                | `Error: Duplicated lambda parameter "x"`               |
+| `ShadowedLambdaParameterError(parameter: 'x', inFunction: 'f')` | `Error: Shadowed lambda parameter "x" in function "f"` |
+| `UndefinedIdentifierError(identifier: 'y')`                     | `Error: Undefined identifier "y"`                      |
 
-Lambdas cannot be recursive because they are anonymous. Use named functions for recursive algorithms.
+| Error                            | Condition                                     | Phase    | Priority |
+| -------------------------------- | --------------------------------------------- | -------- | -------- |
+| `ExpectedTokenError('->')`       | `->` missing after parameter list             | Parsing  | —        |
+| `DuplicatedLambdaParameterError` | Same parameter name appears twice in lambda   | Semantic | 1        |
+| `ShadowedLambdaParameterError`   | Parameter shadows outer variable or parameter | Semantic | 2        |
+| `UndefinedIdentifierError`       | Free variable in lambda body not in scope     | Semantic | 3        |
+| `InvalidArgumentCountError`      | Lambda called with wrong number of arguments  | Runtime  | —        |
+| `InvalidArgumentTypesError`      | Type mismatch in lambda body during execution | Runtime  | —        |
+
+**Error Priority**: For semantic errors on the same parameter, the error with the lowest priority number is thrown first. Duplicate detection is checked before shadowing.
+
+**New Error Types**: The following error types must be added to `lib/compiler/errors/semantic_error.dart`:
+
+```dart
+class DuplicatedLambdaParameterError extends SemanticError {
+  const DuplicatedLambdaParameterError({
+    required String parameter,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Duplicated lambda parameter "$parameter" in function "$inFunction"'
+             : 'Duplicated lambda parameter "$parameter"',
+       );
+}
+
+class ShadowedLambdaParameterError extends SemanticError {
+  const ShadowedLambdaParameterError({
+    required String parameter,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Shadowed lambda parameter "$parameter" in function "$inFunction"'
+             : 'Shadowed lambda parameter "$parameter"',
+       );
+}
+```
 
 ## Examples
 
 ### Valid
 
 ```primal
-// With higher-order functions
-list.map([1, 2, 3], (x) -> x * 2)              // [2, 4, 6]
-list.filter([1, 2, 3, 4], (x) -> x > 2)        // [3, 4]
-list.reduce([1, 2, 3], 0, (acc, x) -> acc + x) // 6
-
 // Zero-parameter lambda
 constant = () -> 42
 constant()  // 42
 
-// Closure
+// Single-parameter lambda
+increment = (x) -> x + 1
+increment(5)  // 6
+
+// Multi-parameter lambda
+add = (x, y) -> x + y
+add(2, 3)  // 5
+
+// With higher-order functions
+list.map([1, 2, 3], (x) -> x * 2)  // [2, 4, 6]
+list.filter([1, 2, 3, 4], (x) -> x > 2)  // [3, 4]
+list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)  // 6
+list.sort([3, 1, 2], (a, b) -> a - b)  // [1, 2, 3]
+
+// Closure capturing outer variable
 multiplier(n) = (x) -> x * n
 double = multiplier(2)
 double(5)  // 10
 
 // Nested lambdas
 compose(f, g) = (x) -> f(g(x))
+addOne = (x) -> x + 1
+timesTwo = (x) -> x * 2
+composed = compose(addOne, timesTwo)
+composed(5)  // 11 (5 * 2 + 1)
 
 // Lambda in collection
 transformers = [(x) -> x + 1, (x) -> x * 2]
 list.map([5], transformers[0])  // [6]
 
-// Immediately invoked
+// Lambda in map
+handlers = {"double": (x) -> x * 2}
+handlers["double"](5)  // 10
+
+// Immediately invoked lambda
 ((x) -> x + 1)(5)  // 6
 
 // Lambda returning lambda
 ((x) -> (y) -> x + y)(3)(4)  // 7
 
 // As function body
-add = (x, y) -> x + y
-add(2, 3)  // 5
-
-// Lambda in map value
-handlers = {"double": (x) -> x * 2}
-handlers["double"](5)  // 10
+square = (x) -> x * x
+square(5)  // 25
 
 // Lambda in conditional
 chooser(b) = if (b) (x) -> x + 1 else (x) -> x * 2
 chooser(true)(5)  // 6
+chooser(false)(5)  // 10
+
+// Lambda with let in body
+withLocal = (x) -> let y = x * 2 in y + 1
+withLocal(5)  // 11
+
+// Lambda with if in body
+absVal = (x) -> if (x < 0) -x else x
+absVal(-5)  // 5
+
+// Multiple levels of capture
+outer(a) = (b) -> (c) -> a + b + c
+f = outer(1)
+g = f(2)
+g(3)  // 6
 ```
 
 ### Invalid
 
+Error annotations below show exception class names. Actual CLI/REPL output includes `Error:` prefix and token locations (see Error Conditions notation).
+
 ```primal
-// Missing parentheses around parameter
+// ERROR: Missing parentheses around parameter
 x -> x + 1
-// Error: InvalidTokenError at `->`
+// → InvalidTokenError (or ExpectedTokenError)
 
-// Duplicate parameters
+// ERROR: Duplicate parameter
 (x, x) -> x + 1
-// Error: DuplicatedParameterError
+// → DuplicatedLambdaParameterError
 
-// Undefined variable
+// ERROR: Shadows function parameter
+bad(x) = (x) -> x + 1
+// → ShadowedLambdaParameterError
+
+// ERROR: Shadows let binding
+bad(n) = let x = 1 in (x) -> x + 1
+// → ShadowedLambdaParameterError
+
+// ERROR: Shadows outer lambda parameter
+bad = (x) -> (x) -> x
+// → ShadowedLambdaParameterError
+
+// ERROR: Undefined variable in lambda body
 (x) -> x + y
-// Error: UndefinedIdentifierError - 'y' is not defined
+// → UndefinedIdentifierError
 
-// Wrong arity
+// ERROR: Wrong arity when calling lambda
 ((x, y) -> x + y)(1)
-// Error: InvalidArgumentCountError - expected 2 arguments, got 1
+// → InvalidArgumentCountError: expected 2 arguments, got 1
+
+// ERROR: Lambda as binary operand without parentheses
+5 + (x) -> x
+// → InvalidTokenError
+// Use: 5 + ((x) -> x)
 ```
 
-## Post-Implementation
+## Implementation Notes
 
-### Documentation Updates
+### Runtime
 
-- Add `docs/reference/lambda.md`
-- Update `docs/primal.md` Syntax section
-- Update `docs/compiler/lexical.md` with `ArrowToken`
-- Update `docs/compiler/syntactic.md` grammar
-- Update `docs/compiler/semantic.md` with lambda handling
-- Update `docs/compiler/runtime.md` if needed
+The lambda is implemented via a `LambdaTerm` that extends `FunctionTerm`:
 
-### Tests
+```dart
+class LambdaTerm extends FunctionTerm {
+  final Term body;
 
-- Lexical: `->` token recognition
-- Syntactic: lambda parsing, disambiguation from grouped expressions
-- Semantic: parameter binding, closure capture, duplicate detection, undefined variables
-- Runtime: invocation, closures, arity errors, type errors
-- Integration: with `list.map`, `list.filter`, `list.reduce`, `list.sort`, etc.
+  const LambdaTerm({
+    required String name,
+    required List<Parameter> parameters,
+    required this.body,
+  }) : super(name: name, parameters: parameters);
 
-## Implementation Complexity
+  @override
+  Term substitute(Bindings bindings) {
+    // Propagate substitution through the body.
+    // LambdaBoundVariableTerm references survive (partial substitution).
+    // Other bound variables (captured from outer scope) get substituted.
+    return LambdaTerm(
+      name: name,
+      parameters: parameters,
+      body: body.substitute(bindings),
+    );
+  }
+
+  @override
+  Term reduce() => this;  // Lambdas are values; they don't reduce further
+
+  @override
+  Term apply(List<Term> arguments) {
+    if (arguments.length != parameters.length) {
+      throw InvalidArgumentCountError(
+        function: name,
+        expected: parameters.length,
+        actual: arguments.length,
+      );
+    }
+    incrementDepth();
+    try {
+      // Evaluate arguments (call-by-value)
+      final List<Term> evaluatedArguments =
+          arguments.map((arg) => arg.reduce()).toList();
+
+      // Create bindings and substitute into body
+      final Bindings bindings = Bindings.from(
+        parameters: parameters,
+        arguments: evaluatedArguments,
+      );
+      final Term substituted = body.substitute(bindings);
+      return substituted.reduce();
+    } finally {
+      decrementDepth();
+    }
+  }
+
+  @override
+  dynamic native() => toString();
+
+  @override
+  String toString() {
+    final String paramStr = parameters.map((p) => p.name).join(', ');
+    return '<lambda($paramStr)>';
+  }
+}
+```
+
+### Lambda Bound Variable Term
+
+Like `LetBoundVariableTerm`, lambda parameters need partial substitution semantics:
+
+```dart
+/// A reference to a lambda parameter within a lambda body.
+///
+/// Unlike [BoundVariableTerm] (for function parameters), this term supports
+/// partial substitution—it returns itself when the name is not found in
+/// bindings, allowing outer scope substitution to pass through without
+/// affecting lambda parameter references.
+class LambdaBoundVariableTerm extends Term {
+  final String name;
+
+  const LambdaBoundVariableTerm(this.name);
+
+  @override
+  Term substitute(Bindings bindings) =>
+      bindings.data.containsKey(name) ? bindings.data[name]! : this;
+
+  @override
+  Term reduce() => this;  // Cannot reduce further; must be substituted first
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  String toString() => name;
+
+  @override
+  dynamic native() =>
+      throw StateError('LambdaBoundVariableTerm "$name" was not substituted');
+}
+```
+
+### Why Partial Substitution is Needed
+
+Consider `multiplier(n) = (x) -> x * n`. When `multiplier(2)` is called:
+
+1. `CustomFunctionTerm.apply([2])` creates bindings `{n: 2}`
+2. Calls `substitute({n: 2})` on the `LambdaTerm` body
+3. Inside the lambda body `x * n`:
+   - `LambdaBoundVariableTerm("x").substitute({n: 2})` returns itself (partial)
+   - `BoundVariableTerm("n").substitute({n: 2})` returns `2`
+4. Result: `LambdaTerm` with body `x * 2`
+5. When later called as `double(5)`:
+   - `LambdaTerm.apply([5])` creates bindings `{x: 5}`
+   - `substitute({x: 5})` on body `x * 2`
+   - `LambdaBoundVariableTerm("x")` gets replaced with `5`
+   - Result: `5 * 2` = `10`
+
+### Semantic Analysis Algorithm
+
+When processing a `LambdaExpression`:
+
+1. Create a local set `lambdaParameters` to track parameter names (for duplicate detection)
+2. For each parameter in order:
+   - If the name is in `lambdaParameters`, throw `DuplicatedLambdaParameterError`
+   - If the name is in `availableParameters` (outer scope), throw `ShadowedLambdaParameterError`
+   - Add the name to `lambdaParameters`
+3. Create extended scope: combine `availableParameters` with `lambdaParameters`
+4. Create extended `lambdaParameterNames` set: combine existing with this lambda's parameters
+5. Check the body expression against the extended scope
+6. Return a `SemanticLambdaNode` with the parameters and checked body
+
+```dart
+SemanticNode _checkLambdaExpression({
+  required LambdaExpression expression,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,
+  required Set<String> lambdaParameterNames,
+  required Map<String, FunctionSignature> allSignatures,
+}) {
+  // Track parameters for this lambda (duplicate detection)
+  final Set<String> localLambdaParameters = {};
+
+  // Check each parameter
+  final List<String> checkedParameters = [];
+  for (final String paramName in expression.parameters) {
+    // Check for duplicate within this lambda
+    if (localLambdaParameters.contains(paramName)) {
+      throw DuplicatedLambdaParameterError(
+        parameter: paramName,
+        inFunction: currentFunction,
+      );
+    }
+
+    // Check for shadowing against outer scope
+    if (availableParameters.contains(paramName)) {
+      throw ShadowedLambdaParameterError(
+        parameter: paramName,
+        inFunction: currentFunction,
+      );
+    }
+
+    localLambdaParameters.add(paramName);
+    checkedParameters.add(paramName);
+  }
+
+  // Extend scope with lambda parameters
+  final Set<String> extendedAvailableParameters = {
+    ...availableParameters,
+    ...localLambdaParameters,
+  };
+  final Set<String> extendedLambdaParameterNames = {
+    ...lambdaParameterNames,
+    ...localLambdaParameters,
+  };
+
+  // Check body with extended scope
+  final SemanticNode checkedBody = checkExpression(
+    expression: expression.body,
+    currentFunction: currentFunction,
+    availableParameters: extendedAvailableParameters,
+    usedParameters: usedParameters,
+    letBindingNames: letBindingNames,
+    lambdaParameterNames: extendedLambdaParameterNames,
+    allSignatures: allSignatures,
+  );
+
+  return SemanticLambdaNode(
+    parameters: checkedParameters,
+    body: checkedBody,
+    location: expression.location,
+  );
+}
+```
+
+**Cascading signature changes**: All helper methods must accept and propagate `lambdaParameterNames`. This parallels the `letBindingNames` pattern from the `let` specification.
+
+Modify `_checkIdentifierExpression()` to distinguish lambda parameters:
+
+```dart
+SemanticNode _checkIdentifierExpression({
+  required IdentifierExpression expression,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,
+  required Set<String> lambdaParameterNames,
+  required Map<String, FunctionSignature> allSignatures,
+}) {
+  final String name = expression.value;
+
+  if (availableParameters.contains(name)) {
+    final bool isLetBinding = letBindingNames.contains(name);
+    final bool isLambdaParameter = lambdaParameterNames.contains(name);
+
+    // Only track usage for function parameters
+    if (!isLetBinding && !isLambdaParameter) {
+      usedParameters.add(name);
+    }
+
+    return SemanticBoundVariableNode(
+      location: expression.location,
+      name: name,
+      isLetBinding: isLetBinding,
+      isLambdaParameter: isLambdaParameter,
+    );
+  } else if (allSignatures.containsKey(name)) {
+    // ... existing function reference handling
+  } else {
+    throw UndefinedIdentifierError(...);
+  }
+}
+```
+
+**External callers**: `RuntimeFacade` must be updated to pass `lambdaParameterNames: {}`:
+
+```dart
+// In RuntimeFacade.evaluateToTerm()
+final SemanticNode semanticNode = analyzer.checkExpression(
+  expression: expression,
+  currentFunction: null,
+  availableParameters: {},
+  usedParameters: {},
+  letBindingNames: {},
+  lambdaParameterNames: {},  // NEW
+  allSignatures: _allSignatures,
+);
+```
+
+### Compiler Pipeline Impact
+
+| Stage     | Changes                                                                                                                                |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Lexical   | Add `ArrowToken` (`->`) in `MinusState`                                                                                                |
+| Syntactic | Add `LambdaExpression` AST node; add `_isArrow` predicate; parse parameters and body with disambiguation                               |
+| Semantic  | Add `lambdaParameterNames` parameter; check for duplicates and shadowing; add `isLambdaParameter` field to `SemanticBoundVariableNode` |
+| Lowering  | Convert `SemanticLambdaNode` to `LambdaTerm`; map `SemanticBoundVariableNode` with `isLambdaParameter` to `LambdaBoundVariableTerm`    |
+| Runtime   | Add `LambdaTerm` extending `FunctionTerm` with `apply()`; add `LambdaBoundVariableTerm` with partial substitution semantics            |
+
+### New Node Types
+
+**Syntactic (AST)**:
+
+```
+LambdaExpression
+  parameters: List<String>
+  body: Expression
+  location: Location    // location of opening '('
+```
+
+**Semantic (IR)**:
+
+```
+SemanticLambdaNode
+  parameters: List<String>
+  body: SemanticNode
+  location: Location    // propagated from LambdaExpression
+```
+
+**Modified existing node** (add field to `lib/compiler/semantic/semantic_node.dart`):
+
+```dart
+class SemanticBoundVariableNode extends SemanticNode {
+  final String name;
+  final bool isLetBinding;
+  final bool isLambdaParameter;  // NEW
+
+  const SemanticBoundVariableNode({
+    required super.location,
+    required this.name,
+    this.isLetBinding = false,
+    this.isLambdaParameter = false,  // Default false for backwards compatibility
+  });
+
+  @override
+  String toString() => name;
+}
+```
+
+**Runtime (Terms)**:
+
+```
+LambdaTerm extends FunctionTerm
+  body: Term
+  // Methods: substitute(), reduce(), apply(), native(), toString()
+
+LambdaBoundVariableTerm
+  name: String
+  // Methods: substitute() (partial), reduce() (returns this), type (AnyType),
+  //          native() (throws StateError), toString()
+```
+
+### Lowering Implementation
+
+Modify the existing `SemanticBoundVariableNode` case and add the `SemanticLambdaNode` case in `lib/compiler/lowering/lowerer.dart`:
+
+```dart
+Term lowerTerm(SemanticNode semanticNode) => switch (semanticNode) {
+  // ... existing cases ...
+
+  // MODIFIED: distinguish lambda parameters from let bindings and function parameters
+  SemanticBoundVariableNode() => semanticNode.isLambdaParameter
+      ? LambdaBoundVariableTerm(semanticNode.name)
+      : semanticNode.isLetBinding
+          ? LetBoundVariableTerm(semanticNode.name)
+          : BoundVariableTerm(semanticNode.name),
+
+  // NEW: lower lambda expressions
+  SemanticLambdaNode() => _lowerLambda(semanticNode),
+
+  _ => throw StateError(
+    'Unknown semantic node type: ${semanticNode.runtimeType}',
+  ),
+};
+
+Term _lowerLambda(SemanticLambdaNode semanticNode) {
+  return LambdaTerm(
+    name: '<lambda@${semanticNode.location.line}:${semanticNode.location.column}>',
+    parameters: semanticNode.parameters
+        .map((name) => Parameter.any(name))
+        .toList(),
+    body: lowerTerm(semanticNode.body),
+  );
+}
+```
+
+### Implementation Complexity
 
 **Medium**
 
-- Lexical: Minor (one new token)
-- Syntactic: Medium (speculative parsing for disambiguation)
-- Semantic: Medium (closure capture logic)
-- Runtime: Minor (reuses `CustomFunctionTerm`)
+| Component         | Effort                                                                              |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| Lexer             | Trivial - extend `MinusState` for `->` token                                        |
+| Parser            | Moderate - disambiguation logic for `(params) ->` vs `(expr)`                       |
+| AST               | Simple - one new node type                                                          |
+| Semantic analyzer | Moderate - scope extension, shadowing check, `isLambdaParameter` field              |
+| Lowerer           | Simple - conditional term selection based on `isLambdaParameter`                    |
+| Runtime           | Moderate - new `LambdaTerm` and `LambdaBoundVariableTerm` with partial substitution |
+| Tests             | Comprehensive coverage of closures, scoping, and error conditions                   |
+
+### REPL Mode
+
+Lambda expressions work in REPL mode the same as in program mode:
+
+```
+> ((x) -> x + 1)(5)
+6
+> f = (x) -> x * 2
+> f(5)
+10
+> multiplier = (n) -> (x) -> x * n
+> double = multiplier(2)
+> double(5)
+10
+```
+
+### Post-Implementation
+
+After implementing the feature:
+
+1. **Update documentation** in `docs/`:
+
+   | File                         | Section                                            | Change Required                                                            |
+   | ---------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
+   | `docs/primal.md`             | Syntax → Body (line ~85)                           | Add lambda expressions to the expression list                              |
+   | `docs/reference/lambda.md`   | (new file)                                         | Full lambda documentation with syntax, semantics, and examples             |
+   | `docs/compiler/lexical.md`   | Two-Character Operators (line ~142)                | Add `ArrowToken` (`->`)                                                    |
+   | `docs/compiler/syntactic.md` | Grammar (line ~20)                                 | Add `lambdaExpression` rule                                                |
+   | `docs/compiler/semantic.md`  | Semantic Checks → Identifier resolution (line ~28) | Add lambda parameter resolution and `isLambdaParameter` field              |
+   | `docs/compiler/semantic.md`  | (new section)                                      | Document `SemanticLambdaNode`, scope handling, and duplicate/shadow checks |
+   | `docs/compiler/runtime.md`   | Function Terms (line ~77)                          | Add `LambdaTerm` extending `FunctionTerm`                                  |
+   | `docs/compiler/runtime.md`   | Reference Terms (line ~69)                         | Add `LambdaBoundVariableTerm` with partial substitution semantics          |
+
+2. **Implement tests** — see detailed test specification below
+
+### Existing Test Suite Updates
+
+Adding `SemanticLambdaNode`, `LambdaTerm`, and `LambdaBoundVariableTerm` affects existing test suites:
+
+#### Signature Changes (Compilation Errors)
+
+Tests that call `checkExpression()` directly must add `lambdaParameterNames: {}`:
+
+| File                                        | Tests Affected                            | Required Change                                   |
+| ------------------------------------------- | ----------------------------------------- | ------------------------------------------------- |
+| `test/compiler/runtime_facade_test.dart`    | All `defineFunction` tests                | RuntimeFacade signature updated; tests compile OK |
+| `test/compiler/semantic_analyzer_test.dart` | Direct `checkExpression()` calls (if any) | Add `lambdaParameterNames: {}` parameter          |
+
+#### Lowerer Tests (Behavioral Changes)
+
+Tests in `test/compiler/lowerer_expression_test.dart`:
+
+| Existing Test                     | Impact               | Notes                                                          |
+| --------------------------------- | -------------------- | -------------------------------------------------------------- |
+| `SemanticBoundVariableNode` group | **No change needed** | Default `isLambdaParameter: false` preserves existing behavior |
+
+New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableTerm`.
+
+#### Term Tests (Potential Impact)
+
+| File                                          | Potential Impact                                                       |
+| --------------------------------------------- | ---------------------------------------------------------------------- |
+| `test/compiler/term_test.dart`                | May need new test group for `LambdaTerm` and `LambdaBoundVariableTerm` |
+| Tests using exhaustive `switch` on term types | Add cases for new term types                                           |
+
+### Test Specification
+
+#### Lexical Tests
+
+| Test                        | Input | Expected                                  |
+| --------------------------- | ----- | ----------------------------------------- |
+| `->` recognized             | `->`  | `ArrowToken`                              |
+| `-` alone                   | `- `  | `MinusToken`                              |
+| `->` after identifier       | `x->` | `IdentifierToken`, `ArrowToken`           |
+| Negative number still works | `-5`  | `MinusToken`, `NumberToken` (or combined) |
+
+#### Syntactic Tests
+
+| Test                        | Input                         | Expected                                        |
+| --------------------------- | ----------------------------- | ----------------------------------------------- |
+| Zero-param lambda           | `() -> 5`                     | `LambdaExpression` with 0 params                |
+| Single-param lambda         | `(x) -> x`                    | `LambdaExpression` with 1 param                 |
+| Multi-param lambda          | `(x, y) -> x + y`             | `LambdaExpression` with 2 params                |
+| Nested lambda (body)        | `(x) -> (y) -> x + y`         | Nested `LambdaExpression` in body               |
+| Lambda with if body         | `(x) -> if (x > 0) x else -x` | `LambdaExpression` with `CallExpression` body   |
+| Lambda with let body        | `(x) -> let y = x in y`       | `LambdaExpression` with `LetExpression` body    |
+| Grouped expression          | `(x + y)`                     | Binary `CallExpression`, NOT lambda             |
+| Grouped identifier          | `(x)`                         | `IdentifierExpression`, NOT lambda              |
+| Immediately invoked         | `((x) -> x)(5)`               | `CallExpression` with `LambdaExpression` callee |
+| Missing arrow               | `(x) x`                       | `ExpectedTokenError('->')`                      |
+| Lambda as operand           | `1 + (x) -> x`                | `InvalidTokenError`                             |
+| Lambda in parens as operand | `1 + ((x) -> x)`              | Valid: binary `+` with lambda                   |
+
+#### Semantic Tests
+
+| Test                                | Input                                             | Expected                                                         |
+| ----------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------- |
+| Valid zero-param                    | `f = () -> 5`                                     | No errors                                                        |
+| Valid single-param                  | `f = (x) -> x + 1`                                | No errors                                                        |
+| Valid multi-param                   | `f = (x, y) -> x + y`                             | No errors                                                        |
+| Duplicate parameter                 | `f = (x, x) -> x`                                 | `DuplicatedLambdaParameterError`                                 |
+| Shadows function parameter          | `f(x) = (x) -> x`                                 | `ShadowedLambdaParameterError`                                   |
+| Shadows let binding                 | `f(n) = let x = 1 in (x) -> x`                    | `ShadowedLambdaParameterError`                                   |
+| Shadows outer lambda parameter      | `f = (x) -> (x) -> x`                             | `ShadowedLambdaParameterError`                                   |
+| Undefined variable in body          | `f = (x) -> y`                                    | `UndefinedIdentifierError`                                       |
+| Captures function parameter         | `f(n) = (x) -> x + n`                             | No errors, `n` is captured                                       |
+| Captures let binding                | `f(n) = let m = 2 in (x) -> x * m`                | No errors, `m` is captured                                       |
+| `isLambdaParameter` set correctly   | `f = (x) -> x`                                    | Body's `SemanticBoundVariableNode` has `isLambdaParameter: true` |
+| Parameter `isLambdaParameter` false | `f(n) = n`                                        | `SemanticBoundVariableNode` has `isLambdaParameter: false`       |
+| Shadows stdlib function             | `f = (num.abs) -> num.abs`                        | No error, `num.abs` resolves to parameter                        |
+| Shadows custom function             | `double(x) = x * 2` then `f = (double) -> double` | No error, `double` resolves to parameter                         |
+
+#### Lowering Tests
+
+| Test                                     | Input                 | Expected                                                    |
+| ---------------------------------------- | --------------------- | ----------------------------------------------------------- |
+| Lambda param → `LambdaBoundVariableTerm` | `(x) -> x`            | Body contains `LambdaBoundVariableTerm("x")`                |
+| Function param → `BoundVariableTerm`     | `f(n) = n`            | Body contains `BoundVariableTerm("n")`                      |
+| Let binding → `LetBoundVariableTerm`     | `let x = 1 in x`      | Body contains `LetBoundVariableTerm("x")`                   |
+| Mixed lambda and capture                 | `f(n) = (x) -> x + n` | `LambdaBoundVariableTerm("x")` and `BoundVariableTerm("n")` |
+
+#### Runtime Tests: LambdaBoundVariableTerm
+
+| Test                             | Code                                              | Expected                   |
+| -------------------------------- | ------------------------------------------------- | -------------------------- |
+| Partial substitution (not found) | `LambdaBoundVariableTerm("x").substitute({y: 5})` | Returns `this` (unchanged) |
+| Full substitution (found)        | `LambdaBoundVariableTerm("x").substitute({x: 5})` | Returns `NumberTerm(5)`    |
+| Reduce returns this              | `LambdaBoundVariableTerm("x").reduce()`           | Returns `this` (unchanged) |
+| Type is AnyType                  | `LambdaBoundVariableTerm("x").type`               | `AnyType`                  |
+| Native throws if unsubstituted   | `LambdaBoundVariableTerm("x").native()`           | `StateError`               |
+| toString returns name            | `LambdaBoundVariableTerm("x").toString()`         | `"x"`                      |
+
+#### Runtime Tests: LambdaTerm (basic)
+
+| Test                  | Code                                      | Expected        |
+| --------------------- | ----------------------------------------- | --------------- |
+| Type is FunctionType  | `LambdaTerm(...).type`                    | `FunctionType`  |
+| Reduce returns this   | `LambdaTerm(...).reduce()`                | Returns `this`  |
+| Native returns string | `LambdaTerm(...).native()`                | `"<lambda(x)>"` |
+| toString format       | `LambdaTerm(params: [x], ...).toString()` | `"<lambda(x)>"` |
+
+#### Runtime Tests: LambdaTerm.substitute()
+
+| Test                        | Setup                        | Expected                                 |
+| --------------------------- | ---------------------------- | ---------------------------------------- |
+| Propagates through body     | `(x) -> y` with `{y: 5}`     | Body becomes `x * 5`                     |
+| Lambda param refs unchanged | `(x) -> x` with `{y: 5}`     | `LambdaBoundVariableTerm("x")` unchanged |
+| Captures outer variable     | `(x) -> x + n` with `{n: 2}` | Body becomes `x + 2`                     |
+
+#### Runtime Tests: LambdaTerm.apply()
+
+| Test                    | Input                             | Expected                        |
+| ----------------------- | --------------------------------- | ------------------------------- |
+| Zero-param invocation   | `(() -> 5).apply([])`             | `NumberTerm(5)`                 |
+| Single-param invocation | `((x) -> x + 1).apply([5])`       | `NumberTerm(6)`                 |
+| Multi-param invocation  | `((x, y) -> x + y).apply([2, 3])` | `NumberTerm(5)`                 |
+| Wrong arity (too few)   | `((x, y) -> x).apply([1])`        | `InvalidArgumentCountError`     |
+| Wrong arity (too many)  | `((x) -> x).apply([1, 2])`        | `InvalidArgumentCountError`     |
+| Arguments evaluated     | `((x) -> x).apply([1 + 1])`       | `NumberTerm(2)` (arg evaluated) |
+
+#### Runtime Tests: Closures
+
+| Test                        | Input                                             | Expected |
+| --------------------------- | ------------------------------------------------- | -------- |
+| Captures function param     | `f(n) = (x) -> x * n` then `f(2)(5)`              | `10`     |
+| Captures let binding        | `f(n) = let m = 2 in (x) -> x * m` then `f(0)(5)` | `10`     |
+| Captures outer lambda param | `((a) -> (b) -> a + b)(1)(2)`                     | `3`      |
+| Multiple captures           | `f(a, b) = (x) -> a + b + x` then `f(1, 2)(3)`    | `6`      |
+
+#### Runtime Tests: Error Propagation
+
+| Test                       | Input                       | Expected              |
+| -------------------------- | --------------------------- | --------------------- |
+| Error in lambda body       | `((x) -> x / 0)(5)`         | `DivisionByZeroError` |
+| `try` catches lambda error | `try(((x) -> x / 0)(5), 0)` | `0`                   |
+
+#### Integration Tests
+
+| Test                      | Input                                                            | Expected    |
+| ------------------------- | ---------------------------------------------------------------- | ----------- |
+| `list.map` with lambda    | `list.map([1, 2, 3], (x) -> x * 2)`                              | `[2, 4, 6]` |
+| `list.filter` with lambda | `list.filter([1, 2, 3, 4], (x) -> x > 2)`                        | `[3, 4]`    |
+| `list.reduce` with lambda | `list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)`                 | `6`         |
+| `list.sort` with lambda   | `list.sort([3, 1, 2], (a, b) -> a - b)`                          | `[1, 2, 3]` |
+| Lambda in list            | `f = [(x) -> x + 1, (x) -> x * 2]` then `f[0](5)`                | `6`         |
+| Lambda in map             | `f = {"inc": (x) -> x + 1}` then `f["inc"](5)`                   | `6`         |
+| Immediately invoked       | `((x) -> x + 1)(5)`                                              | `6`         |
+| Nested invocation         | `((x) -> (y) -> x + y)(1)(2)`                                    | `3`         |
+| Closure with multiplier   | `mult(n) = (x) -> x * n` then `mult(3)(4)`                       | `12`        |
+| Compose pattern           | `comp(f, g) = (x) -> f(g(x))` then `comp((x)->x+1, (x)->x*2)(3)` | `7`         |
+| Lambda with if body       | `((x) -> if (x > 0) x else -x)(-5)`                              | `5`         |
+| Lambda with let body      | `((x) -> let y = x * 2 in y + 1)(5)`                             | `11`        |
+
+#### REPL Tests
+
+**Expression evaluation** (via `evaluateToTerm`):
+
+| Test                 | Input                                    | Expected                   |
+| -------------------- | ---------------------------------------- | -------------------------- |
+| Immediate invocation | `((x) -> x + 1)(5)`                      | `6`                        |
+| Store and call       | `f = (x) -> x * 2` then `f(5)`           | `10`                       |
+| Closure              | `m = (n) -> (x) -> x * n` then `m(2)(5)` | `10`                       |
+| With list.map        | `list.map([1, 2], (x) -> x + 1)`         | `[2, 3]`                   |
+| Error in lambda      | `((x) -> y)(5)`                          | `UndefinedIdentifierError` |
+
+**Function definition** (via `defineFunction`):
+
+| Test                      | Definition then call                                   | Expected |
+| ------------------------- | ------------------------------------------------------ | -------- |
+| Function returning lambda | `makeInc(n) = (x) -> x + n` then `makeInc(1)(5)`       | `6`      |
+| Lambda as function body   | `double = (x) -> x * 2` then `double(5)`               | `10`     |
+| Nested lambdas            | `f = (a) -> (b) -> (c) -> a + b + c` then `f(1)(2)(3)` | `6`      |
