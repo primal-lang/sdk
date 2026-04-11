@@ -90,7 +90,7 @@ A binding cannot reference itself. This is not a recursive binding construct:
 ```primal
 // ERROR: x references itself (no outer x exists)
 bad(n) = let x = x + 1 in x
-// → UndefinedIdentifierError: 'x' is not defined
+// → UndefinedIdentifierError: Undefined identifier "x"
 
 // ERROR: shadowing is checked before the value expression
 bad(x) = let x = x + 1 in x
@@ -271,11 +271,11 @@ bad1(n) = let x = 1, x = 2 in x
 
 // ERROR: Self-reference
 bad2(n) = let x = x + 1 in x
-// → UndefinedIdentifierError: 'x' is not defined
+// → UndefinedIdentifierError: Undefined identifier "x"
 
 // ERROR: Forward reference within same let
 bad3(n) = let y = x, x = 1 in y
-// → UndefinedIdentifierError: 'x' is not defined
+// → UndefinedIdentifierError: Undefined identifier "x"
 
 // ERROR: Missing comma between bindings
 bad4(n) = let x = 1 y = 2 in x + y

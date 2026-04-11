@@ -1,18 +1,3 @@
-LOW: Example typo/inconsistency
-
-What is wrong: Line 260 shows:
-// → UndefinedIdentifierError: 'x' is not defined
-
-But line 78 shows:
-// → UndefinedIdentifierError: 'x' is not defined
-
-These error messages use 'x' is not defined but the actual error class
-(semantic_error.dart:31-35) produces:
-'Undefined identifier "$identifier" in function "$inFunction"'
-
-The spec error messages don't match the existing error format.
-
----
 LOW: Breaking change section is understated
 
 What is wrong: Lines 137-139:
@@ -56,40 +41,3 @@ SemanticLetNode() => _lowerLet(semanticNode),
 
 But Dart's switch exhaustiveness may require removing the default case or the
 new case will be flagged.
-
----
-INFO: Missing REPL expression context handling details
-
-What is wrong: Lines 443-451 mention REPL mode but don't address:
-1. How availableParameters is initialized in REPL mode (currently empty)
-2. Whether REPL state persists let bindings across expressions (it shouldn't
-per the pure expression semantics)
-
-Looking at semantic_analyzer.dart:127-133, checkExpression takes
-availableParameters as a parameter. For REPL, this would be passed empty,
-which is correct. But the spec could be more explicit.
-
----
-INFO: Unused parameter warning semantics for let bindings
-
-What is wrong: Lines 343-347 state:
-Let bindings are added to availableParameters but are NOT function 
-parameters... no warning for unused let bindings
-
-Is "no warning for unused let bindings" intentional design, or an oversight?
-The rationale is not explained. Unused let bindings could indicate dead code.
-
----
-Summary of Missing Tests
-
-Based on the examples in the spec, these test cases are implied but not
-enumerated:
-1. Lexer: let token, in token, edge cases with lettering, inner
-2. Parser: single binding, multiple bindings, nested let, let in branches
-3. Semantic: all error conditions with priority verification
-4. Lowering: SemanticLetNode → LetTerm mapping
-5. Runtime: sequential evaluation, substitution propagation, error propagation
-6. REPL: let expressions evaluate correctly
-7. Integration: all valid/invalid examples from spec
-
-✻ Brewed for 3m 33s
