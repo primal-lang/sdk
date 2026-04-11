@@ -153,9 +153,39 @@ Two new keywords: `let` and `in`.
 
 **New Error Types**: The following error types must be added to `lib/compiler/errors/semantic_error.dart`:
 
-- `EmptyLetBindingsError`
-- `ShadowedBindingError`
-- `DuplicatedLetBindingError`
+```dart
+class EmptyLetBindingsError extends SemanticError {
+  const EmptyLetBindingsError({
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Empty let bindings in function "$inFunction": let expression requires at least one binding'
+             : 'Empty let bindings: let expression requires at least one binding',
+       );
+}
+
+class ShadowedBindingError extends SemanticError {
+  const ShadowedBindingError({
+    required String binding,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Shadowed binding "$binding" in function "$inFunction": name is already bound'
+             : 'Shadowed binding "$binding": name is already bound',
+       );
+}
+
+class DuplicatedLetBindingError extends SemanticError {
+  const DuplicatedLetBindingError({
+    required String binding,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Duplicated let binding "$binding" in function "$inFunction": name is already bound in this let expression'
+             : 'Duplicated let binding "$binding": name is already bound in this let expression',
+       );
+}
+```
 
 ## Examples
 
