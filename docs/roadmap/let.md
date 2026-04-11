@@ -29,6 +29,8 @@ bindings       → binding ("," binding)*
 binding        → IDENTIFIER "=" expression
 ```
 
+Note: The `bindings` rule requires at least one binding. `let in x` is a parse error, not a valid empty binding list.
+
 **Precedence**: `let` has the lowest precedence, binding more loosely than all other operators including `if`. This means `let x = 1 in x + 2` parses as `let x = 1 in (x + 2)`, and `let x = 1 in if (x > 0) x else 0` parses as `let x = 1 in (if (x > 0) x else 0)`.
 
 **Associativity**: Right-associative. Chained `let` expressions nest naturally.
@@ -209,30 +211,20 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
 
 ## Error Conditions
 
-| Error                       | Condition                                      | Priority |
-| --------------------------- | ---------------------------------------------- | -------- |
-| `EmptyLetBindingsError`     | No bindings provided between `let` and `in`    | 1        |
-| `ShadowedLetBindingError`   | Binding shadows a parameter or outer binding   | 2        |
-| `DuplicatedLetBindingError` | Same variable bound twice in one `let`         | 3        |
-| `UndefinedIdentifierError`  | Binding references itself or an undefined name | 4        |
-| `ExpectedTokenError(',')`   | Comma missing between bindings                 | —        |
-| `ExpectedTokenError('in')`  | `in` keyword missing after bindings            | —        |
+| Error                       | Condition                                      | Phase    | Priority |
+| --------------------------- | ---------------------------------------------- | -------- | -------- |
+| `ExpectedTokenError`        | No bindings provided (`let in x`)              | Parsing  | —        |
+| `ExpectedTokenError(',')`   | Comma missing between bindings                 | Parsing  | —        |
+| `ExpectedTokenError('in')`  | `in` keyword missing after bindings            | Parsing  | —        |
+| `ShadowedLetBindingError`   | Binding shadows a parameter or outer binding   | Semantic | 1        |
+| `DuplicatedLetBindingError` | Same variable bound twice in one `let`         | Semantic | 2        |
+| `UndefinedIdentifierError`  | Binding references itself or an undefined name | Semantic | 3        |
 
-**Error Priority**: When multiple errors could apply to the same binding, the error with the lowest priority number is thrown first. Shadowing is checked before duplicate detection, and both are checked before the value expression is analyzed. `ExpectedTokenError` is a syntactic error and is detected during parsing, before semantic analysis.
+**Error Priority**: For semantic errors, when multiple errors could apply to the same binding, the error with the lowest priority number is thrown first. Shadowing is checked before duplicate detection, and both are checked before the value expression is analyzed. Parsing errors (`ExpectedTokenError`) are detected before semantic analysis runs.
 
 **New Error Types**: The following error types must be added to `lib/compiler/errors/semantic_error.dart`:
 
 ```dart
-class EmptyLetBindingsError extends SemanticError {
-  const EmptyLetBindingsError({
-    String? inFunction,
-  }) : super(
-         inFunction != null
-             ? 'Empty let expression in function "$inFunction"'
-             : 'Empty let expression',
-       );
-}
-
 class ShadowedLetBindingError extends SemanticError {
   const ShadowedLetBindingError({
     required String binding,
@@ -315,9 +307,9 @@ chain(a, b) = let x = a + b in let y = x * 2 in y
 ### Invalid
 
 ```primal
-// ERROR: Empty bindings
+// ERROR: Empty bindings (parser expects identifier after 'let')
 bad0(n) = let in n
-// → EmptyLetBindingsError: Empty let expression
+// → ExpectedTokenError: expected identifier
 
 // ERROR: Duplicate binding
 bad1(n) = let x = 1, x = 2 in x
@@ -441,16 +433,17 @@ This preserves the strict behavior of `BoundVariableTerm` for function parameter
 
 When processing a `LetExpression`:
 
-1. If bindings list is empty, throw `EmptyLetBindingsError`
-2. Create a local set `letBindingNames` to track names bound in this `let`
-3. For each binding in order:
+1. Create a local set `letBindingNames` to track names bound in this `let`
+2. For each binding in order:
    - If the name is in `availableParameters`, throw `ShadowedLetBindingError`
    - If the name is in `letBindingNames`, throw `DuplicatedLetBindingError`
    - Check the binding's value expression against the current `availableParameters`
    - Add the name to `letBindingNames`
    - Add the name to `availableParameters` (for subsequent bindings and the body)
-4. Check the body expression against the extended `availableParameters`
-5. Return a `SemanticLetNode` with the checked bindings and body
+3. Check the body expression against the extended `availableParameters`
+4. Return a `SemanticLetNode` with the checked bindings and body
+
+Note: The parser guarantees at least one binding exists (grammar: `bindings → binding ("," binding)*`), so the semantic analyzer does not need to check for empty bindings.
 
 **Error Priority**: Shadowing is checked before duplicate detection. Both are checked before the value expression is analyzed. This means if a binding name shadows a parameter AND the value references itself, the shadowing error is thrown first.
 
@@ -513,13 +506,13 @@ final SemanticNode body = checkExpression(
 
 ### Compiler Pipeline Impact
 
-| Stage     | Changes                                                                                                                      |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Lexical   | Add `LetToken` and `InToken` keywords                                                                                        |
-| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes; parse comma-separated bindings                                     |
-| Semantic  | Extend scope with bindings; check for empty, duplicates, shadowing, and self-reference; add `isLetBinding` field; new errors |
-| Lowering  | Convert `SemanticLetNode` to `LetTerm`; map `SemanticBoundVariableNode` to `LetBoundVariableTerm` or `BoundVariableTerm`     |
-| Runtime   | Add `LetTerm` with sequential binding evaluation; add `LetBoundVariableTerm` with partial substitution semantics             |
+| Stage     | Changes                                                                                                                  |
+| --------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Lexical   | Add `LetToken` and `InToken` keywords                                                                                    |
+| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes; parse comma-separated bindings; require at least one binding   |
+| Semantic  | Extend scope with bindings; check for duplicates, shadowing, and self-reference; add `isLetBinding` field; new errors    |
+| Lowering  | Convert `SemanticLetNode` to `LetTerm`; map `SemanticBoundVariableNode` to `LetBoundVariableTerm` or `BoundVariableTerm` |
+| Runtime   | Add `LetTerm` with sequential binding evaluation; add `LetBoundVariableTerm` with partial substitution semantics         |
 
 ### New Node Types
 
@@ -665,6 +658,7 @@ After implementing the feature:
 | Missing `in`      | `let x = 1 x`                 | `ExpectedTokenError('in')`                 |
 | Missing comma     | `let x = 1 y = 2 in x`        | `ExpectedTokenError(',')`                  |
 | Empty bindings    | `let in x`                    | `ExpectedTokenError` (identifier expected) |
+| Trailing comma    | `let x = 1, in x`             | `ExpectedTokenError` (identifier expected) |
 
 #### Semantic Tests
 
@@ -672,7 +666,6 @@ After implementing the feature:
 | --------------------------------- | ------------------------------------ | ----------------------------------------------------------- |
 | Valid single binding              | `f(n) = let x = n in x`              | No errors, no warnings                                      |
 | Valid multiple bindings           | `f(n) = let x = n, y = x in y`       | No errors                                                   |
-| Empty bindings                    | `f(n) = let in n`                    | `EmptyLetBindingsError`                                     |
 | Shadows parameter                 | `f(x) = let x = 1 in x`              | `ShadowedLetBindingError`                                   |
 | Shadows outer let                 | `f(n) = let x = 1 in let x = 2 in x` | `ShadowedLetBindingError`                                   |
 | Duplicate in same let             | `f(n) = let x = 1, x = 2 in x`       | `DuplicatedLetBindingError`                                 |

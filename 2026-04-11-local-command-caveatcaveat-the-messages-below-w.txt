@@ -1,0 +1,327 @@
+2. HIGH — checkExpression signature change underspecified
+
+What is wrong: The document proposes adding letBindingNames as a new required
+parameter to checkExpression() (lines 462-469), but doesn't show the cascading
+changes required.
+
+Why it is wrong: Looking at semantic_analyzer.dart:127-177, checkExpression()
+is called recursively by:
+- _checkListExpression (line 188)
+- _checkMapExpression (lines 214, 221)
+- _checkCallExpression (line 277, 320)
+
+Each of these methods would need to accept and propagate letBindingNames. The
+document shows modifications to _checkIdentifierExpression (lines 473-497) and
+the entry point (lines 501-509), but omits the other four methods.
+
+References:
+- docs/roadmap/let.md:462-469 — proposed signature
+- lib/compiler/semantic/semantic_analyzer.dart:146-176 — current switch
+statement with six expression types
+
+Consequence: Incomplete implementation guidance; developers will need to infer
+the pattern for the omitted methods.
+
+Missing: Updated signatures and recursive calls for _checkListExpression,
+_checkMapExpression, _checkCallExpression, _checkCalleeIdentifier.
+
+---
+3. HIGH — LetTerm missing type getter and native() method
+
+What is wrong: The document shows LetTerm structure (lines 567-568) but omits
+two required methods:
+@override Type get type => ???;
+@override dynamic native() => ???;
+
+Why it is wrong: Looking at term.dart:8-18, all Term subclasses must implement
+type and native(). The document shows LetTerm.substitute() and
+LetTerm.reduce() but nothing else.
+
+References:
+- docs/roadmap/let.md:567-568 — LetTerm structure
+- lib/compiler/runtime/term.dart:11-17 — abstract method requirements
+
+Consequence: Implementation will fail to compile without these methods.
+
+Missing: What should type return? Likely const AnyType() or the body's type.
+What should native() do? Likely reduce().native().
+
+---
+4. HIGH — LetBoundVariableTerm.reduce() not specified
+
+What is wrong: The document defines LetBoundVariableTerm.substitute() and
+native() (lines 417-435), but omits reduce().
+
+Why it is wrong: If not overridden, it inherits Term.reduce() => this; which
+is probably correct, but this should be explicit since it differs from
+BoundVariableTerm behavior expectations.
+
+References:
+- docs/roadmap/let.md:417-435 — LetBoundVariableTerm class
+- lib/compiler/runtime/term.dart:15 — default reduce
+
+Consequence: Implicit behavior that could cause confusion during review or
+debugging.
+
+Missing: Explicit @override Term reduce() => this; with comment explaining why
+it returns itself.
+
+---
+5. MEDIUM — Semantic analysis algorithm step order is ambiguous
+
+What is wrong: The algorithm (lines 443-454) describes checking a binding name
+against availableParameters for shadowing. But availableParameters is also
+extended with let bindings for subsequent bindings (step "Add the name to
+availableParameters"). This creates ambiguity: does checking "If the name is
+in availableParameters" also catch shadowing of earlier let bindings in the
+same let?
+
+Why it is wrong: Consider let x = 1, x = 2 in x:
+- First x: not in availableParameters, not in letBindingNames → add to both
+- Second x: now in availableParameters → ShadowedLetBindingError?
+
+But the error priority table (line 212-220) says duplicate bindings in same
+let should throw DuplicatedLetBindingError. The algorithm must check
+letBindingNames for duplicates before checking availableParameters for
+shadowing, or else intra-let duplicates would appear as shadowing.
+
+References:
+- docs/roadmap/let.md:443-454 — algorithm steps
+- docs/roadmap/let.md:212-220 — error priority table
+
+Consequence: Ambiguous which error fires for let x = 1, x = 2 in x. Algorithm
+order suggests shadowing, but examples show duplicate.
+
+Missing: Clarify that letBindingNames check must happen first, or that
+intra-let names go into letBindingNames but not availableParameters.
+
+---
+6. MEDIUM — Parser falls through to primary() which will reject LetToken
+
+What is wrong: The document says (line 36) that let cannot appear as a binary
+operand: 1 + let x = 2 in x is invalid. This is correct but the mechanism is
+unclear.
+
+Why it is wrong: Looking at expression_parser.dart:286-306, primary() handles:
+Boolean, Number, String, Identifier, (, [, {. If let is a keyword (LetToken),
+and 1 + ... parses 1 then sees +, it calls the right operand which eventually
+hits primary(). primary() will see LetToken and throw InvalidTokenError(peek)
+— but this error message won't say "let expression not allowed here".
+
+References:
+- docs/roadmap/let.md:36 — states constraint
+- lib/compiler/syntactic/expression_parser.dart:286-305 — primary() definition
+
+Consequence: Error message will be generic ("Invalid token") rather than
+helpful. User won't understand why let is rejected here.
+
+Missing: Either explicit error handling in parser, or acceptance that
+InvalidTokenError is sufficient.
+
+---
+7. MEDIUM — if desugaring assumption may conflict
+
+What is wrong: The current parser desugars if to CallExpression.fromIf() with
+callee IdentifierExpression(operator) where operator is the IfToken
+(expression_parser.dart:87-92). The IfToken.value is the string "if".
+
+But the document doesn't address how let will be represented at the AST level
+— it proposes new LetExpression and LetBindingExpression nodes (lines
+528-538).
+
+Why it matters: This is a design divergence. if is desugared to a call; let
+gets its own AST node. This is probably intentional (let has bindings, if is
+just a ternary call), but should be explicitly stated.
+
+References:
+- docs/roadmap/let.md:528-538 — new LetExpression node
+- lib/compiler/syntactic/expression_parser.dart:87-92 — if desugars to call
+
+Consequence: Inconsistency is fine but should be documented as intentional.
+
+Missing: Rationale note explaining why let gets a dedicated AST node while if
+is desugared.
+
+---
+8. MEDIUM — Trailing comma behavior unspecified
+
+What is wrong: The document says (line 53) "No trailing comma after the last
+binding" but doesn't specify the error.
+
+Why it is wrong: For let x = 1, in x, the parser would see let, parse binding
+x = 1, see comma, try to parse another binding, see in (not an identifier),
+and throw... what? Looking at the list parser
+(expression_parser.dart:312-314), it uses do { ... } while 
+(matchSingle(_isComma)) which doesn't allow trailing commas. Same pattern
+would apply.
+
+References:
+- docs/roadmap/let.md:53 — trailing comma statement
+- lib/compiler/syntactic/expression_parser.dart:312-314 — list parsing pattern
+
+Consequence: The error would be ExpectedTokenError for missing identifier, but
+this should be in the test table.
+
+Missing: Test case: let x = 1, in x → ExpectedTokenError.
+
+---
+9. MEDIUM — Runtime tests reference Bindings.data directly
+
+What is wrong: The proposed LetTerm.reduce() (lines 379-388) builds
+Map<String, Term> bindingMap then wraps it in Bindings(bindingMap). But
+Bindings is designed with a get(name) method that throws NotFoundInScopeError.
+
+Why it matters: The document uses Bindings(Map.of(bindingMap)) for
+substitution, which works. But the pattern differs from how Bindings.from() is
+used elsewhere. This is minor but could cause confusion.
+
+References:
+- docs/roadmap/let.md:383 — Bindings(Map.of(bindingMap))
+- lib/compiler/runtime/bindings.dart:18-28 — Bindings.from() factory
+
+Consequence: Minor style inconsistency.
+
+Missing: Note explaining why Bindings() constructor is used instead of
+Bindings.from().
+
+---
+10. LOW — Missing test case for bad8
+
+What is wrong: The Invalid examples section (lines 351-352) shows:
+bad8(n) = let x = 1, y = 2, x = 3 in x
+// → DuplicatedLetBindingError: Duplicated let binding "x"
+
+But this isn't in the Semantic Tests table (lines 669-685).
+
+References:
+- docs/roadmap/let.md:351-352 — bad8 example
+- docs/roadmap/let.md:669-685 — semantic tests table
+
+Consequence: Test coverage gap.
+
+Missing: Add row: Duplicate non-adjacent | f(n) = let x = 1, y = 2, x = 3 in x
+| DuplicatedLetBindingError
+
+---
+11. LOW — in keyword breaking change underestimated
+
+What is wrong: The document notes (line 208) that let and in become reserved.
+For in, this could break existing code like:
+check(in) = in > 0
+range(in, out) = out - in
+
+Why it matters: The identifier in is short and potentially used. The string
+extension isIn (proposed line 160) would match exact "in" only, so inner,
+into, input remain valid.
+
+References:
+- docs/roadmap/let.md:208 — breaking change note
+- lib/extensions/string_extensions.dart:65-75 — existing keyword predicates
+use exact match
+
+Consequence: Users with in parameters must rename them.
+
+Missing: Migration guidance or severity assessment of this breaking change.
+
+---
+12. LOW — Error message style inconsistency
+
+What is wrong: Proposed error messages (lines 226-256) use format 'Shadowed 
+let binding "$binding" in function "$inFunction"'. Existing
+DuplicatedParameterError (semantic_error.dart:17-24) uses format 'Duplicated 
+parameter "$parameter" in function "$function(${parameters.join(', ')})"' —
+including the full parameter list.
+
+References:
+- docs/roadmap/let.md:236-243 — proposed ShadowedLetBindingError
+- lib/compiler/errors/semantic_error.dart:17-24 — existing
+DuplicatedParameterError
+
+Consequence: Inconsistent error message verbosity.
+
+Missing: Either match the existing style (include parameter list) or document
+the intentional divergence.
+
+---
+13. LOW — SemanticBoundVariableNode.isLetBinding field only partially 
+specified
+
+What is wrong: The document says to add isLetBinding: bool to
+SemanticBoundVariableNode (lines 554-560) but doesn't show the full class
+definition with constructor update.
+
+References:
+- docs/roadmap/let.md:554-560 — node structure
+- lib/compiler/semantic/semantic_node.dart:104-117 — current class definition
+
+Consequence: Implementer must infer constructor changes.
+
+Missing: Full updated class definition:
+class SemanticBoundVariableNode extends SemanticNode {
+final String name;
+final bool isLetBinding;  // NEW
+
+const SemanticBoundVariableNode({
+    required super.location,
+    required this.name,
+    this.isLetBinding = false,  // default for backwards compat
+});
+}
+
+---
+14. INFO — Valid example may confuse readers
+
+What is wrong: Line 303 shows:
+pair(n) = [let x = n * 2 in x, let y = n * 3 in y]
+
+This is valid but creates two separate let scopes. A reader might wonder if y
+could reference x (it cannot).
+
+References:
+- docs/roadmap/let.md:303 — pair example
+
+Consequence: Potential confusion.
+
+Missing: Comment clarifying these are independent scopes.
+
+---
+15. INFO — Unused let binding warning decision stated but incomplete
+
+What is wrong: The document states (lines 512) "Unused let bindings do NOT
+produce warnings." But the mechanism isn't shown — how does the semantic
+analyzer know not to warn?
+
+References:
+- docs/roadmap/let.md:512 — design decision
+- lib/compiler/semantic/semantic_analyzer.dart:79-88 — current unused param
+warning
+
+Consequence: Future implementer might accidentally add unused let binding
+warnings.
+
+Missing: Explain that let bindings aren't tracked in usedParameters by design,
+or show explicit skip logic.
+
+---
+Summary
+Severity: CRITICAL
+Count: 1
+Key Issues: Empty bindings error type contradiction
+────────────────────────────────────────
+Severity: HIGH
+Count: 3
+Key Issues: Incomplete signature changes, missing Term methods
+────────────────────────────────────────
+Severity: MEDIUM
+Count: 5
+Key Issues: Algorithm ambiguity, parser error handling, trailing comma
+────────────────────────────────────────
+Severity: LOW
+Count: 4
+Key Issues: Missing tests, style inconsistencies, breaking change
+────────────────────────────────────────
+Severity: INFO
+Count: 2
+Key Issues: Clarifications for reader understanding
+
+✻ Cooked for 7m 9s
