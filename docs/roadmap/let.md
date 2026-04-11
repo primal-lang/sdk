@@ -1084,6 +1084,56 @@ After implementing the feature:
 
 2. **Implement tests** — see detailed test specification below
 
+### Existing Test Suite Updates
+
+Adding `SemanticLetNode`, `LetTerm`, and `LetBoundVariableTerm` affects existing test suites that assert on the current node/term taxonomy. These must be reviewed and updated:
+
+#### Signature Changes (Compilation Errors)
+
+Tests that call `checkExpression()` directly must add `letBindingNames: {}`:
+
+| File                                        | Tests Affected                            | Required Change                                                |
+| ------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------- |
+| `test/compiler/runtime_facade_test.dart`    | All `defineFunction` tests                | RuntimeFacade signature updated; tests compile without changes |
+| `test/compiler/semantic_analyzer_test.dart` | Direct `checkExpression()` calls (if any) | Add `letBindingNames: {}` parameter                            |
+
+#### Lowerer Tests (Behavioral Changes)
+
+Tests in `test/compiler/lowerer_expression_test.dart` that assert `SemanticBoundVariableNode` lowers to `BoundVariableTerm`:
+
+| Existing Test                                     | Impact               | Notes                                                     |
+| ------------------------------------------------- | -------------------- | --------------------------------------------------------- |
+| `SemanticBoundVariableNode` group (lines 134-170) | **No change needed** | Default `isLetBinding: false` preserves existing behavior |
+
+New tests required for `isLetBinding: true` producing `LetBoundVariableTerm` (covered in Test Specification below).
+
+#### IR Tests (Structural Assertions)
+
+Tests in `test/compiler/intermediate_representation_test.dart`:
+
+| Existing Test                                                               | Impact               | Notes                                                |
+| --------------------------------------------------------------------------- | -------------------- | ---------------------------------------------------- |
+| `parameter reference creates SemanticBoundVariableNode` (line 798)          | **No change needed** | Parameters still produce `SemanticBoundVariableNode` |
+| `lowering SemanticBoundVariableNode produces BoundVariableTerm` (line 1412) | **No change needed** | Default `isLetBinding: false` preserves behavior     |
+
+New tests required to verify `SemanticBoundVariableNode.isLetBinding` field is correctly set (covered below).
+
+#### Term Tests (Potential Impact)
+
+Tests that assert the complete taxonomy of `Term` subclasses may need updates:
+
+| File                                          | Potential Impact                                                 |
+| --------------------------------------------- | ---------------------------------------------------------------- |
+| `test/compiler/term_test.dart`                | May need new test group for `LetTerm` and `LetBoundVariableTerm` |
+| Tests using exhaustive `switch` on term types | Add cases for new term types                                     |
+
+#### Summary: Required Actions
+
+1. **Compile-time fixes**: Update `RuntimeFacade` callers (automatic via signature change)
+2. **New test groups**: Add `LetTerm`, `LetBoundVariableTerm`, `SemanticLetNode` test groups
+3. **Verification**: Run existing test suites to confirm no regressions for parameter handling
+4. **isLetBinding coverage**: Add tests verifying `isLetBinding: false` for parameters, `isLetBinding: true` for let bindings
+
 ### Test Specification
 
 #### Lexical Tests
