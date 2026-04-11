@@ -968,16 +968,16 @@ After implementing the feature:
 
 1. **Update documentation** in `docs/`:
 
-   | File                         | Section                                            | Change Required                                                            |
-   | ---------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
-   | `docs/primal.md`             | Syntax → Body (line ~85)                           | Add lambda expressions to the expression list                              |
-   | `docs/reference/lambda.md`   | (new file)                                         | Full lambda documentation with syntax, semantics, and examples             |
-   | `docs/compiler/lexical.md`   | Two-Character Operators (line ~142)                | Add `ArrowToken` (`->`)                                                    |
-   | `docs/compiler/syntactic.md` | Grammar (line ~20)                                 | Add `lambdaExpression` rule                                                |
-   | `docs/compiler/semantic.md`  | Semantic Checks → Identifier resolution (line ~28) | Add lambda parameter resolution and `isLambdaParameter` field              |
-   | `docs/compiler/semantic.md`  | (new section)                                      | Document `SemanticLambdaNode`, scope handling, and duplicate/shadow checks |
-   | `docs/compiler/runtime.md`   | Function Terms (line ~77)                          | Add `LambdaTerm` extending `FunctionTerm`                                  |
-   | `docs/compiler/runtime.md`   | Reference Terms (line ~69)                         | Add `LambdaBoundVariableTerm` with partial substitution semantics          |
+   | File                         | Section                                 | Change Required                                                            |
+   | ---------------------------- | --------------------------------------- | -------------------------------------------------------------------------- |
+   | `docs/primal.md`             | Syntax → Body                           | Add lambda expressions to the expression list                              |
+   | `docs/reference/lambda.md`   | (new file)                              | Full lambda documentation with syntax, semantics, and examples             |
+   | `docs/compiler/lexical.md`   | Two-Character Operators                 | Add `ArrowToken` (`->`)                                                    |
+   | `docs/compiler/syntactic.md` | Grammar                                 | Add `lambdaExpression` rule                                                |
+   | `docs/compiler/semantic.md`  | Semantic Checks → Identifier resolution | Add lambda parameter resolution and `isLambdaParameter` field              |
+   | `docs/compiler/semantic.md`  | (new section)                           | Document `SemanticLambdaNode`, scope handling, and duplicate/shadow checks |
+   | `docs/compiler/runtime.md`   | Function Terms                          | Add `LambdaTerm` extending `FunctionTerm`                                  |
+   | `docs/compiler/runtime.md`   | Reference Terms                         | Add `LambdaBoundVariableTerm` with partial substitution semantics          |
 
 2. **Implement tests** — see detailed test specification below
 
