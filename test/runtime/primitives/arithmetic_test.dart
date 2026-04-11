@@ -2584,4 +2584,27 @@ void main() {
       checkResult(runtime, false);
     });
   });
+
+  group('Random Number Edge Cases', () {
+    test(
+      'num.integerRandom throws InvalidNumericOperationError on range overflow',
+      () {
+        // Use very large values that would cause range overflow
+        // (max - min + 1) would overflow if > max int
+        final RuntimeFacade runtime = getRuntime(
+          'main = num.integerRandom(-9223372036854775808, 9223372036854775807)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception exception) => exception.toString(),
+              'message',
+              contains('range overflow'),
+            ),
+          ),
+        );
+      },
+    );
+  });
 }
