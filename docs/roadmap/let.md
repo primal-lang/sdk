@@ -823,6 +823,30 @@ final SemanticNode body = checkExpression(
 );
 ```
 
+**External callers**: `RuntimeFacade` also calls `checkExpression()` directly in two places and must be updated to pass `letBindingNames: {}`:
+
+```dart
+// In RuntimeFacade.evaluateToTerm() (lib/compiler/lowering/runtime_facade.dart)
+final SemanticNode semanticNode = analyzer.checkExpression(
+  expression: expression,
+  currentFunction: null,
+  availableParameters: {},
+  usedParameters: {},
+  letBindingNames: {},  // NEW: empty set for top-level expressions
+  allSignatures: _allSignatures,
+);
+
+// In RuntimeFacade.defineFunction() (lib/compiler/lowering/runtime_facade.dart)
+body = analyzer.checkExpression(
+  expression: definition.expression,
+  currentFunction: name,
+  availableParameters: definition.parameters.toSet(),
+  usedParameters: usedParameters,
+  letBindingNames: {},  // NEW: empty set at function level
+  allSignatures: _allSignatures,
+);
+```
+
 **Design Decision**: Unused let bindings do NOT produce warnings. This is intentional—let bindings are local to an expression and their "unused" status is often a transitional state during development. Future versions may add an optional lint for unused let bindings.
 
 ### Compiler Pipeline Impact
