@@ -225,6 +225,20 @@ The `let` expression is implemented via a `LetTerm` in the runtime that performs
 
 ```dart
 @override
+Term substitute(Bindings bindings) {
+  // Remove shadowed names from outer bindings (capture-avoiding).
+  // Without this, f(x) = let x = 1 in x called as f(5) would incorrectly
+  // substitute the outer x into the body before reduce() runs.
+  final Set<String> shadowedNames = this.bindings.map((b) => b.$1).toSet();
+  final Bindings filteredBindings = bindings.without(shadowedNames);
+
+  return LetTerm(
+    bindings: this.bindings.map((b) => (b.$1, b.$2.substitute(filteredBindings))).toList(),
+    body: body.substitute(filteredBindings),
+  );
+}
+
+@override
 Term reduce() {
   Map<String, Term> bindingMap = {};
   for (final (name, term) in bindings) {
@@ -234,6 +248,8 @@ Term reduce() {
   return body.substitute(Bindings(bindingMap)).reduce();
 }
 ```
+
+The `substitute()` method implements capture-avoiding substitution: it filters out any outer bindings whose names are shadowed by this `let` before propagating to binding values and the body. This ensures that `CustomFunctionTerm.apply()`, which calls `substitute()` before `reduce()`, does not incorrectly substitute into shadowed variables.
 
 This is semantically equivalent to nested immediately-applied functions, but implemented directly without synthesizing intermediate function terms.
 
