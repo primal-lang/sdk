@@ -44,12 +44,12 @@ When `let` appears in an invalid position (e.g., as a binary operand), the parse
 if (matchSingle(_isLet)) {
   throw ExpectedTokenError(
     previous,
-    'let expression requires parentheses in this position',
+    'parenthesized let expression',
   );
 }
 ```
 
-This is optional—`InvalidTokenError` is technically correct, but a specific message improves the developer experience.
+This produces: `Invalid token "let". Expected: parenthesized let expression`—consistent with existing error formatting. This is optional—`InvalidTokenError` is technically correct, but a specific message improves the developer experience.
 
 **Whitespace**: Not significant. Indentation in examples is purely for readability. These are equivalent:
 
