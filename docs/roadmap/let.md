@@ -262,6 +262,11 @@ class DuplicatedLetBindingError extends SemanticError {
 }
 ```
 
+**Note on error message format**: These error messages intentionally omit the function's parameter list, unlike `DuplicatedParameterError` which includes it (e.g., `'Duplicated parameter "x" in function "foo(x, x)"'`). The difference is intentional:
+
+- `DuplicatedParameterError` shows the parameter list because the error _is about_ the function signature—seeing the duplicated parameters in context helps.
+- Let binding errors are about bindings _inside_ the function body, not the signature. The parameter list would add noise without aiding diagnosis.
+
 ## Examples
 
 ### Valid
