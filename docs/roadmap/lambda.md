@@ -2,13 +2,13 @@
 
 ## Prerequisites
 
-This specification assumes the `let` expression feature has been implemented per `docs/roadmap/reviewed/let.md`. Specifically, this feature depends on:
+This specification assumes the `let` expression feature has been implemented per `docs/roadmap/reviewed/let.md`. The `let` feature **must be implemented before lambda**. Specifically, this feature depends on:
 
 - `isLetBinding` field on `SemanticBoundVariableNode`
 - `LetBoundVariableTerm` runtime term
 - `letBindingNames` parameter in `checkExpression()`
 
-If implementing lambda before `let`, remove the `isLetBinding` checks and `LetBoundVariableTerm` references from the lowering section.
+These dependencies are guaranteed to exist when lambda implementation begins.
 
 ## Overview
 
