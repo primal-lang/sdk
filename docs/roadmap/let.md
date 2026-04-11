@@ -7,7 +7,7 @@ The `let` expression introduces local variable bindings within an expression bod
 ```primal
 distance(x1, y1, x2, y2) =
     let
-        dx = x2 - x1
+        dx = x2 - x1,
         dy = y2 - y1
     in
         num.sqrt(dx * dx + dy * dy)
@@ -25,7 +25,7 @@ distance(x1, y1, x2, y2) =
 ```
 expression     → letExpression
 letExpression  → "let" bindings "in" expression | ifExpression
-bindings       → binding+
+bindings       → binding ("," binding)*
 binding        → IDENTIFIER "=" expression
 ```
 
@@ -41,14 +41,16 @@ binding        → IDENTIFIER "=" expression
 // Multi-line (formatted for readability)
 foo(a, b) =
     let
-        x = a + 1
+        x = a + 1,
         y = b + 2
     in
         x + y
 
 // Single-line (compact)
-foo(a, b) = let x = a + 1 y = b + 2 in x + y
+foo(a, b) = let x = a + 1, y = b + 2 in x + y
 ```
+
+**Binding Separator**: Commas separate multiple bindings, consistent with Primal's syntax for function parameters, list elements, and map entries. No trailing comma after the last binding.
 
 ## Semantics
 
@@ -60,7 +62,7 @@ Each binding is visible to all subsequent bindings and the body:
 // Valid: y sees x
 foo(a, b) =
     let
-        x = a + 1
+        x = a + 1,
         y = x * 2
     in
         x + y
@@ -87,7 +89,7 @@ Multiple bindings with the same name in a single `let` are an error:
 
 ```primal
 // ERROR: x bound twice
-bad(n) = let x = 1 x = 2 in x
+bad(n) = let x = 1, x = 2 in x
 // → DuplicatedLetBindingError: 'x' is already bound in this let expression
 ```
 
@@ -112,7 +114,7 @@ Bindings are evaluated sequentially in declaration order (call-by-value). Each b
 ```primal
 foo(a) =
     let
-        x = a + 1       // evaluated first
+        x = a + 1,      // evaluated first
         y = x * 2       // evaluated second, uses x
     in
         x + y           // evaluated last
@@ -138,13 +140,22 @@ Two new keywords: `let` and `in`.
 
 ## Error Conditions
 
-| Error                       | Condition                                      |
-| --------------------------- | ---------------------------------------------- |
-| `EmptyLetBindingsError`     | No bindings provided between `let` and `in`    |
-| `DuplicatedLetBindingError` | Same variable bound twice in one `let`         |
-| `ShadowedBindingError`      | Binding shadows a parameter or outer binding   |
-| `UndefinedIdentifierError`  | Binding references itself or an undefined name |
-| `ExpectedTokenError('in')`  | `in` keyword missing after bindings            |
+| Error                       | Condition                                      | Priority |
+| --------------------------- | ---------------------------------------------- | -------- |
+| `EmptyLetBindingsError`     | No bindings provided between `let` and `in`    | 1        |
+| `ShadowedBindingError`      | Binding shadows a parameter or outer binding   | 2        |
+| `DuplicatedLetBindingError` | Same variable bound twice in one `let`         | 3        |
+| `UndefinedIdentifierError`  | Binding references itself or an undefined name | 4        |
+| `ExpectedTokenError(',')`   | Comma missing between bindings                 | —        |
+| `ExpectedTokenError('in')`  | `in` keyword missing after bindings            | —        |
+
+**Error Priority**: When multiple errors could apply to the same binding, the error with the lowest priority number is thrown first. Shadowing is checked before duplicate detection, and both are checked before the value expression is analyzed. `ExpectedTokenError` is a syntactic error and is detected during parsing, before semantic analysis.
+
+**New Error Types**: The following error types must be added to `lib/compiler/errors/semantic_error.dart`:
+
+- `EmptyLetBindingsError`
+- `ShadowedBindingError`
+- `DuplicatedLetBindingError`
 
 ## Examples
 
@@ -157,10 +168,13 @@ double(n) = let x = n * 2 in x
 // Multiple bindings with dependencies
 sum_of_squares(a, b) =
     let
-        a2 = a * a
+        a2 = a * a,
         b2 = b * b
     in
         a2 + b2
+
+// Multiple bindings (single-line)
+sum_of_squares(a, b) = let a2 = a * a, b2 = b * b in a2 + b2
 
 // Nested let expressions
 nested(n) =
@@ -189,6 +203,9 @@ bounded(n, lo, hi) =
 // let in list elements
 pair(n) = [let x = n * 2 in x, let y = n * 3 in y]
 
+// let as function argument
+result(n) = num.abs(let x = n - 10 in x)
+
 // let as operand (requires parentheses)
 offset(a, b) = 1 + (let x = a * b in x)
 
@@ -204,7 +221,7 @@ bad0(n) = let in n
 // → EmptyLetBindingsError: let expression requires at least one binding
 
 // ERROR: Duplicate binding
-bad1(n) = let x = 1 x = 2 in x
+bad1(n) = let x = 1, x = 2 in x
 // → DuplicatedLetBindingError: 'x' is already bound in this let expression
 
 // ERROR: Self-reference
@@ -212,20 +229,28 @@ bad2(n) = let x = x + 1 in x
 // → UndefinedIdentifierError: 'x' is not defined
 
 // ERROR: Forward reference within same let
-bad3(n) = let y = x x = 1 in y
+bad3(n) = let y = x, x = 1 in y
 // → UndefinedIdentifierError: 'x' is not defined
 
+// ERROR: Missing comma between bindings
+bad4(n) = let x = 1 y = 2 in x + y
+// → ExpectedTokenError: expected ','
+
 // ERROR: Missing 'in'
-bad4(n) = let x = 1 x + 2
+bad5(n) = let x = 1, y = 2 x + y
 // → ExpectedTokenError: expected 'in'
 
 // ERROR: Shadows parameter
-bad5(x) = let x = 1 in x
+bad6(x) = let x = 1 in x
 // → ShadowedBindingError: 'x' is already bound
 
 // ERROR: Shadows outer let binding
-bad6(n) = let x = 1 in let x = 2 in x
+bad7(n) = let x = 1 in let x = 2 in x
 // → ShadowedBindingError: 'x' is already bound
+
+// ERROR: Shadows earlier binding in same let
+bad8(n) = let x = 1, y = 2, x = 3 in x
+// → DuplicatedLetBindingError: 'x' is already bound in this let expression
 ```
 
 ## Implementation Notes
@@ -254,7 +279,10 @@ Term substitute(Bindings bindings) {
 Term reduce() {
   Map<String, Term> bindingMap = {};
   for (final (name, term) in bindings) {
-    final Term value = term.substitute(Bindings(bindingMap)).reduce();
+    // Create a snapshot of current bindings for substitution.
+    // This ensures each binding only sees previously evaluated bindings.
+    final Term substituted = term.substitute(Bindings(Map.of(bindingMap)));
+    final Term value = substituted.reduce();
     bindingMap[name] = value;
   }
   return body.substitute(Bindings(bindingMap)).reduce();
@@ -269,28 +297,40 @@ This is semantically equivalent to nested immediately-applied functions, but imp
 
 When processing a `LetExpression`:
 
-1. For each binding in order:
-   - If the name is already in `availableParameters`, throw `ShadowedBindingError`
+1. If bindings list is empty, throw `EmptyLetBindingsError`
+2. Create a local set `letBindingNames` to track names bound in this `let`
+3. For each binding in order:
+   - If the name is in `availableParameters`, throw `ShadowedBindingError`
+   - If the name is in `letBindingNames`, throw `DuplicatedLetBindingError`
    - Check the binding's value expression against the current `availableParameters`
+   - Add the name to `letBindingNames`
    - Add the name to `availableParameters` (for subsequent bindings and the body)
-2. Check the body expression against the extended `availableParameters`
-3. Return a `SemanticLetNode` with the checked bindings and body
+4. Check the body expression against the extended `availableParameters`
+5. Return a `SemanticLetNode` with the checked bindings and body
 
-Since shadowing is disallowed, let binding names are guaranteed to be distinct from parameters. This means:
+**Error Priority**: Shadowing is checked before duplicate detection. Both are checked before the value expression is analyzed. This means if a binding name shadows a parameter AND the value references itself, the shadowing error is thrown first.
 
-- The existing `availableParameters` set can be reused without modification
-- No scoped symbol model is needed to distinguish parameters from let bindings
-- The `usedParameters` tracking for `UnusedParameterWarning` works correctly
+**usedParameters Tracking**: The existing `usedParameters` set tracks which function parameters are referenced. Let bindings are added to `availableParameters` but are NOT function parameters. When an identifier is resolved:
+
+- If it's a function parameter → add to `usedParameters`
+- If it's a let binding → do not add to `usedParameters` (no warning for unused let bindings)
+
+This distinction requires checking whether an identifier in `availableParameters` is a function parameter or a let binding. Options:
+
+1. Track let binding names separately and check both sets
+2. Use a more structured scope model (e.g., `Map<String, BindingKind>`)
+
+The simpler approach (option 1) maintains backward compatibility with the existing analyzer structure.
 
 ### Compiler Pipeline Impact
 
-| Stage     | Changes                                                                         |
-| --------- | ------------------------------------------------------------------------------- |
-| Lexical   | Add `LetToken` and `InToken` keywords                                           |
-| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes                        |
-| Semantic  | Extend scope with bindings, check for duplicates, shadowing, and self-reference |
-| Lowering  | Convert `SemanticLetNode` to `LetTerm`                                          |
-| Runtime   | Add `LetTerm` with sequential binding evaluation                                |
+| Stage     | Changes                                                                                                     |
+| --------- | ----------------------------------------------------------------------------------------------------------- |
+| Lexical   | Add `LetToken` and `InToken` keywords                                                                       |
+| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes; parse comma-separated bindings                    |
+| Semantic  | Extend scope with bindings; check for empty, duplicates, shadowing, and self-reference; add new error types |
+| Lowering  | Convert `SemanticLetNode` to `LetTerm`; add case to `lowerTerm` switch                                      |
+| Runtime   | Add `LetTerm` with sequential binding evaluation                                                            |
 
 ### New Node Types
 
@@ -344,21 +384,31 @@ LetTerm
 | Runtime           | New `LetTerm` with substitution-based evaluation         |
 | Tests             | Comprehensive coverage of scoping and error conditions   |
 
+### REPL Mode
+
+The `let` expression works in REPL mode the same as in program mode:
+
+```
+> let x = 5 in x + 1
+6
+> let a = 2, b = 3 in a * b
+6
+```
+
+The semantic analyzer's `currentFunction: null` case handles REPL expressions correctly since `let` bindings are added to `availableParameters` regardless of function context.
+
 ### Post-Implementation
 
 After implementing the feature:
 
 1. **Update documentation** in `docs/`:
    - Add `let` expression to `docs/reference/control.md`
-   - Update `docs/compiler/lexical.md` with new keywords
-   - Update `docs/compiler/syntactic.md` with new grammar rules and AST nodes
-   - Update `docs/compiler/semantic.md` with new semantic nodes and analysis
-   - Update `docs/compiler/runtime.md` with `LetTerm` behavior
 
 2. **Implement tests** using the examples from this document:
    - Lexical: `let` and `in` token recognition
-   - Syntactic: `LetExpression` parsing (single binding, multiple bindings, nested)
-   - Semantic: scope extension, duplicate detection, shadowing errors, self-reference errors
+   - Syntactic: `LetExpression` parsing (single binding, multiple bindings, nested, comma-separated)
+   - Semantic: scope extension, duplicate detection, shadowing errors, self-reference errors, error priority
    - Lowering: `SemanticLetNode` to `LetTerm` conversion
    - Runtime: sequential evaluation, substitution behavior
    - Integration: all valid and invalid examples from this specification
+   - REPL: `let` expressions in interactive mode
