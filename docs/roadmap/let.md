@@ -184,6 +184,44 @@ foo(a) =
         x + y           // evaluated last
 ```
 
+### Higher-Order Behavior
+
+Let-bound values have the same higher-order capabilities as function parameters. They can be used as:
+
+1. **Function callees**: A let binding holding a function can be called
+2. **Index targets**: A let binding holding a list or map can be indexed
+3. **Chained operations**: Results of calling/indexing let bindings can be further called/indexed
+
+Arity and type checking is deferred to runtime, consistent with how parameters are handled:
+
+```primal
+// Let-bound function call
+apply(n) = let f = num.abs in f(n)
+// apply(-5) → 5
+
+// Let-bound value as index target
+first(xs) = let list = xs in list[0]
+// first([1, 2, 3]) → 1
+
+// Chained call: let binding returns a function, which is then called
+compose(n) =
+    let
+        getFunc = if (n < 0) num.abs else num.neg
+    in
+        getFunc(n)
+// compose(-5) → 5, compose(5) → -5
+
+// Runtime error: let binding is not callable
+bad(n) = let x = 5 in x(n)
+// → NotCallableError at runtime
+
+// Runtime error: let binding is not indexable
+bad2(n) = let x = 5 in x[0]
+// → NotIndexableError at runtime
+```
+
+**Implementation note**: Since let bindings are added to `availableParameters`, the existing `_checkCalleeIdentifier()` logic (which returns `SemanticBoundVariableNode` for bound variables without arity checking) applies automatically.
+
 ### Error Propagation
 
 Errors during binding evaluation propagate immediately:
@@ -1094,6 +1132,9 @@ After implementing the feature:
 | Shadows stdlib function        | `f(n) = let num.abs = 42 in num.abs`                        | No error, `num.abs` resolves to `42`                        |
 | Capture before shadow          | `f(n) = let g = num.abs, num.abs = 0 in g(n)`               | No error, `g` captures function before shadow               |
 | Call shadowed binding          | `f(n) = let double = num.abs in double(n)`                  | No error, `double` is callable (holds function)             |
+| Let binding as callee          | `f(n) = let g = num.abs in g(n)`                            | No error, callee is `SemanticBoundVariableNode`             |
+| Let binding as index target    | `f(xs) = let list = xs in list[0]`                          | No error, `@` callee arg is `SemanticBoundVariableNode`     |
+| Chained call on let binding    | `f(n) = let g = num.abs in g(n) + 1`                        | No error, deferred to runtime                               |
 
 #### Lowering Tests
 
@@ -1151,19 +1192,24 @@ After implementing the feature:
 
 #### Integration Tests
 
-| Test                       | Input                                                                           | Expected        |
-| -------------------------- | ------------------------------------------------------------------------------- | --------------- |
-| `let` with function param  | `f(n) = let x = n * 2 in x` called with `5`                                     | `10`            |
-| `let` in `if` branch       | `f(n) = if (n > 0) let x = n in x else 0`                                       | Works correctly |
-| `if` in `let` binding      | `f(n) = let x = if (n > 0) n else -n in x`                                      | Works correctly |
-| `if` in `let` body         | `f(n) = let x = n in if (x > 0) x else -x`                                      | Works correctly |
-| `let` in list element      | `f(n) = [let x = n in x]`                                                       | `[n]`           |
-| `let` in function argument | `f(n) = num.abs(let x = n in x)`                                                | Works correctly |
-| Deeply nested              | `let a = 1 in let b = a in let c = b in c`                                      | `1`             |
-| Shadow custom function     | `double(x) = x * 2` then `f(n) = let double = 10 in double + n` called with `5` | `15`            |
-| Shadow stdlib function     | `f(n) = let num.abs = 42 in num.abs` called with any                            | `42`            |
-| Capture then shadow        | `f(n) = let g = num.abs, num.abs = 0 in g(n)` called with `-5`                  | `5`             |
-| Call let-bound function    | `f(n) = let double = num.abs in double(n)` called with `-5`                     | `5`             |
+| Test                       | Input                                                                           | Expected            |
+| -------------------------- | ------------------------------------------------------------------------------- | ------------------- |
+| `let` with function param  | `f(n) = let x = n * 2 in x` called with `5`                                     | `10`                |
+| `let` in `if` branch       | `f(n) = if (n > 0) let x = n in x else 0`                                       | Works correctly     |
+| `if` in `let` binding      | `f(n) = let x = if (n > 0) n else -n in x`                                      | Works correctly     |
+| `if` in `let` body         | `f(n) = let x = n in if (x > 0) x else -x`                                      | Works correctly     |
+| `let` in list element      | `f(n) = [let x = n in x]`                                                       | `[n]`               |
+| `let` in function argument | `f(n) = num.abs(let x = n in x)`                                                | Works correctly     |
+| Deeply nested              | `let a = 1 in let b = a in let c = b in c`                                      | `1`                 |
+| Shadow custom function     | `double(x) = x * 2` then `f(n) = let double = 10 in double + n` called with `5` | `15`                |
+| Shadow stdlib function     | `f(n) = let num.abs = 42 in num.abs` called with any                            | `42`                |
+| Capture then shadow        | `f(n) = let g = num.abs, num.abs = 0 in g(n)` called with `-5`                  | `5`                 |
+| Call let-bound function    | `f(n) = let double = num.abs in double(n)` called with `-5`                     | `5`                 |
+| Index let-bound list       | `f(xs) = let list = xs in list[0]` called with `[1, 2, 3]`                      | `1`                 |
+| Index let-bound map        | `f(m) = let map = m in map["a"]` called with `{"a": 42}`                        | `42`                |
+| Chained call               | `f(n) = let g = num.abs in g(g(n))` called with `-5`                            | `5`                 |
+| Non-callable let binding   | `f(n) = let x = 5 in x(n)` called with any                                      | `NotCallableError`  |
+| Non-indexable let binding  | `f(n) = let x = 5 in x[0]` called with any                                      | `NotIndexableError` |
 
 #### REPL Tests
 
