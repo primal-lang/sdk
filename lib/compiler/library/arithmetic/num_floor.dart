@@ -31,7 +31,13 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     final Term a = arguments[0].reduce();
 
     if (a is NumberTerm) {
-      return NumberTerm(a.value.floor());
+      final num value = a.value;
+
+      if (value.isFinite) {
+        return NumberTerm(value.floor());
+      } else {
+        return NumberTerm(value);
+      }
     } else {
       throw InvalidArgumentTypesError(
         function: name,

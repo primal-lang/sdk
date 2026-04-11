@@ -1,6 +1,7 @@
 @Tags(['runtime'])
 library;
 
+import 'package:primal/compiler/errors/lexical_error.dart';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
@@ -280,5 +281,423 @@ void main() {
         '"1f40fc92da241694750979ee6cf582f2d5d7d28e18335de05abc54d0560e0f5302860c652bf08d560252aa5e74210546f369fbbbce8c12cfc7957b2652fe9a75"',
       );
     });
+
+    test('hash.sha256 hashes string with newline', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha256("a\\nb")');
+      checkResult(
+        runtime,
+        '"7e18f737311b2dc3b2f269dd78396b0351f14fb66efa879f768cb23181883c78"',
+      );
+    });
+
+    test('hash.sha512 hashes string with newline', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha512("a\\nb")');
+      checkResult(
+        runtime,
+        '"377f7c6560b237d3b88f734faf092fe88f4b2067e048277223748881569ce7b2237c3e3a3fbeef319eea1ccab853b42ff2a7b8791308342ae383579f4420cba0"',
+      );
+    });
+
+    test('hash.md5 hashes string with tab character', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.md5("a\\tb")');
+      checkResult(runtime, '"6f7f0b434651658d5d07ec3764180020"');
+    });
+
+    test('hash.sha1 hashes string with tab character', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha1("a\\tb")');
+      checkResult(runtime, '"89df1bfd2d7396f9661d8bc1e24ba7e05afc67b4"');
+    });
+
+    test('hash.sha1 hashes unicode string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha1("caf\\u00e9")',
+      );
+      checkResult(runtime, '"f424452a9673918c6f09b0cdd35b20be8e6ae7d7"');
+    });
+
+    test('hash.sha512 hashes unicode string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha512("caf\\u00e9")',
+      );
+      checkResult(
+        runtime,
+        '"0c9dac7fe613719170790f08a5f7b9f5ef876c7b57ff429074bf417969c2c54107d924daf5e706568afca4712d91da1cfdf77588d76403a845177e23e3aeb8ce"',
+      );
+    });
+
+    test('hash.sha1 hashes emoji string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha1("\\u{1F600}")',
+      );
+      checkResult(runtime, '"9c533688a979a858cbd6a43c9f91aba624651f18"');
+    });
+
+    test('hash.md5 hashes emoji string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.md5("\\u{1F600}")');
+      checkResult(runtime, '"2a02eac39d716a70ecf37579185927b6"');
+    });
+
+    test('hash.sha512 hashes emoji string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha512("\\u{1F600}")',
+      );
+      checkResult(
+        runtime,
+        '"9b1ce8b6649e678e1cb7bca85afeaae750add5cfb0668d25ebba5e7f0038f1b6bdcc4bacd909049e752be2a3a3c0158c0f2bb5a33d8101b2ed5d74a66ece2425"',
+      );
+    });
+
+    test('hash.sha1 hashes long string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha1("abcdefghijklmnopqrstuvwxyz0123456789")',
+      );
+      checkResult(runtime, '"d2985049a677bbc4b4e8dea3b89c4820e5668e3a"');
+    });
+
+    test('hash.sha512 hashes long string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha512("abcdefghijklmnopqrstuvwxyz0123456789")',
+      );
+      checkResult(
+        runtime,
+        '"a59b49216a0e3a20443b72c64bdae51d41b33ad08a86a4fb936378dd2f9cd3899809ec31e5259b3b4549388d026561362be71548d4393be76da7eeb01839470c"',
+      );
+    });
+
+    test('hash.md5 hashes string with special characters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.md5("!@#\$%^&*()")',
+      );
+      checkResult(runtime, '"05b28d17a7b6e7024b6e5d8cc43a8bf7"');
+    });
+
+    test('hash.sha1 hashes string with special characters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha1("!@#\$%^&*()")',
+      );
+      checkResult(runtime, '"bf24d65c9bb05b9b814a966940bcfa50767c8a8d"');
+    });
+
+    test('hash.sha256 hashes string with special characters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha256("!@#\$%^&*()")',
+      );
+      checkResult(
+        runtime,
+        '"95ce789c5c9d18490972709838ca3a9719094bca3ac16332cfec0652b0236141"',
+      );
+    });
+
+    test('hash.sha512 hashes string with special characters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha512("!@#\$%^&*()")',
+      );
+      checkResult(
+        runtime,
+        '"138fad927473f694c3a02cca61008e52572bd19ce442f20e139b6f09157b97157fd71946fedfec2381b7e33618afe5f7c24a873ed1efe416978acfc434503614"',
+      );
+    });
+
+    test('hash.md5 hashes numeric string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.md5("12345")');
+      checkResult(runtime, '"827ccb0eea8a706c4c34a16891f84e7b"');
+    });
+
+    test('hash.sha1 hashes numeric string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha1("12345")');
+      checkResult(runtime, '"8cb2237d0679ca88db6464eac60da96345513964"');
+    });
+
+    test('hash.sha256 hashes numeric string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha256("12345")');
+      checkResult(
+        runtime,
+        '"5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"',
+      );
+    });
+
+    test('hash.sha512 hashes numeric string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha512("12345")');
+      checkResult(
+        runtime,
+        '"3627909a29c31381a071ec27f7c9ca97726182aed29a7ddd2e54353322cfb30abb9e3a6df2ac2c20fe23436311d678564d0c8d305930575f60e2d3d048184d79"',
+      );
+    });
+
+    test('hash.md5 hashes very long string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.md5("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")',
+      );
+      checkResult(runtime, '"36a92cc94a9e0fa21f625f8bfb007adf"');
+    });
+
+    test('hash.sha256 hashes very long string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha256("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")',
+      );
+      checkResult(
+        runtime,
+        '"2816597888e4a0d3a36b82b83316ab32680eb8f00f8cd3b904d681246d285a0e"',
+      );
+    });
+
+    test('hash.md5 throws InvalidArgumentTypesError for map argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.md5({"a": 1})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha1 throws InvalidArgumentTypesError for map argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha1({"a": 1})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha256 throws InvalidArgumentTypesError for map argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha256({"a": 1})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha512 throws InvalidArgumentTypesError for map argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha512({"a": 1})',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha256 hashes unicode string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha256("caf\\u00e9")',
+      );
+      checkResult(
+        runtime,
+        '"850f7dc43910ff890f8879c0ed26fe697c93a067ad93a7d50f466a7028a9bf4e"',
+      );
+    });
+
+    test('hash.sha1 hashes very long string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha1("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")',
+      );
+      checkResult(runtime, '"7f9000257a4918d7072655ea468540cdcbd42e0c"');
+    });
+
+    test('hash.sha512 hashes very long string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha512("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")',
+      );
+      checkResult(
+        runtime,
+        '"70ff99fd241905992cc3fff2f6e3f562c8719d689bfe0e53cbc75e53286d82d8767aed0959b8c63aadf55b5730babee75ea082e88414700d7507b988c44c47bc"',
+      );
+    });
+
+    test('hash.md5 rejects carriage return escape', () {
+      expect(
+        () => getRuntime('main = hash.md5("a\\rb")'),
+        throwsA(isA<InvalidEscapeSequenceError>()),
+      );
+    });
+
+    test('hash.sha256 rejects carriage return escape', () {
+      expect(
+        () => getRuntime('main = hash.sha256("a\\rb")'),
+        throwsA(isA<InvalidEscapeSequenceError>()),
+      );
+    });
+
+    test('hash.md5 hashes mixed case string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.md5("AbCdEf")');
+      checkResult(runtime, '"90469eb9b9ccaa40fa9c7d0c593a7201"');
+    });
+
+    test('hash.sha256 hashes mixed case string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha256("AbCdEf")');
+      checkResult(
+        runtime,
+        '"5d2e1239e21be8587a9198ad643db7f758aaa5009a7128e3fe40ab0d8213e0db"',
+      );
+    });
+  });
+
+  group('Hash Output Format', () {
+    test('hash.md5 returns 32-character hex string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.md5("test")');
+      final String result = runtime.executeMain();
+      // Remove surrounding quotes
+      final String hash = result.substring(1, result.length - 1);
+      expect(hash.length, equals(32));
+      expect(RegExp(r'^[a-f0-9]+$').hasMatch(hash), isTrue);
+    });
+
+    test('hash.sha1 returns 40-character hex string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha1("test")');
+      final String result = runtime.executeMain();
+      final String hash = result.substring(1, result.length - 1);
+      expect(hash.length, equals(40));
+      expect(RegExp(r'^[a-f0-9]+$').hasMatch(hash), isTrue);
+    });
+
+    test('hash.sha256 returns 64-character hex string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha256("test")');
+      final String result = runtime.executeMain();
+      final String hash = result.substring(1, result.length - 1);
+      expect(hash.length, equals(64));
+      expect(RegExp(r'^[a-f0-9]+$').hasMatch(hash), isTrue);
+    });
+
+    test('hash.sha512 returns 128-character hex string', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha512("test")');
+      final String result = runtime.executeMain();
+      final String hash = result.substring(1, result.length - 1);
+      expect(hash.length, equals(128));
+      expect(RegExp(r'^[a-f0-9]+$').hasMatch(hash), isTrue);
+    });
+  });
+
+  group('Hash Determinism', () {
+    test('hash.md5 produces same output for same input', () {
+      final RuntimeFacade runtime1 = getRuntime('main = hash.md5("hello")');
+      final RuntimeFacade runtime2 = getRuntime('main = hash.md5("hello")');
+      expect(runtime1.executeMain(), equals(runtime2.executeMain()));
+    });
+
+    test('hash.sha256 produces same output for same input', () {
+      final RuntimeFacade runtime1 = getRuntime('main = hash.sha256("hello")');
+      final RuntimeFacade runtime2 = getRuntime('main = hash.sha256("hello")');
+      expect(runtime1.executeMain(), equals(runtime2.executeMain()));
+    });
+
+    test('hash.md5 produces different output for different inputs', () {
+      final RuntimeFacade runtime1 = getRuntime('main = hash.md5("hello")');
+      final RuntimeFacade runtime2 = getRuntime('main = hash.md5("world")');
+      expect(runtime1.executeMain(), isNot(equals(runtime2.executeMain())));
+    });
+
+    test('hash.sha256 produces different output for different inputs', () {
+      final RuntimeFacade runtime1 = getRuntime('main = hash.sha256("hello")');
+      final RuntimeFacade runtime2 = getRuntime('main = hash.sha256("world")');
+      expect(runtime1.executeMain(), isNot(equals(runtime2.executeMain())));
+    });
+  });
+
+  group('Hash Composition', () {
+    test('hash.md5 works with string concatenation result', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.md5(str.concat("hello", " world"))',
+      );
+      checkResult(runtime, '"5eb63bbbe01eeed093cb22bb8f5acdc3"');
+    });
+
+    test('hash.sha256 works with string concatenation result', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha256(str.concat("hello", " world"))',
+      );
+      checkResult(
+        runtime,
+        '"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"',
+      );
+    });
+
+    test('hash.md5 can be chained (hash of hash)', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.md5(hash.md5("hello"))',
+      );
+      checkResult(runtime, '"69a329523ce1ec88bf63061863d9cb14"');
+    });
+
+    test('hash.sha256 can be chained (hash of hash)', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha256(hash.sha256("hello"))',
+      );
+      checkResult(
+        runtime,
+        '"d7914fe546b684688bb95f4f888a92dfc680603a75f23eb823658031fff766d9"',
+      );
+    });
+
+    test('different hash functions can be composed', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = hash.sha256(hash.md5("hello"))',
+      );
+      checkResult(
+        runtime,
+        '"4914e23374bb211e3dca0df7636fefffc7fedd94f1340ae81c7d6c07b7113e9b"',
+      );
+    });
+  });
+
+  group('Hash Additional Error Cases', () {
+    test('hash.md5 throws InvalidArgumentTypesError for float argument', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.md5(3.14)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha256 throws InvalidArgumentTypesError for float argument', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha256(2.718)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha512 throws InvalidArgumentTypesError for float argument', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha512(1.618)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('hash.sha1 throws InvalidArgumentTypesError for float argument', () {
+      final RuntimeFacade runtime = getRuntime('main = hash.sha1(0.5)');
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test(
+      'hash.md5 throws InvalidArgumentTypesError for nested list argument',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = hash.md5([[1, 2], [3, 4]])',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
+
+    test(
+      'hash.sha256 throws InvalidArgumentTypesError for empty list argument',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = hash.sha256([])');
+        expect(
+          runtime.executeMain,
+          throwsA(isA<InvalidArgumentTypesError>()),
+        );
+      },
+    );
   });
 }
