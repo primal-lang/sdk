@@ -1,33 +1,3 @@
-HIGH: Grammar has let call ifExpression, but if syntax requires parentheses - 
-edge case not addressed
-
-What is wrong: The document shows examples like:
-classify(n) =
-    let
-        abs_n = if (n < 0) -n else n
-    in
-        if (abs_n > 100) "large" else "small"
-
-This works because binding values are full expressions. But the example at
-line 239-240:
-offset(a, b) = 1 + (let x = a * b in x)
-
-Shows let needing parentheses as an operand. But what about:
-let x = if (true) 1 else 2 in x   // Is this valid?
-
-The grammar says binding values go through expression() which starts at
-ifExpression(), so this should work. However, consider:
-let x = 1 in if (x > 0) x else 0
-
-Here in if is ambiguous to a human reader. The grammar handles it (body is a
-full expression), but the doc doesn't clarify this edge case.
-
-Practical consequence: User confusion about let ... in if constructs.
-
-Missing from spec: Clarify that let x = 1 in if (c) a else b parses as let x =
-1 in (if (c) a else b).
-
----
 HIGH: Error type naming inconsistency with codebase conventions
 
 What is wrong: The proposed errors (let.md:156-188):

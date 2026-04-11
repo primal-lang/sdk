@@ -52,6 +52,21 @@ foo(a, b) = let x = a + 1, y = b + 2 in x + y
 
 **Binding Separator**: Commas separate multiple bindings, consistent with Primal's syntax for function parameters, list elements, and map entries. No trailing comma after the last binding.
 
+**Interaction with `if`**: Both binding values and the body are full expressions, so `if` expressions can appear in either position without parentheses:
+
+```primal
+// if in binding value: parses as let x = (if (...) ... else ...) in x
+let x = if (n < 0) -n else n in x
+
+// if in body: parses as let x = 1 in (if (...) ... else ...)
+let x = 1 in if (x > 0) x else 0
+
+// Both: if in binding AND body
+let abs_n = if (n < 0) -n else n in if (abs_n > 100) "large" else "small"
+```
+
+The `in` keyword unambiguously separates the bindings from the body. Despite `in if` appearing adjacent in the token stream, there is no syntactic ambiguity.
+
 ## Semantics
 
 ### Binding Scope
