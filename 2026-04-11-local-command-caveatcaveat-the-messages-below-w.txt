@@ -1,24 +1,3 @@
-MEDIUM: Error message format inconsistency
-
-What is wrong: Proposed error messages (lines 157-187):
-'Empty let bindings in function "$inFunction": let expression requires at 
-least one binding'
-
-Existing error messages (semantic_error.dart:31-35):
-'Undefined identifier "$identifier" in function "$inFunction"'
-
-The proposed format adds "in function" as a prefix phrase, while existing
-errors put it as a suffix. The proposed format also uses :  as a separator
-before the explanation, which existing errors don't do.
-
-Practical consequence: Inconsistent UX in error messages.
-
-Recommendation: Match existing pattern:
-'Empty let bindings: let expression requires at least one binding'
-// or with function context:
-'Empty let bindings in function "$inFunction"'
-
----
 MEDIUM: LetTerm.substitute() has subtle correctness gap
 
 What is wrong: Document lines 299-306 show:

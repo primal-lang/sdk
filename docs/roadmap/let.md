@@ -94,7 +94,7 @@ bad(n) = let x = x + 1 in x
 
 // ERROR: shadowing is checked before the value expression
 bad(x) = let x = x + 1 in x
-// → ShadowedLetBindingError: 'x' is already bound
+// → ShadowedLetBindingError: Shadowed let binding "x"
 // (the value expression x + 1 is never analyzed)
 ```
 
@@ -105,7 +105,7 @@ Multiple bindings with the same name in a single `let` are an error:
 ```primal
 // ERROR: x bound twice
 bad(n) = let x = 1, x = 2 in x
-// → DuplicatedLetBindingError: 'x' is already bound in this let expression
+// → DuplicatedLetBindingError: Duplicated let binding "x"
 ```
 
 ### No Shadowing
@@ -115,11 +115,11 @@ Bindings cannot shadow function parameters or outer `let` bindings. This simplif
 ```primal
 // ERROR: x shadows parameter
 bad(x) = let x = 10 in x
-// → ShadowedLetBindingError: 'x' is already bound
+// → ShadowedLetBindingError: Shadowed let binding "x"
 
 // ERROR: inner x shadows outer x
 bad(n) = let x = 1 in let x = 2 in x
-// → ShadowedLetBindingError: 'x' is already bound
+// → ShadowedLetBindingError: Shadowed let binding "x"
 ```
 
 ### Evaluation Order
@@ -174,8 +174,8 @@ class EmptyLetBindingsError extends SemanticError {
     String? inFunction,
   }) : super(
          inFunction != null
-             ? 'Empty let bindings in function "$inFunction": let expression requires at least one binding'
-             : 'Empty let bindings: let expression requires at least one binding',
+             ? 'Empty let expression in function "$inFunction"'
+             : 'Empty let expression',
        );
 }
 
@@ -185,8 +185,8 @@ class ShadowedLetBindingError extends SemanticError {
     String? inFunction,
   }) : super(
          inFunction != null
-             ? 'Shadowed let binding "$binding" in function "$inFunction": name is already bound'
-             : 'Shadowed let binding "$binding": name is already bound',
+             ? 'Shadowed let binding "$binding" in function "$inFunction"'
+             : 'Shadowed let binding "$binding"',
        );
 }
 
@@ -196,8 +196,8 @@ class DuplicatedLetBindingError extends SemanticError {
     String? inFunction,
   }) : super(
          inFunction != null
-             ? 'Duplicated let binding "$binding" in function "$inFunction": name is already bound in this let expression'
-             : 'Duplicated let binding "$binding": name is already bound in this let expression',
+             ? 'Duplicated let binding "$binding" in function "$inFunction"'
+             : 'Duplicated let binding "$binding"',
        );
 }
 ```
@@ -263,11 +263,11 @@ chain(a, b) = let x = a + b in let y = x * 2 in y
 ```primal
 // ERROR: Empty bindings
 bad0(n) = let in n
-// → EmptyLetBindingsError: let expression requires at least one binding
+// → EmptyLetBindingsError: Empty let expression
 
 // ERROR: Duplicate binding
 bad1(n) = let x = 1, x = 2 in x
-// → DuplicatedLetBindingError: 'x' is already bound in this let expression
+// → DuplicatedLetBindingError: Duplicated let binding "x"
 
 // ERROR: Self-reference
 bad2(n) = let x = x + 1 in x
@@ -287,15 +287,15 @@ bad5(n) = let x = 1, y = 2 x + y
 
 // ERROR: Shadows parameter
 bad6(x) = let x = 1 in x
-// → ShadowedLetBindingError: 'x' is already bound
+// → ShadowedLetBindingError: Shadowed let binding "x"
 
 // ERROR: Shadows outer let binding
 bad7(n) = let x = 1 in let x = 2 in x
-// → ShadowedLetBindingError: 'x' is already bound
+// → ShadowedLetBindingError: Shadowed let binding "x"
 
 // ERROR: Shadows earlier binding in same let
 bad8(n) = let x = 1, y = 2, x = 3 in x
-// → DuplicatedLetBindingError: 'x' is already bound in this let expression
+// → DuplicatedLetBindingError: Duplicated let binding "x"
 ```
 
 ## Implementation Notes
