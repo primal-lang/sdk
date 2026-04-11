@@ -39,7 +39,7 @@ void main() {
 
         runCli(['--version'], console: console);
 
-        expect(platformConsole.outLines, equals(['0.4.3']));
+        expect(platformConsole.outLines, equals([version]));
       });
 
       test('-v prints version and exits', () {
@@ -48,7 +48,7 @@ void main() {
 
         runCli(['-v'], console: console);
 
-        expect(platformConsole.outLines, equals(['0.4.3']));
+        expect(platformConsole.outLines, equals([version]));
       });
 
       test('--debug enables debug output for compilation and execution', () {
@@ -339,7 +339,7 @@ void main() {
 
         // Banner (6 lines) + version
         expect(platformConsole.outLines.length, equals(7));
-        expect(platformConsole.outLines.last, equals('0.4.3'));
+        expect(platformConsole.outLines.last, equals(version));
       });
 
       test(':clear writes escape sequence', () {
@@ -1375,7 +1375,7 @@ void main() {
         runCli(['--debug', '--version'], console: console);
 
         // --version takes precedence and exits immediately
-        expect(platformConsole.outLines, equals(['0.4.3']));
+        expect(platformConsole.outLines, equals([version]));
       });
 
       test('--version before --debug only prints version', () {
@@ -1384,7 +1384,7 @@ void main() {
 
         runCli(['--version', '--debug'], console: console);
 
-        expect(platformConsole.outLines, equals(['0.4.3']));
+        expect(platformConsole.outLines, equals([version]));
       });
 
       test('--help before --debug only prints help', () {
