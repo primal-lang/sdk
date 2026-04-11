@@ -86,18 +86,18 @@ bad(n) = let x = 1 x = 2 in x
 // → DuplicatedLetBindingError: 'x' is already bound in this let expression
 ```
 
-### Shadowing
+### No Shadowing
 
-Bindings may shadow function parameters and outer `let` bindings. A warning is emitted when shadowing occurs. Shadowing is permanent within the inner scope—the outer binding becomes inaccessible:
+Bindings cannot shadow function parameters or outer `let` bindings. This simplifies implementation and avoids confusion about which binding is referenced:
 
 ```primal
-// Valid but emits ShadowedBindingWarning
-shadow(x) = let x = 10 in x  // returns 10, parameter x is inaccessible
+// ERROR: x shadows parameter
+bad(x) = let x = 10 in x
+// → ShadowedBindingError: 'x' is already bound
 
-// Valid: inner let shadows outer permanently
-nested(n) =
-    let x = 1 in
-        let x = 2 in x  // returns 2, outer x = 1 is inaccessible here
+// ERROR: inner x shadows outer x
+bad(n) = let x = 1 in let x = 2 in x
+// → ShadowedBindingError: 'x' is already bound
 ```
 
 ### Evaluation Order
@@ -134,9 +134,9 @@ Two new keywords: `let` and `in`.
 | --------------------------- | ---------------------------------------------- |
 | `EmptyLetBindingsError`     | No bindings provided between `let` and `in`    |
 | `DuplicatedLetBindingError` | Same variable bound twice in one `let`         |
+| `ShadowedBindingError`      | Binding shadows a parameter or outer binding   |
 | `UndefinedIdentifierError`  | Binding references itself or an undefined name |
 | `ExpectedTokenError('in')`  | `in` keyword missing after bindings            |
-| `ShadowedBindingWarning`    | Binding shadows a parameter or outer binding   |
 
 ## Examples
 
@@ -210,6 +210,14 @@ bad3(n) = let y = x x = 1 in y
 // ERROR: Missing 'in'
 bad4(n) = let x = 1 x + 2
 // → ExpectedTokenError: expected 'in'
+
+// ERROR: Shadows parameter
+bad5(x) = let x = 1 in x
+// → ShadowedBindingError: 'x' is already bound
+
+// ERROR: Shadows outer let binding
+bad6(n) = let x = 1 in let x = 2 in x
+// → ShadowedBindingError: 'x' is already bound
 ```
 
 ## Implementation Notes
@@ -226,15 +234,11 @@ The `let` expression is implemented via a `LetTerm` in the runtime that performs
 ```dart
 @override
 Term substitute(Bindings bindings) {
-  // Remove shadowed names from outer bindings (capture-avoiding).
-  // Without this, f(x) = let x = 1 in x called as f(5) would incorrectly
-  // substitute the outer x into the body before reduce() runs.
-  final Set<String> shadowedNames = this.bindings.map((b) => b.$1).toSet();
-  final Bindings filteredBindings = bindings.without(shadowedNames);
-
+  // Since shadowing is disallowed, no let binding name can conflict with
+  // incoming bindings. Simply propagate substitutions through.
   return LetTerm(
-    bindings: this.bindings.map((b) => (b.$1, b.$2.substitute(filteredBindings))).toList(),
-    body: body.substitute(filteredBindings),
+    bindings: this.bindings.map((b) => (b.$1, b.$2.substitute(bindings))).toList(),
+    body: body.substitute(bindings),
   );
 }
 
@@ -249,7 +253,7 @@ Term reduce() {
 }
 ```
 
-The `substitute()` method implements capture-avoiding substitution: it filters out any outer bindings whose names are shadowed by this `let` before propagating to binding values and the body. This ensures that `CustomFunctionTerm.apply()`, which calls `substitute()` before `reduce()`, does not incorrectly substitute into shadowed variables.
+Since shadowing is disallowed at the semantic level, the `substitute()` method does not need capture-avoiding logic—no let binding name can ever conflict with an incoming substitution.
 
 This is semantically equivalent to nested immediately-applied functions, but implemented directly without synthesizing intermediate function terms.
 
@@ -257,27 +261,28 @@ This is semantically equivalent to nested immediately-applied functions, but imp
 
 When processing a `LetExpression`:
 
-1. Create an extended scope starting with the current `availableParameters`
-2. For each binding in order:
-   - If the name is already in `boundNames`, throw `DuplicatedLetBindingError`
-   - Add the name to `boundNames`
-   - Check the binding's value expression against the current extended scope
-   - Add the name to the extended scope (for subsequent bindings)
-   - If the name shadows a parameter, emit `ShadowedBindingWarning`
-3. Check the body expression against the fully extended scope
-4. Return a `SemanticLetNode` with the checked bindings and body
+1. For each binding in order:
+   - If the name is already in `availableParameters`, throw `ShadowedBindingError`
+   - Check the binding's value expression against the current `availableParameters`
+   - Add the name to `availableParameters` (for subsequent bindings and the body)
+2. Check the body expression against the extended `availableParameters`
+3. Return a `SemanticLetNode` with the checked bindings and body
 
-This ensures each binding only sees previous bindings, not itself or later ones.
+Since shadowing is disallowed, let binding names are guaranteed to be distinct from parameters. This means:
+
+- The existing `availableParameters` set can be reused without modification
+- No scoped symbol model is needed to distinguish parameters from let bindings
+- The `usedParameters` tracking for `UnusedParameterWarning` works correctly
 
 ### Compiler Pipeline Impact
 
-| Stage     | Changes                                                                                      |
-| --------- | -------------------------------------------------------------------------------------------- |
-| Lexical   | Add `LetToken` and `InToken` keywords                                                        |
-| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes                                     |
-| Semantic  | Extend scope with bindings, check for duplicates and self-reference, emit shadowing warnings |
-| Lowering  | Convert `SemanticLetNode` to `LetTerm`                                                       |
-| Runtime   | Add `LetTerm` with sequential binding evaluation                                             |
+| Stage     | Changes                                                                         |
+| --------- | ------------------------------------------------------------------------------- |
+| Lexical   | Add `LetToken` and `InToken` keywords                                           |
+| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes                        |
+| Semantic  | Extend scope with bindings, check for duplicates, shadowing, and self-reference |
+| Lowering  | Convert `SemanticLetNode` to `LetTerm`                                          |
+| Runtime   | Add `LetTerm` with sequential binding evaluation                                |
 
 ### New Node Types
 
@@ -326,10 +331,10 @@ LetTerm
 | Lexer             | Trivial - add two keywords (same pattern as `if`/`else`) |
 | Parser            | Straightforward - new rule similar to `ifExpression`     |
 | AST               | Two new node types                                       |
-| Semantic analyzer | Moderate - scope extension logic                         |
+| Semantic analyzer | Simple - scope extension and shadowing check             |
 | Lowerer           | New term type and lowering logic                         |
 | Runtime           | New `LetTerm` with substitution-based evaluation         |
-| Tests             | Comprehensive coverage of scoping, shadowing, errors     |
+| Tests             | Comprehensive coverage of scoping and error conditions   |
 
 ### Post-Implementation
 
@@ -345,7 +350,7 @@ After implementing the feature:
 2. **Implement tests** using the examples from this document:
    - Lexical: `let` and `in` token recognition
    - Syntactic: `LetExpression` parsing (single binding, multiple bindings, nested)
-   - Semantic: scope extension, duplicate detection, self-reference errors, shadowing warnings
+   - Semantic: scope extension, duplicate detection, shadowing errors, self-reference errors
    - Lowering: `SemanticLetNode` to `LetTerm` conversion
    - Runtime: sequential evaluation, substitution behavior
    - Integration: all valid and invalid examples from this specification
