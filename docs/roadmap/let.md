@@ -587,7 +587,13 @@ Term lowerTerm(SemanticNode semanticNode) => switch (semanticNode) {
   // NEW: lower let expressions
   SemanticLetNode() => _lowerLet(semanticNode),
 
-  // ... existing default case ...
+  // Keep existing default case for defensive programming.
+  // SemanticNode is not a sealed class, so Dart does not enforce
+  // exhaustiveness. The default case catches any future node types
+  // that might be added without updating the lowerer.
+  _ => throw StateError(
+    'Unknown semantic node type: ${semanticNode.runtimeType}',
+  ),
 };
 
 Term _lowerLet(SemanticLetNode semanticNode) {
