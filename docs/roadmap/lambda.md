@@ -109,8 +109,7 @@ Lambda parameters are visible only within the lambda body:
 
 ```primal
 // x is only in scope within the lambda body
-f = (x) -> x + 1
-f(5)  // 6
+((x) -> x + 1)(5)  // 6
 ```
 
 ### No Self-Reference
@@ -159,13 +158,11 @@ Lambda parameters MAY shadow function names (both custom and standard library). 
 
 ```primal
 // Valid: num.abs shadows the function num.abs
-f = (num.abs) -> num.abs + 1
-f(5)  // 6
+((num.abs) -> num.abs + 1)(5)  // 6
 
 // Valid: double shadows a user-defined function
 double(x) = x * 2
-g = (double) -> double + 1
-g(5)  // 6
+((double) -> double + 1)(5)  // 6
 ```
 
 ### Closures
@@ -174,10 +171,8 @@ Lambdas capture variables from their enclosing scope by value at creation time:
 
 ```primal
 multiplier(n) = (x) -> x * n
-double = multiplier(2)
-triple = multiplier(3)
-double(5)  // 10
-triple(5)  // 15
+multiplier(2)(5)  // 10
+multiplier(3)(5)  // 15
 ```
 
 When `multiplier(2)` is called:
@@ -191,9 +186,8 @@ Captured variables are resolved at lambda creation time, not call time:
 ```primal
 // Captures happen when the lambda is created
 maker(n) = (x) -> x + n
-f = maker(10)
-// Even if there were a way to change n, f would still use 10
-f(5)  // 15
+maker(10)(5)  // 15
+// Even if there were a way to change n, the closure would still use 10
 ```
 
 ### Evaluation Order
@@ -201,8 +195,8 @@ f(5)  // 15
 Lambda parameters are evaluated left-to-right when the lambda is called (call-by-value):
 
 ```primal
-f = (a, b) -> a - b
-f(10, 3)  // Arguments evaluated: 10 then 3. Result: 7
+// Arguments evaluated: 10 then 3. Result: 7
+((a, b) -> a - b)(10, 3)
 ```
 
 ### Higher-Order Behavior
@@ -215,24 +209,22 @@ list.map([1, 2, 3], (x) -> x * 2)  // [2, 4, 6]
 list.filter([1, 2, 3, 4], (x) -> x > 2)  // [3, 4]
 list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)  // 6
 
-// Lambda returning lambda
-compose = (f) -> (g) -> (x) -> f(g(x))
+// Lambda returning lambda (parameterized compose function)
+compose(f, g) = (x) -> f(g(x))
+compose((x) -> x + 1, (x) -> x * 2)(5)  // 11
 
-// Lambda stored in collection
-ops = [(x) -> x + 1, (x) -> x * 2, (x) -> x - 1]
-ops[1](5)  // 10
+// Lambda stored in collection (access via index)
+list.map([5], [(x) -> x + 1, (x) -> x * 2][0])  // [6]
 
-// Lambda in map
-handlers = {"double": (x) -> x * 2, "triple": (x) -> x * 3}
-handlers["double"](5)  // 10
+// Lambda in map (access via key)
+{"double": (x) -> x * 2}["double"](5)  // 10
 
 // Immediately invoked lambda
 ((x) -> x + 1)(5)  // 6
 
-// Lambda returned from function
+// Lambda returned from parameterized function
 makeAdder(n) = (x) -> x + n
-add5 = makeAdder(5)
-add5(10)  // 15
+makeAdder(5)(10)  // 15
 ```
 
 ### Error Propagation
@@ -241,8 +233,7 @@ Errors during lambda invocation propagate immediately:
 
 ```primal
 // Error propagates from lambda body
-f = (x) -> x / 0
-f(5)  // → DivisionByZeroError
+((x) -> x / 0)(5)  // → DivisionByZeroError
 
 // Errors can be caught with try
 try(((x) -> x / 0)(5), 0)  // returns 0
@@ -354,17 +345,14 @@ class ShadowedLambdaParameterError extends SemanticError {
 ### Valid
 
 ```primal
-// Zero-parameter lambda
-constant = () -> 42
-constant()  // 42
+// Zero-parameter lambda (immediately invoked)
+(() -> 42)()  // 42
 
-// Single-parameter lambda
-increment = (x) -> x + 1
-increment(5)  // 6
+// Single-parameter lambda (immediately invoked)
+((x) -> x + 1)(5)  // 6
 
-// Multi-parameter lambda
-add = (x, y) -> x + y
-add(2, 3)  // 5
+// Multi-parameter lambda (immediately invoked)
+((x, y) -> x + y)(2, 3)  // 5
 
 // With higher-order functions
 list.map([1, 2, 3], (x) -> x * 2)  // [2, 4, 6]
@@ -372,25 +360,20 @@ list.filter([1, 2, 3, 4], (x) -> x > 2)  // [3, 4]
 list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)  // 6
 list.sort([3, 1, 2], (a, b) -> a - b)  // [1, 2, 3]
 
-// Closure capturing outer variable
+// Closure capturing outer variable (parameterized function returning lambda)
 multiplier(n) = (x) -> x * n
-double = multiplier(2)
-double(5)  // 10
+multiplier(2)(5)  // 10
+multiplier(3)(5)  // 15
 
-// Nested lambdas
+// Nested lambdas (parameterized compose function)
 compose(f, g) = (x) -> f(g(x))
-addOne = (x) -> x + 1
-timesTwo = (x) -> x * 2
-composed = compose(addOne, timesTwo)
-composed(5)  // 11 (5 * 2 + 1)
+compose((x) -> x + 1, (x) -> x * 2)(5)  // 11 (5 * 2 + 1)
 
-// Lambda in collection
-transformers = [(x) -> x + 1, (x) -> x * 2]
-list.map([5], transformers[0])  // [6]
+// Lambda in collection (inline, index returns lambda)
+[(x) -> x + 1, (x) -> x * 2][0](5)  // 6
 
-// Lambda in map
-handlers = {"double": (x) -> x * 2}
-handlers["double"](5)  // 10
+// Lambda in map (inline, key lookup returns lambda)
+{"double": (x) -> x * 2}["double"](5)  // 10
 
 // Immediately invoked lambda
 ((x) -> x + 1)(5)  // 6
@@ -398,28 +381,20 @@ handlers["double"](5)  // 10
 // Lambda returning lambda
 ((x) -> (y) -> x + y)(3)(4)  // 7
 
-// As function body
-square = (x) -> x * x
-square(5)  // 25
-
-// Lambda in conditional
+// Lambda in conditional (parameterized function)
 chooser(b) = if (b) (x) -> x + 1 else (x) -> x * 2
 chooser(true)(5)  // 6
 chooser(false)(5)  // 10
 
-// Lambda with let in body
-withLocal = (x) -> let y = x * 2 in y + 1
-withLocal(5)  // 11
+// Lambda with let in body (immediately invoked)
+((x) -> let y = x * 2 in y + 1)(5)  // 11
 
-// Lambda with if in body
-absVal = (x) -> if (x < 0) -x else x
-absVal(-5)  // 5
+// Lambda with if in body (immediately invoked)
+((x) -> if (x < 0) -x else x)(-5)  // 5
 
-// Multiple levels of capture
+// Multiple levels of capture (parameterized function)
 outer(a) = (b) -> (c) -> a + b + c
-f = outer(1)
-g = f(2)
-g(3)  // 6
+outer(1)(2)(3)  // 6
 ```
 
 ### Invalid
@@ -813,7 +788,7 @@ Term _lowerLambda(SemanticLambdaNode semanticNode) {
 
 ### Implementation Complexity
 
-**Medium**
+**High**
 
 | Component         | Effort                                                                              |
 | ----------------- | ----------------------------------------------------------------------------------- |
@@ -833,11 +808,11 @@ Lambda expressions work in REPL mode the same as in program mode:
 > ((x) -> x + 1)(5)
 6
 > f = (x) -> x * 2
-> f(5)
+> f()(5)
 10
-> multiplier = (n) -> (x) -> x * n
+> multiplier(n) = (x) -> x * n
 > double = multiplier(2)
-> double(5)
+> double()(5)
 10
 ```
 
@@ -1009,8 +984,8 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | `list.filter` with lambda | `list.filter([1, 2, 3, 4], (x) -> x > 2)`                        | `[3, 4]`    |
 | `list.reduce` with lambda | `list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)`                 | `6`         |
 | `list.sort` with lambda   | `list.sort([3, 1, 2], (a, b) -> a - b)`                          | `[1, 2, 3]` |
-| Lambda in list            | `f = [(x) -> x + 1, (x) -> x * 2]` then `f[0](5)`                | `6`         |
-| Lambda in map             | `f = {"inc": (x) -> x + 1}` then `f["inc"](5)`                   | `6`         |
+| Lambda in list            | `[(x) -> x + 1, (x) -> x * 2][0](5)`                             | `6`         |
+| Lambda in map             | `{"inc": (x) -> x + 1}["inc"](5)`                                | `6`         |
 | Immediately invoked       | `((x) -> x + 1)(5)`                                              | `6`         |
 | Nested invocation         | `((x) -> (y) -> x + y)(1)(2)`                                    | `3`         |
 | Closure with multiplier   | `mult(n) = (x) -> x * n` then `mult(3)(4)`                       | `12`        |
@@ -1022,18 +997,18 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 **Expression evaluation** (via `evaluateToTerm`):
 
-| Test                 | Input                                    | Expected                   |
-| -------------------- | ---------------------------------------- | -------------------------- |
-| Immediate invocation | `((x) -> x + 1)(5)`                      | `6`                        |
-| Store and call       | `f = (x) -> x * 2` then `f(5)`           | `10`                       |
-| Closure              | `m = (n) -> (x) -> x * n` then `m(2)(5)` | `10`                       |
-| With list.map        | `list.map([1, 2], (x) -> x + 1)`         | `[2, 3]`                   |
-| Error in lambda      | `((x) -> y)(5)`                          | `UndefinedIdentifierError` |
+| Test                 | Input                                | Expected                   |
+| -------------------- | ------------------------------------ | -------------------------- |
+| Immediate invocation | `((x) -> x + 1)(5)`                  | `6`                        |
+| Store and call       | `f = (x) -> x * 2` then `f()(5)`     | `10`                       |
+| Closure              | `m(n) = (x) -> x * n` then `m(2)(5)` | `10`                       |
+| With list.map        | `list.map([1, 2], (x) -> x + 1)`     | `[2, 3]`                   |
+| Error in lambda      | `((x) -> y)(5)`                      | `UndefinedIdentifierError` |
 
 **Function definition** (via `defineFunction`):
 
-| Test                      | Definition then call                                   | Expected |
-| ------------------------- | ------------------------------------------------------ | -------- |
-| Function returning lambda | `makeInc(n) = (x) -> x + n` then `makeInc(1)(5)`       | `6`      |
-| Lambda as function body   | `double = (x) -> x * 2` then `double(5)`               | `10`     |
-| Nested lambdas            | `f = (a) -> (b) -> (c) -> a + b + c` then `f(1)(2)(3)` | `6`      |
+| Test                      | Definition then call                                     | Expected |
+| ------------------------- | -------------------------------------------------------- | -------- |
+| Function returning lambda | `makeInc(n) = (x) -> x + n` then `makeInc(1)(5)`         | `6`      |
+| Lambda as function body   | `double = (x) -> x * 2` then `double()(5)`               | `10`     |
+| Nested lambdas            | `f = (a) -> (b) -> (c) -> a + b + c` then `f()(1)(2)(3)` | `6`      |
