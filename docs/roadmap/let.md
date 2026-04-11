@@ -1015,7 +1015,7 @@ LetExpression
 LetBindingExpression
   name: String
   value: Expression
-  location: Location    // location of identifier token (follows MapEntryExpression pattern)
+  location: Location    // location of binding name token (analogous to MapEntryExpression using key's location)
 ```
 
 **Design note: Why `let` gets a dedicated AST node while `if` is desugared**
