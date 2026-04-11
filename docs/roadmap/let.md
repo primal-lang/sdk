@@ -586,7 +586,19 @@ When processing a `LetExpression`:
 
 Note: The parser guarantees at least one binding exists (grammar: `bindings → binding ("," binding)*`), so the semantic analyzer does not need to check for empty bindings.
 
-**Error Priority**: Duplicate detection is checked before shadowing. This ensures `let x = 1, x = 2 in x` correctly throws `DuplicatedLetBindingError` (not `ShadowedLetBindingError`). Shadowing is only checked against the _original_ outer scope—names added by earlier bindings in the same `let` are not considered shadowing targets. Both checks occur before the value expression is analyzed, so if a binding name is a duplicate AND the value references itself, the duplicate error is thrown first.
+**Error Priority**: Each binding is checked in declaration order. For each binding, the checks occur in this sequence:
+
+1. **Duplicate check** (priority 1): Is this name already in `localLetBindings` (i.e., bound earlier in this same `let`)?
+2. **Shadow check** (priority 2): Is this name in `originalOuterScope` (i.e., a parameter or outer let binding)?
+3. **Value analysis** (priority 3): Analyze the binding's value expression.
+
+This per-binding order ensures:
+
+- `let x = 1, x = 2 in x` throws `DuplicatedLetBindingError` on the second `x` (first `x` passes both checks and is added to `localLetBindings`; second `x` fails duplicate check).
+- `f(x) = let x = 1 in x` throws `ShadowedLetBindingError` on the first `x` (no duplicate since `localLetBindings` is empty, but `x` is in `originalOuterScope`).
+- `f(x) = let x = 1, x = 2 in x` throws `ShadowedLetBindingError` on the first `x` (shadow check fails before the second binding is ever examined).
+
+Shadowing is only checked against the _original_ outer scope—names added by earlier bindings in the same `let` are not considered shadowing targets (they trigger duplicate errors instead).
 
 **usedParameters Tracking**: The existing `usedParameters` set tracks which function parameters are referenced. Let bindings are added to `availableParameters` but are NOT function parameters and should NOT be added to `usedParameters`.
 
