@@ -178,7 +178,19 @@ capture(n) = let f = num.abs, num.abs = 0 in f(n)
 
 **Resolution order**: When an identifier is encountered, the semantic analyzer checks bound variables (`availableParameters`) first, then functions (`allSignatures`). This matches the existing behavior for function parameters.
 
-**Note on dotted names**: Since identifiers can contain dots (regex `[a-zA-Z][\w\.]*`), `num.abs` is lexed as a single identifier token. A let binding for `num.abs` shadows the entire dotted function name, not just `num`.
+**Note on dotted names**: Since identifiers can contain dots (regex `[a-zA-Z][\w\.]*`), `num.abs` is lexed as a single identifier token. Each dotted name is independent—`num`, `num.abs`, and `num.abs.foo` are three distinct identifiers with no hierarchical relationship:
+
+```primal
+// Shadowing num.abs does NOT shadow num or num.neg
+f(n) = let num.abs = 42 in num.abs + num.neg(n)
+// f(5) → 42 + (-5) = 37
+
+// Shadowing num does NOT shadow num.abs
+g(n) = let num = 42 in num.abs(n)
+// g(-5) → 5 (num.abs is a different identifier, calls the function)
+```
+
+This follows from the lexical rule: `num.abs` is ONE token, not `num` `.` `abs`.
 
 ### Evaluation Order
 
@@ -1219,6 +1231,7 @@ Tests that assert the complete taxonomy of `Term` subclasses may need updates:
 | `usedParameters` excludes let  | `f(n) = let x = 1 in x`                                     | Warning: unused parameter `n`                               |
 | Shadows custom function        | `double(x) = x * 2` then `f(n) = let double = 10 in double` | No error, `double` resolves to binding                      |
 | Shadows stdlib function        | `f(n) = let num.abs = 42 in num.abs`                        | No error, `num.abs` resolves to `42`                        |
+| Dotted names are independent   | `f(n) = let num = 42 in num.abs(n)`                         | No error, `num.abs` is distinct from `num`                  |
 | Capture before shadow          | `f(n) = let g = num.abs, num.abs = 0 in g(n)`               | No error, `g` captures function before shadow               |
 | Call shadowed binding          | `f(n) = let double = num.abs in double(n)`                  | No error, `double` is callable (holds function)             |
 | Let binding as callee          | `f(n) = let g = num.abs in g(n)`                            | No error, callee is `SemanticBoundVariableNode`             |
@@ -1292,6 +1305,7 @@ Tests that assert the complete taxonomy of `Term` subclasses may need updates:
 | Deeply nested              | `let a = 1 in let b = a in let c = b in c`                                      | `1`                 |
 | Shadow custom function     | `double(x) = x * 2` then `f(n) = let double = 10 in double + n` called with `5` | `15`                |
 | Shadow stdlib function     | `f(n) = let num.abs = 42 in num.abs` called with any                            | `42`                |
+| Dotted names independent   | `f(n) = let num = 42 in num.abs(n)` called with `-5`                            | `5`                 |
 | Capture then shadow        | `f(n) = let g = num.abs, num.abs = 0 in g(n)` called with `-5`                  | `5`                 |
 | Call let-bound function    | `f(n) = let double = num.abs in double(n)` called with `-5`                     | `5`                 |
 | Index let-bound list       | `f(xs) = let list = xs in list[0]` called with `[1, 2, 3]`                      | `1`                 |
