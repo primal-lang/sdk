@@ -412,49 +412,49 @@ chain(a, b) = let x = a + b in let y = x * 2 in y
 
 ### Invalid
 
-Error annotations below show exception class names and core message content. Actual CLI/REPL output includes `Error:` prefix and token locations (see Error Conditions notation).
+Error annotations below show exception class names. For parsing errors, the constructor argument (expected token) is shown in parentheses. Actual CLI/REPL output includes `Error:` prefix and token locations (see Error Conditions notation).
 
 ```primal
 // ERROR: Empty bindings (parser expects identifier after 'let')
 bad0(n) = let in n
-// → ExpectedTokenError: expected identifier
+// → ExpectedTokenError(_, 'identifier')
 
 // ERROR: Duplicate binding
 bad1(n) = let x = 1, x = 2 in x
-// → DuplicatedLetBindingError: Duplicated let binding "x"
+// → DuplicatedLetBindingError
 
 // ERROR: Self-reference
 bad2(n) = let x = x + 1 in x
-// → UndefinedIdentifierError: Undefined identifier "x"
+// → UndefinedIdentifierError
 
 // ERROR: Forward reference within same let
 bad3(n) = let y = x, x = 1 in y
-// → UndefinedIdentifierError: Undefined identifier "x"
+// → UndefinedIdentifierError
 
 // ERROR: Missing comma between bindings (parser expects 'in' after first binding)
 bad4(n) = let x = 1 y = 2 in x + y
-// → ExpectedTokenError: expected 'in'
+// → ExpectedTokenError(_, 'in')
 
 // ERROR: Missing 'in'
 bad5(n) = let x = 1, y = 2 x + y
-// → ExpectedTokenError: expected 'in'
+// → ExpectedTokenError(_, 'in')
 
 // ERROR: Shadows parameter
 bad6(x) = let x = 1 in x
-// → ShadowedLetBindingError: Shadowed let binding "x"
+// → ShadowedLetBindingError
 
 // ERROR: Shadows outer let binding
 bad7(n) = let x = 1 in let x = 2 in x
-// → ShadowedLetBindingError: Shadowed let binding "x"
+// → ShadowedLetBindingError
 
 // ERROR: Inner let binding not visible in outer scope
 bad8(n) = let x = (let y = 1 in y) in y
-// → UndefinedIdentifierError: Undefined identifier "y"
+// → UndefinedIdentifierError
 // (y is only in scope within the inner let body, not the outer let body)
 
 // ERROR: Shadows earlier binding in same let
 bad9(n) = let x = 1, y = 2, x = 3 in x
-// → DuplicatedLetBindingError: Duplicated let binding "x"
+// → DuplicatedLetBindingError
 
 // ERROR: let as binary operand (requires parentheses)
 bad10(n) = 1 + let x = 2 in x
