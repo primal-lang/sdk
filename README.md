@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
-<a href="https://github.com/primal-lang/sdk/releases/tag/v0.4.2"><img src="https://img.shields.io/badge/Latest-0.4.2-blue" /></a>
+<a href="https://github.com/primal-lang/sdk/releases/tag/v0.4.3"><img src="https://img.shields.io/badge/Latest-0.4.3-blue" /></a>
 </p>
 
 # Primal
@@ -45,6 +45,18 @@ The language has the following characteristics:
 - Interactive
 
 ## Getting started
+
+### Quick install
+
+Run this command to install the latest version:
+
+```bash
+curl -fsSL https://primal-lang.org/install.sh | bash
+```
+
+This installs the `primal` binary to `~/.local/bin` and updates your shell configuration.
+
+### Manual installation
 
 Pre-built binaries are available for Linux, macOS, and Windows. Download the appropriate release from the [GitHub releases](https://github.com/primal-lang/sdk/releases) page, extract it, and add the `bin` folder to your PATH. Then run the interpreter with a source file as an argument:
 

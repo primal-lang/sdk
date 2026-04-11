@@ -43,21 +43,341 @@ void main() {
       expect(violations, isEmpty, reason: violations.join('\n'));
     });
 
-    test('semantic core does not import from runtime', () {
-      // These files bridge semantic → runtime and legitimately import runtime:
-      // - lowerer.dart: converts SemanticNode → Term
-      // - runtime_input_builder.dart: builds RuntimeInput from IntermediateRepresentation
-      // - runtime_facade.dart: orchestrates runtime execution
+    test('semantic does not import from runtime', () {
       final List<String> violations = _checkImports(
         'lib/compiler/semantic',
         ['runtime/'],
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('runtime does not import from reader, lexical, or syntactic', () {
+      final List<String> violations = _checkImports('lib/compiler/runtime', [
+        'reader/',
+        'lexical/',
+        'syntactic/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('lowering core does not import from reader or lexical', () {
+      // The lowering phase bridges semantic → runtime
+      // runtime_facade.dart legitimately imports from syntactic/ to accept
+      // Expression and FunctionDefinition as inputs from the compiler pipeline
+      final List<String> violations = _checkImports(
+        'lib/compiler/lowering',
+        ['reader/', 'lexical/'],
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('lowering core does not import from syntactic', () {
+      // Exclude runtime_facade.dart which serves as the pipeline entry point
+      // and needs to accept syntactic types
+      final List<String> violations = _checkImports(
+        'lib/compiler/lowering',
+        ['syntactic/'],
+        exclude: ['runtime_facade.dart'],
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('library does not import from reader, lexical, or syntactic', () {
+      // Library functions are runtime implementations
+      // They should not depend on compilation phases
+      final List<String> violations = _checkImports('lib/compiler/library', [
+        'reader/',
+        'lexical/',
+        'syntactic/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('errors does not import from runtime', () {
+      // Error definitions should not depend on runtime
+      // to avoid circular dependencies
+      final List<String> violations = _checkImports(
+        'lib/compiler/errors',
+        ['runtime/'],
+        exclude: ['runtime_error.dart'],
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('models does not import from any compiler phase', () {
+      // Models are shared utilities and should not depend on compiler phases
+      final List<String> violations = _checkImports('lib/compiler/models', [
+        'reader/',
+        'lexical/',
+        'syntactic/',
+        'semantic/',
+        'runtime/',
+        'lowering/',
+        'library/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('warnings does not import from runtime or lowering', () {
+      // Warnings are compile-time messages, should not depend on runtime
+      final List<String> violations = _checkImports('lib/compiler/warnings', [
+        'runtime/',
+        'lowering/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('platform does not import from reader, lexical, or syntactic', () {
+      // Platform abstractions are used by runtime, should not depend on parsing phases
+      final List<String> violations = _checkImports('lib/compiler/platform', [
+        'reader/',
+        'lexical/',
+        'syntactic/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('errors does not import from lexical, syntactic, or semantic', () {
+      // Error definitions should only depend on models, not specific phases
+      // to avoid circular dependencies (phases import errors, not vice versa)
+      final List<String> violations = _checkImports(
+        'lib/compiler/errors',
+        ['lexical/', 'syntactic/', 'semantic/'],
         exclude: [
-          'lowerer.dart',
-          'runtime_input_builder.dart',
-          'runtime_facade.dart',
+          'lexical_error.dart',
+          'syntactic_error.dart',
+          'semantic_error.dart',
         ],
       );
       expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('warnings does not import from reader, lexical, or syntactic', () {
+      // Warnings should not depend on parsing phases
+      final List<String> violations = _checkImports('lib/compiler/warnings', [
+        'reader/',
+        'lexical/',
+        'syntactic/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('platform does not import from semantic or lowering', () {
+      // Platform abstractions should not depend on semantic analysis or lowering
+      final List<String> violations = _checkImports('lib/compiler/platform', [
+        'semantic/',
+        'lowering/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('library does not import from semantic or lowering', () {
+      // Library functions are runtime implementations
+      // They should not depend on compilation phases
+      final List<String> violations = _checkImports('lib/compiler/library', [
+        'semantic/',
+        'lowering/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('runtime does not import from lowering', () {
+      // Runtime should be independent of lowering phase
+      final List<String> violations = _checkImports('lib/compiler/runtime', [
+        'lowering/',
+      ]);
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+
+    test('lowering does not import from library or platform', () {
+      // Lowering transforms semantic IR to runtime terms
+      // runtime_input_builder.dart legitimately imports StandardLibrary to build
+      // the initial runtime input with standard library functions
+      // Other lowering files should not depend on library implementations or platform abstractions
+      final List<String> violations = _checkImports(
+        'lib/compiler/lowering',
+        ['library/', 'platform/'],
+        exclude: ['runtime_input_builder.dart'],
+      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
+    });
+  });
+
+  group('_checkImports helper', () {
+    test('returns error message for non-existent directory', () {
+      final List<String> result = _checkImports(
+        'lib/compiler/nonexistent_directory',
+        ['something/'],
+      );
+      expect(result, hasLength(1));
+      expect(
+        result.first,
+        contains('Directory does not exist'),
+      );
+    });
+
+    test('returns empty list when no forbidden imports found', () {
+      // reader/ exists and should have no imports from its own forbidden list
+      final List<String> result = _checkImports('lib/compiler/reader', [
+        'some_nonexistent_path/',
+      ]);
+      expect(result, isEmpty);
+    });
+
+    test('excludes specified files from checking', () {
+      // This test verifies the exclude parameter works correctly
+      // by excluding all dart files in reader that import from models/
+      final List<String> result = _checkImports(
+        'lib/compiler/reader',
+        ['models/'], // reader imports from models
+        exclude: ['source_reader.dart', 'character.dart'],
+      );
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list when forbidden list is empty', () {
+      final List<String> result = _checkImports('lib/compiler/reader', []);
+      expect(result, isEmpty);
+    });
+
+    test('handles directory with subdirectories recursively', () {
+      // library/ has many subdirectories (arithmetic, casting, etc.)
+      // This test verifies recursive checking works
+      final List<String> result = _checkImports(
+        'lib/compiler/library',
+        ['reader/'], // library should not import from reader
+      );
+      expect(result, isEmpty);
+    });
+
+    test('detects multiple violations in the same file', () {
+      // lowering imports from both syntactic and semantic
+      // If we didn't exclude runtime_facade.dart, we'd catch syntactic imports
+      final List<String> result = _checkImports('lib/compiler/lowering', [
+        'syntactic/',
+        'semantic/',
+      ]);
+      // runtime_facade.dart imports from both, so we should find violations
+      expect(result, isNotEmpty);
+      // Verify we found violations from both forbidden paths
+      final bool hasSyntacticViolation = result.any(
+        (String violation) => violation.contains('syntactic/'),
+      );
+      final bool hasSemanticViolation = result.any(
+        (String violation) => violation.contains('semantic/'),
+      );
+      expect(hasSyntacticViolation, isTrue);
+      expect(hasSemanticViolation, isTrue);
+    });
+
+    test('reports correct file path and line number in violation', () {
+      // Use lowering without exclusions to get predictable violations
+      final List<String> result = _checkImports('lib/compiler/lowering', [
+        'syntactic/',
+      ]);
+      expect(result, isNotEmpty);
+      // Check that violation message contains file path with line number
+      expect(result.first, contains('lib/compiler/lowering/'));
+      expect(result.first, contains('.dart:'));
+      expect(result.first, contains('imports forbidden path'));
+    });
+
+    test('handles files with no import statements', () {
+      // models/analyzer.dart has no imports
+      final List<String> result = _checkImports('lib/compiler/models', [
+        'runtime/',
+      ]);
+      // Should complete without error and find no violations
+      expect(result, isEmpty);
+    });
+
+    test('only checks lines starting with import keyword', () {
+      // Ensure comments or strings containing forbidden paths are not flagged
+      // The reader directory files don't contain 'runtime/' in comments
+      // This test verifies the import-only filtering
+      final List<String> result = _checkImports(
+        'lib/compiler/reader',
+        ['runtime/'],
+      );
+      expect(result, isEmpty);
+    });
+
+    test('handles multiple excluded files', () {
+      // Test that multiple files can be excluded
+      // lowering has three files: lowerer.dart, runtime_facade.dart,
+      // runtime_input_builder.dart
+      // By excluding all of them, we should find no violations
+      final List<String> result = _checkImports(
+        'lib/compiler/lowering',
+        ['syntactic/', 'semantic/'],
+        exclude: [
+          'lowerer.dart',
+          'runtime_facade.dart',
+          'runtime_input_builder.dart',
+        ],
+      );
+      expect(result, isEmpty);
+    });
+
+    test('forbidden path with trailing slash prevents partial matches', () {
+      // The forbidden path 'semantic/' should not match 'semantic_error.dart'
+      // because the trailing slash requires a directory structure
+      // This test verifies the trailing slash distinction
+      final List<String> result = _checkImports(
+        'lib/compiler/errors',
+        ['semantic/'], // Should only match 'semantic/' directory imports
+        exclude: ['semantic_error.dart'],
+      );
+      // generic_error.dart has no imports, so no matches expected
+      expect(result, isEmpty);
+    });
+
+    test('detects violation in subdirectory of target directory', () {
+      // library/ has many subdirectories - verify recursive search finds them
+      // We know library imports from runtime/ and errors/ but not from reader/
+      final List<String> result = _checkImports(
+        'lib/compiler/library',
+        ['runtime/'], // Library legitimately imports runtime
+      );
+      // Should find violations since library imports from runtime
+      expect(result, isNotEmpty);
+    });
+
+    test('violation message includes full relative path', () {
+      // Verify that violation messages include the complete path
+      final List<String> result = _checkImports(
+        'lib/compiler/library',
+        ['runtime/'],
+      );
+      expect(result, isNotEmpty);
+      // Verify the path includes the subdirectory structure
+      final bool hasSubdirectoryPath = result.any(
+        (String violation) => violation.contains('lib/compiler/library/'),
+      );
+      expect(hasSubdirectoryPath, isTrue);
+    });
+
+    test('handles files with only whitespace and comments before imports', () {
+      // Files may have license headers or comments before imports
+      // The function should still correctly identify import lines
+      // reader/source_reader.dart has imports
+      final List<String> result = _checkImports(
+        'lib/compiler/reader',
+        ['models/'], // reader imports from models
+      );
+      expect(result, isNotEmpty);
+      expect(result.first, contains('import'));
+    });
+
+    test('each violation is a separate entry', () {
+      // When multiple violations exist, each should be a separate list entry
+      final List<String> result = _checkImports(
+        'lib/compiler/lowering',
+        ['syntactic/', 'semantic/'],
+      );
+      // runtime_facade.dart imports from both syntactic and semantic
+      // Each import line should generate a separate violation
+      expect(result.length, greaterThan(1));
     });
   });
 }

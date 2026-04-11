@@ -9,7 +9,7 @@ class ListRemove extends NativeFunctionTerm {
         name: 'list.remove',
         parameters: const [
           Parameter.list('a'),
-          Parameter.any('b'),
+          Parameter.equatable('b'),
         ],
       );
 

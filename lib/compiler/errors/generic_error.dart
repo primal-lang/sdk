@@ -9,5 +9,5 @@ class GenericError implements Exception {
 }
 
 class CompilationError extends GenericError {
-  const CompilationError(String message) : super('Compilation error', message);
+  const CompilationError(String message) : super('Error', message);
 }

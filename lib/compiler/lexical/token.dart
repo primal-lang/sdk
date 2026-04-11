@@ -138,6 +138,22 @@ class AmpersandToken extends Token<String> {
       );
 }
 
+class DoubleAmpersandToken extends Token<String> {
+  DoubleAmpersandToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+
+class DoublePipeToken extends Token<String> {
+  DoublePipeToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+
 class BangToken extends Token<String> {
   BangToken(Lexeme lexeme)
     : super(

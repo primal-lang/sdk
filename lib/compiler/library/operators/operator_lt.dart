@@ -7,8 +7,8 @@ class OperatorLt extends NativeFunctionTerm {
     : super(
         name: '<',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.ordered('a'),
+          Parameter.ordered('b'),
         ],
       );
 

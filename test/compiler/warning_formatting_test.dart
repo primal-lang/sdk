@@ -24,6 +24,82 @@ void main() {
 
       expect(warning.message, equals('check this'));
     });
+
+    test('implements Exception', () {
+      const warning = GenericWarning('test');
+
+      expect(warning, isA<Exception>());
+    });
+
+    test('handles empty message', () {
+      const warning = GenericWarning('');
+
+      expect(warning.toString(), equals('Warning: '));
+      expect(warning.message, equals(''));
+    });
+
+    test('handles message with special characters', () {
+      const warning = GenericWarning('contains "quotes" and \$pecial chars');
+
+      expect(warning.message, equals('contains "quotes" and \$pecial chars'));
+      expect(
+        warning.toString(),
+        equals('Warning: contains "quotes" and \$pecial chars'),
+      );
+    });
+
+    test('handles multiline message', () {
+      const warning = GenericWarning('line one\nline two\nline three');
+
+      expect(warning.message, equals('line one\nline two\nline three'));
+      expect(
+        warning.toString(),
+        equals('Warning: line one\nline two\nline three'),
+      );
+    });
+
+    test('const instances with same message are identical', () {
+      const warning1 = GenericWarning('same message');
+      const warning2 = GenericWarning('same message');
+
+      expect(identical(warning1, warning2), isTrue);
+    });
+
+    test('handles very long message', () {
+      final String longMessage = 'a' * 1000;
+      final GenericWarning warning = GenericWarning(longMessage);
+
+      expect(warning.message.length, equals(1000));
+      expect(warning.toString(), equals('Warning: $longMessage'));
+    });
+
+    test('handles whitespace-only message', () {
+      const GenericWarning warning = GenericWarning('   \t\n  ');
+
+      expect(warning.message, equals('   \t\n  '));
+      expect(warning.toString(), equals('Warning:    \t\n  '));
+    });
+
+    test('handles unicode characters in message', () {
+      const GenericWarning warning = GenericWarning('警告: 无效值 🚨');
+
+      expect(warning.message, equals('警告: 无效值 🚨'));
+      expect(warning.toString(), equals('Warning: 警告: 无效值 🚨'));
+    });
+
+    test('handles message with leading and trailing whitespace', () {
+      const GenericWarning warning = GenericWarning('  trimmed content  ');
+
+      expect(warning.message, equals('  trimmed content  '));
+      expect(warning.toString(), equals('Warning:   trimmed content  '));
+    });
+
+    test('different messages produce different instances', () {
+      const GenericWarning warning1 = GenericWarning('message one');
+      const GenericWarning warning2 = GenericWarning('message two');
+
+      expect(identical(warning1, warning2), isFalse);
+    });
   });
 
   group('SemanticWarning', () {
@@ -37,6 +113,91 @@ void main() {
       const warning = SemanticWarning('test');
 
       expect(warning, isA<GenericWarning>());
+    });
+
+    test('implements Exception', () {
+      const warning = SemanticWarning('test');
+
+      expect(warning, isA<Exception>());
+    });
+
+    test('errorType is "Warning"', () {
+      const warning = SemanticWarning('test');
+
+      expect(warning.errorType, equals('Warning'));
+    });
+
+    test('message is preserved', () {
+      const warning = SemanticWarning('some warning message');
+
+      expect(warning.message, equals('some warning message'));
+    });
+
+    test('handles empty message', () {
+      const warning = SemanticWarning('');
+
+      expect(warning.toString(), equals('Warning: '));
+      expect(warning.message, equals(''));
+    });
+
+    test('handles message with special characters', () {
+      const warning = SemanticWarning('contains "quotes" and \$pecial chars');
+
+      expect(warning.message, equals('contains "quotes" and \$pecial chars'));
+      expect(
+        warning.toString(),
+        equals('Warning: contains "quotes" and \$pecial chars'),
+      );
+    });
+
+    test('handles multiline message', () {
+      const warning = SemanticWarning('line one\nline two');
+
+      expect(warning.message, equals('line one\nline two'));
+      expect(warning.toString(), equals('Warning: line one\nline two'));
+    });
+
+    test('const instances with same message are identical', () {
+      const warning1 = SemanticWarning('same message');
+      const warning2 = SemanticWarning('same message');
+
+      expect(identical(warning1, warning2), isTrue);
+    });
+
+    test('handles very long message', () {
+      final String longMessage = 'b' * 1000;
+      final SemanticWarning warning = SemanticWarning(longMessage);
+
+      expect(warning.message.length, equals(1000));
+      expect(warning.toString(), equals('Warning: $longMessage'));
+    });
+
+    test('handles whitespace-only message', () {
+      const SemanticWarning warning = SemanticWarning('   \t\n  ');
+
+      expect(warning.message, equals('   \t\n  '));
+      expect(warning.toString(), equals('Warning:    \t\n  '));
+    });
+
+    test('handles unicode characters in message', () {
+      const SemanticWarning warning = SemanticWarning('変数が未使用 🔍');
+
+      expect(warning.message, equals('変数が未使用 🔍'));
+      expect(warning.toString(), equals('Warning: 変数が未使用 🔍'));
+    });
+
+    test('handles message with leading and trailing whitespace', () {
+      const SemanticWarning warning = SemanticWarning('  spaced message  ');
+
+      expect(warning.message, equals('  spaced message  '));
+      expect(warning.toString(), equals('Warning:   spaced message  '));
+    });
+
+    test('different messages produce different instances', () {
+      const SemanticWarning warning1 = SemanticWarning('first');
+      const SemanticWarning warning2 = SemanticWarning('second');
+
+      expect(identical(warning1, warning2), isFalse);
     });
   });
 
@@ -69,6 +230,247 @@ void main() {
       );
 
       expect(warning, isA<GenericWarning>());
+    });
+
+    test('implements Exception', () {
+      const warning = UnusedParameterWarning(
+        function: 'f',
+        parameter: 'x',
+      );
+
+      expect(warning, isA<Exception>());
+    });
+
+    test('errorType is "Warning"', () {
+      const warning = UnusedParameterWarning(
+        function: 'calculate',
+        parameter: 'value',
+      );
+
+      expect(warning.errorType, equals('Warning'));
+    });
+
+    test('message contains formatted parameter and function names', () {
+      const warning = UnusedParameterWarning(
+        function: 'multiply',
+        parameter: 'factor',
+      );
+
+      expect(
+        warning.message,
+        equals('Unused parameter "factor" in function "multiply"'),
+      );
+    });
+
+    test('handles empty function name', () {
+      const warning = UnusedParameterWarning(
+        function: '',
+        parameter: 'x',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "x" in function ""'),
+      );
+    });
+
+    test('handles empty parameter name', () {
+      const warning = UnusedParameterWarning(
+        function: 'test',
+        parameter: '',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "" in function "test"'),
+      );
+    });
+
+    test('handles special characters in function name', () {
+      const warning = UnusedParameterWarning(
+        function: 'my_function',
+        parameter: 'arg',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "arg" in function "my_function"'),
+      );
+    });
+
+    test('handles special characters in parameter name', () {
+      const warning = UnusedParameterWarning(
+        function: 'test',
+        parameter: 'some_param',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "some_param" in function "test"'),
+      );
+    });
+
+    test('handles both empty function and parameter names', () {
+      const warning = UnusedParameterWarning(
+        function: '',
+        parameter: '',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "" in function ""'),
+      );
+    });
+
+    test('const instances with same parameters are identical', () {
+      const warning1 = UnusedParameterWarning(
+        function: 'func',
+        parameter: 'param',
+      );
+      const warning2 = UnusedParameterWarning(
+        function: 'func',
+        parameter: 'param',
+      );
+
+      expect(identical(warning1, warning2), isTrue);
+    });
+
+    test('handles long function and parameter names', () {
+      final String longFunctionName = 'f' * 100;
+      final String longParameterName = 'p' * 100;
+      final UnusedParameterWarning warning = UnusedParameterWarning(
+        function: longFunctionName,
+        parameter: longParameterName,
+      );
+
+      expect(
+        warning.message,
+        equals(
+          'Unused parameter "$longParameterName" in function "$longFunctionName"',
+        ),
+      );
+    });
+
+    test('handles function name with quotes', () {
+      const warning = UnusedParameterWarning(
+        function: 'with"quotes',
+        parameter: 'x',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "x" in function "with"quotes"'),
+      );
+    });
+
+    test('handles parameter name with quotes', () {
+      const warning = UnusedParameterWarning(
+        function: 'test',
+        parameter: 'has"quote',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "has"quote" in function "test"'),
+      );
+    });
+
+    test('handles whitespace-only function name', () {
+      const UnusedParameterWarning warning = UnusedParameterWarning(
+        function: '   ',
+        parameter: 'x',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "x" in function "   "'),
+      );
+    });
+
+    test('handles whitespace-only parameter name', () {
+      const UnusedParameterWarning warning = UnusedParameterWarning(
+        function: 'test',
+        parameter: '\t',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "\t" in function "test"'),
+      );
+    });
+
+    test('handles unicode characters in function name', () {
+      const UnusedParameterWarning warning = UnusedParameterWarning(
+        function: '関数名',
+        parameter: 'x',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "x" in function "関数名"'),
+      );
+    });
+
+    test('handles unicode characters in parameter name', () {
+      const UnusedParameterWarning warning = UnusedParameterWarning(
+        function: 'test',
+        parameter: '参数',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "参数" in function "test"'),
+      );
+    });
+
+    test('handles newlines in function name', () {
+      const UnusedParameterWarning warning = UnusedParameterWarning(
+        function: 'line1\nline2',
+        parameter: 'x',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "x" in function "line1\nline2"'),
+      );
+    });
+
+    test('handles newlines in parameter name', () {
+      const UnusedParameterWarning warning = UnusedParameterWarning(
+        function: 'test',
+        parameter: 'a\nb',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused parameter "a\nb" in function "test"'),
+      );
+    });
+
+    test('different parameters produce different instances', () {
+      const UnusedParameterWarning warning1 = UnusedParameterWarning(
+        function: 'f',
+        parameter: 'x',
+      );
+      const UnusedParameterWarning warning2 = UnusedParameterWarning(
+        function: 'f',
+        parameter: 'y',
+      );
+
+      expect(identical(warning1, warning2), isFalse);
+    });
+
+    test('different functions produce different instances', () {
+      const UnusedParameterWarning warning1 = UnusedParameterWarning(
+        function: 'foo',
+        parameter: 'x',
+      );
+      const UnusedParameterWarning warning2 = UnusedParameterWarning(
+        function: 'bar',
+        parameter: 'x',
+      );
+
+      expect(identical(warning1, warning2), isFalse);
     });
   });
 }

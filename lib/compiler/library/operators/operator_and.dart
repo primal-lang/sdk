@@ -1,4 +1,4 @@
-import 'package:primal/compiler/library/logic/bool_and.dart';
+import 'package:primal/compiler/library/logic/bool_and_strict.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/term.dart';
 
@@ -28,7 +28,7 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
   });
 
   @override
-  Term reduce() => BoolAnd.execute(
+  Term reduce() => BoolAndStrict.execute(
     function: this,
     arguments: arguments,
   );

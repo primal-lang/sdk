@@ -1,6 +1,6 @@
 # Compiler Architecture
 
-The Primal compiler is a five-stage pipeline that transforms source code into an executable representation. It is implemented in Dart and supports both CLI and web targets.
+The Primal compiler is a six-stage pipeline that transforms source code into an executable representation. It is implemented in Dart and supports both CLI and web targets.
 
 ```
 Source Code
@@ -18,15 +18,15 @@ Source Code
  Semantic Analyzer ... Semantic IR with FunctionSignature → compiler/semantic.md
     |
     v
- Lowerer ............. Runtime terms for evaluation       → compiler/semantic.md
+ Lowerer ............. Runtime terms for evaluation       → compiler/runtime.md
     |
     v
  Runtime ............. Evaluation via term substitution   → compiler/runtime.md
 ```
 
-The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateRepresentation` contains semantic IR (with source locations and resolved references). The `Runtime` then lowers this to runtime terms for execution.
+The entry point is `Compiler.compile(String input)` in `lib/compiler/compiler.dart`, which runs the first four stages in sequence. The resulting `IntermediateRepresentation` contains semantic IR (with source locations and resolved references). The `RuntimeFacade` then orchestrates lowering via the `Lowerer` and execution via the `Runtime`.
 
-Each pipeline stage is documented in its own file under [`compiler/`](compiler/).
+Each pipeline stage is documented in its own file under [`compiler/`](compiler/). Shared data types are documented in [`compiler/models.md`](compiler/models.md).
 
 ---
 
@@ -62,7 +62,7 @@ Type checking is **dynamic** - it happens at runtime when native functions valid
 
 **File**: `lib/compiler/library/standard_library.dart`
 
-The standard library provides 230+ built-in functions, organized by namespace:
+The standard library provides 232 built-in functions, organized by namespace:
 
 | Namespace     | Count | Examples                                                 |
 | ------------- | ----- | -------------------------------------------------------- |
@@ -72,7 +72,7 @@ The standard library provides 230+ built-in functions, organized by namespace:
 | `bool.*`      | 4     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`            |
 | `comp.*`      | 6     | `comp.eq`, `comp.lt`, `comp.ge`                          |
 | `map.*`       | 9     | `map.at`, `map.set`, `map.keys`, `map.values`            |
-| `set.*`       | 9     | `set.add`, `set.union`, `set.intersection`               |
+| `set.*`       | 10    | `set.add`, `set.union`, `set.intersection`               |
 | `stack.*`     | 8     | `stack.push`, `stack.pop`, `stack.peek`                  |
 | `queue.*`     | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`           |
 | `vector.*`    | 6     | `vector.add`, `vector.magnitude`, `vector.normalize`     |
@@ -99,19 +99,27 @@ All diagnostics extend `GenericError(errorType, message)`.
 
 Raised during compilation and abort the pipeline:
 
-| Stage     | Error                           | Cause                                  |
-| --------- | ------------------------------- | -------------------------------------- |
-| Lexical   | `InvalidCharacterError`         | Unrecognized character                 |
-| Syntactic | `InvalidTokenError`             | Unexpected token in context            |
-| Syntactic | `ExpectedTokenError`            | Missing required token                 |
-| Syntactic | `UnexpectedEndOfFileError`      | Premature end of input                 |
-| Semantic  | `DuplicatedFunctionError`       | Two functions with the same name       |
-| Semantic  | `DuplicatedParameterError`      | Repeated parameter in a function       |
-| Semantic  | `UndefinedIdentifierError`      | Reference to unknown variable/function |
-| Semantic  | `UndefinedFunctionError`        | Call to unknown function               |
-| Semantic  | `InvalidNumberOfArgumentsError` | Wrong argument count in a call         |
-| Semantic  | `NotCallableError`              | Calling a non-callable literal         |
-| Semantic  | `NotIndexableError`             | Indexing a non-indexable literal       |
+| Stage     | Error                                | Cause                                   |
+| --------- | ------------------------------------ | --------------------------------------- |
+| Lexical   | `InvalidCharacterError`              | Unrecognized character                  |
+| Lexical   | `UnterminatedStringError`            | String literal missing closing quote    |
+| Lexical   | `UnterminatedCommentError`           | Multi-line comment missing closing `*/` |
+| Lexical   | `InvalidEscapeSequenceError`         | Unrecognized escape sequence            |
+| Lexical   | `InvalidHexEscapeError`              | Malformed hex escape sequence           |
+| Lexical   | `InvalidBracedEscapeError`           | Malformed braced Unicode escape         |
+| Lexical   | `InvalidCodePointError`              | Code point exceeds U+10FFFF             |
+| Syntactic | `InvalidTokenError`                  | Unexpected token in context             |
+| Syntactic | `ExpectedTokenError`                 | Missing required token                  |
+| Syntactic | `UnexpectedEndOfFileError`           | Premature end of input                  |
+| Syntactic | `UnexpectedTokenError`               | Trailing tokens after complete expression |
+| Semantic  | `DuplicatedFunctionError`            | Two functions with the same name        |
+| Semantic  | `DuplicatedParameterError`           | Repeated parameter in a function        |
+| Semantic  | `UndefinedIdentifierError`           | Reference to unknown variable/function  |
+| Semantic  | `UndefinedFunctionError`             | Call to unknown function                |
+| Semantic  | `InvalidNumberOfArgumentsError`      | Wrong argument count in a call          |
+| Semantic  | `NotCallableError`                   | Calling a non-callable literal          |
+| Semantic  | `NotIndexableError`                  | Indexing a non-indexable literal        |
+| Semantic  | `CannotRedefineStandardLibraryError` | Redefining a standard library function  |
 
 ### Runtime Errors
 
@@ -136,6 +144,7 @@ Raised during execution:
 | `InvalidNumericOperationError`      | Domain error (e.g., `log(-1)`, `sqrt(-1)`)         |
 | `ParseError`                        | Failed string conversion                           |
 | `JsonParseError`                    | Invalid JSON string                                |
+| `RecursionLimitError`               | Maximum recursion depth exceeded                   |
 | `CustomError`                       | Explicitly raised via `error.throw`                |
 
 ---
@@ -206,6 +215,7 @@ Supporting infrastructure used across compiler stages:
 - **`Stack`** - a generic LIFO data structure.
 - **`FileReader`** - reads source files from disk (CLI only).
 - **`Console`** - wraps platform console with colored output helpers (`warning()`, `error()`).
+- **`LineEditor`** - a terminal line editor with command history navigation (up/down arrow keys, cursor movement). Used by the REPL.
 - **`Mapper`** - converts a `List<FunctionTerm>` into a `Map<String, FunctionTerm>` keyed by function name.
 - **String extensions** - character classification methods (`isDigit`, `isLetter`, `isWhitespace`, `isOperator`, `isDelimiter`, etc.) used extensively by the reader and lexer.
 

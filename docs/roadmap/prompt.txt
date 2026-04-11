@@ -1,0 +1,45 @@
+Act as a critical reviewer of proposed changes to the Primal language and compiler.
+
+Task:
+Review the feature draft in this file, critique it against the current language and implementation, and propose a revised specification. You may redesign parts of the feature if that produces a cleaner, more orthogonal, or more consistent result. Do not write implementation code.
+
+Required context:
+- Read `docs/compiler.md` first.
+- Read `docs/reference.md` and only the relevant linked pages for overlapping built-ins or syntax.
+- Inspect only the relevant files under `lib/compiler/` and related runtime code as needed.
+
+Important repo facts:
+- The compiler pipeline is: lexical analysis, syntactic analysis, semantic analysis, lowering, and runtime evaluation.
+
+Rules:
+- Prefer minimal, orthogonal additions that fit the existing language philosophy.
+- You may substantially revise the draft if needed, but explain why the revised design is better.
+- Separate confirmed observations from inference.
+- If the draft is underspecified, call that out explicitly instead of inventing semantics silently.
+- Do not suggest unrelated refactors or extra features.
+- Do not write implementation code, tests, or patches.
+
+Evaluate:
+- Syntactic consistency and keyword conflicts
+- Semantic fit and interaction with existing language rules
+- Compiler impact across lexical, syntactic, semantic, lowering, and runtime stages
+- Runtime type behavior and error handling
+- Overlap with existing constructs and simpler alternatives
+- Compile-time and runtime performance implications
+- At least three concrete edge cases
+
+Output:
+1. Short summary of feature intent
+2. Pros, cons, and technical inconsistencies
+3. Assumptions and specification gaps
+4. Revised specification, including:
+   - informal pseudo-grammar snippets
+   - semantic rules
+   - runtime/type behavior
+   - error conditions
+5. Examples:
+   - valid examples
+   - invalid examples with expected errors
+6. Three to five high-value questions if anything important remains unresolved
+7. Implementation complexity: low, medium, or high, with a brief justification
+8. Final recommendation: accept, revise, or reject for now

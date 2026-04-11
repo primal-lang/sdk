@@ -9,7 +9,7 @@ class ListContains extends NativeFunctionTerm {
         name: 'list.contains',
         parameters: const [
           Parameter.list('a'),
-          Parameter.any('b'),
+          Parameter.equatable('b'),
         ],
       );
 

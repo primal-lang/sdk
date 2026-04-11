@@ -1,6 +1,9 @@
 class Type {
   const Type();
 
+  /// Returns true if this type specification accepts the given actual type.
+  bool accepts(Type actualType) => this == actualType;
+
   @override
   bool operator ==(Object other) => runtimeType == other.runtimeType;
 
@@ -110,5 +113,148 @@ class AnyType extends Type {
   const AnyType();
 
   @override
+  bool accepts(Type actualType) => true;
+
+  @override
   String toString() => 'Any';
+}
+
+// Type Classes
+
+abstract class TypeClass extends Type {
+  const TypeClass();
+
+  List<Type> get memberTypes;
+
+  @override
+  bool accepts(Type actualType) =>
+      memberTypes.any((Type type) => type == actualType);
+}
+
+class OrderedType extends TypeClass {
+  const OrderedType();
+
+  @override
+  List<Type> get memberTypes => const [
+    NumberType(),
+    StringType(),
+    TimestampType(),
+  ];
+
+  @override
+  String toString() => 'Ordered';
+}
+
+class EquatableType extends TypeClass {
+  const EquatableType();
+
+  @override
+  List<Type> get memberTypes => const [
+    BooleanType(),
+    NumberType(),
+    StringType(),
+    FileType(),
+    DirectoryType(),
+    TimestampType(),
+    VectorType(),
+    StackType(),
+    QueueType(),
+    SetType(),
+    ListType(),
+    MapType(),
+  ];
+
+  @override
+  String toString() => 'Equatable';
+}
+
+class HashableType extends TypeClass {
+  const HashableType();
+
+  @override
+  List<Type> get memberTypes => const [
+    NumberType(),
+    StringType(),
+    BooleanType(),
+    TimestampType(),
+  ];
+
+  @override
+  String toString() => 'Hashable';
+}
+
+class IndexableType extends TypeClass {
+  const IndexableType();
+
+  @override
+  List<Type> get memberTypes => const [
+    StringType(),
+    ListType(),
+    MapType(),
+  ];
+
+  @override
+  String toString() => 'Indexable';
+}
+
+class CollectionType extends TypeClass {
+  const CollectionType();
+
+  @override
+  List<Type> get memberTypes => const [
+    ListType(),
+    SetType(),
+    StackType(),
+    QueueType(),
+    MapType(),
+  ];
+
+  @override
+  String toString() => 'Collection';
+}
+
+class IterableType extends TypeClass {
+  const IterableType();
+
+  @override
+  List<Type> get memberTypes => const [
+    StringType(),
+    ListType(),
+    SetType(),
+    StackType(),
+    QueueType(),
+  ];
+
+  @override
+  String toString() => 'Iterable';
+}
+
+class AddableType extends TypeClass {
+  const AddableType();
+
+  @override
+  List<Type> get memberTypes => const [
+    NumberType(),
+    StringType(),
+    VectorType(),
+    ListType(),
+    SetType(),
+  ];
+
+  @override
+  String toString() => 'Addable';
+}
+
+class SubtractableType extends TypeClass {
+  const SubtractableType();
+
+  @override
+  List<Type> get memberTypes => const [
+    NumberType(),
+    VectorType(),
+    SetType(),
+  ];
+
+  @override
+  String toString() => 'Subtractable';
 }

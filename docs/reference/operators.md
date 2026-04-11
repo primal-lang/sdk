@@ -5,8 +5,21 @@
 ### Equality
 
 - **Symbol:** `==`
-- **Input:** Two arguments of any type
+- **Input:** Two arguments of equatable type
 - **Output:** True if equal, false otherwise
+- **Supported combinations:**
+  - `Boolean == Boolean`
+  - `Number == Number`
+  - `String == String`
+  - `Timestamp == Timestamp`
+  - `File == File` (compares absolute paths)
+  - `Directory == Directory` (compares absolute paths)
+  - `List == List` (element-wise)
+  - `Vector == Vector` (element-wise)
+  - `Stack == Stack` (element-wise)
+  - `Queue == Queue` (element-wise)
+  - `Set == Set`
+  - `Map == Map` (key-wise and value-wise)
 - **Purity:** Pure
 - **Example:**
 
@@ -17,8 +30,21 @@
 ### Inequality
 
 - **Symbol:** `!=`
-- **Input:** Two arguments of any type
+- **Input:** Two arguments of equatable type
 - **Output:** True if not equal, false otherwise
+- **Supported combinations:**
+  - `Boolean != Boolean`
+  - `Number != Number`
+  - `String != String`
+  - `Timestamp != Timestamp`
+  - `File != File` (compares absolute paths)
+  - `Directory != Directory` (compares absolute paths)
+  - `List != List` (element-wise)
+  - `Vector != Vector` (element-wise)
+  - `Stack != Stack` (element-wise)
+  - `Queue != Queue` (element-wise)
+  - `Set != Set`
+  - `Map != Map` (key-wise and value-wise)
 - **Purity:** Pure
 - **Example:**
 
@@ -29,8 +55,12 @@
 ### Greater Than
 
 - **Symbol:** `>`
-- **Input:** Two numbers
-- **Output:** True if first number exceeds the second, false otherwise
+- **Input:** Two arguments of the same type
+- **Output:** True if first argument exceeds the second, false otherwise
+- **Supported combinations:**
+  - `Number > Number`
+  - `String > String` (lexicographic)
+  - `Timestamp > Timestamp`
 - **Purity:** Pure
 - **Example:**
 
@@ -41,8 +71,12 @@
 ### Less Than
 
 - **Symbol:** `<`
-- **Input:** Two numbers
-- **Output:** True if first number is less than second, false otherwise
+- **Input:** Two arguments of the same type
+- **Output:** True if first argument is less than second, false otherwise
+- **Supported combinations:**
+  - `Number < Number`
+  - `String < String` (lexicographic)
+  - `Timestamp < Timestamp`
 - **Purity:** Pure
 - **Example:**
 
@@ -53,8 +87,12 @@
 ### Greater Than or Equal
 
 - **Symbol:** `>=`
-- **Input:** Two numbers
-- **Output:** True if first number is greater than or equal to second, false otherwise
+- **Input:** Two arguments of the same type
+- **Output:** True if first argument is greater than or equal to second, false otherwise
+- **Supported combinations:**
+  - `Number >= Number`
+  - `String >= String` (lexicographic)
+  - `Timestamp >= Timestamp`
 - **Purity:** Pure
 - **Example:**
 
@@ -65,8 +103,12 @@
 ### Less Than or Equal
 
 - **Symbol:** `<=`
-- **Input:** Two numbers
-- **Output:** True if first number is less than or equal to second, false otherwise
+- **Input:** Two arguments of the same type
+- **Output:** True if first argument is less than or equal to second, false otherwise
+- **Supported combinations:**
+  - `Number <= Number`
+  - `String <= String` (lexicographic)
+  - `Timestamp <= Timestamp`
 - **Purity:** Pure
 - **Example:**
 
@@ -79,8 +121,8 @@
 ### Addition
 
 - **Symbol:** `+`
-- **Input:** Two numbers
-- **Output:** The sum of the numbers
+- **Input:** Two arguments of addable type
+- **Output:** The combined result
 - **Supported combinations:**
   - `Number + Number`
   - `String + String`
@@ -101,8 +143,8 @@
 ### Subtraction
 
 - **Symbol:** `-`
-- **Input:** Two numbers
-- **Output:** The difference of the numbers
+- **Input:** Two arguments of subtractable type
+- **Output:** The result of the subtraction
 - **Supported combinations:**
   - `Number - Number`
   - `Vector - Vector`
@@ -113,18 +155,6 @@
 
 ```
 10 - 3 // returns 7
-```
-
-### Negation
-
-- **Symbol:** `-`
-- **Input:** One number
-- **Output:** The negated number
-- **Purity:** Pure
-- **Example:**
-
-```
--5 // returns -5
 ```
 
 ### Multiplication
@@ -144,6 +174,7 @@
 - **Symbol:** `/`
 - **Input:** Two numbers
 - **Output:** The quotient
+- **Errors:** Throws `DivisionByZeroError` if the divisor is zero
 - **Purity:** Pure
 - **Example:**
 
@@ -156,6 +187,7 @@
 - **Symbol:** `%`
 - **Input:** Two numbers
 - **Output:** The remainder of division
+- **Errors:** Throws `DivisionByZeroError` if the divisor is zero
 - **Purity:** Pure
 - **Example:**
 
@@ -165,62 +197,73 @@
 
 ## Logical Operators
 
-### And
+### And (Short-Circuit)
+
+- **Symbols:** `&&`, `and`
+- **Input:** Two boolean arguments
+- **Output:** True only if both arguments are true, false otherwise
+- **Evaluation:** Short-circuit (lazy) - the second operand is only evaluated if the first is true
+- **Purity:** Pure
+- **Example:**
+
+```
+true && false  // returns false
+true and false // returns false
+false && error.throw(-1, "Not evaluated") // returns false (no error thrown)
+```
+
+### And (Strict)
 
 - **Symbol:** `&`
 - **Input:** Two boolean arguments
 - **Output:** True only if both arguments are true, false otherwise
+- **Evaluation:** Strict (eager) - both operands are always evaluated
 - **Purity:** Pure
 - **Example:**
 
 ```
 true & false // returns false
+false & true // returns false (both operands evaluated)
 ```
 
-### Or
+### Or (Short-Circuit)
 
-- **Symbol:** `|`
+- **Symbols:** `||`, `or`
 - **Input:** Two boolean arguments
 - **Output:** True if at least one argument is true, false otherwise
+- **Evaluation:** Short-circuit (lazy) - the second operand is only evaluated if the first is false
 - **Purity:** Pure
 - **Example:**
 
 ```
-true | false // returns true
+true || false  // returns true
+true or false  // returns true
+true || error.throw(-1, "Not evaluated") // returns true (no error thrown)
+```
+
+### Or (Strict)
+
+- **Symbol:** `|`
+- **Input:** Two boolean arguments
+- **Output:** True if at least one argument is true, false otherwise
+- **Evaluation:** Strict (eager) - both operands are always evaluated
+- **Purity:** Pure
+- **Example:**
+
+```
+true | false  // returns true
+false | true  // returns true (both operands evaluated)
 ```
 
 ### Not
 
-- **Symbol:** `!`
+- **Symbols:** `!`, `not`
 - **Input:** One boolean argument
 - **Output:** True if argument is false; false if argument is true
 - **Purity:** Pure
 - **Example:**
 
 ```
-!true // returns false
-```
-
-## Access Operators
-
-### Element At
-
-- **Symbol:** `@`
-- **Input:** A collection and an index/key
-- **Output:** The element at the specified position or key
-- **Supported combinations:**
-  - `List @ Number` (element at index)
-  - `String @ Number` (character at index)
-  - `Map @ Key` (value for key)
-- **Errors:**
-  - Throws if index is negative
-  - Throws if index is out of bounds
-  - Throws if key is not found in map
-- **Purity:** Pure
-- **Example:**
-
-```
-[1, 2, 3] @ 0      // returns 1
-"hello" @ 1        // returns "e"
-{"a": 1, "b": 2} @ "a"  // returns 1
+!true    // returns false
+not true // returns false
 ```

@@ -20,3 +20,8 @@ class ExpectedTokenError extends SyntacticError {
 class UnexpectedEndOfFileError extends SyntacticError {
   const UnexpectedEndOfFileError() : super('Unexpected end of file');
 }
+
+class UnexpectedTokenError extends SyntacticError {
+  const UnexpectedTokenError(Token token)
+    : super('Unexpected token $token after expression');
+}

@@ -4,8 +4,8 @@
 
 ### Equal
 
-- **Signature:** `comp.eq(a: Any, b: Any): Boolean`
-- **Input:** Two arguments of any type
+- **Signature:** `comp.eq(a: Equatable, b: Equatable): Boolean`
+- **Input:** Two arguments of equatable type
 - **Output:** True if the two arguments are equal, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -16,8 +16,8 @@ comp.eq(5, 5) // returns true
 
 ### Not Equal
 
-- **Signature:** `comp.neq(a: Any, b: Any): Boolean`
-- **Input:** Two arguments of any type
+- **Signature:** `comp.neq(a: Equatable, b: Equatable): Boolean`
+- **Input:** Two arguments of equatable type
 - **Output:** True if the two arguments are not equal, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -28,8 +28,8 @@ comp.neq(5, 3) // returns true
 
 ### Greater Than
 
-- **Signature:** `comp.gt(a: Any, b: Any): Boolean`
-- **Input:** Two arguments of any type
+- **Signature:** `comp.gt(a: Ordered, b: Ordered): Boolean`
+- **Input:** Two arguments of ordered type
 - **Output:** True if the first argument is greater than the second, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -40,8 +40,8 @@ comp.gt(5, 3) // returns true
 
 ### Less Than
 
-- **Signature:** `comp.lt(a: Any, b: Any): Boolean`
-- **Input:** Two arguments of any type
+- **Signature:** `comp.lt(a: Ordered, b: Ordered): Boolean`
+- **Input:** Two arguments of ordered type
 - **Output:** True if the first argument is less than the second, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -52,8 +52,8 @@ comp.lt(3, 5) // returns true
 
 ### Greater Than or Equal
 
-- **Signature:** `comp.ge(a: Any, b: Any): Boolean`
-- **Input:** Two arguments of any type
+- **Signature:** `comp.ge(a: Ordered, b: Ordered): Boolean`
+- **Input:** Two arguments of ordered type
 - **Output:** True if the first argument is greater than or equal to the second, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -64,8 +64,8 @@ comp.ge(5, 5) // returns true
 
 ### Less Than or Equal
 
-- **Signature:** `comp.le(a: Any, b: Any): Boolean`
-- **Input:** Two arguments of any type
+- **Signature:** `comp.le(a: Ordered, b: Ordered): Boolean`
+- **Input:** Two arguments of ordered type
 - **Output:** True if the first argument is less than or equal to the second, false otherwise
 - **Purity:** Pure
 - **Example:**

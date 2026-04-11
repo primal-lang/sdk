@@ -68,6 +68,12 @@ extension StringExtensions on String {
 
   bool get isElse => this == 'else';
 
+  bool get isAnd => this == 'and';
+
+  bool get isOr => this == 'or';
+
+  bool get isNot => this == 'not';
+
   bool get isOperandDelimiter =>
       isWhitespace ||
       isBinaryOperator ||

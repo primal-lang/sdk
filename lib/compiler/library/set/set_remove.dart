@@ -9,7 +9,7 @@ class SetRemove extends NativeFunctionTerm {
         name: 'set.remove',
         parameters: const [
           Parameter.set('a'),
-          Parameter.any('b'),
+          Parameter.hashable('b'),
         ],
       );
 

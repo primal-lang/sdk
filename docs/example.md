@@ -6,9 +6,7 @@ This document walks through the complete compilation and evaluation of a Primal 
 
 ```primal
 square(n) = n * n
-
 max(a, b) = if (a >= b) a else b
-
 main = max(square(3), square(4))
 ```
 
@@ -62,9 +60,7 @@ The SourceReader is the first stage of the pipeline. It converts a raw input str
 
 ```
 square(n) = n * n
-
 max(a, b) = if (a >= b) a else b
-
 main = max(square(3), square(4))
 ```
 
@@ -74,7 +70,7 @@ The input is scanned for `\r\n` (Windows) and `\r` (old Mac) line endings, which
 
 #### Step 2: Split into Rows
 
-The normalized string is split by `\n`:
+The normalized string is split by `\n`. If the last element is empty (from a trailing newline), it is removed to avoid generating a spurious empty row:
 
 | Row Index | Content                            |
 | --------- | ---------------------------------- |
@@ -211,6 +207,7 @@ The output preserves every character from the source (including whitespace and n
 2. **Newline injection**: A `\n` is appended after every row, ensuring consistent line boundaries.
 3. **Whitespace preserved**: Spaces are kept as separate `Character` objects—they will be skipped by the lexer.
 4. **Grapheme-aware**: The reader uses `package:characters` to handle multi-codepoint characters correctly (e.g., emoji would be treated as single characters).
+5. **Shebang skipping**: If the first row starts with `#!`, it is skipped entirely. This allows Primal scripts to use Unix shebang lines (e.g., `#!/usr/bin/env primal`) without affecting compilation.
 
 ---
 
@@ -364,7 +361,7 @@ The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
 | Output type           | `List<Token>`            |
 | Input length          | 84 characters            |
 | Output length         | 38 tokens                |
-| Whitespace characters | 46 (skipped)             |
+| Whitespace characters | 19 (skipped)             |
 | Identifiers           | 15                       |
 | Keywords              | 2 (`if`, `else`)         |
 | Numbers               | 2 (`3`, `4`)             |
@@ -373,7 +370,7 @@ The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
 
 ### Key Observations
 
-1. **Whitespace elimination**: All 46 whitespace characters (spaces and newlines) are discarded—they served only to delimit tokens.
+1. **Whitespace elimination**: All 19 whitespace characters (16 spaces and 3 newlines) are discarded—they served only to delimit tokens.
 
 2. **Keyword detection at boundary**: `if` and `else` are recognized as keywords only when the complete lexeme is checked. The lexer accumulates characters in `IdentifierState` and calls `_identifierOrKeywordToken()` at the delimiter.
 
@@ -777,7 +774,7 @@ SemanticFunction(
   name: "max",
   parameters: [Parameter("a"), Parameter("b")],
   body: SemanticCallNode [2, 13]
-    ├─ callee: SemanticIdentifierNode("if", signature=if(c, t, f))
+    ├─ callee: SemanticIdentifierNode("if", signature=if(a, b, c))
     └─ arguments:
        ├─ SemanticCallNode [2, 19]
        │  ├─ callee: SemanticIdentifierNode(">=", signature=>=(a, b))
@@ -964,7 +961,7 @@ SemanticFunction(
 CustomFunctionTerm(
   name: "square",
   parameters: [Parameter("n")],
-  node: CallTerm(
+  term: CallTerm(
     callee: FunctionReferenceTerm("*", functions),
     arguments: [
       BoundVariableTerm("n"),
@@ -983,7 +980,7 @@ SemanticFunction(
   name: "max",
   parameters: [Parameter("a"), Parameter("b")],
   body: SemanticCallNode [2, 13]
-    ├─ callee: SemanticIdentifierNode("if", signature=if(c, t, f))
+    ├─ callee: SemanticIdentifierNode("if", signature=if(a, b, c))
     └─ arguments:
        ├─ SemanticCallNode [2, 19]
        │  ├─ callee: SemanticIdentifierNode(">=", signature=>=(a, b))
@@ -1018,7 +1015,7 @@ SemanticFunction(
 CustomFunctionTerm(
   name: "max",
   parameters: [Parameter("a"), Parameter("b")],
-  node: CallTerm(
+  term: CallTerm(
     callee: FunctionReferenceTerm("if", functions),
     arguments: [
       CallTerm(                              // condition
@@ -1081,7 +1078,7 @@ SemanticFunction(
 CustomFunctionTerm(
   name: "main",
   parameters: [],
-  node: CallTerm(
+  term: CallTerm(
     callee: FunctionReferenceTerm("max", functions),
     arguments: [
       CallTerm(
@@ -1107,17 +1104,17 @@ The `Lowerer` produces a `Map<String, FunctionTerm>` combining custom and standa
   "square": CustomFunctionTerm(
     name: "square",
     parameters: [Parameter("n")],
-    node: CallTerm(FunctionReferenceTerm("*"), [BoundVariableTerm("n"), BoundVariableTerm("n")])
+    term: CallTerm(FunctionReferenceTerm("*"), [BoundVariableTerm("n"), BoundVariableTerm("n")])
   ),
   "max": CustomFunctionTerm(
     name: "max",
     parameters: [Parameter("a"), Parameter("b")],
-    node: CallTerm(FunctionReferenceTerm("if"), [CallTerm(...), BoundVariableTerm("a"), BoundVariableTerm("b")])
+    term: CallTerm(FunctionReferenceTerm("if"), [CallTerm(...), BoundVariableTerm("a"), BoundVariableTerm("b")])
   ),
   "main": CustomFunctionTerm(
     name: "main",
     parameters: [],
-    node: CallTerm(FunctionReferenceTerm("max"), [CallTerm(...), CallTerm(...)])
+    term: CallTerm(FunctionReferenceTerm("max"), [CallTerm(...), CallTerm(...)])
   ),
 
   // Standard library functions (from StandardLibrary.get())
@@ -1136,7 +1133,7 @@ Source locations are stripped; the tree shows only runtime structure.
 square(n) = n * n
 ─────────────────
       CustomFunctionTerm("square")
-      └─ node: CallTerm
+      └─ term: CallTerm
          ├─ callee: FunctionReferenceTerm("*") → functions map
          └─ arguments:
             ├─ BoundVariableTerm("n")
@@ -1145,7 +1142,7 @@ square(n) = n * n
 max(a, b) = if (a >= b) a else b
 ────────────────────────────────
       CustomFunctionTerm("max")
-      └─ node: CallTerm
+      └─ term: CallTerm
          ├─ callee: FunctionReferenceTerm("if") → functions map
          └─ arguments:
             ├─ CallTerm                    ← condition
@@ -1159,7 +1156,7 @@ max(a, b) = if (a >= b) a else b
 main = max(square(3), square(4))
 ────────────────────────────────
       CustomFunctionTerm("main")
-      └─ node: CallTerm
+      └─ term: CallTerm
          ├─ callee: FunctionReferenceTerm("max") → functions map
          └─ arguments:
             ├─ CallTerm

@@ -7,7 +7,7 @@ class QueueIsEmpty extends NativeFunctionTerm {
     : super(
         name: 'queue.isEmpty',
         parameters: const [
-          Parameter.stack('a'),
+          Parameter.queue('a'),
         ],
       );
 

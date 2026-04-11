@@ -65,13 +65,13 @@ to.boolean(1) // returns true
 ### To List
 
 - **Signature:** `to.list(a: Any): List`
-- **Input:** One argument of any type
+- **Input:** One set, vector, stack, or queue
 - **Output:** The argument converted to a list
 - **Purity:** Pure
 - **Example:**
 
 ```
-to.list("abc") // returns ["a", "b", "c"]
+to.list(set.new([1, 2, 3])) // returns [1, 2, 3]
 ```
 
 ## Type Checking Functions

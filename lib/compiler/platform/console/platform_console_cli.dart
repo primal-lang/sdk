@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:primal/compiler/platform/console/platform_console_base.dart';
+import 'package:primal/utils/console.dart';
+import 'package:primal/utils/line_editor.dart';
 
 class PlatformConsoleCli extends PlatformConsoleBase {
+  final LineEditor _lineEditor = LineEditor(prompt: Console.inputPrompt);
   @override
   void outWrite(String content) => stdout.write(content);
 
@@ -15,5 +18,5 @@ class PlatformConsoleCli extends PlatformConsoleBase {
   void errorWriteLn(String content) => stderr.writeln(content);
 
   @override
-  String readLine() => stdin.readLineSync()?.trim() ?? '';
+  String readLine() => _lineEditor.readLine();
 }

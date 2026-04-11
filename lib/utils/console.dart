@@ -4,6 +4,7 @@ import 'package:primal/compiler/platform/console/platform_console_base.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 
 class Console {
+  static const String inputPrompt = '> ';
   static const String reset = '\x1b[0m';
   static const String red = '\x1b[31m';
   static const yellow = '\x1b[93m';
@@ -21,7 +22,7 @@ class Console {
 
   void promptOnce(void Function(String) handler) {
     try {
-      _platformConsole.outWrite('> ');
+      _platformConsole.outWrite(inputPrompt);
       final String input = _platformConsole.readLine();
 
       if (input.isNotEmpty) {
@@ -31,6 +32,8 @@ class Console {
       error(e);
     }
   }
+
+  void write(String message) => _platformConsole.outWrite(message);
 
   void print(String message) => _platformConsole.outWriteLn(message);
 

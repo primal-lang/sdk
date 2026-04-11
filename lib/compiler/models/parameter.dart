@@ -48,6 +48,30 @@ class Parameter {
 
   const Parameter.any(String name) : this._(name: name, type: const AnyType());
 
+  const Parameter.ordered(String name)
+    : this._(name: name, type: const OrderedType());
+
+  const Parameter.equatable(String name)
+    : this._(name: name, type: const EquatableType());
+
+  const Parameter.hashable(String name)
+    : this._(name: name, type: const HashableType());
+
+  const Parameter.indexable(String name)
+    : this._(name: name, type: const IndexableType());
+
+  const Parameter.collection(String name)
+    : this._(name: name, type: const CollectionType());
+
+  const Parameter.iterable(String name)
+    : this._(name: name, type: const IterableType());
+
+  const Parameter.addable(String name)
+    : this._(name: name, type: const AddableType());
+
+  const Parameter.subtractable(String name)
+    : this._(name: name, type: const SubtractableType());
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

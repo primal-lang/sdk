@@ -1,22 +1,22 @@
-### Javascript
+# Javascript
 
 ```javascript
 const factorial = (n) => (n == 0 ? 1 : n * factorial(n - 1));
 ```
 
-### Dart
+# Dart
 
 ```dart
 factorial(n) => n == 0 ? 1 : n * factorial(n - 1);
 ```
 
-### Python
+# Python
 
 ```python
 def factorial(n): return 1 if n == 0 else n * factorial(n-1)
 ```
 
-### Ruby
+# Ruby
 
 ```ruby
 def factorial(n)
@@ -25,10 +25,18 @@ def factorial(n)
 end
 ```
 
-### Lua
+# Lua
 
 ```lua
 function factorial(n)
     return n == 0 and 1 or n * factorial(n - 1)
 end
 ```
+
+# CLI
+
+```bash
+primal --compile=javascript script.prm
+```
+
+Update the CLI help to include the new flags for the supported languages.

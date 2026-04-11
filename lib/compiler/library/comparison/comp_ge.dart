@@ -7,8 +7,8 @@ class CompGe extends NativeFunctionTerm {
     : super(
         name: 'comp.ge',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.ordered('a'),
+          Parameter.ordered('b'),
         ],
       );
 

@@ -33,8 +33,8 @@ void main() {
     test('has errorType "Compilation error"', () {
       const error = CompilationError('bad syntax');
 
-      expect(error.errorType, equals('Compilation error'));
-      expect(error.toString(), equals('Compilation error: bad syntax'));
+      expect(error.errorType, equals('Error'));
+      expect(error.toString(), equals('Error: bad syntax'));
     });
   });
 
@@ -51,6 +51,15 @@ void main() {
   // Lexical errors
   // ---------------------------------------------------------------------------
 
+  group('LexicalError', () {
+    test('has errorType "Error"', () {
+      const LexicalError error = LexicalError('lexical problem');
+
+      expect(error.errorType, equals('Error'));
+      expect(error.toString(), equals('Error: lexical problem'));
+    });
+  });
+
   group('InvalidCharacterError', () {
     test('without expected', () {
       const character = Character(
@@ -61,7 +70,7 @@ void main() {
 
       expect(
         error.toString(),
-        equals('Compilation error: Invalid character "@" at [1, 5]'),
+        equals('Error: Invalid character "@" at [1, 5]'),
       );
     });
 
@@ -75,7 +84,145 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid character "!" at [2, 3]. Expected: =',
+          'Error: Invalid character "!" at [2, 3]. Expected: =',
+        ),
+      );
+    });
+  });
+
+  group('UnterminatedStringError', () {
+    test('toString() includes the starting location', () {
+      const Location location = Location(row: 5, column: 10);
+      final UnterminatedStringError error = UnterminatedStringError(location);
+
+      expect(
+        error.toString(),
+        equals('Error: Unterminated string starting at [5, 10]'),
+      );
+    });
+  });
+
+  group('UnterminatedCommentError', () {
+    test('toString() reports unterminated comment', () {
+      const UnterminatedCommentError error = UnterminatedCommentError();
+
+      expect(
+        error.toString(),
+        equals('Error: Unterminated multi-line comment'),
+      );
+    });
+  });
+
+  group('InvalidEscapeSequenceError', () {
+    test('toString() includes the escape character and location', () {
+      const Character character = Character(
+        value: 'q',
+        location: Location(row: 3, column: 8),
+      );
+      final InvalidEscapeSequenceError error = InvalidEscapeSequenceError(
+        character,
+      );
+
+      expect(
+        error.toString(),
+        equals("Error: Invalid escape sequence '\\q' at [3, 8]"),
+      );
+    });
+  });
+
+  group('InvalidHexEscapeError', () {
+    test('toString() includes escape type, expected digits, and actual', () {
+      const Character character = Character(
+        value: 'g',
+        location: Location(row: 2, column: 5),
+      );
+      final InvalidHexEscapeError error = InvalidHexEscapeError(
+        character,
+        'x',
+        2,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          "Error: Invalid hex escape: expected 2 hex digits after '\\x', got 'g' at [2, 5]",
+        ),
+      );
+    });
+
+    test('toString() for unicode escape with 4 digits', () {
+      const Character character = Character(
+        value: 'z',
+        location: Location(row: 1, column: 10),
+      );
+      final InvalidHexEscapeError error = InvalidHexEscapeError(
+        character,
+        'u',
+        4,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          "Error: Invalid hex escape: expected 4 hex digits after '\\u', got 'z' at [1, 10]",
+        ),
+      );
+    });
+  });
+
+  group('InvalidBracedEscapeError', () {
+    test('toString() includes the message and location', () {
+      final InvalidBracedEscapeError error = InvalidBracedEscapeError(
+        'Missing closing brace',
+        const Location(row: 4, column: 12),
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Missing closing brace at [4, 12]'),
+      );
+    });
+  });
+
+  group('InvalidCodePointError', () {
+    test('toString() includes the code point in hex and location', () {
+      final InvalidCodePointError error = InvalidCodePointError(
+        0x110000,
+        const Location(row: 1, column: 5),
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Invalid code point U+110000: exceeds maximum U+10FFFF at [1, 5]',
+        ),
+      );
+    });
+
+    test('toString() pads small code points to 4 digits', () {
+      final InvalidCodePointError error = InvalidCodePointError(
+        0x1FFFFF,
+        const Location(row: 2, column: 3),
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Invalid code point U+1FFFFF: exceeds maximum U+10FFFF at [2, 3]',
+        ),
+      );
+    });
+
+    test('toString() formats 6-digit code point correctly', () {
+      final InvalidCodePointError error = InvalidCodePointError(
+        0x1100FF,
+        const Location(row: 1, column: 1),
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Invalid code point U+1100FF: exceeds maximum U+10FFFF at [1, 1]',
         ),
       );
     });
@@ -85,6 +232,15 @@ void main() {
   // Syntactic errors
   // ---------------------------------------------------------------------------
 
+  group('SyntacticError', () {
+    test('has errorType "Error"', () {
+      const SyntacticError error = SyntacticError('syntactic problem');
+
+      expect(error.errorType, equals('Error'));
+      expect(error.toString(), equals('Error: syntactic problem'));
+    });
+  });
+
   group('InvalidTokenError', () {
     test('without expected', () {
       final IdentifierToken token = identifierToken('foo', 1, 1);
@@ -92,7 +248,7 @@ void main() {
 
       expect(
         error.toString(),
-        equals('Compilation error: Invalid token "foo" at [1, 1]'),
+        equals('Error: Invalid token "foo" at [1, 1]'),
       );
     });
 
@@ -103,7 +259,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid token "bar" at [3, 7]. Expected: )',
+          'Error: Invalid token "bar" at [3, 7]. Expected: )',
         ),
       );
     });
@@ -117,7 +273,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid token "42" at [5, 10]. Expected: (',
+          'Error: Invalid token "42" at [5, 10]. Expected: (',
         ),
       );
     });
@@ -129,7 +285,19 @@ void main() {
 
       expect(
         error.toString(),
-        equals('Compilation error: Unexpected end of file'),
+        equals('Error: Unexpected end of file'),
+      );
+    });
+  });
+
+  group('UnexpectedTokenError', () {
+    test('toString() includes the token', () {
+      final IdentifierToken token = identifierToken('extra', 5, 15);
+      final UnexpectedTokenError error = UnexpectedTokenError(token);
+
+      expect(
+        error.toString(),
+        equals('Error: Unexpected token "extra" at [5, 15] after expression'),
       );
     });
   });
@@ -137,6 +305,15 @@ void main() {
   // ---------------------------------------------------------------------------
   // Semantic errors
   // ---------------------------------------------------------------------------
+
+  group('SemanticError', () {
+    test('has errorType "Error"', () {
+      const SemanticError error = SemanticError('semantic problem');
+
+      expect(error.errorType, equals('Error'));
+      expect(error.toString(), equals('Error: semantic problem'));
+    });
+  });
 
   group('DuplicatedFunctionError', () {
     test('toString() lists both parameter sets', () {
@@ -156,7 +333,51 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Duplicated function "add" with parameters (x, y) and (a, b)',
+          'Error: Duplicated function "add" with parameters (x, y) and (a, b)',
+        ),
+      );
+    });
+
+    test('toString() with empty parameter lists', () {
+      const FunctionSignature function1 = FunctionSignature(
+        name: 'getValue',
+        parameters: [],
+      );
+      const FunctionSignature function2 = FunctionSignature(
+        name: 'getValue',
+        parameters: [],
+      );
+      final DuplicatedFunctionError error = DuplicatedFunctionError(
+        function1: function1,
+        function2: function2,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Duplicated function "getValue" with parameters () and ()',
+        ),
+      );
+    });
+
+    test('toString() with single parameter in each function', () {
+      const FunctionSignature function1 = FunctionSignature(
+        name: 'negate',
+        parameters: [Parameter.number('x')],
+      );
+      const FunctionSignature function2 = FunctionSignature(
+        name: 'negate',
+        parameters: [Parameter.number('value')],
+      );
+      final DuplicatedFunctionError error = DuplicatedFunctionError(
+        function1: function1,
+        function2: function2,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Duplicated function "negate" with parameters (x) and (value)',
         ),
       );
     });
@@ -173,7 +394,22 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Duplicated parameter "x" in function "add(x, x)"',
+          'Error: Duplicated parameter "x" in function "add(x, x)"',
+        ),
+      );
+    });
+
+    test('toString() with multiple parameters including duplicate', () {
+      final DuplicatedParameterError error = DuplicatedParameterError(
+        function: 'process',
+        parameter: 'value',
+        parameters: ['input', 'value', 'output', 'value'],
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Duplicated parameter "value" in function "process(input, value, output, value)"',
         ),
       );
     });
@@ -181,7 +417,7 @@ void main() {
 
   group('UndefinedIdentifierError', () {
     test('toString() includes identifier name and function context', () {
-      const error = UndefinedIdentifierError(
+      final UndefinedIdentifierError error = UndefinedIdentifierError(
         identifier: 'myVar',
         inFunction: 'calculate',
       );
@@ -189,15 +425,26 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Undefined identifier "myVar" in function "calculate"',
+          'Error: Undefined identifier "myVar" in function "calculate"',
         ),
+      );
+    });
+
+    test('toString() omits function context when inFunction is null', () {
+      final UndefinedIdentifierError error = UndefinedIdentifierError(
+        identifier: 'myVar',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Undefined identifier "myVar"'),
       );
     });
   });
 
   group('UndefinedFunctionError', () {
     test('toString() includes function name and context', () {
-      const error = UndefinedFunctionError(
+      final UndefinedFunctionError error = UndefinedFunctionError(
         function: 'compute',
         inFunction: 'main',
       );
@@ -205,8 +452,109 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Undefined function "compute" in function "main"',
+          'Error: Undefined function "compute" in function "main"',
         ),
+      );
+    });
+
+    test('toString() omits function context when inFunction is null', () {
+      final UndefinedFunctionError error = UndefinedFunctionError(
+        function: 'compute',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Undefined function "compute"'),
+      );
+    });
+  });
+
+  group('CannotRedefineStandardLibraryError', () {
+    test('toString() includes the function name', () {
+      const CannotRedefineStandardLibraryError error =
+          CannotRedefineStandardLibraryError(function: 'print');
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot redefine standard library function "print"'),
+      );
+    });
+  });
+
+  group('CannotDeleteStandardLibraryError', () {
+    test('toString() includes the function name', () {
+      const CannotDeleteStandardLibraryError error =
+          CannotDeleteStandardLibraryError(function: 'map');
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot delete standard library function "map"'),
+      );
+    });
+  });
+
+  group('FunctionNotFoundError', () {
+    test('toString() includes the function name', () {
+      const FunctionNotFoundError error = FunctionNotFoundError(
+        function: 'missingFunc',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Function "missingFunc" not found'),
+      );
+    });
+  });
+
+  group('CannotRenameStandardLibraryError', () {
+    test('toString() includes the function name', () {
+      const CannotRenameStandardLibraryError error =
+          CannotRenameStandardLibraryError(function: 'filter');
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot rename standard library function "filter"'),
+      );
+    });
+  });
+
+  group('FunctionAlreadyExistsError', () {
+    test('toString() includes the function name', () {
+      const FunctionAlreadyExistsError error = FunctionAlreadyExistsError(
+        function: 'duplicate',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Function "duplicate" already exists'),
+      );
+    });
+  });
+
+  group('NotCallableError', () {
+    test('toString() includes value and type', () {
+      const NotCallableError error = NotCallableError(
+        value: '42',
+        type: 'Number',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot call Number literal "42"'),
+      );
+    });
+  });
+
+  group('NotIndexableError', () {
+    test('toString() includes value and type', () {
+      const NotIndexableError error = NotIndexableError(
+        value: 'true',
+        type: 'Boolean',
+      );
+
+      expect(
+        error.toString(),
+        equals('Error: Cannot index Boolean literal "true"'),
       );
     });
   });
@@ -222,7 +570,22 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Compilation error: Invalid number of arguments calling function "process": expected 2, got 3',
+          'Error: Invalid number of arguments calling function "process": expected 2, got 3',
+        ),
+      );
+    });
+
+    test('toString() with zero expected arguments', () {
+      const error = InvalidNumberOfArgumentsError(
+        function: 'noArgs',
+        expected: 0,
+        actual: 1,
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Error: Invalid number of arguments calling function "noArgs": expected 0, got 1',
         ),
       );
     });
@@ -244,6 +607,51 @@ void main() {
         error.toString(),
         equals(
           'Runtime error: Invalid argument types for function "add". Expected: (Number, Number). Actual: (String, Boolean)',
+        ),
+      );
+    });
+
+    test('toString() with single argument type', () {
+      final InvalidArgumentTypesError error = InvalidArgumentTypesError(
+        function: 'negate',
+        expected: [const NumberType()],
+        actual: [const StringType()],
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid argument types for function "negate". Expected: (Number). Actual: (String)',
+        ),
+      );
+    });
+
+    test('toString() with empty type lists', () {
+      final InvalidArgumentTypesError error = InvalidArgumentTypesError(
+        function: 'getValue',
+        expected: [],
+        actual: [],
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid argument types for function "getValue". Expected: (). Actual: ()',
+        ),
+      );
+    });
+
+    test('toString() with list and function types', () {
+      final InvalidArgumentTypesError error = InvalidArgumentTypesError(
+        function: 'map',
+        expected: [const ListType(), const FunctionType()],
+        actual: [const StringType(), const NumberType()],
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid argument types for function "map". Expected: (List, Function). Actual: (String, Number)',
         ),
       );
     });
@@ -359,6 +767,249 @@ void main() {
         equals(
           'Runtime error: Function "readFile" is not implemented on the web platform',
         ),
+      );
+    });
+  });
+
+  group('EmptyCollectionError', () {
+    test('toString() includes function and collection type', () {
+      final EmptyCollectionError error = EmptyCollectionError(
+        function: 'head',
+        collectionType: 'list',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Cannot get element from empty list in function "head"',
+        ),
+      );
+    });
+
+    test('toString() with string collection type', () {
+      final EmptyCollectionError error = EmptyCollectionError(
+        function: 'first',
+        collectionType: 'string',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Cannot get element from empty string in function "first"',
+        ),
+      );
+    });
+
+    test('toString() with map collection type', () {
+      final EmptyCollectionError error = EmptyCollectionError(
+        function: 'values',
+        collectionType: 'map',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Cannot get element from empty map in function "values"',
+        ),
+      );
+    });
+  });
+
+  group('IndexOutOfBoundsError', () {
+    test('toString() includes function, index, and length', () {
+      final IndexOutOfBoundsError error = IndexOutOfBoundsError(
+        function: 'at',
+        index: 10,
+        length: 5,
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Index 10 is out of bounds for at (length: 5)'),
+      );
+    });
+
+    test('toString() with zero length', () {
+      final IndexOutOfBoundsError error = IndexOutOfBoundsError(
+        function: 'first',
+        index: 0,
+        length: 0,
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Index 0 is out of bounds for first (length: 0)'),
+      );
+    });
+  });
+
+  group('NegativeIndexError', () {
+    test('toString() includes function and index', () {
+      final NegativeIndexError error = NegativeIndexError(
+        function: 'at',
+        index: -3,
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Negative index -3 is not allowed for at'),
+      );
+    });
+
+    test('toString() with -1 index', () {
+      final NegativeIndexError error = NegativeIndexError(
+        function: 'charAt',
+        index: -1,
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Negative index -1 is not allowed for charAt'),
+      );
+    });
+  });
+
+  group('DivisionByZeroError', () {
+    test('toString() includes the function name', () {
+      final DivisionByZeroError error = DivisionByZeroError(
+        function: 'divide',
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Division by zero is not allowed in "divide"'),
+      );
+    });
+  });
+
+  group('InvalidNumericOperationError', () {
+    test('toString() includes function and reason', () {
+      final InvalidNumericOperationError error = InvalidNumericOperationError(
+        function: 'sqrt',
+        reason: 'negative number',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid numeric operation in "sqrt": negative number',
+        ),
+      );
+    });
+  });
+
+  group('ParseError', () {
+    test('toString() includes function, input, and target type', () {
+      final ParseError error = ParseError(
+        function: 'toNumber',
+        input: 'abc',
+        targetType: 'Number',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Cannot parse "abc" as Number in "toNumber"',
+        ),
+      );
+    });
+  });
+
+  group('JsonParseError', () {
+    test('toString() includes details and input', () {
+      final JsonParseError error = JsonParseError(
+        input: '{"invalid": }',
+        details: 'Unexpected character',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Unexpected character. Input: "{"invalid": }"',
+        ),
+      );
+    });
+
+    test('toString() truncates long input to 50 characters', () {
+      final String longInput = 'a' * 100;
+      final JsonParseError error = JsonParseError(
+        input: longInput,
+        details: 'Parse failed',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Parse failed. Input: "${'a' * 50}..."',
+        ),
+      );
+    });
+
+    test('toString() does not truncate input of exactly 50 characters', () {
+      final String exactInput = 'b' * 50;
+      final JsonParseError error = JsonParseError(
+        input: exactInput,
+        details: 'Syntax error',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Syntax error. Input: "${'b' * 50}"',
+        ),
+      );
+    });
+
+    test('toString() does not truncate input of 49 characters', () {
+      final String shortInput = 'c' * 49;
+      final JsonParseError error = JsonParseError(
+        input: shortInput,
+        details: 'Unexpected end',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Unexpected end. Input: "${'c' * 49}"',
+        ),
+      );
+    });
+
+    test('toString() truncates input of 51 characters', () {
+      final String slightlyLongInput = 'd' * 51;
+      final JsonParseError error = JsonParseError(
+        input: slightlyLongInput,
+        details: 'Bad format',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid JSON: Bad format. Input: "${'d' * 50}..."',
+        ),
+      );
+    });
+
+    test('toString() with empty input', () {
+      final JsonParseError error = JsonParseError(
+        input: '',
+        details: 'Empty input',
+      );
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Invalid JSON: Empty input. Input: ""'),
+      );
+    });
+  });
+
+  group('RecursionLimitError', () {
+    test('toString() includes the limit', () {
+      final RecursionLimitError error = RecursionLimitError(limit: 1000);
+
+      expect(
+        error.toString(),
+        equals('Runtime error: Maximum recursion depth of 1000 exceeded'),
       );
     });
   });

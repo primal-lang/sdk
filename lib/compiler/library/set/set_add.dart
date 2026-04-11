@@ -8,7 +8,7 @@ class SetAdd extends NativeFunctionTerm {
         name: 'set.add',
         parameters: const [
           Parameter.set('a'),
-          Parameter.any('b'),
+          Parameter.hashable('b'),
         ],
       );
 

@@ -19,6 +19,7 @@ time.now() // returns the current timestamp
 - **Signature:** `time.fromIso(a: String): Timestamp`
 - **Input:** One ISO 8601 string
 - **Output:** A timestamp parsed from the string
+- **Constraints:** Throws an error if the string is not a valid ISO 8601 timestamp
 - **Purity:** Pure
 - **Example:**
 

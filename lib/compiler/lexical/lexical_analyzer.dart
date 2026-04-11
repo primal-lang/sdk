@@ -24,6 +24,18 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
   if (lexeme.value.isElse) {
     return ElseToken(lexeme);
   }
+  if (lexeme.value.isAnd) {
+    // Use canonical operator name '&&' for 'and' keyword (short-circuit)
+    return DoubleAmpersandToken(Lexeme(value: '&&', location: lexeme.location));
+  }
+  if (lexeme.value.isOr) {
+    // Use canonical operator name '||' for 'or' keyword (short-circuit)
+    return DoublePipeToken(Lexeme(value: '||', location: lexeme.location));
+  }
+  if (lexeme.value.isNot) {
+    // Use canonical operator name '!' for 'not' keyword
+    return BangToken(Lexeme(value: '!', location: lexeme.location));
+  }
   return IdentifierToken(lexeme);
 }
 
@@ -622,7 +634,14 @@ class PipeState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isOperatorDelimiter) {
+    if (input.value.isPipe) {
+      // Double pipe '||' produces DoublePipeToken (short-circuit)
+      return ResultState(
+        iterator,
+        DoublePipeToken(output.add(input.value)),
+      );
+    } else if (input.value.isOperatorDelimiter) {
+      // Single pipe '|' produces PipeToken (strict/eager)
       iterator.back();
       return ResultState(iterator, PipeToken(output));
     } else {
@@ -636,7 +655,14 @@ class AmpersandState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isOperatorDelimiter) {
+    if (input.value.isAmpersand) {
+      // Double ampersand '&&' produces DoubleAmpersandToken (short-circuit)
+      return ResultState(
+        iterator,
+        DoubleAmpersandToken(output.add(input.value)),
+      );
+    } else if (input.value.isOperatorDelimiter) {
+      // Single ampersand '&' produces AmpersandToken (strict/eager)
       iterator.back();
       return ResultState(iterator, AmpersandToken(output));
     } else {

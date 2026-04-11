@@ -1,0 +1,227 @@
+import 'dart:io';
+
+/// A line editor that supports command history navigation with up/down arrow keys.
+///
+/// This class handles raw terminal input to detect special keys like arrows,
+/// backspace, and enter. It maintains an in-memory command history that can be
+/// navigated using up/down keys, similar to bash terminal behavior.
+class LineEditor {
+  final String _prompt;
+  final List<String> _history = [];
+  int _historyIndex = 0;
+
+  /// Whether to flush stdout after writes. Required on Windows where stdout
+  /// may be line-buffered even in raw terminal mode. On Unix-like systems,
+  /// stdout is typically unbuffered when connected to a terminal.
+  static final bool _shouldFlush = Platform.isWindows;
+
+  LineEditor({String prompt = ''}) : _prompt = prompt;
+
+  /// Flushes stdout on Windows only to ensure characters appear immediately.
+  void _flushIfNeeded() {
+    if (_shouldFlush) {
+      stdout.flush();
+    }
+  }
+
+  /// Reads a line of input with history navigation support.
+  ///
+  /// Returns the entered line (trimmed), or empty string on EOF.
+  String readLine() {
+    if (!stdin.hasTerminal) {
+      return stdin.readLineSync()?.trim() ?? '';
+    }
+
+    // On Windows, raw terminal mode often has issues with character echo
+    // in various terminal emulators (cmd.exe, PowerShell, Git Bash, etc.).
+    // Fall back to simple line reading which handles echo natively.
+    // This sacrifices history navigation but ensures reliable input display.
+    if (Platform.isWindows) {
+      return stdin.readLineSync()?.trim() ?? '';
+    }
+
+    // On Unix-like systems, we can use raw mode for history navigation.
+    // stdin.hasTerminal may return true even when terminal mode changes fail
+    // (e.g., in certain IDEs). We attempt raw mode but fall back if needed.
+    late bool wasLineMode;
+    late bool wasEchoMode;
+    try {
+      wasLineMode = stdin.lineMode;
+      wasEchoMode = stdin.echoMode;
+      stdin.lineMode = false;
+      stdin.echoMode = false;
+    } on StdinException {
+      // Terminal mode changes not supported; fall back to simple reading
+      return stdin.readLineSync()?.trim() ?? '';
+    }
+
+    try {
+      final String line = _readLineRaw();
+
+      if (line.isNotEmpty) {
+        _history.add(line);
+      }
+      _historyIndex = _history.length;
+
+      return line;
+    } finally {
+      stdin.lineMode = wasLineMode;
+      stdin.echoMode = wasEchoMode;
+    }
+  }
+
+  String _readLineRaw() {
+    final List<int> buffer = [];
+    int cursorPosition = 0;
+    String savedInput = '';
+
+    while (true) {
+      final int byte = stdin.readByteSync();
+
+      if (byte == -1) {
+        // EOF
+        return buffer.isEmpty ? '' : String.fromCharCodes(buffer).trim();
+      }
+
+      if (byte == 10 || byte == 13) {
+        // Enter key (LF or CR)
+        stdout.writeln();
+        _flushIfNeeded();
+        return String.fromCharCodes(buffer).trim();
+      }
+
+      if (byte == 127 || byte == 8) {
+        // Backspace (127 on most terminals, 8 on some)
+        if (cursorPosition > 0) {
+          buffer.removeAt(cursorPosition - 1);
+          cursorPosition--;
+          _redrawLine(buffer, cursorPosition);
+        }
+        continue;
+      }
+
+      if (byte == 3) {
+        // Ctrl+C
+        stdout.writeln('^C');
+        exit(0);
+      }
+
+      if (byte == 4) {
+        // Ctrl+D (EOF)
+        if (buffer.isEmpty) {
+          stdout.writeln();
+          exit(0);
+        }
+        continue;
+      }
+
+      if (byte == 12) {
+        // Ctrl+L (clear screen)
+        stdout.write('\x1b[2J\x1b[H$_prompt${String.fromCharCodes(buffer)}');
+        final int moveBack = buffer.length - cursorPosition;
+        if (moveBack > 0) {
+          stdout.write('\x1b[${moveBack}D');
+        }
+        _flushIfNeeded();
+        continue;
+      }
+
+      if (byte == 27) {
+        // Escape sequence
+        final int next = stdin.readByteSync();
+        if (next == 91) {
+          // CSI sequence (ESC [)
+          final int code = stdin.readByteSync();
+          switch (code) {
+            case 65:
+              // Up arrow
+              if (_history.isEmpty) {
+                continue;
+              }
+              if (_historyIndex == _history.length) {
+                savedInput = String.fromCharCodes(buffer);
+              }
+              if (_historyIndex > 0) {
+                _historyIndex--;
+                buffer.clear();
+                buffer.addAll(_history[_historyIndex].codeUnits);
+                cursorPosition = buffer.length;
+                _redrawLine(buffer, cursorPosition);
+              }
+            case 66:
+              // Down arrow
+              if (_history.isEmpty) {
+                continue;
+              }
+              if (_historyIndex < _history.length) {
+                _historyIndex++;
+                buffer.clear();
+                if (_historyIndex == _history.length) {
+                  buffer.addAll(savedInput.codeUnits);
+                } else {
+                  buffer.addAll(_history[_historyIndex].codeUnits);
+                }
+                cursorPosition = buffer.length;
+                _redrawLine(buffer, cursorPosition);
+              }
+            case 67:
+              // Right arrow
+              if (cursorPosition < buffer.length) {
+                cursorPosition++;
+                stdout.write('\x1b[C');
+                _flushIfNeeded();
+              }
+            case 68:
+              // Left arrow
+              if (cursorPosition > 0) {
+                cursorPosition--;
+                stdout.write('\x1b[D');
+                _flushIfNeeded();
+              }
+            case 51:
+              // Possibly Delete key (ESC [ 3 ~)
+              final int tilde = stdin.readByteSync();
+              if (tilde == 126 && cursorPosition < buffer.length) {
+                buffer.removeAt(cursorPosition);
+                _redrawLine(buffer, cursorPosition);
+              }
+            case 72:
+              // Home key
+              cursorPosition = 0;
+              _redrawLine(buffer, cursorPosition);
+            case 70:
+              // End key
+              cursorPosition = buffer.length;
+              _redrawLine(buffer, cursorPosition);
+          }
+        }
+        continue;
+      }
+
+      if (byte >= 32 && byte < 127) {
+        // Printable ASCII character
+        buffer.insert(cursorPosition, byte);
+        cursorPosition++;
+        if (cursorPosition == buffer.length) {
+          // Use write() with string instead of writeCharCode() for better
+          // Windows compatibility - some Windows terminals handle them differently
+          stdout.write(String.fromCharCode(byte));
+          _flushIfNeeded();
+        } else {
+          _redrawLine(buffer, cursorPosition);
+        }
+      }
+    }
+  }
+
+  void _redrawLine(List<int> buffer, int cursorPosition) {
+    // Move cursor to start of line, clear line, write buffer, reposition cursor
+    stdout.write('\r\x1b[K$_prompt${String.fromCharCodes(buffer)}');
+    // Move cursor to correct position
+    final int moveBack = buffer.length - cursorPosition;
+    if (moveBack > 0) {
+      stdout.write('\x1b[${moveBack}D');
+    }
+    _flushIfNeeded();
+  }
+}

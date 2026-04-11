@@ -10,7 +10,7 @@ The syntactic analyzer (parser) converts the token list into a list of `Function
 
 ```
 program            → functionDefinition*
-functionDefinition → IDENTIFIER "=" expression | IDENTIFIER "(" parameters ")" "=" expression
+functionDefinition → IDENTIFIER "=" expression | IDENTIFIER "(" parameters? ")" "=" expression
 parameters         → IDENTIFIER ( "," IDENTIFIER )*
 ```
 
@@ -20,8 +20,8 @@ parameters         → IDENTIFIER ( "," IDENTIFIER )*
 expression         → ifExpression
 ifExpression       → "if" "(" expression ")" expression "else" expression | equality
 equality           → logicOr ( ( "!=" | "==" ) logicOr )*
-logicOr            → logicAnd ( "|" logicAnd )*
-logicAnd           → comparison ( "&" comparison )*
+logicOr            → logicAnd ( ( "|" | "||" ) logicAnd )*
+logicAnd           → comparison ( ( "&" | "&&" ) comparison )*
 comparison         → term ( ( ">" | ">=" | "<" | "<=" ) term )*
 term               → factor ( ( "-" | "+" ) factor )*
 factor             → index ( ( "/" | "*" | "%" ) index )*
@@ -44,13 +44,15 @@ identifier = expression               -- nullary function
 identifier(p1, p2, ...) = expression  -- parameterized function
 ```
 
+A `FunctionDefinitionBuilder` accumulates the function name and parameters as the state machine progresses. When the expression body is parsed, it produces the final `FunctionDefinition`.
+
 States:
 
-1. `InitState` - expects an identifier (the function name).
+1. `InitState` - expects an identifier (the function name); creates a `FunctionDefinitionBuilder`.
 2. `FunctionNameState` - expects either `=` (nullary) or `(` (parameterized).
-3. `FunctionWithParametersState` / `FunctionWithNewParametersState` / `FunctionWithNextParametersState` - parse the comma-separated parameter list.
+3. `FunctionWithParametersState` / `FunctionWithNewParametersState` / `FunctionWithNextParametersState` - parse the comma-separated parameter list, calling `withParameter` on each identifier.
 4. `FunctionParametrizedState` - expects `=` after closing `)`.
-5. `ResultState` - expression parsing is complete; one `FunctionDefinition` is emitted.
+5. `ResultState` - expression parsing is complete; the builder produces one `FunctionDefinition`.
 
 ## Expression Parser
 
@@ -60,8 +62,8 @@ The expression parser is a **recursive descent parser** with the following prece
 | ---------- | -------------- | ------------------------------------------------------------------------ |
 | 1          | `ifExpression` | `if (cond) expr else expr`                                               |
 | 2          | `equality`     | `==`, `!=`                                                               |
-| 3          | `logicOr`      | `\|` (or)                                                                |
-| 4          | `logicAnd`     | `&` (and)                                                                |
+| 3          | `logicOr`      | `\|`, `\|\|` (or)                                                        |
+| 4          | `logicAnd`     | `&`, `&&` (and)                                                          |
 | 5          | `comparison`   | `>`, `>=`, `<`, `<=`                                                     |
 | 6          | `term`         | `+`, `-`                                                                 |
 | 7          | `factor`       | `*`, `/`, `%`                                                            |
@@ -93,6 +95,8 @@ The parser desugars several syntactic forms into `CallExpression` nodes:
 | ----------------- | -------------- |
 | `a + b`           | `+(a, b)`      |
 | `a == b`          | `==(a, b)`     |
+| `a \|\| b`        | `\|(a, b)`     |
+| `a && b`          | `&(a, b)`      |
 | `!x`              | `!(x)`         |
 | `-x`              | `-(0, x)`      |
 | `a @ i`           | `@(a, i)`      |

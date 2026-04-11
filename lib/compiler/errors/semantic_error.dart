@@ -25,17 +25,25 @@ class DuplicatedParameterError extends SemanticError {
 }
 
 class UndefinedIdentifierError extends SemanticError {
-  const UndefinedIdentifierError({
+  UndefinedIdentifierError({
     required String identifier,
-    required String inFunction,
-  }) : super('Undefined identifier "$identifier" in function "$inFunction"');
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Undefined identifier "$identifier" in function "$inFunction"'
+             : 'Undefined identifier "$identifier"',
+       );
 }
 
 class UndefinedFunctionError extends SemanticError {
-  const UndefinedFunctionError({
+  UndefinedFunctionError({
     required String function,
-    required String inFunction,
-  }) : super('Undefined function "$function" in function "$inFunction"');
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Undefined function "$function" in function "$inFunction"'
+             : 'Undefined function "$function"',
+       );
 }
 
 class InvalidNumberOfArgumentsError extends SemanticError {
@@ -61,4 +69,34 @@ class NotIndexableError extends SemanticError {
     required String value,
     required String type,
   }) : super('Cannot index $type literal "$value"');
+}
+
+class CannotRedefineStandardLibraryError extends SemanticError {
+  const CannotRedefineStandardLibraryError({
+    required String function,
+  }) : super('Cannot redefine standard library function "$function"');
+}
+
+class CannotDeleteStandardLibraryError extends SemanticError {
+  const CannotDeleteStandardLibraryError({
+    required String function,
+  }) : super('Cannot delete standard library function "$function"');
+}
+
+class FunctionNotFoundError extends SemanticError {
+  const FunctionNotFoundError({
+    required String function,
+  }) : super('Function "$function" not found');
+}
+
+class CannotRenameStandardLibraryError extends SemanticError {
+  const CannotRenameStandardLibraryError({
+    required String function,
+  }) : super('Cannot rename standard library function "$function"');
+}
+
+class FunctionAlreadyExistsError extends SemanticError {
+  const FunctionAlreadyExistsError({
+    required String function,
+  }) : super('Function "$function" already exists');
 }

@@ -1,12 +1,16 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:primal/compiler/compiler.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
+import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
 
-const String version = '0.4.2';
+const String version = '0.4.3';
 
 const String helpText = '''
 Usage: primal [options] [file] [arguments...]
@@ -15,12 +19,29 @@ Options:
   --help, -h       Show this help
   --version, -v    Print the version string
   --debug, -d      Enable debug mode (timing, trace, verbose errors)
+  --watch, -w      Watch file for changes and re-run on modification
 
 Examples:
   primal                     Start the REPL
   primal program.pri         Run a program with a main function
   primal program.pri arg1    Run a program with arguments
   primal -d                  Start the REPL in debug mode
+  primal -w program.pri      Watch and re-run on changes
+''';
+
+const String replHelpText = '''
+REPL Commands:
+  :help                Show this help
+  :version             Show version info
+  :clear               Clear the screen
+  :quit, :q, :exit     Exit the REPL
+  :debug on/off        Toggle debug mode
+  :list                Show all user-defined functions
+  :delete <name>       Remove a user-defined function
+  :rename <old> <new>  Rename a user-defined function
+  :load <file>         Load definitions from a file (resets session)
+  :run <file>          Load definitions and run main if available
+  :reset               Clear all user-defined functions
 ''';
 
 void main(List<String> args) => runCli(args);
@@ -37,6 +58,7 @@ void runCli(
 
   // Parse flags
   bool debug = false;
+  bool watch = false;
   final List<String> remainingArgs = [];
 
   for (final String argument in args) {
@@ -45,13 +67,20 @@ void runCli(
         currentConsole.print(helpText);
         return;
       case '--version' || '-v':
-        currentConsole.print('Primal $version');
+        currentConsole.print(version);
         return;
       case '--debug' || '-d':
         debug = true;
+      case '--watch' || '-w':
+        watch = true;
       default:
         remainingArgs.add(argument);
     }
+  }
+
+  if (watch && remainingArgs.isEmpty) {
+    currentConsole.error('Watch mode requires a file argument.');
+    return;
   }
 
   try {
@@ -89,12 +118,30 @@ void runCli(
         console: currentConsole,
         debug: debug,
       );
+
+      if (watch) {
+        _watchFile(
+          filePath: remainingArgs[0],
+          args: remainingArgs,
+          compiler: compiler,
+          console: currentConsole,
+          debug: debug,
+          sourceReader: sourceReader,
+        );
+      }
     } else {
+      if (watch) {
+        currentConsole.error(
+          'Watch mode requires a file with a main function.',
+        );
+        return;
+      }
       _runRepl(
         runtime: runtime,
         compiler: compiler,
         console: currentConsole,
         debug: debug,
+        sourceReader: sourceReader,
       );
     }
   } catch (e, stackTrace) {
@@ -103,6 +150,50 @@ void runCli(
       currentConsole.print('[debug] Stack trace:\n$stackTrace');
     }
   }
+}
+
+void _printBanner(Console console) {
+  // Get terminal width, fallback to 60 if not available
+  final int terminalWidth = stdout.hasTerminal ? stdout.terminalColumns : 60;
+  final int boxWidth = terminalWidth - 2 < 30 ? 30 : terminalWidth - 2;
+
+  final String directory = _shortenHomePath(Directory.current.path);
+
+  // Truncate directory if too long to fit in box
+  // Line format: "v$version • $directory" must fit in boxWidth - 1
+  // Prefix is: "v" (1) + version + " • " (3) = version.length + 4
+  final int maxDirectoryLength = boxWidth - version.length - 5;
+  final String truncatedDirectory = directory.length > maxDirectoryLength
+      ? '...${directory.substring(directory.length - (maxDirectoryLength - 3))}'
+      : directory;
+  final String horizontal = '\u2500' * boxWidth;
+  final String topBorder = '\u250c$horizontal\u2510';
+  final String bottomBorder = '\u2514$horizontal\u2518';
+  const String vertical = '\u2502';
+
+  // Block letter "PRIMAL" logo - each block character is 1 display cell wide
+  final List<String> lines = [
+    '\u2588\u2580\u2588 \u2588\u2580\u2588 \u2588 \u2588\u2580\u2584\u2580\u2588 \u2588\u2580\u2588 \u2588',
+    '\u2588\u2580\u2580 \u2588\u2580\u2584 \u2588 \u2588 \u2580 \u2588 \u2588\u2580\u2588 \u2588\u2584\u2584',
+    'v$version \u2022 $truncatedDirectory',
+    ':help \u2022 :load <file> \u2022 :quit',
+  ];
+
+  console.print(topBorder);
+  for (final String line in lines) {
+    // padRight works correctly since all characters are 1 display cell wide
+    console.print('$vertical ${line.padRight(boxWidth - 1)}$vertical');
+  }
+  console.print(bottomBorder);
+}
+
+String _shortenHomePath(String path) {
+  // Only shorten on Unix-like systems (where HOME is typically set)
+  final String? home = Platform.environment['HOME'];
+  if (home != null && path.startsWith(home)) {
+    return '~${path.substring(home.length)}';
+  }
+  return path;
 }
 
 void _executeMain({
@@ -131,25 +222,130 @@ void _executeMain({
   console.print(result);
 }
 
+void _watchFile({
+  required String filePath,
+  required List<String> args,
+  required Compiler compiler,
+  required Console console,
+  required bool debug,
+  required String Function(String) sourceReader,
+}) {
+  final File file = File(filePath);
+  final Stream<FileSystemEvent> watcher = file.watch(
+    events: FileSystemEvent.modify,
+  );
+
+  Timer? debounceTimer;
+
+  watcher.listen((_) {
+    // Debounce: cancel any pending reload and schedule a new one.
+    // This handles editors that trigger multiple events per save.
+    debounceTimer?.cancel();
+    debounceTimer = Timer(const Duration(milliseconds: 100), () {
+      console.write('\x1b[2J\x1b[H');
+      //console.print('File changed, reloading...\n');
+
+      try {
+        final Stopwatch compileWatch = Stopwatch();
+        if (debug) {
+          compileWatch.start();
+        }
+
+        final IntermediateRepresentation intermediateRepresentation = compiler
+            .compile(sourceReader(filePath));
+
+        if (debug) {
+          compileWatch.stop();
+          console.print(
+            '[debug] Compilation: ${compileWatch.elapsedMilliseconds}ms',
+          );
+        }
+
+        for (final GenericWarning warning
+            in intermediateRepresentation.warnings) {
+          console.warning(warning);
+        }
+
+        final RuntimeFacade runtime = RuntimeFacade(
+          intermediateRepresentation,
+          compiler.expression,
+        );
+
+        if (runtime.hasMain) {
+          _executeMain(
+            runtime: runtime,
+            args: args,
+            console: console,
+            debug: debug,
+          );
+        } else {
+          console.error('main function no longer found in $filePath');
+        }
+      } catch (e, stackTrace) {
+        console.error(e);
+        if (debug) {
+          console.print('[debug] Stack trace:\n$stackTrace');
+        }
+      }
+    });
+  });
+
+  // The stream subscription keeps the process alive.
+  // Handle Ctrl+C gracefully.
+  ProcessSignal.sigint.watch().first.then((_) => exit(0));
+}
+
 void _runRepl({
   required RuntimeFacade runtime,
   required Compiler compiler,
   required Console console,
   required bool debug,
+  required String Function(String) sourceReader,
 }) {
+  bool debugMode = debug;
+
+  _printBanner(console);
+
   console.prompt((input) {
     try {
+      if (debugMode) {
+        console.print('[debug] Input: $input');
+      }
+
+      // Handle REPL commands
+      if (_handleReplCommand(
+        input: input,
+        runtime: runtime,
+        compiler: compiler,
+        console: console,
+        debugMode: debugMode,
+        setDebugMode: (bool value) => debugMode = value,
+        sourceReader: sourceReader,
+      )) {
+        return;
+      }
+
+      // Try to parse as a function definition first
+      final FunctionDefinition? functionDefinition = compiler
+          .functionDefinition(input);
+
+      if (functionDefinition != null) {
+        // Define the function and continue (no output)
+        runtime.defineFunction(functionDefinition);
+        return;
+      }
+
+      // Otherwise, evaluate as an expression
       final Stopwatch parseWatch = Stopwatch();
       final Stopwatch evalWatch = Stopwatch();
 
-      if (debug) {
-        console.print('[debug] Input: $input');
+      if (debugMode) {
         parseWatch.start();
       }
 
       final Expression expression = compiler.expression(input);
 
-      if (debug) {
+      if (debugMode) {
         parseWatch.stop();
         console.print('[debug] Parsing: ${parseWatch.elapsedMilliseconds}ms');
         evalWatch.start();
@@ -157,7 +353,7 @@ void _runRepl({
 
       final String result = runtime.evaluate(expression);
 
-      if (debug) {
+      if (debugMode) {
         evalWatch.stop();
         console.print('[debug] Evaluation: ${evalWatch.elapsedMilliseconds}ms');
       }
@@ -165,9 +361,135 @@ void _runRepl({
       console.print(result);
     } catch (e, stackTrace) {
       console.error(e);
-      if (debug) {
+      if (debugMode) {
         console.print('[debug] Stack trace:\n$stackTrace');
       }
     }
   });
+}
+
+/// Handles REPL commands (inputs starting with ':').
+///
+/// Returns true if the input was handled as a command, false otherwise.
+bool _handleReplCommand({
+  required String input,
+  required RuntimeFacade runtime,
+  required Compiler compiler,
+  required Console console,
+  required bool debugMode,
+  required void Function(bool) setDebugMode,
+  required String Function(String) sourceReader,
+}) {
+  if (!input.startsWith(':')) {
+    return false;
+  }
+
+  // Commands with arguments
+  if (input == ':delete' || input.startsWith(':delete ')) {
+    final String name = input.length > ':delete '.length
+        ? input.substring(':delete '.length).trim()
+        : '';
+    if (name.isEmpty) {
+      console.error('Usage: :delete <function_name>');
+    } else {
+      runtime.deleteFunction(name);
+      console.print("Function '$name' deleted.");
+    }
+    return true;
+  }
+
+  if (input == ':rename' || input.startsWith(':rename ')) {
+    final String arguments = input.length > ':rename '.length
+        ? input.substring(':rename '.length).trim()
+        : '';
+    final List<String> parts = arguments.split(RegExp(r'\s+'));
+    if (parts.length != 2 || parts[0].isEmpty || parts[1].isEmpty) {
+      console.error('Usage: :rename <old_name> <new_name>');
+    } else {
+      runtime.renameFunction(parts[0], parts[1]);
+      console.print("Function '${parts[0]}' renamed to '${parts[1]}'.");
+    }
+    return true;
+  }
+
+  if (input == ':load' || input.startsWith(':load ')) {
+    final String filePath = input.length > ':load '.length
+        ? input.substring(':load '.length).trim()
+        : '';
+    if (filePath.isEmpty) {
+      console.error('Usage: :load <file_path>');
+    } else {
+      final String source = sourceReader(filePath);
+      final IntermediateRepresentation representation = compiler.compile(
+        source,
+      );
+      for (final GenericWarning warning in representation.warnings) {
+        console.warning(warning);
+      }
+      final int count = runtime.loadFromIntermediateRepresentation(
+        representation,
+      );
+      console.print('Loaded $count function(s) from $filePath.');
+    }
+    return true;
+  }
+
+  if (input == ':run' || input.startsWith(':run ')) {
+    final String filePath = input.length > ':run '.length
+        ? input.substring(':run '.length).trim()
+        : '';
+    if (filePath.isEmpty) {
+      console.error('Usage: :run <file_path>');
+    } else {
+      final String source = sourceReader(filePath);
+      final IntermediateRepresentation representation = compiler.compile(
+        source,
+      );
+      for (final GenericWarning warning in representation.warnings) {
+        console.warning(warning);
+      }
+      final int count = runtime.loadFromIntermediateRepresentation(
+        representation,
+      );
+      console.print('Loaded $count function(s) from $filePath.');
+      if (runtime.hasMain) {
+        final String result = runtime.executeMain();
+        console.print(result);
+      }
+    }
+    return true;
+  }
+
+  // Commands without arguments
+  switch (input) {
+    case ':version':
+      console.print(version);
+    case ':help':
+      console.print(replHelpText);
+    case ':quit' || ':q' || ':exit':
+      exit(0);
+    case ':clear':
+      console.write('\x1b[2J\x1b[H');
+    case ':debug on':
+      setDebugMode(true);
+      console.print('Debug mode enabled.');
+    case ':debug off':
+      setDebugMode(false);
+      console.print('Debug mode disabled.');
+    case ':list':
+      final List<String> signatures = runtime.userDefinedFunctionSignatures;
+      if (signatures.isEmpty) {
+        console.print('No user-defined functions.');
+      } else {
+        console.print(signatures.join('\n'));
+      }
+    case ':reset':
+      runtime.reset();
+      console.print('All user-defined functions cleared.');
+    default:
+      console.error(
+        "Unknown command '$input'. Type :help for available commands.",
+      );
+  }
+  return true;
 }

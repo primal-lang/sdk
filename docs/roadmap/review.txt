@@ -1,0 +1,26 @@
+Review this file as a feature design document for Primal.
+
+Use a skeptical code-review mindset. Do not summarize first. Find problems, inconsistencies, incorrect assumptions, missing cases, under-scoped work, and examples that do not match the current implementation.
+
+Compare the document against:
+- the current parser, semantic analyzer, lowering, and runtime
+- existing error and warning behavior
+- existing tests
+- docs/primal.md and docs/reference.md where relevant
+
+Output findings first, ordered by severity. Each finding must be numbered. For each finding include:
+- what is wrong
+- why it is wrong
+- exact file/line references in both the design doc and the codebase
+- the practical consequence if implemented as written
+- missing tests or missing spec detail
+
+Specifically look for:
+- grammar and precedence mistakes
+- scope, shadowing, substitution, and capture issues
+- mismatches between examples and actual language behavior
+- breaking changes
+- places where the implementation notes do not fit the current architecture
+- ambiguous decisions that need to be resolved before coding
+
+If something is unclear, say what assumption the document seems to make and whether that assumption matches the current code.

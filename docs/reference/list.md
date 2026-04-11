@@ -31,6 +31,7 @@
 - **Signature:** `list.filled(a: Number, b: Any): List`
 - **Input:** A number and a value
 - **Output:** A list with the value repeated the specified number of times
+- **Constraints:** Throws an error if the number is negative
 - **Purity:** Pure
 - **Example:**
 
@@ -45,6 +46,7 @@ list.filled(3, 0) // returns [0, 0, 0]
 - **Signature:** `list.at(a: List, b: Number): Any`
 - **Input:** A list and an index
 - **Output:** The element at the given index
+- **Constraints:** Throws an error if the index is negative or out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -57,6 +59,7 @@ list.at([10, 20, 30], 1) // returns 20
 - **Signature:** `list.first(a: List): Any`
 - **Input:** One list
 - **Output:** The first element of the list
+- **Constraints:** Throws an error if the list is empty
 - **Purity:** Pure
 - **Example:**
 
@@ -69,6 +72,7 @@ list.first([10, 20, 30]) // returns 10
 - **Signature:** `list.last(a: List): Any`
 - **Input:** One list
 - **Output:** The last element of the list
+- **Constraints:** Throws an error if the list is empty
 - **Purity:** Pure
 - **Example:**
 
@@ -81,6 +85,7 @@ list.last([10, 20, 30]) // returns 30
 - **Signature:** `list.sublist(a: List, b: Number, c: Number): List`
 - **Input:** A list, a start index, and an end index
 - **Output:** A new list spanning from start to end indices
+- **Constraints:** Throws an error if the start index is negative, or if the start or end index is out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -117,6 +122,7 @@ list.rest([1, 2, 3]) // returns [2, 3]
 - **Signature:** `list.take(a: List, b: Number): List`
 - **Input:** A list and a number
 - **Output:** A new list containing the first n elements
+- **Constraints:** Throws an error if the number is negative
 - **Purity:** Pure
 - **Example:**
 
@@ -129,6 +135,7 @@ list.take([1, 2, 3, 4], 2) // returns [1, 2]
 - **Signature:** `list.drop(a: List, b: Number): List`
 - **Input:** A list and a number
 - **Output:** A new list excluding the first n elements
+- **Constraints:** Throws an error if the number is negative
 - **Purity:** Pure
 - **Example:**
 
@@ -143,6 +150,7 @@ list.drop([1, 2, 3, 4], 2) // returns [3, 4]
 - **Signature:** `list.set(a: List, b: Number, c: Any): List`
 - **Input:** A list, an index, and a value
 - **Output:** A new list with the value assigned at the specified index
+- **Constraints:** Throws an error if the index is negative or out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -188,8 +196,8 @@ list.insertEnd([1, 2], 3) // returns [1, 2, 3]
 
 ### Remove
 
-- **Signature:** `list.remove(a: List, b: Any): List`
-- **Input:** A list and a value
+- **Signature:** `list.remove(a: List, b: Equatable): List`
+- **Input:** A list and an equatable value
 - **Output:** A new list with all occurrences of the value removed
 - **Purity:** Pure
 - **Example:**
@@ -203,6 +211,7 @@ list.remove([1, 2, 3, 2], 2) // returns [1, 3]
 - **Signature:** `list.removeAt(a: List, b: Number): List`
 - **Input:** A list and an index
 - **Output:** A new list with the element at the index removed
+- **Constraints:** Throws an error if the index is negative or out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -227,6 +236,7 @@ list.reverse([1, 2, 3]) // returns [3, 2, 1]
 - **Signature:** `list.swap(a: List, b: Number, c: Number): List`
 - **Input:** A list and two indices
 - **Output:** A new list with the elements at the given indices exchanged
+- **Constraints:** Throws an error if either index is negative or out of bounds
 - **Purity:** Pure
 - **Example:**
 
@@ -286,8 +296,8 @@ list.isNotEmpty([1, 2]) // returns true
 
 ### Contains
 
-- **Signature:** `list.contains(a: List, b: Any): Boolean`
-- **Input:** A list and a value
+- **Signature:** `list.contains(a: List, b: Equatable): Boolean`
+- **Input:** A list and an equatable value
 - **Output:** True if the value exists in the list, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -298,8 +308,8 @@ list.contains([1, 2, 3], 2) // returns true
 
 ### Index Of
 
-- **Signature:** `list.indexOf(a: List, b: Any): Number`
-- **Input:** A list and a value
+- **Signature:** `list.indexOf(a: List, b: Equatable): Number`
+- **Input:** A list and an equatable value
 - **Output:** The position of the first occurrence, or -1 if absent
 - **Purity:** Pure
 - **Example:**

@@ -11,7 +11,7 @@ balancedParenthesis.helper(list, stack) =
     else if (str.first(list) == '(')
         balancedParenthesis.helper(str.rest(list), stack.push(stack, '('))
     else if (str.first(list) == ')')
-        if ((stack.isNotEmpty(stack)) & (stack.peek(stack) == '('))
+        if ((stack.isNotEmpty(stack)) && (stack.peek(stack) == '('))
             balancedParenthesis.helper(str.rest(list), stack.pop(stack))
         else
             false

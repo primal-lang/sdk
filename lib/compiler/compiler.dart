@@ -1,3 +1,4 @@
+import 'package:primal/compiler/errors/syntactic_error.dart';
 import 'package:primal/compiler/lexical/lexical_analyzer.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/reader/character.dart';
@@ -39,6 +40,37 @@ class Compiler {
       ListIterator(tokens),
     );
 
-    return expressionParser.expression();
+    final Expression result = expressionParser.expression();
+
+    if (!expressionParser.iterator.isAtEnd) {
+      throw UnexpectedTokenError(expressionParser.iterator.peek!);
+    }
+
+    return result;
+  }
+
+  /// Tries to parse the input as a single function definition.
+  ///
+  /// Returns the [FunctionDefinition] if successful, or null if the input
+  /// is not a valid function definition (e.g., it's an expression).
+  FunctionDefinition? functionDefinition(String input) {
+    try {
+      final SourceReader reader = SourceReader(input);
+      final List<Character> characters = reader.analyze();
+
+      final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
+      final List<Token> tokens = lexicalAnalyzer.analyze();
+
+      final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
+      final List<FunctionDefinition> functions = syntacticAnalyzer.analyze();
+
+      // Must be exactly one function definition
+      if (functions.length == 1) {
+        return functions.first;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 }

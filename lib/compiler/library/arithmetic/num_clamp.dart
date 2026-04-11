@@ -35,6 +35,13 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     final Term c = arguments[2].reduce();
 
     if ((a is NumberTerm) && (b is NumberTerm) && (c is NumberTerm)) {
+      if (b.value > c.value) {
+        throw InvalidNumericOperationError(
+          function: name,
+          reason: 'min bound (${b.value}) must be <= max bound (${c.value})',
+        );
+      }
+
       return NumberTerm(a.value.clamp(b.value, c.value));
     } else {
       throw InvalidArgumentTypesError(

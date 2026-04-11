@@ -18,6 +18,15 @@ description: Reviews staged and unstaged changes in this Dart project, checking 
    - **Readability**: Unclear or overly complex code, poorly named functions and variables, missing or misleading comments, hard-to-follow control flow in state machines or expression parsing.
    - **Style**: Violations of analysis_options.yaml rules (single quotes, trailing commas, const constructors, final locals, return type declarations, null-aware operators), naming inconsistencies with existing code, dead code introduced, hardcoded values that belong in constants or the type system.
 
+   **Analysis Guidance**: When looking for issues, focus on changes that:
+   - Meaningfully impact the accuracy, performance, security, or maintainability of the code.
+   - Are discrete and actionable (not general codebase concerns or combinations of multiple issues).
+   - Match the level of rigor present in the rest of the codebase (e.g., don't expect detailed comments and input validation in a repository of one-off scripts).
+   - The author would likely fix if made aware.
+   - Can be identified without relying on unstated assumptions about the codebase or author's intent.
+   - Provably affect other parts of the code (don't speculate that a change may disrupt something — identify the affected code).
+   - Are clearly not intentional changes by the original author.
+
 3. **Context Verification**: Before flagging an issue, read the surrounding code to confirm it is a real problem and not handled elsewhere. Minimize false positives. Pay special attention to the compiler pipeline — an apparent issue in one phase may be intentionally delegated to a later phase.
 
 4. **Reporting**: Present the subagent's findings in a Markdown table:

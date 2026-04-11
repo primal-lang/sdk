@@ -7,8 +7,8 @@ class CompLe extends NativeFunctionTerm {
     : super(
         name: 'comp.le',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.ordered('a'),
+          Parameter.ordered('b'),
         ],
       );
 

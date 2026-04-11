@@ -7,8 +7,8 @@ class CompEq extends NativeFunctionTerm {
     : super(
         name: 'comp.eq',
         parameters: const [
-          Parameter.any('a'),
-          Parameter.any('b'),
+          Parameter.equatable('a'),
+          Parameter.equatable('b'),
         ],
       );
 

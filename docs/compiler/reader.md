@@ -1,6 +1,6 @@
 # SourceReader
 
-**File**: `lib/compiler/reader/reader.dart`
+**File**: `lib/compiler/reader/source_reader.dart`
 
 The source reader is the first stage of the compiler pipeline. It converts a raw input string into a flat list of `Character` objects, each annotated with its row and column position.
 
@@ -26,4 +26,4 @@ A `\n` character is appended after every non-skipped row, including the last. Th
 
 ## Output
 
-The output preserves every character from the source (including whitespace), with location information used later for error reporting. `Character` provides a `get lexeme` getter that converts it to a `Lexeme`, bridging directly into the lexical analyzer. Both `Character` and `Location` support value equality (`==` and `hashCode`), making them suitable for use in tests and collections.
+The output preserves every character from the source (including whitespace), with location information used later for error reporting. Both `Character` and `Location` support value equality (`==` and `hashCode`), making them suitable for use in tests and collections. `Character.toString()` returns the value and its location (e.g., `"a" at [1, 1]`).

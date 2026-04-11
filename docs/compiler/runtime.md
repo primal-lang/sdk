@@ -1,6 +1,6 @@
 # Runtime
 
-**Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/term.dart`, `lib/compiler/runtime/bindings.dart`
+**Files**: `lib/compiler/runtime/runtime.dart`, `lib/compiler/runtime/term.dart`, `lib/compiler/runtime/bindings.dart`, `lib/compiler/runtime/runtime_input.dart`
 
 The runtime evaluates compiled code through **term substitution and reduction**. It receives `IntermediateRepresentation` from the semantic analyzer and lowers semantic IR to runtime terms for execution.
 
@@ -15,34 +15,89 @@ When a `RuntimeFacade` is created, the `RuntimeInputBuilder` constructs a `Runti
 
 Note: `IntermediateRepresentation` contains only `FunctionSignature` references for the standard library (not `FunctionTerm`), keeping the semantic output free of runtime types. The actual runtime terms are instantiated during this initialization step.
 
+## RuntimeInput
+
+`RuntimeInput` holds the shared functions map used by the runtime:
+
+- `functions` - a `Map<String, FunctionTerm>` containing all available functions (standard library and user-defined).
+- `containsFunction(String name)` - returns whether a function with the given name exists.
+- `getFunction(String name)` - returns the `FunctionTerm` for the given name, or `null`.
+
+## Runtime
+
+`Runtime` wraps a `RuntimeInput` and provides evaluation and output formatting:
+
+- `reduceTerm(Term term)` - reduces a term to its value by calling `term.reduce()`.
+- `format(dynamic value)` - converts a native Dart value to its display representation. Booleans and numbers pass through unchanged. Strings, `DateTime`, `File`, and `Directory` values are quoted. Collections (`Set`, `List`, `Map`) are formatted recursively. Throws `InvalidValueError` for unrecognized types.
+
 ## Term Hierarchy
 
 All runtime values are terms. The base `Term` class defines:
 
 - `type` - returns the term's `Type`.
-- `substitute(Bindings)` - replaces bound variables with their argument values.
-- `reduce()` - reduces the term to a value.
+- `substitute(Bindings bindings)` - replaces bound variables with their argument values. Default: returns `this`.
+- `reduce()` - reduces the term to a value. Default: returns `this`.
 - `native()` - converts to a native Dart value.
 
-**Literal terms** (self-evaluating):
+### ValueTerm
+
+`ValueTerm<T>` is the abstract base for all terms that hold a typed value. It implements `Term` with:
+
+- `value` - the underlying Dart value of type `T`.
+- `substitute(Bindings bindings)` - returns `this` (values are self-evaluating).
+- `reduce()` - returns `this`.
+- `native()` - returns `value`.
+- `ValueTerm.from(dynamic value)` - static factory that wraps a native Dart value in the appropriate term type (`bool` to `BooleanTerm`, `num` to `NumberTerm`, `String` to `StringTerm`, `DateTime` to `TimestampTerm`, `File` to `FileTerm`, `Directory` to `DirectoryTerm`, `Set<Term>` to `SetTerm`, `List<Term>` to `ListTerm`, `Map<Term, Term>` to `MapTerm`). Throws `InvalidLiteralValueError` for unrecognized types.
+
+### Literal Terms
+
+Self-evaluating terms that extend `ValueTerm`:
+
 `BooleanTerm`, `NumberTerm`, `StringTerm`, `FileTerm`, `DirectoryTerm`, `TimestampTerm`
 
-**Collection terms** (substitute recursively; self-evaluating):
-`ListTerm`, `MapTerm`, `SetTerm`, `VectorTerm`, `StackTerm`, `QueueTerm`
+### Collection Terms
 
-**Reference terms**:
+Collection terms extend `ValueTerm`, override `substitute` to recurse into their elements, and override `native()` to return unwrapped Dart collections:
 
-- `FunctionReferenceTerm(name, functions)` - holds a function name and the functions map; `reduce()` returns the referenced `FunctionTerm`.
-- `BoundVariableTerm(name)` - replaced during substitution via bindings.
+- `ListTerm` - wraps `List<Term>`.
+- `VectorTerm` - wraps `List<Term>`.
+- `SetTerm` - wraps `Set<Term>`.
+- `StackTerm` - wraps `List<Term>`.
+- `QueueTerm` - wraps `List<Term>`.
+- `MapTerm` - wraps `Map<Term, Term>`. Additionally provides `asMapWithKeys()`, which returns a `Map<dynamic, Term>` with native keys but term values.
 
-**Call term**:
-`CallTerm(callee, arguments)` - on evaluation, reduces the callee to a `FunctionTerm`, then calls `apply()` with the arguments.
+### Reference Terms
 
-**Function terms**:
+- `FunctionReferenceTerm(name, functions)` - holds a function name and the functions map; `reduce()` returns the referenced `FunctionTerm`. Throws `NotFoundInScopeError` if the name is not in the map.
+- `BoundVariableTerm(name)` - replaced during substitution via bindings. Calling `native()` throws a `StateError` since bound variables must be substituted before evaluation.
 
-- `FunctionTerm` - base, with name and parameters.
-- `CustomFunctionTerm` - user-defined; `apply()` substitutes arguments into the body, then reduces.
-- `NativeFunctionTerm` - built-in; delegates to a Dart implementation.
+### Call Term
+
+`CallTerm({required callee, required arguments})` - on evaluation, reduces the callee to a `FunctionTerm` via `getFunctionTerm()`, then calls `apply()` with the arguments. The `getFunctionTerm()` helper throws `InvalidFunctionError` if the reduced callee is not a `FunctionTerm`. Substitution recurses into both callee and arguments.
+
+### Function Terms
+
+`FunctionTerm` is the abstract base for all functions, with `name` and `parameters` fields.
+
+**Recursion tracking**: `FunctionTerm` maintains a static recursion depth counter (`maxRecursionDepth = 1000`). This assumes single-threaded execution.
+
+- `resetDepth()` - resets the counter to zero. Called before starting evaluation.
+- `incrementDepth()` - increments the counter and returns `true`. Throws `RecursionLimitError` if the limit is exceeded.
+- `decrementDepth()` - decrements the counter.
+
+**Instance members**:
+
+- `parameterTypes` - returns the list of parameter types.
+- `equalSignature(FunctionTerm function)` - returns whether two functions share the same name.
+- `toSignature()` - returns a phase-agnostic `FunctionSignature`.
+- `apply(List<Term> arguments)` - validates argument count (throws `InvalidArgumentCountError` on mismatch), creates `Bindings` from parameters and arguments, substitutes, and reduces.
+- `native()` - returns the function's string representation.
+
+**Subclasses**:
+
+- `CustomFunctionTerm` - user-defined; holds a `term` (the function body). Overrides `apply()` to increment/decrement recursion depth, eagerly evaluate all arguments before binding (call-by-value), then substitute and reduce. Overrides `substitute(Bindings bindings)` to substitute into the body term.
+- `NativeFunctionTerm` - built-in; overrides `substitute(Bindings bindings)` to resolve each parameter from the bindings and pass the resulting argument list to the abstract `term(List<Term> arguments)` method, which returns a concrete evaluation term.
+- `NativeFunctionTermWithArguments` - holds pre-resolved `arguments`; subclasses override `reduce()` to implement the actual logic.
 
 ### Native Function Implementation Pattern
 
@@ -71,14 +126,21 @@ class _Term extends NativeFunctionTermWithArguments {
 }
 ```
 
+## Bindings
+
+`Bindings` maps parameter names to their argument terms:
+
+- `Bindings(Map<String, Term> data)` - wraps an existing map.
+- `Bindings.from({required List<Parameter> parameters, required List<Term> arguments})` - factory that pairs each parameter name with the corresponding argument term by index.
+- `get(String name)` - returns the term bound to the given name. Throws `NotFoundInScopeError` if the name is not present.
+
 ## Evaluation Model
 
 Function application follows these steps:
 
 1. Reduce the callee expression to get a `FunctionTerm`.
-2. Create `Bindings` from the function's parameters and the provided arguments.
-3. Substitute all `BoundVariableTerm`s in the function body with their bound values.
-4. Reduce the resulting term.
+2. For `CustomFunctionTerm`: increment recursion depth, eagerly evaluate all arguments (call-by-value), create `Bindings`, substitute into the body, reduce, then decrement recursion depth.
+3. For `NativeFunctionTerm` (via the base `FunctionTerm.apply()`): validate argument count, create `Bindings`, substitute (which resolves parameters and delegates to `term()`), then reduce.
 
 This is a substitution-based evaluation model consistent with lambda calculus beta-reduction.
 
