@@ -13,6 +13,13 @@ distance(x1, y1, x2, y2) =
         num.sqrt(dx * dx + dy * dy)
 ```
 
+## Pros
+
+1. Reduces duplication: Avoids repeating complex subexpressions, improving both readability and efficiency.
+2. Aligns with functional style: A natural fit for expression-oriented, immutable languages.
+3. Sequencing dependent computations: Multi-binding let expressions naturally express data dependencies.
+4. Educational value: Teaches binding and scope concepts without introducing full lambda syntax.
+
 ## Grammar
 
 ```
