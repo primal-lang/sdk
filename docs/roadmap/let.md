@@ -1228,17 +1228,18 @@ Tests that assert the complete taxonomy of `Term` subclasses may need updates:
 
 #### Syntactic Tests
 
-| Test              | Input                         | Expected                                   |
-| ----------------- | ----------------------------- | ------------------------------------------ |
-| Single binding    | `let x = 1 in x`              | `LetExpression` with 1 binding             |
-| Multiple bindings | `let x = 1, y = 2 in x`       | `LetExpression` with 2 bindings            |
-| Nested let        | `let x = 1 in let y = 2 in y` | Nested `LetExpression`                     |
-| Missing `in`      | `let x = 1 x`                 | `ExpectedTokenError('in')`                 |
-| Missing comma     | `let x = 1 y = 2 in x`        | `ExpectedTokenError('in')` (see note)      |
-| Empty bindings    | `let in x`                    | `ExpectedTokenError` (identifier expected) |
-| Trailing comma    | `let x = 1, in x`             | `ExpectedTokenError` (identifier expected) |
-| Let as operand    | `1 + let x = 2 in x`          | `InvalidTokenError` or descriptive error   |
-| Let in parens     | `1 + (let x = 2 in x)`        | Valid: binary `+` with parenthesized let   |
+| Test                 | Input                           | Expected                                   |
+| -------------------- | ------------------------------- | ------------------------------------------ |
+| Single binding       | `let x = 1 in x`                | `LetExpression` with 1 binding             |
+| Multiple bindings    | `let x = 1, y = 2 in x`         | `LetExpression` with 2 bindings            |
+| Nested let (body)    | `let x = 1 in let y = 2 in y`   | Nested `LetExpression` in body             |
+| Nested let (binding) | `let x = (let y = 1 in y) in x` | Nested `LetExpression` in binding value    |
+| Missing `in`         | `let x = 1 x`                   | `ExpectedTokenError('in')`                 |
+| Missing comma        | `let x = 1 y = 2 in x`          | `ExpectedTokenError('in')` (see note)      |
+| Empty bindings       | `let in x`                      | `ExpectedTokenError` (identifier expected) |
+| Trailing comma       | `let x = 1, in x`               | `ExpectedTokenError` (identifier expected) |
+| Let as operand       | `1 + let x = 2 in x`            | `InvalidTokenError` or descriptive error   |
+| Let in parens        | `1 + (let x = 2 in x)`          | Valid: binary `+` with parenthesized let   |
 
 **Note on "Missing comma" error**: Following the existing parser pattern for comma-separated lists (function arguments, list elements, map entries), the parser uses `do...while(matchSingle(_isComma))` then `consume(_isIn, 'in')`. When a comma is missing between bindings (`let x = 1 y = 2 in x`), the parser exits the loop after the first binding and fails when expecting `in` but finding `y`. This produces `ExpectedTokenError('in')` rather than a more specific "expected comma" error. This is intentional—it maintains consistency with existing parser diagnostics rather than adding bespoke lookahead logic for `let`.
 
@@ -1332,7 +1333,8 @@ Tests that assert the complete taxonomy of `Term` subclasses may need updates:
 | `if` in `let` body         | `f(n) = let x = n in if (x > 0) x else -x`                                      | Works correctly     |
 | `let` in list element      | `f(n) = [let x = n in x]`                                                       | `[n]`               |
 | `let` in function argument | `f(n) = num.abs(let x = n in x)`                                                | Works correctly     |
-| Deeply nested              | `let a = 1 in let b = a in let c = b in c`                                      | `1`                 |
+| Deeply nested (body)       | `let a = 1 in let b = a in let c = b in c`                                      | `1`                 |
+| Let in binding value       | `f(n) = let x = (let y = n in y * 2) in x` called with `5`                      | `10`                |
 | Shadow custom function     | `double(x) = x * 2` then `f(n) = let double = 10 in double + n` called with `5` | `15`                |
 | Shadow stdlib function     | `f(n) = let num.abs = 42 in num.abs` called with any                            | `42`                |
 | Dotted names independent   | `f(n) = let num = 42 in num.abs(n)` called with `-5`                            | `5`                 |
@@ -1350,13 +1352,14 @@ These tests exercise both entry points in `RuntimeFacade`: expression evaluation
 
 **Expression evaluation** (via `evaluateToTerm`):
 
-| Test                  | Input                             | Expected                                                    |
-| --------------------- | --------------------------------- | ----------------------------------------------------------- |
-| Simple let            | `let x = 5 in x + 1`              | `6`                                                         |
-| Multiple bindings     | `let a = 2, b = 3 in a * b`       | `6`                                                         |
-| Nested let            | `let x = 1 in let y = x + 1 in y` | `2`                                                         |
-| Shadow stdlib in expr | `let num.abs = 42 in num.abs`     | `42`                                                        |
-| Error in REPL         | `let x = x in x`                  | `UndefinedIdentifierError` (no function context in message) |
+| Test                  | Input                               | Expected                                                    |
+| --------------------- | ----------------------------------- | ----------------------------------------------------------- |
+| Simple let            | `let x = 5 in x + 1`                | `6`                                                         |
+| Multiple bindings     | `let a = 2, b = 3 in a * b`         | `6`                                                         |
+| Nested let (body)     | `let x = 1 in let y = x + 1 in y`   | `2`                                                         |
+| Nested let (binding)  | `let x = (let y = 3 in y * 2) in x` | `6`                                                         |
+| Shadow stdlib in expr | `let num.abs = 42 in num.abs`       | `42`                                                        |
+| Error in REPL         | `let x = x in x`                    | `UndefinedIdentifierError` (no function context in message) |
 
 **Function definition** (via `defineFunction`):
 
