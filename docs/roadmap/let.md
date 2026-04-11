@@ -1090,7 +1090,15 @@ The semantic analyzer's `currentFunction: null` case handles REPL expressions co
 After implementing the feature:
 
 1. **Update documentation** in `docs/`:
-   - Add `let` expression to `docs/reference/control.md`
+
+   | File                        | Section                                            | Change Required                                                                                   |
+   | --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+   | `docs/primal.md`            | Syntax → Body (line ~85)                           | Add `let` expressions to the expression list alongside conditionals                               |
+   | `docs/reference/control.md` | (new section)                                      | Add full `let` expression documentation with syntax, semantics, and examples                      |
+   | `docs/compiler/semantic.md` | Semantic Checks → Identifier resolution (line ~28) | Add let binding resolution rules and `isLetBinding` field description                             |
+   | `docs/compiler/semantic.md` | (new section)                                      | Document `SemanticLetNode`, `SemanticLetBindingNode`, scope handling, and duplicate/shadow checks |
+   | `docs/compiler/runtime.md`  | Reference Terms (line ~69)                         | Add `LetBoundVariableTerm` with partial substitution semantics                                    |
+   | `docs/compiler/runtime.md`  | (new section)                                      | Document `LetTerm` with sequential binding evaluation                                             |
 
 2. **Implement tests** — see detailed test specification below
 
