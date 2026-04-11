@@ -151,6 +151,60 @@ try(let x = error.throw(0, "fail") in x, 0)  // returns 0
 
 Two new keywords: `let` and `in`.
 
+### Implementation
+
+**1. Add string extensions** in `lib/extensions/string_extensions.dart`:
+
+```dart
+bool get isLet => this == 'let';
+
+bool get isIn => this == 'in';
+```
+
+**2. Add token classes** in `lib/compiler/lexical/token.dart`:
+
+```dart
+class LetToken extends Token<String> {
+  LetToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+
+class InToken extends Token<String> {
+  InToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+```
+
+**3. Update keyword recognition** in `lib/compiler/lexical/lexical_analyzer.dart`:
+
+```dart
+Token _identifierOrKeywordToken(Lexeme lexeme) {
+  if (lexeme.value.isBoolean) {
+    return BooleanToken(lexeme);
+  }
+  if (lexeme.value.isIf) {
+    return IfToken(lexeme);
+  }
+  if (lexeme.value.isElse) {
+    return ElseToken(lexeme);
+  }
+  if (lexeme.value.isLet) {      // NEW
+    return LetToken(lexeme);
+  }
+  if (lexeme.value.isIn) {       // NEW
+    return InToken(lexeme);
+  }
+  // ... existing and/or/not handling ...
+  return IdentifierToken(lexeme);
+}
+```
+
 **Breaking change**: Existing identifiers named `let` or `in` become reserved keywords.
 
 ## Error Conditions

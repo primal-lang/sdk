@@ -1,32 +1,3 @@
-LOW: Breaking change section is understated
-
-What is wrong: Lines 137-139:
-Breaking change: Existing identifiers named let or in become reserved 
-keywords.
-
-This is a one-liner but deserves more attention:
-1. How common is in as a variable name in typical code?
-2. Should there be a deprecation warning phase?
-3. How does this affect the REPL?
-
-The in keyword is particularly concerning - it's a common variable name (e.g.,
-in for input, stream input, etc.).
-
----
-LOW: Token class location for let/in not specified
-
-What is wrong: The spec says "Add LetToken and InToken keywords" (line 359)
-but doesn't specify where in lexical_analyzer.dart's
-_identifierOrKeywordToken() function they should be added, or the token class
-definitions themselves.
-
-Currently keywords are checked via string extensions
-(lib/extensions/string_extensions.dart). The spec should clarify whether to
-add:
-- isLet and isIn string extensions
-- Or direct checks in _identifierOrKeywordToken()
-
----
 LOW: Lowering switch exhaustiveness
 
 What is wrong: Line 36-38 of lowerer.dart:
