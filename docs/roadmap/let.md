@@ -37,6 +37,20 @@ Note: The `bindings` rule requires at least one binding. `let in x` is a parse e
 
 **Position**: `let` can appear at the start of an expression context, the same positions where `if` is valid today. It cannot appear as an operand to binary operators without parentheses (e.g., `1 + let x = 2 in x` is invalid; use `1 + (let x = 2 in x)`).
 
+When `let` appears in an invalid position (e.g., as a binary operand), the parser's `primary()` method encounters a `LetToken` where it expects a literal, identifier, or grouping. This throws `InvalidTokenError`. For a more helpful error message, `primary()` can be extended to check for `LetToken` and throw a descriptive error:
+
+```dart
+// In primary(), before the final throw:
+if (matchSingle(_isLet)) {
+  throw ExpectedTokenError(
+    previous,
+    'let expression requires parentheses in this position',
+  );
+}
+```
+
+This is optional—`InvalidTokenError` is technically correct, but a specific message improves the developer experience.
+
 **Whitespace**: Not significant. Indentation in examples is purely for readability. These are equivalent:
 
 ```primal
@@ -347,6 +361,11 @@ bad8(n) = let x = (let y = 1 in y) in y
 // ERROR: Shadows earlier binding in same let
 bad9(n) = let x = 1, y = 2, x = 3 in x
 // → DuplicatedLetBindingError: Duplicated let binding "x"
+
+// ERROR: let as binary operand (requires parentheses)
+bad10(n) = 1 + let x = 2 in x
+// → InvalidTokenError (or descriptive error if enhanced)
+// Use: 1 + (let x = 2 in x)
 ```
 
 ## Implementation Notes
@@ -954,6 +973,8 @@ After implementing the feature:
 | Missing comma     | `let x = 1 y = 2 in x`        | `ExpectedTokenError(',')`                  |
 | Empty bindings    | `let in x`                    | `ExpectedTokenError` (identifier expected) |
 | Trailing comma    | `let x = 1, in x`             | `ExpectedTokenError` (identifier expected) |
+| Let as operand    | `1 + let x = 2 in x`          | `InvalidTokenError` or descriptive error   |
+| Let in parens     | `1 + (let x = 2 in x)`        | Valid: binary `+` with parenthesized let   |
 
 #### Semantic Tests
 

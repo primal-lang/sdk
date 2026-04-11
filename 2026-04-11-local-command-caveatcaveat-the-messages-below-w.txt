@@ -1,26 +1,3 @@
-6. MEDIUM — Parser falls through to primary() which will reject LetToken
-
-What is wrong: The document says (line 36) that let cannot appear as a binary
-operand: 1 + let x = 2 in x is invalid. This is correct but the mechanism is
-unclear.
-
-Why it is wrong: Looking at expression_parser.dart:286-306, primary() handles:
-Boolean, Number, String, Identifier, (, [, {. If let is a keyword (LetToken),
-and 1 + ... parses 1 then sees +, it calls the right operand which eventually
-hits primary(). primary() will see LetToken and throw InvalidTokenError(peek)
-— but this error message won't say "let expression not allowed here".
-
-References:
-- docs/roadmap/let.md:36 — states constraint
-- lib/compiler/syntactic/expression_parser.dart:286-305 — primary() definition
-
-Consequence: Error message will be generic ("Invalid token") rather than
-helpful. User won't understand why let is rejected here.
-
-Missing: Either explicit error handling in parser, or acceptance that
-InvalidTokenError is sufficient.
-
----
 7. MEDIUM — if desugaring assumption may conflict
 
 What is wrong: The current parser desugars if to CallExpression.fromIf() with
