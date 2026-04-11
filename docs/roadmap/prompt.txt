@@ -41,4 +41,5 @@ Output:
    - valid examples
    - invalid examples with expected errors
 6. Three to five high-value questions if anything important remains unresolved
-7. Final recommendation: accept, revise, or reject for now
+7. Implementation complexity: low, medium, or high, with a brief justification
+8. Final recommendation: accept, revise, or reject for now
