@@ -33,7 +33,7 @@ binding        → IDENTIFIER "=" expression
 
 **Associativity**: Right-associative. Chained `let` expressions nest naturally.
 
-**Position**: `let` can appear anywhere an expression is expected.
+**Position**: `let` can appear at the start of an expression context, the same positions where `if` is valid today. It cannot appear as an operand to binary operators without parentheses (e.g., `1 + let x = 2 in x` is invalid; use `1 + (let x = 2 in x)`).
 
 **Whitespace**: Not significant. Indentation in examples is purely for readability. These are equivalent:
 
@@ -181,8 +181,8 @@ bounded(n, lo, hi) =
 // let in list elements
 pair(n) = [let x = n * 2 in x, let y = n * 3 in y]
 
-// let as operand
-offset(a, b) = 1 + let x = a * b in x
+// let as operand (requires parentheses)
+offset(a, b) = 1 + (let x = a * b in x)
 
 // Chained single-binding lets (equivalent to nested)
 chain(a, b) = let x = a + b in let y = x * 2 in y
