@@ -1,0 +1,93 @@
+1. Critical: False Prerequisite (Let Expression Not Implemented)
+- What is wrong: The design document explicitly states that
+    it "assumes the let expression feature has been implemented
+    per docs/roadmap/reviewed/let.md" and that this dependency
+    is "guaranteed to exist." However, the let feature has NOT
+    been implemented in the current codebase.
+- Why it is wrong:
+    lib/compiler/syntactic/expression_parser.dart does not
+    contain letExpression(), and
+    lib/compiler/semantic/semantic_analyzer.dart lacks the
+    letBindingNames parameter in checkExpression().
+- References: docs/roadmap/lambda.md:5-11;
+    lib/compiler/syntactic/expression_parser.dart;
+    lib/compiler/semantic/semantic_analyzer.dart.
+- Practical consequence: Implementation of lambda cannot
+    proceed as written because the core semantic and syntactic
+    infrastructure it depends on is missing.
+- Missing detail: A plan to either implement let first or
+    de-couple the lambda implementation from let dependencies.
+
+2. Major: Incorrect Static Method Invocation in Runtime
+- What is wrong: The LambdaTerm.apply() implementation calls
+    incrementDepth() and decrementDepth() without the
+    FunctionTerm. prefix.
+- Why it is wrong: In Dart, static methods of a superclass
+    must be qualified with the class name (e.g.,
+    FunctionTerm.incrementDepth()) when called from a subclass.
+    The current code will fail to compile.
+- References: docs/roadmap/lambda.md:526-550;
+    lib/compiler/runtime/term.dart:342,352.
+- Practical consequence: Compilation error in the runtime.
+
+3. Major: Under-scoped Semantic Analyzer Changes
+- What is wrong: The document underestimates the effort for
+    "Cascading signature changes" in the semantic analyzer.
+- Why it is wrong: Adding lambdaParameterNames (and the
+    missing letBindingNames) requires updating every recursive
+    helper in SemanticAnalyzer, including _checkListExpression,
+    _checkMapExpression, _checkCallExpression,
+    _checkCalleeIdentifier, etc. The document only shows
+    checkExpression and _checkIdentifierExpression.
+- References: docs/roadmap/lambda.md:787-802;
+    lib/compiler/semantic/semantic_analyzer.dart.
+- Practical consequence: Incomplete semantic analysis; nested
+    expressions inside lists or maps will not correctly resolve
+    lambda parameters or will fail to compile.
+- Missing spec detail: Exhaustive list of all private helper
+    methods in SemanticAnalyzer that require signature updates.
+
+4. Minor: Inconsistency in Unused Parameter Warnings
+- What is wrong: Lambda parameters are explicitly excluded
+    from the usedParameters tracking mechanism.
+- Why it is wrong: While consistent with the proposed let
+    behavior, it is inconsistent with top-level function
+    parameters which produce a warning if unused. This creates
+    a "silent failure" mode where typos in lambda parameter
+    names in the body won't be flagged as unused parameters
+    (though they might trigger an UndefinedIdentifierError).
+- References: docs/roadmap/lambda.md:777-780;
+    lib/compiler/semantic/semantic_analyzer.dart:80-92.
+- Practical consequence: Reduced developer experience (DX)
+    for lambda-heavy code compared to top-level functions.
+
+5. Minor: Grammar Discrepancy for Zero-Parameter Lambdas
+- What is wrong: The parameters rule IDENTIFIER ( ","
+    IDENTIFIER )* implies at least one identifier, but the text
+    and the lambdaExpression rule allow zero parameters via
+    parameters?.
+- Why it is wrong: In standard EBNF, parameters? being empty
+    would match (), but the internal structure of the
+    parameters rule usually defines what's inside the commas.
+    If parameters is empty, the parameters rule is not
+    technically satisfied unless it's defined as (IDENTIFIER (
+    "," IDENTIFIER )*)?.
+- References: docs/roadmap/lambda.md:38-40.
+- Practical consequence: Ambiguity in the formal grammar,
+    though the provided Dart implementation of
+    _checkLambdaStart correctly handles the () case.
+
+6. Minor: REPL Friction for Top-Level Assignments
+- What is wrong: The requirement to use f()(5) instead of
+    f(5) when assigning a lambda to a top-level name.
+- Why it is wrong: While technically consistent with Primal's
+    current "everything is a function" architecture, it
+    violates the principle of least astonishment for users
+    coming from other functional languages. The document notes
+    this but doesn't propose a path to more idiomatic usage
+    (like auto-invoking zero-arity functions that return
+    functions).
+- References: docs/roadmap/lambda.md:1152-1172.
+- Practical consequence: Confusing UX in the REPL; users will
+    likely forget the extra () and get
+    InvalidNumberOfArgumentsError.
