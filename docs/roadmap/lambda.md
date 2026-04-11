@@ -547,7 +547,10 @@ Error annotations below show exception class names. Actual CLI/REPL output inclu
 ```primal
 // ERROR: Missing parentheses around parameter
 x -> x + 1
-// → InvalidTokenError (or ExpectedTokenError)
+// → InvalidTokenError on '->'
+// Parser sees 'x' as an identifier expression, then encounters '->' which is
+// not a valid binary operator or expression continuation. The arrow token is
+// only recognized as part of lambda syntax immediately after ')' in '(params) ->'.
 
 // ERROR: Duplicate parameter
 (x, x) -> x + 1
