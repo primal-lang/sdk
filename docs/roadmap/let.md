@@ -35,7 +35,17 @@ Note: The `bindings` rule requires at least one binding. `let in x` is a parse e
 
 **Associativity**: Right-associative. Chained `let` expressions nest naturally.
 
-**Position**: `let` can appear at the start of an expression context, the same positions where `if` is valid today. It cannot appear as an operand to binary operators without parentheses (e.g., `1 + let x = 2 in x` is invalid; use `1 + (let x = 2 in x)`).
+**Position**: `let` can appear at the start of any expression context:
+
+- Function body (top-level expression after `=`)
+- Within parentheses: `(let x = 1 in x)`
+- As a list element: `[let x = 1 in x, 2]`
+- As a map key or value: `{(let k = "a" in k): let v = 1 in v}`
+- As a function argument: `foo(let x = 1 in x)`
+- In either branch of an `if` expression: `if (c) let x = 1 in x else 0`
+- In another `let` binding or body: `let x = let y = 1 in y in x`
+
+It cannot appear as an operand to binary operators without parentheses (e.g., `1 + let x = 2 in x` is invalid; use `1 + (let x = 2 in x)`).
 
 When `let` appears in an invalid position (e.g., as a binary operand), the parser's `primary()` method encounters a `LetToken` where it expects a literal, identifier, or grouping. This throws `InvalidTokenError`. For a more helpful error message, `primary()` can be extended to check for `LetToken` and throw a descriptive error:
 
