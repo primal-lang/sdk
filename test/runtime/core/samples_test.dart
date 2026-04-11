@@ -946,6 +946,16 @@ void main() {
       checkResult(runtime, 4.0);
     });
 
+    test('piEstimate with two terms', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/pi_estimate.prm',
+        ).replaceAll('main = piEstimate(10)', 'main = piEstimate(2)'),
+      );
+      // 4 * (1 - 1/3) = 4 * (2/3) = 8/3 ≈ 2.666...
+      checkResult(runtime, 2.666666666666667);
+    });
+
     test('matrix multiply identity matrix', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/matrix_multiply.prm').replaceAll(
@@ -970,6 +980,406 @@ void main() {
         [0, 0],
         [0, 0],
       ]);
+    });
+
+    test('matrix multiply 1x1 matrices', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/matrix_multiply.prm').replaceAll(
+          'main = matMul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
+          'main = matMul([[3]], [[7]])',
+        ),
+      );
+      checkResult(runtime, [
+        [21],
+      ]);
+    });
+
+    test('divisors with perfect square returns symmetric divisors', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/divisors.prm',
+        ).replaceAll('main = divisors(10)', 'main = divisors(16)'),
+      );
+      checkResult(runtime, [1, 2, 4, 8, 16]);
+    });
+
+    test('divisors with two returns one and two', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/divisors.prm',
+        ).replaceAll('main = divisors(10)', 'main = divisors(2)'),
+      );
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('quicksort with all equal elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/quicksort.prm').replaceAll(
+          'main = quicksort([38, 27, 43, 3, 9])',
+          'main = quicksort([5, 5, 5, 5])',
+        ),
+      );
+      checkResult(runtime, [5, 5, 5, 5]);
+    });
+
+    test('quicksort with two elements already sorted', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/quicksort.prm').replaceAll(
+          'main = quicksort([38, 27, 43, 3, 9])',
+          'main = quicksort([1, 2])',
+        ),
+      );
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('quicksort with two elements reverse sorted', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/quicksort.prm').replaceAll(
+          'main = quicksort([38, 27, 43, 3, 9])',
+          'main = quicksort([2, 1])',
+        ),
+      );
+      checkResult(runtime, [1, 2]);
+    });
+
+    test('flatten with single non-list element', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/flatten.prm').replaceAll(
+          'main = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
+          'main = flatten([42])',
+        ),
+      );
+      checkResult(runtime, [42]);
+    });
+
+    test('flatten with deeply nested single element', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/flatten.prm').replaceAll(
+          'main = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
+          'main = flatten([[[[[1]]]]])',
+        ),
+      );
+      checkResult(runtime, [1]);
+    });
+
+    test('gcd with zero and positive number returns positive number', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/gcd_lcm.prm',
+        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(0, 5)'),
+      );
+      checkResult(runtime, 5);
+    });
+
+    test('gcd with positive number and zero returns positive number', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/gcd_lcm.prm',
+        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(12, 0)'),
+      );
+      checkResult(runtime, 12);
+    });
+
+    test('gcd with one number being multiple of other', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/gcd_lcm.prm',
+        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(12, 4)'),
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('lcm with one returns the other number', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/gcd_lcm.prm',
+        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = lcm(1, 7)'),
+      );
+      checkResult(runtime, 7.0);
+    });
+
+    test('movingAverage with empty list returns empty list', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/moving_averages.prm').replaceAll(
+          'main = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
+          'main = movingAverage([], 3)',
+        ),
+      );
+      checkResult(runtime, []);
+    });
+
+    test('movingAverage with window size one returns rounded values', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/moving_averages.prm').replaceAll(
+          'main = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
+          'main = movingAverage([10, 20, 30], 1)',
+        ),
+      );
+      checkResult(runtime, [10, 20, 30]);
+    });
+
+    test('isPalindrome with odd length longer palindrome returns true', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/is_palindrome.prm').replaceAll(
+          'main = isPalindrome("level")',
+          'main = isPalindrome("racecar")',
+        ),
+      );
+      checkResult(runtime, true);
+    });
+
+    test('isPalindrome with even length palindrome returns true', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/is_palindrome.prm').replaceAll(
+          'main = isPalindrome("level")',
+          'main = isPalindrome("abba")',
+        ),
+      );
+      checkResult(runtime, true);
+    });
+
+    test('binarySearch with two elements target is first', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/binary_search.prm').replaceAll(
+          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main = binarySearch([1, 2], 1)',
+        ),
+      );
+      checkResult(runtime, true);
+    });
+
+    test('binarySearch with two elements target is second', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/binary_search.prm').replaceAll(
+          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main = binarySearch([1, 2], 2)',
+        ),
+      );
+      checkResult(runtime, true);
+    });
+
+    test('binarySearch with two elements target not found', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/binary_search.prm').replaceAll(
+          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main = binarySearch([1, 3], 2)',
+        ),
+      );
+      checkResult(runtime, false);
+    });
+
+    test('frequency with single element returns count of one', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/frequency.prm').replaceAll(
+          'main = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
+          'main = frequency([42])',
+        ),
+      );
+      checkResult(runtime, {42: 1});
+    });
+
+    test('findMax with two elements returns larger', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/find_max.prm').replaceAll(
+          'main = findMax([1, 7, -13, 9, 2])',
+          'main = findMax([3, 7])',
+        ),
+      );
+      checkResult(runtime, 7);
+    });
+
+    test('findMax with duplicate max values returns max', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/find_max.prm').replaceAll(
+          'main = findMax([1, 7, -13, 9, 2])',
+          'main = findMax([5, 10, 10, 3])',
+        ),
+      );
+      checkResult(runtime, 10);
+    });
+
+    test('power with one base returns one', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/power.prm',
+        ).replaceAll('main = power(2, 10)', 'main = power(1, 100)'),
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('power with two base and small exponent', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/power.prm',
+        ).replaceAll('main = power(2, 10)', 'main = power(2, 3)'),
+      );
+      checkResult(runtime, 8);
+    });
+
+    test('sumOfDigits with two digit number', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/sum_of_digits.prm',
+        ).replaceAll('main = sumOfDigits(123456789)', 'main = sumOfDigits(99)'),
+      );
+      checkResult(runtime, 18);
+    });
+
+    test('sumOfDigits with all same digits', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/sum_of_digits.prm').replaceAll(
+          'main = sumOfDigits(123456789)',
+          'main = sumOfDigits(1111)',
+        ),
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('reverseList with two elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/reverse_list.prm').replaceAll(
+          'main = reverseList([1, 2, 3, 4, 5])',
+          'main = reverseList([1, 2])',
+        ),
+      );
+      checkResult(runtime, [2, 1]);
+    });
+
+    test('toRoman with five returns V', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_roman_numerals.prm',
+        ).replaceAll('main = toRoman(1984)', 'main = toRoman(5)'),
+      );
+      checkResult(runtime, '"V"');
+    });
+
+    test('toRoman with ten returns X', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_roman_numerals.prm',
+        ).replaceAll('main = toRoman(1984)', 'main = toRoman(10)'),
+      );
+      checkResult(runtime, '"X"');
+    });
+
+    test('toRoman with fifty returns L', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_roman_numerals.prm',
+        ).replaceAll('main = toRoman(1984)', 'main = toRoman(50)'),
+      );
+      checkResult(runtime, '"L"');
+    });
+
+    test('toRoman with one hundred returns C', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_roman_numerals.prm',
+        ).replaceAll('main = toRoman(1984)', 'main = toRoman(100)'),
+      );
+      checkResult(runtime, '"C"');
+    });
+
+    test('toRoman with five hundred returns D', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_roman_numerals.prm',
+        ).replaceAll('main = toRoman(1984)', 'main = toRoman(500)'),
+      );
+      checkResult(runtime, '"D"');
+    });
+
+    test('toRoman with one thousand returns M', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_roman_numerals.prm',
+        ).replaceAll('main = toRoman(1984)', 'main = toRoman(1000)'),
+      );
+      checkResult(runtime, '"M"');
+    });
+
+    test('toRoman with max supported value', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_roman_numerals.prm',
+        ).replaceAll('main = toRoman(1984)', 'main = toRoman(3999)'),
+      );
+      checkResult(runtime, '"MMMCMXCIX"');
+    });
+
+    test('toBinary with two returns binary string', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_binary.prm',
+        ).replaceAll('main = toBinary(10)', 'main = toBinary(2)'),
+      );
+      checkResult(runtime, '"10"');
+    });
+
+    test('toBinary with larger number', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/to_binary.prm',
+        ).replaceAll('main = toBinary(10)', 'main = toBinary(255)'),
+      );
+      checkResult(runtime, '"11111111"');
+    });
+
+    test('factorial with large number', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/factorial.prm',
+        ).replaceAll('main = factorial(5)', 'main = factorial(10)'),
+      );
+      checkResult(runtime, 3628800);
+    });
+
+    test('isPrime with three returns true', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/is_prime.prm',
+        ).replaceAll('main = isPrime(97)', 'main = isPrime(3)'),
+      );
+      checkResult(runtime, true);
+    });
+
+    test('isPrime with large prime returns true', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/is_prime.prm',
+        ).replaceAll('main = isPrime(97)', 'main = isPrime(101)'),
+      );
+      checkResult(runtime, true);
+    });
+
+    test('isPrime with large composite returns false', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile(
+          'samples/is_prime.prm',
+        ).replaceAll('main = isPrime(97)', 'main = isPrime(100)'),
+      );
+      checkResult(runtime, false);
+    });
+
+    test('binarySearch with odd length list element in left half', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/binary_search.prm').replaceAll(
+          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main = binarySearch([1, 2, 3, 4, 5], 2)',
+        ),
+      );
+      checkResult(runtime, true);
+    });
+
+    test('binarySearch with odd length list element in right half', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/binary_search.prm').replaceAll(
+          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main = binarySearch([1, 2, 3, 4, 5], 4)',
+        ),
+      );
+      checkResult(runtime, true);
     });
   });
 }

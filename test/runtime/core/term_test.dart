@@ -31,6 +31,22 @@ class TestNativeFunctionTerm extends NativeFunctionTerm {
   Term term(List<Term> arguments) => termFunction(arguments);
 }
 
+/// Test double for [NativeFunctionTermWithArguments] since it is abstract.
+class TestNativeFunctionTermWithArguments
+    extends NativeFunctionTermWithArguments {
+  final Term Function() reduceFunction;
+
+  const TestNativeFunctionTermWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+    required this.reduceFunction,
+  });
+
+  @override
+  Term reduce() => reduceFunction();
+}
+
 void main() {
   group('ValueTerm.from()', () {
     test('bool returns BooleanTerm', () {
@@ -1279,6 +1295,849 @@ void main() {
       final String longString = 'a' * 10000;
       final StringTerm term = StringTerm(longString);
       expect(term.native().length, 10000);
+    });
+  });
+
+  group('NativeFunctionTermWithArguments', () {
+    test('type is FunctionType', () {
+      final TestNativeFunctionTermWithArguments term =
+          TestNativeFunctionTermWithArguments(
+            name: 'testFunction',
+            parameters: const [Parameter.number('x')],
+            arguments: const [NumberTerm(42)],
+            reduceFunction: () => const NumberTerm(42),
+          );
+      expect(term.type, isA<FunctionType>());
+    });
+
+    test('reduce() returns expected value', () {
+      final TestNativeFunctionTermWithArguments term =
+          TestNativeFunctionTermWithArguments(
+            name: 'getValue',
+            parameters: const [],
+            arguments: const [],
+            reduceFunction: () => const StringTerm('result'),
+          );
+      final Term result = term.reduce();
+      expect(result, isA<StringTerm>());
+      expect((result as StringTerm).value, 'result');
+    });
+
+    test('arguments are accessible', () {
+      const List<Term> providedArguments = [
+        NumberTerm(1),
+        StringTerm('test'),
+      ];
+      final TestNativeFunctionTermWithArguments term =
+          TestNativeFunctionTermWithArguments(
+            name: 'withArgs',
+            parameters: const [Parameter.number('a'), Parameter.string('b')],
+            arguments: providedArguments,
+            reduceFunction: () => const BooleanTerm(true),
+          );
+      expect(term.arguments, providedArguments);
+    });
+
+    test('toString() includes name and parameters', () {
+      final TestNativeFunctionTermWithArguments term =
+          TestNativeFunctionTermWithArguments(
+            name: 'display',
+            parameters: const [Parameter.number('value')],
+            arguments: const [NumberTerm(100)],
+            reduceFunction: () => const NumberTerm(100),
+          );
+      expect(term.toString(), 'display(value: Number)');
+    });
+
+    test('native() returns string representation', () {
+      final TestNativeFunctionTermWithArguments term =
+          TestNativeFunctionTermWithArguments(
+            name: 'compute',
+            parameters: const [Parameter.boolean('flag')],
+            arguments: const [BooleanTerm(true)],
+            reduceFunction: () => const BooleanTerm(true),
+          );
+      expect(term.native(), 'compute(flag: Boolean)');
+    });
+
+    test('empty parameters and arguments', () {
+      final TestNativeFunctionTermWithArguments term =
+          TestNativeFunctionTermWithArguments(
+            name: 'noParams',
+            parameters: const [],
+            arguments: const [],
+            reduceFunction: () => const NumberTerm(0),
+          );
+      expect(term.parameters, isEmpty);
+      expect(term.arguments, isEmpty);
+      expect(term.toString(), 'noParams()');
+    });
+  });
+
+  group('Term base class default implementations', () {
+    test('substitute() returns itself by default', () {
+      const NumberTerm term = NumberTerm(42);
+      const Bindings bindings = Bindings({'x': StringTerm('unused')});
+      expect(term.substitute(bindings), same(term));
+    });
+
+    test('reduce() returns itself by default', () {
+      const StringTerm term = StringTerm('value');
+      expect(term.reduce(), same(term));
+    });
+  });
+
+  group('CallTerm.getFunctionTerm()', () {
+    test('returns function from FunctionTerm callee', () {
+      final TestNativeFunctionTerm function = TestNativeFunctionTerm(
+        name: 'identity',
+        parameters: const [Parameter.number('x')],
+        termFunction: (List<Term> arguments) => arguments[0],
+      );
+      final CallTerm call = CallTerm(
+        callee: function,
+        arguments: const [NumberTerm(42)],
+      );
+      expect(call.getFunctionTerm(function), same(function));
+    });
+
+    test('returns function from FunctionReferenceTerm callee', () {
+      const TestFunctionTerm function = TestFunctionTerm(
+        name: 'ref',
+        parameters: [],
+      );
+      final Map<String, FunctionTerm> functions = {'ref': function};
+      final FunctionReferenceTerm reference = FunctionReferenceTerm(
+        'ref',
+        functions,
+      );
+      const CallTerm call = CallTerm(
+        callee: NumberTerm(0),
+        arguments: [],
+      );
+      final FunctionTerm result = call.getFunctionTerm(reference);
+      expect(result, same(function));
+    });
+
+    test('throws InvalidFunctionError for non-function term', () {
+      const CallTerm call = CallTerm(
+        callee: StringTerm('notAFunction'),
+        arguments: [],
+      );
+      expect(
+        () => call.getFunctionTerm(const StringTerm('notAFunction')),
+        throwsA(isA<InvalidFunctionError>()),
+      );
+    });
+
+    test('throws InvalidFunctionError for ListTerm', () {
+      const ListTerm listTerm = ListTerm([NumberTerm(1)]);
+      const CallTerm call = CallTerm(
+        callee: listTerm,
+        arguments: [],
+      );
+      expect(
+        () => call.getFunctionTerm(listTerm),
+        throwsA(isA<InvalidFunctionError>()),
+      );
+    });
+  });
+
+  group('FunctionTerm.substitute() base class', () {
+    test('creates bindings and calls substitute on body', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'test',
+        parameters: [Parameter.number('a')],
+      );
+      // The base FunctionTerm.substitute just returns this, so test that
+      const Bindings bindings = Bindings({'x': NumberTerm(1)});
+      expect(term.substitute(bindings), same(term));
+    });
+  });
+
+  group('ListTerm edge cases', () {
+    test('single element list', () {
+      const ListTerm term = ListTerm([NumberTerm(42)]);
+      expect(term.native(), [42]);
+      expect(term.toString(), '[42]');
+    });
+
+    test('large list', () {
+      final List<Term> elements = List.generate(1000, NumberTerm.new);
+      final ListTerm term = ListTerm(elements);
+      expect(term.native().length, 1000);
+      expect(term.native()[0], 0);
+      expect(term.native()[999], 999);
+    });
+
+    test('substitute() with no matching bindings returns equivalent list', () {
+      const ListTerm term = ListTerm([NumberTerm(1), NumberTerm(2)]);
+      const Bindings bindings = Bindings({'unused': StringTerm('value')});
+      final Term result = term.substitute(bindings);
+      expect(result, isA<ListTerm>());
+      expect((result as ListTerm).native(), [1, 2]);
+    });
+  });
+
+  group('MapTerm edge cases', () {
+    test('single entry map', () {
+      const MapTerm term = MapTerm({StringTerm('key'): NumberTerm(42)});
+      expect(term.native(), {'key': 42});
+    });
+
+    test('map with number keys', () {
+      const MapTerm term = MapTerm({
+        NumberTerm(1): StringTerm('one'),
+        NumberTerm(2): StringTerm('two'),
+      });
+      expect(term.native(), {1: 'one', 2: 'two'});
+    });
+
+    test('map with boolean keys', () {
+      const MapTerm term = MapTerm({
+        BooleanTerm(true): StringTerm('yes'),
+        BooleanTerm(false): StringTerm('no'),
+      });
+      expect(term.native(), {true: 'yes', false: 'no'});
+    });
+
+    test('asMapWithKeys() with multiple types', () {
+      const MapTerm term = MapTerm({
+        NumberTerm(1): StringTerm('one'),
+        StringTerm('two'): NumberTerm(2),
+      });
+      final Map<dynamic, Term> result = term.asMapWithKeys();
+      expect(result.keys.toSet(), {1, 'two'});
+    });
+
+    test('value is correct', () {
+      const Map<Term, Term> entries = {StringTerm('a'): NumberTerm(1)};
+      const MapTerm term = MapTerm(entries);
+      expect(term.value, entries);
+    });
+  });
+
+  group('SetTerm edge cases', () {
+    test('single element set', () {
+      const SetTerm term = SetTerm({NumberTerm(42)});
+      expect(term.native(), {42});
+    });
+
+    test('large set', () {
+      final Set<Term> elements = Set.from(List.generate(100, NumberTerm.new));
+      final SetTerm term = SetTerm(elements);
+      expect(term.native().length, 100);
+    });
+
+    test('set with mixed types', () {
+      const SetTerm term = SetTerm({
+        NumberTerm(1),
+        StringTerm('two'),
+        BooleanTerm(true),
+      });
+      expect(term.native(), {1, 'two', true});
+    });
+  });
+
+  group('VectorTerm edge cases', () {
+    test('single element vector', () {
+      const VectorTerm term = VectorTerm([NumberTerm(42)]);
+      expect(term.native(), [42]);
+    });
+
+    test('nested substitution in vector', () {
+      const VectorTerm term = VectorTerm([
+        BoundVariableTerm('a'),
+        BoundVariableTerm('b'),
+      ]);
+      const Bindings bindings = Bindings({
+        'a': NumberTerm(1),
+        'b': NumberTerm(2),
+      });
+      final Term result = term.substitute(bindings);
+      expect(result, isA<VectorTerm>());
+      expect((result as VectorTerm).native(), [1, 2]);
+    });
+  });
+
+  group('StackTerm edge cases', () {
+    test('single element stack', () {
+      const StackTerm term = StackTerm([NumberTerm(42)]);
+      expect(term.native(), [42]);
+    });
+
+    test('nested substitution in stack', () {
+      const StackTerm term = StackTerm([
+        BoundVariableTerm('x'),
+        BoundVariableTerm('y'),
+        NumberTerm(3),
+      ]);
+      const Bindings bindings = Bindings({
+        'x': NumberTerm(1),
+        'y': NumberTerm(2),
+      });
+      final Term result = term.substitute(bindings);
+      expect(result, isA<StackTerm>());
+      expect((result as StackTerm).native(), [1, 2, 3]);
+    });
+  });
+
+  group('QueueTerm edge cases', () {
+    test('single element queue', () {
+      const QueueTerm term = QueueTerm([NumberTerm(42)]);
+      expect(term.native(), [42]);
+    });
+
+    test('nested substitution in queue', () {
+      const QueueTerm term = QueueTerm([
+        BoundVariableTerm('first'),
+        NumberTerm(2),
+        BoundVariableTerm('last'),
+      ]);
+      const Bindings bindings = Bindings({
+        'first': StringTerm('a'),
+        'last': StringTerm('z'),
+      });
+      final Term result = term.substitute(bindings);
+      expect(result, isA<QueueTerm>());
+      expect((result as QueueTerm).native(), ['a', 2, 'z']);
+    });
+  });
+
+  group('FunctionTerm with various parameter types', () {
+    test('function with boolean parameter', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'check',
+        parameters: [Parameter.boolean('flag')],
+      );
+      expect(term.toString(), 'check(flag: Boolean)');
+    });
+
+    test('function with file parameter', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'readFile',
+        parameters: [Parameter.file('path')],
+      );
+      expect(term.toString(), 'readFile(path: File)');
+    });
+
+    test('function with directory parameter', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'listDir',
+        parameters: [Parameter.directory('dir')],
+      );
+      expect(term.toString(), 'listDir(dir: Directory)');
+    });
+
+    test('function with list parameter', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'process',
+        parameters: [Parameter.list('items')],
+      );
+      expect(term.toString(), 'process(items: List)');
+    });
+
+    test('function with map parameter', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'lookup',
+        parameters: [Parameter.map('data')],
+      );
+      expect(term.toString(), 'lookup(data: Map)');
+    });
+
+    test('function with any parameter', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'identity',
+        parameters: [Parameter.any('value')],
+      );
+      expect(term.toString(), 'identity(value: Any)');
+    });
+
+    test('function with function parameter', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'apply',
+        parameters: [Parameter.function('callback')],
+      );
+      expect(term.toString(), 'apply(callback: Function)');
+    });
+
+    test('function with timestamp parameter', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'format',
+        parameters: [Parameter.timestamp('time')],
+      );
+      expect(term.toString(), 'format(time: Timestamp)');
+    });
+
+    test('function with many parameters', () {
+      const TestFunctionTerm term = TestFunctionTerm(
+        name: 'complex',
+        parameters: [
+          Parameter.number('a'),
+          Parameter.string('b'),
+          Parameter.boolean('c'),
+          Parameter.list('d'),
+          Parameter.map('e'),
+        ],
+      );
+      expect(term.parameterTypes.length, 5);
+      expect(term.toString(), contains('complex'));
+      expect(term.toString(), contains('Number'));
+      expect(term.toString(), contains('String'));
+      expect(term.toString(), contains('Boolean'));
+      expect(term.toString(), contains('List'));
+      expect(term.toString(), contains('Map'));
+    });
+  });
+
+  group('CustomFunctionTerm edge cases', () {
+    setUp(FunctionTerm.resetDepth);
+
+    tearDown(FunctionTerm.resetDepth);
+
+    test('apply() with nested function call in body', () {
+      final TestNativeFunctionTerm innerFunction = TestNativeFunctionTerm(
+        name: 'double',
+        parameters: const [Parameter.number('x')],
+        termFunction: (List<Term> arguments) {
+          final num value = (arguments[0] as NumberTerm).value;
+          return NumberTerm(value * 2);
+        },
+      );
+      final Map<String, FunctionTerm> functions = {'double': innerFunction};
+      final FunctionReferenceTerm doubleRef = FunctionReferenceTerm(
+        'double',
+        functions,
+      );
+      final CallTerm callDouble = CallTerm(
+        callee: doubleRef,
+        arguments: const [BoundVariableTerm('x')],
+      );
+      final CustomFunctionTerm wrapper = CustomFunctionTerm(
+        name: 'wrapper',
+        parameters: const [Parameter.number('x')],
+        term: callDouble,
+      );
+      final Term result = wrapper.apply(const [NumberTerm(21)]);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 42);
+    });
+
+    test('apply() with zero parameters', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'constant',
+        parameters: [],
+        term: StringTerm('hello'),
+      );
+      final Term result = term.apply(const []);
+      expect(result, isA<StringTerm>());
+      expect((result as StringTerm).value, 'hello');
+    });
+
+    test('substitute() returns substituted term directly', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'identity',
+        parameters: [Parameter.number('x')],
+        term: BoundVariableTerm('y'),
+      );
+      const Bindings bindings = Bindings({'y': StringTerm('substituted')});
+      final Term result = term.substitute(bindings);
+      expect(result, isA<StringTerm>());
+      expect((result as StringTerm).value, 'substituted');
+    });
+
+    test('reduce() returns itself', () {
+      const CustomFunctionTerm term = CustomFunctionTerm(
+        name: 'f',
+        parameters: [Parameter.number('x')],
+        term: BoundVariableTerm('x'),
+      );
+      expect(term.reduce(), same(term));
+    });
+  });
+
+  group('NativeFunctionTerm edge cases', () {
+    test('substitute() with all bound parameters', () {
+      final TestNativeFunctionTerm term = TestNativeFunctionTerm(
+        name: 'add',
+        parameters: const [
+          Parameter.number('a'),
+          Parameter.number('b'),
+          Parameter.number('c'),
+        ],
+        termFunction: (List<Term> arguments) {
+          final num sum =
+              (arguments[0] as NumberTerm).value +
+              (arguments[1] as NumberTerm).value +
+              (arguments[2] as NumberTerm).value;
+          return NumberTerm(sum);
+        },
+      );
+      const Bindings bindings = Bindings({
+        'a': NumberTerm(1),
+        'b': NumberTerm(2),
+        'c': NumberTerm(3),
+      });
+      final Term result = term.substitute(bindings);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 6);
+    });
+
+    test('reduce() returns itself', () {
+      final TestNativeFunctionTerm term = TestNativeFunctionTerm(
+        name: 'f',
+        parameters: const [],
+        termFunction: (List<Term> arguments) => const NumberTerm(0),
+      );
+      expect(term.reduce(), same(term));
+    });
+
+    test('apply() with no parameters succeeds', () {
+      final TestNativeFunctionTerm term = TestNativeFunctionTerm(
+        name: 'zero',
+        parameters: const [],
+        termFunction: (List<Term> arguments) => const NumberTerm(0),
+      );
+      final Term result = term.apply(const []);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 0);
+    });
+  });
+
+  group('CallTerm edge cases', () {
+    test('native() with nested CallTerm', () {
+      final TestNativeFunctionTerm inner = TestNativeFunctionTerm(
+        name: 'getNumber',
+        parameters: const [],
+        termFunction: (List<Term> arguments) => const NumberTerm(42),
+      );
+      final TestNativeFunctionTerm outer = TestNativeFunctionTerm(
+        name: 'identity',
+        parameters: const [Parameter.number('x')],
+        termFunction: (List<Term> arguments) => arguments[0],
+      );
+      final CallTerm innerCall = CallTerm(
+        callee: inner,
+        arguments: const [],
+      );
+      final CallTerm outerCall = CallTerm(
+        callee: outer,
+        arguments: [innerCall],
+      );
+      expect(outerCall.native(), 42);
+    });
+
+    test('substitute() preserves non-variable arguments', () {
+      const CallTerm call = CallTerm(
+        callee: BoundVariableTerm('f'),
+        arguments: [NumberTerm(1), StringTerm('two')],
+      );
+      final TestNativeFunctionTerm function = TestNativeFunctionTerm(
+        name: 'test',
+        parameters: const [Parameter.number('a'), Parameter.string('b')],
+        termFunction: (List<Term> arguments) => const BooleanTerm(true),
+      );
+      final Bindings bindings = Bindings({'f': function});
+      final Term result = call.substitute(bindings);
+      expect(result, isA<CallTerm>());
+      final CallTerm substituted = result as CallTerm;
+      expect((substituted.arguments[0] as NumberTerm).value, 1);
+      expect((substituted.arguments[1] as StringTerm).value, 'two');
+    });
+
+    test('reduce() with deeply nested CallTerm', () {
+      final TestNativeFunctionTerm addOne = TestNativeFunctionTerm(
+        name: 'addOne',
+        parameters: const [Parameter.number('x')],
+        termFunction: (List<Term> arguments) {
+          // The argument may still be a CallTerm, so reduce it first
+          final Term reducedArgument = arguments[0].reduce();
+          final num value = (reducedArgument as NumberTerm).value;
+          return NumberTerm(value + 1);
+        },
+      );
+      CallTerm call = CallTerm(
+        callee: addOne,
+        arguments: const [NumberTerm(0)],
+      );
+      for (int i = 0; i < 5; i++) {
+        call = CallTerm(
+          callee: addOne,
+          arguments: [call],
+        );
+      }
+      final Term result = call.reduce();
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 6);
+    });
+  });
+
+  group('FunctionReferenceTerm edge cases', () {
+    test('native() returns function signature string', () {
+      const TestFunctionTerm function = TestFunctionTerm(
+        name: 'noParams',
+        parameters: [],
+      );
+      final Map<String, FunctionTerm> functions = {'noParams': function};
+      final FunctionReferenceTerm reference = FunctionReferenceTerm(
+        'noParams',
+        functions,
+      );
+      expect(reference.native(), 'noParams()');
+    });
+
+    test('type is always FunctionType', () {
+      const TestFunctionTerm function = TestFunctionTerm(
+        name: 'typed',
+        parameters: [Parameter.string('s')],
+      );
+      final Map<String, FunctionTerm> functions = {'typed': function};
+      final FunctionReferenceTerm reference = FunctionReferenceTerm(
+        'typed',
+        functions,
+      );
+      expect(reference.type, isA<FunctionType>());
+    });
+  });
+
+  group('BooleanTerm edge cases', () {
+    test('type is always BooleanType regardless of value', () {
+      const BooleanTerm trueTerm = BooleanTerm(true);
+      const BooleanTerm falseTerm = BooleanTerm(false);
+      expect(trueTerm.type, isA<BooleanType>());
+      expect(falseTerm.type, isA<BooleanType>());
+    });
+
+    test('value property matches constructor argument', () {
+      const BooleanTerm trueTerm = BooleanTerm(true);
+      const BooleanTerm falseTerm = BooleanTerm(false);
+      expect(trueTerm.value, true);
+      expect(falseTerm.value, false);
+    });
+  });
+
+  group('TimestampTerm edge cases', () {
+    test('timestamp at epoch', () {
+      final DateTime epoch = DateTime.fromMillisecondsSinceEpoch(0);
+      final TimestampTerm term = TimestampTerm(epoch);
+      expect(term.native(), epoch);
+    });
+
+    test('timestamp with milliseconds', () {
+      final DateTime preciseTime = DateTime(2024, 1, 1, 12, 30, 45, 123);
+      final TimestampTerm term = TimestampTerm(preciseTime);
+      expect(term.native().millisecond, 123);
+    });
+
+    test('future timestamp', () {
+      final DateTime future = DateTime(3000, 12, 31);
+      final TimestampTerm term = TimestampTerm(future);
+      expect(term.native().year, 3000);
+    });
+  });
+
+  group('ValueTerm.from() additional cases', () {
+    test('int zero returns NumberTerm', () {
+      final ValueTerm term = ValueTerm.from(0);
+      expect(term, isA<NumberTerm>());
+      expect((term as NumberTerm).value, 0);
+    });
+
+    test('negative int returns NumberTerm', () {
+      final ValueTerm term = ValueTerm.from(-42);
+      expect(term, isA<NumberTerm>());
+      expect((term as NumberTerm).value, -42);
+    });
+
+    test('negative double returns NumberTerm', () {
+      final ValueTerm term = ValueTerm.from(-3.14);
+      expect(term, isA<NumberTerm>());
+      expect((term as NumberTerm).value, -3.14);
+    });
+
+    test('empty string returns StringTerm', () {
+      final ValueTerm term = ValueTerm.from('');
+      expect(term, isA<StringTerm>());
+      expect((term as StringTerm).value, '');
+    });
+
+    test('empty List<Term> returns ListTerm', () {
+      final ValueTerm term = ValueTerm.from(<Term>[]);
+      expect(term, isA<ListTerm>());
+      expect((term as ListTerm).value, isEmpty);
+    });
+
+    test('empty Map<Term, Term> returns MapTerm', () {
+      final ValueTerm term = ValueTerm.from(<Term, Term>{});
+      expect(term, isA<MapTerm>());
+      expect((term as MapTerm).value, isEmpty);
+    });
+
+    test('empty Set<Term> returns SetTerm', () {
+      final ValueTerm term = ValueTerm.from(<Term>{});
+      expect(term, isA<SetTerm>());
+      expect((term as SetTerm).value, isEmpty);
+    });
+
+    test('null throws InvalidLiteralValueError', () {
+      expect(
+        () => ValueTerm.from(null),
+        throwsA(isA<InvalidLiteralValueError>()),
+      );
+    });
+
+    test('DateTime.now() returns TimestampTerm', () {
+      final DateTime now = DateTime.now();
+      final ValueTerm term = ValueTerm.from(now);
+      expect(term, isA<TimestampTerm>());
+    });
+  });
+
+  group('FunctionTerm.equalSignature() edge cases', () {
+    test('same name different parameter count returns true', () {
+      const TestFunctionTerm f1 = TestFunctionTerm(
+        name: 'func',
+        parameters: [Parameter.number('x')],
+      );
+      const TestFunctionTerm f2 = TestFunctionTerm(
+        name: 'func',
+        parameters: [Parameter.number('a'), Parameter.number('b')],
+      );
+      expect(f1.equalSignature(f2), true);
+    });
+
+    test('empty name matches empty name', () {
+      const TestFunctionTerm f1 = TestFunctionTerm(
+        name: '',
+        parameters: [],
+      );
+      const TestFunctionTerm f2 = TestFunctionTerm(
+        name: '',
+        parameters: [Parameter.number('x')],
+      );
+      expect(f1.equalSignature(f2), true);
+    });
+
+    test('case sensitive name comparison', () {
+      const TestFunctionTerm f1 = TestFunctionTerm(
+        name: 'Func',
+        parameters: [],
+      );
+      const TestFunctionTerm f2 = TestFunctionTerm(
+        name: 'func',
+        parameters: [],
+      );
+      expect(f1.equalSignature(f2), false);
+    });
+  });
+
+  group('FunctionTerm recursion depth edge cases', () {
+    setUp(FunctionTerm.resetDepth);
+
+    tearDown(FunctionTerm.resetDepth);
+
+    test('incrementDepth at exactly max depth minus one succeeds', () {
+      for (int i = 0; i < FunctionTerm.maxRecursionDepth - 1; i++) {
+        FunctionTerm.incrementDepth();
+      }
+      expect(FunctionTerm.incrementDepth(), true);
+    });
+
+    test('multiple reset calls are idempotent', () {
+      FunctionTerm.incrementDepth();
+      FunctionTerm.incrementDepth();
+      FunctionTerm.resetDepth();
+      FunctionTerm.resetDepth();
+      FunctionTerm.resetDepth();
+      expect(FunctionTerm.incrementDepth(), true);
+    });
+
+    test('decrement then increment cycle', () {
+      for (int i = 0; i < 10; i++) {
+        FunctionTerm.incrementDepth();
+        FunctionTerm.decrementDepth();
+      }
+      expect(FunctionTerm.incrementDepth(), true);
+    });
+  });
+
+  group('CallTerm with BoundVariableTerm arguments', () {
+    test('substitute() resolves all BoundVariableTerm arguments', () {
+      const CallTerm call = CallTerm(
+        callee: BoundVariableTerm('func'),
+        arguments: [
+          BoundVariableTerm('a'),
+          BoundVariableTerm('b'),
+          BoundVariableTerm('c'),
+        ],
+      );
+      final TestNativeFunctionTerm function = TestNativeFunctionTerm(
+        name: 'sum',
+        parameters: const [
+          Parameter.number('x'),
+          Parameter.number('y'),
+          Parameter.number('z'),
+        ],
+        termFunction: (List<Term> arguments) {
+          final num sum =
+              (arguments[0] as NumberTerm).value +
+              (arguments[1] as NumberTerm).value +
+              (arguments[2] as NumberTerm).value;
+          return NumberTerm(sum);
+        },
+      );
+      final Bindings bindings = Bindings({
+        'func': function,
+        'a': const NumberTerm(1),
+        'b': const NumberTerm(2),
+        'c': const NumberTerm(3),
+      });
+      final Term substituted = call.substitute(bindings);
+      expect(substituted, isA<CallTerm>());
+      final CallTerm substitutedCall = substituted as CallTerm;
+      final Term result = substitutedCall.reduce();
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, 6);
+    });
+  });
+
+  group('ListTerm with nested BoundVariableTerms', () {
+    test('deeply nested substitution', () {
+      const ListTerm innerList = ListTerm([
+        BoundVariableTerm('inner'),
+      ]);
+      const ListTerm outerList = ListTerm([
+        innerList,
+        BoundVariableTerm('outer'),
+      ]);
+      const Bindings bindings = Bindings({
+        'inner': NumberTerm(1),
+        'outer': NumberTerm(2),
+      });
+      final Term result = outerList.substitute(bindings);
+      expect(result, isA<ListTerm>());
+      final List<dynamic> native = (result as ListTerm).native();
+      expect(native, [
+        [1],
+        2,
+      ]);
+    });
+  });
+
+  group('MapTerm toString() formatting', () {
+    test('empty map toString()', () {
+      const MapTerm term = MapTerm({});
+      expect(term.toString(), '{}');
+    });
+
+    test('multiple entries toString()', () {
+      const MapTerm term = MapTerm({
+        StringTerm('a'): NumberTerm(1),
+        StringTerm('b'): NumberTerm(2),
+      });
+      final String str = term.toString();
+      expect(str, contains('a: 1'));
+      expect(str, contains('b: 2'));
     });
   });
 }
