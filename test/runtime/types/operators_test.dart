@@ -1019,6 +1019,16 @@ void main() {
       final RuntimeFacade runtime = getRuntime('main = true + 1');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
+
+    test('+ throws on vector length mismatch', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1, 2]) + vector.new([3])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
   });
 
   group('Subtraction with Sets', () {
@@ -1058,6 +1068,16 @@ void main() {
     test('- throws on invalid argument types', () {
       final RuntimeFacade runtime = getRuntime('main = "10" - 2');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('- throws on vector length mismatch', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = vector.new([1, 2]) - vector.new([3])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
     });
   });
 
@@ -1186,6 +1206,20 @@ void main() {
       );
       checkResult(runtime, false);
     });
+
+    test('== returns true for sets with different order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = set.new([1, 2, 3]) == set.new([3, 2, 1])',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('== returns true for maps with different key order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = {"b": 2, "a": 1} == {"a": 1, "b": 2}',
+      );
+      checkResult(runtime, true);
+    });
   });
 
   group('Logical Operator Error Cases', () {
@@ -1206,6 +1240,26 @@ void main() {
 
     test('| throws on non-boolean second argument', () {
       final RuntimeFacade runtime = getRuntime('main = false | 1');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('&& throws on non-boolean first argument', () {
+      final RuntimeFacade runtime = getRuntime('main = 1 && true');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('&& throws on non-boolean second argument', () {
+      final RuntimeFacade runtime = getRuntime('main = true && 1');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('|| throws on non-boolean first argument', () {
+      final RuntimeFacade runtime = getRuntime('main = 1 || false');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('|| throws on non-boolean second argument', () {
+      final RuntimeFacade runtime = getRuntime('main = false || 1');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 

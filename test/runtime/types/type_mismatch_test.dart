@@ -561,6 +561,48 @@ void main() {
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
+
+    test(
+      'num.integerRandom throws InvalidNumericOperationError when max is less than min',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = num.integerRandom(5, 4)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('num.integerRandom'),
+                contains('max (4) must be >= min (5)'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'num.clamp throws InvalidNumericOperationError when minimum bound exceeds maximum bound',
+      () {
+        final RuntimeFacade runtime = getRuntime('main = num.clamp(5, 10, 4)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('num.clamp'),
+                contains('min bound (10) must be <= max bound (4)'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   });
 
   group('Logic Function Type Mismatches', () {
@@ -601,6 +643,34 @@ void main() {
 
     test('bool.not with number', () {
       final RuntimeFacade runtime = getRuntime('main = bool.not(5)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.andStrict with a non-boolean first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = bool.andStrict(1, true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.andStrict with a non-boolean second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = bool.andStrict(true, 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.orStrict with a non-boolean first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = bool.orStrict(1, false)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('bool.orStrict with a non-boolean second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = bool.orStrict(false, 1)',
+      );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });
@@ -732,6 +802,13 @@ void main() {
     test('str.indexOf with numbers', () {
       final RuntimeFacade runtime = getRuntime('main = str.indexOf(5, 5)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('str.match throws ParseError for an invalid regular expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = str.match("hello", "(")',
+      );
+      expect(runtime.executeMain, throwsA(isA<ParseError>()));
     });
   });
 
@@ -881,6 +958,56 @@ void main() {
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
+
+    group('Higher Order Function Type Mismatches', () {
+      test('list.map with non-function second argument', () {
+        final RuntimeFacade runtime = getRuntime('main = list.map([1, 2], 5)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('list.filter with non-function second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.filter([1, 2], 5)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('list.reduce with non-function third argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.reduce([1, 2], 0, 5)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('list.sort with non-function second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.sort([1, 2], 5)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('list.zip with non-function third argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = list.zip([1, 2], [3, 4], 5)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('list.all with non-function second argument', () {
+        final RuntimeFacade runtime = getRuntime('main = list.all([1, 2], 5)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('list.any with non-function second argument', () {
+        final RuntimeFacade runtime = getRuntime('main = list.any([1, 2], 5)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('list.none with non-function second argument', () {
+        final RuntimeFacade runtime = getRuntime('main = list.none([1, 2], 5)');
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+    });
   });
 
   group('Map Type Mismatches', () {
@@ -921,6 +1048,36 @@ void main() {
         'main = map.containsKey(5, "k")',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    group('Key Type Mismatches', () {
+      test('map.at with a non-hashable key', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = map.at({"a": 1}, num.abs)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('map.removeAt with a non-number key', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = map.removeAt({"a": 1}, num.abs)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('map.set with a non-hashable key', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = map.set({"a": 1}, num.abs, 2)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('map.containsKey with a non-hashable key', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = map.containsKey({"a": 1}, num.abs)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
     });
   });
 

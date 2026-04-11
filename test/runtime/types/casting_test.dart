@@ -54,6 +54,11 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
+    test('to.integer throws ParseError for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main = to.integer("")');
+      expect(runtime.executeMain, throwsA(isA<ParseError>()));
+    });
+
     test('to.decimal converts string to decimal', () {
       final RuntimeFacade runtime = getRuntime('main = to.decimal("12")');
       checkResult(runtime, 12.0);
@@ -67,6 +72,11 @@ void main() {
     test('to.decimal throws for boolean argument', () {
       final RuntimeFacade runtime = getRuntime('main = to.decimal(true)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('to.decimal throws ParseError for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main = to.decimal("")');
+      expect(runtime.executeMain, throwsA(isA<ParseError>()));
     });
 
     test('to.string returns string unchanged', () {
@@ -245,6 +255,18 @@ void main() {
 
     test('is.list returns true for empty list', () {
       final RuntimeFacade runtime = getRuntime('main = is.list([])');
+      checkResult(runtime, true);
+    });
+
+    test('is.vector returns true for empty vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main = is.vector(vector.new([]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('is.set returns true for empty set', () {
+      final RuntimeFacade runtime = getRuntime('main = is.set(set.new([]))');
       checkResult(runtime, true);
     });
 

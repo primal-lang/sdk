@@ -273,6 +273,38 @@ void main() {
       });
     });
 
+    group('File', () {
+      test('returns true for equal files', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.eq(file.fromPath("."), file.fromPath("."))',
+        );
+        checkResult(runtime, true);
+      });
+
+      test('returns false for unequal files', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.eq(file.fromPath("."), file.fromPath(".."))',
+        );
+        checkResult(runtime, false);
+      });
+    });
+
+    group('Directory', () {
+      test('returns true for equal directories', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.eq(directory.fromPath("."), directory.fromPath("."))',
+        );
+        checkResult(runtime, true);
+      });
+
+      test('returns false for unequal directories', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.eq(directory.fromPath("."), directory.fromPath(".."))',
+        );
+        checkResult(runtime, false);
+      });
+    });
+
     group('Map', () {
       test('returns true for equal maps', () {
         final RuntimeFacade runtime = getRuntime(
@@ -300,6 +332,13 @@ void main() {
           'main = comp.eq({"x": 1, "y": 2}, {"x": 1, "y": 3})',
         );
         checkResult(runtime, false);
+      });
+
+      test('returns true for equal maps with different insertion order', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.eq({"x": 1, "y": 2}, {"y": 2, "x": 1})',
+        );
+        checkResult(runtime, true);
       });
 
       test('returns true for empty maps', () {
@@ -403,6 +442,134 @@ void main() {
       test('returns true for lists with different lengths', () {
         final RuntimeFacade runtime = getRuntime(
           'main = comp.neq([1, 2, 3], [1, 2])',
+        );
+        checkResult(runtime, true);
+      });
+    });
+
+    group('Timestamp', () {
+      test('returns false for equal timestamps', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(time.fromIso("2024-01-01T00:00:00"), time.fromIso("2024-01-01T00:00:00"))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('returns true for unequal timestamps', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(time.fromIso("2024-01-01T00:00:00"), time.fromIso("2024-01-02T00:00:00"))',
+        );
+        checkResult(runtime, true);
+      });
+    });
+
+    group('Vector', () {
+      test('returns false for equal vectors', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(vector.new([1, 2, 3]), vector.new([1, 2, 3]))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('returns true for unequal vectors', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(vector.new([1, 2, 3]), vector.new([1, 2, 4]))',
+        );
+        checkResult(runtime, true);
+      });
+    });
+
+    group('Stack', () {
+      test('returns false for equal stacks', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(stack.new([1, 2, 3]), stack.new([1, 2, 3]))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('returns true for unequal stacks', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(stack.new([1, 2, 3]), stack.new([1, 2, 4]))',
+        );
+        checkResult(runtime, true);
+      });
+    });
+
+    group('Queue', () {
+      test('returns false for equal queues', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(queue.new([1, 2, 3]), queue.new([1, 2, 3]))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('returns true for unequal queues', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(queue.new([1, 2, 3]), queue.new([1, 2, 4]))',
+        );
+        checkResult(runtime, true);
+      });
+    });
+
+    group('Set', () {
+      test('returns false for equal sets', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(set.new([1, 2, 3]), set.new([1, 2, 3]))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('returns true for unequal sets', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(set.new([1, 2, 3]), set.new([1, 2]))',
+        );
+        checkResult(runtime, true);
+      });
+    });
+
+    group('Map', () {
+      test('returns false for equal maps', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq({"x": 1, "y": 2}, {"x": 1, "y": 2})',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('returns true for unequal maps', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq({"x": 1, "y": 2}, {"x": 1, "y": 3})',
+        );
+        checkResult(runtime, true);
+      });
+    });
+
+    group('File', () {
+      test('returns false for equal files', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(file.fromPath("."), file.fromPath("."))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('returns true for unequal files', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(file.fromPath("."), file.fromPath(".."))',
+        );
+        checkResult(runtime, true);
+      });
+    });
+
+    group('Directory', () {
+      test('returns false for equal directories', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(directory.fromPath("."), directory.fromPath("."))',
+        );
+        checkResult(runtime, false);
+      });
+
+      test('returns true for unequal directories', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main = comp.neq(directory.fromPath("."), directory.fromPath(".."))',
         );
         checkResult(runtime, true);
       });
