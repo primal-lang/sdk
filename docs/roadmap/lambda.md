@@ -964,6 +964,13 @@ Lambda expressions work in REPL mode the same as in program mode:
 10
 ```
 
+**Why `f()(5)` instead of `f(5)`?** In Primal, `name = expression` always defines a **zero-parameter function**—there is no separate concept of "value binding" at the top level. When you write `f = (x) -> x * 2`, you create a function `f` with zero parameters whose body is the lambda. To use it:
+
+1. `f()` — invoke the zero-param function, returning the lambda
+2. `(5)` — invoke the returned lambda with argument 5
+
+This is consistent with Primal's "everything is a function" philosophy. For direct invocation without the extra `()`, use an immediately invoked lambda: `((x) -> x * 2)(5)`, or define a parameterized function: `f(x) = x * 2`.
+
 ### Post-Implementation
 
 After implementing the feature:
