@@ -158,7 +158,7 @@ Two new keywords: `let` and `in`.
 | Error                       | Condition                                      | Priority |
 | --------------------------- | ---------------------------------------------- | -------- |
 | `EmptyLetBindingsError`     | No bindings provided between `let` and `in`    | 1        |
-| `ShadowedLetBindingError`      | Binding shadows a parameter or outer binding   | 2        |
+| `ShadowedLetBindingError`   | Binding shadows a parameter or outer binding   | 2        |
 | `DuplicatedLetBindingError` | Same variable bound twice in one `let`         | 3        |
 | `UndefinedIdentifierError`  | Binding references itself or an undefined name | 4        |
 | `ExpectedTokenError(',')`   | Comma missing between bindings                 | —        |
@@ -338,6 +338,51 @@ Since shadowing is disallowed at the semantic level, the `substitute()` method d
 
 This is semantically equivalent to nested immediately-applied functions, but implemented directly without synthesizing intermediate function terms.
 
+### Partial Substitution Requirement
+
+The existing `BoundVariableTerm.substitute()` throws `NotFoundInScopeError` if the variable name is not in the bindings map. This works for function parameters (which are always fully substituted during function application), but causes a problem with let bindings.
+
+Consider `foo(y) = let x = 1 in x + y`. When `foo(5)` is called:
+
+1. `CustomFunctionTerm.apply([5])` creates bindings `{y: 5}`
+2. Calls `substitute({y: 5})` on the LetTerm body
+3. `LetTerm.substitute()` propagates into body: `x + y`
+4. `BoundVariableTerm("x").substitute({y: 5})` — **throws** because `x` is not in `{y: 5}`
+
+The problem: function parameter substitution traverses the entire body, including references to let bindings that should NOT be substituted yet.
+
+**Solution**: Introduce `LetBoundVariableTerm` with partial substitution semantics:
+
+```dart
+/// A reference to a let-bound variable within a let expression body.
+///
+/// Unlike [BoundVariableTerm] (for function parameters), this term supports
+/// partial substitution—it returns itself when the name is not found in
+/// bindings, allowing function parameter substitution to pass through
+/// without affecting let binding references.
+class LetBoundVariableTerm extends Term {
+  final String name;
+
+  const LetBoundVariableTerm(this.name);
+
+  @override
+  Term substitute(Bindings bindings) =>
+      bindings.data.containsKey(name) ? bindings.data[name]! : this;
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  String toString() => name;
+
+  @override
+  dynamic native() =>
+      throw StateError('LetBoundVariableTerm "$name" was not substituted');
+}
+```
+
+This preserves the strict behavior of `BoundVariableTerm` for function parameters (catching bugs early) while allowing let binding references to survive function parameter substitution until `LetTerm.reduce()` processes them.
+
 ### Semantic Analysis Algorithm
 
 When processing a `LetExpression`:
@@ -370,20 +415,24 @@ SemanticNode checkExpression({
 })
 ```
 
-Modify `_checkIdentifierExpression()` to only add to `usedParameters` for function parameters:
+Modify `_checkIdentifierExpression()` to track usage and set `isLetBinding`:
 
 ```dart
 SemanticNode _checkIdentifierExpression({...}) {
   final String name = expression.value;
 
   if (availableParameters.contains(name)) {
+    final bool isLetBinding = letBindingNames.contains(name);
+
     // Only track usage for function parameters, not let bindings
-    if (!letBindingNames.contains(name)) {
+    if (!isLetBinding) {
       usedParameters.add(name);
     }
+
     return SemanticBoundVariableNode(
       location: expression.location,
       name: name,
+      isLetBinding: isLetBinding,  // NEW: used by lowerer to choose term type
     );
   } else if (allSignatures.containsKey(name)) {
     // ... existing function reference handling
@@ -410,13 +459,13 @@ final SemanticNode body = checkExpression(
 
 ### Compiler Pipeline Impact
 
-| Stage     | Changes                                                                                                     |
-| --------- | ----------------------------------------------------------------------------------------------------------- |
-| Lexical   | Add `LetToken` and `InToken` keywords                                                                       |
-| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes; parse comma-separated bindings                    |
-| Semantic  | Extend scope with bindings; check for empty, duplicates, shadowing, and self-reference; add new error types |
-| Lowering  | Convert `SemanticLetNode` to `LetTerm`; add case to `lowerTerm` switch                                      |
-| Runtime   | Add `LetTerm` with sequential binding evaluation                                                            |
+| Stage     | Changes                                                                                                                      |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Lexical   | Add `LetToken` and `InToken` keywords                                                                                        |
+| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes; parse comma-separated bindings                                     |
+| Semantic  | Extend scope with bindings; check for empty, duplicates, shadowing, and self-reference; add `isLetBinding` field; new errors |
+| Lowering  | Convert `SemanticLetNode` to `LetTerm`; map `SemanticBoundVariableNode` to `LetBoundVariableTerm` or `BoundVariableTerm`     |
+| Runtime   | Add `LetTerm` with sequential binding evaluation; add `LetBoundVariableTerm` with partial substitution semantics             |
 
 ### New Node Types
 
@@ -448,22 +497,42 @@ SemanticLetBindingNode
   location: Location
 ```
 
+**Modified existing node** (add field to `lib/compiler/semantic/semantic_node.dart`):
+
+```
+SemanticBoundVariableNode
+  name: String
+  isLetBinding: bool    // NEW: true for let bindings, false for function parameters
+  location: Location
+```
+
 **Runtime (Terms)**:
 
 ```
 LetTerm
   bindings: List<(String, Term)>
   body: Term
+
+LetBoundVariableTerm    // NEW: for let binding references
+  name: String
 ```
 
 ### Lowering Implementation
 
-Add the following case to the `lowerTerm` switch in `lib/compiler/lowering/lowerer.dart`:
+Modify the existing `SemanticBoundVariableNode` case and add the `SemanticLetNode` case in `lib/compiler/lowering/lowerer.dart`:
 
 ```dart
 Term lowerTerm(SemanticNode semanticNode) => switch (semanticNode) {
   // ... existing cases ...
+
+  // MODIFIED: distinguish let bindings from function parameters
+  SemanticBoundVariableNode() => semanticNode.isLetBinding
+      ? LetBoundVariableTerm(semanticNode.name)
+      : BoundVariableTerm(semanticNode.name),
+
+  // NEW: lower let expressions
   SemanticLetNode() => _lowerLet(semanticNode),
+
   // ... existing default case ...
 };
 
@@ -483,15 +552,15 @@ Term _lowerLet(SemanticLetNode semanticNode) {
 
 **Medium**
 
-| Component         | Effort                                                   |
-| ----------------- | -------------------------------------------------------- |
-| Lexer             | Trivial - add two keywords (same pattern as `if`/`else`) |
-| Parser            | Straightforward - new rule similar to `ifExpression`     |
-| AST               | Two new node types                                       |
-| Semantic analyzer | Simple - scope extension and shadowing check             |
-| Lowerer           | New term type and lowering logic                         |
-| Runtime           | New `LetTerm` with substitution-based evaluation         |
-| Tests             | Comprehensive coverage of scoping and error conditions   |
+| Component         | Effort                                                                          |
+| ----------------- | ------------------------------------------------------------------------------- |
+| Lexer             | Trivial - add two keywords (same pattern as `if`/`else`)                        |
+| Parser            | Straightforward - new rule similar to `ifExpression`                            |
+| AST               | Two new node types                                                              |
+| Semantic analyzer | Moderate - scope extension, shadowing check, `isLetBinding` field on bound vars |
+| Lowerer           | Simple - conditional term selection based on `isLetBinding`                     |
+| Runtime           | Moderate - new `LetTerm` and `LetBoundVariableTerm` with partial substitution   |
+| Tests             | Comprehensive coverage of scoping, substitution, and error conditions           |
 
 ### REPL Mode
 
