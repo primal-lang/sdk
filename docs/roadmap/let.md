@@ -1167,8 +1167,24 @@ After implementing the feature:
 
 #### REPL Tests
 
-| Test              | Input                       | Expected                                                    |
-| ----------------- | --------------------------- | ----------------------------------------------------------- |
-| Simple let        | `let x = 5 in x + 1`        | `6`                                                         |
-| Multiple bindings | `let a = 2, b = 3 in a * b` | `6`                                                         |
-| Error in REPL     | `let x = x in x`            | `UndefinedIdentifierError` (no function context in message) |
+These tests exercise both entry points in `RuntimeFacade`: expression evaluation (`evaluateToTerm`) and function definition (`defineFunction`).
+
+**Expression evaluation** (via `evaluateToTerm`):
+
+| Test                  | Input                             | Expected                                                    |
+| --------------------- | --------------------------------- | ----------------------------------------------------------- |
+| Simple let            | `let x = 5 in x + 1`              | `6`                                                         |
+| Multiple bindings     | `let a = 2, b = 3 in a * b`       | `6`                                                         |
+| Nested let            | `let x = 1 in let y = x + 1 in y` | `2`                                                         |
+| Shadow stdlib in expr | `let num.abs = 42 in num.abs`     | `42`                                                        |
+| Error in REPL         | `let x = x in x`                  | `UndefinedIdentifierError` (no function context in message) |
+
+**Function definition** (via `defineFunction`):
+
+| Test                        | Definition then call                                    | Expected |
+| --------------------------- | ------------------------------------------------------- | -------- |
+| Define function with let    | `f(n) = let x = n * 2 in x` then `f(5)`                 | `10`     |
+| Let shadowing in definition | `f(n) = let num.abs = 99 in num.abs` then `f(0)`        | `99`     |
+| Nested let in definition    | `f(n) = let x = n in let y = x in y` then `f(7)`        | `7`      |
+| Parameter + let binding     | `f(a, b) = let sum = a + b in sum * 2` then `f(3, 4)`   | `14`     |
+| Redefine with let           | `g(n) = n` then `g(n) = let x = n in x * 2` then `g(5)` | `10`     |
