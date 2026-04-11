@@ -309,3 +309,22 @@ LetTerm
 | Lowerer           | New term type and lowering logic                         |
 | Runtime           | New `LetTerm` with substitution-based evaluation         |
 | Tests             | Comprehensive coverage of scoping, shadowing, errors     |
+
+### Post-Implementation
+
+After implementing the feature:
+
+1. **Update documentation** in `docs/`:
+   - Add `let` expression to `docs/reference/control.md`
+   - Update `docs/compiler/lexical.md` with new keywords
+   - Update `docs/compiler/syntactic.md` with new grammar rules and AST nodes
+   - Update `docs/compiler/semantic.md` with new semantic nodes and analysis
+   - Update `docs/compiler/runtime.md` with `LetTerm` behavior
+
+2. **Implement tests** using the examples from this document:
+   - Lexical: `let` and `in` token recognition
+   - Syntactic: `LetExpression` parsing (single binding, multiple bindings, nested)
+   - Semantic: scope extension, duplicate detection, self-reference errors, shadowing warnings
+   - Lowering: `SemanticLetNode` to `LetTerm` conversion
+   - Runtime: sequential evaluation, substitution behavior
+   - Integration: all valid and invalid examples from this specification
