@@ -216,11 +216,11 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
 | `ExpectedTokenError`        | No bindings provided (`let in x`)              | Parsing  | —        |
 | `ExpectedTokenError(',')`   | Comma missing between bindings                 | Parsing  | —        |
 | `ExpectedTokenError('in')`  | `in` keyword missing after bindings            | Parsing  | —        |
-| `ShadowedLetBindingError`   | Binding shadows a parameter or outer binding   | Semantic | 1        |
-| `DuplicatedLetBindingError` | Same variable bound twice in one `let`         | Semantic | 2        |
+| `DuplicatedLetBindingError` | Same variable bound twice in one `let`         | Semantic | 1        |
+| `ShadowedLetBindingError`   | Binding shadows a parameter or outer binding   | Semantic | 2        |
 | `UndefinedIdentifierError`  | Binding references itself or an undefined name | Semantic | 3        |
 
-**Error Priority**: For semantic errors, when multiple errors could apply to the same binding, the error with the lowest priority number is thrown first. Shadowing is checked before duplicate detection, and both are checked before the value expression is analyzed. Parsing errors (`ExpectedTokenError`) are detected before semantic analysis runs.
+**Error Priority**: For semantic errors, when multiple errors could apply to the same binding, the error with the lowest priority number is thrown first. Duplicate detection is checked before shadowing (to correctly identify intra-let duplicates), and both are checked before the value expression is analyzed. Parsing errors (`ExpectedTokenError`) are detected before semantic analysis runs.
 
 **New Error Types**: The following error types must be added to `lib/compiler/errors/semantic_error.dart`:
 
@@ -463,19 +463,21 @@ This preserves the strict behavior of `BoundVariableTerm` for function parameter
 
 When processing a `LetExpression`:
 
-1. Create a local set `letBindingNames` to track names bound in this `let`
-2. For each binding in order:
-   - If the name is in `availableParameters`, throw `ShadowedLetBindingError`
-   - If the name is in `letBindingNames`, throw `DuplicatedLetBindingError`
+1. Save the original `availableParameters` for shadowing checks (before any names from this `let` are added)
+2. Create a local set `localLetBindings` to track names bound in this `let` (for duplicate detection)
+3. For each binding in order:
+   - If the name is in `localLetBindings`, throw `DuplicatedLetBindingError`
+   - If the name is in the _original_ `availableParameters`, throw `ShadowedLetBindingError`
    - Check the binding's value expression against the current `availableParameters`
-   - Add the name to `letBindingNames`
+   - Add the name to `localLetBindings`
    - Add the name to `availableParameters` (for subsequent bindings and the body)
-3. Check the body expression against the extended `availableParameters`
-4. Return a `SemanticLetNode` with the checked bindings and body
+   - Add the name to `letBindingNames` (for `isLetBinding` tracking)
+4. Check the body expression against the extended `availableParameters`
+5. Return a `SemanticLetNode` with the checked bindings and body
 
 Note: The parser guarantees at least one binding exists (grammar: `bindings → binding ("," binding)*`), so the semantic analyzer does not need to check for empty bindings.
 
-**Error Priority**: Shadowing is checked before duplicate detection. Both are checked before the value expression is analyzed. This means if a binding name shadows a parameter AND the value references itself, the shadowing error is thrown first.
+**Error Priority**: Duplicate detection is checked before shadowing. This ensures `let x = 1, x = 2 in x` correctly throws `DuplicatedLetBindingError` (not `ShadowedLetBindingError`). Shadowing is only checked against the _original_ outer scope—names added by earlier bindings in the same `let` are not considered shadowing targets. Both checks occur before the value expression is analyzed, so if a binding name is a duplicate AND the value references itself, the duplicate error is thrown first.
 
 **usedParameters Tracking**: The existing `usedParameters` set tracks which function parameters are referenced. Let bindings are added to `availableParameters` but are NOT function parameters and should NOT be added to `usedParameters`.
 
@@ -696,6 +698,12 @@ SemanticNode _checkLetExpression({
   required Set<String> letBindingNames,
   required Map<String, FunctionSignature> allSignatures,
 }) {
+  // Save the original outer scope for shadowing checks. This is the scope
+  // BEFORE any names from this let are added. This ensures that
+  // `let x = 1, x = 2 in x` correctly throws DuplicatedLetBindingError
+  // (not ShadowedLetBindingError).
+  final Set<String> originalOuterScope = Set.of(availableParameters);
+
   // Create working copies to avoid polluting outer scope when we return.
   // This ensures `let x = 1 in (let y = 2 in y) + y` correctly errors on
   // the final `y` (which is outside the inner let's scope).
@@ -712,17 +720,19 @@ SemanticNode _checkLetExpression({
   for (final LetBindingExpression binding in expression.bindings) {
     final String name = binding.name;
 
-    // Check for shadowing (parameter or outer let binding)
-    if (scopedAvailableParameters.contains(name)) {
-      throw ShadowedLetBindingError(
+    // Check for duplicate within this let FIRST
+    // This ensures `let x = 1, x = 2 in x` throws DuplicatedLetBindingError
+    if (localLetBindings.contains(name)) {
+      throw DuplicatedLetBindingError(
         binding: name,
         inFunction: currentFunction,
       );
     }
 
-    // Check for duplicate within this let
-    if (localLetBindings.contains(name)) {
-      throw DuplicatedLetBindingError(
+    // Check for shadowing against the ORIGINAL outer scope (not including
+    // names added by earlier bindings in this let)
+    if (originalOuterScope.contains(name)) {
+      throw ShadowedLetBindingError(
         binding: name,
         inFunction: currentFunction,
       );
@@ -947,21 +957,21 @@ After implementing the feature:
 
 #### Semantic Tests
 
-| Test                              | Input                                  | Expected                                                    |
-| --------------------------------- | -------------------------------------- | ----------------------------------------------------------- |
-| Valid single binding              | `f(n) = let x = n in x`                | No errors, no warnings                                      |
-| Valid multiple bindings           | `f(n) = let x = n, y = x in y`         | No errors                                                   |
-| Shadows parameter                 | `f(x) = let x = 1 in x`                | `ShadowedLetBindingError`                                   |
-| Shadows outer let                 | `f(n) = let x = 1 in let x = 2 in x`   | `ShadowedLetBindingError`                                   |
-| Duplicate in same let             | `f(n) = let x = 1, x = 2 in x`         | `DuplicatedLetBindingError`                                 |
-| Duplicate non-adjacent            | `f(n) = let x = 1, y = 2, x = 3 in x`  | `DuplicatedLetBindingError`                                 |
-| Self-reference                    | `f(n) = let x = x in x`                | `UndefinedIdentifierError`                                  |
-| Forward reference                 | `f(n) = let y = x, x = 1 in y`         | `UndefinedIdentifierError`                                  |
-| Scope isolation                   | `f(n) = let x = (let y = 1 in y) in y` | `UndefinedIdentifierError` (y not in outer scope)           |
-| Error priority: shadow before dup | `f(x) = let x = 1, x = 2 in x`         | `ShadowedLetBindingError` (not Duplicated)                  |
-| `isLetBinding` set correctly      | `f(n) = let x = 1 in x`                | Body's `SemanticBoundVariableNode` has `isLetBinding: true` |
-| Parameter `isLetBinding` false    | `f(n) = n`                             | `SemanticBoundVariableNode` has `isLetBinding: false`       |
-| `usedParameters` excludes let     | `f(n) = let x = 1 in x`                | Warning: unused parameter `n`                               |
+| Test                           | Input                                  | Expected                                                    |
+| ------------------------------ | -------------------------------------- | ----------------------------------------------------------- |
+| Valid single binding           | `f(n) = let x = n in x`                | No errors, no warnings                                      |
+| Valid multiple bindings        | `f(n) = let x = n, y = x in y`         | No errors                                                   |
+| Shadows parameter              | `f(x) = let x = 1 in x`                | `ShadowedLetBindingError`                                   |
+| Shadows outer let              | `f(n) = let x = 1 in let x = 2 in x`   | `ShadowedLetBindingError`                                   |
+| Duplicate in same let          | `f(n) = let x = 1, x = 2 in x`         | `DuplicatedLetBindingError`                                 |
+| Duplicate non-adjacent         | `f(n) = let x = 1, y = 2, x = 3 in x`  | `DuplicatedLetBindingError`                                 |
+| Self-reference                 | `f(n) = let x = x in x`                | `UndefinedIdentifierError`                                  |
+| Forward reference              | `f(n) = let y = x, x = 1 in y`         | `UndefinedIdentifierError`                                  |
+| Scope isolation                | `f(n) = let x = (let y = 1 in y) in y` | `UndefinedIdentifierError` (y not in outer scope)           |
+| Shadow on first binding        | `f(x) = let x = 1, x = 2 in x`         | `ShadowedLetBindingError` (first `x` shadows param)         |
+| `isLetBinding` set correctly   | `f(n) = let x = 1 in x`                | Body's `SemanticBoundVariableNode` has `isLetBinding: true` |
+| Parameter `isLetBinding` false | `f(n) = n`                             | `SemanticBoundVariableNode` has `isLetBinding: false`       |
+| `usedParameters` excludes let  | `f(n) = let x = 1 in x`                | Warning: unused parameter `n`                               |
 
 #### Lowering Tests
 
