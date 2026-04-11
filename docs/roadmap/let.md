@@ -339,8 +339,13 @@ bad6(x) = let x = 1 in x
 bad7(n) = let x = 1 in let x = 2 in x
 // → ShadowedLetBindingError: Shadowed let binding "x"
 
+// ERROR: Inner let binding not visible in outer scope
+bad8(n) = let x = (let y = 1 in y) in y
+// → UndefinedIdentifierError: Undefined identifier "y"
+// (y is only in scope within the inner let body, not the outer let body)
+
 // ERROR: Shadows earlier binding in same let
-bad8(n) = let x = 1, y = 2, x = 3 in x
+bad9(n) = let x = 1, y = 2, x = 3 in x
 // → DuplicatedLetBindingError: Duplicated let binding "x"
 ```
 
@@ -462,10 +467,153 @@ SemanticNode checkExpression({
 })
 ```
 
+**Cascading signature changes**: All helper methods that call `checkExpression()` must also accept and propagate `letBindingNames`. Update the following methods to add the parameter and pass it through:
+
+```dart
+// _checkListExpression: propagate through element checks
+SemanticNode _checkListExpression({
+  required ListExpression expression,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,  // NEW
+  required Map<String, FunctionSignature> allSignatures,
+}) {
+  final List<SemanticNode> elements = expression.value
+      .map(
+        (e) => checkExpression(
+          expression: e,
+          currentFunction: currentFunction,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          letBindingNames: letBindingNames,  // PROPAGATE
+          allSignatures: allSignatures,
+        ),
+      )
+      .toList();
+  // ... rest unchanged
+}
+
+// _checkMapExpression: propagate through key and value checks
+SemanticNode _checkMapExpression({
+  required MapExpression expression,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,  // NEW
+  required Map<String, FunctionSignature> allSignatures,
+}) {
+  final List<SemanticMapEntryNode> entries = expression.value
+      .map(
+        (e) => SemanticMapEntryNode(
+          key: checkExpression(
+            expression: e.key,
+            currentFunction: currentFunction,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            letBindingNames: letBindingNames,  // PROPAGATE
+            allSignatures: allSignatures,
+          ),
+          value: checkExpression(
+            expression: e.value,
+            currentFunction: currentFunction,
+            availableParameters: availableParameters,
+            usedParameters: usedParameters,
+            letBindingNames: letBindingNames,  // PROPAGATE
+            allSignatures: allSignatures,
+          ),
+        ),
+      )
+      .toList();
+  // ... rest unchanged
+}
+
+// _checkCallExpression: propagate through argument and callee checks
+SemanticNode _checkCallExpression({
+  required CallExpression expression,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,  // NEW
+  required Map<String, FunctionSignature> allSignatures,
+}) {
+  final List<SemanticNode> checkedArguments = expression.arguments
+      .map(
+        (argument) => checkExpression(
+          expression: argument,
+          currentFunction: currentFunction,
+          availableParameters: availableParameters,
+          usedParameters: usedParameters,
+          letBindingNames: letBindingNames,  // PROPAGATE
+          allSignatures: allSignatures,
+        ),
+      )
+      .toList();
+
+  // ... non-callable and non-indexable checks unchanged ...
+
+  SemanticNode callee;
+  if (expression.callee is IdentifierExpression) {
+    callee = _checkCalleeIdentifier(
+      expression: expression,
+      callee: expression.callee as IdentifierExpression,
+      currentFunction: currentFunction,
+      availableParameters: availableParameters,
+      usedParameters: usedParameters,
+      letBindingNames: letBindingNames,  // PROPAGATE
+      allSignatures: allSignatures,
+    );
+  } else {
+    callee = checkExpression(
+      expression: expression.callee,
+      currentFunction: currentFunction,
+      availableParameters: availableParameters,
+      usedParameters: usedParameters,
+      letBindingNames: letBindingNames,  // PROPAGATE
+      allSignatures: allSignatures,
+    );
+  }
+  // ... rest unchanged
+}
+
+// _checkCalleeIdentifier: propagate for higher-order function support
+SemanticNode _checkCalleeIdentifier({
+  required CallExpression expression,
+  required IdentifierExpression callee,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,  // NEW
+  required Map<String, FunctionSignature> allSignatures,
+}) {
+  final String functionName = callee.value;
+
+  if (availableParameters.contains(functionName)) {
+    final bool isLetBinding = letBindingNames.contains(functionName);  // CHECK
+    if (!isLetBinding) {
+      usedParameters.add(functionName);
+    }
+    return SemanticBoundVariableNode(
+      location: callee.location,
+      name: functionName,
+      isLetBinding: isLetBinding,  // SET
+    );
+  }
+  // ... rest unchanged
+}
+```
+
 Modify `_checkIdentifierExpression()` to track usage and set `isLetBinding`:
 
 ```dart
-SemanticNode _checkIdentifierExpression({...}) {
+SemanticNode _checkIdentifierExpression({
+  required IdentifierExpression expression,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,  // NEW
+  required Map<String, FunctionSignature> allSignatures,
+}) {
   final String name = expression.value;
 
   if (availableParameters.contains(name)) {
@@ -486,6 +634,115 @@ SemanticNode _checkIdentifierExpression({...}) {
   } else {
     throw UndefinedIdentifierError(...);
   }
+}
+```
+
+**Add new case to `checkExpression()` switch**: Handle `LetExpression` by delegating to a new `_checkLetExpression()` method:
+
+```dart
+SemanticNode checkExpression({...}) => switch (expression) {
+  BooleanExpression() => SemanticBooleanNode(...),
+  NumberExpression() => SemanticNumberNode(...),
+  StringExpression() => SemanticStringNode(...),
+  ListExpression() => _checkListExpression(..., letBindingNames: letBindingNames),
+  MapExpression() => _checkMapExpression(..., letBindingNames: letBindingNames),
+  IdentifierExpression() => _checkIdentifierExpression(..., letBindingNames: letBindingNames),
+  CallExpression() => _checkCallExpression(..., letBindingNames: letBindingNames),
+  LetExpression() => _checkLetExpression(  // NEW CASE
+    expression: expression,
+    currentFunction: currentFunction,
+    availableParameters: availableParameters,
+    usedParameters: usedParameters,
+    letBindingNames: letBindingNames,
+    allSignatures: allSignatures,
+  ),
+  _ => throw StateError(...),
+};
+```
+
+**Add `_checkLetExpression()` method**: This implements the semantic analysis algorithm for let expressions:
+
+```dart
+SemanticNode _checkLetExpression({
+  required LetExpression expression,
+  required String? currentFunction,
+  required Set<String> availableParameters,
+  required Set<String> usedParameters,
+  required Set<String> letBindingNames,
+  required Map<String, FunctionSignature> allSignatures,
+}) {
+  // Create working copies to avoid polluting outer scope when we return.
+  // This ensures `let x = 1 in (let y = 2 in y) + y` correctly errors on
+  // the final `y` (which is outside the inner let's scope).
+  // Note: usedParameters is NOT copied because parameter usage tracking
+  // must persist across all scopes within a function.
+  final Set<String> scopedAvailableParameters = Set.of(availableParameters);
+  final Set<String> scopedLetBindingNames = Set.of(letBindingNames);
+
+  // Create local tracking set for this let's bindings (duplicate detection)
+  final Set<String> localLetBindings = {};
+
+  // Process each binding
+  final List<SemanticLetBindingNode> checkedBindings = [];
+  for (final LetBindingExpression binding in expression.bindings) {
+    final String name = binding.name;
+
+    // Check for shadowing (parameter or outer let binding)
+    if (scopedAvailableParameters.contains(name)) {
+      throw ShadowedLetBindingError(
+        binding: name,
+        inFunction: currentFunction,
+      );
+    }
+
+    // Check for duplicate within this let
+    if (localLetBindings.contains(name)) {
+      throw DuplicatedLetBindingError(
+        binding: name,
+        inFunction: currentFunction,
+      );
+    }
+
+    // Check the binding's value expression (before adding name to scope)
+    final SemanticNode checkedValue = checkExpression(
+      expression: binding.value,
+      currentFunction: currentFunction,
+      availableParameters: scopedAvailableParameters,
+      usedParameters: usedParameters,
+      letBindingNames: scopedLetBindingNames,
+      allSignatures: allSignatures,
+    );
+
+    // Add to tracking sets for subsequent bindings
+    localLetBindings.add(name);
+    scopedAvailableParameters.add(name);
+    scopedLetBindingNames.add(name);
+
+    checkedBindings.add(SemanticLetBindingNode(
+      name: name,
+      value: checkedValue,
+      location: binding.location,
+    ));
+  }
+
+  // Check the body with extended scope
+  final SemanticNode checkedBody = checkExpression(
+    expression: expression.body,
+    currentFunction: currentFunction,
+    availableParameters: scopedAvailableParameters,
+    usedParameters: usedParameters,
+    letBindingNames: scopedLetBindingNames,
+    allSignatures: allSignatures,
+  );
+
+  // When this method returns, the scoped sets are discarded, so the outer
+  // scope's availableParameters and letBindingNames remain unchanged.
+
+  return SemanticLetNode(
+    bindings: checkedBindings,
+    body: checkedBody,
+    location: expression.location,
+  );
 }
 ```
 
@@ -662,19 +919,21 @@ After implementing the feature:
 
 #### Semantic Tests
 
-| Test                              | Input                                | Expected                                                    |
-| --------------------------------- | ------------------------------------ | ----------------------------------------------------------- |
-| Valid single binding              | `f(n) = let x = n in x`              | No errors, no warnings                                      |
-| Valid multiple bindings           | `f(n) = let x = n, y = x in y`       | No errors                                                   |
-| Shadows parameter                 | `f(x) = let x = 1 in x`              | `ShadowedLetBindingError`                                   |
-| Shadows outer let                 | `f(n) = let x = 1 in let x = 2 in x` | `ShadowedLetBindingError`                                   |
-| Duplicate in same let             | `f(n) = let x = 1, x = 2 in x`       | `DuplicatedLetBindingError`                                 |
-| Self-reference                    | `f(n) = let x = x in x`              | `UndefinedIdentifierError`                                  |
-| Forward reference                 | `f(n) = let y = x, x = 1 in y`       | `UndefinedIdentifierError`                                  |
-| Error priority: shadow before dup | `f(x) = let x = 1, x = 2 in x`       | `ShadowedLetBindingError` (not Duplicated)                  |
-| `isLetBinding` set correctly      | `f(n) = let x = 1 in x`              | Body's `SemanticBoundVariableNode` has `isLetBinding: true` |
-| Parameter `isLetBinding` false    | `f(n) = n`                           | `SemanticBoundVariableNode` has `isLetBinding: false`       |
-| `usedParameters` excludes let     | `f(n) = let x = 1 in x`              | Warning: unused parameter `n`                               |
+| Test                              | Input                                  | Expected                                                    |
+| --------------------------------- | -------------------------------------- | ----------------------------------------------------------- |
+| Valid single binding              | `f(n) = let x = n in x`                | No errors, no warnings                                      |
+| Valid multiple bindings           | `f(n) = let x = n, y = x in y`         | No errors                                                   |
+| Shadows parameter                 | `f(x) = let x = 1 in x`                | `ShadowedLetBindingError`                                   |
+| Shadows outer let                 | `f(n) = let x = 1 in let x = 2 in x`   | `ShadowedLetBindingError`                                   |
+| Duplicate in same let             | `f(n) = let x = 1, x = 2 in x`         | `DuplicatedLetBindingError`                                 |
+| Duplicate non-adjacent            | `f(n) = let x = 1, y = 2, x = 3 in x`  | `DuplicatedLetBindingError`                                 |
+| Self-reference                    | `f(n) = let x = x in x`                | `UndefinedIdentifierError`                                  |
+| Forward reference                 | `f(n) = let y = x, x = 1 in y`         | `UndefinedIdentifierError`                                  |
+| Scope isolation                   | `f(n) = let x = (let y = 1 in y) in y` | `UndefinedIdentifierError` (y not in outer scope)           |
+| Error priority: shadow before dup | `f(x) = let x = 1, x = 2 in x`         | `ShadowedLetBindingError` (not Duplicated)                  |
+| `isLetBinding` set correctly      | `f(n) = let x = 1 in x`                | Body's `SemanticBoundVariableNode` has `isLetBinding: true` |
+| Parameter `isLetBinding` false    | `f(n) = n`                             | `SemanticBoundVariableNode` has `isLetBinding: false`       |
+| `usedParameters` excludes let     | `f(n) = let x = 1 in x`                | Warning: unused parameter `n`                               |
 
 #### Lowering Tests
 

@@ -1,31 +1,3 @@
-2. HIGH — checkExpression signature change underspecified
-
-What is wrong: The document proposes adding letBindingNames as a new required
-parameter to checkExpression() (lines 462-469), but doesn't show the cascading
-changes required.
-
-Why it is wrong: Looking at semantic_analyzer.dart:127-177, checkExpression()
-is called recursively by:
-- _checkListExpression (line 188)
-- _checkMapExpression (lines 214, 221)
-- _checkCallExpression (line 277, 320)
-
-Each of these methods would need to accept and propagate letBindingNames. The
-document shows modifications to _checkIdentifierExpression (lines 473-497) and
-the entry point (lines 501-509), but omits the other four methods.
-
-References:
-- docs/roadmap/let.md:462-469 — proposed signature
-- lib/compiler/semantic/semantic_analyzer.dart:146-176 — current switch
-statement with six expression types
-
-Consequence: Incomplete implementation guidance; developers will need to infer
-the pattern for the omitted methods.
-
-Missing: Updated signatures and recursive calls for _checkListExpression,
-_checkMapExpression, _checkCallExpression, _checkCalleeIdentifier.
-
----
 3. HIGH — LetTerm missing type getter and native() method
 
 What is wrong: The document shows LetTerm structure (lines 567-568) but omits
@@ -143,28 +115,6 @@ Missing: Rationale note explaining why let gets a dedicated AST node while if
 is desugared.
 
 ---
-8. MEDIUM — Trailing comma behavior unspecified
-
-What is wrong: The document says (line 53) "No trailing comma after the last
-binding" but doesn't specify the error.
-
-Why it is wrong: For let x = 1, in x, the parser would see let, parse binding
-x = 1, see comma, try to parse another binding, see in (not an identifier),
-and throw... what? Looking at the list parser
-(expression_parser.dart:312-314), it uses do { ... } while 
-(matchSingle(_isComma)) which doesn't allow trailing commas. Same pattern
-would apply.
-
-References:
-- docs/roadmap/let.md:53 — trailing comma statement
-- lib/compiler/syntactic/expression_parser.dart:312-314 — list parsing pattern
-
-Consequence: The error would be ExpectedTokenError for missing identifier, but
-this should be in the test table.
-
-Missing: Test case: let x = 1, in x → ExpectedTokenError.
-
----
 9. MEDIUM — Runtime tests reference Bindings.data directly
 
 What is wrong: The proposed LetTerm.reduce() (lines 379-388) builds
@@ -201,27 +151,6 @@ Consequence: Test coverage gap.
 
 Missing: Add row: Duplicate non-adjacent | f(n) = let x = 1, y = 2, x = 3 in x
 | DuplicatedLetBindingError
-
----
-11. LOW — in keyword breaking change underestimated
-
-What is wrong: The document notes (line 208) that let and in become reserved.
-For in, this could break existing code like:
-check(in) = in > 0
-range(in, out) = out - in
-
-Why it matters: The identifier in is short and potentially used. The string
-extension isIn (proposed line 160) would match exact "in" only, so inner,
-into, input remain valid.
-
-References:
-- docs/roadmap/let.md:208 — breaking change note
-- lib/extensions/string_extensions.dart:65-75 — existing keyword predicates
-use exact match
-
-Consequence: Users with in parameters must rename them.
-
-Missing: Migration guidance or severity assessment of this breaking change.
 
 ---
 12. LOW — Error message style inconsistency
@@ -267,61 +196,3 @@ const SemanticBoundVariableNode({
     this.isLetBinding = false,  // default for backwards compat
 });
 }
-
----
-14. INFO — Valid example may confuse readers
-
-What is wrong: Line 303 shows:
-pair(n) = [let x = n * 2 in x, let y = n * 3 in y]
-
-This is valid but creates two separate let scopes. A reader might wonder if y
-could reference x (it cannot).
-
-References:
-- docs/roadmap/let.md:303 — pair example
-
-Consequence: Potential confusion.
-
-Missing: Comment clarifying these are independent scopes.
-
----
-15. INFO — Unused let binding warning decision stated but incomplete
-
-What is wrong: The document states (lines 512) "Unused let bindings do NOT
-produce warnings." But the mechanism isn't shown — how does the semantic
-analyzer know not to warn?
-
-References:
-- docs/roadmap/let.md:512 — design decision
-- lib/compiler/semantic/semantic_analyzer.dart:79-88 — current unused param
-warning
-
-Consequence: Future implementer might accidentally add unused let binding
-warnings.
-
-Missing: Explain that let bindings aren't tracked in usedParameters by design,
-or show explicit skip logic.
-
----
-Summary
-Severity: CRITICAL
-Count: 1
-Key Issues: Empty bindings error type contradiction
-────────────────────────────────────────
-Severity: HIGH
-Count: 3
-Key Issues: Incomplete signature changes, missing Term methods
-────────────────────────────────────────
-Severity: MEDIUM
-Count: 5
-Key Issues: Algorithm ambiguity, parser error handling, trailing comma
-────────────────────────────────────────
-Severity: LOW
-Count: 4
-Key Issues: Missing tests, style inconsistencies, breaking change
-────────────────────────────────────────
-Severity: INFO
-Count: 2
-Key Issues: Clarifications for reader understanding
-
-✻ Cooked for 7m 9s
