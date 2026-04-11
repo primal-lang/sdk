@@ -41,6 +41,31 @@ parameters        → IDENTIFIER ( "," IDENTIFIER )*
 
 Note: The `parameters` rule allows zero or more parameters. `() -> 5` is valid (zero-parameter lambda). Single-parameter lambdas require parentheses: `(x) -> x + 1`, not `x -> x + 1`.
 
+**Parser integration**: The grammar change inserts `lambdaExpression` at the top of the expression hierarchy. This works correctly with the existing parser because `expression()` is the universal entry point for all expression contexts:
+
+```
+BEFORE:  expression() → ifExpression() → equality() → ... → primary()
+AFTER:   expression() → lambdaExpression() → letExpression() → ifExpression() → ... → primary()
+```
+
+When parsing sub-expressions (function arguments, list elements, map values, etc.), the parser always calls `expression()`. For example, in `finishCall()`:
+
+```dart
+do {
+  arguments.add(expression());  // Calls expression() for each argument
+} while (matchSingle(_isComma));
+```
+
+This means `list.map([1, 2, 3], (x) -> x * 2)` parses correctly:
+
+1. Parse `list.map` as identifier
+2. See `(`, enter `finishCall()`
+3. Parse first argument `[1, 2, 3]`: `expression()` → ... → `primary()` → list
+4. See `,`, continue
+5. Parse second argument `(x) -> x * 2`: `expression()` → `lambdaExpression()` → **lambda detected!**
+
+The lookahead in `lambdaExpression()` (via `_checkLambdaStart()`) determines whether to parse a lambda or fall through. Since `(` followed by identifiers and `->` is unambiguous, there is no conflict with grouped expressions in `primary()`—the lookahead resolves the ambiguity before any tokens are consumed.
+
 **Precedence**: Lambda has the lowest precedence, binding more loosely than all other operators including `let` and `if`. This means `(x) -> x + 1` parses as `(x) -> (x + 1)`, and `(x) -> if (x > 0) x else 0` parses as `(x) -> (if (x > 0) x else 0)`.
 
 **Associativity**: Right-associative. Nested lambdas parse naturally: `(x) -> (y) -> x + y` parses as `(x) -> ((y) -> (x + y))`.
