@@ -1,24 +1,3 @@
-3. HIGH — LetTerm missing type getter and native() method
-
-What is wrong: The document shows LetTerm structure (lines 567-568) but omits
-two required methods:
-@override Type get type => ???;
-@override dynamic native() => ???;
-
-Why it is wrong: Looking at term.dart:8-18, all Term subclasses must implement
-type and native(). The document shows LetTerm.substitute() and
-LetTerm.reduce() but nothing else.
-
-References:
-- docs/roadmap/let.md:567-568 — LetTerm structure
-- lib/compiler/runtime/term.dart:11-17 — abstract method requirements
-
-Consequence: Implementation will fail to compile without these methods.
-
-Missing: What should type return? Likely const AnyType() or the body's type.
-What should native() do? Likely reduce().native().
-
----
 4. HIGH — LetBoundVariableTerm.reduce() not specified
 
 What is wrong: The document defines LetBoundVariableTerm.substitute() and

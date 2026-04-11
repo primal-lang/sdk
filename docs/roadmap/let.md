@@ -361,27 +361,49 @@ The `let` expression is implemented via a `LetTerm` in the runtime that performs
 4. Finally, substitute all bindings into the body and reduce
 
 ```dart
-@override
-Term substitute(Bindings bindings) {
-  // Since shadowing is disallowed, no let binding name can conflict with
-  // incoming bindings. Simply propagate substitutions through.
-  return LetTerm(
-    bindings: this.bindings.map((b) => (b.$1, b.$2.substitute(bindings))).toList(),
-    body: body.substitute(bindings),
-  );
-}
+class LetTerm extends Term {
+  final List<(String, Term)> bindings;
+  final Term body;
 
-@override
-Term reduce() {
-  Map<String, Term> bindingMap = {};
-  for (final (name, term) in bindings) {
-    // Create a snapshot of current bindings for substitution.
-    // This ensures each binding only sees previously evaluated bindings.
-    final Term substituted = term.substitute(Bindings(Map.of(bindingMap)));
-    final Term value = substituted.reduce();
-    bindingMap[name] = value;
+  const LetTerm({
+    required this.bindings,
+    required this.body,
+  });
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  Term substitute(Bindings bindings) {
+    // Since shadowing is disallowed, no let binding name can conflict with
+    // incoming bindings. Simply propagate substitutions through.
+    return LetTerm(
+      bindings: this.bindings.map((b) => (b.$1, b.$2.substitute(bindings))).toList(),
+      body: body.substitute(bindings),
+    );
   }
-  return body.substitute(Bindings(bindingMap)).reduce();
+
+  @override
+  Term reduce() {
+    Map<String, Term> bindingMap = {};
+    for (final (name, term) in bindings) {
+      // Create a snapshot of current bindings for substitution.
+      // This ensures each binding only sees previously evaluated bindings.
+      final Term substituted = term.substitute(Bindings(Map.of(bindingMap)));
+      final Term value = substituted.reduce();
+      bindingMap[name] = value;
+    }
+    return body.substitute(Bindings(bindingMap)).reduce();
+  }
+
+  @override
+  dynamic native() => reduce().native();
+
+  @override
+  String toString() {
+    final String bindingStr = bindings.map((b) => '${b.$1} = ${b.$2}').join(', ');
+    return 'let $bindingStr in $body';
+  }
 }
 ```
 
@@ -419,6 +441,9 @@ class LetBoundVariableTerm extends Term {
   @override
   Term substitute(Bindings bindings) =>
       bindings.data.containsKey(name) ? bindings.data[name]! : this;
+
+  @override
+  Term reduce() => this;  // Cannot reduce further; must be substituted first
 
   @override
   Type get type => const AnyType();
@@ -816,9 +841,12 @@ SemanticBoundVariableNode
 LetTerm
   bindings: List<(String, Term)>
   body: Term
+  // Methods: substitute(), reduce(), type (AnyType), native(), toString()
 
 LetBoundVariableTerm    // NEW: for let binding references
   name: String
+  // Methods: substitute() (partial), reduce() (returns this), type (AnyType),
+  //          native() (throws StateError), toString()
 ```
 
 ### Lowering Implementation
@@ -949,7 +977,18 @@ After implementing the feature:
 | -------------------------------- | ---------------------------------------------- | -------------------------- |
 | Partial substitution (not found) | `LetBoundVariableTerm("x").substitute({y: 5})` | Returns `this` (unchanged) |
 | Full substitution (found)        | `LetBoundVariableTerm("x").substitute({x: 5})` | Returns `NumberTerm(5)`    |
+| Reduce returns this              | `LetBoundVariableTerm("x").reduce()`           | Returns `this` (unchanged) |
+| Type is AnyType                  | `LetBoundVariableTerm("x").type`               | `AnyType`                  |
 | Native throws if unsubstituted   | `LetBoundVariableTerm("x").native()`           | `StateError`               |
+| toString returns name            | `LetBoundVariableTerm("x").toString()`         | `"x"`                      |
+
+#### Runtime Tests: LetTerm (basic)
+
+| Test             | Code                                              | Expected                    |
+| ---------------- | ------------------------------------------------- | --------------------------- |
+| Type is AnyType  | `LetTerm(bindings: [...], body: ...).type`        | `AnyType`                   |
+| Native delegates | `LetTerm(bindings: [(x, 1)], body: x).native()`   | `1` (via reduce().native()) |
+| toString format  | `LetTerm(bindings: [(x, 1)], body: x).toString()` | `"let x = 1 in x"`          |
 
 #### Runtime Tests: LetTerm.substitute()
 
