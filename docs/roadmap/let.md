@@ -881,12 +881,27 @@ SemanticLetBindingNode
 
 **Modified existing node** (add field to `lib/compiler/semantic/semantic_node.dart`):
 
+```dart
+/// A reference to a bound variable (parameter or let binding) within a function body.
+///
+/// Created during semantic analysis when an identifier matches a parameter name
+/// or a let binding name.
+class SemanticBoundVariableNode extends SemanticNode {
+  final String name;
+  final bool isLetBinding;  // NEW: true for let bindings, false for function parameters
+
+  const SemanticBoundVariableNode({
+    required super.location,
+    required this.name,
+    this.isLetBinding = false,  // Default false for backwards compatibility
+  });
+
+  @override
+  String toString() => name;
+}
 ```
-SemanticBoundVariableNode
-  name: String
-  isLetBinding: bool    // NEW: true for let bindings, false for function parameters
-  location: Location
-```
+
+Note: The default `isLetBinding = false` ensures existing code that creates `SemanticBoundVariableNode` for function parameters continues to work without modification.
 
 **Runtime (Terms)**:
 
