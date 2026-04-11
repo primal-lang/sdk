@@ -296,6 +296,14 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
 
 ## Error Conditions
 
+**Notation convention**: This section uses exception class names (e.g., `ExpectedTokenError`) for implementation reference. The actual user-visible messages include an `Error:` prefix and location information. For example:
+
+| Exception Class                                            | User-Visible Message                                |
+| ---------------------------------------------------------- | --------------------------------------------------- |
+| `ExpectedTokenError(token, 'in')`                          | `Error: Invalid token "y" at [1, 15]. Expected: in` |
+| `ShadowedLetBindingError(binding: 'x', inFunction: 'foo')` | `Error: Shadowed let binding "x" in function "foo"` |
+| `UndefinedIdentifierError(identifier: 'x')`                | `Error: Undefined identifier "x"`                   |
+
 | Error                       | Condition                                              | Phase    | Priority |
 | --------------------------- | ------------------------------------------------------ | -------- | -------- |
 | `ExpectedTokenError`        | No bindings provided (`let in x`)                      | Parsing  | —        |
@@ -394,6 +402,8 @@ chain(a, b) = let x = a + b in let y = x * 2 in y
 ```
 
 ### Invalid
+
+Error annotations below show exception class names and core message content. Actual CLI/REPL output includes `Error:` prefix and token locations (see Error Conditions notation).
 
 ```primal
 // ERROR: Empty bindings (parser expects identifier after 'let')
