@@ -406,25 +406,22 @@ class ArrowToken extends Token<String> {
 The existing `MinusState` handles the `-` character. Extend it to recognize `->`:
 
 ```dart
-class MinusState extends State<Character, LexicalState> {
-  final Lexeme lexeme;
-
-  const MinusState(this.lexeme);
+class MinusState extends State<Character, Lexeme> {
+  const MinusState(super.iterator, super.output);
 
   @override
-  LexicalState process(ListIterator<Character> iterator) {
-    final Character character = iterator.current!;
-
-    if (character.value == '>') {
+  State process(Character input) {
+    if (input.value == '>') {
       // Consume '>' and emit ArrowToken
       return ResultState(
-        ArrowToken(lexeme.add(character.value)),
+        iterator,
+        ArrowToken(output.add(input.value)),
       );
-    } else if (character.value.isOperatorDelimiter) {
+    } else if (input.value.isOperatorDelimiter) {
       iterator.back();
-      return ResultState(MinusToken(lexeme));
+      return ResultState(iterator, MinusToken(output));
     } else {
-      throw InvalidCharacterError(character);
+      throw InvalidCharacterError(input);
     }
   }
 }
