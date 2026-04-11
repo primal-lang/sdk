@@ -537,7 +537,37 @@ class LetTerm extends Term {
 }
 ```
 
-Since shadowing is disallowed at the semantic level, the `substitute()` method does not need capture-avoiding logic—no let binding name can ever conflict with an incoming substitution.
+**Why capture-avoiding substitution is not needed:**
+
+The `substitute()` method does not need capture-avoiding logic because of how substitution and reduction are phased:
+
+1. **Phase 1 (`substitute`)**: Incoming bindings (from function parameters or outer lets) are propagated through the let's binding values and body. `LetBoundVariableTerm` references return themselves unchanged (partial substitution).
+
+2. **Phase 2 (`reduce`)**: The let's own bindings are evaluated sequentially, building a local binding map. Each binding value is substituted with prior bindings, then reduced. Finally, the body is substituted with all bindings.
+
+Consider `f(x) = let y = x in (let z = y in z)` called with `f(5)`:
+
+```
+substitute({x: 5}) on outer LetTerm:
+  → bindings become [(y, 5)]  (x substituted)
+  → body (inner let) propagates: inner bindings [(z, LetBoundVariableTerm("y"))] unchanged
+                                 inner body LetBoundVariableTerm("z") unchanged
+
+reduce() on outer LetTerm:
+  → evaluate y = 5, bindingMap = {y: 5}
+  → substitute body with {y: 5}:
+      inner bindings become [(z, 5)]  (y substituted)
+      inner body still LetBoundVariableTerm("z")
+  → reduce inner:
+      evaluate z = 5, bindingMap = {z: 5}
+      substitute body with {z: 5} → 5
+```
+
+The phases never conflict because:
+
+- Semantic analysis disallows shadowing (no name conflicts possible)
+- `LetBoundVariableTerm` uses partial substitution (survives phase 1 intact)
+- `reduce()` handles its own bindings after `substitute()` is complete
 
 This is semantically equivalent to nested immediately-applied functions, but implemented directly without synthesizing intermediate function terms.
 
