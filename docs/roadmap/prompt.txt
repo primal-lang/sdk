@@ -2,17 +2,25 @@
 
 **Task:** Analyze a proposed new feature for my programming language.
 
-i want to implement a new feature in the language that i'm building in this project.
+**Context & Constraints:**
+Before reviewing the new feature, please index and understand the core design philosophy, syntax rules, and type system of the current implementation:
+* **Documentation:** `@docs/`
+* **Implementation:** `@lib/`
 
-before jumping into the details of the new feature, read and understand the current implementation of the sdk:
-- documentation: @docs/ 
-- implementation: @lib/
+**The Feature Draft:**
+I have started drafting the feature in this file.
 
----
+**Evaluation Criteria:**
+Please provide a critical analysis focusing on:
+- **Syntactic Consistency:** Does this syntax feel "at home" with the existing grammar? Are there potential keyword conflicts?
+- **Compiler Complexity:** What are the implications for the Lexer, Parser, and IR generation?
+- **Edge Cases:** Identify at least three scenarios where this feature might behave unexpectedly or fail.
+- **Orthogonality:** Does this feature overlap with existing constructs? Is there a more 'minimalist' way to achieve this?
+- **Error Handling:** How will the compiler report errors related to this feature? Describe a 'good' vs. 'bad' error message for a common mistake.
+- **Performance:** What is the overhead at runtime?
 
-i already started to draft the feature in this file.
-
-- what do you think?
-- is there something i didn't take into account?
-- is there an inconsistency, problem, mistake in the new feature?
-- ask me questions so we can improve and polish the specs of the new feature
+**Output:**
+Do not write any implementation code yet. Instead, provide:
+* A summary of the "pros and cons"
+* A list of technical inconsistencies you found.
+* **Five targeted questions** to help me refine the specification.
