@@ -94,7 +94,7 @@ bad(n) = let x = x + 1 in x
 
 // ERROR: shadowing is checked before the value expression
 bad(x) = let x = x + 1 in x
-// → ShadowedBindingError: 'x' is already bound
+// → ShadowedLetBindingError: 'x' is already bound
 // (the value expression x + 1 is never analyzed)
 ```
 
@@ -115,11 +115,11 @@ Bindings cannot shadow function parameters or outer `let` bindings. This simplif
 ```primal
 // ERROR: x shadows parameter
 bad(x) = let x = 10 in x
-// → ShadowedBindingError: 'x' is already bound
+// → ShadowedLetBindingError: 'x' is already bound
 
 // ERROR: inner x shadows outer x
 bad(n) = let x = 1 in let x = 2 in x
-// → ShadowedBindingError: 'x' is already bound
+// → ShadowedLetBindingError: 'x' is already bound
 ```
 
 ### Evaluation Order
@@ -158,7 +158,7 @@ Two new keywords: `let` and `in`.
 | Error                       | Condition                                      | Priority |
 | --------------------------- | ---------------------------------------------- | -------- |
 | `EmptyLetBindingsError`     | No bindings provided between `let` and `in`    | 1        |
-| `ShadowedBindingError`      | Binding shadows a parameter or outer binding   | 2        |
+| `ShadowedLetBindingError`      | Binding shadows a parameter or outer binding   | 2        |
 | `DuplicatedLetBindingError` | Same variable bound twice in one `let`         | 3        |
 | `UndefinedIdentifierError`  | Binding references itself or an undefined name | 4        |
 | `ExpectedTokenError(',')`   | Comma missing between bindings                 | —        |
@@ -179,14 +179,14 @@ class EmptyLetBindingsError extends SemanticError {
        );
 }
 
-class ShadowedBindingError extends SemanticError {
-  const ShadowedBindingError({
+class ShadowedLetBindingError extends SemanticError {
+  const ShadowedLetBindingError({
     required String binding,
     String? inFunction,
   }) : super(
          inFunction != null
-             ? 'Shadowed binding "$binding" in function "$inFunction": name is already bound'
-             : 'Shadowed binding "$binding": name is already bound',
+             ? 'Shadowed let binding "$binding" in function "$inFunction": name is already bound'
+             : 'Shadowed let binding "$binding": name is already bound',
        );
 }
 
@@ -287,11 +287,11 @@ bad5(n) = let x = 1, y = 2 x + y
 
 // ERROR: Shadows parameter
 bad6(x) = let x = 1 in x
-// → ShadowedBindingError: 'x' is already bound
+// → ShadowedLetBindingError: 'x' is already bound
 
 // ERROR: Shadows outer let binding
 bad7(n) = let x = 1 in let x = 2 in x
-// → ShadowedBindingError: 'x' is already bound
+// → ShadowedLetBindingError: 'x' is already bound
 
 // ERROR: Shadows earlier binding in same let
 bad8(n) = let x = 1, y = 2, x = 3 in x
@@ -345,7 +345,7 @@ When processing a `LetExpression`:
 1. If bindings list is empty, throw `EmptyLetBindingsError`
 2. Create a local set `letBindingNames` to track names bound in this `let`
 3. For each binding in order:
-   - If the name is in `availableParameters`, throw `ShadowedBindingError`
+   - If the name is in `availableParameters`, throw `ShadowedLetBindingError`
    - If the name is in `letBindingNames`, throw `DuplicatedLetBindingError`
    - Check the binding's value expression against the current `availableParameters`
    - Add the name to `letBindingNames`

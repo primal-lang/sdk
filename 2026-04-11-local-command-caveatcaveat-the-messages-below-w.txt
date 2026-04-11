@@ -1,26 +1,3 @@
-HIGH: Error type naming inconsistency with codebase conventions
-
-What is wrong: The proposed errors (let.md:156-188):
-- EmptyLetBindingsError
-- ShadowedBindingError
-- DuplicatedLetBindingError
-
-Existing errors (semantic_error.dart):
-- DuplicatedParameterError (not DuplicatedParamError)
-- UndefinedIdentifierError (not UndefinedIdError)
-
-The proposed DuplicatedLetBindingError should probably be
-DuplicateLetBindingError (singular) to match codebase style, but actually
-looking closer at the codebase: DuplicatedFunctionError,
-DuplicatedParameterError - they use "Duplicated" not "Duplicate". So
-DuplicatedLetBindingError is correct.
-
-However, "ShadowedBindingError" is less specific - it doesn't say what kind of
-binding (let vs parameter). Consider ShadowedLetBindingError for consistency.
-
-File references: let.md:167-176, semantic_error.dart:17-25
-
----
 HIGH: usedParameters tracking approach is under-specified
 
 What is wrong: Document lines 343-353 say:
