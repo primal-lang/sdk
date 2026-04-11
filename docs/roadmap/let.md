@@ -47,7 +47,16 @@ Note: The `bindings` rule requires at least one binding. `let in x` is a parse e
 
 It cannot appear as an operand to binary operators without parentheses (e.g., `1 + let x = 2 in x` is invalid; use `1 + (let x = 2 in x)`).
 
-When `let` appears in an invalid position (e.g., as a binary operand), the parser's `primary()` method encounters a `LetToken` where it expects a literal, identifier, or grouping. This throws `InvalidTokenError`. For a more helpful error message, `primary()` can be extended to check for `LetToken` and throw a descriptive error:
+When `let` appears in an invalid position (e.g., as a binary operand), the parser's `primary()` method encounters a `LetToken` where it expects a literal, identifier, or grouping. This throws `InvalidTokenError`. For a more helpful error message, `primary()` can be extended to check for `LetToken` and throw a descriptive error.
+
+**Parser predicates**: Add these static predicates to `ExpressionParser` (following the existing pattern at lines 13-43):
+
+```dart
+static bool _isLet(Token token) => token is LetToken;
+static bool _isIn(Token token) => token is InToken;
+```
+
+**Error enhancement** (optional):
 
 ```dart
 // In primary(), before the final throw:
@@ -943,13 +952,13 @@ body = analyzer.checkExpression(
 
 ### Compiler Pipeline Impact
 
-| Stage     | Changes                                                                                                                  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Lexical   | Add `LetToken` and `InToken` keywords                                                                                    |
-| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes; parse comma-separated bindings; require at least one binding   |
-| Semantic  | Extend scope with bindings; check for duplicates, shadowing, and self-reference; add `isLetBinding` field; new errors    |
-| Lowering  | Convert `SemanticLetNode` to `LetTerm`; map `SemanticBoundVariableNode` to `LetBoundVariableTerm` or `BoundVariableTerm` |
-| Runtime   | Add `LetTerm` with sequential binding evaluation; add `LetBoundVariableTerm` with partial substitution semantics         |
+| Stage     | Changes                                                                                                                                                     |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lexical   | Add `LetToken` and `InToken` keywords                                                                                                                       |
+| Syntactic | Add `LetExpression` and `LetBindingExpression` AST nodes; add `_isLet` and `_isIn` predicates; parse comma-separated bindings; require at least one binding |
+| Semantic  | Extend scope with bindings; check for duplicates, shadowing, and self-reference; add `isLetBinding` field; new errors                                       |
+| Lowering  | Convert `SemanticLetNode` to `LetTerm`; map `SemanticBoundVariableNode` to `LetBoundVariableTerm` or `BoundVariableTerm`                                    |
+| Runtime   | Add `LetTerm` with sequential binding evaluation; add `LetBoundVariableTerm` with partial substitution semantics                                            |
 
 ### New Node Types
 
