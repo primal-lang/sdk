@@ -841,6 +841,19 @@ LetBindingExpression
   location: Location    // location of identifier token (follows MapEntryExpression pattern)
 ```
 
+**Design note: Why `let` gets a dedicated AST node while `if` is desugared**
+
+The `if` expression is desugared to `CallExpression.fromIf()` because it's semantically a ternary function: it takes a condition and two branches, evaluates the condition, and returns one branch. This fits naturally into the call expression model.
+
+In contrast, `let` introduces **named bindings with scope**. The binding names must be tracked through semantic analysis for shadowing checks, duplicate detection, and scope extension. A `CallExpression` cannot capture this structure—there's no callee, and the "arguments" are name-value pairs, not positional values.
+
+Additionally, `let` requires a dedicated `SemanticLetNode` so the semantic analyzer can:
+1. Extract binding names for scope tracking
+2. Distinguish let-bound variables from function parameters (`isLetBinding` field)
+3. Process bindings sequentially (each binding sees previous bindings)
+
+This is similar to how `MapExpression` has dedicated `MapEntryExpression` nodes rather than desugaring to calls.
+
 **Semantic (IR)**:
 
 ```

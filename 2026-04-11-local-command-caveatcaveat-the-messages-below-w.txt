@@ -1,27 +1,3 @@
-7. MEDIUM — if desugaring assumption may conflict
-
-What is wrong: The current parser desugars if to CallExpression.fromIf() with
-callee IdentifierExpression(operator) where operator is the IfToken
-(expression_parser.dart:87-92). The IfToken.value is the string "if".
-
-But the document doesn't address how let will be represented at the AST level
-— it proposes new LetExpression and LetBindingExpression nodes (lines
-528-538).
-
-Why it matters: This is a design divergence. if is desugared to a call; let
-gets its own AST node. This is probably intentional (let has bindings, if is
-just a ternary call), but should be explicitly stated.
-
-References:
-- docs/roadmap/let.md:528-538 — new LetExpression node
-- lib/compiler/syntactic/expression_parser.dart:87-92 — if desugars to call
-
-Consequence: Inconsistency is fine but should be documented as intentional.
-
-Missing: Rationale note explaining why let gets a dedicated AST node while if
-is desugared.
-
----
 9. MEDIUM — Runtime tests reference Bindings.data directly
 
 What is wrong: The proposed LetTerm.reduce() (lines 379-388) builds
