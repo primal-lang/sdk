@@ -404,6 +404,11 @@ class LetTerm extends Term {
 
   @override
   Term reduce() {
+    // Build binding map incrementally. We use Bindings(map) directly instead
+    // of Bindings.from() because:
+    // 1. Bindings.from() takes List<Parameter> + List<Term> for function calls
+    // 2. Here we build the map incrementally as each binding is evaluated
+    // 3. Each binding must see only previously evaluated bindings, not all
     Map<String, Term> bindingMap = {};
     for (final (name, term) in bindings) {
       // Create a snapshot of current bindings for substitution.
@@ -848,6 +853,7 @@ The `if` expression is desugared to `CallExpression.fromIf()` because it's seman
 In contrast, `let` introduces **named bindings with scope**. The binding names must be tracked through semantic analysis for shadowing checks, duplicate detection, and scope extension. A `CallExpression` cannot capture this structure—there's no callee, and the "arguments" are name-value pairs, not positional values.
 
 Additionally, `let` requires a dedicated `SemanticLetNode` so the semantic analyzer can:
+
 1. Extract binding names for scope tracking
 2. Distinguish let-bound variables from function parameters (`isLetBinding` field)
 3. Process bindings sequentially (each binding sees previous bindings)
