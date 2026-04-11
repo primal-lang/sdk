@@ -71,9 +71,14 @@ foo(a, b) =
 A binding cannot reference itself. This is not a recursive binding construct:
 
 ```primal
-// ERROR: x references itself
+// ERROR: x references itself (no outer x exists)
 bad(n) = let x = x + 1 in x
 // → UndefinedIdentifierError: 'x' is not defined
+
+// ERROR: shadowing is checked before the value expression
+bad(x) = let x = x + 1 in x
+// → ShadowedBindingError: 'x' is already bound
+// (the value expression x + 1 is never analyzed)
 ```
 
 ### No Duplicate Bindings
