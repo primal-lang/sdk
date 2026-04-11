@@ -41,5 +41,8 @@ Output:
    - valid examples
    - invalid examples with expected errors
 6. Three to five high-value questions if anything important remains unresolved
-7. Implementation complexity: low, medium, or high, with a brief justification
-8. Final recommendation: accept, revise, or reject for now
+7. Add a post-implementation section to indicate to:
+   - Update documentation in `docs/`
+   - Implement tests
+8. Implementation complexity: low, medium, or high, with a brief justification
+9. Final recommendation: accept, revise, or reject for now
