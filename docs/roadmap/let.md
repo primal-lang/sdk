@@ -295,3 +295,17 @@ LetTerm
   bindings: List<(String, Term)>
   body: Term
 ```
+
+### Implementation Complexity
+
+**Medium**
+
+| Component         | Effort                                                   |
+| ----------------- | -------------------------------------------------------- |
+| Lexer             | Trivial - add two keywords (same pattern as `if`/`else`) |
+| Parser            | Straightforward - new rule similar to `ifExpression`     |
+| AST               | Two new node types                                       |
+| Semantic analyzer | Moderate - scope extension logic                         |
+| Lowerer           | New term type and lowering logic                         |
+| Runtime           | New `LetTerm` with substitution-based evaluation         |
+| Tests             | Comprehensive coverage of scoping, shadowing, errors     |
