@@ -258,14 +258,13 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
 
 ## Error Conditions
 
-| Error                       | Condition                                      | Phase    | Priority |
-| --------------------------- | ---------------------------------------------- | -------- | -------- |
-| `ExpectedTokenError`        | No bindings provided (`let in x`)              | Parsing  | —        |
-| `ExpectedTokenError(',')`   | Comma missing between bindings                 | Parsing  | —        |
-| `ExpectedTokenError('in')`  | `in` keyword missing after bindings            | Parsing  | —        |
-| `DuplicatedLetBindingError` | Same variable bound twice in one `let`         | Semantic | 1        |
-| `ShadowedLetBindingError`   | Binding shadows a parameter or outer binding   | Semantic | 2        |
-| `UndefinedIdentifierError`  | Binding references itself or an undefined name | Semantic | 3        |
+| Error                       | Condition                                              | Phase    | Priority |
+| --------------------------- | ------------------------------------------------------ | -------- | -------- |
+| `ExpectedTokenError`        | No bindings provided (`let in x`)                      | Parsing  | —        |
+| `ExpectedTokenError('in')`  | `in` keyword missing or comma missing between bindings | Parsing  | —        |
+| `DuplicatedLetBindingError` | Same variable bound twice in one `let`                 | Semantic | 1        |
+| `ShadowedLetBindingError`   | Binding shadows a parameter or outer binding           | Semantic | 2        |
+| `UndefinedIdentifierError`  | Binding references itself or an undefined name         | Semantic | 3        |
 
 **Error Priority**: For semantic errors, when multiple errors could apply to the same binding, the error with the lowest priority number is thrown first. Duplicate detection is checked before shadowing (to correctly identify intra-let duplicates), and both are checked before the value expression is analyzed. Parsing errors (`ExpectedTokenError`) are detected before semantic analysis runs.
 
@@ -375,9 +374,9 @@ bad2(n) = let x = x + 1 in x
 bad3(n) = let y = x, x = 1 in y
 // → UndefinedIdentifierError: Undefined identifier "x"
 
-// ERROR: Missing comma between bindings
+// ERROR: Missing comma between bindings (parser expects 'in' after first binding)
 bad4(n) = let x = 1 y = 2 in x + y
-// → ExpectedTokenError: expected ','
+// → ExpectedTokenError: expected 'in'
 
 // ERROR: Missing 'in'
 bad5(n) = let x = 1, y = 2 x + y
@@ -1066,11 +1065,13 @@ After implementing the feature:
 | Multiple bindings | `let x = 1, y = 2 in x`       | `LetExpression` with 2 bindings            |
 | Nested let        | `let x = 1 in let y = 2 in y` | Nested `LetExpression`                     |
 | Missing `in`      | `let x = 1 x`                 | `ExpectedTokenError('in')`                 |
-| Missing comma     | `let x = 1 y = 2 in x`        | `ExpectedTokenError(',')`                  |
+| Missing comma     | `let x = 1 y = 2 in x`        | `ExpectedTokenError('in')` (see note)      |
 | Empty bindings    | `let in x`                    | `ExpectedTokenError` (identifier expected) |
 | Trailing comma    | `let x = 1, in x`             | `ExpectedTokenError` (identifier expected) |
 | Let as operand    | `1 + let x = 2 in x`          | `InvalidTokenError` or descriptive error   |
 | Let in parens     | `1 + (let x = 2 in x)`        | Valid: binary `+` with parenthesized let   |
+
+**Note on "Missing comma" error**: Following the existing parser pattern for comma-separated lists (function arguments, list elements, map entries), the parser uses `do...while(matchSingle(_isComma))` then `consume(_isIn, 'in')`. When a comma is missing between bindings (`let x = 1 y = 2 in x`), the parser exits the loop after the first binding and fails when expecting `in` but finding `y`. This produces `ExpectedTokenError('in')` rather than a more specific "expected comma" error. This is intentional—it maintains consistency with existing parser diagnostics rather than adding bespoke lookahead logic for `let`.
 
 #### Semantic Tests
 
