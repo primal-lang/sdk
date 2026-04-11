@@ -218,6 +218,18 @@ The `let` expression is implemented via a `LetTerm` in the runtime that performs
 3. Each subsequent binding's term is substituted with all previous bindings before evaluation
 4. Finally, substitute all bindings into the body and reduce
 
+```dart
+@override
+Term reduce() {
+  Map<String, Term> bindingMap = {};
+  for (final (name, term) in bindings) {
+    final Term value = term.substitute(Bindings(bindingMap)).reduce();
+    bindingMap[name] = value;
+  }
+  return body.substitute(Bindings(bindingMap)).reduce();
+}
+```
+
 This is semantically equivalent to nested immediately-applied functions, but implemented directly without synthesizing intermediate function terms.
 
 ### Semantic Analysis Algorithm
