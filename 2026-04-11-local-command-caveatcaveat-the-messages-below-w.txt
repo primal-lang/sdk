@@ -1,16 +1,3 @@
-MEDIUM: Missing test specification for LetTerm in isolation
-
-What is wrong: Lines 460-467 list test categories but don't provide specific
-test cases for:
-1. LetTerm.substitute() behavior with incoming bindings
-2. LetTerm.reduce() evaluation order
-3. Error propagation from binding evaluation
-
-The existing test patterns (e.g., test/compiler/semantic_analyzer_test.dart)
-are comprehensive but the doc doesn't map example programs to expected test
-assertions.
-
----
 MEDIUM: Bindings constructor approach differs from spec
 
 What is wrong: The spec shows (line 314):

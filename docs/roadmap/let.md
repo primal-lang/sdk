@@ -582,11 +582,106 @@ After implementing the feature:
 1. **Update documentation** in `docs/`:
    - Add `let` expression to `docs/reference/control.md`
 
-2. **Implement tests** using the examples from this document:
-   - Lexical: `let` and `in` token recognition
-   - Syntactic: `LetExpression` parsing (single binding, multiple bindings, nested, comma-separated)
-   - Semantic: scope extension, duplicate detection, shadowing errors, self-reference errors, error priority
-   - Lowering: `SemanticLetNode` to `LetTerm` conversion
-   - Runtime: sequential evaluation, substitution behavior
-   - Integration: all valid and invalid examples from this specification
-   - REPL: `let` expressions in interactive mode
+2. **Implement tests** — see detailed test specification below
+
+### Test Specification
+
+#### Lexical Tests
+
+| Test                       | Input    | Expected                    |
+| -------------------------- | -------- | --------------------------- |
+| `let` keyword recognized   | `let`    | `LetToken`                  |
+| `in` keyword recognized    | `in`     | `InToken`                   |
+| `let` prefix in identifier | `letter` | `IdentifierToken("letter")` |
+| `in` prefix in identifier  | `inner`  | `IdentifierToken("inner")`  |
+
+#### Syntactic Tests
+
+| Test              | Input                         | Expected                                   |
+| ----------------- | ----------------------------- | ------------------------------------------ |
+| Single binding    | `let x = 1 in x`              | `LetExpression` with 1 binding             |
+| Multiple bindings | `let x = 1, y = 2 in x`       | `LetExpression` with 2 bindings            |
+| Nested let        | `let x = 1 in let y = 2 in y` | Nested `LetExpression`                     |
+| Missing `in`      | `let x = 1 x`                 | `ExpectedTokenError('in')`                 |
+| Missing comma     | `let x = 1 y = 2 in x`        | `ExpectedTokenError(',')`                  |
+| Empty bindings    | `let in x`                    | `ExpectedTokenError` (identifier expected) |
+
+#### Semantic Tests
+
+| Test                              | Input                                | Expected                                                    |
+| --------------------------------- | ------------------------------------ | ----------------------------------------------------------- |
+| Valid single binding              | `f(n) = let x = n in x`              | No errors, no warnings                                      |
+| Valid multiple bindings           | `f(n) = let x = n, y = x in y`       | No errors                                                   |
+| Empty bindings                    | `f(n) = let in n`                    | `EmptyLetBindingsError`                                     |
+| Shadows parameter                 | `f(x) = let x = 1 in x`              | `ShadowedLetBindingError`                                   |
+| Shadows outer let                 | `f(n) = let x = 1 in let x = 2 in x` | `ShadowedLetBindingError`                                   |
+| Duplicate in same let             | `f(n) = let x = 1, x = 2 in x`       | `DuplicatedLetBindingError`                                 |
+| Self-reference                    | `f(n) = let x = x in x`              | `UndefinedIdentifierError`                                  |
+| Forward reference                 | `f(n) = let y = x, x = 1 in y`       | `UndefinedIdentifierError`                                  |
+| Error priority: shadow before dup | `f(x) = let x = 1, x = 2 in x`       | `ShadowedLetBindingError` (not Duplicated)                  |
+| `isLetBinding` set correctly      | `f(n) = let x = 1 in x`              | Body's `SemanticBoundVariableNode` has `isLetBinding: true` |
+| Parameter `isLetBinding` false    | `f(n) = n`                           | `SemanticBoundVariableNode` has `isLetBinding: false`       |
+| `usedParameters` excludes let     | `f(n) = let x = 1 in x`              | Warning: unused parameter `n`                               |
+
+#### Lowering Tests
+
+| Test                                 | Input                       | Expected                                                 |
+| ------------------------------------ | --------------------------- | -------------------------------------------------------- |
+| Let binding → `LetBoundVariableTerm` | `let x = 1 in x`            | Body contains `LetBoundVariableTerm("x")`                |
+| Parameter → `BoundVariableTerm`      | `f(n) = n`                  | Body contains `BoundVariableTerm("n")`                   |
+| Mixed                                | `f(n) = let x = 1 in x + n` | `LetBoundVariableTerm("x")` and `BoundVariableTerm("n")` |
+
+#### Runtime Tests: LetBoundVariableTerm
+
+| Test                             | Code                                           | Expected                   |
+| -------------------------------- | ---------------------------------------------- | -------------------------- |
+| Partial substitution (not found) | `LetBoundVariableTerm("x").substitute({y: 5})` | Returns `this` (unchanged) |
+| Full substitution (found)        | `LetBoundVariableTerm("x").substitute({x: 5})` | Returns `NumberTerm(5)`    |
+| Native throws if unsubstituted   | `LetBoundVariableTerm("x").native()`           | `StateError`               |
+
+#### Runtime Tests: LetTerm.substitute()
+
+| Test                              | Setup                          | Expected                              |
+| --------------------------------- | ------------------------------ | ------------------------------------- |
+| Propagates through binding values | `let x = y in x` with `{y: 5}` | Binding becomes `(x, 5)`              |
+| Propagates through body           | `let x = 1 in y` with `{y: 5}` | Body becomes `5`                      |
+| Let binding refs unchanged        | `let x = 1 in x` with `{y: 5}` | `LetBoundVariableTerm("x")` unchanged |
+
+#### Runtime Tests: LetTerm.reduce()
+
+| Test                             | Input                             | Expected                   |
+| -------------------------------- | --------------------------------- | -------------------------- |
+| Single binding evaluation        | `let x = 1 + 1 in x`              | `2`                        |
+| Sequential evaluation order      | `let x = 1, y = x + 1 in y`       | `2` (x evaluated before y) |
+| All bindings substituted in body | `let x = 1, y = 2 in x + y`       | `3`                        |
+| Nested let                       | `let x = 1 in let y = x + 1 in y` | `2`                        |
+
+#### Runtime Tests: Error Propagation
+
+| Test                        | Input                      | Expected              |
+| --------------------------- | -------------------------- | --------------------- |
+| Error in first binding      | `let x = 1/0 in x`         | `DivisionByZeroError` |
+| Error in second binding     | `let x = 1, y = 1/0 in y`  | `DivisionByZeroError` |
+| Error in body               | `let x = 1 in 1/0`         | `DivisionByZeroError` |
+| `try` catches binding error | `try(let x = 1/0 in x, 0)` | `0`                   |
+| `try` catches body error    | `try(let x = 1 in 1/0, 0)` | `0`                   |
+
+#### Integration Tests
+
+| Test                       | Input                                       | Expected        |
+| -------------------------- | ------------------------------------------- | --------------- |
+| `let` with function param  | `f(n) = let x = n * 2 in x` called with `5` | `10`            |
+| `let` in `if` branch       | `f(n) = if (n > 0) let x = n in x else 0`   | Works correctly |
+| `if` in `let` binding      | `f(n) = let x = if (n > 0) n else -n in x`  | Works correctly |
+| `if` in `let` body         | `f(n) = let x = n in if (x > 0) x else -x`  | Works correctly |
+| `let` in list element      | `f(n) = [let x = n in x]`                   | `[n]`           |
+| `let` in function argument | `f(n) = num.abs(let x = n in x)`            | Works correctly |
+| Deeply nested              | `let a = 1 in let b = a in let c = b in c`  | `1`             |
+
+#### REPL Tests
+
+| Test              | Input                       | Expected                                                    |
+| ----------------- | --------------------------- | ----------------------------------------------------------- |
+| Simple let        | `let x = 5 in x + 1`        | `6`                                                         |
+| Multiple bindings | `let a = 2, b = 3 in a * b` | `6`                                                         |
+| Error in REPL     | `let x = x in x`            | `UndefinedIdentifierError` (no function context in message) |

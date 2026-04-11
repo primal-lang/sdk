@@ -8,7 +8,7 @@ Compare the document against:
 - existing tests
 - docs/primal.md and docs/reference.md where relevant
 
-Output findings first, ordered by severity. For each finding include:
+Output findings first, ordered by severity. Each finding must be numbered. For each finding include:
 - what is wrong
 - why it is wrong
 - exact file/line references in both the design doc and the codebase
