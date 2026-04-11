@@ -1,0 +1,385 @@
+HIGH: Grammar has let call ifExpression, but if syntax requires parentheses - 
+edge case not addressed
+
+What is wrong: The document shows examples like:
+classify(n) =
+    let
+        abs_n = if (n < 0) -n else n
+    in
+        if (abs_n > 100) "large" else "small"
+
+This works because binding values are full expressions. But the example at
+line 239-240:
+offset(a, b) = 1 + (let x = a * b in x)
+
+Shows let needing parentheses as an operand. But what about:
+let x = if (true) 1 else 2 in x   // Is this valid?
+
+The grammar says binding values go through expression() which starts at
+ifExpression(), so this should work. However, consider:
+let x = 1 in if (x > 0) x else 0
+
+Here in if is ambiguous to a human reader. The grammar handles it (body is a
+full expression), but the doc doesn't clarify this edge case.
+
+Practical consequence: User confusion about let ... in if constructs.
+
+Missing from spec: Clarify that let x = 1 in if (c) a else b parses as let x =
+1 in (if (c) a else b).
+
+---
+HIGH: Error type naming inconsistency with codebase conventions
+
+What is wrong: The proposed errors (let.md:156-188):
+- EmptyLetBindingsError
+- ShadowedBindingError
+- DuplicatedLetBindingError
+
+Existing errors (semantic_error.dart):
+- DuplicatedParameterError (not DuplicatedParamError)
+- UndefinedIdentifierError (not UndefinedIdError)
+
+The proposed DuplicatedLetBindingError should probably be
+DuplicateLetBindingError (singular) to match codebase style, but actually
+looking closer at the codebase: DuplicatedFunctionError,
+DuplicatedParameterError - they use "Duplicated" not "Duplicate". So
+DuplicatedLetBindingError is correct.
+
+However, "ShadowedBindingError" is less specific - it doesn't say what kind of
+binding (let vs parameter). Consider ShadowedLetBindingError for consistency.
+
+File references: let.md:167-176, semantic_error.dart:17-25
+
+---
+HIGH: usedParameters tracking approach is under-specified
+
+What is wrong: Document lines 343-353 say:
+usedParameters Tracking: The existing usedParameters set tracks which function
+parameters are referenced. Let bindings are added to availableParameters but 
+are NOT function parameters. When an identifier is resolved:
+- If it's a function parameter → add to usedParameters
+- If it's a let binding → do not add to usedParameters
+
+The document suggests two options but doesn't mandate one. Looking at
+semantic_analyzer.dart:247-252:
+if (availableParameters.contains(name)) {
+usedParameters.add(name);
+return SemanticBoundVariableNode(...);
+}
+
+Currently, any name in availableParameters gets added to usedParameters. With
+let bindings in availableParameters, this would cause false positives
+(treating let bindings as "used parameters").
+
+Practical consequence: Unused parameter warnings would break - let binding
+usage would suppress warnings for actual unused parameters if they share names
+(which is disallowed anyway), but more critically, the logic to distinguish
+parameters from let bindings needs explicit implementation.
+
+Missing from spec: The spec doesn't provide the actual code diff for
+semantic_analyzer.dart to handle this distinction. It mentions "option 1" but
+doesn't commit to it.
+
+---
+MEDIUM: Error message format inconsistency
+
+What is wrong: Proposed error messages (lines 157-187):
+'Empty let bindings in function "$inFunction": let expression requires at 
+least one binding'
+
+Existing error messages (semantic_error.dart:31-35):
+'Undefined identifier "$identifier" in function "$inFunction"'
+
+The proposed format adds "in function" as a prefix phrase, while existing
+errors put it as a suffix. The proposed format also uses :  as a separator
+before the explanation, which existing errors don't do.
+
+Practical consequence: Inconsistent UX in error messages.
+
+Recommendation: Match existing pattern:
+'Empty let bindings: let expression requires at least one binding'
+// or with function context:
+'Empty let bindings in function "$inFunction"'
+
+---
+MEDIUM: LetTerm.substitute() has subtle correctness gap
+
+What is wrong: Document lines 299-306 show:
+@override
+Term substitute(Bindings bindings) {
+return LetTerm(
+    bindings: this.bindings.map((b) => (b.$1,
+b.$2.substitute(bindings))).toList(),
+    body: body.substitute(bindings),
+);
+}
+
+The doc claims (lines 321-322):
+Since shadowing is disallowed at the semantic level, the substitute() method 
+does not need capture-avoiding logic
+
+This is almost correct but has a subtle issue. Consider:
+f(x) = let y = x in (let z = 1 in y)
+
+When f is called with argument a, we get:
+1. Substitute {x: a} into body
+2. Outer let substitutes into x → a, into inner let body → y
+
+This works because y is a let binding name, not a parameter, and bindings are
+resolved at reduce() time, not substitute() time. But the implementation in
+reduce() (lines 309-319) correctly creates bindingMap incrementally.
+
+However, the document's substitute() propagates substitutions through body
+immediately. Consider:
+foo(x) = let x = 1 in x  // disallowed - shadowing
+
+This is caught by semantic analysis. But what about:
+foo(y) = let x = 1 in y
+
+When called with argument z:
+- substitute({y: z}) into LetTerm
+- body y → z (BoundVariableTerm.substitute)
+- Result: let x = 1 in z
+
+Then reduce():
+- bindingMap = {x: 1}
+- body.substitute({x: 1}) on z → z (z is not in map)
+- Returns z
+
+This is correct! But wait - z is a BoundVariableTerm, and
+BoundVariableTerm.substitute() throws if the name isn't found. Looking at
+bindings.dart:10-15:
+Term get(String name) {
+if (data.containsKey(name)) {
+    return data[name]!;
+} else {
+    throw NotFoundInScopeError(name);
+}
+}
+
+And term.dart:253:
+Term substitute(Bindings bindings) => bindings.get(name);
+
+So BoundVariableTerm("z").substitute(Bindings({x: 1})) throws!
+
+This is a bug in the LetTerm.reduce() implementation in the doc. After
+evaluating let bindings, the body is substituted with only the let bindings,
+not the original function bindings.
+
+Correct implementation should be:
+Term reduce() {
+Map<String, Term> bindingMap = {};
+for (final (name, term) in bindings) {
+    final Term substituted = term.substitute(Bindings(Map.of(bindingMap)));
+    final Term value = substituted.reduce();
+    bindingMap[name] = value;
+}
+// Body still has BoundVariableTerms from outer scope - they were already
+// substituted by the time we got here (during the outer function's apply())
+return body.substitute(Bindings(bindingMap)).reduce();
+}
+
+Actually wait - looking again at the call flow:
+1. CustomFunctionTerm.apply() does substitute(bindings).reduce()
+(term.dart:414)
+2. This calls LetTerm.substitute(bindings) first, which substitutes all
+function parameters into the body
+3. Then reduce() is called on the already-substituted term
+
+So by the time LetTerm.reduce() runs, all BoundVariableTerms for function
+parameters have already been replaced with values. The remaining
+BoundVariableTerms would be for let bindings that haven't been substituted
+yet.
+
+Actually no - let bindings create new terms during lowering, not
+BoundVariableTerms. Let me re-read...
+
+The document says at line 34:
+SemanticBoundVariableNode() => BoundVariableTerm(semanticNode.name),
+
+So let binding usages in the body become BoundVariableTerm too. When we reach
+LetTerm.reduce():
+- Function parameter BoundVariableTerms have been substituted (from outer
+apply())
+- Let binding BoundVariableTerms have NOT been substituted yet
+
+So body.substitute(Bindings(bindingMap)) needs to handle let binding names.
+
+But wait - the substitute() in the doc substitutes through the body:
+return LetTerm(
+bindings: this.bindings.map((b) => (b.$1,
+b.$2.substitute(bindings))).toList(),
+body: body.substitute(bindings),  // <-- this substitutes function params
+);
+
+So after substitute(), the body has function params resolved. Then reduce()
+does:
+return body.substitute(Bindings(bindingMap)).reduce();
+
+Where bindingMap has let binding names → values. This should work IF and ONLY
+IF BoundVariableTerm.substitute doesn't throw for names not in bindings.
+
+But looking at term.dart:253: it DOES throw via bindings.get(name).
+
+This is the bug. Either:
+1. Bindings.get() needs to return the original term if name not found
+(identity substitution)
+2. Or LetTerm.reduce() needs different logic
+
+Actually, checking term.dart line 13:
+Term substitute(Bindings bindings) => this;
+
+The base Term.substitute() returns this. Only BoundVariableTerm overrides to
+call bindings.get().
+
+The fix would be to make BoundVariableTerm.substitute() return this if not
+found:
+Term substitute(Bindings bindings) {
+if (bindings.data.containsKey(name)) {
+    return bindings.get(name);
+}
+return this;
+}
+
+But that changes existing behavior - currently it throws, which is correct for
+the existing system where all BoundVariableTerms should be substituted.
+
+The design doc doesn't address this architectural incompatibility.
+
+File references: let.md:309-319, term.dart:247-264, bindings.dart:10-15
+
+---
+MEDIUM: Missing test specification for LetTerm in isolation
+
+What is wrong: Lines 460-467 list test categories but don't provide specific
+test cases for:
+1. LetTerm.substitute() behavior with incoming bindings
+2. LetTerm.reduce() evaluation order
+3. Error propagation from binding evaluation
+
+The existing test patterns (e.g., test/compiler/semantic_analyzer_test.dart)
+are comprehensive but the doc doesn't map example programs to expected test
+assertions.
+
+---
+MEDIUM: Bindings constructor approach differs from spec
+
+What is wrong: The spec shows (line 314):
+final Term substituted = term.substitute(Bindings(Map.of(bindingMap)));
+
+But the current Bindings class (bindings.dart:8):
+const Bindings(this.data);
+
+Uses a constructor that takes the map directly. Map.of() creates a copy, which
+is correct for snapshot semantics. But the spec uses Bindings(Map.of(...))
+while the existing code uses Bindings.from() factory. Inconsistent API usage.
+
+---
+MEDIUM: LetBindingExpression location semantics unclear
+
+What is wrong: Line 375-379 shows:
+LetBindingExpression
+name: String
+value: Expression
+location: Location
+
+What location does this use? The = token? The identifier token? The value's
+location? The existing MapEntryExpression (expression.dart:54-62) uses
+location: key.location. The spec should clarify.
+
+---
+LOW: Example typo/inconsistency
+
+What is wrong: Line 260 shows:
+// → UndefinedIdentifierError: 'x' is not defined
+
+But line 78 shows:
+// → UndefinedIdentifierError: 'x' is not defined
+
+These error messages use 'x' is not defined but the actual error class
+(semantic_error.dart:31-35) produces:
+'Undefined identifier "$identifier" in function "$inFunction"'
+
+The spec error messages don't match the existing error format.
+
+---
+LOW: Breaking change section is understated
+
+What is wrong: Lines 137-139:
+Breaking change: Existing identifiers named let or in become reserved 
+keywords.
+
+This is a one-liner but deserves more attention:
+1. How common is in as a variable name in typical code?
+2. Should there be a deprecation warning phase?
+3. How does this affect the REPL?
+
+The in keyword is particularly concerning - it's a common variable name (e.g.,
+in for input, stream input, etc.).
+
+---
+LOW: Token class location for let/in not specified
+
+What is wrong: The spec says "Add LetToken and InToken keywords" (line 359)
+but doesn't specify where in lexical_analyzer.dart's
+_identifierOrKeywordToken() function they should be added, or the token class
+definitions themselves.
+
+Currently keywords are checked via string extensions
+(lib/extensions/string_extensions.dart). The spec should clarify whether to
+add:
+- isLet and isIn string extensions
+- Or direct checks in _identifierOrKeywordToken()
+
+---
+LOW: Lowering switch exhaustiveness
+
+What is wrong: Line 36-38 of lowerer.dart:
+_ => throw StateError(
+'Unknown semantic node type: ${semanticNode.runtimeType}',
+),
+
+When adding SemanticLetNode, this default case will become unreachable if
+exhaustive checking is used. The spec shows (lines 408-412):
+SemanticLetNode() => _lowerLet(semanticNode),
+// ... existing default case ...
+
+But Dart's switch exhaustiveness may require removing the default case or the
+new case will be flagged.
+
+---
+INFO: Missing REPL expression context handling details
+
+What is wrong: Lines 443-451 mention REPL mode but don't address:
+1. How availableParameters is initialized in REPL mode (currently empty)
+2. Whether REPL state persists let bindings across expressions (it shouldn't
+per the pure expression semantics)
+
+Looking at semantic_analyzer.dart:127-133, checkExpression takes
+availableParameters as a parameter. For REPL, this would be passed empty,
+which is correct. But the spec could be more explicit.
+
+---
+INFO: Unused parameter warning semantics for let bindings
+
+What is wrong: Lines 343-347 state:
+Let bindings are added to availableParameters but are NOT function 
+parameters... no warning for unused let bindings
+
+Is "no warning for unused let bindings" intentional design, or an oversight?
+The rationale is not explained. Unused let bindings could indicate dead code.
+
+---
+Summary of Missing Tests
+
+Based on the examples in the spec, these test cases are implied but not
+enumerated:
+1. Lexer: let token, in token, edge cases with lettering, inner
+2. Parser: single binding, multiple bindings, nested let, let in branches
+3. Semantic: all error conditions with priority verification
+4. Lowering: SemanticLetNode → LetTerm mapping
+5. Runtime: sequential evaluation, substitution propagation, error propagation
+6. REPL: let expressions evaluate correctly
+7. Integration: all valid/invalid examples from spec
+
+✻ Brewed for 3m 33s

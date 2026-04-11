@@ -29,7 +29,7 @@ bindings       → binding ("," binding)*
 binding        → IDENTIFIER "=" expression
 ```
 
-**Precedence**: `let` has the lowest precedence (below `if`), so `let x = 1 in x + 2` parses as `let x = 1 in (x + 2)`.
+**Precedence**: `let` has the lowest precedence, binding more loosely than all other operators including `if`. This means `let x = 1 in x + 2` parses as `let x = 1 in (x + 2)`, and `let x = 1 in if (x > 0) x else 0` parses as `let x = 1 in (if (x > 0) x else 0)`.
 
 **Associativity**: Right-associative. Chained `let` expressions nest naturally.
 

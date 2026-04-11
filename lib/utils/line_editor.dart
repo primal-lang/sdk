@@ -32,9 +32,17 @@ class LineEditor {
       return stdin.readLineSync()?.trim() ?? '';
     }
 
-    // On Windows, stdin.hasTerminal may return true even when terminal mode
-    // changes fail (e.g., in Git Bash, mintty, or certain IDEs). We attempt
-    // raw mode for history navigation, but fall back to simple line reading.
+    // On Windows, raw terminal mode often has issues with character echo
+    // in various terminal emulators (cmd.exe, PowerShell, Git Bash, etc.).
+    // Fall back to simple line reading which handles echo natively.
+    // This sacrifices history navigation but ensures reliable input display.
+    if (Platform.isWindows) {
+      return stdin.readLineSync()?.trim() ?? '';
+    }
+
+    // On Unix-like systems, we can use raw mode for history navigation.
+    // stdin.hasTerminal may return true even when terminal mode changes fail
+    // (e.g., in certain IDEs). We attempt raw mode but fall back if needed.
     late bool wasLineMode;
     late bool wasEchoMode;
     try {
@@ -195,7 +203,9 @@ class LineEditor {
         buffer.insert(cursorPosition, byte);
         cursorPosition++;
         if (cursorPosition == buffer.length) {
-          stdout.writeCharCode(byte);
+          // Use write() with string instead of writeCharCode() for better
+          // Windows compatibility - some Windows terminals handle them differently
+          stdout.write(String.fromCharCode(byte));
           _flushIfNeeded();
         } else {
           _redrawLine(buffer, cursorPosition);
