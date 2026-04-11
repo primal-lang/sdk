@@ -148,6 +148,29 @@ bad(n) = let x = 1 in let x = 2 in x
 // → ShadowedLetBindingError: Shadowed let binding "x"
 ```
 
+### Function Name Shadowing (Allowed)
+
+Let bindings MAY shadow function names (both custom and standard library). This is consistent with existing parameter behavior—bound variables take precedence over functions in name resolution:
+
+```primal
+// Valid: double shadows the function double
+double(x) = x * 2
+use_double(n) = let double = 10 in double + n
+// use_double(5) → 15 (double resolves to 10, not the function)
+
+// Valid: dotted names are single identifiers
+use_abs(n) = let num.abs = 42 in num.abs
+// use_abs(5) → 42 (num.abs resolves to 42, not the function)
+
+// Valid: shadowed function can be captured before shadowing
+capture(n) = let f = num.abs, num.abs = 0 in f(n)
+// capture(-5) → 5 (f captured the function before shadowing)
+```
+
+**Resolution order**: When an identifier is encountered, the semantic analyzer checks bound variables (`availableParameters`) first, then functions (`allSignatures`). This matches the existing behavior for function parameters.
+
+**Note on dotted names**: Since identifiers can contain dots (regex `[a-zA-Z][\w\.]*`), `num.abs` is lexed as a single identifier token. A let binding for `num.abs` shadows the entire dotted function name, not just `num`.
+
 ### Evaluation Order
 
 Bindings are evaluated sequentially in declaration order (call-by-value). Each binding is fully evaluated before the next:
@@ -1051,21 +1074,25 @@ After implementing the feature:
 
 #### Semantic Tests
 
-| Test                           | Input                                  | Expected                                                    |
-| ------------------------------ | -------------------------------------- | ----------------------------------------------------------- |
-| Valid single binding           | `f(n) = let x = n in x`                | No errors, no warnings                                      |
-| Valid multiple bindings        | `f(n) = let x = n, y = x in y`         | No errors                                                   |
-| Shadows parameter              | `f(x) = let x = 1 in x`                | `ShadowedLetBindingError`                                   |
-| Shadows outer let              | `f(n) = let x = 1 in let x = 2 in x`   | `ShadowedLetBindingError`                                   |
-| Duplicate in same let          | `f(n) = let x = 1, x = 2 in x`         | `DuplicatedLetBindingError`                                 |
-| Duplicate non-adjacent         | `f(n) = let x = 1, y = 2, x = 3 in x`  | `DuplicatedLetBindingError`                                 |
-| Self-reference                 | `f(n) = let x = x in x`                | `UndefinedIdentifierError`                                  |
-| Forward reference              | `f(n) = let y = x, x = 1 in y`         | `UndefinedIdentifierError`                                  |
-| Scope isolation                | `f(n) = let x = (let y = 1 in y) in y` | `UndefinedIdentifierError` (y not in outer scope)           |
-| Shadow on first binding        | `f(x) = let x = 1, x = 2 in x`         | `ShadowedLetBindingError` (first `x` shadows param)         |
-| `isLetBinding` set correctly   | `f(n) = let x = 1 in x`                | Body's `SemanticBoundVariableNode` has `isLetBinding: true` |
-| Parameter `isLetBinding` false | `f(n) = n`                             | `SemanticBoundVariableNode` has `isLetBinding: false`       |
-| `usedParameters` excludes let  | `f(n) = let x = 1 in x`                | Warning: unused parameter `n`                               |
+| Test                           | Input                                                       | Expected                                                    |
+| ------------------------------ | ----------------------------------------------------------- | ----------------------------------------------------------- |
+| Valid single binding           | `f(n) = let x = n in x`                                     | No errors, no warnings                                      |
+| Valid multiple bindings        | `f(n) = let x = n, y = x in y`                              | No errors                                                   |
+| Shadows parameter              | `f(x) = let x = 1 in x`                                     | `ShadowedLetBindingError`                                   |
+| Shadows outer let              | `f(n) = let x = 1 in let x = 2 in x`                        | `ShadowedLetBindingError`                                   |
+| Duplicate in same let          | `f(n) = let x = 1, x = 2 in x`                              | `DuplicatedLetBindingError`                                 |
+| Duplicate non-adjacent         | `f(n) = let x = 1, y = 2, x = 3 in x`                       | `DuplicatedLetBindingError`                                 |
+| Self-reference                 | `f(n) = let x = x in x`                                     | `UndefinedIdentifierError`                                  |
+| Forward reference              | `f(n) = let y = x, x = 1 in y`                              | `UndefinedIdentifierError`                                  |
+| Scope isolation                | `f(n) = let x = (let y = 1 in y) in y`                      | `UndefinedIdentifierError` (y not in outer scope)           |
+| Shadow on first binding        | `f(x) = let x = 1, x = 2 in x`                              | `ShadowedLetBindingError` (first `x` shadows param)         |
+| `isLetBinding` set correctly   | `f(n) = let x = 1 in x`                                     | Body's `SemanticBoundVariableNode` has `isLetBinding: true` |
+| Parameter `isLetBinding` false | `f(n) = n`                                                  | `SemanticBoundVariableNode` has `isLetBinding: false`       |
+| `usedParameters` excludes let  | `f(n) = let x = 1 in x`                                     | Warning: unused parameter `n`                               |
+| Shadows custom function        | `double(x) = x * 2` then `f(n) = let double = 10 in double` | No error, `double` resolves to binding                      |
+| Shadows stdlib function        | `f(n) = let num.abs = 42 in num.abs`                        | No error, `num.abs` resolves to `42`                        |
+| Capture before shadow          | `f(n) = let g = num.abs, num.abs = 0 in g(n)`               | No error, `g` captures function before shadow               |
+| Call shadowed binding          | `f(n) = let double = num.abs in double(n)`                  | No error, `double` is callable (holds function)             |
 
 #### Lowering Tests
 
@@ -1123,15 +1150,19 @@ After implementing the feature:
 
 #### Integration Tests
 
-| Test                       | Input                                       | Expected        |
-| -------------------------- | ------------------------------------------- | --------------- |
-| `let` with function param  | `f(n) = let x = n * 2 in x` called with `5` | `10`            |
-| `let` in `if` branch       | `f(n) = if (n > 0) let x = n in x else 0`   | Works correctly |
-| `if` in `let` binding      | `f(n) = let x = if (n > 0) n else -n in x`  | Works correctly |
-| `if` in `let` body         | `f(n) = let x = n in if (x > 0) x else -x`  | Works correctly |
-| `let` in list element      | `f(n) = [let x = n in x]`                   | `[n]`           |
-| `let` in function argument | `f(n) = num.abs(let x = n in x)`            | Works correctly |
-| Deeply nested              | `let a = 1 in let b = a in let c = b in c`  | `1`             |
+| Test                       | Input                                                                           | Expected        |
+| -------------------------- | ------------------------------------------------------------------------------- | --------------- |
+| `let` with function param  | `f(n) = let x = n * 2 in x` called with `5`                                     | `10`            |
+| `let` in `if` branch       | `f(n) = if (n > 0) let x = n in x else 0`                                       | Works correctly |
+| `if` in `let` binding      | `f(n) = let x = if (n > 0) n else -n in x`                                      | Works correctly |
+| `if` in `let` body         | `f(n) = let x = n in if (x > 0) x else -x`                                      | Works correctly |
+| `let` in list element      | `f(n) = [let x = n in x]`                                                       | `[n]`           |
+| `let` in function argument | `f(n) = num.abs(let x = n in x)`                                                | Works correctly |
+| Deeply nested              | `let a = 1 in let b = a in let c = b in c`                                      | `1`             |
+| Shadow custom function     | `double(x) = x * 2` then `f(n) = let double = 10 in double + n` called with `5` | `15`            |
+| Shadow stdlib function     | `f(n) = let num.abs = 42 in num.abs` called with any                            | `42`            |
+| Capture then shadow        | `f(n) = let g = num.abs, num.abs = 0 in g(n)` called with `-5`                  | `5`             |
+| Call let-bound function    | `f(n) = let double = num.abs in double(n)` called with `-5`                     | `5`             |
 
 #### REPL Tests
 
