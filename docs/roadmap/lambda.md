@@ -403,7 +403,9 @@ class ArrowToken extends Token<String> {
 
 **2. Update `MinusState`** in `lib/compiler/lexical/lexical_analyzer.dart`:
 
-The existing `MinusState` handles the `-` character. Extend it to recognize `->`:
+The existing `MinusState` handles the `-` character. Currently, after seeing `-`, it checks if the next character is an operator delimiter (`isOperatorDelimiter` in `string_extensions.dart`). The `>` character is **not** in the delimiter set—it's a binary operator character—so the current implementation throws `InvalidCharacterError` when encountering `->`.
+
+Extend `MinusState` to check for `>` **before** the delimiter check, producing `ArrowToken` for the two-character sequence:
 
 ```dart
 class MinusState extends State<Character, Lexeme> {
