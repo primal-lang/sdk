@@ -119,7 +119,10 @@ Errors during binding evaluation propagate immediately:
 
 ```primal
 // Error propagates from binding evaluation
-try(let x = error.throw("fail") in x, 0)  // throws "fail"
+let x = error.throw(0, "fail") in x  // throws CustomError("fail")
+
+// Errors can be caught with try
+try(let x = error.throw(0, "fail") in x, 0)  // returns 0
 ```
 
 ## Lexical Changes
