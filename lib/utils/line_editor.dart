@@ -10,7 +10,19 @@ class LineEditor {
   final List<String> _history = [];
   int _historyIndex = 0;
 
+  /// Whether to flush stdout after writes. Required on Windows where stdout
+  /// may be line-buffered even in raw terminal mode. On Unix-like systems,
+  /// stdout is typically unbuffered when connected to a terminal.
+  static final bool _shouldFlush = Platform.isWindows;
+
   LineEditor({String prompt = ''}) : _prompt = prompt;
+
+  /// Flushes stdout on Windows only to ensure characters appear immediately.
+  void _flushIfNeeded() {
+    if (_shouldFlush) {
+      stdout.flush();
+    }
+  }
 
   /// Reads a line of input with history navigation support.
   ///
@@ -66,6 +78,7 @@ class LineEditor {
       if (byte == 10 || byte == 13) {
         // Enter key (LF or CR)
         stdout.writeln();
+        _flushIfNeeded();
         return String.fromCharCodes(buffer).trim();
       }
 
@@ -101,6 +114,7 @@ class LineEditor {
         if (moveBack > 0) {
           stdout.write('\x1b[${moveBack}D');
         }
+        _flushIfNeeded();
         continue;
       }
 
@@ -147,12 +161,14 @@ class LineEditor {
               if (cursorPosition < buffer.length) {
                 cursorPosition++;
                 stdout.write('\x1b[C');
+                _flushIfNeeded();
               }
             case 68:
               // Left arrow
               if (cursorPosition > 0) {
                 cursorPosition--;
                 stdout.write('\x1b[D');
+                _flushIfNeeded();
               }
             case 51:
               // Possibly Delete key (ESC [ 3 ~)
@@ -180,6 +196,7 @@ class LineEditor {
         cursorPosition++;
         if (cursorPosition == buffer.length) {
           stdout.writeCharCode(byte);
+          _flushIfNeeded();
         } else {
           _redrawLine(buffer, cursorPosition);
         }
@@ -195,5 +212,6 @@ class LineEditor {
     if (moveBack > 0) {
       stdout.write('\x1b[${moveBack}D');
     }
+    _flushIfNeeded();
   }
 }
