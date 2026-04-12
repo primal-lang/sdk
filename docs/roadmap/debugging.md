@@ -117,6 +117,20 @@ Returns: the lambda `(x) -> x + 1` (unmodified)
 
 Note: The return value is always the _unmodified_ first argument `a`. Named functions show parameter types in the printed output; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
 
+Since functions are returned unmodified, they remain callable:
+
+```primal
+debug(num.abs, "abs")(-5)
+```
+
+Output (stdout):
+
+```
+[debug] abs: num.abs(a: Number)
+```
+
+Returns: `5`
+
 ### Inline in Expressions
 
 ```primal
@@ -253,7 +267,10 @@ Key differences from `console.writeLn`:
     - `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}`
     - Nested collections: `debug([[1 + 2]], "x")` prints `[debug] x: [[3]]`
   - System types: timestamps, files, directories
-  - Functions: named functions, lambdas
+  - Functions remain callable after debug:
+    - `debug(num.abs, "abs")(-5)` returns `5`
+    - `debug((x) -> x + 1, "inc")(5)` returns `6`
+    - Closures preserve captured bindings: `let y = 10 in debug((x) -> x + y, "f")(5)` returns `15`
   - Special values: `debug(num.infinity(), "inf")`
   - Nested debug: `debug(debug(1, "inner"), "outer")`
   - Unicode in labels: `debug(1, "结果")`
