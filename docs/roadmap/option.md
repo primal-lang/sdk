@@ -8,7 +8,7 @@ Add explicit values for present or absent results:
 safeHead(xs) =
   if (list.isEmpty(xs)) none else some(list.first(xs))
 
-value = maybe.unwrapOr(safeHead([]), 0)
+value() = maybe.unwrapOr(safeHead([]), 0)
 ```
 
 **Design notes:**

@@ -25,6 +25,6 @@ Line 2`
 # Raw strings
 
 ```primal
-path = r"C:\Users\name"
-pattern = r"\d+\.\d+"
+path() = r"C:\Users\name"
+pattern() = r"\d+\.\d+"
 ```

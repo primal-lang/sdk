@@ -23,8 +23,8 @@ Status = Pending | Approved | Rejected
 Variants are accessed via the enum name:
 
 ```primal
-favorite = Color.Blue
-heading = Direction.North
+favorite() = Color.Blue
+heading() = Direction.North
 ```
 
 ### Comparison

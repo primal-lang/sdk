@@ -5,8 +5,8 @@ This proposal introduces tuples and records with destructuring to Primal, provid
 A tuple is an ordered, fixed-size collection of values. Using parentheses keeps the syntax minimal:
 
 ```primal
-point = (10, 20)
-person = ("Alice", 30, true)
+point() = (10, 20)
+person() = ("Alice", 30, true)
 ```
 
 ## 2. Named Records
@@ -14,8 +14,8 @@ person = ("Alice", 30, true)
 Records add semantic meaning by labeling fields. A lightweight syntax using `{field: value}` (distinct from maps which use `{key -> value}`):
 
 ```primal
-point = {x: 10, y: 20}
-person = {name: "Alice", age: 30, active: true}
+point() = {x: 10, y: 20}
+person() = {name: "Alice", age: 30, active: true}
 ```
 
 ## 3. Accessing Elements
@@ -23,17 +23,17 @@ person = {name: "Alice", age: 30, active: true}
 **Positional (tuples):**
 
 ```primal
-x = first(point)      // 10
-y = second(point)     // 20
+x() = first(point())      // 10
+y() = second(point())     // 20
 // or index-based:
-x = point.0           // 10
+x() = point().0           // 10
 ```
 
 **Named (records):**
 
 ```primal
-name = person.name    // "Alice"
-age = person.age      // 30
+name() = person().name    // "Alice"
+age() = person().age      // 30
 ```
 
 ## 4. Destructuring in Function Parameters
@@ -54,10 +54,10 @@ Allow unpacking in local bindings (if Primal adds `let` or similar):
 
 ```primal
 // Hypothetical let-binding syntax
-result = let (x, y) = getCoordinates() in x + y
+result() = let (x, y) = getCoordinates() in x + y
 
 // Or inline with a where-clause style
-hypotenuse = sqrt(x*x + y*y) where (x, y) = getPoint()
+hypotenuse() = sqrt(x*x + y*y) where (x, y) = getPoint()
 ```
 
 ## 6. Multi-Value Function Returns
@@ -114,11 +114,11 @@ This keeps Primal's minimalist philosophy while enabling cleaner APIs, safer dat
 Add fixed-size heterogeneous collections:
 
 ```
-point = (3, 4)
-person = ("Alice", 30, true)
+point() = (3, 4)
+person() = ("Alice", 30, true)
 
-x = tuple.first(point)
-name = tuple.at(person, 0)
+x() = tuple.first(point())
+name() = tuple.at(person(), 0)
 ```
 
 **Why it belongs:** Lists are currently used for many things, but they do not communicate "fixed-size structured value". Tuples would be a lightweight way to return multiple values and model small product data.

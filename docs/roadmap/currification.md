@@ -24,6 +24,6 @@ Apply some arguments now, get a function that expects the rest:
 ```
 add(a, b) = a + b
 
-addFive = add(5, _)
-main() = addFive(3)   // returns 8
+addFive() = add(5, _)
+main() = addFive()(3)   // returns 8
 ```

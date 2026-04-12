@@ -12,8 +12,8 @@ Primal already exposes `str.match`, but string-based regex patterns are harder t
 Add first-class regex syntax:
 
 ```
-pattern = /[a-z]+[0-9]+/
-matched = regex.match("hello123", pattern)
-groups = regex.findAll("abc123def456", /\d+/)
-replaced = regex.replace("hello123", /\d+/, "XXX")
+pattern() = /[a-z]+[0-9]+/
+matched() = regex.match("hello123", pattern())
+groups() = regex.findAll("abc123def456", /\d+/)
+replaced() = regex.replace("hello123", /\d+/, "XXX")
 ```

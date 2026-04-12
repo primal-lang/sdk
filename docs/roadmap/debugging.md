@@ -12,8 +12,8 @@ Expression-returning debug helpers that print or validate values without changin
 **Proposed Syntax:**
 
 ```primal
-x = debug.trace(expensiveComputation())
-y = debug.trace("after filter", list.filter(data, isValid))
+x() = debug.trace(expensiveComputation())
+y() = debug.trace("after filter", list.filter(data, isValid))
 
 safeHead(xs) =
   debug.assert(
@@ -22,11 +22,11 @@ safeHead(xs) =
     "expected a non-empty list"
   )
 
-measured = debug.timed("loadUsers", loadUsers())
-debug.type(measured)                      // "List", "Number", "Function", ...
+measured() = debug.timed("loadUsers", loadUsers())
+debug.type(measured())                    // "List", "Number", "Function", ...
 
 traceStep(x) = debug.trace("step", x)
-result = list.map([1, 2, 3], traceStep)
+result() = list.map([1, 2, 3], traceStep)
 
 debug.traceWhen(isVerbose, "payload", payload)
 ```
@@ -60,13 +60,13 @@ Expose metadata about function values. Primal already has first-class functions,
 **Proposed Syntax:**
 
 ```primal
-f = num.add
+f() = num.add
 
-function.name(f)                          // "num.add"
-function.arity(f)                         // 2
-function.parameters(f)                    // ["a", "b"]
-function.isNative(f)                      // true
-function.signature(f)                     // "num.add(a: Number, b: Number)"
+function.name(f())                        // "num.add"
+function.arity(f())                       // 2
+function.parameters(f())                  // ["a", "b"]
+function.isNative(f())                    // true
+function.signature(f())                   // "num.add(a: Number, b: Number)"
 
 greet(name) = "Hello, " + name
 

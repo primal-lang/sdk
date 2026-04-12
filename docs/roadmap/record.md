@@ -12,7 +12,7 @@ Add named-field structures:
 ```
 record Person(name, age)
 
-alice = Person("Alice", 30)
-name = alice.name
-older = alice with { age: 31 }
+alice() = Person("Alice", 30)
+name() = alice().name
+older() = alice() with { age: 31 }
 ```
