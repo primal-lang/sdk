@@ -26,11 +26,11 @@ main() = list.map([1, 2, 3], (x) -> x * 2)  // [2, 4, 6]
 ```
 expression        → lambdaExpression
 lambdaExpression  → "(" parameters? ")" "->" expression
-                  / letExpression
+                  | letExpression
 parameters        → IDENTIFIER ( "," IDENTIFIER )*
 ```
 
-Note: The `/` denotes prioritized choice (PEG-style), not BNF alternation. The parser uses lookahead to check if the token sequence matches `"(" (IDENTIFIER ("," IDENTIFIER)*)? ")" "->"`. If so, it parses a lambda; otherwise, it falls through to `letExpression`. This is not backtracking—the lookahead examines tokens without consuming them.
+**Notation**: The `|` above represents **ordered alternation** (try first alternative, fall through to second if it fails). This differs from standard BNF where `|` means unordered choice. The parser uses lookahead to check if the token sequence matches `"(" (IDENTIFIER ("," IDENTIFIER)*)? ")" "->"`. If so, it parses a lambda; otherwise, it falls through to `letExpression`. This is **not backtracking**—the lookahead examines tokens without consuming them, then commits to one path.
 
 The `parameters?` makes the parameter list optional, allowing zero-parameter lambdas like `() -> 5`. When present, `parameters` requires at least one identifier. Single-parameter lambdas require parentheses: `(x) -> x + 1`, not `x -> x + 1`. Note that `()` alone (without `->`) is **not** a valid expression—the lookahead finds no `->` after `)`, so it falls through to `letExpression()` → ... → `primary()` where `()` fails as an empty grouped expression.
 
@@ -1421,15 +1421,17 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Printing Tests
 
-These tests verify lambda printing format. Note: lambdas print without types (`<lambda@1:1>(x)`) while named functions print with types (`f(x: any)`).
+These tests verify lambda printing format. Note: lambdas print without types (`<lambda@row:col>(x)`) while named functions print with types (`f(x: any)`).
 
-| Test                    | Input                                    | Expected                           |
-| ----------------------- | ---------------------------------------- | ---------------------------------- |
-| Lambda alone            | `f() = (x) -> x` then `f()`              | `"<lambda@1:7>(x)"`                |
-| Lambda in list          | `main() = [(x) -> x]`                    | `["<lambda@1:10>(x)"]`             |
-| Mixed lambdas and named | `f(a) = a` then `main() = [f, (x) -> x]` | `["f(a: any)", "<lambda@...>(x)"]` |
-| Multi-param lambda      | `f() = (a, b) -> a + b` then `f()`       | `"<lambda@1:7>(a, b)"`             |
-| Zero-param lambda       | `f() = () -> 5` then `f()`               | `"<lambda@1:7>()"`                 |
+| Test                    | Input                                    | Expected                            |
+| ----------------------- | ---------------------------------------- | ----------------------------------- |
+| Lambda alone            | `f() = (x) -> x` then `f()`              | matches `<lambda@\d+:\d+>\(x\)`     |
+| Lambda in list          | `main() = [(x) -> x]`                    | matches `\[<lambda@\d+:\d+>\(x\)\]` |
+| Mixed lambdas and named | `f(a) = a` then `main() = [f, (x) -> x]` | `["f(a: any)", "<lambda@...>(x)"]`  |
+| Multi-param lambda      | `f() = (a, b) -> a + b` then `f()`       | matches `<lambda@\d+:\d+>\(a, b\)`  |
+| Zero-param lambda       | `f() = () -> 5` then `f()`               | matches `<lambda@\d+:\d+>\(\)`      |
+
+**Note on location in lambda names**: The `row:col` in `<lambda@row:col>` reflects the source location of the lambda's opening `(`. Exact column values depend on input formatting (whitespace, line breaks). Tests should use **regex matching** (as shown above) or **substring checks** rather than exact string comparison. For example, verify the output contains `<lambda@` and ends with `>(x)` rather than asserting the exact string `<lambda@1:7>(x)`.
 
 #### REPL Tests
 
