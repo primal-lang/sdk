@@ -7,30 +7,30 @@ A new function `debug` that evaluates an expression, prints its value with a lab
 ## Signature
 
 ```
-debug(a: Any, b: String): Any
+debug(a: String, b: Any): Any
 ```
 
-- **Input:** A value of any type (`a`) and a label string (`b`)
-- **Output:** The value, after printing it to stdout
+- **Input:** A label string (`a`) and a value of any type (`b`)
+- **Output:** The value `b`, after printing it to stdout
 - **Purity:** Impure
 
 ## Behavior
 
-1. Reduce expression `a` to a value (any type)
-2. Deep-reduce `a`: recursively reduce all elements within collections (see [Evaluation Semantics](#evaluation-semantics))
-3. Reduce expression `b` to a value (must be a String)
-4. Print to stdout: `[debug] <b>: <deeply-reduced a>\n`
-5. Return the deeply-reduced `a` (a new term with all collection elements fully evaluated)
+1. Reduce expression `a` to a value (must be a String)
+2. Reduce expression `b` to a value (any type)
+3. Deep-reduce `b`: recursively reduce all elements within collections (see [Evaluation Semantics](#evaluation-semantics))
+4. Print to stdout: `[debug] <a>: <deeply-reduced b>\n`
+5. Return the deeply-reduced `b` (a new term with all collection elements fully evaluated)
 
 ### Evaluation Semantics
 
-Evaluation is **deep**: `debug` recursively reduces `a` and all nested elements within collections before printing and returning. This ensures computed values are shown in output, and the return value contains fully evaluated elements.
+Evaluation is **deep**: `debug` recursively reduces `b` and all nested elements within collections before printing and returning. This ensures computed values are shown in output, and the return value contains fully evaluated elements.
 
-- `debug(1 + 2, "x")` prints `[debug] x: 3` and returns `3`
-- `debug([1 + 2, 3 * 4], "x")` prints `[debug] x: [3, 12]` and returns `[3, 12]`
-- `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}` and returns `{"sum": 3}`
+- `debug("x", 1 + 2)` prints `[debug] x: 3` and returns `3`
+- `debug("x", [1 + 2, 3 * 4])` prints `[debug] x: [3, 12]` and returns `[3, 12]`
+- `debug("x", {"sum": 1 + 2})` prints `[debug] x: {sum: 3}` and returns `{"sum": 3}`
 
-This differs from `console.write`, which does not deep-reduce collection elements. For `debug`, the return value is a **new term** with all nested computations resolved, not the original unevaluated term.
+This differs from `console.write`, which does not deep-reduce collection elements. For `debug`, the return value is a **new term** with all nested computations resolved, not the original unevaluated `b` term.
 
 Note: Deep evaluation may trigger side effects in nested expressions and will not terminate for infinite structures.
 
@@ -64,7 +64,7 @@ Where `value` uses `Term.toString()` (same as `console.write`):
 ### Basic Usage
 
 ```primal
-debug(1 + 2, "result")
+debug("result", 1 + 2)
 ```
 
 Output (stdout):
@@ -78,7 +78,7 @@ Returns: `3`
 ### String Values
 
 ```primal
-debug("hello world", "greeting")
+debug("greeting", "hello world")
 ```
 
 Output (stdout):
@@ -94,7 +94,7 @@ Note: Strings print without quotes in the output (matching `console.write` behav
 ### Map and Collection Values
 
 ```primal
-debug({"name": "Alice", "age": 30}, "user")
+debug("user", {"name": "Alice", "age": 30})
 ```
 
 Output (stdout):
@@ -110,7 +110,7 @@ Note: Map keys and string values print without quotes in the output. The return 
 ### Function Values
 
 ```primal
-debug(num.add, "function")
+debug("function", num.add)
 ```
 
 Output (stdout):
@@ -124,7 +124,7 @@ Returns: the function `num.add` (unmodified)
 Lambda functions display without parameter types:
 
 ```primal
-debug((x) -> x + 1, "lambda")
+debug("lambda", (x) -> x + 1)
 ```
 
 Output (stdout):
@@ -135,12 +135,12 @@ Output (stdout):
 
 Returns: the lambda `(x) -> x + 1` (unmodified)
 
-Note: The return value is always the _unmodified_ first argument `a`. Named functions show parameter types in the printed output; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
+Note: The return value is always the _unmodified_ `b` argument. Named functions show parameter types in the printed output; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
 
 Since functions are returned unmodified, they remain callable:
 
 ```primal
-debug(num.abs, "abs")(-5)
+debug("abs", num.abs)(-5)
 ```
 
 Output (stdout):
@@ -154,7 +154,7 @@ Returns: `5`
 ### Inline in Expressions
 
 ```primal
-num.add(debug(5, "a"), debug(10, "b"))
+num.add(debug("a", 5), debug("b", 10))
 ```
 
 Output (stdout):
@@ -170,9 +170,9 @@ Returns: `15`
 
 ```primal
 factorial(n) = if (n <= 1)
-                  debug(1, "base case")
+                  debug("base case", 1)
                else
-                  n * debug(factorial(n - 1), "factorial(" + to.string(n - 1) + ")")
+                  n * debug("factorial(" + to.string(n - 1) + ")", factorial(n - 1))
 
 main() = factorial(4)
 ```
@@ -191,8 +191,8 @@ Returns: `24`
 ### Debugging Intermediate Values
 
 ```primal
-process(items) = let filtered = debug(list.filter(items, (x) -> x > 0), "after filter"),
-                     mapped = debug(list.map(filtered, (x) -> x * 2), "after map")
+process(items) = let filtered = debug("after filter", list.filter(items, (x) -> x > 0)),
+                     mapped = debug("after map", list.map(filtered, (x) -> x * 2))
                  in mapped
 
 main() = process([-1, 2, -3, 4])
@@ -209,13 +209,13 @@ Returns: `[4, 8]`
 
 ## Error Conditions
 
-| Condition                               | Phase    | Error                                  |
-| --------------------------------------- | -------- | -------------------------------------- |
-| Wrong argument count (direct call)      | Semantic | `InvalidNumberOfArgumentsError`        |
-| Wrong argument count (indirect call)    | Runtime  | `InvalidArgumentCountError`            |
-| Argument `b` not String (direct call)   | Runtime  | `InvalidArgumentTypesError`            |
-| Argument `b` not String (indirect call) | Runtime  | `InvalidArgumentTypesError`            |
-| Expression `a` throws                   | Runtime  | Error propagates (not caught by debug) |
+| Condition                            | Phase    | Error                                  |
+| ------------------------------------ | -------- | -------------------------------------- |
+| Wrong argument count (direct call)   | Semantic | `InvalidNumberOfArgumentsError`        |
+| Wrong argument count (indirect call) | Runtime  | `InvalidArgumentCountError`            |
+| `a` not String (direct call)         | Runtime  | `InvalidArgumentTypesError`            |
+| `a` not String (indirect call)       | Runtime  | `InvalidArgumentTypesError`            |
+| Expression `a` or `b` throws         | Runtime  | Error propagates (not caught by debug) |
 
 ## Invalid Examples
 
@@ -224,12 +224,12 @@ Returns: `[4, 8]`
 debug()
 // SemanticError: Invalid number of arguments calling function "debug": expected 2, got 0
 
-// Wrong type for argument b (caught at runtime)
-debug("value", 123)
-// RuntimeError: Invalid argument types for function "debug". Expected: (String). Actual: (Number)
+// Wrong type for a (caught at runtime)
+debug(123, "value")
+// RuntimeError: Invalid argument types for function "debug". Expected: (String, Any). Actual: (Number, String)
 
 // Error propagation (not caught)
-debug(num.div(1, 0), "oops")
+debug("oops", num.div(1, 0))
 // RuntimeError: Division by zero is not allowed in "num.div"
 ```
 
@@ -263,10 +263,10 @@ The implementation extends the pattern established by `console.writeLn`:
 Key differences from `console.writeLn`:
 
 1. **Two arguments**: Evaluate `a` first, then `b` (left-to-right order matters for error propagation)
-2. **Type checking**: Verify `b` is a `StringTerm`; throw `InvalidArgumentTypesError` if not
-3. **Deep reduction**: Recursively reduce `a` and all nested collection elements before printing and returning
-4. **Return value**: Return the deeply-reduced `a` term (not the original unreduced term)
-5. **Output format**: Concatenate `[debug] ` + `b.value` + `: ` + `deeplyReduced.toString()`
+2. **Type checking**: Verify `a` is a `StringTerm`; throw `InvalidArgumentTypesError` if not
+3. **Deep reduction**: Recursively reduce `b` and all nested collection elements before printing and returning
+4. **Return value**: Return the deeply-reduced `b` term (not the original unreduced term)
+5. **Output format**: Concatenate `[debug] ` + `a.value` + `: ` + `deeplyReduced.toString()`
 
 #### Deep Reduction Implementation
 
@@ -292,7 +292,7 @@ Term _deepReduce(Term term) {
 }
 ```
 
-This ensures that `debug([1 + 2], "x")` prints `[debug] x: [3]` and returns `ListTerm([NumberTerm(3)])`.
+This ensures that `debug("x", [1 + 2])` prints `[debug] x: [3]` and returns `ListTerm([NumberTerm(3)])`.
 
 ## Post-Implementation
 
@@ -301,27 +301,27 @@ This ensures that `debug([1 + 2], "x")` prints `[debug] x: [3]` and returns `Lis
   - Correct return value
   - Output format
   - Error propagation (left-to-right evaluation order):
-    - `debug(num.div(1, 0), "label")` throws `DivisionByZeroError`
-    - `debug(num.div(1, 0), error.throw(0, "fail"))` throws `DivisionByZeroError` (first arg fails first)
-    - `debug(1, error.throw(0, "fail"))` throws custom error (both args evaluated)
+    - `debug("label", num.div(1, 0))` throws `DivisionByZeroError`
+    - `debug(error.throw(0, "fail"), num.div(1, 0))` throws custom error (label fails first)
+    - `debug("ok", error.throw(0, "fail"))` throws custom error (value evaluated after label)
   - Recursive scenarios
   - Primitives: numbers, strings, booleans
-  - Collections with literal elements: `debug([1, 2], "list")`, `debug({"a": 1}, "map")`
-  - Empty collections: `debug([], "empty")`, `debug({}, "empty")`
+  - Collections with literal elements: `debug("list", [1, 2])`, `debug("map", {"a": 1})`
+  - Empty collections: `debug("empty", [])`, `debug("empty", {})`
   - Deep evaluation (computed elements reduced in output AND return value):
-    - `debug([1 + 2], "x")` prints `[debug] x: [3]` and returns `[3]`
-    - `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}` and returns `{"sum": 3}`
-    - Nested collections: `debug([[1 + 2]], "x")` prints `[debug] x: [[3]]` and returns `[[3]]`
-    - Return value usable: `list.first(debug([1 + 2], "x"))` returns `3` (not a CallTerm)
+    - `debug("x", [1 + 2])` prints `[debug] x: [3]` and returns `[3]`
+    - `debug("x", {"sum": 1 + 2})` prints `[debug] x: {sum: 3}` and returns `{"sum": 3}`
+    - Nested collections: `debug("x", [[1 + 2]])` prints `[debug] x: [[3]]` and returns `[[3]]`
+    - Return value usable: `list.first(debug("x", [1 + 2]))` returns `3` (not a CallTerm)
   - System types with exact format expectations:
-    - `debug(time.now(), "t")` prints Dart DateTime format (e.g., `[debug] t: 2024-01-15 10:30:00.000`)
-    - `debug(file.fromPath("/tmp/test.txt"), "f")` prints `[debug] f: /tmp/test.txt`
-    - `debug(directory.fromPath("/tmp"), "d")` prints `[debug] d: /tmp`
+    - `debug("t", time.now())` prints Dart DateTime format (e.g., `[debug] t: 2024-01-15 10:30:00.000`)
+    - `debug("f", file.fromPath("/tmp/test.txt"))` prints `[debug] f: /tmp/test.txt`
+    - `debug("d", directory.fromPath("/tmp"))` prints `[debug] d: /tmp`
   - Functions remain callable after debug:
-    - `debug(num.abs, "abs")(-5)` returns `5`
-    - `debug((x) -> x + 1, "inc")(5)` returns `6`
-    - Closures preserve captured bindings: `let y = 10 in debug((x) -> x + y, "f")(5)` returns `15`
-  - Special values: `debug(num.infinity(), "inf")`
-  - Nested debug: `debug(debug(1, "inner"), "outer")`
-  - Unicode in labels: `debug(1, "结果")`
-  - Empty label: `debug(1, "")`
+    - `debug("abs", num.abs)(-5)` returns `5`
+    - `debug("inc", (x) -> x + 1)(5)` returns `6`
+    - Closures preserve captured bindings: `let y = 10 in debug("f", (x) -> x + y)(5)` returns `15`
+  - Special values: `debug("inf", num.infinity())`
+  - Nested debug: `debug("outer", debug("inner", 1))`
+  - Unicode in labels: `debug("结果", 1)`
+  - Empty label: `debug("", 1)`
