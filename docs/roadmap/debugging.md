@@ -1,4 +1,4 @@
-# Runtime Inspection and Timing
+# Runtime Inspection
 
 Add a minimal set of runtime inspection helpers that fit Primal's existing model:
 

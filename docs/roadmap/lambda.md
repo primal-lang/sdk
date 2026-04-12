@@ -1235,7 +1235,7 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Shadows function parameter          | `f(x) = (x) -> x`                                   | `ShadowedLambdaParameterError`                                   |
 | Shadows let binding                 | `f(n) = let x = 1 in (x) -> x`                      | `ShadowedLambdaParameterError`                                   |
 | Shadows outer lambda parameter      | `f() = (x) -> (x) -> x`                             | `ShadowedLambdaParameterError`                                   |
-| Let in body shadows lambda param    | `f() = (x) -> let x = 5 in x`                       | `ShadowedLetBindingError`                                        |
+| Let in body shadows lambda param    | `f() = (x) -> let x = 5 in x`                       | `ShadowedLetBindingError` (existing error, see note)             |
 | Undefined variable in body          | `f() = (x) -> y`                                    | `UndefinedIdentifierError`                                       |
 | Captures function parameter         | `f(n) = (x) -> x + n`                               | No errors, `n` is captured                                       |
 | Captures let binding                | `f(n) = let m = 2 in (x) -> x * m`                  | No errors, `m` is captured                                       |
@@ -1248,6 +1248,8 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Partially unused lambda parameters  | `f() = (x, y) -> x`                                 | `UnusedLambdaParameterWarning` for `y` only                      |
 | No warning when all params used     | `f() = (x, y) -> x + y`                             | No warnings                                                      |
 | Outer param used in nested lambda   | `f() = (x) -> (y) -> x + y`                         | No warnings (x is used in inner body)                            |
+
+**Note on `ShadowedLetBindingError`**: The test "Let in body shadows lambda param" reuses the existing `ShadowedLetBindingError` rather than defining a new error type. When a let binding shadows a lambda parameter, the existing let-shadowing check catches it because lambda parameters are added to `availableParameters` before the body is checked. The error message "Shadowed let binding 'x'" means "the let binding 'x' causes shadowing"—this wording is consistent with existing behavior for `f(x) = let x = 5 in x` (function parameter shadowed by let).
 
 #### Lowering Tests
 
