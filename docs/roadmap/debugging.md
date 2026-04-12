@@ -221,5 +221,13 @@ The implementation follows the pattern established by `console.write`:
   - Correct return value
   - Output format
   - Error propagation
-  - Various value types (primitives, collections, functions)
   - Recursive scenarios
+  - Primitives: numbers, strings, booleans
+  - Collections: lists, maps, sets, stacks, queues, vectors
+  - Empty collections: `debug([], "empty")`, `debug({}, "empty")`
+  - System types: timestamps, files, directories
+  - Functions: named functions, lambdas
+  - Special values: `debug(num.infinity(), "inf")`
+  - Nested debug: `debug(debug(1, "inner"), "outer")`
+  - Unicode in labels: `debug(1, "结果")`
+  - Empty label: `debug(1, "")`
