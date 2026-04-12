@@ -1182,7 +1182,7 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 | Test                        | Setup                        | Expected                                 |
 | --------------------------- | ---------------------------- | ---------------------------------------- |
-| Propagates through body     | `(x) -> y` with `{y: 5}`     | Body becomes `x * 5`                     |
+| Propagates through body     | `(x) -> x * y` with `{y: 5}` | Body becomes `x * 5`                     |
 | Lambda param refs unchanged | `(x) -> x` with `{y: 5}`     | `LambdaBoundVariableTerm("x")` unchanged |
 | Captures outer variable     | `(x) -> x + n` with `{n: 2}` | Body becomes `x + 2`                     |
 

@@ -9,20 +9,12 @@ debug.type([1, 2, 3]) // prints in the console "List" and returns [1, 2,3]
 ```
 
 ```primal
-x() = debug.trace(expensiveComputation()) // What could it print in the console?
+debug.trace(foo()) // What could it print in the console?
 ```
 
 ```primal
-traceStep(x) = debug.trace("step", x)
-result() = list.map([1, 2, 3], traceStep)
+debug.timed(bar()) // What could it print in the console?
 ```
-
-**Use Cases:**
-
-- Debugging during development
-- Performance profiling
-- Understanding recursion
-- Validating assumptions
 
 **Implementation Notes:**
 
