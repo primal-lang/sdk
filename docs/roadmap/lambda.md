@@ -695,13 +695,16 @@ class LambdaTerm extends FunctionTerm {
   @override
   dynamic native() => toString();
 
+  // Override to print parameter names only (no types).
+  // Lambda parameters are always untyped in source, so showing ": any" is noise.
+  // Named functions print "f(x: Number)" but lambdas print "<lambda@1:1>(x)".
   @override
   String toString() =>
-      '$name(${parameters.map((p) => '${p.name}: ${p.type}').join(', ')})';
+      '$name(${parameters.map((p) => p.name).join(', ')})';
 }
 ```
 
-**Printing format**: Lambdas use the same signature format as named functions for consistency. A lambda `(x, y) -> x + y` at row 1, column 1 prints as `<lambda@1:1>(x, y)`. This matches the existing `FunctionTerm.toString()` pattern where named functions print as `name(param: Type, ...)`.
+**Printing format**: Lambdas print parameter names without types: `<lambda@1:1>(x, y)`. This differs from named functions which print `name(param: Type, ...)` because lambda parameters are always untyped in source—showing `: any` would be noise. The lambda name encodes source location for debugging.
 
 ````
 
@@ -1277,13 +1280,13 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Printing Tests
 
-These tests verify lambda printing consistency with named functions.
+These tests verify lambda printing format. Note: lambdas print without types (`<lambda@1:1>(x)`) while named functions print with types (`f(x: any)`).
 
 | Test                    | Input                                    | Expected                      |
 | ----------------------- | ---------------------------------------- | ----------------------------- |
 | Lambda alone            | `f() = (x) -> x` then `f()`              | `"<lambda@1:7>(x)"`           |
 | Lambda in list          | `main() = [(x) -> x]`                    | `["<lambda@1:10>(x)"]`        |
-| Mixed lambdas and named | `f(a) = a` then `main() = [f, (x) -> x]` | `["f(a)", "<lambda@...>(x)"]` |
+| Mixed lambdas and named | `f(a) = a` then `main() = [f, (x) -> x]` | `["f(a: any)", "<lambda@...>(x)"]` |
 | Multi-param lambda      | `f() = (a, b) -> a + b` then `f()`       | `"<lambda@1:7>(a, b)"`        |
 | Zero-param lambda       | `f() = () -> 5` then `f()`               | `"<lambda@1:7>()"`            |
 

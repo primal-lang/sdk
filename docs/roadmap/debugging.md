@@ -18,32 +18,6 @@ This proposal adds these standard-library functions:
 - `function.arity(f): Number`
 - `function.parameters(f): List`
 
-This proposal does not add:
-
-- `debug.trace`
-- `function.signature`
-
-## Rationale
-
-### Why no `debug.trace`
-
-Primal already has expression-returning console output helpers:
-
-```primal
-console.writeLn(value)
-```
-
-This already evaluates `value`, prints it, and returns it unchanged, so a separate `debug.trace` function would duplicate existing behavior.
-
-### Why no `function.signature`
-
-`function.signature` overlaps with existing string conversion and is underspecified:
-
-- it is unclear whether the output should be typed or untyped
-- it adds little beyond `function.name`, `function.arity`, and `function.parameters`
-
-The smaller introspection surface is cleaner and easier to document.
-
 ## Syntax
 
 No syntax changes are required.
