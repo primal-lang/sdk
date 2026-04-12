@@ -7,19 +7,19 @@ A new function `debug` that evaluates an expression, prints its value with a lab
 ## Signature
 
 ```
-debug(value: Any, label: String): Any
+debug(a: Any, b: String): Any
 ```
 
-- **Input:** A value of any type and a label string
+- **Input:** A value of any type (`a`) and a label string (`b`)
 - **Output:** The value, after printing it to stdout
 - **Purity:** Impure
 
 ## Behavior
 
-1. Evaluate the `value` expression (any type)
-2. Evaluate the `label` expression (must be a String)
-3. Print to stdout: `[debug] <label>: <value>\n`
-4. Return the evaluated value
+1. Evaluate expression `a` (any type)
+2. Evaluate expression `b` (must be a String)
+3. Print to stdout: `[debug] <b>: <a>\n`
+4. Return the evaluated value of `a`
 
 ## Output Format
 
@@ -138,8 +138,8 @@ Returns: `[4, 8]`
 | Condition                  | Error                                  |
 | -------------------------- | -------------------------------------- |
 | Wrong argument count       | `InvalidArgumentCountError`            |
-| Second argument not String | `InvalidArgumentTypesError`            |
-| Value expression throws    | Error propagates (not caught by debug) |
+| Argument `b` not String    | `InvalidArgumentTypesError`            |
+| Expression `a` throws      | Error propagates (not caught by debug) |
 
 ## Invalid Examples
 
@@ -148,9 +148,9 @@ Returns: `[4, 8]`
 debug()
 // Error: InvalidArgumentCountError - expected 2, got 0
 
-// Wrong label type
+// Wrong type for argument b
 debug("value", 123)
-// Error: InvalidArgumentTypesError - expected String for argument 'label'
+// Error: InvalidArgumentTypesError - expected String for argument 'b'
 
 // Error propagation (not caught)
 debug(num.div(1, 0), "oops")
