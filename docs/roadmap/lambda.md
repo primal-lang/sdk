@@ -968,6 +968,27 @@ for (final SemanticWarning warning in warnings) {
 }
 ```
 
+```dart
+// In SemanticAnalyzer.analyze(), within the function processing loop:
+// (This is the batch compilation path for .prm files)
+final Set<String> usedLambdaParameters = {};  // NEW
+final SemanticNode body = checkExpression(
+  expression: function.expression,
+  currentFunction: function.name,
+  availableParameters: availableParameters,
+  usedParameters: usedParameters,
+  letBindingNames: {},
+  lambdaParameterNames: {},         // NEW
+  usedLambdaParameters: usedLambdaParameters,  // NEW
+  warnings: warnings,               // Already exists in analyze()
+  allSignatures: allSignatures,
+);
+// Note: warnings list already exists in analyze() and is returned in
+// IntermediateRepresentation. No additional stderr printing needed here—
+// warnings are collected and returned to the caller (Compiler) which
+// prints them before execution.
+```
+
 **REPL warning behavior**: Warnings collected during `evaluateToTerm()` and `defineFunction()` should be printed to stderr immediately after successful evaluation, before displaying the result. This matches batch compilation behavior where warnings appear but do not prevent execution.
 
 ```dart
