@@ -437,13 +437,15 @@ class MinusState extends State<Character, Lexeme> {
 | `DuplicatedLambdaParameterError(parameter: 'x')`                | `Error: Duplicated lambda parameter "x"`               |
 | `ShadowedLambdaParameterError(parameter: 'x', inFunction: 'f')` | `Error: Shadowed lambda parameter "x" in function "f"` |
 | `UndefinedIdentifierError(identifier: 'y')`                     | `Error: Undefined identifier "y"`                      |
+| `UnusedLambdaParameterWarning(parameter: 'x', inFunction: 'f')` | `Warning: Unused lambda parameter "x" in function "f"` |
 
-| Error                            | Condition                                     | Phase    | Priority |
+| Error/Warning                    | Condition                                     | Phase    | Priority |
 | -------------------------------- | --------------------------------------------- | -------- | -------- |
 | `ExpectedTokenError('->')`       | `->` missing after parameter list             | Parsing  | —        |
 | `DuplicatedLambdaParameterError` | Same parameter name appears twice in lambda   | Semantic | 1        |
 | `ShadowedLambdaParameterError`   | Parameter shadows outer variable or parameter | Semantic | 2        |
 | `UndefinedIdentifierError`       | Free variable in lambda body not in scope     | Semantic | 3        |
+| `UnusedLambdaParameterWarning`   | Lambda parameter not used in body             | Semantic | —        |
 | `InvalidArgumentCountError`      | Lambda called with wrong number of arguments  | Runtime  | —        |
 | `InvalidArgumentTypesError`      | Type mismatch in lambda body during execution | Runtime  | —        |
 
@@ -471,6 +473,21 @@ class ShadowedLambdaParameterError extends SemanticError {
          inFunction != null
              ? 'Shadowed lambda parameter "$parameter" in function "$inFunction"'
              : 'Shadowed lambda parameter "$parameter"',
+       );
+}
+```
+
+**New Warning Type**: Add to `lib/compiler/warnings/semantic_warning.dart`:
+
+```dart
+class UnusedLambdaParameterWarning extends SemanticWarning {
+  const UnusedLambdaParameterWarning({
+    required String parameter,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Unused lambda parameter "$parameter" in function "$inFunction"'
+             : 'Unused lambda parameter "$parameter"',
        );
 }
 ```
@@ -705,8 +722,10 @@ When processing a `LambdaExpression`:
    - Add the name to `lambdaParameters`
 3. Create extended scope: combine `availableParameters` with `lambdaParameters`
 4. Create extended `lambdaParameterNames` set: combine existing with this lambda's parameters
-5. Check the body expression against the extended scope
-6. Return a `SemanticLambdaNode` with the parameters and checked body
+5. Create a local `usedLambdaParameters` set to track which lambda parameters are used in the body
+6. Check the body expression against the extended scope, passing `usedLambdaParameters`
+7. Emit `UnusedLambdaParameterWarning` for any parameters in `lambdaParameters` not in `usedLambdaParameters`
+8. Return a `SemanticLambdaNode` with the parameters and checked body
 
 ```dart
 SemanticNode _checkLambdaExpression({
@@ -716,6 +735,8 @@ SemanticNode _checkLambdaExpression({
   required Set<String> usedParameters,
   required Set<String> letBindingNames,
   required Set<String> lambdaParameterNames,
+  required Set<String> usedLambdaParameters,
+  required List<SemanticWarning> warnings,
   required Map<String, FunctionSignature> allSignatures,
 }) {
   // Track parameters for this lambda (duplicate detection)
@@ -754,6 +775,9 @@ SemanticNode _checkLambdaExpression({
     ...localLambdaParameters,
   };
 
+  // Track which lambda parameters are used in the body
+  final Set<String> localUsedLambdaParameters = {};
+
   // Check body with extended scope
   final SemanticNode checkedBody = checkExpression(
     expression: expression.body,
@@ -762,8 +786,22 @@ SemanticNode _checkLambdaExpression({
     usedParameters: usedParameters,
     letBindingNames: letBindingNames,
     lambdaParameterNames: extendedLambdaParameterNames,
+    usedLambdaParameters: localUsedLambdaParameters,
+    warnings: warnings,
     allSignatures: allSignatures,
   );
+
+  // Warn about unused lambda parameters
+  for (final String paramName in localLambdaParameters) {
+    if (!localUsedLambdaParameters.contains(paramName)) {
+      warnings.add(
+        UnusedLambdaParameterWarning(
+          parameter: paramName,
+          inFunction: currentFunction,
+        ),
+      );
+    }
+  }
 
   return SemanticLambdaNode(
     parameters: checkedParameters,
@@ -775,17 +813,18 @@ SemanticNode _checkLambdaExpression({
 
 **Cascading signature changes**: All helper methods must accept and propagate `lambdaParameterNames`. This parallels the `letBindingNames` pattern from the `let` specification. The following methods require signature updates to add `required Set<String> lambdaParameterNames`:
 
-| Method                         | Change Required                                               |
-| ------------------------------ | ------------------------------------------------------------- |
-| `checkExpression()`            | Add parameter, propagate to all helper calls                  |
-| `_checkListExpression()`       | Add parameter, propagate to element `checkExpression` calls   |
-| `_checkMapExpression()`        | Add parameter, propagate to key/value `checkExpression` calls |
-| `_checkIdentifierExpression()` | Add parameter, use to set `isLambdaParameter` flag            |
-| `_checkCallExpression()`       | Add parameter, propagate to callee and argument checks        |
-| `_checkCalleeIdentifier()`     | Add parameter, propagate to recursive calls                   |
-| `_checkLetExpression()`        | Add parameter, propagate to binding and body checks           |
+| Method                         | Change Required                                                                     |
+| ------------------------------ | ----------------------------------------------------------------------------------- |
+| `checkExpression()`            | Add `lambdaParameterNames`, `usedLambdaParameters`, `warnings`; propagate to all    |
+| `_checkListExpression()`       | Add parameters, propagate to element `checkExpression` calls                        |
+| `_checkMapExpression()`        | Add parameters, propagate to key/value `checkExpression` calls                      |
+| `_checkIdentifierExpression()` | Add parameters, set `isLambdaParameter` flag, track usage in `usedLambdaParameters` |
+| `_checkCallExpression()`       | Add parameters, propagate to callee and argument checks                             |
+| `_checkCalleeIdentifier()`     | Add parameters, propagate to recursive calls                                        |
+| `_checkLetExpression()`        | Add parameters, propagate to binding and body checks                                |
+| `_checkLambdaExpression()`     | Create local `usedLambdaParameters`, emit warnings for unused parameters            |
 
-Modify `_checkIdentifierExpression()` to distinguish lambda parameters:
+Modify `_checkIdentifierExpression()` to distinguish lambda parameters and track usage:
 
 ```dart
 SemanticNode _checkIdentifierExpression({
@@ -795,6 +834,7 @@ SemanticNode _checkIdentifierExpression({
   required Set<String> usedParameters,
   required Set<String> letBindingNames,
   required Set<String> lambdaParameterNames,
+  required Set<String> usedLambdaParameters,
   required Map<String, FunctionSignature> allSignatures,
 }) {
   final String name = expression.value;
@@ -803,8 +843,10 @@ SemanticNode _checkIdentifierExpression({
     final bool isLetBinding = letBindingNames.contains(name);
     final bool isLambdaParameter = lambdaParameterNames.contains(name);
 
-    // Only track usage for function parameters
-    if (!isLetBinding && !isLambdaParameter) {
+    // Track usage for function parameters and lambda parameters
+    if (isLambdaParameter) {
+      usedLambdaParameters.add(name);
+    } else if (!isLetBinding) {
       usedParameters.add(name);
     }
 
@@ -822,30 +864,34 @@ SemanticNode _checkIdentifierExpression({
 }
 ```
 
-**External callers**: `RuntimeFacade` must be updated to pass `lambdaParameterNames: {}`:
+**External callers**: `RuntimeFacade` must be updated to pass the new parameters:
 
 ```dart
 // In RuntimeFacade.evaluateToTerm()
+final List<SemanticWarning> warnings = [];
 final SemanticNode semanticNode = analyzer.checkExpression(
   expression: expression,
   currentFunction: null,
   availableParameters: {},
   usedParameters: {},
   letBindingNames: {},
-  lambdaParameterNames: {},  // NEW
+  lambdaParameterNames: {},       // NEW
+  usedLambdaParameters: {},       // NEW
+  warnings: warnings,             // NEW
   allSignatures: _allSignatures,
 );
+// Handle warnings as appropriate (log, collect, etc.)
 ```
 
 ### Compiler Pipeline Impact
 
-| Stage     | Changes                                                                                                                                |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Lexical   | Add `ArrowToken` (`->`) in `MinusState`                                                                                                |
-| Syntactic | Add `LambdaExpression` AST node; add `_isArrow` predicate; parse parameters and body with disambiguation                               |
-| Semantic  | Add `lambdaParameterNames` parameter; check for duplicates and shadowing; add `isLambdaParameter` field to `SemanticBoundVariableNode` |
-| Lowering  | Convert `SemanticLambdaNode` to `LambdaTerm`; map `SemanticBoundVariableNode` with `isLambdaParameter` to `LambdaBoundVariableTerm`    |
-| Runtime   | Add `LambdaTerm` extending `FunctionTerm` with `apply()`; add `LambdaBoundVariableTerm` with partial substitution semantics            |
+| Stage     | Changes                                                                                                                                                                              |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Lexical   | Add `ArrowToken` (`->`) in `MinusState`                                                                                                                                              |
+| Syntactic | Add `LambdaExpression` AST node; add `_isArrow` predicate; parse parameters and body with disambiguation                                                                             |
+| Semantic  | Add `lambdaParameterNames`, `usedLambdaParameters`, `warnings` parameters; check for duplicates, shadowing, and unused; add `isLambdaParameter` field to `SemanticBoundVariableNode` |
+| Lowering  | Convert `SemanticLambdaNode` to `LambdaTerm`; map `SemanticBoundVariableNode` with `isLambdaParameter` to `LambdaBoundVariableTerm`                                                  |
+| Runtime   | Add `LambdaTerm` extending `FunctionTerm` with `apply()`; add `LambdaBoundVariableTerm` with partial substitution semantics                                                          |
 
 ### New Node Types
 
@@ -1066,6 +1112,10 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Parameter `isLambdaParameter` false | `f(n) = n`                                        | `SemanticBoundVariableNode` has `isLambdaParameter: false`       |
 | Shadows stdlib function             | `f = (num.abs) -> num.abs`                        | No error, `num.abs` resolves to parameter                        |
 | Shadows custom function             | `double(x) = x * 2` then `f = (double) -> double` | No error, `double` resolves to parameter                         |
+| Unused lambda parameter             | `f() = (x) -> 5`                                  | `UnusedLambdaParameterWarning` for `x`                           |
+| Multiple unused lambda parameters   | `f() = (x, y) -> 5`                               | `UnusedLambdaParameterWarning` for `x` and `y`                   |
+| Partially unused lambda parameters  | `f() = (x, y) -> x`                               | `UnusedLambdaParameterWarning` for `y` only                      |
+| No warning when all params used     | `f() = (x, y) -> x + y`                           | No warnings                                                      |
 
 #### Lowering Tests
 
