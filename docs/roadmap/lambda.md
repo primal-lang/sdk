@@ -82,11 +82,15 @@ It cannot appear as an operand to binary operators without parentheses (e.g., `5
 
 **Key insight**: Lambda parameter lists have a restricted form—zero or more comma-separated identifiers followed by `)` then `->`. A grouped expression can contain arbitrary expressions. We can distinguish these by scanning ahead without consuming.
 
-**ListIterator extension**: Add a `peekAt()` method to `lib/utils/list_iterator.dart`:
+**Prerequisite: ListIterator.peekAt()**: The current `ListIterator` class (`lib/utils/list_iterator.dart`) only provides single-token lookahead via the `peek` getter. Lambda disambiguation requires **multi-token lookahead** to scan ahead for the `->` token without consuming. This method **does not currently exist** and must be added before implementing lambda parsing:
 
 ```dart
 /// Peeks at the token [offset] positions ahead without consuming.
 /// Returns null if the offset is beyond the end of the list.
+///
+/// Unlike [peek] which only sees the current position, this method
+/// enables multi-token lookahead for disambiguation (e.g., lambda vs
+/// grouped expression).
 T? peekAt(int offset) {
   final int targetIndex = _index + offset;
   if (targetIndex < _list.length) {
@@ -95,6 +99,8 @@ T? peekAt(int offset) {
   return null;
 }
 ```
+
+**Note**: This is the only addition to `ListIterator` required for lambda support. All other parser infrastructure (predicates, check, match, consume) already exists.
 
 **Parser predicates**: Add these static predicates to `ExpressionParser` (following the existing pattern at lines 12-43):
 
