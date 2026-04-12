@@ -24,13 +24,6 @@ debug.timed(bar()) // What could it print in the console?
 
 ### Function Introspection
 
-| Property   | Rating     |
-| ---------- | ---------- |
-| Fit        | **High**   |
-| Complexity | **Low**    |
-| Impact     | **Medium** |
-
-**Description:**
 Expose metadata about function values. Primal already has first-class functions, but once a function is passed around there is very little users can ask about it. Introspection would make higher-order code, debugging, and tooling much nicer.
 
 **Proposed Syntax:**
@@ -38,11 +31,13 @@ Expose metadata about function values. Primal already has first-class functions,
 ```primal
 addNumbers(a, b) = a + b
 
-function.name(addNumbers)                        // "addNumbers"
-function.arity(addNumbers)                       // 2
-function.parameters(addNumbers)                  // ["a", "b"]
-function.signature(addNumbers)                   // "addNumbers(a, b)"
+function.name(addNumbers)                 // "addNumbers"
+function.arity(addNumbers)                // 2
+function.parameters(addNumbers)           // ["a", "b"]
+function.signature(addNumbers)            // "addNumbers(a, b)"
+```
 
+```primal
 greet(name) = "Hello, " + name
 
 function.name(greet)                      // "greet"
@@ -55,5 +50,3 @@ function.signature(greet)                 // "greet(name)"
 
 - `FunctionTerm` already stores `name` and `parameters`, so most of this proposal is exposing existing runtime metadata.
 - `function.signature` can reuse the formatting already present in `FunctionTerm.toString()`.
-- Later extensions could add documentation text, source location, or namespace data.
-- This is a very high-leverage addition for relatively little implementation work.
