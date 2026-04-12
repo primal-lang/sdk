@@ -27,7 +27,7 @@ debug(value: Any, label: String): Any
 [debug] label: value
 ```
 
-Where `value` uses the same string conversion as `console.write`.
+Where `value` uses the same string conversion as `console.write` (strings print without quotes, lists print as `[1, 2, 3]`, maps print as `{a: 1, b: 2}`).
 
 ## Examples
 
@@ -44,6 +44,22 @@ Output (stdout):
 ```
 
 Returns: `3`
+
+### String Values
+
+```primal
+debug("hello world", "greeting")
+```
+
+Output (stdout):
+
+```
+[debug] greeting: hello world
+```
+
+Returns: `"hello world"`
+
+Note: Strings print without quotes in the output (matching `console.write` behavior).
 
 ### Inline in Expressions
 
