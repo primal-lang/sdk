@@ -42,13 +42,12 @@ Expose metadata about function values. Primal already has first-class functions,
 **Proposed Syntax:**
 
 ```primal
-f() = num.add
+addNumbers(a, b) = a + b
 
-function.name(f())                        // "num.add"
-function.arity(f())                       // 2
-function.parameters(f())                  // ["a", "b"]
-function.isNative(f())                    // true
-function.signature(f())                   // "num.add(a: Number, b: Number)"
+function.name(addNumbers)                        // "num.add"
+function.arity(addNumbers)                       // 2
+function.parameters(addNumbers)                  // ["a", "b"]
+function.signature(addNumbers)                   // "num.add(a, b)"
 
 greet(name) = "Hello, " + name
 

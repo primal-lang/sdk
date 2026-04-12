@@ -73,7 +73,7 @@ The lookahead in `lambdaExpression()` (via `_checkLambdaStart()`) determines whe
 
 **Why immediate invocation needs double parentheses**: Because lambda has the lowest precedence and its body extends to the end of the expression, `(x) -> x + 1(5)` parses as `(x) -> (x + 1(5))`—the `(5)` becomes part of the lambda body, calling `1` as a function. The outer parentheses in `((x) -> x + 1)(5)` group the entire lambda as a single expression, then `(5)` calls that expression.
 
-It cannot appear as an operand to binary operators without parentheses (e.g., `5 + (x) -> x` is invalid; use `5 + ((x) -> x)`).
+It cannot appear as an operand to binary operators without parentheses (e.g., `5 + (x) -> x` is a parse error). Note: `5 + ((x) -> x)` is syntactically valid but fails at runtime with `InvalidArgumentTypesError` because `+` does not accept `FunctionType` operands.
 
 **Disambiguation**: After `(`, the parser must determine whether the content is a lambda parameter list or a grouped expression. The parser uses **multi-token lookahead** (not backtracking) to make this determination before consuming any tokens.
 
@@ -615,7 +615,7 @@ bad() = (x) -> (x) -> x
 // Parser sees '5 + (x)' as a complete expression (where (x) is a grouped
 // identifier, not a lambda—no '->' follows ')' during lookahead). Then
 // Compiler.expression() detects leftover '-> x' tokens and throws.
-// Use: 5 + ((x) -> x)
+// Note: 5 + ((x) -> x) parses but fails at runtime (InvalidArgumentTypesError)
 ```
 
 ## Implementation Notes
@@ -1106,20 +1106,20 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Syntactic Tests
 
-| Test                        | Input                         | Expected                                        |
-| --------------------------- | ----------------------------- | ----------------------------------------------- |
-| Zero-param lambda           | `() -> 5`                     | `LambdaExpression` with 0 params                |
-| Single-param lambda         | `(x) -> x`                    | `LambdaExpression` with 1 param                 |
-| Multi-param lambda          | `(x, y) -> x + y`             | `LambdaExpression` with 2 params                |
-| Nested lambda (body)        | `(x) -> (y) -> x + y`         | Nested `LambdaExpression` in body               |
-| Lambda with if body         | `(x) -> if (x > 0) x else -x` | `LambdaExpression` with `CallExpression` body   |
-| Lambda with let body        | `(x) -> let y = x in y`       | `LambdaExpression` with `LetExpression` body    |
-| Grouped expression          | `(x + y)`                     | Binary `CallExpression`, NOT lambda             |
-| Grouped identifier          | `(x)`                         | `IdentifierExpression`, NOT lambda              |
-| Immediately invoked         | `((x) -> x)(5)`               | `CallExpression` with `LambdaExpression` callee |
-| Missing arrow               | `(x) x`                       | `UnexpectedTokenError` on `x` (see note)        |
-| Lambda as operand           | `1 + (x) -> x`                | `UnexpectedTokenError` on `->` (see note)       |
-| Lambda in parens as operand | `1 + ((x) -> x)`              | Valid: binary `+` with lambda                   |
+| Test                        | Input                         | Expected                                         |
+| --------------------------- | ----------------------------- | ------------------------------------------------ |
+| Zero-param lambda           | `() -> 5`                     | `LambdaExpression` with 0 params                 |
+| Single-param lambda         | `(x) -> x`                    | `LambdaExpression` with 1 param                  |
+| Multi-param lambda          | `(x, y) -> x + y`             | `LambdaExpression` with 2 params                 |
+| Nested lambda (body)        | `(x) -> (y) -> x + y`         | Nested `LambdaExpression` in body                |
+| Lambda with if body         | `(x) -> if (x > 0) x else -x` | `LambdaExpression` with `CallExpression` body    |
+| Lambda with let body        | `(x) -> let y = x in y`       | `LambdaExpression` with `LetExpression` body     |
+| Grouped expression          | `(x + y)`                     | Binary `CallExpression`, NOT lambda              |
+| Grouped identifier          | `(x)`                         | `IdentifierExpression`, NOT lambda               |
+| Immediately invoked         | `((x) -> x)(5)`               | `CallExpression` with `LambdaExpression` callee  |
+| Missing arrow               | `(x) x`                       | `UnexpectedTokenError` on `x` (see note)         |
+| Lambda as operand           | `1 + (x) -> x`                | `UnexpectedTokenError` on `->` (see note)        |
+| Lambda in parens as operand | `1 + ((x) -> x)`              | Parses OK (runtime fails: `+` rejects functions) |
 
 **Note on error tests**: Tests expecting `UnexpectedTokenError` must use `Compiler.expression()` (not raw `ExpressionParser`) because the leftover-token check happens in `Compiler`. For `(x) x`, the parser sees `(x)` as a grouped identifier (lookahead finds no `->` after `)`), then `Compiler.expression()` throws on the leftover `x`. For `1 + (x) -> x`, the parser completes `1 + (x)` successfully, then throws on leftover `->`.
 
@@ -1214,20 +1214,21 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Integration Tests
 
-| Test                      | Input                                                            | Expected    |
-| ------------------------- | ---------------------------------------------------------------- | ----------- |
-| `list.map` with lambda    | `list.map([1, 2, 3], (x) -> x * 2)`                              | `[2, 4, 6]` |
-| `list.filter` with lambda | `list.filter([1, 2, 3, 4], (x) -> x > 2)`                        | `[3, 4]`    |
-| `list.reduce` with lambda | `list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)`                 | `6`         |
-| `list.sort` with lambda   | `list.sort([3, 1, 2], (a, b) -> a - b)`                          | `[1, 2, 3]` |
-| Lambda in list            | `[(x) -> x + 1, (x) -> x * 2][0](5)`                             | `6`         |
-| Lambda in map             | `{"inc": (x) -> x + 1}["inc"](5)`                                | `6`         |
-| Immediately invoked       | `((x) -> x + 1)(5)`                                              | `6`         |
-| Nested invocation         | `((x) -> (y) -> x + y)(1)(2)`                                    | `3`         |
-| Closure with multiplier   | `mult(n) = (x) -> x * n` then `mult(3)(4)`                       | `12`        |
-| Compose pattern           | `comp(f, g) = (x) -> f(g(x))` then `comp((x)->x+1, (x)->x*2)(3)` | `7`         |
-| Lambda with if body       | `((x) -> if (x > 0) x else -x)(-5)`                              | `5`         |
-| Lambda with let body      | `((x) -> let y = x * 2 in y + 1)(5)`                             | `11`        |
+| Test                      | Input                                                            | Expected                    |
+| ------------------------- | ---------------------------------------------------------------- | --------------------------- |
+| `list.map` with lambda    | `list.map([1, 2, 3], (x) -> x * 2)`                              | `[2, 4, 6]`                 |
+| `list.filter` with lambda | `list.filter([1, 2, 3, 4], (x) -> x > 2)`                        | `[3, 4]`                    |
+| `list.reduce` with lambda | `list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)`                 | `6`                         |
+| `list.sort` with lambda   | `list.sort([3, 1, 2], (a, b) -> a - b)`                          | `[1, 2, 3]`                 |
+| Lambda in list            | `[(x) -> x + 1, (x) -> x * 2][0](5)`                             | `6`                         |
+| Lambda in map             | `{"inc": (x) -> x + 1}["inc"](5)`                                | `6`                         |
+| Immediately invoked       | `((x) -> x + 1)(5)`                                              | `6`                         |
+| Nested invocation         | `((x) -> (y) -> x + y)(1)(2)`                                    | `3`                         |
+| Closure with multiplier   | `mult(n) = (x) -> x * n` then `mult(3)(4)`                       | `12`                        |
+| Compose pattern           | `comp(f, g) = (x) -> f(g(x))` then `comp((x)->x+1, (x)->x*2)(3)` | `7`                         |
+| Lambda with if body       | `((x) -> if (x > 0) x else -x)(-5)`                              | `5`                         |
+| Lambda with let body      | `((x) -> let y = x * 2 in y + 1)(5)`                             | `11`                        |
+| Lambda as + operand       | `1 + ((x) -> x)`                                                 | `InvalidArgumentTypesError` |
 
 #### REPL Tests
 
