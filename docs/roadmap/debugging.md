@@ -2,25 +2,23 @@
 
 ## Summary
 
-A new function `debug` that evaluates an expression, prints its value with an optional label to stderr, and returns the expression's value. This enables inline debugging without altering control flow.
+A new function `debug` that evaluates an expression, prints its value with a label to stdout, and returns the expression's value. This enables inline debugging without altering control flow.
 
 ## Signature
 
 ```
-debug(label: String, value: Any): Any
+debug(value: Any, label: String): Any
 ```
 
-- **Input:** A label string and a value of any type
-- **Output:** The value, after printing it to stderr
+- **Input:** A value of any type and a label string
+- **Output:** The value, after printing it to stdout
 - **Purity:** Impure
 
 ## Behavior
 
-1. Evaluate the `label` expression (must be a String)
-2. Evaluate the `value` expression (any type)
-3. Print to stderr:
-   - If label is non-empty: `[debug] <label>: <value>\n`
-   - If label is empty: `[debug] <value>\n`
+1. Evaluate the `value` expression (any type)
+2. Evaluate the `label` expression (must be a String)
+3. Print to stdout: `[debug] <label>: <value>\n`
 4. Return the evaluated value
 
 ## Output Format
@@ -36,10 +34,10 @@ Where `value` uses the same string conversion as `console.write`.
 ### Basic Usage
 
 ```primal
-debug("result", 1 + 2)
+debug(1 + 2, "result")
 ```
 
-Output (stderr):
+Output (stdout):
 
 ```
 [debug] result: 3
@@ -47,27 +45,13 @@ Output (stderr):
 
 Returns: `3`
 
-### Without Label
-
-```primal
-debug("", 42)
-```
-
-Output (stderr):
-
-```
-[debug] 42
-```
-
-Returns: `42`
-
 ### Inline in Expressions
 
 ```primal
-num.add(debug("a", 5), debug("b", 10))
+num.add(debug(5, "a"), debug(10, "b"))
 ```
 
-Output (stderr):
+Output (stdout):
 
 ```
 [debug] a: 5
@@ -80,14 +64,14 @@ Returns: `15`
 
 ```primal
 factorial(n) = if (n <= 1)
-                  debug("base case", 1)
+                  debug(1, "base case")
                else
-                  n * debug("factorial(" + to.string(n - 1) + ")", factorial(n - 1))
+                  n * debug(factorial(n - 1), "factorial(" + to.string(n - 1) + ")")
 
 main() = factorial(4)
 ```
 
-Output (stderr):
+Output (stdout):
 
 ```
 [debug] base case: 1
@@ -101,14 +85,14 @@ Returns: `24`
 ### Debugging Intermediate Values
 
 ```primal
-process(items) = let filtered = debug("after filter", list.filter(items, (x) -> x > 0)),
-                     mapped = debug("after map", list.map(filtered, (x) -> x * 2))
+process(items) = let filtered = debug(list.filter(items, (x) -> x > 0), "after filter"),
+                     mapped = debug(list.map(filtered, (x) -> x * 2), "after map")
                  in mapped
 
 main() = process([-1, 2, -3, 4])
 ```
 
-Output (stderr):
+Output (stdout):
 
 ```
 [debug] after filter: [2, 4]
@@ -119,11 +103,11 @@ Returns: `[4, 8]`
 
 ## Error Conditions
 
-| Condition                 | Error                                  |
-| ------------------------- | -------------------------------------- |
-| Wrong argument count      | `InvalidArgumentCountError`            |
-| First argument not String | `InvalidArgumentTypesError`            |
-| Value expression throws   | Error propagates (not caught by debug) |
+| Condition                  | Error                                  |
+| -------------------------- | -------------------------------------- |
+| Wrong argument count       | `InvalidArgumentCountError`            |
+| Second argument not String | `InvalidArgumentTypesError`            |
+| Value expression throws    | Error propagates (not caught by debug) |
 
 ## Invalid Examples
 
@@ -133,11 +117,11 @@ debug()
 // Error: InvalidArgumentCountError - expected 2, got 0
 
 // Wrong label type
-debug(123, "value")
+debug("value", 123)
 // Error: InvalidArgumentTypesError - expected String for argument 'label'
 
 // Error propagation (not caught)
-debug("oops", num.div(1, 0))
+debug(num.div(1, 0), "oops")
 // Error: DivisionByZeroError
 ```
 
@@ -150,7 +134,7 @@ Works on both CLI and web platforms (uses platform console abstraction).
 - Add documentation in `docs/reference/debug.md` and link from `docs/reference.md`
 - Implement tests for:
   - Correct return value
-  - Output format with and without label
+  - Output format
   - Error propagation
   - Various value types (primitives, collections, functions)
   - Recursive scenarios
