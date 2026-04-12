@@ -261,9 +261,35 @@ Key differences from `console.writeLn`:
 
 1. **Two arguments**: Evaluate `a` first, then `b` (left-to-right order matters for error propagation)
 2. **Type checking**: Verify `b` is a `StringTerm`; throw `InvalidArgumentTypesError` if not
-3. **Deep reduction**: Recursively reduce `a` and all nested collection elements before printing
-4. **Return value**: Return the deeply-reduced `a` term (not a string representation)
-5. **Output format**: Concatenate `[debug] ` + `b.value` + `: ` + `a.toString()`
+3. **Deep reduction**: Recursively reduce `a` and all nested collection elements before printing and returning
+4. **Return value**: Return the deeply-reduced `a` term (not the original unreduced term)
+5. **Output format**: Concatenate `[debug] ` + `b.value` + `: ` + `deeplyReduced.toString()`
+
+#### Deep Reduction Implementation
+
+Unlike `console.writeLn` which calls `a.reduce()` once and returns, `debug` must deeply reduce collection elements. This requires a recursive helper:
+
+```dart
+Term _deepReduce(Term term) {
+  final Term reduced = term.reduce();
+  return switch (reduced) {
+    ListTerm() => ListTerm(reduced.value.map(_deepReduce).toList()),
+    VectorTerm() => VectorTerm(reduced.value.map(_deepReduce).toList()),
+    StackTerm() => StackTerm(reduced.value.map(_deepReduce).toList()),
+    QueueTerm() => QueueTerm(reduced.value.map(_deepReduce).toList()),
+    SetTerm() => SetTerm(reduced.value.map(_deepReduce).toSet()),
+    MapTerm() => MapTerm(Map.fromEntries(
+        reduced.value.entries.map((e) => MapEntry(
+          _deepReduce(e.key),
+          _deepReduce(e.value),
+        )),
+      )),
+    _ => reduced,  // Primitives, functions, etc. are already fully reduced
+  };
+}
+```
+
+This ensures that `debug([1 + 2], "x")` prints `[debug] x: [3]` and returns `ListTerm([NumberTerm(3)])`.
 
 ## Post-Implementation
 
@@ -279,10 +305,11 @@ Key differences from `console.writeLn`:
   - Primitives: numbers, strings, booleans
   - Collections with literal elements: `debug([1, 2], "list")`, `debug({"a": 1}, "map")`
   - Empty collections: `debug([], "empty")`, `debug({}, "empty")`
-  - Deep evaluation (computed elements reduced):
-    - `debug([1 + 2], "x")` prints `[debug] x: [3]`
-    - `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}`
-    - Nested collections: `debug([[1 + 2]], "x")` prints `[debug] x: [[3]]`
+  - Deep evaluation (computed elements reduced in output AND return value):
+    - `debug([1 + 2], "x")` prints `[debug] x: [3]` and returns `[3]`
+    - `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}` and returns `{"sum": 3}`
+    - Nested collections: `debug([[1 + 2]], "x")` prints `[debug] x: [[3]]` and returns `[[3]]`
+    - Return value usable: `list.first(debug([1 + 2], "x"))` returns `3` (not a CallTerm)
   - System types with exact format expectations:
     - `debug(time.now(), "t")` prints Dart DateTime format (e.g., `[debug] t: 2024-01-15 10:30:00.000`)
     - `debug(file.fromPath("/tmp/test.txt"), "f")` prints `[debug] f: /tmp/test.txt`
