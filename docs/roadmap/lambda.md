@@ -302,15 +302,18 @@ bad() = (x) -> (x) -> x
 Lambda parameters MAY shadow function names (both custom and standard library). This is consistent with existing parameter and let binding behavior:
 
 ```primal
-// Valid: double shadows a user-defined function
+// Valid: parameter "double" shadows user-defined function "double"
 double(x) = x * 2
-((double) -> double + 1)(5)  // 6
+((double) -> double + 1)(5)  // 6 (double is the parameter value 5, not the function)
 
-// Valid: list.map shadows the standard library function
-((list.map) -> list.map + 1)(5)  // 6
+// Valid: parameter "abs" shadows the identifier "abs"
+// Inside the lambda, "abs" refers to the parameter, not any function
+((abs) -> abs + 1)(5)  // 6
 ```
 
-Note: Identifiers in Primal may contain dots (regex `[a-zA-Z][\w\.]*`), so `list.map` is a single identifier token, not method call syntax. When used as a lambda parameter, it shadows the standard library function of the same name. While technically valid, using dotted names as parameters is discouraged for readability.
+**Why this works**: Inside the lambda body, the identifier resolves to the lambda parameter (which has value 5), not to any function with the same name. Parameter binding takes precedence over function name lookup, just as with function parameters and let bindings.
+
+**Dotted identifiers**: Primal identifiers may contain dots (regex `[a-zA-Z][\w\.]*`), so `list.map` is technically a valid single identifier token, not method call syntax. A lambda like `((list.map) -> list.map + 1)(5)` is syntactically valid and returns 6. However, using dotted names as parameters is **strongly discouraged** because it creates confusion with the standard library's namespace convention (e.g., `list.map`, `num.abs`).
 
 ### Closures
 
@@ -907,6 +910,17 @@ The alternative approach—keeping warnings post-hoc—would require `_checkLamb
 | `_checkLambdaExpression()`     | (NEW) Extend scope with lambda params, propagate shared `usedLambdaParameters`, emit warnings                 |
 
 **Note**: The `warnings` parameter is a `List<SemanticWarning>` that is mutated in place (appended to). This follows the same pattern as `usedParameters` and `usedLambdaParameters`.
+
+**Additional changes not in the table above**:
+
+| Location | Change Required |
+| -------- | --------------- |
+| `SemanticAnalyzer.analyze()` | Pass `warnings` list into `checkExpression()` instead of populating it post-hoc. The existing loop at lines 67-98 creates `warnings` locally and populates it after `checkExpression()` returns—this must change to thread `warnings` through. The unused function parameter check (lines 80-90) can remain post-hoc or be moved. |
+| `RuntimeFacade.evaluateToTerm()` | Create local `warnings` list, pass to `checkExpression()`, print to stderr after success (see code example below). |
+| `RuntimeFacade.defineFunction()` | Create local `warnings` list, pass to `checkExpression()`, print to stderr after lowering succeeds (see code example below). |
+| `checkExpression()` switch statement | Add case for `LambdaExpression()` that calls `_checkLambdaExpression()`. |
+
+The helper method table above lists signature changes, but these entry-point changes are equally important and represent the bulk of the refactoring effort.
 
 Modify `_checkIdentifierExpression()` to distinguish lambda parameters and track usage:
 
