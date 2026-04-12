@@ -168,7 +168,7 @@ main() = list.reduce(
     group('Lambda in data structures', () {
       test('Lambda in list literal', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = [(x) -> x + 1, (x) -> x * 2] @ 0(5)',
+          'main() = ([(x) -> x + 1, (x) -> x * 2] @ 0)(5)',
         );
         checkResult(runtime, 6);
       });
@@ -348,7 +348,7 @@ main() = f(1)(2)(3)(4)
 
       test('Lambda with list operations', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = ((xs) -> list.head(xs))([1, 2, 3])',
+          'main() = ((xs) -> list.first(xs))([1, 2, 3])',
         );
         checkResult(runtime, 1);
       });

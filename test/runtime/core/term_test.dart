@@ -884,8 +884,8 @@ void main() {
       );
       const Bindings bindings = Bindings({'y': NumberTerm(99)});
       final Term result = term.substitute(bindings);
-      expect(result, isA<NumberTerm>());
-      expect((result as NumberTerm).value, 99);
+      // Custom functions are closed values - external substitution returns this
+      expect(result, same(term));
     });
 
     test('apply() manages recursion depth', () {
@@ -1742,8 +1742,8 @@ void main() {
       );
       const Bindings bindings = Bindings({'y': StringTerm('substituted')});
       final Term result = term.substitute(bindings);
-      expect(result, isA<StringTerm>());
-      expect((result as StringTerm).value, 'substituted');
+      // Custom functions are closed values - external substitution returns this
+      expect(result, same(term));
     });
 
     test('reduce() returns itself', () {

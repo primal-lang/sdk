@@ -530,14 +530,20 @@ class CustomFunctionTerm extends FunctionTerm {
         arguments: evaluatedArguments,
       );
 
-      return substitute(bindings).reduce();
+      // Directly substitute into body and reduce.
+      return term.substitute(bindings).reduce();
     } finally {
       FunctionTerm.decrementDepth();
     }
   }
 
+  // Custom functions are closed values - external substitution doesn't affect
+  // them. The function's internal variables are bound at application time via
+  // apply(), not during external substitution. This prevents variable capture
+  // bugs when a function is captured by a lambda that uses the same variable
+  // names.
   @override
-  Term substitute(Bindings bindings) => term.substitute(bindings);
+  Term substitute(Bindings bindings) => this;
 }
 
 /// A lambda function term (anonymous inline function).
@@ -560,10 +566,21 @@ class LambdaTerm extends FunctionTerm {
     // Propagate substitution through the body.
     // LambdaBoundVariableTerm references survive (partial substitution).
     // Other bound variables (captured from outer scope) get substituted.
+    //
+    // IMPORTANT: Remove bindings for this lambda's own parameters before
+    // substituting into the body. This prevents outer substitutions from
+    // affecting inner lambda parameters with the same names. For example,
+    // in `((x) -> (x) -> x)(1)`, substituting {x: 1} into the outer lambda
+    // should NOT affect the inner lambda's parameter x.
+    final Map<String, Term> filteredBindings = Map.of(bindings.data);
+    for (final Parameter parameter in parameters) {
+      filteredBindings.remove(parameter.name);
+    }
+
     return LambdaTerm(
       name: name,
       parameters: parameters,
-      body: body.substitute(bindings),
+      body: body.substitute(Bindings(filteredBindings)),
     );
   }
 

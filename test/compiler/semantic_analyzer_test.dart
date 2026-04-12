@@ -2661,7 +2661,7 @@ f(n) = let double = 10 in double
     test('Captures let binding', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(n) = let m = 2 in (x) -> x * m',
+            'f(n) = let m = n in (x) -> x * m',
           );
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
