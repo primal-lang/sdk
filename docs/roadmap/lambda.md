@@ -651,10 +651,20 @@ class LambdaTerm extends FunctionTerm {
   @override
   Term reduce() => this;  // Lambdas are values; they don't reduce further
 
-  // Note: This method mirrors CustomFunctionTerm.apply() for call-by-value
-  // semantics. The duplication exists because LambdaTerm.substitute() must
-  // preserve the lambda wrapper (for partial application), while
-  // CustomFunctionTerm.substitute() returns the unwrapped body directly.
+  // Why we override apply() instead of using FunctionTerm.apply():
+  //
+  // FunctionTerm.apply() uses: substitute(bindings).reduce()
+  // CustomFunctionTerm.substitute() returns: term.substitute(bindings) [unwrapped body]
+  // LambdaTerm.substitute() returns: LambdaTerm(..., body.substitute(bindings)) [preserves wrapper]
+  //
+  // If we used the base class pattern:
+  //   1. substitute(bindings) → returns a LambdaTerm (wrapper preserved)
+  //   2. reduce() on LambdaTerm → returns this (lambdas are values)
+  //   3. Result: a LambdaTerm, NOT the evaluated body!
+  //
+  // So we must substitute directly into the body and reduce that result.
+  // This is analogous to CustomFunctionTerm.apply() which also overrides
+  // to add call-by-value argument evaluation.
   @override
   Term apply(List<Term> arguments) {
     if (arguments.length != parameters.length) {
@@ -745,6 +755,8 @@ Consider `multiplier(n) = (x) -> x * n`. When `multiplier(2)` is called:
    - `substitute({x: 5})` on body `x * 2`
    - `LambdaBoundVariableTerm("x")` gets replaced with `5`
    - Result: `5 * 2` = `10`
+
+**Why `LambdaTerm.apply()` substitutes into body directly**: Step 4 shows that `LambdaTerm.substitute()` preserves the lambda wrapper—this is essential for closures to work. But this means `LambdaTerm` cannot use the base `FunctionTerm.apply()` pattern of `substitute(bindings).reduce()`, because `reduce()` on a `LambdaTerm` returns itself (lambdas are values). Instead, `apply()` must substitute directly into the body and reduce that result.
 
 ### Semantic Analysis Algorithm
 

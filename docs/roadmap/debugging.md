@@ -20,15 +20,10 @@ This proposal adds these standard-library functions:
 
 This proposal does not add:
 
-- `debug.type`
 - `debug.trace`
 - `function.signature`
 
 ## Rationale
-
-### Why `type.of` instead of `debug.type`
-
-Runtime type inspection is a pure query, not a debugging side effect. It should return the canonical runtime type name and avoid printing.
 
 ### Why no `debug.trace`
 
