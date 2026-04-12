@@ -1163,6 +1163,7 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Shadows function parameter          | `f(x) = (x) -> x`                                   | `ShadowedLambdaParameterError`                                   |
 | Shadows let binding                 | `f(n) = let x = 1 in (x) -> x`                      | `ShadowedLambdaParameterError`                                   |
 | Shadows outer lambda parameter      | `f() = (x) -> (x) -> x`                             | `ShadowedLambdaParameterError`                                   |
+| Let in body shadows lambda param    | `f() = (x) -> let x = 5 in x`                       | `ShadowedLetBindingError`                                        |
 | Undefined variable in body          | `f() = (x) -> y`                                    | `UndefinedIdentifierError`                                       |
 | Captures function parameter         | `f(n) = (x) -> x + n`                               | No errors, `n` is captured                                       |
 | Captures let binding                | `f(n) = let m = 2 in (x) -> x * m`                  | No errors, `m` is captured                                       |
