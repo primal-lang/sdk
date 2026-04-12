@@ -210,7 +210,7 @@ Returns: `[4, 8]`
 | --------------------------------------- | -------- | -------------------------------------- |
 | Wrong argument count (direct call)      | Semantic | `InvalidNumberOfArgumentsError`        |
 | Wrong argument count (indirect call)    | Runtime  | `InvalidArgumentCountError`            |
-| Argument `b` not String (direct call)   | Semantic | `InvalidArgumentTypesError`            |
+| Argument `b` not String (direct call)   | Runtime  | `InvalidArgumentTypesError`            |
 | Argument `b` not String (indirect call) | Runtime  | `InvalidArgumentTypesError`            |
 | Expression `a` throws                   | Runtime  | Error propagates (not caught by debug) |
 
@@ -221,9 +221,9 @@ Returns: `[4, 8]`
 debug()
 // SemanticError: Invalid number of arguments calling function "debug": expected 2, got 0
 
-// Wrong type for argument b (direct call - caught during semantic analysis)
+// Wrong type for argument b (caught at runtime)
 debug("value", 123)
-// SemanticError: Invalid argument types for function "debug". Expected: (String). Actual: (Number)
+// RuntimeError: Invalid argument types for function "debug". Expected: (String). Actual: (Number)
 
 // Error propagation (not caught)
 debug(num.div(1, 0), "oops")
