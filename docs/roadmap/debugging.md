@@ -219,8 +219,10 @@ Returns: `[4, 8]`
 
 ## Invalid Examples
 
+### Direct Calls
+
 ```primal
-// Missing arguments (direct call - caught during semantic analysis)
+// Missing arguments (caught during semantic analysis)
 debug()
 // SemanticError: Invalid number of arguments calling function "debug": expected 2, got 0
 
@@ -232,6 +234,27 @@ debug(123, "value")
 debug("oops", num.div(1, 0))
 // RuntimeError: Division by zero is not allowed in "num.div"
 ```
+
+### Indirect Calls (Higher-Order Usage)
+
+When `debug` is passed as a value and called indirectly, errors occur at runtime. The error message always uses the function name "debug":
+
+```primal
+// Passing debug as higher-order function - valid usage
+let f = debug in f("label", 42)
+// prints: [debug] label: 42
+// returns: 42
+
+// Wrong argument count via indirect call
+let f = debug in f("only one arg")
+// RuntimeError: Invalid argument count for function "debug". Expected: 2. Actual: 1
+
+// Wrong type via indirect call
+let f = debug in f(123, "value")
+// RuntimeError: Invalid argument types for function "debug". Expected: (String, Any). Actual: (Number, String)
+```
+
+Note: Primal does not support partial application. `debug("label")` fails immediately with an argument count error; it does not return a partially applied function.
 
 ## Platform Support
 
@@ -325,3 +348,10 @@ This ensures that `debug("x", [1 + 2])` prints `[debug] x: [3]` and returns `Lis
   - Nested debug: `debug("outer", debug("inner", 1))`
   - Unicode in labels: `debug("结果", 1)`
   - Empty label: `debug("", 1)`
+  - Higher-order function usage:
+    - `let f = debug in f("x", 1)` works correctly
+    - `list.map([1, 2], (x) -> debug("item", x))` prints each item
+  - Indirect call errors (error message includes "debug" as function name):
+    - `let f = debug in f("only one")` throws `InvalidArgumentCountError`
+    - `let f = debug in f(123, "value")` throws `InvalidArgumentTypesError`
+  - No partial application: `debug("label")` throws `InvalidNumberOfArgumentsError` immediately
