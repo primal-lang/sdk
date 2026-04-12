@@ -1148,6 +1148,7 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Missing arrow               | `(x) x`                       | `UnexpectedTokenError` on `x` (see note)         |
 | Lambda as operand           | `1 + (x) -> x`                | `UnexpectedTokenError` on `->` (see note)        |
 | Lambda in parens as operand | `1 + ((x) -> x)`              | Parses OK (runtime fails: `+` rejects functions) |
+| Trailing comma in params    | `(x,) -> x`                   | `ExpectedTokenError` on `)` (expects identifier) |
 
 **Note on error tests**: Tests expecting `UnexpectedTokenError` must use `Compiler.expression()` (not raw `ExpressionParser`) because the leftover-token check happens in `Compiler`. For `(x) x`, the parser sees `(x)` as a grouped identifier (lookahead finds no `->` after `)`), then `Compiler.expression()` throws on the leftover `x`. For `1 + (x) -> x`, the parser completes `1 + (x)` successfully, then throws on leftover `->`.
 
