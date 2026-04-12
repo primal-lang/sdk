@@ -468,13 +468,13 @@ class MinusState extends State<Character, Lexeme> {
 
 **Notation convention**: This section uses exception class names (e.g., `DuplicatedLambdaParameterError`) for implementation reference. The actual user-visible messages include an `Error:` prefix (or `Warning:` for warnings). Lambda semantic errors follow the same pattern as existing semantic errors—no source location is attached. For example:
 
-| Exception Class                                                 | User-Visible Message                                   |
-| --------------------------------------------------------------- | ------------------------------------------------------ |
-| `DuplicatedLambdaParameterError(parameter: 'x')`                | `Error: Duplicated lambda parameter "x"`               |
-| `ShadowedLambdaParameterError(parameter: 'x', inFunction: 'f')` | `Error: Shadowed lambda parameter "x" in function "f"` |
+| Exception Class                                                 | User-Visible Message                                               |
+| --------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `DuplicatedLambdaParameterError(parameter: 'x')`                | `Error: Duplicated lambda parameter "x"`                           |
+| `ShadowedLambdaParameterError(parameter: 'x', inFunction: 'f')` | `Error: Shadowed lambda parameter "x" in function "f"`             |
 | `ShadowedLetBindingError(binding: 'x', inFunction: 'f')`        | `Error: Shadowed let binding "x" in function "f"` (see note below) |
-| `UndefinedIdentifierError(identifier: 'y')`                     | `Error: Undefined identifier "y"`                      |
-| `UnusedLambdaParameterWarning(parameter: 'x', inFunction: 'f')` | `Warning: Unused lambda parameter "x" in function "f"` |
+| `UndefinedIdentifierError(identifier: 'y')`                     | `Error: Undefined identifier "y"`                                  |
+| `UnusedLambdaParameterWarning(parameter: 'x', inFunction: 'f')` | `Warning: Unused lambda parameter "x" in function "f"`             |
 
 **Note on `ShadowedLetBindingError` in lambda context**: When a let binding inside a lambda body shadows a lambda parameter (e.g., `(x) -> let x = 5 in x`), the existing `ShadowedLetBindingError` is thrown, not a new lambda-specific error. The message "Shadowed let binding 'x'" means the let binding named 'x' is causing the shadowing violation. This wording is consistent with existing behavior for function parameters (e.g., `f(x) = let x = 5 in x` also throws `ShadowedLetBindingError`). While the message focuses on the let binding rather than what it shadows, this is intentional—the let binding is the construct being written incorrectly.
 
@@ -916,14 +916,35 @@ The alternative approach—keeping warnings post-hoc—would require `_checkLamb
 
 **Additional changes not in the table above**:
 
-| Location | Change Required |
-| -------- | --------------- |
-| `SemanticAnalyzer.analyze()` | Pass `warnings` list into `checkExpression()` instead of populating it post-hoc. The existing loop at lines 67-98 creates `warnings` locally and populates it after `checkExpression()` returns—this must change to thread `warnings` through. The unused function parameter check (lines 80-90) can remain post-hoc or be moved. |
-| `RuntimeFacade.evaluateToTerm()` | Create local `warnings` list, pass to `checkExpression()`, print to stderr after success (see code example below). |
-| `RuntimeFacade.defineFunction()` | Create local `warnings` list, pass to `checkExpression()`, print to stderr after lowering succeeds (see code example below). |
-| `checkExpression()` switch statement | Add case for `LambdaExpression()` that calls `_checkLambdaExpression()`. |
+| Location                             | Change Required                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SemanticAnalyzer.analyze()`         | Pass `warnings` list into `checkExpression()` instead of populating it post-hoc. The existing loop at lines 67-98 creates `warnings` locally and populates it after `checkExpression()` returns—this must change to thread `warnings` through. The unused function parameter check (lines 80-90) can remain post-hoc or be moved. |
+| `RuntimeFacade.evaluateToTerm()`     | Create local `warnings` list, pass to `checkExpression()`, print to stderr after success (see code example below).                                                                                                                                                                                                                |
+| `RuntimeFacade.defineFunction()`     | Create local `warnings` list, pass to `checkExpression()`, print to stderr after lowering succeeds (see code example below).                                                                                                                                                                                                      |
+| `checkExpression()` switch statement | Add case for `LambdaExpression()` that calls `_checkLambdaExpression()` (see below).                                                                                                                                                                                                                                              |
 
 The helper method table above lists signature changes, but these entry-point changes are equally important and represent the bulk of the refactoring effort.
+
+**Switch statement addition**: The `checkExpression()` method uses a switch expression on the `Expression` type. Add this case to handle lambda expressions (the exact position depends on the existing case order, but typically after `LetExpression`):
+
+```dart
+SemanticNode checkExpression({...}) => switch (expression) {
+  // ... existing cases for BooleanExpression, NumberExpression, etc. ...
+  LetExpression() => _checkLetExpression(...),
+  LambdaExpression() => _checkLambdaExpression(  // NEW CASE
+    expression: expression,
+    currentFunction: currentFunction,
+    availableParameters: availableParameters,
+    usedParameters: usedParameters,
+    letBindingNames: letBindingNames,
+    lambdaParameterNames: lambdaParameterNames,
+    usedLambdaParameters: usedLambdaParameters,
+    warnings: warnings,
+    allSignatures: allSignatures,
+  ),
+  _ => throw StateError('Unexpected expression type: ${expression.runtimeType}'),
+};
+```
 
 Modify `_checkIdentifierExpression()` to distinguish lambda parameters and track usage:
 
@@ -1267,20 +1288,20 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Syntactic Tests
 
-| Test                        | Input                         | Expected                                         |
-| --------------------------- | ----------------------------- | ------------------------------------------------ |
-| Zero-param lambda           | `() -> 5`                     | `LambdaExpression` with 0 params                 |
-| Single-param lambda         | `(x) -> x`                    | `LambdaExpression` with 1 param                  |
-| Multi-param lambda          | `(x, y) -> x + y`             | `LambdaExpression` with 2 params                 |
-| Nested lambda (body)        | `(x) -> (y) -> x + y`         | Nested `LambdaExpression` in body                |
-| Lambda with if body         | `(x) -> if (x > 0) x else -x` | `LambdaExpression` with `CallExpression` body    |
-| Lambda with let body        | `(x) -> let y = x in y`       | `LambdaExpression` with `LetExpression` body     |
-| Grouped expression          | `(x + y)`                     | Binary `CallExpression`, NOT lambda              |
-| Grouped identifier          | `(x)`                         | `IdentifierExpression`, NOT lambda               |
-| Immediately invoked         | `((x) -> x)(5)`               | `CallExpression` with `LambdaExpression` callee  |
-| Missing arrow               | `(x) x`                       | `UnexpectedTokenError` on `x` (see note)         |
-| Lambda as operand           | `1 + (x) -> x`                | `UnexpectedTokenError` on `->` (see note)        |
-| Lambda in parens as operand | `1 + ((x) -> x)`              | Parses OK (runtime fails: `+` rejects functions) |
+| Test                        | Input                         | Expected                                             |
+| --------------------------- | ----------------------------- | ---------------------------------------------------- |
+| Zero-param lambda           | `() -> 5`                     | `LambdaExpression` with 0 params                     |
+| Single-param lambda         | `(x) -> x`                    | `LambdaExpression` with 1 param                      |
+| Multi-param lambda          | `(x, y) -> x + y`             | `LambdaExpression` with 2 params                     |
+| Nested lambda (body)        | `(x) -> (y) -> x + y`         | Nested `LambdaExpression` in body                    |
+| Lambda with if body         | `(x) -> if (x > 0) x else -x` | `LambdaExpression` with `CallExpression` body        |
+| Lambda with let body        | `(x) -> let y = x in y`       | `LambdaExpression` with `LetExpression` body         |
+| Grouped expression          | `(x + y)`                     | Binary `CallExpression`, NOT lambda                  |
+| Grouped identifier          | `(x)`                         | `IdentifierExpression`, NOT lambda                   |
+| Immediately invoked         | `((x) -> x)(5)`               | `CallExpression` with `LambdaExpression` callee      |
+| Missing arrow               | `(x) x`                       | `UnexpectedTokenError` on `x` (see note)             |
+| Lambda as operand           | `1 + (x) -> x`                | `UnexpectedTokenError` on `->` (see note)            |
+| Lambda in parens as operand | `1 + ((x) -> x)`              | Parses OK (runtime fails: `+` rejects functions)     |
 | Trailing comma in params    | `(x,) -> x`                   | `ExpectedTokenError` on `,` (expects `)`) (see note) |
 
 **Note on error tests**: Tests expecting `UnexpectedTokenError` must use `Compiler.expression()` (not raw `ExpressionParser`) because the leftover-token check happens in `Compiler`. For `(x) x`, the parser sees `(x)` as a grouped identifier (lookahead finds no `->` after `)`), then `Compiler.expression()` throws on the leftover `x`. For `1 + (x) -> x`, the parser completes `1 + (x)` successfully, then throws on leftover `->`.
