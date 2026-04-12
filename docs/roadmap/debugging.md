@@ -61,6 +61,22 @@ Returns: `"hello world"`
 
 Note: Strings print without quotes in the output (matching `console.write` behavior).
 
+### Map and Collection Values
+
+```primal
+debug({"name": "Alice", "age": 30}, "user")
+```
+
+Output (stdout):
+
+```
+[debug] user: {name: Alice, age: 30}
+```
+
+Returns: `{"name": "Alice", "age": 30}`
+
+Note: Map keys and string values print without quotes in the output. The return value retains its original structure.
+
 ### Inline in Expressions
 
 ```primal
