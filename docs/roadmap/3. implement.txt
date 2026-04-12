@@ -1,0 +1,12 @@
+i want to implement the feature of "XXX" to the language. 
+- document explaining the feature: @docs/roadmap/XXX
+
+steps:
+1. read the document carefully
+2. create a very detailed plan and write that plan in a file in the root of the project. the plan should have checkboxes that you must check as you implement it
+3. proceed to implement the plan
+
+constraints:
+- you are forbidden to run any test command
+- you will have to implement all the tests "blindly"
+- i will run the tests manually after you finish and inform you if there are any problems

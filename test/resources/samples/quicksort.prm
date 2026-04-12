@@ -11,22 +11,6 @@ quicksort(list) =
             pivot = list.first(list),
             rest = list.rest(list)
         in
-            quicksort(smaller(rest, pivot)) + pivot + quicksort(greaterEq(rest, pivot))
-
-smaller(list, pivot) =
-    if (list.isEmpty(list))
-        []
-    else if (list.first(list) < pivot)
-        list.first(list) + smaller(list.rest(list), pivot)
-    else
-        smaller(list.rest(list), pivot)
-
-greaterEq(list, pivot) =
-    if (list.isEmpty(list))
-        []
-    else if (list.first(list) >= pivot)
-        list.first(list) + greaterEq(list.rest(list), pivot)
-    else
-        greaterEq(list.rest(list), pivot)
+            quicksort(list.filter(rest, (x) -> x < pivot)) + pivot + quicksort(list.filter(rest, (x) -> x >= pivot))
 
 main() = quicksort([38, 27, 43, 3, 9])
