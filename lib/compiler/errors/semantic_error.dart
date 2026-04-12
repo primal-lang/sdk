@@ -100,3 +100,25 @@ class FunctionAlreadyExistsError extends SemanticError {
     required String function,
   }) : super('Function "$function" already exists');
 }
+
+class ShadowedLetBindingError extends SemanticError {
+  const ShadowedLetBindingError({
+    required String binding,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Shadowed let binding "$binding" in function "$inFunction"'
+             : 'Shadowed let binding "$binding"',
+       );
+}
+
+class DuplicatedLetBindingError extends SemanticError {
+  const DuplicatedLetBindingError({
+    required String binding,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Duplicated let binding "$binding" in function "$inFunction"'
+             : 'Duplicated let binding "$binding"',
+       );
+}

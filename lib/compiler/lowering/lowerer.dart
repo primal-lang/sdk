@@ -31,8 +31,12 @@ class Lowerer {
       semanticNode.name,
       functions,
     ),
-    SemanticBoundVariableNode() => BoundVariableTerm(semanticNode.name),
+    SemanticBoundVariableNode() =>
+      semanticNode.isLetBinding
+          ? LetBoundVariableTerm(semanticNode.name)
+          : BoundVariableTerm(semanticNode.name),
     SemanticCallNode() => _lowerCall(semanticNode),
+    SemanticLetNode() => _lowerLet(semanticNode),
     _ => throw StateError(
       'Unknown semantic node type: ${semanticNode.runtimeType}',
     ),
@@ -54,6 +58,17 @@ class Lowerer {
     return CallTerm(
       callee: lowerTerm(semanticNode.callee),
       arguments: semanticNode.arguments.map(lowerTerm).toList(),
+    );
+  }
+
+  Term _lowerLet(SemanticLetNode semanticNode) {
+    final List<(String, Term)> loweredBindings = semanticNode.bindings
+        .map((binding) => (binding.name, lowerTerm(binding.value)))
+        .toList();
+
+    return LetTerm(
+      bindings: loweredBindings,
+      body: lowerTerm(semanticNode.body),
     );
   }
 }

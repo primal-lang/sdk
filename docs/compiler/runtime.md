@@ -70,10 +70,27 @@ Collection terms extend `ValueTerm`, override `substitute` to recurse into their
 
 - `FunctionReferenceTerm(name, functions)` - holds a function name and the functions map; `reduce()` returns the referenced `FunctionTerm`. Throws `NotFoundInScopeError` if the name is not in the map.
 - `BoundVariableTerm(name)` - replaced during substitution via bindings. Calling `native()` throws a `StateError` since bound variables must be substituted before evaluation.
+- `LetBoundVariableTerm(name)` - represents a reference to a let binding; replaced during `LetTerm` reduction via partial substitution. Unlike `BoundVariableTerm`, it is not affected by function parameter bindings.
 
 ### Call Term
 
 `CallTerm({required callee, required arguments})` - on evaluation, reduces the callee to a `FunctionTerm` via `getFunctionTerm()`, then calls `apply()` with the arguments. The `getFunctionTerm()` helper throws `InvalidFunctionError` if the reduced callee is not a `FunctionTerm`. Substitution recurses into both callee and arguments.
+
+### Let Term
+
+`LetTerm({required bindings, required body})` - represents a let expression with local bindings. The `bindings` field is a `List<(String, Term)>` of name-value pairs, and `body` is the expression to evaluate with bindings in scope.
+
+**Evaluation** (`reduce()`):
+
+1. Bindings are evaluated sequentially (call-by-value).
+2. Each binding value is reduced, then substituted into subsequent bindings and the body.
+3. `LetBoundVariableTerm` instances matching the binding name are replaced with the reduced value.
+4. After all bindings are processed, the body is reduced and returned.
+
+**Substitution** (`substitute(Bindings bindings)`):
+
+- Recurses into binding values and body, propagating function parameter bindings.
+- Does not affect `LetBoundVariableTerm` instances (they are handled during `reduce()`).
 
 ### Function Terms
 

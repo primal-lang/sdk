@@ -2157,5 +2157,857 @@ void main() {
         );
       });
     });
+
+    group('Let expressions', () {
+      group('basic let evaluation', () {
+        test('evaluates simple let with single binding', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(runtime.evaluate(getExpression('let x = 5 in x')), '5');
+        });
+
+        test('evaluates let with expression in body', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(runtime.evaluate(getExpression('let x = 5 in x + 3')), '8');
+        });
+
+        test('evaluates let with multiple bindings', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(getExpression('let x = 1, y = 2 in x + y')),
+            '3',
+          );
+        });
+
+        test('evaluates let with sequential binding dependency', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(getExpression('let x = 1, y = x + 1 in y')),
+            '2',
+          );
+        });
+
+        test('evaluates let with three sequential bindings', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let a = 1, b = a + 1, c = b + 1 in a + b + c'),
+            ),
+            '6',
+          );
+        });
+      });
+
+      group('let with function parameters', () {
+        test('let binding uses function parameter', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'f(x) = let y = x + 1 in y',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(runtime.evaluate(getExpression('f(5)')), '6');
+        });
+
+        test('let binding uses multiple function parameters', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'f(a, b) = let sum = a + b in sum * 2',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(runtime.evaluate(getExpression('f(3, 4)')), '14');
+        });
+
+        test('multiple let bindings use function parameters', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'f(x) = let a = x, b = a + x in b',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(runtime.evaluate(getExpression('f(5)')), '10');
+        });
+
+        test('let does not shadow function parameter', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'f(x) = let y = x in x + y',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(runtime.evaluate(getExpression('f(3)')), '6');
+        });
+      });
+
+      group('let with if expressions', () {
+        test('let in if condition', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('if (let x = true in x) 1 else 2'),
+            ),
+            '1',
+          );
+        });
+
+        test('let in then branch', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('if (true) let x = 5 in x else 0'),
+            ),
+            '5',
+          );
+        });
+
+        test('let in else branch', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('if (false) 0 else let x = 10 in x'),
+            ),
+            '10',
+          );
+        });
+
+        test('let wrapping entire if expression', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let cond = true in if (cond) 1 else 2'),
+            ),
+            '1',
+          );
+        });
+
+        test('let binding used in conditional branches', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let x = 5 in if (x > 3) x * 2 else x'),
+            ),
+            '10',
+          );
+        });
+
+        test('nested conditionals with let', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression(
+                'let x = 5 in if (x > 10) "big" else if (x > 3) "medium" else "small"',
+              ),
+            ),
+            '"medium"',
+          );
+        });
+      });
+
+      group('let in list/map elements', () {
+        test('let in list element', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(getExpression('[let x = 1 in x, 2, 3]')),
+            '[1, 2, 3]',
+          );
+        });
+
+        test('multiple let expressions in list', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('[let a = 1 in a, let b = 2 in b, let c = 3 in c]'),
+            ),
+            '[1, 2, 3]',
+          );
+        });
+
+        test('let wrapping list', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(getExpression('let x = 5 in [x, x + 1, x + 2]')),
+            '[5, 6, 7]',
+          );
+        });
+
+        test('let in map value', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(getExpression('{"key": let x = 42 in x}')),
+            '{"key": 42}',
+          );
+        });
+
+        test('let in map key', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(getExpression('{let k = "key" in k: 1}')),
+            '{"key": 1}',
+          );
+        });
+
+        test('let wrapping map', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let x = 1, y = 2 in {"a": x, "b": y}'),
+            ),
+            '{"a": 1, "b": 2}',
+          );
+        });
+      });
+
+      group('nested let expressions', () {
+        test('let inside let body', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let x = 1 in let y = 2 in x + y'),
+            ),
+            '3',
+          );
+        });
+
+        test('inner let references outer let binding', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let x = 5 in let y = x + 1 in y'),
+            ),
+            '6',
+          );
+        });
+
+        test('inner let uses different binding names', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let x = 1 in let y = 2 in x + y'),
+            ),
+            '3',
+          );
+        });
+
+        test('deeply nested let expressions', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression(
+                'let a = 1 in let b = a + 1 in let c = b + 1 in a + b + c',
+              ),
+            ),
+            '6',
+          );
+        });
+
+        test('let in binding value of another let', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let x = let y = 5 in y * 2 in x + 1'),
+            ),
+            '11',
+          );
+        });
+
+        test('nested let with independent bindings', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          // Inner let y=2 uses outer x=1
+          // After inner let completes, outer x is still accessible
+          expect(
+            runtime.evaluate(
+              getExpression(
+                'let x = 1 in (let y = x + 1 in y) + x',
+              ),
+            ),
+            '3',
+          );
+        });
+      });
+
+      group('let with function shadowing', () {
+        test('let binding shadows function name', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'double(x) = x * 2',
+          )!;
+          runtime.defineFunction(definition);
+
+          // let binding 'double' shadows the function 'double'
+          expect(
+            runtime.evaluate(
+              getExpression('let double = 10 in double'),
+            ),
+            '10',
+          );
+        });
+
+        test('let binding shadows stdlib function', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          // After let, we can still use num.add outside the let
+          expect(
+            runtime.evaluate(
+              getExpression('(let num.add = 100 in num.add) + num.add(1, 2)'),
+            ),
+            '103',
+          );
+        });
+
+        test('function usable after let scope ends', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'double(x) = x * 2',
+          )!;
+          runtime.defineFunction(definition);
+
+          // After let scope, double function should work again
+          expect(
+            runtime.evaluate(
+              getExpression('(let double = 5 in double) + double(3)'),
+            ),
+            '11',
+          );
+        });
+      });
+
+      group('higher-order let bindings', () {
+        test('let binding holds function reference', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'double(x) = x * 2',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(
+            runtime.evaluate(
+              getExpression('let f = double in f(5)'),
+            ),
+            '10',
+          );
+        });
+
+        test('let binding holds stdlib function', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let add = num.add in add(3, 4)'),
+            ),
+            '7',
+          );
+        });
+
+        test('let binding used with list.map', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'double(x) = x * 2',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(
+            runtime.evaluate(
+              getExpression('let f = double in list.map([1, 2, 3], f)'),
+            ),
+            '[2, 4, 6]',
+          );
+        });
+
+        test('let binding holds identity function', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'identity(x) = x',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(
+            runtime.evaluate(
+              getExpression('let id = identity in id(42)'),
+            ),
+            '42',
+          );
+        });
+
+        test('let binding holds function used with multiple args', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let add = num.add in add(5, 3)'),
+            ),
+            '8',
+          );
+        });
+      });
+
+      group('let error propagation', () {
+        test('error in binding value propagates', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            () => runtime.evaluate(getExpression('let x = 1 / 0 in x')),
+            throwsA(isA<DivisionByZeroError>()),
+          );
+        });
+
+        test('error in body propagates', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            () => runtime.evaluate(getExpression('let x = 0 in 1 / x')),
+            throwsA(isA<DivisionByZeroError>()),
+          );
+        });
+
+        test('error in second binding propagates', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            () => runtime.evaluate(
+              getExpression('let x = 1, y = x / 0 in y'),
+            ),
+            throwsA(isA<DivisionByZeroError>()),
+          );
+        });
+
+        test('recursion limit error in let body', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'infinite(x) = infinite(x)',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(
+            () => runtime.evaluate(
+              getExpression('let f = infinite in f(1)'),
+            ),
+            throwsA(isA<RecursionLimitError>()),
+          );
+        });
+
+        test('undefined function error in let body', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            () => runtime.evaluate(
+              getExpression('let x = 1 in undefined_func(x)'),
+            ),
+            throwsA(isA<UndefinedFunctionError>()),
+          );
+        });
+      });
+
+      group('REPL-style let operations', () {
+        test('define function using let expression', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'compute(x, y) = let sum = x + y, product = x * y in sum + product',
+          )!;
+
+          runtime.defineFunction(definition);
+
+          expect(runtime.evaluate(getExpression('compute(2, 3)')), '11');
+        });
+
+        test('define recursive function with let for intermediate values', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'fib(n) = if (n <= 1) n else let a = fib(n - 1), b = fib(n - 2) in a + b',
+          )!;
+
+          runtime.defineFunction(definition);
+
+          expect(runtime.evaluate(getExpression('fib(6)')), '8');
+        });
+
+        test('redefine function with different let structure', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition1 = compiler.functionDefinition(
+            'f(x) = let a = x in a',
+          )!;
+          final FunctionDefinition definition2 = compiler.functionDefinition(
+            'f(x) = let a = x, b = a in b',
+          )!;
+
+          runtime.defineFunction(definition1);
+          expect(runtime.evaluate(getExpression('f(5)')), '5');
+
+          runtime.defineFunction(definition2);
+          expect(runtime.evaluate(getExpression('f(10)')), '10');
+        });
+
+        test('evaluate standalone let expression in REPL', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          // Simulate REPL evaluating expressions
+          expect(
+            runtime.evaluate(
+              getExpression('let x = 10, y = 20 in x * y'),
+            ),
+            '200',
+          );
+        });
+
+        test('let in main function', () {
+          final RuntimeFacade runtime = getRuntime(
+            'main = let greeting = "Hello" in greeting',
+          );
+
+          expect(runtime.executeMain(), '"Hello"');
+        });
+
+        test('let in main function with arguments', () {
+          final RuntimeFacade runtime = getRuntime(
+            'main(name) = let greeting = "Hello, " in greeting + name',
+          );
+
+          expect(runtime.executeMain(['World']), '"Hello, World"');
+        });
+
+        test('complex let in executeMain', () {
+          final RuntimeFacade runtime = getRuntime('''
+            helper(x) = x * 2
+            main = let x = 5, y = helper(x) in y + 1
+          ''');
+
+          expect(runtime.executeMain(), '11');
+        });
+      });
+
+      group('let with various types', () {
+        test('let with string binding', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(getExpression('let s = "hello" in s + " world"')),
+            '"hello world"',
+          );
+        });
+
+        test('let with boolean binding', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(getExpression('let b = true in !b')),
+            'false',
+          );
+        });
+
+        test('let with list binding', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let items = [1, 2, 3] in list.length(items)'),
+            ),
+            '3',
+          );
+        });
+
+        test('let with map binding', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression('let m = {"a": 1} in map.at(m, "a")'),
+            ),
+            '1',
+          );
+        });
+
+        test('let with set binding', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            runtime.evaluate(
+              getExpression(
+                'let s = set.new([1, 2, 3]) in set.contains(s, 2)',
+              ),
+            ),
+            'true',
+          );
+        });
+      });
+
+      group('let evaluateToTerm', () {
+        test('evaluateToTerm with let returns correct term type', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          final Term result = runtime.evaluateToTerm(
+            getExpression('let x = 42 in x'),
+          );
+
+          expect(result, isA<NumberTerm>());
+          expect(result.native(), 42);
+        });
+
+        test('evaluateToTerm with let returning list', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          final Term result = runtime.evaluateToTerm(
+            getExpression('let x = 1 in [x, x + 1]'),
+          );
+
+          expect(result, isA<ListTerm>());
+          expect(result.native(), [1, 2]);
+        });
+
+        test('evaluateToTerm with let returning function', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          final Term result = runtime.evaluateToTerm(
+            getExpression('let f = num.add in f'),
+          );
+
+          expect(result, isA<FunctionTerm>());
+        });
+      });
+
+      group('let runtime error cases', () {
+        test('index let-bound map', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'f(m) = let map = m in map["a"]',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(
+            runtime.evaluate(getExpression('f({"a": 42})')),
+            '42',
+          );
+        });
+
+        test('non-callable let binding throws InvalidFunctionError', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'f(n) = let x = 5 in x(n)',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(
+            () => runtime.evaluate(getExpression('f(1)')),
+            throwsA(isA<InvalidFunctionError>()),
+          );
+        });
+
+        test('non-indexable let binding throws InvalidArgumentTypesError', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+          final FunctionDefinition definition = compiler.functionDefinition(
+            'f(n) = let x = 5 in x[0]',
+          )!;
+          runtime.defineFunction(definition);
+
+          expect(
+            () => runtime.evaluate(getExpression('f(1)')),
+            throwsA(isA<InvalidArgumentTypesError>()),
+          );
+        });
+
+        test('REPL error has no function context', () {
+          final RuntimeFacade runtime = RuntimeFacade(
+            IntermediateRepresentation.empty(),
+            compiler.expression,
+          );
+
+          expect(
+            () => runtime.evaluate(getExpression('let x = x in x')),
+            throwsA(
+              isA<UndefinedIdentifierError>().having(
+                (e) => e.message,
+                'message',
+                isNot(contains('in function')),
+              ),
+            ),
+          );
+        });
+      });
+    });
   });
 }

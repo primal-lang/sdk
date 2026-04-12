@@ -74,6 +74,22 @@ class ElseToken extends Token<String> {
       );
 }
 
+class LetToken extends Token<String> {
+  LetToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+
+class InToken extends Token<String> {
+  InToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+
 class MinusToken extends Token<String> {
   MinusToken(Lexeme lexeme)
     : super(

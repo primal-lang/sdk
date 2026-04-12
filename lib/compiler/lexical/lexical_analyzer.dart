@@ -24,6 +24,12 @@ Token _identifierOrKeywordToken(Lexeme lexeme) {
   if (lexeme.value.isElse) {
     return ElseToken(lexeme);
   }
+  if (lexeme.value.isLet) {
+    return LetToken(lexeme);
+  }
+  if (lexeme.value.isIn) {
+    return InToken(lexeme);
+  }
   if (lexeme.value.isAnd) {
     // Use canonical operator name '&&' for 'and' keyword (short-circuit)
     return DoubleAmpersandToken(Lexeme(value: '&&', location: lexeme.location));

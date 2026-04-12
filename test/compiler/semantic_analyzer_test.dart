@@ -2273,4 +2273,309 @@ second = 2
       expect(first!.location.row, isNot(equals(second!.location.row)));
     });
   });
+
+  // --- Let expression tests ---
+
+  group('Let expressions', () {
+    test('valid single binding', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let x = n in x');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('valid multiple bindings', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let x = n, y = x in y');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('shadows parameter throws ShadowedLetBindingError', () {
+      expect(
+        () => getIntermediateRepresentation('f(x) = let x = 1 in x'),
+        throwsA(isA<ShadowedLetBindingError>()),
+      );
+    });
+
+    test('shadows outer let throws ShadowedLetBindingError', () {
+      expect(
+        () =>
+            getIntermediateRepresentation('f(n) = let x = 1 in let x = 2 in x'),
+        throwsA(isA<ShadowedLetBindingError>()),
+      );
+    });
+
+    test('duplicate in same let throws DuplicatedLetBindingError', () {
+      expect(
+        () => getIntermediateRepresentation('f(n) = let x = 1, x = 2 in x'),
+        throwsA(isA<DuplicatedLetBindingError>()),
+      );
+    });
+
+    test('duplicate non-adjacent throws DuplicatedLetBindingError', () {
+      expect(
+        () => getIntermediateRepresentation(
+          'f(n) = let x = 1, y = 2, x = 3 in x',
+        ),
+        throwsA(isA<DuplicatedLetBindingError>()),
+      );
+    });
+
+    test('self-reference throws UndefinedIdentifierError', () {
+      expect(
+        () => getIntermediateRepresentation('f(n) = let x = x in x'),
+        throwsA(isA<UndefinedIdentifierError>()),
+      );
+    });
+
+    test('forward reference throws UndefinedIdentifierError', () {
+      expect(
+        () => getIntermediateRepresentation('f(n) = let y = x, x = 1 in y'),
+        throwsA(isA<UndefinedIdentifierError>()),
+      );
+    });
+
+    test('scope isolation - inner let binding not visible to outer scope', () {
+      expect(
+        () => getIntermediateRepresentation(
+          'f(n) = let x = (let y = 1 in y) in y',
+        ),
+        throwsA(isA<UndefinedIdentifierError>()),
+      );
+    });
+
+    test('shadow on first binding shadows parameter', () {
+      expect(
+        () => getIntermediateRepresentation('f(x) = let x = 1, y = 2 in y'),
+        throwsA(isA<ShadowedLetBindingError>()),
+      );
+    });
+
+    test('isLetBinding set correctly on let binding reference', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let x = 1 in x');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      expect(function, isNotNull);
+      expect(function!.body, isA<SemanticLetNode>());
+      final SemanticLetNode letNode = function.body as SemanticLetNode;
+      expect(letNode.body, isA<SemanticBoundVariableNode>());
+      final SemanticBoundVariableNode bodyVar =
+          letNode.body as SemanticBoundVariableNode;
+      expect(bodyVar.isLetBinding, isTrue);
+    });
+
+    test('parameter isLetBinding is false', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = n');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      expect(function, isNotNull);
+      expect(function!.body, isA<SemanticBoundVariableNode>());
+      final SemanticBoundVariableNode bodyVar =
+          function.body as SemanticBoundVariableNode;
+      expect(bodyVar.isLetBinding, isFalse);
+    });
+
+    test(
+      'usedParameters excludes let bindings - warns on unused parameter',
+      () {
+        final IntermediateRepresentation intermediateRepresentation =
+            getIntermediateRepresentation('f(n) = let x = 1 in x');
+        expect(intermediateRepresentation.warnings.length, equals(1));
+        expect(
+          intermediateRepresentation.warnings.first,
+          isA<UnusedParameterWarning>(),
+        );
+      },
+    );
+
+    test('shadows custom function is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('''
+double(x) = x * 2
+f(n) = let double = 10 in double
+''');
+      expect(intermediateRepresentation.warnings.length, equals(1));
+      // Warning for unused parameter n
+    });
+
+    test('shadows stdlib function is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let abs = 42 in abs');
+      expect(intermediateRepresentation.warnings.length, equals(1));
+      // Warning for unused parameter n
+    });
+
+    test('let binding as callee is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let g = num.abs in g(n)');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('let binding as index target is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(xs) = let list = xs in list[0]');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('chained call on let binding is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(n) = let g = num.abs in g(n) + 1',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('nested let in body is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(n) = let x = 1 in let y = x + 1 in y',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(1));
+    });
+
+    test('nested let in binding value is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(n) = let x = (let y = n in y * 2) in x',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('let produces SemanticLetNode', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let x = n in x');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      expect(function, isNotNull);
+      expect(function!.body, isA<SemanticLetNode>());
+    });
+
+    test('SemanticLetNode has correct bindings', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let x = 1, y = 2 in x + y');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      expect(function, isNotNull);
+      final SemanticLetNode letNode = function!.body as SemanticLetNode;
+      expect(letNode.bindings.length, equals(2));
+      expect(letNode.bindings[0].name, equals('x'));
+      expect(letNode.bindings[1].name, equals('y'));
+    });
+
+    test('let in list element is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = [let x = n in x]');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('let in map value is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = {"key": let x = n in x}');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('let in function argument is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = num.abs(let x = n in x)');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('let in if condition is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(n) = if (let x = n in x > 0) 1 else 0',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('let in if branches is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(n) = if (n > 0) let x = n in x else 0',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('capture function before shadow is valid', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(n) = let g = num.abs, abs = 0 in g(n)',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+  });
+
+  // --- Let expression error message tests ---
+
+  group('Let expression error messages', () {
+    test('ShadowedLetBindingError includes binding name', () {
+      try {
+        getIntermediateRepresentation('f(x) = let x = 1 in x');
+        fail('Expected ShadowedLetBindingError');
+      } on ShadowedLetBindingError catch (error) {
+        expect(error.message.contains('x'), isTrue);
+      }
+    });
+
+    test('ShadowedLetBindingError includes function context', () {
+      try {
+        getIntermediateRepresentation('myFunc(x) = let x = 1 in x');
+        fail('Expected ShadowedLetBindingError');
+      } on ShadowedLetBindingError catch (error) {
+        expect(error.message.contains('myFunc'), isTrue);
+      }
+    });
+
+    test('DuplicatedLetBindingError includes binding name', () {
+      try {
+        getIntermediateRepresentation('f(n) = let x = 1, x = 2 in x');
+        fail('Expected DuplicatedLetBindingError');
+      } on DuplicatedLetBindingError catch (error) {
+        expect(error.message.contains('x'), isTrue);
+      }
+    });
+
+    test('DuplicatedLetBindingError includes function context', () {
+      try {
+        getIntermediateRepresentation('myFunc(n) = let x = 1, x = 2 in x');
+        fail('Expected DuplicatedLetBindingError');
+      } on DuplicatedLetBindingError catch (error) {
+        expect(error.message.contains('myFunc'), isTrue);
+      }
+    });
+  });
+
+  // --- SemanticLetNode tests ---
+
+  group('SemanticLetNode', () {
+    test('toString returns let format', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let x = 1 in x');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      expect(function!.body.toString(), contains('let'));
+      expect(function.body.toString(), contains('in'));
+    });
+
+    test('location is preserved', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let x = 1 in x');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      final SemanticLetNode letNode = function!.body as SemanticLetNode;
+      expect(letNode.location, isNotNull);
+    });
+
+    test('binding locations are preserved', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = let x = 1, y = 2 in x');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      final SemanticLetNode letNode = function!.body as SemanticLetNode;
+      for (final SemanticLetBindingNode binding in letNode.bindings) {
+        expect(binding.location, isNotNull);
+      }
+    });
+  });
 }

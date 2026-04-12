@@ -26,16 +26,22 @@ RuntimeFacade (evaluation entry point)
 2. **Duplicate function detection** - reports a `DuplicatedFunctionError` if two custom functions share the same name, or if a custom function conflicts with a standard library function.
 3. **Duplicate parameter detection** - reports a `DuplicatedParameterError` if a function has repeated parameter names.
 4. **Identifier resolution** - for every identifier in a function body:
-   - If it matches a parameter name, it becomes a `SemanticBoundVariableNode`.
+   - If it matches a let binding name (within scope), it becomes a `SemanticBoundVariableNode` with `isLetBinding: true`.
+   - If it matches a parameter name, it becomes a `SemanticBoundVariableNode` with `isLetBinding: false`.
    - If it matches a known function name (custom or standard library), it becomes a `SemanticIdentifierNode` with a resolved `FunctionSignature`.
    - Otherwise, an `UndefinedIdentifierError` is raised (with optional function context via the `inFunction` parameter).
 5. **Call validation** - for direct identifier calls (e.g., `foo(1, 2)`):
-   - If the callee is a parameter, it becomes a `SemanticBoundVariableNode` (validated at runtime).
+   - If the callee is a parameter or let binding, it becomes a `SemanticBoundVariableNode` (validated at runtime).
    - If the callee is a known function, the argument count is checked against the callee's arity. Mismatches raise `InvalidNumberOfArgumentsError`.
    - If the callee is undefined, an `UndefinedFunctionError` is raised.
    - Indirect calls (e.g., `f()(x)`) are validated at runtime.
 6. **Literal validation** - rejects attempts to call non-callable literals (numbers, booleans, strings, lists, maps) with `NotCallableError`, or index non-indexable literals (numbers, booleans) with `NotIndexableError`.
 7. **Unused parameter warnings** - parameters that are never referenced in the function body produce an `UnusedParameterWarning`.
+8. **Let expression validation** - for `let name = value in body`:
+   - Reports `ShadowedLetBindingError` if a binding name matches a function parameter.
+   - Reports `DuplicatedLetBindingError` if binding names are repeated within the same let expression.
+   - Bindings are processed sequentially, so later bindings can reference earlier ones.
+   - Let bindings can shadow function names (the binding takes precedence within the body).
 
 Nested structures (`SemanticCallNode`, `SemanticListNode`, `SemanticMapNode`) are checked recursively.
 
@@ -47,19 +53,21 @@ The semantic IR is a bound AST that preserves source information lost in runtime
 
 **File**: `lib/compiler/semantic/semantic_node.dart`
 
-| Node Type                   | Description                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------ |
-| `SemanticNode`              | Abstract base class for all semantic IR nodes; holds a `Location`              |
-| `SemanticLiteralNode<T>`    | Abstract base class for literal nodes; extends `SemanticNode` with a `T value` |
-| `SemanticBooleanNode`       | Boolean literal (`SemanticLiteralNode<bool>`)                                  |
-| `SemanticNumberNode`        | Numeric literal (`SemanticLiteralNode<num>`)                                   |
-| `SemanticStringNode`        | String literal (`SemanticLiteralNode<String>`)                                 |
-| `SemanticListNode`          | List literal (`SemanticLiteralNode<List<SemanticNode>>`)                       |
-| `SemanticMapEntryNode`      | Key-value pair holding two `SemanticNode` fields (`key`, `value`)              |
-| `SemanticMapNode`           | Map literal (`SemanticLiteralNode<List<SemanticMapEntryNode>>`)                |
-| `SemanticIdentifierNode`    | Function reference with `name` and optional resolved `FunctionSignature`       |
-| `SemanticBoundVariableNode` | Parameter reference with `name`                                                |
-| `SemanticCallNode`          | Function call with `callee` (`SemanticNode`) and `arguments`                   |
+| Node Type                   | Description                                                                             |
+| --------------------------- | --------------------------------------------------------------------------------------- |
+| `SemanticNode`              | Abstract base class for all semantic IR nodes; holds a `Location`                       |
+| `SemanticLiteralNode<T>`    | Abstract base class for literal nodes; extends `SemanticNode` with a `T value`          |
+| `SemanticBooleanNode`       | Boolean literal (`SemanticLiteralNode<bool>`)                                           |
+| `SemanticNumberNode`        | Numeric literal (`SemanticLiteralNode<num>`)                                            |
+| `SemanticStringNode`        | String literal (`SemanticLiteralNode<String>`)                                          |
+| `SemanticListNode`          | List literal (`SemanticLiteralNode<List<SemanticNode>>`)                                |
+| `SemanticMapEntryNode`      | Key-value pair holding two `SemanticNode` fields (`key`, `value`)                       |
+| `SemanticMapNode`           | Map literal (`SemanticLiteralNode<List<SemanticMapEntryNode>>`)                         |
+| `SemanticIdentifierNode`    | Function reference with `name` and optional resolved `FunctionSignature`                |
+| `SemanticBoundVariableNode` | Parameter or let binding reference with `name` and `isLetBinding` flag                  |
+| `SemanticCallNode`          | Function call with `callee` (`SemanticNode`) and `arguments`                            |
+| `SemanticLetBindingNode`    | Let binding with `name` (String) and `value` (SemanticNode)                             |
+| `SemanticLetNode`           | Let expression with `bindings` (List<SemanticLetBindingNode>) and `body` (SemanticNode) |
 
 ### SemanticFunction
 
@@ -123,16 +131,18 @@ The `functions` map is passed at construction and used to resolve `SemanticIdent
 
 This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model. The lowerer operates only on semantic types (`SemanticNode`, `SemanticFunction`) and produces runtime types (`Term`, `CustomFunctionTerm`), maintaining clean phase separation.
 
-| Semantic Node               | Runtime Term            |
-| --------------------------- | ----------------------- |
-| `SemanticBooleanNode`       | `BooleanTerm`           |
-| `SemanticNumberNode`        | `NumberTerm`            |
-| `SemanticStringNode`        | `StringTerm`            |
-| `SemanticListNode`          | `ListTerm`              |
-| `SemanticMapNode`           | `MapTerm`               |
-| `SemanticIdentifierNode`    | `FunctionReferenceTerm` |
-| `SemanticBoundVariableNode` | `BoundVariableTerm`     |
-| `SemanticCallNode`          | `CallTerm`              |
+| Semantic Node                                     | Runtime Term            |
+| ------------------------------------------------- | ----------------------- |
+| `SemanticBooleanNode`                             | `BooleanTerm`           |
+| `SemanticNumberNode`                              | `NumberTerm`            |
+| `SemanticStringNode`                              | `StringTerm`            |
+| `SemanticListNode`                                | `ListTerm`              |
+| `SemanticMapNode`                                 | `MapTerm`               |
+| `SemanticIdentifierNode`                          | `FunctionReferenceTerm` |
+| `SemanticBoundVariableNode` (isLetBinding: false) | `BoundVariableTerm`     |
+| `SemanticBoundVariableNode` (isLetBinding: true)  | `LetBoundVariableTerm`  |
+| `SemanticCallNode`                                | `CallTerm`              |
+| `SemanticLetNode`                                 | `LetTerm`               |
 
 ## RuntimeInputBuilder
 

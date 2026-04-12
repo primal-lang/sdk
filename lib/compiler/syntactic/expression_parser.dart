@@ -41,6 +41,9 @@ class ExpressionParser {
   static bool _isNumber(Token t) => t is NumberToken;
   static bool _isString(Token t) => t is StringToken;
   static bool _isIdentifier(Token t) => t is IdentifierToken;
+  static bool _isLet(Token t) => t is LetToken;
+  static bool _isIn(Token t) => t is InToken;
+  static bool _isAssign(Token t) => t is AssignToken;
 
   // Static predicate lists - allocated once (multi-element only)
   static final List<bool Function(Token)> _equalityPredicates = [
@@ -72,7 +75,39 @@ class ExpressionParser {
     _isDoubleAmpersand,
   ];
 
-  Expression expression() => ifExpression();
+  Expression expression() => letExpression();
+
+  Expression letExpression() {
+    if (matchSingle(_isLet)) {
+      final Token letToken = previous;
+      final List<LetBindingExpression> bindings = [];
+
+      // Parse at least one binding
+      do {
+        final Token nameToken = consume(_isIdentifier, 'identifier');
+        consume(_isAssign, '=');
+        final Expression value = expression();
+        bindings.add(
+          LetBindingExpression(
+            location: nameToken.location,
+            name: nameToken.value as String,
+            value: value,
+          ),
+        );
+      } while (matchSingle(_isComma));
+
+      consume(_isIn, 'in');
+      final Expression body = expression();
+
+      return LetExpression(
+        location: letToken.location,
+        bindings: bindings,
+        body: body,
+      );
+    } else {
+      return ifExpression();
+    }
+  }
 
   Expression ifExpression() {
     if (matchSingle(_isIf)) {
@@ -300,6 +335,8 @@ class ExpressionParser {
       return list(previous);
     } else if (matchSingle(_isOpenBraces)) {
       return map(previous);
+    } else if (matchSingle(_isLet)) {
+      throw ExpectedTokenError(previous, 'parenthesized let expression');
     }
 
     throw InvalidTokenError(peek);

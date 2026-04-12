@@ -263,6 +263,96 @@ class BoundVariableTerm extends Term {
       throw StateError('BoundVariableTerm cannot be converted to native');
 }
 
+/// A reference to a let-bound variable within a let expression body.
+///
+/// Unlike [BoundVariableTerm] (for function parameters), this term supports
+/// partial substitution—it returns itself when the name is not found in
+/// bindings, allowing function parameter substitution to pass through
+/// without affecting let binding references.
+class LetBoundVariableTerm extends Term {
+  final String name;
+
+  const LetBoundVariableTerm(this.name);
+
+  @override
+  Term substitute(Bindings bindings) =>
+      bindings.data.containsKey(name) ? bindings.data[name]! : this;
+
+  @override
+  Term reduce() => this;
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  String toString() => name;
+
+  @override
+  dynamic native() =>
+      throw StateError('LetBoundVariableTerm "$name" was not substituted');
+}
+
+/// A let expression that introduces local variable bindings.
+///
+/// Bindings are evaluated sequentially in declaration order (call-by-value).
+/// Each binding is fully evaluated before the next, and previous bindings
+/// are visible to subsequent bindings and the body.
+class LetTerm extends Term {
+  final List<(String, Term)> bindings;
+  final Term body;
+
+  const LetTerm({
+    required this.bindings,
+    required this.body,
+  });
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  Term substitute(Bindings bindings) {
+    // Since shadowing is disallowed, no let binding name can conflict with
+    // incoming bindings. Simply propagate substitutions through.
+    return LetTerm(
+      bindings: this.bindings
+          .map((b) => (b.$1, b.$2.substitute(bindings)))
+          .toList(),
+      body: body.substitute(bindings),
+    );
+  }
+
+  @override
+  Term reduce() {
+    // Build binding map incrementally. We use Bindings(map) directly instead
+    // of Bindings.from() because:
+    // 1. Bindings.from() takes List<Parameter> + List<Term> for function calls
+    // 2. Here we build the map incrementally as each binding is evaluated
+    // 3. Each binding must see only previously evaluated bindings, not all
+    final Map<String, Term> bindingMap = {};
+    for (final (String name, Term term) in bindings) {
+      // Create a snapshot of current bindings for substitution.
+      // This ensures each binding only sees previously evaluated bindings.
+      final Term substituted = term.substitute(
+        Bindings(Map<String, Term>.of(bindingMap)),
+      );
+      final Term value = substituted.reduce();
+      bindingMap[name] = value;
+    }
+    return body.substitute(Bindings(bindingMap)).reduce();
+  }
+
+  @override
+  dynamic native() => reduce().native();
+
+  @override
+  String toString() {
+    final String bindingString = bindings
+        .map((b) => '${b.$1} = ${b.$2}')
+        .join(', ');
+    return 'let $bindingString in $body';
+  }
+}
+
 class CallTerm extends Term {
   final Term callee;
   final List<Term> arguments;

@@ -2140,4 +2140,436 @@ void main() {
       expect(str, contains('b: 2'));
     });
   });
+
+  // --- LetBoundVariableTerm tests ---
+
+  group('LetBoundVariableTerm', () {
+    test('partial substitution - not found returns this', () {
+      const LetBoundVariableTerm term = LetBoundVariableTerm('x');
+      const Bindings bindings = Bindings({'y': NumberTerm(5)});
+      final Term result = term.substitute(bindings);
+      expect(result, same(term));
+    });
+
+    test('full substitution - found returns value', () {
+      const LetBoundVariableTerm term = LetBoundVariableTerm('x');
+      const Bindings bindings = Bindings({'x': NumberTerm(5)});
+      final Term result = term.substitute(bindings);
+      expect(result, isA<NumberTerm>());
+      expect((result as NumberTerm).value, equals(5));
+    });
+
+    test('substitute with string value', () {
+      const LetBoundVariableTerm term = LetBoundVariableTerm('name');
+      const Bindings bindings = Bindings({'name': StringTerm('hello')});
+      final Term result = term.substitute(bindings);
+      expect(result, isA<StringTerm>());
+      expect((result as StringTerm).value, equals('hello'));
+    });
+
+    test('reduce returns this', () {
+      const LetBoundVariableTerm term = LetBoundVariableTerm('x');
+      expect(term.reduce(), same(term));
+    });
+
+    test('type is AnyType', () {
+      const LetBoundVariableTerm term = LetBoundVariableTerm('x');
+      expect(term.type, isA<AnyType>());
+    });
+
+    test('native throws StateError if unsubstituted', () {
+      const LetBoundVariableTerm term = LetBoundVariableTerm('x');
+      expect(() => term.native(), throwsStateError);
+    });
+
+    test('toString returns name', () {
+      const LetBoundVariableTerm term = LetBoundVariableTerm('myVariable');
+      expect(term.toString(), equals('myVariable'));
+    });
+
+    test('substitute with empty bindings returns this', () {
+      const LetBoundVariableTerm term = LetBoundVariableTerm('x');
+      const Bindings bindings = Bindings({});
+      expect(term.substitute(bindings), same(term));
+    });
+
+    test(
+      'substitute with multiple bindings but different name returns this',
+      () {
+        const LetBoundVariableTerm term = LetBoundVariableTerm('z');
+        const Bindings bindings = Bindings({
+          'x': NumberTerm(1),
+          'y': NumberTerm(2),
+        });
+        expect(term.substitute(bindings), same(term));
+      },
+    );
+  });
+
+  // --- LetTerm tests ---
+
+  group('LetTerm', () {
+    group('basic properties', () {
+      test('type is AnyType', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', NumberTerm(1))],
+          body: LetBoundVariableTerm('x'),
+        );
+        expect(term.type, isA<AnyType>());
+      });
+
+      test('toString returns let format', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', NumberTerm(1))],
+          body: LetBoundVariableTerm('x'),
+        );
+        final String str = term.toString();
+        expect(str, contains('let'));
+        expect(str, contains('x'));
+        expect(str, contains('in'));
+      });
+
+      test('toString with multiple bindings', () {
+        const LetTerm term = LetTerm(
+          bindings: [
+            ('x', NumberTerm(1)),
+            ('y', NumberTerm(2)),
+          ],
+          body: LetBoundVariableTerm('x'),
+        );
+        final String str = term.toString();
+        expect(str, contains('x = 1'));
+        expect(str, contains('y = 2'));
+      });
+
+      test('native delegates to reduce then native', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', NumberTerm(42))],
+          body: LetBoundVariableTerm('x'),
+        );
+        expect(term.native(), equals(42));
+      });
+    });
+
+    group('substitute', () {
+      test('propagates through binding values', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', BoundVariableTerm('y'))],
+          body: LetBoundVariableTerm('x'),
+        );
+        const Bindings bindings = Bindings({'y': NumberTerm(5)});
+        final Term result = term.substitute(bindings);
+        expect(result, isA<LetTerm>());
+        final LetTerm letResult = result as LetTerm;
+        expect(letResult.bindings[0].$2, isA<NumberTerm>());
+      });
+
+      test('propagates through body', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', NumberTerm(1))],
+          body: BoundVariableTerm('y'),
+        );
+        const Bindings bindings = Bindings({'y': NumberTerm(5)});
+        final Term result = term.substitute(bindings);
+        expect(result, isA<LetTerm>());
+        final LetTerm letResult = result as LetTerm;
+        expect(letResult.body, isA<NumberTerm>());
+      });
+
+      test('let binding refs unchanged when not in bindings', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', NumberTerm(1))],
+          body: LetBoundVariableTerm('x'),
+        );
+        const Bindings bindings = Bindings({'y': NumberTerm(5)});
+        final Term result = term.substitute(bindings);
+        expect(result, isA<LetTerm>());
+        final LetTerm letResult = result as LetTerm;
+        expect(letResult.body, isA<LetBoundVariableTerm>());
+      });
+
+      test('substitute with empty bindings returns equivalent term', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', NumberTerm(1))],
+          body: LetBoundVariableTerm('x'),
+        );
+        const Bindings bindings = Bindings({});
+        final Term result = term.substitute(bindings);
+        expect(result, isA<LetTerm>());
+      });
+    });
+
+    group('reduce', () {
+      test('single binding evaluation', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', NumberTerm(42))],
+          body: LetBoundVariableTerm('x'),
+        );
+        final Term result = term.reduce();
+        expect(result, isA<NumberTerm>());
+        expect((result as NumberTerm).value, equals(42));
+      });
+
+      test('sequential evaluation order', () {
+        // let x = 1, y = x + 1 in y should give 2
+        // We simulate x + 1 with a call
+        final TestNativeFunctionTerm addOne = TestNativeFunctionTerm(
+          name: 'addOne',
+          parameters: const [Parameter.number('n')],
+          termFunction: (List<Term> arguments) {
+            final num value = (arguments[0] as NumberTerm).value;
+            return NumberTerm(value + 1);
+          },
+        );
+        final Map<String, FunctionTerm> functions = {'addOne': addOne};
+        final LetTerm term = LetTerm(
+          bindings: [
+            (
+              'x',
+              const NumberTerm(1),
+            ),
+            (
+              'y',
+              CallTerm(
+                callee: FunctionReferenceTerm('addOne', functions),
+                arguments: const [LetBoundVariableTerm('x')],
+              ),
+            ),
+          ],
+          body: const LetBoundVariableTerm('y'),
+        );
+        final Term result = term.reduce();
+        expect(result, isA<NumberTerm>());
+        expect((result as NumberTerm).value, equals(2));
+      });
+
+      test('all bindings substituted in body', () {
+        // let x = 1, y = 2 in x + y should give 3
+        final TestNativeFunctionTerm add = TestNativeFunctionTerm(
+          name: 'add',
+          parameters: const [
+            Parameter.number('a'),
+            Parameter.number('b'),
+          ],
+          termFunction: (List<Term> arguments) {
+            final num a = (arguments[0] as NumberTerm).value;
+            final num b = (arguments[1] as NumberTerm).value;
+            return NumberTerm(a + b);
+          },
+        );
+        final Map<String, FunctionTerm> functions = {'add': add};
+        final LetTerm term = LetTerm(
+          bindings: const [
+            ('x', NumberTerm(1)),
+            ('y', NumberTerm(2)),
+          ],
+          body: CallTerm(
+            callee: FunctionReferenceTerm('add', functions),
+            arguments: const [
+              LetBoundVariableTerm('x'),
+              LetBoundVariableTerm('y'),
+            ],
+          ),
+        );
+        final Term result = term.reduce();
+        expect(result, isA<NumberTerm>());
+        expect((result as NumberTerm).value, equals(3));
+      });
+
+      test('nested let', () {
+        // let x = 1 in let y = x + 1 in y should give 2
+        final TestNativeFunctionTerm addOne = TestNativeFunctionTerm(
+          name: 'addOne',
+          parameters: const [Parameter.number('n')],
+          termFunction: (List<Term> arguments) {
+            final num value = (arguments[0] as NumberTerm).value;
+            return NumberTerm(value + 1);
+          },
+        );
+        final Map<String, FunctionTerm> functions = {'addOne': addOne};
+        final LetTerm term = LetTerm(
+          bindings: const [('x', NumberTerm(1))],
+          body: LetTerm(
+            bindings: [
+              (
+                'y',
+                CallTerm(
+                  callee: FunctionReferenceTerm('addOne', functions),
+                  arguments: const [LetBoundVariableTerm('x')],
+                ),
+              ),
+            ],
+            body: const LetBoundVariableTerm('y'),
+          ),
+        );
+        final Term result = term.reduce();
+        expect(result, isA<NumberTerm>());
+        expect((result as NumberTerm).value, equals(2));
+      });
+
+      test('binding expression is evaluated to value', () {
+        // let x = 1 + 1 in x should give 2
+        final TestNativeFunctionTerm add = TestNativeFunctionTerm(
+          name: 'add',
+          parameters: const [
+            Parameter.number('a'),
+            Parameter.number('b'),
+          ],
+          termFunction: (List<Term> arguments) {
+            final num a = (arguments[0] as NumberTerm).value;
+            final num b = (arguments[1] as NumberTerm).value;
+            return NumberTerm(a + b);
+          },
+        );
+        final Map<String, FunctionTerm> functions = {'add': add};
+        final LetTerm term = LetTerm(
+          bindings: [
+            (
+              'x',
+              CallTerm(
+                callee: FunctionReferenceTerm('add', functions),
+                arguments: const [NumberTerm(1), NumberTerm(1)],
+              ),
+            ),
+          ],
+          body: const LetBoundVariableTerm('x'),
+        );
+        final Term result = term.reduce();
+        expect(result, isA<NumberTerm>());
+        expect((result as NumberTerm).value, equals(2));
+      });
+
+      test('reduce with string body', () {
+        const LetTerm term = LetTerm(
+          bindings: [('x', StringTerm('hello'))],
+          body: LetBoundVariableTerm('x'),
+        );
+        final Term result = term.reduce();
+        expect(result, isA<StringTerm>());
+        expect((result as StringTerm).value, equals('hello'));
+      });
+
+      test('reduce with boolean body', () {
+        const LetTerm term = LetTerm(
+          bindings: [('flag', BooleanTerm(true))],
+          body: LetBoundVariableTerm('flag'),
+        );
+        final Term result = term.reduce();
+        expect(result, isA<BooleanTerm>());
+        expect((result as BooleanTerm).value, isTrue);
+      });
+
+      test('reduce with list body', () {
+        const LetTerm term = LetTerm(
+          bindings: [
+            (
+              'items',
+              ListTerm([NumberTerm(1), NumberTerm(2), NumberTerm(3)]),
+            ),
+          ],
+          body: LetBoundVariableTerm('items'),
+        );
+        final Term result = term.reduce();
+        expect(result, isA<ListTerm>());
+        expect((result as ListTerm).native(), equals([1, 2, 3]));
+      });
+    });
+  });
+
+  // --- LetTerm error propagation tests ---
+
+  group('LetTerm error propagation', () {
+    test('error in binding propagates', () {
+      // Division by zero in binding
+      final TestNativeFunctionTerm divide = TestNativeFunctionTerm(
+        name: 'divide',
+        parameters: const [
+          Parameter.number('a'),
+          Parameter.number('b'),
+        ],
+        termFunction: (List<Term> arguments) {
+          final num b = (arguments[1] as NumberTerm).value;
+          if (b == 0) {
+            throw DivisionByZeroError(function: 'divide');
+          }
+          final num a = (arguments[0] as NumberTerm).value;
+          return NumberTerm(a / b);
+        },
+      );
+      final Map<String, FunctionTerm> functions = {'divide': divide};
+      final LetTerm term = LetTerm(
+        bindings: [
+          (
+            'x',
+            CallTerm(
+              callee: FunctionReferenceTerm('divide', functions),
+              arguments: const [NumberTerm(1), NumberTerm(0)],
+            ),
+          ),
+        ],
+        body: const LetBoundVariableTerm('x'),
+      );
+      expect(term.reduce, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('error in second binding propagates', () {
+      final TestNativeFunctionTerm divide = TestNativeFunctionTerm(
+        name: 'divide',
+        parameters: const [
+          Parameter.number('a'),
+          Parameter.number('b'),
+        ],
+        termFunction: (List<Term> arguments) {
+          final num b = (arguments[1] as NumberTerm).value;
+          if (b == 0) {
+            throw DivisionByZeroError(function: 'divide');
+          }
+          final num a = (arguments[0] as NumberTerm).value;
+          return NumberTerm(a / b);
+        },
+      );
+      final Map<String, FunctionTerm> functions = {'divide': divide};
+      final LetTerm term = LetTerm(
+        bindings: [
+          ('x', const NumberTerm(1)),
+          (
+            'y',
+            CallTerm(
+              callee: FunctionReferenceTerm('divide', functions),
+              arguments: const [NumberTerm(1), NumberTerm(0)],
+            ),
+          ),
+        ],
+        body: const LetBoundVariableTerm('y'),
+      );
+      expect(term.reduce, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('error in body propagates', () {
+      final TestNativeFunctionTerm divide = TestNativeFunctionTerm(
+        name: 'divide',
+        parameters: const [
+          Parameter.number('a'),
+          Parameter.number('b'),
+        ],
+        termFunction: (List<Term> arguments) {
+          final num b = (arguments[1] as NumberTerm).value;
+          if (b == 0) {
+            throw DivisionByZeroError(function: 'divide');
+          }
+          final num a = (arguments[0] as NumberTerm).value;
+          return NumberTerm(a / b);
+        },
+      );
+      final Map<String, FunctionTerm> functions = {'divide': divide};
+      final LetTerm term = LetTerm(
+        bindings: const [('x', NumberTerm(1))],
+        body: CallTerm(
+          callee: FunctionReferenceTerm('divide', functions),
+          arguments: const [NumberTerm(1), NumberTerm(0)],
+        ),
+      );
+      expect(term.reduce, throwsA(isA<DivisionByZeroError>()));
+    });
+  });
 }

@@ -733,6 +733,66 @@ void main() {
       ]);
     });
 
+    test('Let expression', () {
+      final List<Token> tokens = getTokens('let x = 1 in x');
+      checkTokens(tokens, [
+        LetToken(
+          const Lexeme(
+            value: 'let',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 5,
+            ),
+          ),
+        ),
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 1,
+              column: 7,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '1',
+            location: Location(
+              row: 1,
+              column: 9,
+            ),
+          ),
+        ),
+        InToken(
+          const Lexeme(
+            value: 'in',
+            location: Location(
+              row: 1,
+              column: 11,
+            ),
+          ),
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 14,
+            ),
+          ),
+        ),
+      ]);
+    });
+
     test('Arithmetic operators', () {
       final List<Token> tokens = getTokens('- + / * %');
       checkTokens(tokens, [
@@ -3569,6 +3629,30 @@ pi = 3.14
         ]);
       });
 
+      test('let keyword at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('let');
+        checkTokens(tokens, [
+          LetToken(
+            const Lexeme(
+              value: 'let',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('in keyword at end of input (no trailing delimiter)', () {
+        final List<Token> tokens = getTokensDirect('in');
+        checkTokens(tokens, [
+          InToken(
+            const Lexeme(
+              value: 'in',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
       test('Incomplete exponent with minus sign at end of input', () {
         expect(() => getTokensDirect('1e-'), throwsA(isA<LexicalError>()));
       });
@@ -5063,6 +5147,30 @@ pi = 3.14
           IdentifierToken(
             const Lexeme(
               value: 'ordinal',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier starting with let', () {
+        final List<Token> tokens = getTokens('letter');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'letter',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier starting with in', () {
+        final List<Token> tokens = getTokens('inner');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'inner',
               location: Location(row: 1, column: 1),
             ),
           ),

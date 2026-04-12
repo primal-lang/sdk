@@ -2605,4 +2605,157 @@ void main() {
       expect((expression as MapExpression).value.length, equals(5));
     });
   });
+
+  group('Let expression parsing', () {
+    test('Single binding', () {
+      final Expression expression = getExpression('let x = 1 in x');
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1 in x');
+    });
+
+    test('Multiple bindings', () {
+      final Expression expression = getExpression('let x = 1, y = 2 in x');
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1, y = 2 in x');
+    });
+
+    test('Nested let in body', () {
+      final Expression expression = getExpression(
+        'let x = 1 in let y = 2 in y',
+      );
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1 in let y = 2 in y');
+    });
+
+    test('Nested let in binding', () {
+      final Expression expression = getExpression(
+        'let x = (let y = 1 in y) in x',
+      );
+      expect(expression, isA<LetExpression>());
+      final LetExpression letExpression = expression as LetExpression;
+      expect(letExpression.bindings.length, equals(1));
+      expect(letExpression.bindings.first.value, isA<LetExpression>());
+    });
+
+    test('Let with complex expression in body', () {
+      final Expression expression = getExpression('let x = 1 in x + 2');
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1 in +(x, 2)');
+    });
+
+    test('Let with complex expression in binding', () {
+      final Expression expression = getExpression('let x = 1 + 2 in x');
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = +(1, 2) in x');
+    });
+
+    test('Let with if in binding', () {
+      final Expression expression = getExpression(
+        'let x = if (true) 1 else 2 in x',
+      );
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = if(true, 1, 2) in x');
+    });
+
+    test('Let with if in body', () {
+      final Expression expression = getExpression(
+        'let x = 1 in if (x > 0) x else 0',
+      );
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1 in if(>(x, 0), x, 0)');
+    });
+
+    test('Let in parentheses is valid', () {
+      final Expression expression = getExpression('1 + (let x = 2 in x)');
+      expect(expression.toString(), '+(1, let x = 2 in x)');
+    });
+
+    test('Let in list element', () {
+      final Expression expression = getExpression('[let x = 1 in x, 2]');
+      expect(expression, isA<ListExpression>());
+      final ListExpression listExpression = expression as ListExpression;
+      expect(listExpression.value.first, isA<LetExpression>());
+    });
+
+    test('Let as function argument', () {
+      final Expression expression = getExpression('foo(let x = 1 in x)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression callExpression = expression as CallExpression;
+      expect(callExpression.arguments.first, isA<LetExpression>());
+    });
+
+    test('Missing in keyword', () {
+      expect(
+        () => getExpression('let x = 1 x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Missing comma between bindings', () {
+      expect(
+        () => getExpression('let x = 1 y = 2 in x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Empty bindings', () {
+      expect(
+        () => getExpression('let in x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Trailing comma', () {
+      expect(
+        () => getExpression('let x = 1, in x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Let as binary operand throws error', () {
+      expect(
+        () => getExpression('1 + let x = 2 in x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Let has lowest precedence', () {
+      final Expression expression = getExpression('let x = 1 in x + 2');
+      expect(expression, isA<LetExpression>());
+      final LetExpression letExpression = expression as LetExpression;
+      expect(letExpression.body, isA<CallExpression>());
+    });
+
+    test('Let is right-associative', () {
+      final Expression expression = getExpression(
+        'let x = 1 in let y = 2 in x + y',
+      );
+      expect(expression, isA<LetExpression>());
+      final LetExpression outer = expression as LetExpression;
+      expect(outer.bindings.length, equals(1));
+      expect(outer.body, isA<LetExpression>());
+    });
+
+    test('LetBindingExpression exposes name and value', () {
+      final Expression expression = getExpression('let x = 42 in x');
+      expect(expression, isA<LetExpression>());
+      final LetExpression letExpression = expression as LetExpression;
+      expect(letExpression.bindings.length, equals(1));
+      final LetBindingExpression binding = letExpression.bindings.first;
+      expect(binding.name, equals('x'));
+      expect(binding.value, isA<NumberExpression>());
+    });
+
+    test('LetExpression location is let token location', () {
+      final Expression expression = getExpression('let x = 1 in x');
+      expect(expression.location.column, equals(1));
+    });
+
+    test('LetBindingExpression location is identifier location', () {
+      final Expression expression = getExpression('let x = 1 in x');
+      final LetExpression letExpression = expression as LetExpression;
+      final LetBindingExpression binding = letExpression.bindings.first;
+      expect(binding.location.column, equals(5));
+    });
+  });
 }

@@ -73,6 +73,7 @@ class SemanticAnalyzer
         currentFunction: function.name,
         availableParameters: availableParameters,
         usedParameters: usedParameters,
+        letBindingNames: {},
         allSignatures: allSignatures,
       );
 
@@ -124,11 +125,17 @@ class SemanticAnalyzer
   ///
   /// The [currentFunction] parameter is optional and is used for error messages.
   /// When null (e.g., in REPL mode), error messages omit the function context.
+  ///
+  /// The [letBindingNames] parameter tracks which names in [availableParameters]
+  /// are let bindings rather than function parameters, to set [isLetBinding]
+  /// on [SemanticBoundVariableNode] and exclude let bindings from unused
+  /// parameter warnings.
   SemanticNode checkExpression({
     required Expression expression,
     required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
+    required Set<String> letBindingNames,
     required Map<String, FunctionSignature> allSignatures,
   }) => switch (expression) {
     BooleanExpression() => SemanticBooleanNode(
@@ -148,6 +155,7 @@ class SemanticAnalyzer
       currentFunction: currentFunction,
       availableParameters: availableParameters,
       usedParameters: usedParameters,
+      letBindingNames: letBindingNames,
       allSignatures: allSignatures,
     ),
     MapExpression() => _checkMapExpression(
@@ -155,6 +163,7 @@ class SemanticAnalyzer
       currentFunction: currentFunction,
       availableParameters: availableParameters,
       usedParameters: usedParameters,
+      letBindingNames: letBindingNames,
       allSignatures: allSignatures,
     ),
     IdentifierExpression() => _checkIdentifierExpression(
@@ -162,6 +171,7 @@ class SemanticAnalyzer
       currentFunction: currentFunction,
       availableParameters: availableParameters,
       usedParameters: usedParameters,
+      letBindingNames: letBindingNames,
       allSignatures: allSignatures,
     ),
     CallExpression() => _checkCallExpression(
@@ -169,6 +179,15 @@ class SemanticAnalyzer
       currentFunction: currentFunction,
       availableParameters: availableParameters,
       usedParameters: usedParameters,
+      letBindingNames: letBindingNames,
+      allSignatures: allSignatures,
+    ),
+    LetExpression() => _checkLetExpression(
+      expression: expression,
+      currentFunction: currentFunction,
+      availableParameters: availableParameters,
+      usedParameters: usedParameters,
+      letBindingNames: letBindingNames,
       allSignatures: allSignatures,
     ),
     _ => throw StateError(
@@ -181,6 +200,7 @@ class SemanticAnalyzer
     required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
+    required Set<String> letBindingNames,
     required Map<String, FunctionSignature> allSignatures,
   }) {
     final List<SemanticNode> elements = expression.value
@@ -190,6 +210,7 @@ class SemanticAnalyzer
             currentFunction: currentFunction,
             availableParameters: availableParameters,
             usedParameters: usedParameters,
+            letBindingNames: letBindingNames,
             allSignatures: allSignatures,
           ),
         )
@@ -206,6 +227,7 @@ class SemanticAnalyzer
     required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
+    required Set<String> letBindingNames,
     required Map<String, FunctionSignature> allSignatures,
   }) {
     final List<SemanticMapEntryNode> entries = expression.value
@@ -216,6 +238,7 @@ class SemanticAnalyzer
               currentFunction: currentFunction,
               availableParameters: availableParameters,
               usedParameters: usedParameters,
+              letBindingNames: letBindingNames,
               allSignatures: allSignatures,
             ),
             value: checkExpression(
@@ -223,6 +246,7 @@ class SemanticAnalyzer
               currentFunction: currentFunction,
               availableParameters: availableParameters,
               usedParameters: usedParameters,
+              letBindingNames: letBindingNames,
               allSignatures: allSignatures,
             ),
           ),
@@ -240,15 +264,23 @@ class SemanticAnalyzer
     required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
+    required Set<String> letBindingNames,
     required Map<String, FunctionSignature> allSignatures,
   }) {
     final String name = expression.value;
 
     if (availableParameters.contains(name)) {
-      usedParameters.add(name);
+      final bool isLetBinding = letBindingNames.contains(name);
+
+      // Only track usage for function parameters, not let bindings
+      if (!isLetBinding) {
+        usedParameters.add(name);
+      }
+
       return SemanticBoundVariableNode(
         location: expression.location,
         name: name,
+        isLetBinding: isLetBinding,
       );
     } else if (allSignatures.containsKey(name)) {
       return SemanticIdentifierNode(
@@ -269,6 +301,7 @@ class SemanticAnalyzer
     required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
+    required Set<String> letBindingNames,
     required Map<String, FunctionSignature> allSignatures,
   }) {
     // First, recursively check all arguments
@@ -279,6 +312,7 @@ class SemanticAnalyzer
             currentFunction: currentFunction,
             availableParameters: availableParameters,
             usedParameters: usedParameters,
+            letBindingNames: letBindingNames,
             allSignatures: allSignatures,
           ),
         )
@@ -314,6 +348,7 @@ class SemanticAnalyzer
         currentFunction: currentFunction,
         availableParameters: availableParameters,
         usedParameters: usedParameters,
+        letBindingNames: letBindingNames,
         allSignatures: allSignatures,
       );
     } else {
@@ -322,6 +357,7 @@ class SemanticAnalyzer
         currentFunction: currentFunction,
         availableParameters: availableParameters,
         usedParameters: usedParameters,
+        letBindingNames: letBindingNames,
         allSignatures: allSignatures,
       );
     }
@@ -339,15 +375,23 @@ class SemanticAnalyzer
     required String? currentFunction,
     required Set<String> availableParameters,
     required Set<String> usedParameters,
+    required Set<String> letBindingNames,
     required Map<String, FunctionSignature> allSignatures,
   }) {
     final String functionName = callee.value;
 
     if (availableParameters.contains(functionName)) {
-      usedParameters.add(functionName);
+      final bool isLetBinding = letBindingNames.contains(functionName);
+
+      // Only track usage for function parameters, not let bindings
+      if (!isLetBinding) {
+        usedParameters.add(functionName);
+      }
+
       return SemanticBoundVariableNode(
         location: callee.location,
         name: functionName,
+        isLetBinding: isLetBinding,
       );
     } else if (allSignatures.containsKey(functionName)) {
       final FunctionSignature signature = allSignatures[functionName]!;
@@ -371,6 +415,100 @@ class SemanticAnalyzer
         inFunction: currentFunction,
       );
     }
+  }
+
+  SemanticNode _checkLetExpression({
+    required LetExpression expression,
+    required String? currentFunction,
+    required Set<String> availableParameters,
+    required Set<String> usedParameters,
+    required Set<String> letBindingNames,
+    required Map<String, FunctionSignature> allSignatures,
+  }) {
+    // Save the original outer scope for shadowing checks. This is the scope
+    // BEFORE any names from this let are added. This ensures that
+    // `let x = 1, x = 2 in x` correctly throws DuplicatedLetBindingError
+    // (not ShadowedLetBindingError).
+    final Set<String> originalOuterScope = Set<String>.of(availableParameters);
+
+    // Create working copies to avoid polluting outer scope when we return.
+    // This ensures `let x = 1 in (let y = 2 in y) + y` correctly errors on
+    // the final `y` (which is outside the inner let's scope).
+    // Note: usedParameters is NOT copied because parameter usage tracking
+    // must persist across all scopes within a function.
+    final Set<String> scopedAvailableParameters = Set<String>.of(
+      availableParameters,
+    );
+    final Set<String> scopedLetBindingNames = Set<String>.of(letBindingNames);
+
+    // Create local tracking set for this let's bindings (duplicate detection)
+    final Set<String> localLetBindings = {};
+
+    // Process each binding
+    final List<SemanticLetBindingNode> checkedBindings = [];
+    for (final LetBindingExpression binding in expression.bindings) {
+      final String name = binding.name;
+
+      // Check for duplicate within this let FIRST
+      // This ensures `let x = 1, x = 2 in x` throws DuplicatedLetBindingError
+      if (localLetBindings.contains(name)) {
+        throw DuplicatedLetBindingError(
+          binding: name,
+          inFunction: currentFunction,
+        );
+      }
+
+      // Check for shadowing against the ORIGINAL outer scope (not including
+      // names added by earlier bindings in this let)
+      if (originalOuterScope.contains(name)) {
+        throw ShadowedLetBindingError(
+          binding: name,
+          inFunction: currentFunction,
+        );
+      }
+
+      // Check the binding's value expression (before adding name to scope)
+      final SemanticNode checkedValue = checkExpression(
+        expression: binding.value,
+        currentFunction: currentFunction,
+        availableParameters: scopedAvailableParameters,
+        usedParameters: usedParameters,
+        letBindingNames: scopedLetBindingNames,
+        allSignatures: allSignatures,
+      );
+
+      // Add to tracking sets for subsequent bindings
+      localLetBindings.add(name);
+      scopedAvailableParameters.add(name);
+      scopedLetBindingNames.add(name);
+
+      checkedBindings.add(
+        SemanticLetBindingNode(
+          name: name,
+          value: checkedValue,
+          location: binding.location,
+        ),
+      );
+    }
+
+    // Check the body with extended scope
+    final SemanticNode checkedBody = checkExpression(
+      expression: expression.body,
+      currentFunction: currentFunction,
+      availableParameters: scopedAvailableParameters,
+      usedParameters: usedParameters,
+      letBindingNames: scopedLetBindingNames,
+      allSignatures: allSignatures,
+    );
+
+    // When this method returns, the scoped sets are discarded, so the outer
+    // scope's availableParameters and letBindingNames remain unchanged.
+
+    return SemanticLetNode(
+      bindings: checkedBindings,
+      body: checkedBody,
+      location: expression.location,
+    );
   }
 
   bool _isNonCallableLiteral(Expression expression) {

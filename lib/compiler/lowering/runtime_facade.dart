@@ -230,6 +230,7 @@ class RuntimeFacade {
       currentFunction: null,
       availableParameters: {},
       usedParameters: {},
+      letBindingNames: {},
       allSignatures: _allSignatures,
     );
 
@@ -285,6 +286,7 @@ class RuntimeFacade {
         currentFunction: name,
         availableParameters: definition.parameters.toSet(),
         usedParameters: usedParameters,
+        letBindingNames: {},
         allSignatures: _allSignatures,
       );
     } catch (error) {

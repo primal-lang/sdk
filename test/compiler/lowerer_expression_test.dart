@@ -1765,4 +1765,313 @@ void main() {
       expect((result.term as FunctionReferenceTerm).name, 'otherFunction');
     });
   });
+
+  // --- Let expression lowering tests ---
+
+  group('SemanticLetNode', () {
+    const Location defaultLocation = Location(row: 1, column: 1);
+
+    test('lowers single binding let to LetTerm', () {
+      const SemanticLetNode semantic = SemanticLetNode(
+        location: defaultLocation,
+        bindings: [
+          SemanticLetBindingNode(
+            name: 'x',
+            value: SemanticNumberNode(location: defaultLocation, value: 1),
+            location: defaultLocation,
+          ),
+        ],
+        body: SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'x',
+          isLetBinding: true,
+        ),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LetTerm>());
+      final LetTerm letTerm = term as LetTerm;
+      expect(letTerm.bindings.length, equals(1));
+      expect(letTerm.bindings[0].$1, equals('x'));
+      expect(letTerm.bindings[0].$2, isA<NumberTerm>());
+      expect(letTerm.body, isA<LetBoundVariableTerm>());
+    });
+
+    test('lowers multiple binding let to LetTerm', () {
+      const SemanticLetNode semantic = SemanticLetNode(
+        location: defaultLocation,
+        bindings: [
+          SemanticLetBindingNode(
+            name: 'x',
+            value: SemanticNumberNode(location: defaultLocation, value: 1),
+            location: defaultLocation,
+          ),
+          SemanticLetBindingNode(
+            name: 'y',
+            value: SemanticNumberNode(location: defaultLocation, value: 2),
+            location: defaultLocation,
+          ),
+        ],
+        body: SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'y',
+          isLetBinding: true,
+        ),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LetTerm>());
+      final LetTerm letTerm = term as LetTerm;
+      expect(letTerm.bindings.length, equals(2));
+      expect(letTerm.bindings[0].$1, equals('x'));
+      expect(letTerm.bindings[1].$1, equals('y'));
+    });
+
+    test('lowers nested let in body', () {
+      const SemanticLetNode semantic = SemanticLetNode(
+        location: defaultLocation,
+        bindings: [
+          SemanticLetBindingNode(
+            name: 'x',
+            value: SemanticNumberNode(location: defaultLocation, value: 1),
+            location: defaultLocation,
+          ),
+        ],
+        body: SemanticLetNode(
+          location: defaultLocation,
+          bindings: [
+            SemanticLetBindingNode(
+              name: 'y',
+              value: SemanticNumberNode(location: defaultLocation, value: 2),
+              location: defaultLocation,
+            ),
+          ],
+          body: SemanticBoundVariableNode(
+            location: defaultLocation,
+            name: 'y',
+            isLetBinding: true,
+          ),
+        ),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LetTerm>());
+      final LetTerm outerLet = term as LetTerm;
+      expect(outerLet.body, isA<LetTerm>());
+      final LetTerm innerLet = outerLet.body as LetTerm;
+      expect(innerLet.bindings[0].$1, equals('y'));
+    });
+
+    test('lowers nested let in binding value', () {
+      const SemanticLetNode semantic = SemanticLetNode(
+        location: defaultLocation,
+        bindings: [
+          SemanticLetBindingNode(
+            name: 'x',
+            value: SemanticLetNode(
+              location: defaultLocation,
+              bindings: [
+                SemanticLetBindingNode(
+                  name: 'y',
+                  value: SemanticNumberNode(
+                    location: defaultLocation,
+                    value: 1,
+                  ),
+                  location: defaultLocation,
+                ),
+              ],
+              body: SemanticBoundVariableNode(
+                location: defaultLocation,
+                name: 'y',
+                isLetBinding: true,
+              ),
+            ),
+            location: defaultLocation,
+          ),
+        ],
+        body: SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'x',
+          isLetBinding: true,
+        ),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LetTerm>());
+      final LetTerm letTerm = term as LetTerm;
+      expect(letTerm.bindings[0].$2, isA<LetTerm>());
+    });
+
+    test('lowers let with call in binding value', () {
+      final Map<String, FunctionTerm> functions = {
+        'foo': const TestFunctionTerm(name: 'foo', parameters: []),
+      };
+      const SemanticLetNode semantic = SemanticLetNode(
+        location: defaultLocation,
+        bindings: [
+          SemanticLetBindingNode(
+            name: 'x',
+            value: SemanticCallNode(
+              location: defaultLocation,
+              callee: SemanticIdentifierNode(
+                location: defaultLocation,
+                name: 'foo',
+              ),
+              arguments: [],
+            ),
+            location: defaultLocation,
+          ),
+        ],
+        body: SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'x',
+          isLetBinding: true,
+        ),
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LetTerm>());
+      final LetTerm letTerm = term as LetTerm;
+      expect(letTerm.bindings[0].$2, isA<CallTerm>());
+    });
+
+    test('lowers let with call in body', () {
+      final Map<String, FunctionTerm> functions = {
+        'foo': const TestFunctionTerm(
+          name: 'foo',
+          parameters: [Parameter.any('x')],
+        ),
+      };
+      const SemanticLetNode semantic = SemanticLetNode(
+        location: defaultLocation,
+        bindings: [
+          SemanticLetBindingNode(
+            name: 'x',
+            value: SemanticNumberNode(location: defaultLocation, value: 1),
+            location: defaultLocation,
+          ),
+        ],
+        body: SemanticCallNode(
+          location: defaultLocation,
+          callee: SemanticIdentifierNode(
+            location: defaultLocation,
+            name: 'foo',
+          ),
+          arguments: [
+            SemanticBoundVariableNode(
+              location: defaultLocation,
+              name: 'x',
+              isLetBinding: true,
+            ),
+          ],
+        ),
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LetTerm>());
+      final LetTerm letTerm = term as LetTerm;
+      expect(letTerm.body, isA<CallTerm>());
+      final CallTerm callTerm = letTerm.body as CallTerm;
+      expect(callTerm.arguments[0], isA<LetBoundVariableTerm>());
+    });
+  });
+
+  group('SemanticBoundVariableNode with isLetBinding', () {
+    const Location defaultLocation = Location(row: 1, column: 1);
+
+    test('isLetBinding true produces LetBoundVariableTerm', () {
+      const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+        location: defaultLocation,
+        name: 'x',
+        isLetBinding: true,
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LetBoundVariableTerm>());
+      expect((term as LetBoundVariableTerm).name, equals('x'));
+    });
+
+    test('isLetBinding false produces BoundVariableTerm', () {
+      const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+        location: defaultLocation,
+        name: 'x',
+        isLetBinding: false,
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<BoundVariableTerm>());
+      expect((term as BoundVariableTerm).name, equals('x'));
+    });
+
+    test('default isLetBinding produces BoundVariableTerm', () {
+      const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+        location: defaultLocation,
+        name: 'x',
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<BoundVariableTerm>());
+    });
+  });
+
+  group('Mixed parameter and let binding lowering', () {
+    const Location defaultLocation = Location(row: 1, column: 1);
+
+    test('let with parameter reference produces both term types', () {
+      // Represents: f(n) = let x = 1 in x + n
+      // Body is a call with two different variable types
+      final Map<String, FunctionTerm> functions = {
+        'add': const TestFunctionTerm(
+          name: 'add',
+          parameters: [Parameter.any('a'), Parameter.any('b')],
+        ),
+      };
+      const SemanticLetNode semantic = SemanticLetNode(
+        location: defaultLocation,
+        bindings: [
+          SemanticLetBindingNode(
+            name: 'x',
+            value: SemanticNumberNode(location: defaultLocation, value: 1),
+            location: defaultLocation,
+          ),
+        ],
+        body: SemanticCallNode(
+          location: defaultLocation,
+          callee: SemanticIdentifierNode(
+            location: defaultLocation,
+            name: 'add',
+          ),
+          arguments: [
+            SemanticBoundVariableNode(
+              location: defaultLocation,
+              name: 'x',
+              isLetBinding: true,
+            ),
+            SemanticBoundVariableNode(
+              location: defaultLocation,
+              name: 'n',
+              isLetBinding: false,
+            ),
+          ],
+        ),
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LetTerm>());
+      final LetTerm letTerm = term as LetTerm;
+      final CallTerm callTerm = letTerm.body as CallTerm;
+      expect(callTerm.arguments[0], isA<LetBoundVariableTerm>());
+      expect(callTerm.arguments[1], isA<BoundVariableTerm>());
+    });
+  });
 }
