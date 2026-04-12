@@ -88,6 +88,7 @@ A function declaration is composed of:
   - Function calls: `foo(x)`, `bar(10)`, etc
   - Conditionals: `if (foo) bar else baz`
   - Let expressions: `let x = 1 in x + 1`
+  - Lambda expressions: `(x) -> x + 1`, `(a, b) -> a + b`
 
 Here is an example of a function with parameters:
 

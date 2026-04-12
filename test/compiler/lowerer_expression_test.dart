@@ -2074,4 +2074,233 @@ void main() {
       expect(callTerm.arguments[1], isA<BoundVariableTerm>());
     });
   });
+
+  group('SemanticLambdaNode', () {
+    const Location defaultLocation = Location(row: 1, column: 1);
+
+    test('lowers lambda with single parameter to LambdaTerm', () {
+      const SemanticLambdaNode semantic = SemanticLambdaNode(
+        location: defaultLocation,
+        parameters: ['x'],
+        body: SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'x',
+          isLambdaParameter: true,
+        ),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LambdaTerm>());
+      final LambdaTerm lambdaTerm = term as LambdaTerm;
+      expect(lambdaTerm.parameters.length, equals(1));
+      expect(lambdaTerm.parameters[0].name, equals('x'));
+      expect(lambdaTerm.body, isA<LambdaBoundVariableTerm>());
+    });
+
+    test('lowers zero-param lambda to LambdaTerm', () {
+      const SemanticLambdaNode semantic = SemanticLambdaNode(
+        location: defaultLocation,
+        parameters: [],
+        body: SemanticNumberNode(location: defaultLocation, value: 42),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LambdaTerm>());
+      final LambdaTerm lambdaTerm = term as LambdaTerm;
+      expect(lambdaTerm.parameters, isEmpty);
+      expect(lambdaTerm.body, isA<NumberTerm>());
+    });
+
+    test('lowers multi-param lambda to LambdaTerm', () {
+      const SemanticLambdaNode semantic = SemanticLambdaNode(
+        location: defaultLocation,
+        parameters: ['x', 'y'],
+        body: SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'x',
+          isLambdaParameter: true,
+        ),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LambdaTerm>());
+      final LambdaTerm lambdaTerm = term as LambdaTerm;
+      expect(lambdaTerm.parameters.length, equals(2));
+      expect(lambdaTerm.parameters[0].name, equals('x'));
+      expect(lambdaTerm.parameters[1].name, equals('y'));
+    });
+
+    test('lambda name format includes location', () {
+      const SemanticLambdaNode semantic = SemanticLambdaNode(
+        location: Location(row: 5, column: 10),
+        parameters: ['x'],
+        body: SemanticBoundVariableNode(
+          location: Location(row: 5, column: 10),
+          name: 'x',
+          isLambdaParameter: true,
+        ),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LambdaTerm>());
+      final LambdaTerm lambdaTerm = term as LambdaTerm;
+      expect(lambdaTerm.name, equals('<lambda@5:10>'));
+    });
+
+    test('lowers nested lambda', () {
+      const SemanticLambdaNode semantic = SemanticLambdaNode(
+        location: defaultLocation,
+        parameters: ['x'],
+        body: SemanticLambdaNode(
+          location: defaultLocation,
+          parameters: ['y'],
+          body: SemanticBoundVariableNode(
+            location: defaultLocation,
+            name: 'x',
+            isLambdaParameter: true,
+          ),
+        ),
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LambdaTerm>());
+      final LambdaTerm outerLambda = term as LambdaTerm;
+      expect(outerLambda.body, isA<LambdaTerm>());
+      final LambdaTerm innerLambda = outerLambda.body as LambdaTerm;
+      expect(innerLambda.body, isA<LambdaBoundVariableTerm>());
+    });
+
+    test('lowers lambda with call in body', () {
+      final Map<String, FunctionTerm> functions = {
+        'add': const TestFunctionTerm(
+          name: 'add',
+          parameters: [Parameter.any('a'), Parameter.any('b')],
+        ),
+      };
+      const SemanticLambdaNode semantic = SemanticLambdaNode(
+        location: defaultLocation,
+        parameters: ['x', 'y'],
+        body: SemanticCallNode(
+          location: defaultLocation,
+          callee: SemanticIdentifierNode(
+            location: defaultLocation,
+            name: 'add',
+          ),
+          arguments: [
+            SemanticBoundVariableNode(
+              location: defaultLocation,
+              name: 'x',
+              isLambdaParameter: true,
+            ),
+            SemanticBoundVariableNode(
+              location: defaultLocation,
+              name: 'y',
+              isLambdaParameter: true,
+            ),
+          ],
+        ),
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LambdaTerm>());
+      final LambdaTerm lambdaTerm = term as LambdaTerm;
+      expect(lambdaTerm.body, isA<CallTerm>());
+      final CallTerm callTerm = lambdaTerm.body as CallTerm;
+      expect(callTerm.arguments[0], isA<LambdaBoundVariableTerm>());
+      expect(callTerm.arguments[1], isA<LambdaBoundVariableTerm>());
+    });
+
+    test('lowers lambda with captured function parameter', () {
+      final Map<String, FunctionTerm> functions = {
+        'add': const TestFunctionTerm(
+          name: 'add',
+          parameters: [Parameter.any('a'), Parameter.any('b')],
+        ),
+      };
+      const SemanticLambdaNode semantic = SemanticLambdaNode(
+        location: defaultLocation,
+        parameters: ['x'],
+        body: SemanticCallNode(
+          location: defaultLocation,
+          callee: SemanticIdentifierNode(
+            location: defaultLocation,
+            name: 'add',
+          ),
+          arguments: [
+            SemanticBoundVariableNode(
+              location: defaultLocation,
+              name: 'x',
+              isLambdaParameter: true,
+            ),
+            SemanticBoundVariableNode(
+              location: defaultLocation,
+              name: 'n',
+              isLambdaParameter: false,
+              isLetBinding: false,
+            ),
+          ],
+        ),
+      );
+      final Lowerer lowerer = Lowerer(functions);
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LambdaTerm>());
+      final LambdaTerm lambdaTerm = term as LambdaTerm;
+      final CallTerm callTerm = lambdaTerm.body as CallTerm;
+      expect(callTerm.arguments[0], isA<LambdaBoundVariableTerm>());
+      expect(callTerm.arguments[1], isA<BoundVariableTerm>());
+    });
+  });
+
+  group('SemanticBoundVariableNode with isLambdaParameter', () {
+    const Location defaultLocation = Location(row: 1, column: 1);
+
+    test('isLambdaParameter true produces LambdaBoundVariableTerm', () {
+      const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+        location: defaultLocation,
+        name: 'x',
+        isLambdaParameter: true,
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<LambdaBoundVariableTerm>());
+      expect((term as LambdaBoundVariableTerm).name, equals('x'));
+    });
+
+    test(
+      'isLambdaParameter takes precedence over isLetBinding',
+      () {
+        // This shouldn't happen in practice, but testing the priority
+        const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+          location: defaultLocation,
+          name: 'x',
+          isLambdaParameter: true,
+          isLetBinding: true,
+        );
+        const Lowerer lowerer = Lowerer({});
+        final Term term = lowerer.lowerTerm(semantic);
+
+        // isLambdaParameter is checked first
+        expect(term, isA<LambdaBoundVariableTerm>());
+      },
+    );
+
+    test('default flags produce BoundVariableTerm', () {
+      const SemanticBoundVariableNode semantic = SemanticBoundVariableNode(
+        location: defaultLocation,
+        name: 'x',
+      );
+      const Lowerer lowerer = Lowerer({});
+      final Term term = lowerer.lowerTerm(semantic);
+
+      expect(term, isA<BoundVariableTerm>());
+    });
+  });
 }

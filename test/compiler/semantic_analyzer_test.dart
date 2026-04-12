@@ -2583,4 +2583,206 @@ f(n) = let double = 10 in double
       }
     });
   });
+
+  group('Lambda expressions', () {
+    test('Valid zero-param lambda', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = () -> 5');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Valid single-param lambda', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (x) -> x + 1');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Valid multi-param lambda', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (x, y) -> x + y');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Duplicate lambda parameter', () {
+      expect(
+        () => getIntermediateRepresentation('f() = (x, x) -> x'),
+        throwsA(isA<DuplicatedLambdaParameterError>()),
+      );
+    });
+
+    test('Duplicate lambda parameter (three params)', () {
+      expect(
+        () => getIntermediateRepresentation('f() = (a, b, a) -> a'),
+        throwsA(isA<DuplicatedLambdaParameterError>()),
+      );
+    });
+
+    test('Shadows function parameter', () {
+      expect(
+        () => getIntermediateRepresentation('f(x) = (x) -> x'),
+        throwsA(isA<ShadowedLambdaParameterError>()),
+      );
+    });
+
+    test('Shadows let binding', () {
+      expect(
+        () => getIntermediateRepresentation('f(n) = let x = 1 in (x) -> x'),
+        throwsA(isA<ShadowedLambdaParameterError>()),
+      );
+    });
+
+    test('Shadows outer lambda parameter', () {
+      expect(
+        () => getIntermediateRepresentation('f() = (x) -> (x) -> x'),
+        throwsA(isA<ShadowedLambdaParameterError>()),
+      );
+    });
+
+    test('Let in body shadows lambda param', () {
+      expect(
+        () => getIntermediateRepresentation('f() = (x) -> let x = 5 in x'),
+        throwsA(isA<ShadowedLetBindingError>()),
+      );
+    });
+
+    test('Undefined variable in lambda body', () {
+      expect(
+        () => getIntermediateRepresentation('f() = (x) -> y'),
+        throwsA(isA<UndefinedIdentifierError>()),
+      );
+    });
+
+    test('Captures function parameter', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = (x) -> x + n');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Captures let binding', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(n) = let m = 2 in (x) -> x * m',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('isLambdaParameter set correctly', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (x) -> x');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      final SemanticLambdaNode lambdaNode =
+          function!.body as SemanticLambdaNode;
+      final SemanticBoundVariableNode bodyVar =
+          lambdaNode.body as SemanticBoundVariableNode;
+      expect(bodyVar.isLambdaParameter, isTrue);
+    });
+
+    test('Unused lambda parameter warning', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (x) -> 5');
+      expect(intermediateRepresentation.warnings.length, equals(1));
+      expect(
+        intermediateRepresentation.warnings.first,
+        isA<UnusedLambdaParameterWarning>(),
+      );
+    });
+
+    test('Two unused lambda parameters', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (x, y) -> 5');
+      expect(intermediateRepresentation.warnings.length, equals(2));
+    });
+
+    test('Outer param used in nested lambda', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (x) -> (y) -> x + y');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Lambda inside list literal', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = [(x) -> x]');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Lambda inside map literal', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = {"fn": (x) -> x}');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Lambda with function call in body', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('''
+            helper(x) = x * 2
+            f() = (x) -> helper(x)
+          ''');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Immediately invoked lambda with captured variable', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = ((x) -> x + n)(5)');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Nested lambda captures outer function parameter', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'f(multiplier) = (a) -> (b) -> multiplier * a * b',
+          );
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('Lambda parameter with same name as standard library function', () {
+      // Lambda parameter 'list' should not conflict with standard library
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (list) -> list');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+    });
+
+    test('SemanticLambdaNode has correct structure', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (a, b) -> a + b');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      final SemanticLambdaNode lambdaNode =
+          function!.body as SemanticLambdaNode;
+      expect(lambdaNode.parameters, equals(['a', 'b']));
+      expect(lambdaNode.body, isA<SemanticCallNode>());
+    });
+
+    test('Lambda location is preserved', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (x) -> x');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      final SemanticLambdaNode lambdaNode =
+          function!.body as SemanticLambdaNode;
+      expect(lambdaNode.location, isNotNull);
+    });
+
+    test('Function parameter is not lambda parameter', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f(n) = n');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      final SemanticBoundVariableNode bodyVar =
+          function!.body as SemanticBoundVariableNode;
+      expect(bodyVar.isLambdaParameter, isFalse);
+    });
+
+    test('Let binding is not lambda parameter', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = let x = 1 in x');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+      final SemanticLetNode letNode = function!.body as SemanticLetNode;
+      final SemanticBoundVariableNode bodyVar =
+          letNode.body as SemanticBoundVariableNode;
+      expect(bodyVar.isLambdaParameter, isFalse);
+      expect(bodyVar.isLetBinding, isTrue);
+    });
+  });
 }

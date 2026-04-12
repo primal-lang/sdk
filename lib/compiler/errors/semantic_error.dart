@@ -122,3 +122,25 @@ class DuplicatedLetBindingError extends SemanticError {
              : 'Duplicated let binding "$binding"',
        );
 }
+
+class DuplicatedLambdaParameterError extends SemanticError {
+  const DuplicatedLambdaParameterError({
+    required String parameter,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Duplicated lambda parameter "$parameter" in function "$inFunction"'
+             : 'Duplicated lambda parameter "$parameter"',
+       );
+}
+
+class ShadowedLambdaParameterError extends SemanticError {
+  const ShadowedLambdaParameterError({
+    required String parameter,
+    String? inFunction,
+  }) : super(
+         inFunction != null
+             ? 'Shadowed lambda parameter "$parameter" in function "$inFunction"'
+             : 'Shadowed lambda parameter "$parameter"',
+       );
+}

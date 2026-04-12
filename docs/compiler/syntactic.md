@@ -17,7 +17,11 @@ parameters         → IDENTIFIER ( "," IDENTIFIER )*
 ### Expressions
 
 ```
-expression         → ifExpression
+expression         → lambdaExpression
+lambdaExpression   → "(" parameters? ")" "->" expression | letExpression
+letExpression      → "let" bindings "in" expression | ifExpression
+bindings           → binding ( "," binding )*
+binding            → IDENTIFIER "=" expression
 ifExpression       → "if" "(" expression ")" expression "else" expression | equality
 equality           → logicOr ( ( "!=" | "==" ) logicOr )*
 logicOr            → logicAnd ( ( "|" | "||" ) logicAnd )*
@@ -58,19 +62,21 @@ States:
 
 The expression parser is a **recursive descent parser** with the following precedence levels (lowest to highest):
 
-| Precedence | Rule           | Operators / Forms                                                        |
-| ---------- | -------------- | ------------------------------------------------------------------------ |
-| 1          | `ifExpression` | `if (cond) expr else expr`                                               |
-| 2          | `equality`     | `==`, `!=`                                                               |
-| 3          | `logicOr`      | `\|`, `\|\|` (or)                                                        |
-| 4          | `logicAnd`     | `&`, `&&` (and)                                                          |
-| 5          | `comparison`   | `>`, `>=`, `<`, `<=`                                                     |
-| 6          | `term`         | `+`, `-`                                                                 |
-| 7          | `factor`       | `*`, `/`, `%`                                                            |
-| 8          | `index`        | `@` (element access)                                                     |
-| 9          | `unary`        | `!`, `-` (negation)                                                      |
-| 10         | `call`         | function application `f(args)`, chained calls `f(x)(y)`, indexing `a[i]` |
-| 11         | `primary`      | literals, identifiers, `(expr)`, `[list]`, `{map}`                       |
+| Precedence | Rule               | Operators / Forms                                                        |
+| ---------- | ------------------ | ------------------------------------------------------------------------ |
+| 1          | `lambdaExpression` | `(params) -> expr`                                                       |
+| 2          | `letExpression`    | `let x = expr in expr`                                                   |
+| 3          | `ifExpression`     | `if (cond) expr else expr`                                               |
+| 4          | `equality`         | `==`, `!=`                                                               |
+| 5          | `logicOr`          | `\|`, `\|\|` (or)                                                        |
+| 6          | `logicAnd`         | `&`, `&&` (and)                                                          |
+| 7          | `comparison`       | `>`, `>=`, `<`, `<=`                                                     |
+| 8          | `term`             | `+`, `-`                                                                 |
+| 9          | `factor`           | `*`, `/`, `%`                                                            |
+| 10         | `index`            | `@` (element access)                                                     |
+| 11         | `unary`            | `!`, `-` (negation)                                                      |
+| 12         | `call`             | function application `f(args)`, chained calls `f(x)(y)`, indexing `a[i]` |
+| 13         | `primary`          | literals, identifiers, `(expr)`, `[list]`, `{map}`                       |
 
 ## Expression Tree
 
@@ -84,6 +90,8 @@ All expressions extend `Expression` (which has a `Location`):
 - `IdentifierExpression` (extends `LiteralExpression<String>`) - a named reference (variable or function)
 - `CallExpression` - function application (callee expression + argument list)
   - Also used to represent binary and unary operators via factory constructors (`fromBinaryOperation`, `fromUnaryOperation`, `fromIf`)
+- `LambdaExpression` - anonymous function with parameter list and body expression
+- `LetExpression` - local binding expression with bindings and body
 
 Operators and `if` expressions are desugared into `CallExpression` nodes at parse time, unifying all computation as function application.
 
@@ -118,5 +126,7 @@ The semantic analyzer converts expressions directly to semantic IR nodes, preser
 | `MapExpression`        | `SemanticMapNode`                                       |
 | `IdentifierExpression` | `SemanticIdentifierNode` or `SemanticBoundVariableNode` |
 | `CallExpression`       | `SemanticCallNode`                                      |
+| `LambdaExpression`     | `SemanticLambdaNode`                                    |
+| `LetExpression`        | `SemanticLetNode`                                       |
 
 The semantic IR is then lowered to runtime terms (`BooleanTerm`, `NumberTerm`, etc.) for evaluation. See [semantic.md](semantic.md) for details.

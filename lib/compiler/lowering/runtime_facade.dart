@@ -12,6 +12,7 @@ import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
+import 'package:primal/compiler/warnings/generic_warning.dart';
 
 /// Parses a string into an [Expression].
 typedef ExpressionParser = Expression Function(String input);
@@ -223,6 +224,7 @@ class RuntimeFacade {
 
     const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
     final Lowerer lowerer = Lowerer(_runtimeInput.functions);
+    final List<GenericWarning> warnings = [];
 
     // Proper pipeline: Expression → SemanticNode → Term → evaluate
     final SemanticNode semanticNode = analyzer.checkExpression(
@@ -231,10 +233,17 @@ class RuntimeFacade {
       availableParameters: {},
       usedParameters: {},
       letBindingNames: {},
+      lambdaParameterNames: {},
+      usedLambdaParameters: {},
+      warnings: warnings,
       allSignatures: _allSignatures,
     );
 
     final Term lowered = lowerer.lowerTerm(semanticNode);
+
+    // Note: Warnings from lambda expressions in REPL are discarded here.
+    // Named function definitions emit warnings through IntermediateRepresentation.
+
     return lowered.reduce();
   }
 
@@ -278,6 +287,7 @@ class RuntimeFacade {
 
     // Perform semantic analysis on the function body
     SemanticNode body;
+    final List<GenericWarning> warnings = [];
     try {
       const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
       final Set<String> usedParameters = {};
@@ -287,6 +297,9 @@ class RuntimeFacade {
         availableParameters: definition.parameters.toSet(),
         usedParameters: usedParameters,
         letBindingNames: {},
+        lambdaParameterNames: {},
+        usedLambdaParameters: {},
+        warnings: warnings,
         allSignatures: _allSignatures,
       );
     } catch (error) {
@@ -316,6 +329,10 @@ class RuntimeFacade {
     // Update runtime state (signature was already added before semantic analysis)
     _runtimeInput.functions[name] = functionTerm;
     _userDefinedFunctions.add(name);
+
+    // Note: Warnings from REPL function definitions are discarded here.
+    // Named function definitions from files emit warnings through
+    // IntermediateRepresentation during the main compilation pipeline.
   }
 
   void _checkDuplicateParameters(String functionName, List<String> parameters) {

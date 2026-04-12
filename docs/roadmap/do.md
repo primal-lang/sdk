@@ -12,11 +12,12 @@ Primal is expression-oriented, but practical scripting still needs a readable wa
 #### Syntax
 
 ```primal
-main() = do
-  xs = [1, 2, 3, 4]
-  evens = list.filter(xs, isEven)
-  doubled = list.map(evens, double)
-  doubled
+main() =
+do
+    xs = [1, 2, 3, 4]
+    evens = list.filter(xs, isEven)
+    doubled = list.map(evens, double)
+    doubled
 end
 ```
 
@@ -24,10 +25,10 @@ Blocks should also support wildcard bindings for sequencing effectful expression
 
 ```primal
 main() = do
-  _ = console.writeLn("starting")
-  value = console.read()
-  value
-end
+            _ = console.writeLn("starting")
+            value = console.read()
+            value
+         end
 ```
 
 #### Semantics
@@ -48,9 +49,9 @@ Allow evaluating expressions in order and returning the last one:
 
 ```
 main() = do
-  console.writeLn("Enter name:")
-  name = console.read()
-  console.writeLn("Hello, " + name)
-  name
-end
+            console.writeLn("Enter name:")
+            name = console.read()
+            console.writeLn("Hello, " + name)
+            name
+         end
 ```

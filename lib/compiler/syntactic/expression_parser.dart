@@ -44,6 +44,7 @@ class ExpressionParser {
   static bool _isLet(Token t) => t is LetToken;
   static bool _isIn(Token t) => t is InToken;
   static bool _isAssign(Token t) => t is AssignToken;
+  static bool _isArrow(Token t) => t is ArrowToken;
 
   // Static predicate lists - allocated once (multi-element only)
   static final List<bool Function(Token)> _equalityPredicates = [
@@ -75,7 +76,97 @@ class ExpressionParser {
     _isDoubleAmpersand,
   ];
 
-  Expression expression() => letExpression();
+  Expression expression() => lambdaExpression();
+
+  /// Checks if the current position starts a lambda expression.
+  /// Uses lookahead only - does not consume any tokens.
+  ///
+  /// Returns the number of parameters if this is a lambda, or -1 if not.
+  /// This allows the caller to know how many identifiers to consume.
+  int _checkLambdaStart() {
+    // Must start with '('
+    if (!check(_isOpenParen)) {
+      return -1;
+    }
+
+    int offset = 1; // Skip past '('
+    int parameterCount = 0;
+
+    // Check for zero-parameter lambda: () ->
+    Token? token = iterator.peekAt(offset);
+    if (token != null && _isCloseParen(token)) {
+      // Saw '(' ')' - check for '->'
+      final Token? arrow = iterator.peekAt(offset + 1);
+      if (arrow != null && _isArrow(arrow)) {
+        return 0; // Zero-parameter lambda
+      }
+      return -1; // Just '()' without '->', not a lambda
+    }
+
+    // Check for one or more parameters: (id, id, ...) ->
+    while (true) {
+      token = iterator.peekAt(offset);
+      if (token == null) {
+        return -1; // Unexpected end
+      }
+
+      // Expect identifier
+      if (!_isIdentifier(token)) {
+        return -1; // Not an identifier, so not a lambda parameter list
+      }
+      parameterCount++;
+      offset++;
+
+      // After identifier, expect ',' or ')'
+      token = iterator.peekAt(offset);
+      if (token == null) {
+        return -1;
+      }
+
+      if (_isCloseParen(token)) {
+        // End of parameter list - check for '->'
+        final Token? arrow = iterator.peekAt(offset + 1);
+        if (arrow != null && _isArrow(arrow)) {
+          return parameterCount;
+        }
+        return -1; // ')' not followed by '->', not a lambda
+      } else if (_isComma(token)) {
+        offset++; // Skip comma, continue to next parameter
+      } else {
+        return -1; // Unexpected token in parameter list
+      }
+    }
+  }
+
+  Expression lambdaExpression() {
+    final int parameterCount = _checkLambdaStart();
+
+    if (parameterCount >= 0) {
+      final Token openParen = advance(); // Consume '('
+      final List<String> parameters = [];
+
+      if (parameterCount > 0) {
+        // Consume comma-separated identifiers
+        do {
+          final Token identifier = consume(_isIdentifier, 'identifier');
+          parameters.add(identifier.value as String);
+        } while (matchSingle(_isComma));
+      }
+
+      consume(_isCloseParen, ')');
+      consume(_isArrow, '->');
+      final Expression body =
+          expression(); // Recursive: lambda body can contain lambdas
+
+      return LambdaExpression(
+        location: openParen.location,
+        parameters: parameters,
+        body: body,
+      );
+    } else {
+      return letExpression();
+    }
+  }
 
   Expression letExpression() {
     if (matchSingle(_isLet)) {

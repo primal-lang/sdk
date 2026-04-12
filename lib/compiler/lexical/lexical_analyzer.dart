@@ -561,7 +561,10 @@ class MinusState extends State<Character, Lexeme> {
 
   @override
   State process(Character input) {
-    if (input.value.isOperatorDelimiter) {
+    if (input.value == '>') {
+      // Consume '>' and emit ArrowToken for '->'
+      return ResultState(iterator, ArrowToken(output.add(input.value)));
+    } else if (input.value.isOperatorDelimiter) {
       iterator.back();
       return ResultState(iterator, MinusToken(output));
     } else {

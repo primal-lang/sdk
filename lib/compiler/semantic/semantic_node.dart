@@ -108,11 +108,13 @@ class SemanticIdentifierNode extends SemanticNode {
 class SemanticBoundVariableNode extends SemanticNode {
   final String name;
   final bool isLetBinding;
+  final bool isLambdaParameter;
 
   const SemanticBoundVariableNode({
     required super.location,
     required this.name,
     this.isLetBinding = false,
+    this.isLambdaParameter = false,
   });
 
   @override
@@ -166,4 +168,19 @@ class SemanticLetNode extends SemanticNode {
     final String bindingsString = bindings.join(', ');
     return 'let $bindingsString in $body';
   }
+}
+
+/// A lambda expression with parameters and body.
+class SemanticLambdaNode extends SemanticNode {
+  final List<String> parameters;
+  final SemanticNode body;
+
+  const SemanticLambdaNode({
+    required super.location,
+    required this.parameters,
+    required this.body,
+  });
+
+  @override
+  String toString() => '(${parameters.join(', ')}) -> $body';
 }

@@ -688,6 +688,79 @@ void main() {
       expect(iterator.peek, 2);
     });
   });
+
+  group('peekAt', () {
+    test('peekAt(0) same as peek', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      expect(iterator.peekAt(0), equals(iterator.peek));
+      expect(iterator.peekAt(0), equals(1));
+    });
+
+    test('peekAt(1) looks ahead by one', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      expect(iterator.peekAt(1), equals(2));
+    });
+
+    test('peekAt(2) looks ahead by two', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      expect(iterator.peekAt(2), equals(3));
+    });
+
+    test('peekAt beyond end returns null', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      expect(iterator.peekAt(3), isNull);
+      expect(iterator.peekAt(100), isNull);
+    });
+
+    test('peekAt from middle position', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      iterator.next; // advance to index 1
+      expect(iterator.peekAt(0), equals(2)); // current position
+      expect(iterator.peekAt(1), equals(3)); // one ahead
+      expect(iterator.peekAt(2), isNull); // beyond end
+    });
+
+    test('peekAt does not consume tokens', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      final int? peekedAt1 = iterator.peekAt(1);
+      expect(peekedAt1, equals(2));
+      expect(iterator.peek, equals(1)); // still at beginning
+      expect(iterator.isAtEnd, isFalse);
+    });
+
+    test('peekAt with negative offset can access previous elements', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3]);
+      iterator.next; // now at index 1
+      // peekAt(-1) with _index=1 computes targetIndex=0, which is valid
+      // This allows looking backwards from the current position
+      expect(iterator.peekAt(-1), equals(1)); // _index=1 + (-1) = 0
+    });
+
+    test('peekAt on empty list returns null', () {
+      final ListIterator<int> iterator = ListIterator([]);
+      expect(iterator.peekAt(0), isNull);
+      expect(iterator.peekAt(1), isNull);
+    });
+
+    test('peekAt after advancing to end returns null', () {
+      final ListIterator<int> iterator = ListIterator([1, 2]);
+      iterator.next;
+      iterator.next;
+      expect(iterator.isAtEnd, isTrue);
+      expect(iterator.peekAt(0), isNull);
+    });
+
+    test('multiple peekAt calls return consistent values', () {
+      final ListIterator<int> iterator = ListIterator([1, 2, 3, 4, 5]);
+      for (int i = 0; i < 5; i++) {
+        expect(iterator.peekAt(i), equals(i + 1));
+      }
+      // Calling again should return the same values
+      for (int i = 0; i < 5; i++) {
+        expect(iterator.peekAt(i), equals(i + 1));
+      }
+    });
+  });
 }
 
 class _TestObject {

@@ -37,7 +37,13 @@ RuntimeFacade (evaluation entry point)
    - Indirect calls (e.g., `f()(x)`) are validated at runtime.
 6. **Literal validation** - rejects attempts to call non-callable literals (numbers, booleans, strings, lists, maps) with `NotCallableError`, or index non-indexable literals (numbers, booleans) with `NotIndexableError`.
 7. **Unused parameter warnings** - parameters that are never referenced in the function body produce an `UnusedParameterWarning`.
-8. **Let expression validation** - for `let name = value in body`:
+8. **Lambda expression validation** - for `(params) -> body`:
+   - Reports `DuplicatedLambdaParameterError` if a parameter name appears more than once.
+   - Reports `ShadowedLambdaParameterError` if a parameter shadows a function parameter, let binding, or outer lambda parameter.
+   - Lambda parameters are added to the available scope when checking the body.
+   - Reports `UnusedLambdaParameterWarning` for parameters not used in the body.
+   - Lambda parameters may shadow function names (both custom and standard library).
+9. **Let expression validation** - for `let name = value in body`:
    - Reports `ShadowedLetBindingError` if a binding name matches a function parameter.
    - Reports `DuplicatedLetBindingError` if binding names are repeated within the same let expression.
    - Bindings are processed sequentially, so later bindings can reference earlier ones.
@@ -53,21 +59,22 @@ The semantic IR is a bound AST that preserves source information lost in runtime
 
 **File**: `lib/compiler/semantic/semantic_node.dart`
 
-| Node Type                   | Description                                                                             |
-| --------------------------- | --------------------------------------------------------------------------------------- |
-| `SemanticNode`              | Abstract base class for all semantic IR nodes; holds a `Location`                       |
-| `SemanticLiteralNode<T>`    | Abstract base class for literal nodes; extends `SemanticNode` with a `T value`          |
-| `SemanticBooleanNode`       | Boolean literal (`SemanticLiteralNode<bool>`)                                           |
-| `SemanticNumberNode`        | Numeric literal (`SemanticLiteralNode<num>`)                                            |
-| `SemanticStringNode`        | String literal (`SemanticLiteralNode<String>`)                                          |
-| `SemanticListNode`          | List literal (`SemanticLiteralNode<List<SemanticNode>>`)                                |
-| `SemanticMapEntryNode`      | Key-value pair holding two `SemanticNode` fields (`key`, `value`)                       |
-| `SemanticMapNode`           | Map literal (`SemanticLiteralNode<List<SemanticMapEntryNode>>`)                         |
-| `SemanticIdentifierNode`    | Function reference with `name` and optional resolved `FunctionSignature`                |
-| `SemanticBoundVariableNode` | Parameter or let binding reference with `name` and `isLetBinding` flag                  |
-| `SemanticCallNode`          | Function call with `callee` (`SemanticNode`) and `arguments`                            |
-| `SemanticLetBindingNode`    | Let binding with `name` (String) and `value` (SemanticNode)                             |
-| `SemanticLetNode`           | Let expression with `bindings` (List<SemanticLetBindingNode>) and `body` (SemanticNode) |
+| Node Type                   | Description                                                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `SemanticNode`              | Abstract base class for all semantic IR nodes; holds a `Location`                                                |
+| `SemanticLiteralNode<T>`    | Abstract base class for literal nodes; extends `SemanticNode` with a `T value`                                   |
+| `SemanticBooleanNode`       | Boolean literal (`SemanticLiteralNode<bool>`)                                                                    |
+| `SemanticNumberNode`        | Numeric literal (`SemanticLiteralNode<num>`)                                                                     |
+| `SemanticStringNode`        | String literal (`SemanticLiteralNode<String>`)                                                                   |
+| `SemanticListNode`          | List literal (`SemanticLiteralNode<List<SemanticNode>>`)                                                         |
+| `SemanticMapEntryNode`      | Key-value pair holding two `SemanticNode` fields (`key`, `value`)                                                |
+| `SemanticMapNode`           | Map literal (`SemanticLiteralNode<List<SemanticMapEntryNode>>`)                                                  |
+| `SemanticIdentifierNode`    | Function reference with `name` and optional resolved `FunctionSignature`                                         |
+| `SemanticBoundVariableNode` | Parameter, let binding, or lambda parameter reference with `name`, `isLetBinding`, and `isLambdaParameter` flags |
+| `SemanticLambdaNode`        | Lambda expression with `parameters` (List<String>) and `body` (SemanticNode)                                     |
+| `SemanticCallNode`          | Function call with `callee` (`SemanticNode`) and `arguments`                                                     |
+| `SemanticLetBindingNode`    | Let binding with `name` (String) and `value` (SemanticNode)                                                      |
+| `SemanticLetNode`           | Let expression with `bindings` (List<SemanticLetBindingNode>) and `body` (SemanticNode)                          |
 
 ### SemanticFunction
 
@@ -131,18 +138,20 @@ The `functions` map is passed at construction and used to resolve `SemanticIdent
 
 This pass strips source locations and produces the minimal runtime representation needed for the substitution-based evaluation model. The lowerer operates only on semantic types (`SemanticNode`, `SemanticFunction`) and produces runtime types (`Term`, `CustomFunctionTerm`), maintaining clean phase separation.
 
-| Semantic Node                                     | Runtime Term            |
-| ------------------------------------------------- | ----------------------- |
-| `SemanticBooleanNode`                             | `BooleanTerm`           |
-| `SemanticNumberNode`                              | `NumberTerm`            |
-| `SemanticStringNode`                              | `StringTerm`            |
-| `SemanticListNode`                                | `ListTerm`              |
-| `SemanticMapNode`                                 | `MapTerm`               |
-| `SemanticIdentifierNode`                          | `FunctionReferenceTerm` |
-| `SemanticBoundVariableNode` (isLetBinding: false) | `BoundVariableTerm`     |
-| `SemanticBoundVariableNode` (isLetBinding: true)  | `LetBoundVariableTerm`  |
-| `SemanticCallNode`                                | `CallTerm`              |
-| `SemanticLetNode`                                 | `LetTerm`               |
+| Semantic Node                                         | Runtime Term              |
+| ----------------------------------------------------- | ------------------------- |
+| `SemanticBooleanNode`                                 | `BooleanTerm`             |
+| `SemanticNumberNode`                                  | `NumberTerm`              |
+| `SemanticStringNode`                                  | `StringTerm`              |
+| `SemanticListNode`                                    | `ListTerm`                |
+| `SemanticMapNode`                                     | `MapTerm`                 |
+| `SemanticIdentifierNode`                              | `FunctionReferenceTerm`   |
+| `SemanticBoundVariableNode` (isLambdaParameter: true) | `LambdaBoundVariableTerm` |
+| `SemanticBoundVariableNode` (isLetBinding: true)      | `LetBoundVariableTerm`    |
+| `SemanticBoundVariableNode` (both false)              | `BoundVariableTerm`       |
+| `SemanticCallNode`                                    | `CallTerm`                |
+| `SemanticLetNode`                                     | `LetTerm`                 |
+| `SemanticLambdaNode`                                  | `LambdaTerm`              |
 
 ## RuntimeInputBuilder
 

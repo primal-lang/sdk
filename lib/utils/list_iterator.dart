@@ -26,6 +26,20 @@ class ListIterator<T> {
     }
   }
 
+  /// Peeks at the element [offset] positions ahead without consuming.
+  /// Returns null if the offset is beyond the end of the list.
+  ///
+  /// Unlike [peek] which only sees the current position, this method
+  /// enables multi-token lookahead for disambiguation (e.g., lambda vs
+  /// grouped expression).
+  T? peekAt(int offset) {
+    final int targetIndex = _index + offset;
+    if (targetIndex < _list.length) {
+      return _list[targetIndex];
+    }
+    return null;
+  }
+
   T get next {
     if (hasNext) {
       return _list[_index++];

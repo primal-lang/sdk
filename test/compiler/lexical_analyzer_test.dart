@@ -844,6 +844,168 @@ void main() {
       ]);
     });
 
+    test('Arrow token recognized', () {
+      final List<Token> tokens = getTokens('->');
+      checkTokens(tokens, [
+        ArrowToken(
+          const Lexeme(
+            value: '->',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Minus still works after adding arrow', () {
+      final List<Token> tokens = getTokens('- ');
+      checkTokens(tokens, [
+        MinusToken(
+          const Lexeme(
+            value: '-',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Arrow after identifier', () {
+      final List<Token> tokens = getTokens('x->');
+      checkTokens(tokens, [
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        ArrowToken(
+          const Lexeme(
+            value: '->',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Negative number still works', () {
+      final List<Token> tokens = getTokens('-5');
+      checkTokens(tokens, [
+        MinusToken(
+          const Lexeme(
+            value: '-',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '5',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Arrow in lambda expression', () {
+      final List<Token> tokens = getTokens('(x) -> x');
+      checkTokens(tokens, [
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
+        ArrowToken(
+          const Lexeme(
+            value: '->',
+            location: Location(
+              row: 1,
+              column: 5,
+            ),
+          ),
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 8,
+            ),
+          ),
+        ),
+      ]);
+    });
+
+    test('Arrow with no space before', () {
+      final List<Token> tokens = getTokens('x->5');
+      checkTokens(tokens, [
+        IdentifierToken(
+          const Lexeme(
+            value: 'x',
+            location: Location(
+              row: 1,
+              column: 1,
+            ),
+          ),
+        ),
+        ArrowToken(
+          const Lexeme(
+            value: '->',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '5',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
+          ),
+        ),
+      ]);
+    });
+
     test('At token', () {
       final List<Token> tokens = getTokens('@');
       checkTokens(tokens, [

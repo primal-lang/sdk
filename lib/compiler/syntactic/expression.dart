@@ -153,3 +153,17 @@ class LetExpression extends Expression {
     return 'let $bindingsString in $body';
   }
 }
+
+class LambdaExpression extends Expression {
+  final List<String> parameters;
+  final Expression body;
+
+  const LambdaExpression({
+    required super.location,
+    required this.parameters,
+    required this.body,
+  });
+
+  @override
+  String toString() => '(${parameters.join(', ')}) -> $body';
+}

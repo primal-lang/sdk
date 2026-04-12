@@ -71,6 +71,7 @@ Collection terms extend `ValueTerm`, override `substitute` to recurse into their
 - `FunctionReferenceTerm(name, functions)` - holds a function name and the functions map; `reduce()` returns the referenced `FunctionTerm`. Throws `NotFoundInScopeError` if the name is not in the map.
 - `BoundVariableTerm(name)` - replaced during substitution via bindings. Calling `native()` throws a `StateError` since bound variables must be substituted before evaluation.
 - `LetBoundVariableTerm(name)` - represents a reference to a let binding; replaced during `LetTerm` reduction via partial substitution. Unlike `BoundVariableTerm`, it is not affected by function parameter bindings.
+- `LambdaBoundVariableTerm(name)` - represents a reference to a lambda parameter; replaced during `LambdaTerm.apply()` via partial substitution. Returns itself when the name is not found in bindings, allowing outer scope substitution to pass through without affecting lambda parameter references.
 
 ### Call Term
 
@@ -115,6 +116,7 @@ Collection terms extend `ValueTerm`, override `substitute` to recurse into their
 - `CustomFunctionTerm` - user-defined; holds a `term` (the function body). Overrides `apply()` to increment/decrement recursion depth, eagerly evaluate all arguments before binding (call-by-value), then substitute and reduce. Overrides `substitute(Bindings bindings)` to substitute into the body term.
 - `NativeFunctionTerm` - built-in; overrides `substitute(Bindings bindings)` to resolve each parameter from the bindings and pass the resulting argument list to the abstract `term(List<Term> arguments)` method, which returns a concrete evaluation term.
 - `NativeFunctionTermWithArguments` - holds pre-resolved `arguments`; subclasses override `reduce()` to implement the actual logic.
+- `LambdaTerm` - anonymous function created from a lambda expression; holds `body` (the lambda body term). Overrides `substitute(Bindings bindings)` to propagate substitution through the body (preserving the lambda wrapper for closures). Overrides `apply()` to substitute directly into the body and reduce, enabling proper closure semantics. Lambda parameters are represented as `LambdaBoundVariableTerm` references that survive outer substitution until the lambda is invoked.
 
 ### Native Function Implementation Pattern
 

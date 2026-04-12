@@ -292,6 +292,35 @@ class LetBoundVariableTerm extends Term {
       throw StateError('LetBoundVariableTerm "$name" was not substituted');
 }
 
+/// A reference to a lambda parameter within a lambda body.
+///
+/// Unlike [BoundVariableTerm] (for function parameters), this term supports
+/// partial substitution—it returns itself when the name is not found in
+/// bindings, allowing outer scope substitution to pass through without
+/// affecting lambda parameter references.
+class LambdaBoundVariableTerm extends Term {
+  final String name;
+
+  const LambdaBoundVariableTerm(this.name);
+
+  @override
+  Term substitute(Bindings bindings) =>
+      bindings.data.containsKey(name) ? bindings.data[name]! : this;
+
+  @override
+  Term reduce() => this; // Cannot reduce further; must be substituted first
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  String toString() => name;
+
+  @override
+  dynamic native() =>
+      throw StateError('LambdaBoundVariableTerm "$name" was not substituted');
+}
+
 /// A let expression that introduces local variable bindings.
 ///
 /// Bindings are evaluated sequentially in declaration order (call-by-value).
@@ -509,6 +538,89 @@ class CustomFunctionTerm extends FunctionTerm {
 
   @override
   Term substitute(Bindings bindings) => term.substitute(bindings);
+}
+
+/// A lambda function term (anonymous inline function).
+///
+/// Lambdas are first-class values that capture their definition environment.
+/// They support closures—captured variables from outer scope are substituted
+/// into the body at creation time, while lambda parameters remain as
+/// [LambdaBoundVariableTerm] references until the lambda is applied.
+class LambdaTerm extends FunctionTerm {
+  final Term body;
+
+  const LambdaTerm({
+    required super.name,
+    required super.parameters,
+    required this.body,
+  });
+
+  @override
+  Term substitute(Bindings bindings) {
+    // Propagate substitution through the body.
+    // LambdaBoundVariableTerm references survive (partial substitution).
+    // Other bound variables (captured from outer scope) get substituted.
+    return LambdaTerm(
+      name: name,
+      parameters: parameters,
+      body: body.substitute(bindings),
+    );
+  }
+
+  @override
+  Term reduce() => this; // Lambdas are values; they don't reduce further
+
+  // Why we override apply() instead of using FunctionTerm.apply():
+  //
+  // FunctionTerm.apply() uses: substitute(bindings).reduce()
+  // CustomFunctionTerm.substitute() returns: term.substitute(bindings) [unwrapped body]
+  // LambdaTerm.substitute() returns: LambdaTerm(..., body.substitute(bindings)) [preserves wrapper]
+  //
+  // If we used the base class pattern:
+  //   1. substitute(bindings) → returns a LambdaTerm (wrapper preserved)
+  //   2. reduce() on LambdaTerm → returns this (lambdas are values)
+  //   3. Result: a LambdaTerm, NOT the evaluated body!
+  //
+  // So we must substitute directly into the body and reduce that result.
+  // This is analogous to CustomFunctionTerm.apply() which also overrides
+  // to add call-by-value argument evaluation.
+  @override
+  Term apply(List<Term> arguments) {
+    if (arguments.length != parameters.length) {
+      throw InvalidArgumentCountError(
+        function: name,
+        expected: parameters.length,
+        actual: arguments.length,
+      );
+    }
+    FunctionTerm.incrementDepth();
+    try {
+      // Evaluate arguments (call-by-value)
+      final List<Term> evaluatedArguments = arguments
+          .map((argument) => argument.reduce())
+          .toList();
+
+      // Create bindings and substitute into body
+      final Bindings bindings = Bindings.from(
+        parameters: parameters,
+        arguments: evaluatedArguments,
+      );
+      final Term substituted = body.substitute(bindings);
+      return substituted.reduce();
+    } finally {
+      FunctionTerm.decrementDepth();
+    }
+  }
+
+  @override
+  dynamic native() => toString();
+
+  // Override to print parameter names only (no types).
+  // Lambda parameters are always untyped in source, so showing ": any" is noise.
+  // Named functions print "f(x: Number)" but lambdas print "<lambda@1:1>(x)".
+  @override
+  String toString() =>
+      '$name(${parameters.map((parameter) => parameter.name).join(', ')})';
 }
 
 abstract class NativeFunctionTerm extends FunctionTerm {

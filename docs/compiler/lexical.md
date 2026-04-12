@@ -151,6 +151,7 @@ Several states peek at the next character to distinguish single-character tokens
 | `BangState`      | `=`           | `NotEqualToken` (`!=`)              | `BangToken` (`!`)              |
 | `PipeState`      | `\|`          | `DoublePipeToken` (`\|\|`, lazy)    | `PipeToken` (`\|`, strict)     |
 | `AmpersandState` | `&`           | `DoubleAmpersandToken` (`&&`, lazy) | `AmpersandToken` (`&`, strict) |
+| `MinusState`     | `>`           | `ArrowToken` (`->`)                 | `MinusToken` (`-`)             |
 
 In all cases the lookahead pattern applies: if the next character does not form a compound token, `iterator.back()` un-consumes it.
 
@@ -231,11 +232,11 @@ All tokens extend `Token<T>` and carry a typed value plus location:
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
 | Literals    | `StringToken`, `NumberToken`, `BooleanToken`                                                                                                                                                                                                                             | `String`, `num`, `bool` |
 | Identifiers | `IdentifierToken`                                                                                                                                                                                                                                                        | `String`                |
-| Keywords    | `IfToken`, `ElseToken`                                                                                                                                                                                                                                                   | `String`                |
+| Keywords    | `IfToken`, `ElseToken`, `LetToken`, `InToken`                                                                                                                                                                                                                            | `String`                |
 | Assignment  | `AssignToken` (`=`)                                                                                                                                                                                                                                                      | `String`                |
 | Binary ops  | `PlusToken`, `MinusToken`, `AsteriskToken`, `ForwardSlashToken`, `PercentToken`, `PipeToken`, `DoublePipeToken`, `AmpersandToken`, `DoubleAmpersandToken`, `EqualToken`, `NotEqualToken`, `GreaterThanToken`, `GreaterOrEqualToken`, `LessThanToken`, `LessOrEqualToken` | `String`                |
 | Unary ops   | `BangToken`                                                                                                                                                                                                                                                              | `String`                |
-| Symbols     | `AtToken` (`@`)                                                                                                                                                                                                                                                          | `String`                |
+| Symbols     | `AtToken` (`@`), `ArrowToken` (`->`)                                                                                                                                                                                                                                     | `String`                |
 | Delimiters  | `OpenParenthesisToken`, `CloseParenthesisToken`, `OpenBracketToken`, `CloseBracketToken`, `OpenBracesToken`, `CloseBracesToken`, `CommaToken`, `ColonToken`                                                                                                              | `String`                |
 
 `NumberToken` parses the lexeme string to `num` and `BooleanToken` parses to `bool` at construction time. All other token types store the raw lexeme string.

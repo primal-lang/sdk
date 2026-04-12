@@ -98,6 +98,14 @@ class MinusToken extends Token<String> {
       );
 }
 
+class ArrowToken extends Token<String> {
+  ArrowToken(Lexeme lexeme)
+    : super(
+        value: lexeme.value,
+        location: lexeme.location,
+      );
+}
+
 class PlusToken extends Token<String> {
   PlusToken(Lexeme lexeme)
     : super(

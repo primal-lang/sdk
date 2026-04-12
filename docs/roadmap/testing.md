@@ -1,19 +1,28 @@
 # Testing Assertions
 
-This document reviews the current testing-function draft against the existing
-Primal language and compiler, then proposes a revised specification.
+This document reviews the testing-function draft against the existing Primal
+language and compiler, then proposes a revised specification for a focused
+assertion library.
 
 ## 1. Short Summary Of Feature Intent
 
-The original draft proposes standard-library helpers for writing assertions
+The feature should provide standard-library helpers for writing assertions
 directly in Primal code so that test expectations can be expressed in the
 language itself.
 
-The main valid need is an assertion mechanism, especially one that can assert
-that an expression throws. Most of the other proposed helpers overlap heavily
-with functionality that already exists in the language.
+The library should include these assertion helpers:
 
-## 2. Pros, Cons, And Technical Inconsistencies
+- `assert.throws`
+- `assert.equal`
+- `assert.true`
+- `assert.false`
+
+`assert.throws` is the most implementation-sensitive helper because it must
+intercept runtime failures under Primal's eager call model. The other helpers
+still provide value because they make tests easier to read and standardize how
+assertion failures are represented.
+
+## 2. Pros, Costs, And Technical Considerations
 
 ### Pros
 
@@ -24,115 +33,88 @@ with functionality that already exists in the language.
 - A library-based design fits the existing compiler pipeline
   cleanly, because ordinary function calls already pass through lexical,
   syntactic, semantic, lowering, and runtime evaluation stages.
+- Convenience helpers can improve test readability even when they mirror
+  existing equality or boolean checks.
+- A shared failure representation makes assertion behavior predictable across
+  all helpers.
 
-### Technical Inconsistencies In The Draft
+### Costs
 
-- The draft does not define what successful assertions return.
-- The draft does not define how failed assertions are represented at
-  runtime.
-- The draft does not define whether assertion messages are evaluated
-  eagerly or lazily.
-- The draft does not define whether `assert.throws` catches all
-  runtime errors or only a narrower subset.
-- The draft does not define map semantics for `assert.contains`.
-- `assert.closeTo` is underspecified for a dynamically typed
-  language because it does not define number-only behavior, NaN or infinity
-  behavior, or failure semantics when given non-numeric values.
+- Several helpers overlap with functionality that already exists in the
+  language.
+- The standard library surface becomes larger than the bare minimum.
+- Lazy message evaluation means these helpers are not trivial wrappers over
+  existing functions under Primal's eager call model.
 
-## 3. Assumptions And Specification Gaps
+### Technical Considerations
+
+- The specification must define one common success return value.
+- The specification must define one common assertion-failure runtime
+  representation.
+- The specification must define whether `assert.throws` catches every runtime
+  error that `try` catches.
+
+## 3. Assumptions And Scope
 
 ### Confirmed Observations
 
 - Primal has first-class functions.
-- Primal does not currently expose lambda or anonymous-function syntax.
 - `if` and `try` are special native functions with lazy evaluation behavior.
 - Runtime type validation is performed by native functions at evaluation time.
+- Existing language and library behavior already provide the underlying
+  predicates needed by these helpers, especially ordinary equality and boolean
+  expressions.
 
-### Inference
+### Scope Of This Proposal
 
-- If Primal gains a language-level assertion library, it should be minimal and
-  orthogonal rather than mirroring every convenience helper found in external
-  test frameworks.
-
-### Gaps In The Original Draft
-
-- It does not say whether this is only an assertion library or part of a wider
-  test framework.
-- It does not specify assertion-failure runtime behavior.
-- It does not specify success return values.
-- It does not specify lazy versus eager evaluation of messages.
-- It does not specify exact interaction with existing runtime errors.
-- It does not specify whether invalid helper usage should become assertion
-  failures or ordinary runtime argument errors.
+- This is an assertion library specification, not a full test-runner design.
+- Assertion helpers should be available as standard-library functions.
+- No new syntax is added.
+- Some helpers intentionally mirror existing language operations in order to
+  make test code clearer and more consistent.
 
 ## 4. Revised Specification
 
 ### Final Scope
 
-Add only these two standard-library functions:
+Add these standard-library functions:
 
 ```primal
-assert.that(condition, message)
 assert.throws(expression, message)
+assert.equal(actual, expected, message)
+assert.true(condition, message)
+assert.false(condition, message)
 ```
-
-Do not add these as built-ins:
-
-- `assert.equal`
-- `assert.true`
-- `assert.false`
-- `assert.match`
-- `assert.contains`
-- `assert.closeTo`
-
-Those cases should be written using existing Primal expressions.
 
 ### Why This Revision Is Better
 
-- It keeps the feature minimal.
-- It avoids duplicating existing equality, regex, and containment APIs.
-- It preserves the current language preference for composition over large
-  convenience surfaces.
-- It isolates the genuinely new capability: asserting that an expression throws
-  under Primal's eager call model.
+- It preserves the goal of keeping assertions inside the language rather than
+  adding assertion syntax.
+- It keeps the assertion surface small while still covering the main testing
+  needs.
+- It standardizes how assertion failures are represented and reported.
+- It keeps the implementation inside the existing compiler and runtime model.
 
 ### Informal Pseudo-Grammar
 
 No new syntax is added.
 
 ```ebnf
-assert_call ::= "assert.that" "(" expression "," expression ")"
-              | "assert.throws" "(" expression "," expression ")"
+assert_call ::= "assert.throws" "(" expression "," expression ")"
+              | "assert.equal" "(" expression "," expression "," expression ")"
+              | "assert.true" "(" expression "," expression ")"
+              | "assert.false" "(" expression "," expression ")"
 ```
 
 These are ordinary function calls with ordinary identifiers.
 
-### Semantic Rules
-
-#### `assert.that(condition, message)`
-
-- Evaluate `condition`.
-- If `condition` reduces to `true`, return `true`.
-- If `condition` reduces to `false`, evaluate `message`.
-- `message` must reduce to a string.
-- Raise an assertion failure with that message.
-
-#### `assert.throws(expression, message)`
-
-- Evaluate `expression`.
-- If evaluating `expression` throws at runtime, return `true`.
-- If evaluating `expression` completes normally, evaluate `message`.
-- `message` must reduce to a string.
-- Raise an assertion failure with that message.
-
-### Runtime And Type Behavior
+### Common Assertion Behavior
 
 - Success return value: `true`
-- `assert.that` requires the evaluated first argument to be a boolean.
-- `assert.throws` accepts any first argument expression.
-- In both functions, `message` is lazy and is evaluated only on failure.
-- Failed assertions should reuse the existing custom-error mechanism rather than
-  requiring a separate assertion-specific runtime error type.
+- In every helper, `message` is lazy and is evaluated only on failure.
+- On a failing path, `message` must reduce to a string.
+- Failed assertions should reuse the existing custom-error mechanism rather
+  than introducing a separate assertion-specific runtime error type.
 - The recommended failure representation is:
 
 ```primal
@@ -142,17 +124,74 @@ error.throw("assertion", message)
 This means a failed assertion is represented as a `CustomError` whose code is
 `"assertion"` and whose message is the supplied string.
 
+If evaluating the predicate or helper-specific operation itself throws before
+the assertion outcome is known, that error should propagate unchanged unless
+the helper explicitly defines that thrown error as success, as `assert.throws`
+does.
+
+### Semantic Rules
+
+#### `assert.throws(expression, message)`
+
+- Evaluate `expression` under runtime error interception.
+- If evaluating `expression` throws any runtime error that `try` would catch,
+  return `true`.
+- If evaluating `expression` completes normally, evaluate `message`.
+- `message` must reduce to a string.
+- Raise an assertion failure with that message.
+
+#### `assert.equal(actual, expected, message)`
+
+- Evaluate `actual`.
+- Evaluate `expected`.
+- Compare them using Primal's ordinary equality semantics, equivalent to `==`
+  or `comp.eq`.
+- If the comparison reduces to `true`, return `true`.
+- If the comparison reduces to `false`, evaluate `message`.
+- `message` must reduce to a string.
+- Raise an assertion failure with that message.
+
+#### `assert.true(condition, message)`
+
+- Evaluate `condition`.
+- `condition` must reduce to a boolean.
+- If `condition` reduces to `true`, return `true`.
+- If `condition` reduces to `false`, evaluate `message`.
+- `message` must reduce to a string.
+- Raise an assertion failure with that message.
+
+This is a readability helper for asserting truth directly.
+
+#### `assert.false(condition, message)`
+
+- Evaluate `condition`.
+- `condition` must reduce to a boolean.
+- If `condition` reduces to `false`, return `true`.
+- If `condition` reduces to `true`, evaluate `message`.
+- `message` must reduce to a string.
+- Raise an assertion failure with that message.
+
+### Runtime And Type Behavior
+
+- Success return value: `true`
+- All assertion helpers use lazy message evaluation.
+- `assert.true` and `assert.false` require a boolean condition.
+- `assert.equal` follows the same runtime type rules as ordinary equality.
+- `assert.throws` catches any runtime error that `try` would catch.
+
 ### Error Conditions
 
-- `assert.that` with a non-boolean condition:
+- `assert.true` with a non-boolean condition:
   - `InvalidArgumentTypesError`
-- `assert.that` with a failing condition and non-string message:
+- `assert.false` with a non-boolean condition:
   - `InvalidArgumentTypesError`
+- Any assertion helper with a failing condition and non-string message:
+  - `InvalidArgumentTypesError`
+- `assert.equal` with arguments rejected by ordinary equality:
+  - propagate the underlying runtime error unchanged
 - `assert.throws` with a non-throwing expression:
   - assertion failure
-- `assert.throws` with a non-string message on the failing path:
-  - `InvalidArgumentTypesError`
-- Errors from nested expressions such as invalid regex patterns:
+- Errors from nested expressions:
   - propagate unchanged unless they are the error being intentionally caught by
     `assert.throws`
 
@@ -171,46 +210,40 @@ This means a failed assertion is represented as a `CustomError` whose code is
 
 #### Semantic Analysis
 
-- Add two standard-library signatures
+- Add four standard-library signatures
 - Preserve ordinary arity checking and function-resolution behavior
 
 #### Lowering
 
 - No structural lowering changes required
-- Both assertions lower as ordinary calls to standard-library functions
+- All assertions lower as ordinary calls to standard-library functions
 
 #### Runtime Evaluation
 
-- `assert.that` must be implemented as a native function
-- `assert.throws` must be implemented as a lazy native function
-- `assert.throws` cannot be modeled correctly as an eager custom function
+- All assertion helpers must be implemented as native functions or an
+  equivalent runtime mechanism that preserves lazy message evaluation.
+- `assert.throws` must additionally evaluate its first argument under runtime
+  error interception.
+- These helpers cannot be modeled correctly as ordinary eager custom functions
+  if lazy failure messages are required.
 
 ### Performance Considerations
 
-- Runtime overhead is low for `assert.that`
+- Runtime overhead is low for `assert.equal`, `assert.true`, and
+  `assert.false`.
 - Runtime overhead is low to medium for `assert.throws` because it requires
-  evaluation under error interception
-- Avoiding redundant assertion wrappers keeps the standard library smaller and
-  reduces documentation and maintenance cost
+  evaluation under error interception.
 
 ## 5. Examples
 
 ### Valid Examples
 
 ```primal
-assert.that(1 + 1 == 2, "math failed")
+assert.equal(1 + 1, 2, "math failed")
 ```
 
 ```primal
-assert.that(str.match("hello123", "[a-z]+[0-9]+"), "pattern mismatch")
-```
-
-```primal
-assert.that(list.contains([1, 2, 3], 2), "missing element")
-```
-
-```primal
-assert.that(num.abs(actual - expected) <= delta, "not close enough")
+assert.true(str.match("hello123", "[a-z]+[0-9]+"), "pattern mismatch")
 ```
 
 ```primal
@@ -218,13 +251,13 @@ assert.throws(to.number("not a number"), "expected parsing to fail")
 ```
 
 ```primal
-assert.that(true, error.throw(-1, "message should not evaluate"))
+assert.equal(true, true, error.throw(-1, "message should not evaluate"))
 ```
 
 ### Invalid Examples With Expected Errors
 
 ```primal
-assert.that(1, "expected boolean")
+assert.true(1, "expected boolean")
 ```
 
 Expected error:
@@ -234,7 +267,17 @@ InvalidArgumentTypesError
 ```
 
 ```primal
-assert.that(false, 123)
+assert.false(true, 123)
+```
+
+Expected error:
+
+```text
+InvalidArgumentTypesError
+```
+
+```primal
+assert.equal("1", 1, "expected equal")
 ```
 
 Expected error:
@@ -253,27 +296,17 @@ Expected result:
 Assertion failure via CustomError(code = "assertion", message = "expected failure")
 ```
 
-```primal
-assert.that(str.match("abc", "["), "bad regex")
-```
+## 6. Concrete Edge Cases
 
-Expected error:
-
-```text
-ParseError
-```
-
-### Concrete Edge Cases
-
-#### Edge Case 1: Lazy Message Evaluation
+### Edge Case 1: Lazy Message Evaluation
 
 ```primal
-assert.that(true, error.throw(-1, "unused"))
+assert.equal(true, true, error.throw(-1, "unused"))
 ```
 
 This must succeed without evaluating the message.
 
-#### Edge Case 2: `assert.throws` Around A Successful Expression
+### Edge Case 2: `assert.throws` Around A Successful Expression
 
 ```primal
 assert.throws(1 + 2, "expected a throw")
@@ -281,24 +314,16 @@ assert.throws(1 + 2, "expected a throw")
 
 This must fail with an assertion failure, not succeed.
 
-#### Edge Case 3: Underlying Predicate Error
+### Edge Case 3: Underlying Equality Type Error
 
 ```primal
-assert.that(str.match("abc", "["), "pattern should be valid")
+assert.equal("1", 1, "should not coerce types")
 ```
 
-This should propagate the regex parse error rather than convert it into a
-false condition.
+This should propagate `InvalidArgumentTypesError` rather than convert it into
+an assertion failure.
 
-#### Edge Case 4: Message Type Error On Failure Path Only
-
-```primal
-assert.that(false, 42)
-```
-
-This should throw `InvalidArgumentTypesError`.
-
-#### Edge Case 5: `assert.throws` Catches A Custom Error
+### Edge Case 4: `assert.throws` Catches A Custom Error
 
 ```primal
 assert.throws(error.throw(404, "not found"), "should throw")
@@ -306,38 +331,38 @@ assert.throws(error.throw(404, "not found"), "should throw")
 
 This should succeed.
 
-## 6. High-Value Open Questions
+## 7. High-Value Open Questions
 
-1. Is the goal only an assertion library, or should this later expand into a
-   full test-runner design?
-2. Should failed assertions always reuse `CustomError`, or is a dedicated
-   assertion-specific runtime error still desired?
-3. Should `assert.throws` catch every runtime failure that `try` catches, or a
-   narrower subset?
-4. Is lazy evaluation of assertion messages required by design?
-5. Should assertion helpers be available in all programs, or only in a future
+1. Is the long-term goal still only an assertion library, or should this later
+   expand into a full test-runner design?
+2. Should assertion helpers be available in all programs, or only in a future
    testing-oriented environment?
+3. Should future work add richer failure payloads or formatted diagnostics
+   while keeping the same helper surface?
 
-## 7. Post-Implementation
+## 8. Post-Implementation
 
 - Update documentation in `docs/`
-- Implement tests
+- Implement runtime coverage for all four helpers
+- Implement tests for lazy message behavior, equality type errors, and
+  `assert.throws` error interception
 
-## 8. Implementation Complexity
+## 9. Implementation Complexity
 
 Medium
 
 Justification:
 
-- The surface area is small if reduced to two functions.
 - No lexer or parser work should be required.
-- The main complexity is correct lazy runtime behavior for `assert.throws` and
-  consistent assertion-failure reporting.
+- The surface area is small and cohesive.
+- The main complexity is preserving lazy message behavior across all helpers
+  and implementing error interception for `assert.throws`.
 
-## 9. Final Recommendation
+## 10. Final Recommendation
 
-Revise
+Adopt
 
-Do not accept the original draft as written. Adopt the reduced two-function
-design centered on `assert.that` and `assert.throws`, and leave the rest to be
-expressed through existing Primal operators and library functions.
+Adopt the focused four-function assertion library centered on
+`assert.throws`, `assert.equal`, `assert.true`, and `assert.false`. Those
+helpers cover the main testing use cases while keeping the surface smaller than
+the earlier expanded designs.
