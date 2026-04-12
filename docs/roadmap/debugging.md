@@ -89,7 +89,7 @@ Output (stdout):
 [debug] function: num.add(a: Number, b: Number)
 ```
 
-Returns: `"num.add(a: Number, b: Number)"`
+Returns: the function `num.add` (unmodified)
 
 Lambda functions display without parameter types:
 
@@ -103,9 +103,9 @@ Output (stdout):
 [debug] lambda: <lambda@1:7>(x)
 ```
 
-Returns: `"<lambda@1:7>(x)"`
+Returns: the lambda `(x) -> x + 1` (unmodified)
 
-Note: Named functions show parameter types; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
+Note: The return value is always the *unmodified* first argument `a`. Named functions show parameter types in the printed output; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
 
 ### Inline in Expressions
 
