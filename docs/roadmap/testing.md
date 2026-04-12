@@ -17,46 +17,25 @@ with functionality that already exists in the language.
 
 ### Pros
 
-- Confirmed: Dotted names such as `assert.true` and `assert.equal` are
+- Dotted names such as `assert.true` and `assert.equal` are
   syntactically valid function names in Primal.
-- Confirmed: Adding assertions as standard-library functions fits the current
+- Adding assertions as standard-library functions fits the current
   language philosophy better than introducing new assertion syntax.
-- Confirmed: A library-based design fits the existing compiler pipeline
+- A library-based design fits the existing compiler pipeline
   cleanly, because ordinary function calls already pass through lexical,
   syntactic, semantic, lowering, and runtime evaluation stages.
 
-### Cons
-
-- Confirmed: `assert.throws(expression, message)` cannot be implemented as an
-  ordinary custom function because custom functions evaluate arguments eagerly.
-  It must be a lazy native function, similar to `if` and `try`.
-- Confirmed: `assert.equal`, `assert.true`, `assert.false`, `assert.match`,
-  and most uses of `assert.contains` are largely wrappers around features that
-  already exist:
-  - equality via `==` and `comp.eq`
-  - regex matching via `str.match`
-  - containment via `str.contains`, `list.contains`, `set.contains`, and
-    `map.containsKey`
-- Confirmed: `assert.contains(element, collection, message)` is inconsistent
-  with the existing API shape. Current containment functions are container
-  first, not element first.
-- Confirmed: A generic `assert.contains` does not map cleanly onto the current
-  runtime type classes. There is no existing type class that means "supports
-  containment" across string, list, set, and map.
-- Confirmed: Every new `assert.*` standard-library name reserves additional
-  global names and can conflict with user-defined functions.
-
 ### Technical Inconsistencies In The Draft
 
-- Confirmed: The draft does not define what successful assertions return.
-- Confirmed: The draft does not define how failed assertions are represented at
+- The draft does not define what successful assertions return.
+- The draft does not define how failed assertions are represented at
   runtime.
-- Confirmed: The draft does not define whether assertion messages are evaluated
+- The draft does not define whether assertion messages are evaluated
   eagerly or lazily.
-- Confirmed: The draft does not define whether `assert.throws` catches all
+- The draft does not define whether `assert.throws` catches all
   runtime errors or only a narrower subset.
-- Confirmed: The draft does not define map semantics for `assert.contains`.
-- Confirmed: `assert.closeTo` is underspecified for a dynamically typed
+- The draft does not define map semantics for `assert.contains`.
+- `assert.closeTo` is underspecified for a dynamically typed
   language because it does not define number-only behavior, NaN or infinity
   behavior, or failure semantics when given non-numeric values.
 
