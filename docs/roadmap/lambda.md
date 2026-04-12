@@ -37,7 +37,7 @@ The `parameters?` makes the parameter list optional, allowing zero-parameter lam
 **Parser integration**: The grammar change inserts `lambdaExpression` at the top of the expression hierarchy. This works correctly with the existing parser because `expression()` is the universal entry point for all expression contexts:
 
 ```
-BEFORE:  expression() → ifExpression() → equality() → ... → primary()
+BEFORE:  expression() → letExpression() → ifExpression() → equality() → ... → primary()
 AFTER:   expression() → lambdaExpression() → letExpression() → ifExpression() → ... → primary()
 ```
 
@@ -1458,6 +1458,6 @@ These tests verify lambda printing format. Note: lambdas print without types (`<
 | Test                              | Steps                                                                                          | Expected                              |
 | --------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------- |
 | Lambda sees redefined function    | `double(x) = x * 2`, `f() = (x) -> double(x)`, `lam() = f()`, `double(x) = x * 3`, `lam()(5)`  | `15` (uses new definition)            |
-| Lambda errors on deleted function | `helper(x) = x`, `f() = (x) -> helper(x)`, `lam() = f()`, delete `helper`, `lam()(5)`          | `NotFoundInScopeError`                |
+| Lambda errors on deleted function | `helper(x) = x`, `f() = (x) -> helper(x)`, `lam() = f()`, `:delete helper`, `lam()(5)`         | `NotFoundInScopeError`                |
 | Bound variable still captured     | `make(n) = (x) -> x * n`, `lam() = make(2)`, redefine `make(n) = (x) -> x + n`, `lam()(5)`     | `10` (bound var captured, not late)   |
 | Mixed capture and late-binding    | `mult(x) = x * 2`, `f(n) = (x) -> mult(n + x)`, `lam() = f(10)`, `mult(x) = x * 3`, `lam()(5)` | `45` (n=10 captured, mult late-bound) |
