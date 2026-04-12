@@ -210,11 +210,11 @@ Add to `lib/compiler/library/standard_library.dart`:
 
 ### Architecture Notes
 
-The implementation follows the pattern established by `console.write`:
+The implementation follows the pattern established by `console.writeLn`:
 
 - Extend `NativeFunctionTerm` for the function definition
 - Extend `NativeFunctionTermWithArguments` for the evaluation logic
-- Use `PlatformInterface().console.outWrite()` for output
+- Use `PlatformInterface().console.outWriteLn()` for output (includes newline)
 
 ## Post-Implementation
 
