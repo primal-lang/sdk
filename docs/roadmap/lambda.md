@@ -773,7 +773,17 @@ SemanticNode _checkLambdaExpression({
 }
 ```
 
-**Cascading signature changes**: All helper methods must accept and propagate `lambdaParameterNames`. This parallels the `letBindingNames` pattern from the `let` specification.
+**Cascading signature changes**: All helper methods must accept and propagate `lambdaParameterNames`. This parallels the `letBindingNames` pattern from the `let` specification. The following methods require signature updates to add `required Set<String> lambdaParameterNames`:
+
+| Method                         | Change Required                                               |
+| ------------------------------ | ------------------------------------------------------------- |
+| `checkExpression()`            | Add parameter, propagate to all helper calls                  |
+| `_checkListExpression()`       | Add parameter, propagate to element `checkExpression` calls   |
+| `_checkMapExpression()`        | Add parameter, propagate to key/value `checkExpression` calls |
+| `_checkIdentifierExpression()` | Add parameter, use to set `isLambdaParameter` flag            |
+| `_checkCallExpression()`       | Add parameter, propagate to callee and argument checks        |
+| `_checkCalleeIdentifier()`     | Add parameter, propagate to recursive calls                   |
+| `_checkLetExpression()`        | Add parameter, propagate to binding and body checks           |
 
 Modify `_checkIdentifierExpression()` to distinguish lambda parameters:
 
@@ -1043,16 +1053,16 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Test                                | Input                                             | Expected                                                         |
 | ----------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------- |
 | Valid zero-param                    | `f = () -> 5`                                     | No errors                                                        |
-| Valid single-param                  | `f() = (x) -> x + 1`                                | No errors                                                        |
+| Valid single-param                  | `f() = (x) -> x + 1`                              | No errors                                                        |
 | Valid multi-param                   | `f = (x, y) -> x + y`                             | No errors                                                        |
 | Duplicate parameter                 | `f = (x, x) -> x`                                 | `DuplicatedLambdaParameterError`                                 |
 | Shadows function parameter          | `f(x) = (x) -> x`                                 | `ShadowedLambdaParameterError`                                   |
 | Shadows let binding                 | `f(n) = let x = 1 in (x) -> x`                    | `ShadowedLambdaParameterError`                                   |
-| Shadows outer lambda parameter      | `f() = (x) -> (x) -> x`                             | `ShadowedLambdaParameterError`                                   |
-| Undefined variable in body          | `f() = (x) -> y`                                    | `UndefinedIdentifierError`                                       |
+| Shadows outer lambda parameter      | `f() = (x) -> (x) -> x`                           | `ShadowedLambdaParameterError`                                   |
+| Undefined variable in body          | `f() = (x) -> y`                                  | `UndefinedIdentifierError`                                       |
 | Captures function parameter         | `f(n) = (x) -> x + n`                             | No errors, `n` is captured                                       |
 | Captures let binding                | `f(n) = let m = 2 in (x) -> x * m`                | No errors, `m` is captured                                       |
-| `isLambdaParameter` set correctly   | `f() = (x) -> x`                                    | Body's `SemanticBoundVariableNode` has `isLambdaParameter: true` |
+| `isLambdaParameter` set correctly   | `f() = (x) -> x`                                  | Body's `SemanticBoundVariableNode` has `isLambdaParameter: true` |
 | Parameter `isLambdaParameter` false | `f(n) = n`                                        | `SemanticBoundVariableNode` has `isLambdaParameter: false`       |
 | Shadows stdlib function             | `f = (num.abs) -> num.abs`                        | No error, `num.abs` resolves to parameter                        |
 | Shadows custom function             | `double(x) = x * 2` then `f = (double) -> double` | No error, `double` resolves to parameter                         |
@@ -1145,15 +1155,15 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Test                 | Input                                | Expected                   |
 | -------------------- | ------------------------------------ | -------------------------- |
 | Immediate invocation | `((x) -> x + 1)(5)`                  | `6`                        |
-| Store and call       | `f() = (x) -> x * 2` then `f()(5)`     | `10`                       |
+| Store and call       | `f() = (x) -> x * 2` then `f()(5)`   | `10`                       |
 | Closure              | `m(n) = (x) -> x * n` then `m(2)(5)` | `10`                       |
 | With list.map        | `list.map([1, 2], (x) -> x + 1)`     | `[2, 3]`                   |
 | Error in lambda      | `((x) -> y)(5)`                      | `UndefinedIdentifierError` |
 
 **Function definition** (via `defineFunction`):
 
-| Test                      | Definition then call                                     | Expected |
-| ------------------------- | -------------------------------------------------------- | -------- |
-| Function returning lambda | `makeInc(n) = (x) -> x + n` then `makeInc(1)(5)`         | `6`      |
+| Test                      | Definition then call                                       | Expected |
+| ------------------------- | ---------------------------------------------------------- | -------- |
+| Function returning lambda | `makeInc(n) = (x) -> x + n` then `makeInc(1)(5)`           | `6`      |
 | Lambda as function body   | `double() = (x) -> x * 2` then `double()(5)`               | `10`     |
 | Nested lambdas            | `f() = (a) -> (b) -> (c) -> a + b + c` then `f()(1)(2)(3)` | `6`      |
