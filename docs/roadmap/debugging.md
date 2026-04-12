@@ -37,7 +37,24 @@ Note: Deep evaluation may trigger side effects in nested expressions and will no
 [debug] label: value
 ```
 
-Where `value` uses the same string conversion as `console.write` (strings print without quotes, lists print as `[1, 2, 3]`, maps print as `{a: 1, b: 2}`).
+Where `value` uses `Term.toString()` (same as `console.write`):
+
+| Type      | Format                      | Example                         |
+| --------- | --------------------------- | ------------------------------- |
+| Number    | Numeric value               | `42`, `3.14`                    |
+| String    | Raw string (no quotes)      | `hello world`                   |
+| Boolean   | `true` or `false`           | `true`                          |
+| List      | `[elem, ...]`               | `[1, 2, 3]`                     |
+| Vector    | `[elem, ...]`               | `[1, 2, 3]`                     |
+| Stack     | `[elem, ...]`               | `[1, 2, 3]`                     |
+| Queue     | `[elem, ...]`               | `[1, 2, 3]`                     |
+| Map       | `{key: value, ...}`         | `{name: Alice, age: 30}`        |
+| Set       | `{elem, ...}`               | `{1, 2, 3}`                     |
+| Timestamp | Dart DateTime format        | `2024-01-15 10:30:00.000`       |
+| File      | File path                   | `/path/to/file.txt`             |
+| Directory | Directory path              | `/path/to/directory`            |
+| Function  | `name(param: Type, ...)`    | `num.add(a: Number, b: Number)` |
+| Lambda    | `<lambda@line:col>(params)` | `<lambda@1:7>(x)`               |
 
 ## Examples
 
@@ -266,7 +283,10 @@ Key differences from `console.writeLn`:
     - `debug([1 + 2], "x")` prints `[debug] x: [3]`
     - `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}`
     - Nested collections: `debug([[1 + 2]], "x")` prints `[debug] x: [[3]]`
-  - System types: timestamps, files, directories
+  - System types with exact format expectations:
+    - `debug(time.now(), "t")` prints Dart DateTime format (e.g., `[debug] t: 2024-01-15 10:30:00.000`)
+    - `debug(file.fromPath("/tmp/test.txt"), "f")` prints `[debug] f: /tmp/test.txt`
+    - `debug(directory.fromPath("/tmp"), "d")` prints `[debug] d: /tmp`
   - Functions remain callable after debug:
     - `debug(num.abs, "abs")(-5)` returns `5`
     - `debug((x) -> x + 1, "inc")(5)` returns `6`
