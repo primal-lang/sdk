@@ -296,13 +296,15 @@ bad() = (x) -> (x) -> x
 Lambda parameters MAY shadow function names (both custom and standard library). This is consistent with existing parameter and let binding behavior:
 
 ```primal
-// Valid: num.abs shadows the function num.abs
-((num.abs) -> num.abs + 1)(5)  // 6
-
 // Valid: double shadows a user-defined function
 double(x) = x * 2
 ((double) -> double + 1)(5)  // 6
+
+// Valid: list.map shadows the standard library function
+((list.map) -> list.map + 1)(5)  // 6
 ```
+
+Note: Identifiers in Primal may contain dots (regex `[a-zA-Z][\w\.]*`), so `list.map` is a single identifier token, not method call syntax. When used as a lambda parameter, it shadows the standard library function of the same name. While technically valid, using dotted names as parameters is discouraged for readability.
 
 ### Closures
 
@@ -1209,7 +1211,7 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Captures let binding                | `f(n) = let m = 2 in (x) -> x * m`                  | No errors, `m` is captured                                       |
 | `isLambdaParameter` set correctly   | `f() = (x) -> x`                                    | Body's `SemanticBoundVariableNode` has `isLambdaParameter: true` |
 | Parameter `isLambdaParameter` false | `f(n) = n`                                          | `SemanticBoundVariableNode` has `isLambdaParameter: false`       |
-| Shadows stdlib function             | `f() = (num.abs) -> num.abs`                        | No error, `num.abs` resolves to parameter                        |
+| Shadows stdlib function             | `f() = (list.map) -> list.map`                      | No error, `list.map` resolves to parameter                       |
 | Shadows custom function             | `double(x) = x * 2` then `f() = (double) -> double` | No error, `double` resolves to parameter                         |
 | Unused lambda parameter             | `f() = (x) -> 5`                                    | `UnusedLambdaParameterWarning` for `x`                           |
 | Multiple unused lambda parameters   | `f() = (x, y) -> 5`                                 | `UnusedLambdaParameterWarning` for `x` and `y`                   |

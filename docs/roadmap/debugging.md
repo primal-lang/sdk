@@ -85,7 +85,7 @@ For standard-library functions, these are the declared runtime parameter names. 
 ## Key Edge Cases
 
 ```primal
-let alias = greet in function.name(alias) // returns "greet"
+let alias = greet in function.name(alias) // returns "greet()"
 ```
 
 ```primal
