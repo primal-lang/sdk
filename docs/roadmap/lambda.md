@@ -1014,7 +1014,13 @@ final SemanticNode body = checkExpression(
 // collected and returned to the caller (Compiler) which prints them.
 ```
 
-**REPL warning behavior**: Warnings collected during `evaluateToTerm()` and `defineFunction()` should be printed to stderr immediately after successful evaluation, before displaying the result. This matches batch compilation behavior where warnings appear but do not prevent execution.
+**REPL warning behavior**: The REPL has two entry points that need warning emission:
+
+1. **`defineFunction()`** - Called when user enters a function definition (e.g., `f() = (x) -> 5`). Warnings are printed after successful definition, before the implicit confirmation. This is the primary path for lambda parameter warnings since lambdas typically appear in function bodies.
+
+2. **`evaluateToTerm()`** - Called when user enters an expression (e.g., `((x) -> 5)(10)`). Warnings are printed after successful evaluation, before displaying the result. This path handles immediately-invoked lambdas.
+
+Both methods should print warnings to stderr immediately after success, matching batch compilation behavior where warnings appear but do not prevent execution.
 
 ```dart
 // In RuntimeFacade.evaluateToTerm(), after successful evaluation:
@@ -1024,7 +1030,12 @@ for (final SemanticWarning warning in warnings) {
 return lowered.reduce();
 ```
 
-Example REPL session:
+```dart
+// In RuntimeFacade.defineFunction(), warning printing is shown above (lines 983-986)
+// in the "External callers" section. Warnings print after lowering succeeds.
+```
+
+Example REPL session (function definition path via `defineFunction()`):
 
 ```
 > f() = (x) -> 5
@@ -1033,7 +1044,15 @@ Warning: Unused lambda parameter "x" in function "f"
 5
 ```
 
-Note: Warnings are emitted once at definition time, not on each invocation. The lambda body is analyzed when `f` is defined, so the unused parameter warning appears then. Calling `f()(10)` produces no new warnings.
+Example REPL session (expression evaluation path via `evaluateToTerm()`):
+
+```
+> ((x) -> 5)(10)
+Warning: Unused lambda parameter "x"
+5
+```
+
+Note: Warnings are emitted once at analysis time, not on each invocation. For function definitions, the lambda body is analyzed when the function is defined. For expressions, the lambda is analyzed when the expression is evaluated. Calling a previously-defined function like `f()(10)` produces no new warnings because the lambda was already analyzed.
 
 ### Compiler Pipeline Impact
 
@@ -1245,9 +1264,11 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Missing arrow               | `(x) x`                       | `UnexpectedTokenError` on `x` (see note)         |
 | Lambda as operand           | `1 + (x) -> x`                | `UnexpectedTokenError` on `->` (see note)        |
 | Lambda in parens as operand | `1 + ((x) -> x)`              | Parses OK (runtime fails: `+` rejects functions) |
-| Trailing comma in params    | `(x,) -> x`                   | `ExpectedTokenError` on `)` (expects identifier) |
+| Trailing comma in params    | `(x,) -> x`                   | `ExpectedTokenError` on `,` (expects `)`) (see note) |
 
 **Note on error tests**: Tests expecting `UnexpectedTokenError` must use `Compiler.expression()` (not raw `ExpressionParser`) because the leftover-token check happens in `Compiler`. For `(x) x`, the parser sees `(x)` as a grouped identifier (lookahead finds no `->` after `)`), then `Compiler.expression()` throws on the leftover `x`. For `1 + (x) -> x`, the parser completes `1 + (x)` successfully, then throws on leftover `->`.
+
+**Note on trailing comma**: For `(x,) -> x`, the lookahead `_checkLambdaStart()` sees `(`, `x`, `,`, then `)` (not an identifier), so it returns -1. The parser falls through to `primary()` for grouped expression handling. After consuming `(` and parsing `x`, it tries to consume `)` but sees `,` instead, throwing `ExpectedTokenError` with message "Expected: ')'".
 
 #### Semantic Tests
 
