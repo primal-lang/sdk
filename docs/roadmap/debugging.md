@@ -16,10 +16,20 @@ debug(a: Any, b: String): Any
 
 ## Behavior
 
-1. Evaluate expression `a` (any type)
-2. Evaluate expression `b` (must be a String)
+1. Reduce expression `a` to a value (any type)
+2. Reduce expression `b` to a value (must be a String)
 3. Print to stdout: `[debug] <b>: <a>\n`
-4. Return the evaluated value of `a`
+4. Return the reduced value of `a`
+
+### Evaluation Semantics
+
+Evaluation is **deep**: `debug` recursively reduces `a` and all nested elements within collections before printing. This ensures computed values are shown, making debug output more useful.
+
+- `debug(1 + 2, "x")` prints `[debug] x: 3`
+- `debug([1 + 2, 3 * 4], "x")` prints `[debug] x: [3, 12]`
+- `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}`
+
+Note: Deep evaluation may trigger side effects in nested expressions and will not terminate for infinite structures.
 
 ## Output Format
 
@@ -220,8 +230,9 @@ Key differences from `console.writeLn`:
 
 1. **Two arguments**: Evaluate `a` first, then `b` (left-to-right order matters for error propagation)
 2. **Type checking**: Verify `b` is a `StringTerm`; throw `InvalidArgumentTypesError` if not
-3. **Return value**: Return the evaluated `a` term unchanged (not a string representation)
-4. **Output format**: Concatenate `[debug] ` + `b.value` + `: ` + `a.toString()`
+3. **Deep reduction**: Recursively reduce `a` and all nested collection elements before printing
+4. **Return value**: Return the deeply-reduced `a` term (not a string representation)
+5. **Output format**: Concatenate `[debug] ` + `b.value` + `: ` + `a.toString()`
 
 ## Post-Implementation
 
@@ -235,8 +246,12 @@ Key differences from `console.writeLn`:
     - `debug(1, error.throw(0, "fail"))` throws custom error (both args evaluated)
   - Recursive scenarios
   - Primitives: numbers, strings, booleans
-  - Collections: lists, maps, sets, stacks, queues, vectors
+  - Collections with literal elements: `debug([1, 2], "list")`, `debug({"a": 1}, "map")`
   - Empty collections: `debug([], "empty")`, `debug({}, "empty")`
+  - Deep evaluation (computed elements reduced):
+    - `debug([1 + 2], "x")` prints `[debug] x: [3]`
+    - `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}`
+    - Nested collections: `debug([[1 + 2]], "x")` prints `[debug] x: [[3]]`
   - System types: timestamps, files, directories
   - Functions: named functions, lambdas
   - Special values: `debug(num.infinity(), "inf")`
