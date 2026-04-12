@@ -651,6 +651,10 @@ class LambdaTerm extends FunctionTerm {
   @override
   Term reduce() => this;  // Lambdas are values; they don't reduce further
 
+  // Note: This method mirrors CustomFunctionTerm.apply() for call-by-value
+  // semantics. The duplication exists because LambdaTerm.substitute() must
+  // preserve the lambda wrapper (for partial application), while
+  // CustomFunctionTerm.substitute() returns the unwrapped body directly.
   @override
   Term apply(List<Term> arguments) {
     if (arguments.length != parameters.length) {
