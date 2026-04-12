@@ -151,11 +151,6 @@ function.parameters("hello")
 
 - Add native runtime functions only
 
-## Simpler Alternatives
-
-- Use `console.write` or `console.writeLn` for ad hoc tracing
-- Use `is.function` when only a boolean type check is needed
-
 ## Post-Implementation
 
 - Update documentation in `docs/`
@@ -166,7 +161,3 @@ function.parameters("hello")
 Low.
 
 The feature set is limited to additional standard-library functions and does not require new syntax, new tokens, or new intermediate representation forms.
-
-## Recommendation
-
-Revise the original draft to this smaller specification.

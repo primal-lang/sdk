@@ -796,10 +796,19 @@ SemanticNode _checkLambdaExpression({
   // Track parameters for this lambda (duplicate detection)
   final Set<String> localLambdaParameters = {};
 
+  // Note: Unlike _checkLetExpression(), we don't need to snapshot
+  // `originalOuterScope` here. Let expressions need it because bindings are
+  // added to scope incrementally (so `let x = 1, x = 2` must throw
+  // DuplicatedLetBindingError, not ShadowedLetBindingError). Lambda parameters
+  // are just names—they aren't added to `availableParameters` during this loop,
+  // only to `localLambdaParameters`. The duplicate check uses
+  // `localLambdaParameters`; the shadow check uses the unchanged
+  // `availableParameters`.
+
   // Check each parameter
   final List<String> checkedParameters = [];
   for (final String paramName in expression.parameters) {
-    // Check for duplicate within this lambda
+    // Check for duplicate within this lambda (against earlier params)
     if (localLambdaParameters.contains(paramName)) {
       throw DuplicatedLambdaParameterError(
         parameter: paramName,
@@ -807,7 +816,7 @@ SemanticNode _checkLambdaExpression({
       );
     }
 
-    // Check for shadowing against outer scope
+    // Check for shadowing against outer scope (unchanged during this loop)
     if (availableParameters.contains(paramName)) {
       throw ShadowedLambdaParameterError(
         parameter: paramName,
