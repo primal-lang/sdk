@@ -1,9 +1,10 @@
-i want to implement the feature of "XXX" to the language. 
-- document explaining the feature: @docs/roadmap/XXX
+i want to implement a new the feature in the language. the feature is documented in: @docs/roadmap/XXX
 
 steps:
 1. read the document carefully
-2. create a very detailed plan and write that plan in a file in the root of the project. the plan should have checkboxes that you must check as you implement it
+2. create a very detailed plan and write that plan in a file in the root of the project. the plan should have checkboxes that you must check as you implement it. the plan should also include steps at the end to:
+    - update the documenation in @docs/
+    - add tests in all levels in @test/
 3. proceed to implement the plan
 
 constraints:

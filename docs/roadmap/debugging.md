@@ -89,7 +89,7 @@ Output (stdout):
 [debug] function: num.add(a: Number, b: Number)
 ```
 
-Returns: `num.add(a: Number, b: Number)`
+Returns: `"num.add(a: Number, b: Number)"`
 
 Lambda functions display without parameter types:
 
@@ -103,7 +103,7 @@ Output (stdout):
 [debug] lambda: <lambda@1:7>(x)
 ```
 
-Returns: `<lambda@1:7>(x)`
+Returns: `"<lambda@1:7>(x)"`
 
 Note: Named functions show parameter types; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
 
