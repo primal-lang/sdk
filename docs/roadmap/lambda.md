@@ -29,7 +29,7 @@ lambdaExpression  → "(" parameters? ")" "->" expression | letExpression
 parameters        → IDENTIFIER ( "," IDENTIFIER )*
 ```
 
-Note: The `parameters` rule allows zero or more parameters. `() -> 5` is valid (zero-parameter lambda). Single-parameter lambdas require parentheses: `(x) -> x + 1`, not `x -> x + 1`. Note that `()` alone (without `->`) is **not** a valid expression—the lookahead checks for `->` after `)`, and without it, the parser falls through to `primary()` where `()` fails as an empty grouped expression.
+Note: The `parameters?` in `lambdaExpression` makes the parameter list optional, allowing zero-parameter lambdas like `() -> 5`. When present, the `parameters` rule requires at least one identifier. Single-parameter lambdas require parentheses: `(x) -> x + 1`, not `x -> x + 1`. Note that `()` alone (without `->`) is **not** a valid expression—the lookahead checks for `->` after `)`, and without it, the parser falls through to `primary()` where `()` fails as an empty grouped expression.
 
 **Parser integration**: The grammar change inserts `lambdaExpression` at the top of the expression hierarchy. This works correctly with the existing parser because `expression()` is the universal entry point for all expression contexts:
 
