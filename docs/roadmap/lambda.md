@@ -998,7 +998,7 @@ Term lowerTerm(SemanticNode semanticNode) => switch (semanticNode) {
 
 Term _lowerLambda(SemanticLambdaNode semanticNode) {
   return LambdaTerm(
-    name: '<lambda@${semanticNode.location.line}:${semanticNode.location.column}>',
+    name: '<lambda@${semanticNode.location.row}:${semanticNode.location.column}>',
     parameters: semanticNode.parameters
         .map((name) => Parameter.any(name))
         .toList(),
@@ -1148,12 +1148,13 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Lowering Tests
 
-| Test                                     | Input                 | Expected                                                    |
-| ---------------------------------------- | --------------------- | ----------------------------------------------------------- |
-| Lambda param → `LambdaBoundVariableTerm` | `(x) -> x`            | Body contains `LambdaBoundVariableTerm("x")`                |
-| Function param → `BoundVariableTerm`     | `f(n) = n`            | Body contains `BoundVariableTerm("n")`                      |
-| Let binding → `LetBoundVariableTerm`     | `let x = 1 in x`      | Body contains `LetBoundVariableTerm("x")`                   |
-| Mixed lambda and capture                 | `f(n) = (x) -> x + n` | `LambdaBoundVariableTerm("x")` and `BoundVariableTerm("n")` |
+| Test                                     | Input                      | Expected                                                    |
+| ---------------------------------------- | -------------------------- | ----------------------------------------------------------- |
+| Lambda param → `LambdaBoundVariableTerm` | `(x) -> x`                 | Body contains `LambdaBoundVariableTerm("x")`                |
+| Function param → `BoundVariableTerm`     | `f(n) = n`                 | Body contains `BoundVariableTerm("n")`                      |
+| Let binding → `LetBoundVariableTerm`     | `let x = 1 in x`           | Body contains `LetBoundVariableTerm("x")`                   |
+| Mixed lambda and capture                 | `f(n) = (x) -> x + n`      | `LambdaBoundVariableTerm("x")` and `BoundVariableTerm("n")` |
+| Lambda name format                       | `(x) -> x` at row 1, col 1 | `LambdaTerm` with `name: '<lambda@1:1>'`                    |
 
 #### Runtime Tests: LambdaBoundVariableTerm
 
@@ -1205,10 +1206,11 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Runtime Tests: Error Propagation
 
-| Test                       | Input                       | Expected              |
-| -------------------------- | --------------------------- | --------------------- |
-| Error in lambda body       | `((x) -> x / 0)(5)`         | `DivisionByZeroError` |
-| `try` catches lambda error | `try(((x) -> x / 0)(5), 0)` | `0`                   |
+| Test                       | Input                       | Expected                                                 |
+| -------------------------- | --------------------------- | -------------------------------------------------------- |
+| Error in lambda body       | `((x) -> x / 0)(5)`         | `DivisionByZeroError`                                    |
+| `try` catches lambda error | `try(((x) -> x / 0)(5), 0)` | `0`                                                      |
+| Lambda name in arity error | `((x, y) -> x)(1)` at [1,1] | `InvalidArgumentCountError` with function `<lambda@1:1>` |
 
 #### Integration Tests
 

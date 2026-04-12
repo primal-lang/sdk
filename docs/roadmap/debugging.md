@@ -13,8 +13,6 @@ debug.type(measured())                    // "List", "Number", "Function", ...
 
 traceStep(x) = debug.trace("step", x)
 result() = list.map([1, 2, 3], traceStep)
-
-debug.traceWhen(isVerbose, "payload", payload)
 ```
 
 **Use Cases:**
@@ -26,10 +24,9 @@ debug.traceWhen(isVerbose, "payload", payload)
 
 **Implementation Notes:**
 
-- The MVP should be library functions rather than decorators, breakpoints, or statement-like forms.
+- `debug.type` must return the same value as `typeof` but as a string, so it can be used in expressions without affecting behavior.
 - `debug.trace` must evaluate its value exactly once and return it unchanged.
 - `debug.timed` can piggyback on the existing CLI debug mode but should also work as a normal runtime function.
-- Rich call-stack tracing can come later once the runtime carries more source-location metadata through evaluation.
 
 ### Function Introspection
 
