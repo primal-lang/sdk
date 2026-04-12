@@ -105,7 +105,7 @@ Output (stdout):
 
 Returns: the lambda `(x) -> x + 1` (unmodified)
 
-Note: The return value is always the *unmodified* first argument `a`. Named functions show parameter types in the printed output; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
+Note: The return value is always the _unmodified_ first argument `a`. Named functions show parameter types in the printed output; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
 
 ### Inline in Expressions
 
@@ -165,26 +165,28 @@ Returns: `[4, 8]`
 
 ## Error Conditions
 
-| Condition                  | Error                                  |
-| -------------------------- | -------------------------------------- |
-| Wrong argument count       | `InvalidArgumentCountError`            |
-| Argument `b` not String    | `InvalidArgumentTypesError`            |
-| Expression `a` throws      | Error propagates (not caught by debug) |
+| Condition                               | Phase    | Error                                  |
+| --------------------------------------- | -------- | -------------------------------------- |
+| Wrong argument count (direct call)      | Semantic | `InvalidNumberOfArgumentsError`        |
+| Wrong argument count (indirect call)    | Runtime  | `InvalidArgumentCountError`            |
+| Argument `b` not String (direct call)   | Semantic | `InvalidArgumentTypesError`            |
+| Argument `b` not String (indirect call) | Runtime  | `InvalidArgumentTypesError`            |
+| Expression `a` throws                   | Runtime  | Error propagates (not caught by debug) |
 
 ## Invalid Examples
 
 ```primal
-// Missing arguments
+// Missing arguments (direct call - caught during semantic analysis)
 debug()
-// Error: InvalidArgumentCountError - expected 2, got 0
+// SemanticError: InvalidNumberOfArgumentsError - expected 2, got 0
 
-// Wrong type for argument b
+// Wrong type for argument b (direct call - caught during semantic analysis)
 debug("value", 123)
-// Error: InvalidArgumentTypesError - expected String for argument 'b'
+// SemanticError: InvalidArgumentTypesError - expected String for argument 'b'
 
 // Error propagation (not caught)
 debug(num.div(1, 0), "oops")
-// Error: DivisionByZeroError
+// RuntimeError: DivisionByZeroError
 ```
 
 ## Platform Support
