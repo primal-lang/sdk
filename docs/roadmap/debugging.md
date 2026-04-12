@@ -220,7 +220,10 @@ The implementation follows the pattern established by `console.write`:
 - Implement tests for:
   - Correct return value
   - Output format
-  - Error propagation
+  - Error propagation (left-to-right evaluation order):
+    - `debug(num.div(1, 0), "label")` throws `DivisionByZeroError`
+    - `debug(num.div(1, 0), error.throw(0, "fail"))` throws `DivisionByZeroError` (first arg fails first)
+    - `debug(1, error.throw(0, "fail"))` throws custom error (both args evaluated)
   - Recursive scenarios
   - Primitives: numbers, strings, booleans
   - Collections: lists, maps, sets, stacks, queues, vectors
