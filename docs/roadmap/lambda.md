@@ -1,15 +1,5 @@
 # Lambda Functions
 
-## Prerequisites
-
-This specification assumes the `let` expression feature has been implemented per `docs/roadmap/reviewed/let.md`. The `let` feature **must be implemented before lambda**. Specifically, this feature depends on:
-
-- `isLetBinding` field on `SemanticBoundVariableNode`
-- `LetBoundVariableTerm` runtime term
-- `letBindingNames` parameter in `checkExpression()`
-
-These dependencies are guaranteed to exist when lambda implementation begins.
-
 ## Overview
 
 Lambda functions are anonymous inline function expressions. They allow defining functions at the expression level without top-level declarations, primarily benefiting higher-order functions like `list.map`, `list.filter`, and `list.reduce`.
