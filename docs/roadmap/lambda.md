@@ -452,7 +452,7 @@ class MinusState extends State<Character, Lexeme> {
 
 ## Error Conditions
 
-**Notation convention**: This section uses exception class names (e.g., `DuplicatedLambdaParameterError`) for implementation reference. The actual user-visible messages include an `Error:` prefix and location information. For example:
+**Notation convention**: This section uses exception class names (e.g., `DuplicatedLambdaParameterError`) for implementation reference. The actual user-visible messages include an `Error:` prefix (or `Warning:` for warnings). Lambda semantic errors follow the same pattern as existing semantic errors—no source location is attached. For example:
 
 | Exception Class                                                 | User-Visible Message                                   |
 | --------------------------------------------------------------- | ------------------------------------------------------ |
@@ -575,7 +575,7 @@ outer(1)(2)(3)  // 6
 
 ### Invalid
 
-Error annotations below show exception class names. Actual CLI/REPL output includes `Error:` prefix and token locations (see Error Conditions notation).
+Error annotations below show exception class names. Actual CLI/REPL output includes `Error:` prefix. Syntactic errors (e.g., `UnexpectedTokenError`) include token locations via `Token.toString()`. Semantic errors (e.g., `DuplicatedLambdaParameterError`) do not include source locations.
 
 ```primal
 // ERROR: Missing parentheses around parameter

@@ -44,28 +44,18 @@ Expose metadata about function values. Primal already has first-class functions,
 ```primal
 addNumbers(a, b) = a + b
 
-function.name(addNumbers)                        // "num.add"
+function.name(addNumbers)                        // "addNumbers"
 function.arity(addNumbers)                       // 2
 function.parameters(addNumbers)                  // ["a", "b"]
-function.signature(addNumbers)                   // "num.add(a, b)"
+function.signature(addNumbers)                   // "addNumbers(a, b)"
 
 greet(name) = "Hello, " + name
 
 function.name(greet)                      // "greet"
 function.arity(greet)                     // 1
 function.parameters(greet)                // ["name"]
-function.isNative(greet)                  // false
-
-list.map([num.add, num.sub, greet], function.name)
+function.signature(greet)                 // "greet(name)"
 ```
-
-**Use Cases:**
-
-- REPL tooling
-- Debug output
-- Higher-order libraries
-- Documentation generation
-- Better error messages around callables
 
 **Implementation Notes:**
 
