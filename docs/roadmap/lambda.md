@@ -472,8 +472,11 @@ class MinusState extends State<Character, Lexeme> {
 | --------------------------------------------------------------- | ------------------------------------------------------ |
 | `DuplicatedLambdaParameterError(parameter: 'x')`                | `Error: Duplicated lambda parameter "x"`               |
 | `ShadowedLambdaParameterError(parameter: 'x', inFunction: 'f')` | `Error: Shadowed lambda parameter "x" in function "f"` |
+| `ShadowedLetBindingError(binding: 'x', inFunction: 'f')`        | `Error: Shadowed let binding "x" in function "f"` (see note below) |
 | `UndefinedIdentifierError(identifier: 'y')`                     | `Error: Undefined identifier "y"`                      |
 | `UnusedLambdaParameterWarning(parameter: 'x', inFunction: 'f')` | `Warning: Unused lambda parameter "x" in function "f"` |
+
+**Note on `ShadowedLetBindingError` in lambda context**: When a let binding inside a lambda body shadows a lambda parameter (e.g., `(x) -> let x = 5 in x`), the existing `ShadowedLetBindingError` is thrown, not a new lambda-specific error. The message "Shadowed let binding 'x'" means the let binding named 'x' is causing the shadowing violation. This wording is consistent with existing behavior for function parameters (e.g., `f(x) = let x = 5 in x` also throws `ShadowedLetBindingError`). While the message focuses on the let binding rather than what it shadows, this is intentional—the let binding is the construct being written incorrectly.
 
 **Parser entry point note**: `Compiler.expression()` calls `ExpressionParser.expression()` then checks for leftover tokens—if any remain, it throws `UnexpectedTokenError`. Invalid lambda-like syntax (e.g., `x -> x + 1`, `(x) x`, `5 + (x) -> x`) parses partially as a valid expression, leaving tokens unconsumed. The lookahead in `_checkLambdaStart()` returns -1 for non-lambda patterns, so they fall through to grouped expression or identifier parsing without consuming `->`. This means these cases produce `UnexpectedTokenError`, not `ExpectedTokenError` or `InvalidTokenError`.
 
@@ -1309,7 +1312,7 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | No warning when all params used     | `f() = (x, y) -> x + y`                             | No warnings                                                      |
 | Outer param used in nested lambda   | `f() = (x) -> (y) -> x + y`                         | No warnings (x is used in inner body)                            |
 
-**Note on `ShadowedLetBindingError`**: The test "Let in body shadows lambda param" reuses the existing `ShadowedLetBindingError` rather than defining a new error type. When a let binding shadows a lambda parameter, the existing let-shadowing check catches it because lambda parameters are added to `availableParameters` before the body is checked. The error message "Shadowed let binding 'x'" means "the let binding 'x' causes shadowing"—this wording is consistent with existing behavior for `f(x) = let x = 5 in x` (function parameter shadowed by let).
+**Note on `ShadowedLetBindingError`**: The test "Let in body shadows lambda param" reuses the existing `ShadowedLetBindingError` rather than defining a new error type. When a let binding shadows a lambda parameter, the existing let-shadowing check catches it because lambda parameters are added to `availableParameters` before the body is checked. See the "Error Conditions" section above for details on the error message wording.
 
 #### Lowering Tests
 
