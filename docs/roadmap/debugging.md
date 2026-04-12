@@ -13,7 +13,6 @@ This revision keeps the parts of the original draft that are orthogonal and alre
 This proposal adds these standard-library functions:
 
 - `type.of(a): String`
-- `debug.timed(a): Any`
 - `function.name(f): String`
 - `function.arity(f): Number`
 - `function.parameters(f): List`
@@ -26,7 +25,6 @@ These are ordinary standard-library identifiers:
 
 ```primal
 type.of(value)
-debug.timed(value)
 function.name(value)
 function.arity(value)
 function.parameters(value)
@@ -56,17 +54,6 @@ Possible result strings:
 - `Timestamp`
 - `Function`
 
-### `debug.timed`
-
-- **Signature:** `debug.timed(a: Any): Any`
-- **Purity:** Impure
-- **Behavior:** Evaluates its argument exactly once, measures evaluation time, prints the elapsed time to standard output, and returns the reduced value unchanged
-- **Output format:** `<milliseconds>ms` followed by a newline
-
-`debug.timed` is a normal runtime function and should work on both CLI and web targets.
-
-If evaluation of the argument fails, the original runtime error is propagated and no timing line is printed.
-
 ### `function.name`
 
 - **Signature:** `function.name(f: Function): String`
@@ -94,7 +81,6 @@ For standard-library functions, these are the declared runtime parameter names. 
 - Wrong arity remains an existing call-site error
 - `function.name`, `function.arity`, and `function.parameters` must raise `InvalidArgumentTypesError` when their reduced argument is not a function value
 - `type.of` propagates any error raised while evaluating its argument
-- `debug.timed` propagates any error raised while evaluating its argument
 
 ## Key Edge Cases
 
@@ -108,10 +94,6 @@ type.of(if (ready) value else fallback) // returns the type of the selected bran
 
 ```primal
 function.parameters(num.add) // returns the runtime parameter names for the built-in function
-```
-
-```primal
-debug.timed(error.throw(1, "boom")) // rethrows the error and does not print timing output
 ```
 
 ## Examples
@@ -134,10 +116,6 @@ function.arity(addNumbers) // returns 2
 function.parameters(addNumbers) // returns ["a", "b"]
 ```
 
-```primal
-debug.timed(str.length("hello")) // prints something like "0ms" and returns 5
-```
-
 ### Invalid
 
 ```primal
@@ -148,11 +126,6 @@ function.name(42)
 ```primal
 function.parameters("hello")
 // Runtime error: Invalid argument types for function "function.parameters". Expected: (Function). Actual: (String)
-```
-
-```primal
-debug.timed(1, 2)
-// Error: invalid number of arguments for "debug.timed"
 ```
 
 ## Compiler Impact
