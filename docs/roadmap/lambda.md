@@ -680,12 +680,14 @@ class LambdaTerm extends FunctionTerm {
   dynamic native() => toString();
 
   @override
-  String toString() {
-    final String paramStr = parameters.map((p) => p.name).join(', ');
-    return '<lambda($paramStr)>';
-  }
+  String toString() =>
+      '$name(${parameters.map((p) => '${p.name}: ${p.type}').join(', ')})';
 }
 ```
+
+**Printing format**: Lambdas use the same signature format as named functions for consistency. A lambda `(x, y) -> x + y` at row 1, column 1 prints as `<lambda@1:1>(x, y)`. This matches the existing `FunctionTerm.toString()` pattern where named functions print as `name(param: Type, ...)`.
+
+````
 
 ### Lambda Bound Variable Term
 
@@ -720,7 +722,7 @@ class LambdaBoundVariableTerm extends Term {
   dynamic native() =>
       throw StateError('LambdaBoundVariableTerm "$name" was not substituted');
 }
-```
+````
 
 ### Why Partial Substitution is Needed
 
@@ -1169,12 +1171,12 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Runtime Tests: LambdaTerm (basic)
 
-| Test                  | Code                                      | Expected        |
-| --------------------- | ----------------------------------------- | --------------- |
-| Type is FunctionType  | `LambdaTerm(...).type`                    | `FunctionType`  |
-| Reduce returns this   | `LambdaTerm(...).reduce()`                | Returns `this`  |
-| Native returns string | `LambdaTerm(...).native()`                | `"<lambda(x)>"` |
-| toString format       | `LambdaTerm(params: [x], ...).toString()` | `"<lambda(x)>"` |
+| Test                  | Code                                               | Expected            |
+| --------------------- | -------------------------------------------------- | ------------------- |
+| Type is FunctionType  | `LambdaTerm(...).type`                             | `FunctionType`      |
+| Reduce returns this   | `LambdaTerm(...).reduce()`                         | Returns `this`      |
+| Native returns string | `LambdaTerm(name: '<lambda@1:1>', ...).native()`   | `"<lambda@1:1>(x)"` |
+| toString format       | `LambdaTerm(name: '<lambda@1:1>', [x]).toString()` | `"<lambda@1:1>(x)"` |
 
 #### Runtime Tests: LambdaTerm.substitute()
 
@@ -1229,6 +1231,18 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Lambda with if body       | `((x) -> if (x > 0) x else -x)(-5)`                              | `5`                         |
 | Lambda with let body      | `((x) -> let y = x * 2 in y + 1)(5)`                             | `11`                        |
 | Lambda as + operand       | `1 + ((x) -> x)`                                                 | `InvalidArgumentTypesError` |
+
+#### Printing Tests
+
+These tests verify lambda printing consistency with named functions.
+
+| Test                    | Input                                    | Expected                      |
+| ----------------------- | ---------------------------------------- | ----------------------------- |
+| Lambda alone            | `f() = (x) -> x` then `f()`              | `"<lambda@1:7>(x)"`           |
+| Lambda in list          | `main() = [(x) -> x]`                    | `["<lambda@1:10>(x)"]`        |
+| Mixed lambdas and named | `f(a) = a` then `main() = [f, (x) -> x]` | `["f(a)", "<lambda@...>(x)"]` |
+| Multi-param lambda      | `f() = (a, b) -> a + b` then `f()`       | `"<lambda@1:7>(a, b)"`        |
+| Zero-param lambda       | `f() = () -> 5` then `f()`               | `"<lambda@1:7>()"`            |
 
 #### REPL Tests
 

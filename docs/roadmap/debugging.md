@@ -5,12 +5,14 @@ Expression-returning debug helpers that print or validate values without changin
 **Proposed Syntax:**
 
 ```primal
-x() = debug.trace(expensiveComputation())
-y() = debug.trace("after filter", list.filter(data, isValid))
+debug.type([1, 2, 3]) // prints in the console "List" and returns [1, 2,3]
+```
 
-measured() = debug.timed("loadUsers", loadUsers())
-debug.type(measured())                    // "List", "Number", "Function", ...
+```primal
+x() = debug.trace(expensiveComputation()) // What could it print in the console?
+```
 
+```primal
 traceStep(x) = debug.trace("step", x)
 result() = list.map([1, 2, 3], traceStep)
 ```
@@ -24,7 +26,7 @@ result() = list.map([1, 2, 3], traceStep)
 
 **Implementation Notes:**
 
-- `debug.type` must return the same value as `typeof` but as a string, so it can be used in expressions without affecting behavior.
+- `debug.type` must return the type as a string
 - `debug.trace` must evaluate its value exactly once and return it unchanged.
 - `debug.timed` can piggyback on the existing CLI debug mode but should also work as a normal runtime function.
 
