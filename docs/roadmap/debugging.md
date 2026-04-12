@@ -1,52 +1,230 @@
-### Debug / Trace Expressions
+# Runtime Inspection and Timing
 
-Expression-returning debug helpers that print or validate values without changing program behavior. This is a particularly good fit for Primal because everything is an expression and the CLI already has a `--debug` mode.
+Add a minimal set of runtime inspection helpers that fit Primal's existing model:
 
-**Proposed Syntax:**
+- functions are first-class values
+- everything remains expression-oriented
+- no new syntax or keywords are required
+
+This revision keeps the parts of the original draft that are orthogonal and already supported by the runtime model, and removes the parts that overlap with existing constructs or remain underspecified.
+
+## Summary
+
+This proposal adds these standard-library functions:
+
+- `type.of(a): String`
+- `debug.timed(a): Any`
+- `function.name(f): String`
+- `function.arity(f): Number`
+- `function.parameters(f): List`
+
+This proposal does not add:
+
+- `debug.type`
+- `debug.trace`
+- `function.signature`
+
+## Rationale
+
+### Why `type.of` instead of `debug.type`
+
+Runtime type inspection is a pure query, not a debugging side effect. It should return the canonical runtime type name and avoid printing.
+
+### Why no `debug.trace`
+
+Primal already has expression-returning console output helpers:
 
 ```primal
-debug.type([1, 2, 3]) // prints in the console "List" and returns [1, 2,3]
+console.writeLn(value)
+```
+
+This already evaluates `value`, prints it, and returns it unchanged, so a separate `debug.trace` function would duplicate existing behavior.
+
+### Why no `function.signature`
+
+`function.signature` overlaps with existing string conversion and is underspecified:
+
+- it is unclear whether the output should be typed or untyped
+- it adds little beyond `function.name`, `function.arity`, and `function.parameters`
+
+The smaller introspection surface is cleaner and easier to document.
+
+## Syntax
+
+No syntax changes are required.
+
+These are ordinary standard-library identifiers:
+
+```primal
+type.of(value)
+debug.timed(value)
+function.name(value)
+function.arity(value)
+function.parameters(value)
+```
+
+## Semantics
+
+### `type.of`
+
+- **Signature:** `type.of(a: Any): String`
+- **Purity:** Pure
+- **Behavior:** Evaluates its argument exactly once, reduces it to a value, and returns the canonical runtime type name as a string
+
+Possible result strings:
+
+- `Boolean`
+- `Number`
+- `String`
+- `List`
+- `Map`
+- `Set`
+- `Stack`
+- `Queue`
+- `Vector`
+- `File`
+- `Directory`
+- `Timestamp`
+- `Function`
+
+### `debug.timed`
+
+- **Signature:** `debug.timed(a: Any): Any`
+- **Purity:** Impure
+- **Behavior:** Evaluates its argument exactly once, measures evaluation time, prints the elapsed time to standard output, and returns the reduced value unchanged
+- **Output format:** `<milliseconds>ms` followed by a newline
+
+`debug.timed` is a normal runtime function and should work on both CLI and web targets.
+
+If evaluation of the argument fails, the original runtime error is propagated and no timing line is printed.
+
+### `function.name`
+
+- **Signature:** `function.name(f: Function): String`
+- **Purity:** Pure
+- **Behavior:** Returns the underlying function value's runtime name
+
+### `function.arity`
+
+- **Signature:** `function.arity(f: Function): Number`
+- **Purity:** Pure
+- **Behavior:** Returns the number of parameters accepted by the function
+
+### `function.parameters`
+
+- **Signature:** `function.parameters(f: Function): List`
+- **Purity:** Pure
+- **Behavior:** Returns the function parameter names, in declaration order, as a list of strings
+
+For user-defined functions, these are the original parameter names.
+
+For standard-library functions, these are the declared runtime parameter names. They may be generic names such as `"a"` and `"b"`.
+
+## Error Behavior
+
+- Wrong arity remains an existing call-site error
+- `function.name`, `function.arity`, and `function.parameters` must raise `InvalidArgumentTypesError` when their reduced argument is not a function value
+- `type.of` propagates any error raised while evaluating its argument
+- `debug.timed` propagates any error raised while evaluating its argument
+
+## Key Edge Cases
+
+```primal
+let alias = greet in function.name(alias) // returns "greet"
 ```
 
 ```primal
-debug.trace(foo()) // What could it print in the console?
+type.of(if (ready) value else fallback) // returns the type of the selected branch only
 ```
 
 ```primal
-debug.timed(bar()) // What could it print in the console?
+function.parameters(num.add) // returns the runtime parameter names for the built-in function
 ```
 
-**Implementation Notes:**
+```primal
+debug.timed(error.throw(1, "boom")) // rethrows the error and does not print timing output
+```
 
-- `debug.type` must return the type as a string
-- `debug.trace` must evaluate its value exactly once and return it unchanged.
-- `debug.timed` can piggyback on the existing CLI debug mode but should also work as a normal runtime function.
+## Examples
 
-### Function Introspection
+### Valid
 
-Expose metadata about function values. Primal already has first-class functions, but once a function is passed around there is very little users can ask about it. Introspection would make higher-order code, debugging, and tooling much nicer.
+```primal
+type.of([1, 2, 3]) // returns "List"
+```
 
-**Proposed Syntax:**
+```primal
+type.of(num.add) // returns "Function"
+```
 
 ```primal
 addNumbers(a, b) = a + b
 
-function.name(addNumbers)                 // "addNumbers"
-function.arity(addNumbers)                // 2
-function.parameters(addNumbers)           // ["a", "b"]
-function.signature(addNumbers)            // "addNumbers(a, b)"
+function.name(addNumbers) // returns "addNumbers"
+function.arity(addNumbers) // returns 2
+function.parameters(addNumbers) // returns ["a", "b"]
 ```
 
 ```primal
-greet(name) = "Hello, " + name
-
-function.name(greet)                      // "greet"
-function.arity(greet)                     // 1
-function.parameters(greet)                // ["name"]
-function.signature(greet)                 // "greet(name)"
+debug.timed(str.length("hello")) // prints something like "0ms" and returns 5
 ```
 
-**Implementation Notes:**
+### Invalid
 
-- `FunctionTerm` already stores `name` and `parameters`, so most of this proposal is exposing existing runtime metadata.
-- `function.signature` can reuse the formatting already present in `FunctionTerm.toString()`.
+```primal
+function.name(42)
+// Runtime error: Invalid argument types for function "function.name". Expected: (Function). Actual: (Number)
+```
+
+```primal
+function.parameters("hello")
+// Runtime error: Invalid argument types for function "function.parameters". Expected: (Function). Actual: (String)
+```
+
+```primal
+debug.timed(1, 2)
+// Error: invalid number of arguments for "debug.timed"
+```
+
+## Compiler Impact
+
+### Lexical Analysis
+
+- No changes
+
+### Syntactic Analysis
+
+- No changes
+
+### Semantic Analysis
+
+- Add standard-library signatures only
+- Existing identifier resolution and arity checking remain sufficient
+
+### Lowering
+
+- No structural changes
+
+### Runtime
+
+- Add native runtime functions only
+
+## Simpler Alternatives
+
+- Use `console.write` or `console.writeLn` for ad hoc tracing
+- Use `is.function` when only a boolean type check is needed
+
+## Post-Implementation
+
+- Update documentation in `docs/`
+- Implement tests
+
+## Implementation Complexity
+
+Low.
+
+The feature set is limited to additional standard-library functions and does not require new syntax, new tokens, or new intermediate representation forms.
+
+## Recommendation
+
+Revise the original draft to this smaller specification.

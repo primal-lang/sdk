@@ -757,10 +757,9 @@ When processing a `LambdaExpression`:
    - Add the name to `lambdaParameters`
 3. Create extended scope: combine `availableParameters` with `lambdaParameters`
 4. Create extended `lambdaParameterNames` set: combine existing with this lambda's parameters
-5. Create a local `usedLambdaParameters` set to track which lambda parameters are used in the body
-6. Check the body expression against the extended scope, passing `usedLambdaParameters`
-7. Emit `UnusedLambdaParameterWarning` for any parameters in `lambdaParameters` not in `usedLambdaParameters`
-8. Return a `SemanticLambdaNode` with the parameters and checked body
+5. Check the body expression against the extended scope, passing through the shared `usedLambdaParameters` set (do NOT create a local copy—usage must propagate across nested lambdas)
+6. Emit `UnusedLambdaParameterWarning` for any parameters in `lambdaParameters` not in `usedLambdaParameters`
+7. Return a `SemanticLambdaNode` with the parameters and checked body
 
 ```dart
 SemanticNode _checkLambdaExpression({
@@ -810,10 +809,10 @@ SemanticNode _checkLambdaExpression({
     ...localLambdaParameters,
   };
 
-  // Track which lambda parameters are used in the body
-  final Set<String> localUsedLambdaParameters = {};
-
-  // Check body with extended scope
+  // Check body with extended scope.
+  // Note: usedLambdaParameters is NOT copied because lambda parameter usage
+  // tracking must persist across nested lambdas. This mirrors how usedParameters
+  // works for function parameters (see _checkLetExpression comment).
   final SemanticNode checkedBody = checkExpression(
     expression: expression.body,
     currentFunction: currentFunction,
@@ -821,14 +820,17 @@ SemanticNode _checkLambdaExpression({
     usedParameters: usedParameters,
     letBindingNames: letBindingNames,
     lambdaParameterNames: extendedLambdaParameterNames,
-    usedLambdaParameters: localUsedLambdaParameters,
+    usedLambdaParameters: usedLambdaParameters,
     warnings: warnings,
     allSignatures: allSignatures,
   );
 
-  // Warn about unused lambda parameters
+  // Warn about unused lambda parameters (only THIS lambda's parameters).
+  // The shared usedLambdaParameters set contains all used lambda params
+  // from this and nested scopes, so outer params used in inner lambdas
+  // are correctly marked as used.
   for (final String paramName in localLambdaParameters) {
-    if (!localUsedLambdaParameters.contains(paramName)) {
+    if (!usedLambdaParameters.contains(paramName)) {
       warnings.add(
         UnusedLambdaParameterWarning(
           parameter: paramName,
@@ -848,16 +850,16 @@ SemanticNode _checkLambdaExpression({
 
 **Cascading signature changes**: All helper methods must accept and propagate `lambdaParameterNames`. This parallels the `letBindingNames` pattern from the `let` specification. The following methods require signature updates to add `required Set<String> lambdaParameterNames`:
 
-| Method                         | Change Required                                                                     |
-| ------------------------------ | ----------------------------------------------------------------------------------- |
-| `checkExpression()`            | Add `lambdaParameterNames`, `usedLambdaParameters`, `warnings`; propagate to all    |
-| `_checkListExpression()`       | Add parameters, propagate to element `checkExpression` calls                        |
-| `_checkMapExpression()`        | Add parameters, propagate to key/value `checkExpression` calls                      |
-| `_checkIdentifierExpression()` | Add parameters, set `isLambdaParameter` flag, track usage in `usedLambdaParameters` |
-| `_checkCallExpression()`       | Add parameters, propagate to callee and argument checks                             |
-| `_checkCalleeIdentifier()`     | Add parameters, propagate to recursive calls                                        |
-| `_checkLetExpression()`        | Add parameters, propagate to binding and body checks                                |
-| `_checkLambdaExpression()`     | Create local `usedLambdaParameters`, emit warnings for unused parameters            |
+| Method                         | Change Required                                                                                               |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `checkExpression()`            | Add `lambdaParameterNames`, `usedLambdaParameters`, `warnings`; propagate to all                              |
+| `_checkListExpression()`       | Add parameters, propagate to element `checkExpression` calls                                                  |
+| `_checkMapExpression()`        | Add parameters, propagate to key/value `checkExpression` calls                                                |
+| `_checkIdentifierExpression()` | Add parameters, set `isLambdaParameter` flag, track usage in `usedLambdaParameters`                           |
+| `_checkCallExpression()`       | Add parameters, propagate to callee and argument checks                                                       |
+| `_checkCalleeIdentifier()`     | Add parameters, propagate to recursive calls                                                                  |
+| `_checkLetExpression()`        | Add parameters, propagate to binding and body checks                                                          |
+| `_checkLambdaExpression()`     | Extend scope with lambda params, propagate shared `usedLambdaParameters`, emit warnings for unused parameters |
 
 Modify `_checkIdentifierExpression()` to distinguish lambda parameters and track usage:
 
@@ -1175,6 +1177,7 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Multiple unused lambda parameters   | `f() = (x, y) -> 5`                                 | `UnusedLambdaParameterWarning` for `x` and `y`                   |
 | Partially unused lambda parameters  | `f() = (x, y) -> x`                                 | `UnusedLambdaParameterWarning` for `y` only                      |
 | No warning when all params used     | `f() = (x, y) -> x + y`                             | No warnings                                                      |
+| Outer param used in nested lambda   | `f() = (x) -> (y) -> x + y`                         | No warnings (x is used in inner body)                            |
 
 #### Lowering Tests
 
