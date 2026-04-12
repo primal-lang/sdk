@@ -1060,7 +1060,7 @@ Lambda expressions work in REPL mode the same as in program mode:
 > f()(5)
 10
 > multiplier(n) = (x) -> x * n
-> double = multiplier(2)
+> double() = multiplier(2)
 > double()(5)
 10
 ```
@@ -1153,26 +1153,26 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 
 #### Semantic Tests
 
-| Test                                | Input                                             | Expected                                                         |
-| ----------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------- |
-| Valid zero-param                    | `f = () -> 5`                                     | No errors                                                        |
-| Valid single-param                  | `f() = (x) -> x + 1`                              | No errors                                                        |
-| Valid multi-param                   | `f = (x, y) -> x + y`                             | No errors                                                        |
-| Duplicate parameter                 | `f = (x, x) -> x`                                 | `DuplicatedLambdaParameterError`                                 |
-| Shadows function parameter          | `f(x) = (x) -> x`                                 | `ShadowedLambdaParameterError`                                   |
-| Shadows let binding                 | `f(n) = let x = 1 in (x) -> x`                    | `ShadowedLambdaParameterError`                                   |
-| Shadows outer lambda parameter      | `f() = (x) -> (x) -> x`                           | `ShadowedLambdaParameterError`                                   |
-| Undefined variable in body          | `f() = (x) -> y`                                  | `UndefinedIdentifierError`                                       |
-| Captures function parameter         | `f(n) = (x) -> x + n`                             | No errors, `n` is captured                                       |
-| Captures let binding                | `f(n) = let m = 2 in (x) -> x * m`                | No errors, `m` is captured                                       |
-| `isLambdaParameter` set correctly   | `f() = (x) -> x`                                  | Body's `SemanticBoundVariableNode` has `isLambdaParameter: true` |
-| Parameter `isLambdaParameter` false | `f(n) = n`                                        | `SemanticBoundVariableNode` has `isLambdaParameter: false`       |
-| Shadows stdlib function             | `f = (num.abs) -> num.abs`                        | No error, `num.abs` resolves to parameter                        |
-| Shadows custom function             | `double(x) = x * 2` then `f = (double) -> double` | No error, `double` resolves to parameter                         |
-| Unused lambda parameter             | `f() = (x) -> 5`                                  | `UnusedLambdaParameterWarning` for `x`                           |
-| Multiple unused lambda parameters   | `f() = (x, y) -> 5`                               | `UnusedLambdaParameterWarning` for `x` and `y`                   |
-| Partially unused lambda parameters  | `f() = (x, y) -> x`                               | `UnusedLambdaParameterWarning` for `y` only                      |
-| No warning when all params used     | `f() = (x, y) -> x + y`                           | No warnings                                                      |
+| Test                                | Input                                               | Expected                                                         |
+| ----------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------- |
+| Valid zero-param                    | `f() = () -> 5`                                     | No errors                                                        |
+| Valid single-param                  | `f() = (x) -> x + 1`                                | No errors                                                        |
+| Valid multi-param                   | `f() = (x, y) -> x + y`                             | No errors                                                        |
+| Duplicate parameter                 | `f() = (x, x) -> x`                                 | `DuplicatedLambdaParameterError`                                 |
+| Shadows function parameter          | `f(x) = (x) -> x`                                   | `ShadowedLambdaParameterError`                                   |
+| Shadows let binding                 | `f(n) = let x = 1 in (x) -> x`                      | `ShadowedLambdaParameterError`                                   |
+| Shadows outer lambda parameter      | `f() = (x) -> (x) -> x`                             | `ShadowedLambdaParameterError`                                   |
+| Undefined variable in body          | `f() = (x) -> y`                                    | `UndefinedIdentifierError`                                       |
+| Captures function parameter         | `f(n) = (x) -> x + n`                               | No errors, `n` is captured                                       |
+| Captures let binding                | `f(n) = let m = 2 in (x) -> x * m`                  | No errors, `m` is captured                                       |
+| `isLambdaParameter` set correctly   | `f() = (x) -> x`                                    | Body's `SemanticBoundVariableNode` has `isLambdaParameter: true` |
+| Parameter `isLambdaParameter` false | `f(n) = n`                                          | `SemanticBoundVariableNode` has `isLambdaParameter: false`       |
+| Shadows stdlib function             | `f() = (num.abs) -> num.abs`                        | No error, `num.abs` resolves to parameter                        |
+| Shadows custom function             | `double(x) = x * 2` then `f() = (double) -> double` | No error, `double` resolves to parameter                         |
+| Unused lambda parameter             | `f() = (x) -> 5`                                    | `UnusedLambdaParameterWarning` for `x`                           |
+| Multiple unused lambda parameters   | `f() = (x, y) -> 5`                                 | `UnusedLambdaParameterWarning` for `x` and `y`                   |
+| Partially unused lambda parameters  | `f() = (x, y) -> x`                                 | `UnusedLambdaParameterWarning` for `y` only                      |
+| No warning when all params used     | `f() = (x, y) -> x + y`                             | No warnings                                                      |
 
 #### Lowering Tests
 
@@ -1292,9 +1292,9 @@ These tests verify lambda printing consistency with named functions.
 
 **Late-binding of function references** (verifies `FunctionReferenceTerm` behavior):
 
-| Test                              | Steps                                                                                        | Expected                              |
-| --------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------- |
-| Lambda sees redefined function    | `double(x) = x * 2`, `f() = (x) -> double(x)`, `lam = f()`, `double(x) = x * 3`, `lam()(5)`  | `15` (uses new definition)            |
-| Lambda errors on deleted function | `helper(x) = x`, `f() = (x) -> helper(x)`, `lam = f()`, delete `helper`, `lam()(5)`          | `NotFoundInScopeError`                |
-| Bound variable still captured     | `make(n) = (x) -> x * n`, `lam = make(2)`, redefine `make(n) = (x) -> x + n`, `lam()(5)`     | `10` (bound var captured, not late)   |
-| Mixed capture and late-binding    | `mult(x) = x * 2`, `f(n) = (x) -> mult(n + x)`, `lam = f(10)`, `mult(x) = x * 3`, `lam()(5)` | `45` (n=10 captured, mult late-bound) |
+| Test                              | Steps                                                                                          | Expected                              |
+| --------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Lambda sees redefined function    | `double(x) = x * 2`, `f() = (x) -> double(x)`, `lam() = f()`, `double(x) = x * 3`, `lam()(5)`  | `15` (uses new definition)            |
+| Lambda errors on deleted function | `helper(x) = x`, `f() = (x) -> helper(x)`, `lam() = f()`, delete `helper`, `lam()(5)`          | `NotFoundInScopeError`                |
+| Bound variable still captured     | `make(n) = (x) -> x * n`, `lam() = make(2)`, redefine `make(n) = (x) -> x + n`, `lam()(5)`     | `10` (bound var captured, not late)   |
+| Mixed capture and late-binding    | `mult(x) = x * 2`, `f(n) = (x) -> mult(n + x)`, `lam() = f(10)`, `mult(x) = x * 3`, `lam()(5)` | `45` (n=10 captured, mult late-bound) |
