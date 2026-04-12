@@ -17,17 +17,20 @@ debug(a: Any, b: String): Any
 ## Behavior
 
 1. Reduce expression `a` to a value (any type)
-2. Reduce expression `b` to a value (must be a String)
-3. Print to stdout: `[debug] <b>: <a>\n`
-4. Return the reduced value of `a`
+2. Deep-reduce `a`: recursively reduce all elements within collections (see [Evaluation Semantics](#evaluation-semantics))
+3. Reduce expression `b` to a value (must be a String)
+4. Print to stdout: `[debug] <b>: <deeply-reduced a>\n`
+5. Return the deeply-reduced `a` (a new term with all collection elements fully evaluated)
 
 ### Evaluation Semantics
 
-Evaluation is **deep**: `debug` recursively reduces `a` and all nested elements within collections before printing. This ensures computed values are shown, making debug output more useful.
+Evaluation is **deep**: `debug` recursively reduces `a` and all nested elements within collections before printing and returning. This ensures computed values are shown in output, and the return value contains fully evaluated elements.
 
-- `debug(1 + 2, "x")` prints `[debug] x: 3`
-- `debug([1 + 2, 3 * 4], "x")` prints `[debug] x: [3, 12]`
-- `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}`
+- `debug(1 + 2, "x")` prints `[debug] x: 3` and returns `3`
+- `debug([1 + 2, 3 * 4], "x")` prints `[debug] x: [3, 12]` and returns `[3, 12]`
+- `debug({"sum": 1 + 2}, "x")` prints `[debug] x: {sum: 3}` and returns `{"sum": 3}`
+
+This differs from `console.write`, which does not deep-reduce collection elements. For `debug`, the return value is a **new term** with all nested computations resolved, not the original unevaluated term.
 
 Note: Deep evaluation may trigger side effects in nested expressions and will not terminate for infinite structures.
 
