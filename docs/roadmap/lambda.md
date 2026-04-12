@@ -919,7 +919,7 @@ SemanticNode _checkIdentifierExpression({
 }
 ```
 
-**External callers**: `RuntimeFacade` must be updated to pass the new parameters:
+**External callers**: `RuntimeFacade` must be updated to pass the new parameters in both `evaluateToTerm()` and `defineFunction()`:
 
 ```dart
 // In RuntimeFacade.evaluateToTerm()
@@ -935,6 +935,26 @@ final SemanticNode semanticNode = analyzer.checkExpression(
   warnings: warnings,             // NEW
   allSignatures: _allSignatures,
 );
+```
+
+```dart
+// In RuntimeFacade.defineFunction(), within the try block:
+final List<SemanticWarning> warnings = [];
+body = analyzer.checkExpression(
+  expression: definition.expression,
+  currentFunction: name,
+  availableParameters: definition.parameters.toSet(),
+  usedParameters: usedParameters,
+  letBindingNames: {},
+  lambdaParameterNames: {},       // NEW
+  usedLambdaParameters: {},       // NEW
+  warnings: warnings,             // NEW
+  allSignatures: _allSignatures,
+);
+// After successful lowering (before method returns), print warnings:
+for (final SemanticWarning warning in warnings) {
+  stderr.writeln('Warning: ${warning.message}');
+}
 ```
 
 **REPL warning behavior**: Warnings collected during `evaluateToTerm()` and `defineFunction()` should be printed to stderr immediately after successful evaluation, before displaying the result. This matches batch compilation behavior where warnings appear but do not prevent execution.
