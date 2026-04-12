@@ -59,6 +59,8 @@ Where `value` uses `Term.toString()` (same as `console.write`):
 | Function  | `name(param: Type, ...)`    | `num.add(a: Number, b: Number)` |
 | Lambda    | `<lambda@line:col>(params)` | `<lambda@1:7>(x)`               |
 
+Note: The `{}` literal in source code is parsed as an empty Map, not an empty Set. To create an empty Set, use `set.new()`. In output, both empty Map and empty Set display as `{}`.
+
 ## Examples
 
 ### Basic Usage
@@ -330,7 +332,10 @@ This ensures that `debug("x", [1 + 2])` prints `[debug] x: [3]` and returns `Lis
   - Recursive scenarios
   - Primitives: numbers, strings, booleans
   - Collections with literal elements: `debug("list", [1, 2])`, `debug("map", {"a": 1})`
-  - Empty collections: `debug("empty", [])`, `debug("empty", {})`
+  - Empty collections:
+    - `debug("empty list", [])` prints `[debug] empty list: []`
+    - `debug("empty map", {})` prints `[debug] empty map: {}` (note: `{}` is parsed as empty Map, not Set)
+    - `debug("empty set", set.new())` prints `[debug] empty set: {}`
   - Deep evaluation (computed elements reduced in output AND return value):
     - `debug("x", [1 + 2])` prints `[debug] x: [3]` and returns `[3]`
     - `debug("x", {"sum": 1 + 2})` prints `[debug] x: {sum: 3}` and returns `{"sum": 3}`
