@@ -178,15 +178,15 @@ Returns: `[4, 8]`
 ```primal
 // Missing arguments (direct call - caught during semantic analysis)
 debug()
-// SemanticError: InvalidNumberOfArgumentsError - expected 2, got 0
+// SemanticError: Invalid number of arguments calling function "debug": expected 2, got 0
 
 // Wrong type for argument b (direct call - caught during semantic analysis)
 debug("value", 123)
-// SemanticError: InvalidArgumentTypesError - expected String for argument 'b'
+// SemanticError: Invalid argument types for function "debug". Expected: (String). Actual: (Number)
 
 // Error propagation (not caught)
 debug(num.div(1, 0), "oops")
-// RuntimeError: DivisionByZeroError
+// RuntimeError: Division by zero is not allowed in "num.div"
 ```
 
 ## Platform Support
