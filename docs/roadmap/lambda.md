@@ -516,6 +516,8 @@ class UnusedLambdaParameterWarning extends SemanticWarning {
 }
 ```
 
+**Why warn for lambda parameters but not let bindings?** Lambda parameters, like function parameters, are part of a callable's interface. An unused parameter suggests the signature may be wrong. Let bindings are internal computations; unused bindings are wasteful but don't affect the interface. This matches the existing behavior where function parameters have unused warnings but let bindings do not.
+
 ## Examples
 
 ### Valid

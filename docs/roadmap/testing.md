@@ -21,11 +21,15 @@ assert.throws(to.number("not a number"), "Expected parsing to fail")
 ```
 
 ```primal
-assert.closeTo(actual, expected, delta)
+assert.closeTo(actual, expected, delta, errorMessage)
 ```
 
-assert.match(string, regex)
+```primal
+assert.match(string, regex, errorMessage)
+```
 
-assert.arrayContaining(subset)
+```primal
+assert.contains(element, collection, errorMessage)
+```
 
 What other functions could we implement?
