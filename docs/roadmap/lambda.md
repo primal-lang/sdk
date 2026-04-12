@@ -303,7 +303,7 @@ double(x) = x * 2
 
 ### Closures
 
-Lambdas capture variables from their enclosing scope by value at creation time:
+Lambdas capture **bound variables** (function parameters, let bindings, outer lambda parameters) by value at creation time:
 
 ```primal
 multiplier(n) = (x) -> x * n
@@ -317,7 +317,7 @@ When `multiplier(2)` is called:
 2. The captured variable `n` is substituted with `2`
 3. The resulting closure `(x) -> x * 2` is returned
 
-Captured variables are resolved at lambda creation time, not call time:
+Captured bound variables are resolved at lambda creation time, not call time:
 
 ```primal
 // Captures happen when the lambda is created
@@ -325,6 +325,28 @@ maker(n) = (x) -> x + n
 maker(10)(5)  // 15
 // Even if there were a way to change n, the closure would still use 10
 ```
+
+### Function References in Lambdas
+
+**Function references are late-bound**, not captured by value. When a lambda body references a named function (custom or standard library), it lowers to a `FunctionReferenceTerm` that resolves through the shared `functions` map at reduce-time:
+
+```primal
+// In REPL:
+double(x) = x * 2
+f() = (x) -> double(x)        // double is a FunctionReferenceTerm, not captured
+myLambda = f()
+
+double(x) = x * 3             // Redefine double
+myLambda()(5)                 // 15 (uses new definition, not 10)
+```
+
+This late-binding is **intentional** to support:
+
+- Forward references (function A calls B before B is defined)
+- Mutual recursion (A calls B, B calls A)
+- REPL redefinition semantics
+
+**Consequence**: Lambdas referencing named functions observe rename/delete/redefinition of those functions. This differs from the creation-time capture of bound variables.
 
 ### Evaluation Order
 
@@ -1217,3 +1239,12 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Function returning lambda | `makeInc(n) = (x) -> x + n` then `makeInc(1)(5)`           | `6`      |
 | Lambda as function body   | `double() = (x) -> x * 2` then `double()(5)`               | `10`     |
 | Nested lambdas            | `f() = (a) -> (b) -> (c) -> a + b + c` then `f()(1)(2)(3)` | `6`      |
+
+**Late-binding of function references** (verifies `FunctionReferenceTerm` behavior):
+
+| Test                              | Steps                                                                                        | Expected                              |
+| --------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Lambda sees redefined function    | `double(x) = x * 2`, `f() = (x) -> double(x)`, `lam = f()`, `double(x) = x * 3`, `lam()(5)`  | `15` (uses new definition)            |
+| Lambda errors on deleted function | `helper(x) = x`, `f() = (x) -> helper(x)`, `lam = f()`, delete `helper`, `lam()(5)`          | `NotFoundInScopeError`                |
+| Bound variable still captured     | `make(n) = (x) -> x * n`, `lam = make(2)`, redefine `make(n) = (x) -> x + n`, `lam()(5)`     | `10` (bound var captured, not late)   |
+| Mixed capture and late-binding    | `mult(x) = x * 2`, `f(n) = (x) -> mult(n + x)`, `lam = f(10)`, `mult(x) = x * 3`, `lam()(5)` | `45` (n=10 captured, mult late-bound) |

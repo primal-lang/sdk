@@ -1,12 +1,5 @@
 ### Debug / Trace Expressions
 
-| Property   | Rating   |
-| ---------- | -------- |
-| Fit        | **High** |
-| Complexity | **Low**  |
-| Impact     | **High** |
-
-**Description:**
 Expression-returning debug helpers that print or validate values without changing program behavior. This is a particularly good fit for Primal because everything is an expression and the CLI already has a `--debug` mode.
 
 **Proposed Syntax:**
