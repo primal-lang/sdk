@@ -461,9 +461,11 @@ class MinusState extends State<Character, Lexeme> {
 | `UndefinedIdentifierError(identifier: 'y')`                     | `Error: Undefined identifier "y"`                      |
 | `UnusedLambdaParameterWarning(parameter: 'x', inFunction: 'f')` | `Warning: Unused lambda parameter "x" in function "f"` |
 
+**Parser entry point note**: `Compiler.expression()` calls `ExpressionParser.expression()` then checks for leftover tokens—if any remain, it throws `UnexpectedTokenError`. Invalid lambda-like syntax (e.g., `x -> x + 1`, `(x) x`, `5 + (x) -> x`) parses partially as a valid expression, leaving tokens unconsumed. The lookahead in `_checkLambdaStart()` returns -1 for non-lambda patterns, so they fall through to grouped expression or identifier parsing without consuming `->`. This means these cases produce `UnexpectedTokenError`, not `ExpectedTokenError` or `InvalidTokenError`.
+
 | Error/Warning                    | Condition                                     | Phase    | Priority |
 | -------------------------------- | --------------------------------------------- | -------- | -------- |
-| `ExpectedTokenError('->')`       | `->` missing after parameter list             | Parsing  | —        |
+| `UnexpectedTokenError`           | Leftover tokens after expression (see above)  | Parsing  | —        |
 | `DuplicatedLambdaParameterError` | Same parameter name appears twice in lambda   | Semantic | 1        |
 | `ShadowedLambdaParameterError`   | Parameter shadows outer variable or parameter | Semantic | 2        |
 | `UndefinedIdentifierError`       | Free variable in lambda body not in scope     | Semantic | 3        |
@@ -578,9 +580,9 @@ Error annotations below show exception class names. Actual CLI/REPL output inclu
 ```primal
 // ERROR: Missing parentheses around parameter
 x -> x + 1
-// → InvalidTokenError on '->'
-// Parser sees 'x' as an identifier expression, then encounters '->' which is
-// not a valid binary operator or expression continuation. The arrow token is
+// → UnexpectedTokenError on '->'
+// Parser sees 'x' as an identifier expression, then Compiler.expression()
+// detects leftover tokens and throws UnexpectedTokenError. The arrow token is
 // only recognized as part of lambda syntax immediately after ')' in '(params) ->'.
 
 // ERROR: Duplicate parameter
@@ -609,7 +611,10 @@ bad() = (x) -> (x) -> x
 
 // ERROR: Lambda as binary operand without parentheses
 5 + (x) -> x
-// → InvalidTokenError
+// → UnexpectedTokenError on '->'
+// Parser sees '5 + (x)' as a complete expression (where (x) is a grouped
+// identifier, not a lambda—no '->' follows ')' during lookahead). Then
+// Compiler.expression() detects leftover '-> x' tokens and throws.
 // Use: 5 + ((x) -> x)
 ```
 
@@ -1112,9 +1117,11 @@ New tests required for `isLambdaParameter: true` producing `LambdaBoundVariableT
 | Grouped expression          | `(x + y)`                     | Binary `CallExpression`, NOT lambda             |
 | Grouped identifier          | `(x)`                         | `IdentifierExpression`, NOT lambda              |
 | Immediately invoked         | `((x) -> x)(5)`               | `CallExpression` with `LambdaExpression` callee |
-| Missing arrow               | `(x) x`                       | `ExpectedTokenError('->')`                      |
-| Lambda as operand           | `1 + (x) -> x`                | `InvalidTokenError`                             |
+| Missing arrow               | `(x) x`                       | `UnexpectedTokenError` on `x` (see note)        |
+| Lambda as operand           | `1 + (x) -> x`                | `UnexpectedTokenError` on `->` (see note)       |
 | Lambda in parens as operand | `1 + ((x) -> x)`              | Valid: binary `+` with lambda                   |
+
+**Note on error tests**: Tests expecting `UnexpectedTokenError` must use `Compiler.expression()` (not raw `ExpressionParser`) because the leftover-token check happens in `Compiler`. For `(x) x`, the parser sees `(x)` as a grouped identifier (lookahead finds no `->` after `)`), then `Compiler.expression()` throws on the leftover `x`. For `1 + (x) -> x`, the parser completes `1 + (x)` successfully, then throws on leftover `->`.
 
 #### Semantic Tests
 

@@ -8,13 +8,6 @@ Expression-returning debug helpers that print or validate values without changin
 x() = debug.trace(expensiveComputation())
 y() = debug.trace("after filter", list.filter(data, isValid))
 
-safeHead(xs) =
-  debug.assert(
-    list.isNotEmpty(xs),
-    list.first(xs),
-    "expected a non-empty list"
-  )
-
 measured() = debug.timed("loadUsers", loadUsers())
 debug.type(measured())                    // "List", "Number", "Function", ...
 
@@ -35,7 +28,6 @@ debug.traceWhen(isVerbose, "payload", payload)
 
 - The MVP should be library functions rather than decorators, breakpoints, or statement-like forms.
 - `debug.trace` must evaluate its value exactly once and return it unchanged.
-- `debug.assert` should throw a regular runtime error so it composes naturally with `try`.
 - `debug.timed` can piggyback on the existing CLI debug mode but should also work as a normal runtime function.
 - Rich call-stack tracing can come later once the runtime carries more source-location metadata through evaluation.
 
