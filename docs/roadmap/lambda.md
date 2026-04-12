@@ -614,7 +614,7 @@ class LambdaTerm extends FunctionTerm {
         actual: arguments.length,
       );
     }
-    incrementDepth();
+    FunctionTerm.incrementDepth();
     try {
       // Evaluate arguments (call-by-value)
       final List<Term> evaluatedArguments =
@@ -628,7 +628,7 @@ class LambdaTerm extends FunctionTerm {
       final Term substituted = body.substitute(bindings);
       return substituted.reduce();
     } finally {
-      decrementDepth();
+      FunctionTerm.decrementDepth();
     }
   }
 
