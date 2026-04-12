@@ -161,6 +161,29 @@ debug(num.div(1, 0), "oops")
 
 Works on both CLI and web platforms (uses platform console abstraction).
 
+## Implementation
+
+### File Location
+
+```
+lib/compiler/library/debug/debug.dart
+```
+
+### Registration
+
+Add to `lib/compiler/library/standard_library.dart`:
+
+1. Import: `import 'package:primal/compiler/library/debug/debug.dart';`
+2. Add `const Debug()` to the function list in `StandardLibrary.get()`
+
+### Architecture Notes
+
+The implementation follows the pattern established by `console.write`:
+
+- Extend `NativeFunctionTerm` for the function definition
+- Extend `NativeFunctionTermWithArguments` for the evaluation logic
+- Use `PlatformInterface().console.outWrite()` for output
+
 ## Post-Implementation
 
 - Add documentation in `docs/reference/debug.md` and link from `docs/reference.md`
