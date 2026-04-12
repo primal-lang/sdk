@@ -909,8 +909,28 @@ final SemanticNode semanticNode = analyzer.checkExpression(
   warnings: warnings,             // NEW
   allSignatures: _allSignatures,
 );
-// Handle warnings as appropriate (log, collect, etc.)
 ```
+
+**REPL warning behavior**: Warnings collected during `evaluateToTerm()` and `defineFunction()` should be printed to stderr immediately after successful evaluation, before displaying the result. This matches batch compilation behavior where warnings appear but do not prevent execution.
+
+```dart
+// In RuntimeFacade.evaluateToTerm(), after successful evaluation:
+for (final SemanticWarning warning in warnings) {
+  stderr.writeln('Warning: ${warning.message}');
+}
+return lowered.reduce();
+```
+
+Example REPL session:
+
+```
+> f() = (x) -> 5
+Warning: Unused lambda parameter "x" in function "f"
+> f()(10)
+5
+```
+
+Note: Warnings are emitted once at definition time, not on each invocation. The lambda body is analyzed when `f` is defined, so the unused parameter warning appears then. Calling `f()(10)` produces no new warnings.
 
 ### Compiler Pipeline Impact
 

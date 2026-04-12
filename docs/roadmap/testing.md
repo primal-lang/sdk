@@ -20,4 +20,12 @@ assert.false(isEven(5), "Expected 5 to be odd")
 assert.throws(to.number("not a number"), "Expected parsing to fail")
 ```
 
+```primal
+assert.closeTo(actual, expected, delta)
+```
+
+assert.match(string, regex)
+
+assert.arrayContaining(subset)
+
 What other functions could we implement?
