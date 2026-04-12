@@ -77,6 +77,36 @@ Returns: `{"name": "Alice", "age": 30}`
 
 Note: Map keys and string values print without quotes in the output. The return value retains its original structure.
 
+### Function Values
+
+```primal
+debug(num.add, "function")
+```
+
+Output (stdout):
+
+```
+[debug] function: num.add(a: Number, b: Number)
+```
+
+Returns: `num.add(a: Number, b: Number)`
+
+Lambda functions display without parameter types:
+
+```primal
+debug((x) -> x + 1, "lambda")
+```
+
+Output (stdout):
+
+```
+[debug] lambda: <lambda@1:7>(x)
+```
+
+Returns: `<lambda@1:7>(x)`
+
+Note: Named functions show parameter types; lambdas show only parameter names. The `@1:7` indicates the source location (line:column) where the lambda was defined.
+
 ### Inline in Expressions
 
 ```primal
