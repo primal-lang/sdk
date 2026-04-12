@@ -877,18 +877,30 @@ SemanticNode _checkLambdaExpression({
 }
 ```
 
+**Architectural change: Warning threading**: The current implementation collects warnings _after_ `checkExpression()` returns—warnings are populated in `analyze()` by iterating over function parameters post-hoc (see `semantic_analyzer.dart` lines 80-90). This design proposes **threading warnings through** `checkExpression()` as a mutable list parameter, which enables lambda parameter warnings to be emitted during expression traversal.
+
+This is a deliberate architectural change, not just adding parameters. The refactoring involves:
+
+1. Adding `warnings` parameter to `checkExpression()` and all helper methods
+2. Moving unused function parameter warning emission INTO the expression checking flow (or keeping it post-hoc for function parameters only)
+3. Emitting lambda parameter warnings inside `_checkLambdaExpression()` during body analysis
+
+The alternative approach—keeping warnings post-hoc—would require `_checkLambdaExpression()` to return both a `SemanticLambdaNode` AND a list of warnings, which complicates the return type. Threading warnings through is cleaner and matches how `usedParameters` already works (threaded through and mutated in place).
+
 **Cascading signature changes**: All helper methods must accept and propagate `lambdaParameterNames`. This parallels the `letBindingNames` pattern from the `let` specification. The following methods require signature updates to add `required Set<String> lambdaParameterNames`:
 
 | Method                         | Change Required                                                                                               |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `checkExpression()`            | Add `lambdaParameterNames`, `usedLambdaParameters`, `warnings`; propagate to all                              |
-| `_checkListExpression()`       | Add parameters, propagate to element `checkExpression` calls                                                  |
-| `_checkMapExpression()`        | Add parameters, propagate to key/value `checkExpression` calls                                                |
-| `_checkIdentifierExpression()` | Add parameters, set `isLambdaParameter` flag, track usage in `usedLambdaParameters`                           |
-| `_checkCallExpression()`       | Add parameters, propagate to callee and argument checks                                                       |
-| `_checkCalleeIdentifier()`     | Add parameters, propagate to recursive calls                                                                  |
-| `_checkLetExpression()`        | Add parameters, propagate to binding and body checks                                                          |
-| `_checkLambdaExpression()`     | Extend scope with lambda params, propagate shared `usedLambdaParameters`, emit warnings for unused parameters |
+| `checkExpression()`            | Add `lambdaParameterNames`, `usedLambdaParameters`, `warnings`; propagate to all cases in switch              |
+| `_checkListExpression()`       | Add all three new parameters; propagate to element `checkExpression` calls                                    |
+| `_checkMapExpression()`        | Add all three new parameters; propagate to key/value `checkExpression` calls                                  |
+| `_checkIdentifierExpression()` | Add `lambdaParameterNames`, `usedLambdaParameters` (no `warnings`); set `isLambdaParameter` flag; track usage |
+| `_checkCallExpression()`       | Add all three new parameters; propagate to callee and argument checks                                         |
+| `_checkCalleeIdentifier()`     | Add all three new parameters; propagate to recursive calls                                                    |
+| `_checkLetExpression()`        | Add all three new parameters; propagate to binding and body checks                                            |
+| `_checkLambdaExpression()`     | (NEW) Extend scope with lambda params, propagate shared `usedLambdaParameters`, emit warnings                 |
+
+**Note**: The `warnings` parameter is a `List<SemanticWarning>` that is mutated in place (appended to). This follows the same pattern as `usedParameters` and `usedLambdaParameters`.
 
 Modify `_checkIdentifierExpression()` to distinguish lambda parameters and track usage:
 
@@ -971,6 +983,12 @@ for (final SemanticWarning warning in warnings) {
 ```dart
 // In SemanticAnalyzer.analyze(), within the function processing loop:
 // (This is the batch compilation path for .prm files)
+//
+// REFACTORING NOTE: The current analyze() creates `warnings` as a local list
+// and populates it AFTER checkExpression() returns (lines 80-90). This change
+// passes `warnings` INTO checkExpression() so lambda parameter warnings can
+// be emitted during traversal. The existing unused function parameter warning
+// loop (lines 80-90) can remain as-is or be moved into checkExpression().
 final Set<String> usedLambdaParameters = {};  // NEW
 final SemanticNode body = checkExpression(
   expression: function.expression,
@@ -980,13 +998,14 @@ final SemanticNode body = checkExpression(
   letBindingNames: {},
   lambdaParameterNames: {},         // NEW
   usedLambdaParameters: usedLambdaParameters,  // NEW
-  warnings: warnings,               // Already exists in analyze()
+  warnings: warnings,               // CHANGED: now passed through, not just local
   allSignatures: allSignatures,
 );
-// Note: warnings list already exists in analyze() and is returned in
-// IntermediateRepresentation. No additional stderr printing needed here—
-// warnings are collected and returned to the caller (Compiler) which
-// prints them before execution.
+// Note: The warnings list is defined earlier in analyze() and returned in
+// IntermediateRepresentation. Lambda parameter warnings are now added during
+// checkExpression() traversal; function parameter warnings are still added
+// after this call (lines 80-90). No stderr printing needed here—warnings are
+// collected and returned to the caller (Compiler) which prints them.
 ```
 
 **REPL warning behavior**: Warnings collected during `evaluateToTerm()` and `defineFunction()` should be printed to stderr immediately after successful evaluation, before displaying the result. This matches batch compilation behavior where warnings appear but do not prevent execution.
@@ -1012,13 +1031,13 @@ Note: Warnings are emitted once at definition time, not on each invocation. The 
 
 ### Compiler Pipeline Impact
 
-| Stage     | Changes                                                                                                                                                                              |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Lexical   | Add `ArrowToken` (`->`) in `MinusState`                                                                                                                                              |
-| Syntactic | Add `LambdaExpression` AST node; add `_isArrow` predicate; parse parameters and body with disambiguation                                                                             |
-| Semantic  | Add `lambdaParameterNames`, `usedLambdaParameters`, `warnings` parameters; check for duplicates, shadowing, and unused; add `isLambdaParameter` field to `SemanticBoundVariableNode` |
-| Lowering  | Convert `SemanticLambdaNode` to `LambdaTerm`; map `SemanticBoundVariableNode` with `isLambdaParameter` to `LambdaBoundVariableTerm`                                                  |
-| Runtime   | Add `LambdaTerm` extending `FunctionTerm` with `apply()`; add `LambdaBoundVariableTerm` with partial substitution semantics                                                          |
+| Stage     | Changes                                                                                                                                                                                                 |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lexical   | Add `ArrowToken` (`->`) in `MinusState`                                                                                                                                                                 |
+| Syntactic | Add `LambdaExpression` AST node; add `_isArrow` predicate; add `peekAt()` to `ListIterator`; parse parameters and body with disambiguation                                                              |
+| Semantic  | **Refactor**: Thread `warnings` through `checkExpression()`; add `lambdaParameterNames`, `usedLambdaParameters`; add `isLambdaParameter` to `SemanticBoundVariableNode`; add `_checkLambdaExpression()` |
+| Lowering  | Convert `SemanticLambdaNode` to `LambdaTerm`; map `SemanticBoundVariableNode` with `isLambdaParameter` to `LambdaBoundVariableTerm`                                                                     |
+| Runtime   | Add `LambdaTerm` extending `FunctionTerm` with `apply()`; add `LambdaBoundVariableTerm` with partial substitution semantics                                                                             |
 
 ### New Node Types
 
@@ -1111,15 +1130,15 @@ Term _lowerLambda(SemanticLambdaNode semanticNode) {
 
 **High**
 
-| Component         | Effort                                                                              |
-| ----------------- | ----------------------------------------------------------------------------------- |
-| Lexer             | Trivial - extend `MinusState` for `->` token                                        |
-| Parser            | Moderate - disambiguation logic for `(params) ->` vs `(expr)`                       |
-| AST               | Simple - one new node type                                                          |
-| Semantic analyzer | Moderate - scope extension, shadowing check, `isLambdaParameter` field              |
-| Lowerer           | Simple - conditional term selection based on `isLambdaParameter`                    |
-| Runtime           | Moderate - new `LambdaTerm` and `LambdaBoundVariableTerm` with partial substitution |
-| Tests             | Comprehensive coverage of closures, scoping, and error conditions                   |
+| Component         | Effort                                                                                          |
+| ----------------- | ----------------------------------------------------------------------------------------------- |
+| Lexer             | Trivial - extend `MinusState` for `->` token                                                    |
+| Parser            | Moderate - add `peekAt()` to `ListIterator`; disambiguation logic for `(params) ->` vs `(expr)` |
+| AST               | Simple - one new node type                                                                      |
+| Semantic analyzer | **High** - refactor warning threading; add 3 parameters to 8+ methods; scope extension; shadows |
+| Lowerer           | Simple - conditional term selection based on `isLambdaParameter`                                |
+| Runtime           | Moderate - new `LambdaTerm` and `LambdaBoundVariableTerm` with partial substitution             |
+| Tests             | Comprehensive coverage of closures, scoping, and error conditions                               |
 
 ### REPL Mode
 
