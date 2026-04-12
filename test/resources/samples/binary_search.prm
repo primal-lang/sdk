@@ -20,4 +20,4 @@ binarySearch.helper(list, element, index) =
     else
         binarySearch(list.sublist(list, index + 1, list.length(list)), element)
 
-main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)
+main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)

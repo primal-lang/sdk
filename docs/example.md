@@ -7,7 +7,7 @@ This document walks through the complete compilation and evaluation of a Primal 
 ```primal
 square(n) = n * n
 max(a, b) = if (a >= b) a else b
-main = max(square(3), square(4))
+main() = max(square(3), square(4))
 ```
 
 This program defines:
@@ -61,7 +61,7 @@ The SourceReader is the first stage of the pipeline. It converts a raw input str
 ```
 square(n) = n * n
 max(a, b) = if (a >= b) a else b
-main = max(square(3), square(4))
+main() = max(square(3), square(4))
 ```
 
 #### Step 1: Normalize Line Endings
@@ -606,7 +606,7 @@ max(a, b) = if (a >= b) a else b
          ├─ IdentifierExpression("a") [2, 25] ← ifTrue
          └─ IdentifierExpression("b") [2, 32] ← ifFalse
 
-main = max(square(3), square(4))
+main() = max(square(3), square(4))
 ────────────────────────────────
       CallExpression [3, 8]
       ├─ callee: IdentifierExpression("max")
@@ -1153,7 +1153,7 @@ max(a, b) = if (a >= b) a else b
             ├─ BoundVariableTerm("a")      ← ifTrue
             └─ BoundVariableTerm("b")      ← ifFalse
 
-main = max(square(3), square(4))
+main() = max(square(3), square(4))
 ────────────────────────────────
       CustomFunctionTerm("main")
       └─ term: CallTerm

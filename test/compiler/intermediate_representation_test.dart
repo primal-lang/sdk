@@ -53,7 +53,7 @@ void main() {
     test('compiled program includes user-defined functions', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'double(x) = x * 2\nmain = double(5)',
+            'double(x) = x * 2\nmain() = double(5)',
           );
 
       expect(
@@ -71,7 +71,7 @@ void main() {
       () {
         final IntermediateRepresentation intermediateRepresentation =
             getIntermediateRepresentation(
-              'main = 42',
+              'main() = 42',
             );
 
         expect(
@@ -90,7 +90,7 @@ void main() {
     test('user function has correct parameter count', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'add(x, y) = x + y\nmain = add(1, 2)',
+            'add(x, y) = x + y\nmain() = add(1, 2)',
           );
       final SemanticFunction addFn =
           intermediateRepresentation.customFunctions['add']!;
@@ -101,7 +101,7 @@ void main() {
     test('warnings list populated for unused parameters', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(x, y) = x\nmain = f(1, 2)',
+            'f(x, y) = x\nmain() = f(1, 2)',
           );
 
       expect(intermediateRepresentation.warnings.length, equals(1));
@@ -118,7 +118,7 @@ void main() {
     test('warnings list empty when all parameters are used', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'add(x, y) = x + y\nmain = add(1, 2)',
+            'add(x, y) = x + y\nmain() = add(1, 2)',
           );
 
       expect(intermediateRepresentation.warnings, isEmpty);
@@ -127,7 +127,7 @@ void main() {
     test('multiple unused parameters generate multiple warnings', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(x, y, z) = 42\nmain = f(1, 2, 3)',
+            'f(x, y, z) = 42\nmain() = f(1, 2, 3)',
           );
 
       expect(intermediateRepresentation.warnings.length, equals(3));
@@ -136,7 +136,7 @@ void main() {
     test('custom function is a SemanticFunction', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
       final SemanticFunction mainFn =
           intermediateRepresentation.customFunctions['main']!;
@@ -147,7 +147,7 @@ void main() {
     test('lowered custom function is a CustomFunctionTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
       final SemanticFunction mainFn =
           intermediateRepresentation.customFunctions['main']!;
@@ -160,7 +160,7 @@ void main() {
     test('standard library signature is a FunctionSignature', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
       final FunctionSignature? numAddSig = intermediateRepresentation
           .getStandardLibrarySignature(
@@ -174,7 +174,7 @@ void main() {
     test('parameterless function has empty parameter list', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
       final SemanticFunction mainFn =
           intermediateRepresentation.customFunctions['main']!;
@@ -185,7 +185,7 @@ void main() {
     test('containsFunction returns true for custom functions', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
 
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
@@ -194,7 +194,7 @@ void main() {
     test('containsFunction returns true for standard library functions', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
 
       expect(intermediateRepresentation.containsFunction('num.add'), isTrue);
@@ -203,7 +203,7 @@ void main() {
     test('containsFunction returns false for unknown functions', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
 
       expect(intermediateRepresentation.containsFunction('unknown'), isFalse);
@@ -212,7 +212,7 @@ void main() {
     test('allFunctionNames includes both custom and standard library', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'double(x) = x * 2\nmain = double(5)',
+            'double(x) = x * 2\nmain() = double(5)',
           );
 
       expect(
@@ -257,7 +257,7 @@ void main() {
     test('getCustomFunction returns the custom function', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'double(x) = x * 2\nmain = double(5)',
+            'double(x) = x * 2\nmain() = double(5)',
           );
       final SemanticFunction? doubleFn = intermediateRepresentation
           .getCustomFunction('double');
@@ -271,7 +271,7 @@ void main() {
     test('getCustomFunction returns null for unknown function', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
 
       expect(
@@ -283,7 +283,7 @@ void main() {
     test('getCustomFunction returns null for standard library function', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
 
       expect(
@@ -295,7 +295,7 @@ void main() {
     test('function with multiple parameters has correct parameter count', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(a, b, c, d, e) = a + b + c + d + e\nmain = f(1, 2, 3, 4, 5)',
+            'f(a, b, c, d, e) = a + b + c + d + e\nmain() = f(1, 2, 3, 4, 5)',
           );
       final SemanticFunction fFn =
           intermediateRepresentation.customFunctions['f']!;
@@ -306,7 +306,7 @@ void main() {
     test('multiple custom functions are all accessible', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'add(x, y) = x + y\nmul(x, y) = x * y\nmain = add(1, mul(2, 3))',
+            'add(x, y) = x + y\nmul(x, y) = x * y\nmain() = add(1, mul(2, 3))',
           );
 
       expect(intermediateRepresentation.customFunctions.length, equals(3));
@@ -327,7 +327,7 @@ void main() {
     test('custom function body is a SemanticNode', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
       final SemanticFunction mainFn =
           intermediateRepresentation.customFunctions['main']!;
@@ -338,7 +338,7 @@ void main() {
     test('custom function has location information', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
       final SemanticFunction mainFn =
           intermediateRepresentation.customFunctions['main']!;
@@ -385,19 +385,19 @@ void main() {
     test('custom function has correct location column', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
       final SemanticFunction mainFn =
           intermediateRepresentation.customFunctions['main']!;
 
-      // Location column points to the equals sign
-      expect(mainFn.location.column, equals(8));
+      // Location column points to the equals sign (after 'main()' = 6 chars + space + 1)
+      expect(mainFn.location.column, equals(10));
     });
 
     test('second function has correct location row', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'first = 1\nsecond = 2\nmain = first + second',
+            'first() = 1\nsecond() = 2\nmain() = first + second',
           );
       final SemanticFunction secondFn =
           intermediateRepresentation.customFunctions['second']!;
@@ -408,7 +408,7 @@ void main() {
     test('parameter order is preserved', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(a, b, c) = a + b + c\nmain = f(1, 2, 3)',
+            'f(a, b, c) = a + b + c\nmain() = f(1, 2, 3)',
           );
       final SemanticFunction fFn =
           intermediateRepresentation.customFunctions['f']!;
@@ -421,7 +421,7 @@ void main() {
     test('SemanticFunction toString includes name and parameters', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'add(x, y) = x + y\nmain = add(1, 2)',
+            'add(x, y) = x + y\nmain() = add(1, 2)',
           );
       final SemanticFunction addFn =
           intermediateRepresentation.customFunctions['add']!;
@@ -432,7 +432,7 @@ void main() {
     test('SemanticFunction toString with no parameters', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
       final SemanticFunction mainFn =
           intermediateRepresentation.customFunctions['main']!;
@@ -443,7 +443,7 @@ void main() {
     test('warnings from multiple functions are collected', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(x) = 1\ng(y) = 2\nmain = f(1) + g(2)',
+            'f(x) = 1\ng(y) = 2\nmain() = f(1) + g(2)',
           );
 
       expect(intermediateRepresentation.warnings.length, equals(2));
@@ -452,7 +452,7 @@ void main() {
     test('function calling another custom function is resolved', () {
       final IntermediateRepresentation
       intermediateRepresentation = getIntermediateRepresentation(
-        'double(x) = x * 2\nquadruple(x) = double(double(x))\nmain = quadruple(5)',
+        'double(x) = x * 2\nquadruple(x) = double(double(x))\nmain() = quadruple(5)',
       );
 
       expect(
@@ -507,7 +507,7 @@ void main() {
     test('allFunctionNames returns new set on each access', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
 
       final Set<String> first = intermediateRepresentation.allFunctionNames;
@@ -521,7 +521,7 @@ void main() {
       () {
         final IntermediateRepresentation intermediateRepresentation =
             getIntermediateRepresentation(
-              'main = 42',
+              'main() = 42',
             );
 
         expect(
@@ -536,7 +536,7 @@ void main() {
       () {
         final IntermediateRepresentation intermediateRepresentation =
             getIntermediateRepresentation(
-              'myFunc = 42\nmain = myFunc',
+              'myFunc() = 42\nmain() = myFunc',
             );
 
         expect(
@@ -549,7 +549,7 @@ void main() {
     test('function with list body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = [1, 2, 3]',
+            'main() = [1, 2, 3]',
           );
 
       expect(
@@ -562,7 +562,7 @@ void main() {
     test('function with map body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = {"a": 1, "b": 2}',
+            'main() = {"a": 1, "b": 2}',
           );
 
       expect(
@@ -575,7 +575,7 @@ void main() {
     test('function with nested call body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = num.add(1, num.mul(2, 3))',
+            'main() = num.add(1, num.mul(2, 3))',
           );
 
       expect(
@@ -588,7 +588,7 @@ void main() {
     test('function with boolean body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = true',
+            'main() = true',
           );
 
       expect(
@@ -600,7 +600,7 @@ void main() {
     test('function with string body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = "hello"',
+            'main() = "hello"',
           );
 
       expect(
@@ -612,7 +612,7 @@ void main() {
     test('unused parameter warning contains correct function name', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'myFunction(unused) = 42\nmain = myFunction(1)',
+            'myFunction(unused) = 42\nmain() = myFunction(1)',
           );
 
       expect(intermediateRepresentation.warnings.length, equals(1));
@@ -625,7 +625,7 @@ void main() {
     test('unused parameter warning contains correct parameter name', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(unusedParam) = 42\nmain = f(1)',
+            'f(unusedParam) = 42\nmain() = f(1)',
           );
 
       expect(intermediateRepresentation.warnings.length, equals(1));
@@ -645,7 +645,7 @@ void main() {
     test('getCustomFunction handles empty string', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = 42',
+            'main() = 42',
           );
 
       expect(intermediateRepresentation.getCustomFunction(''), isNull);
@@ -664,7 +664,7 @@ void main() {
     test('single parameter function has parameter list of length one', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'identity(x) = x\nmain = identity(42)',
+            'identity(x) = x\nmain() = identity(42)',
           );
       final SemanticFunction identityFn =
           intermediateRepresentation.customFunctions['identity']!;
@@ -678,7 +678,7 @@ void main() {
       () {
         final IntermediateRepresentation intermediateRepresentation =
             getIntermediateRepresentation(
-              'complex(a, b) = if (a > b) a else b\nmain = complex(1, 2)',
+              'complex(a, b) = if (a > b) a else b\nmain() = complex(1, 2)',
             );
         final SemanticFunction complexFn =
             intermediateRepresentation.customFunctions['complex']!;
@@ -723,7 +723,7 @@ void main() {
   group('SemanticFunction', () {
     test('body is a SemanticNumberNode for numeric literal', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = 42');
+          getIntermediateRepresentation('main() = 42');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -733,7 +733,7 @@ void main() {
 
     test('body is a SemanticBooleanNode for boolean literal', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = true');
+          getIntermediateRepresentation('main() = true');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -743,7 +743,7 @@ void main() {
 
     test('body is a SemanticBooleanNode for false literal', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = false');
+          getIntermediateRepresentation('main() = false');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -753,7 +753,7 @@ void main() {
 
     test('body is a SemanticStringNode for string literal', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = "hello world"');
+          getIntermediateRepresentation('main() = "hello world"');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -766,7 +766,7 @@ void main() {
 
     test('body is a SemanticListNode for list literal', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = [1, 2, 3]');
+          getIntermediateRepresentation('main() = [1, 2, 3]');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -777,7 +777,7 @@ void main() {
 
     test('body is a SemanticMapNode for map literal', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {"a": 1}');
+          getIntermediateRepresentation('main() = {"a": 1}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -788,7 +788,7 @@ void main() {
 
     test('body is a SemanticCallNode for function call', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = num.add(1, 2)');
+          getIntermediateRepresentation('main() = num.add(1, 2)');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -797,7 +797,9 @@ void main() {
 
     test('parameter reference creates SemanticBoundVariableNode', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('identity(x) = x\nmain = identity(5)');
+          getIntermediateRepresentation(
+            'identity(x) = x\nmain() = identity(5)',
+          );
       final SemanticFunction identityFunction =
           intermediateRepresentation.customFunctions['identity']!;
 
@@ -813,7 +815,7 @@ void main() {
       () {
         final IntermediateRepresentation intermediateRepresentation =
             getIntermediateRepresentation(
-              'apply(f, x) = f(x)\nmain = apply(num.abs, 5)',
+              'apply(f, x) = f(x)\nmain() = apply(num.abs, 5)',
             );
         final SemanticFunction mainFunction =
             intermediateRepresentation.customFunctions['main']!;
@@ -831,7 +833,7 @@ void main() {
 
     test('empty list body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = []');
+          getIntermediateRepresentation('main() = []');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -842,7 +844,7 @@ void main() {
 
     test('empty map body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {}');
+          getIntermediateRepresentation('main() = {}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -853,7 +855,7 @@ void main() {
 
     test('nested list body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = [[1, 2], [3, 4]]');
+          getIntermediateRepresentation('main() = [[1, 2], [3, 4]]');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -866,7 +868,7 @@ void main() {
 
     test('nested map body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {"outer": {"inner": 1}}');
+          getIntermediateRepresentation('main() = {"outer": {"inner": 1}}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -879,7 +881,7 @@ void main() {
     test('location row is preserved from source', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'first = 1\nsecond = 2\nthird = 3\nmain = 0',
+            'first() = 1\nsecond() = 2\nthird() = 3\nmain() = 0',
           );
       final SemanticFunction thirdFunction =
           intermediateRepresentation.customFunctions['third']!;
@@ -891,7 +893,7 @@ void main() {
   group('SemanticNode toString', () {
     test('SemanticBooleanNode toString returns value', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = true');
+          getIntermediateRepresentation('main() = true');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -900,7 +902,7 @@ void main() {
 
     test('SemanticNumberNode toString returns value', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = 42');
+          getIntermediateRepresentation('main() = 42');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -909,7 +911,7 @@ void main() {
 
     test('SemanticStringNode toString returns quoted value', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = "hello"');
+          getIntermediateRepresentation('main() = "hello"');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -918,7 +920,7 @@ void main() {
 
     test('SemanticListNode toString returns bracketed elements', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = [1, 2, 3]');
+          getIntermediateRepresentation('main() = [1, 2, 3]');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -927,7 +929,7 @@ void main() {
 
     test('SemanticMapNode toString returns braced entries', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {"a": 1}');
+          getIntermediateRepresentation('main() = {"a": 1}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -937,7 +939,7 @@ void main() {
     test('SemanticIdentifierNode toString returns name', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'apply(f, x) = f(x)\nmain = apply(num.abs, 5)',
+            'apply(f, x) = f(x)\nmain() = apply(num.abs, 5)',
           );
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
@@ -949,7 +951,9 @@ void main() {
 
     test('SemanticBoundVariableNode toString returns name', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('identity(x) = x\nmain = identity(5)');
+          getIntermediateRepresentation(
+            'identity(x) = x\nmain() = identity(5)',
+          );
       final SemanticFunction identityFunction =
           intermediateRepresentation.customFunctions['identity']!;
 
@@ -958,7 +962,7 @@ void main() {
 
     test('SemanticCallNode toString returns function and arguments', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = num.add(1, 2)');
+          getIntermediateRepresentation('main() = num.add(1, 2)');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -967,7 +971,7 @@ void main() {
 
     test('SemanticMapEntryNode toString returns key colon value', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {"key": 42}');
+          getIntermediateRepresentation('main() = {"key": 42}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       final SemanticMapNode mapNode = mainFunction.body as SemanticMapNode;
@@ -980,7 +984,7 @@ void main() {
   group('SemanticAnalyzer error conditions', () {
     test('throws DuplicatedFunctionError for duplicate custom functions', () {
       expect(
-        () => getIntermediateRepresentation('f = 1\nf = 2\nmain = f'),
+        () => getIntermediateRepresentation('f() = 1\nf() = 2\nmain() = f'),
         throwsA(isA<DuplicatedFunctionError>()),
       );
     });
@@ -990,7 +994,7 @@ void main() {
       () {
         // Standard library functions use dotted names like 'num.add', which are valid identifiers
         expect(
-          () => getIntermediateRepresentation('num.add(x, y) = x\nmain = 0'),
+          () => getIntermediateRepresentation('num.add(x, y) = x\nmain() = 0'),
           throwsA(isA<DuplicatedFunctionError>()),
         );
       },
@@ -998,7 +1002,7 @@ void main() {
 
     test('throws DuplicatedParameterError for duplicate parameter names', () {
       expect(
-        () => getIntermediateRepresentation('f(x, x) = x\nmain = f(1, 2)'),
+        () => getIntermediateRepresentation('f(x, x) = x\nmain() = f(1, 2)'),
         throwsA(isA<DuplicatedParameterError>()),
       );
     });
@@ -1007,7 +1011,7 @@ void main() {
       'throws UndefinedIdentifierError for undefined identifier in body',
       () {
         expect(
-          () => getIntermediateRepresentation('f(x) = y\nmain = f(1)'),
+          () => getIntermediateRepresentation('f(x) = y\nmain() = f(1)'),
           throwsA(isA<UndefinedIdentifierError>()),
         );
       },
@@ -1015,77 +1019,79 @@ void main() {
 
     test('throws UndefinedFunctionError for undefined function call', () {
       expect(
-        () => getIntermediateRepresentation('main = undefined(1)'),
+        () => getIntermediateRepresentation('main() = undefined(1)'),
         throwsA(isA<UndefinedFunctionError>()),
       );
     });
 
     test('throws InvalidNumberOfArgumentsError for wrong arity', () {
       expect(
-        () => getIntermediateRepresentation('main = num.add(1)'),
+        () => getIntermediateRepresentation('main() = num.add(1)'),
         throwsA(isA<InvalidNumberOfArgumentsError>()),
       );
     });
 
     test('throws InvalidNumberOfArgumentsError for too many arguments', () {
       expect(
-        () => getIntermediateRepresentation('main = num.add(1, 2, 3)'),
+        () => getIntermediateRepresentation('main() = num.add(1, 2, 3)'),
         throwsA(isA<InvalidNumberOfArgumentsError>()),
       );
     });
 
     test('throws NotCallableError for calling number literal', () {
       expect(
-        () => getIntermediateRepresentation('main = 5(1)'),
+        () => getIntermediateRepresentation('main() = 5(1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('throws NotCallableError for calling boolean literal', () {
       expect(
-        () => getIntermediateRepresentation('main = true(1)'),
+        () => getIntermediateRepresentation('main() = true(1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('throws NotCallableError for calling string literal', () {
       expect(
-        () => getIntermediateRepresentation('main = "hello"(1)'),
+        () => getIntermediateRepresentation('main() = "hello"(1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('throws NotCallableError for calling list literal', () {
       expect(
-        () => getIntermediateRepresentation('main = [1, 2](1)'),
+        () => getIntermediateRepresentation('main() = [1, 2](1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('throws NotCallableError for calling map literal', () {
       expect(
-        () => getIntermediateRepresentation('main = {"a": 1}(1)'),
+        () => getIntermediateRepresentation('main() = {"a": 1}(1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('throws NotIndexableError for indexing number literal', () {
       expect(
-        () => getIntermediateRepresentation('main = 5[0]'),
+        () => getIntermediateRepresentation('main() = 5[0]'),
         throwsA(isA<NotIndexableError>()),
       );
     });
 
     test('throws NotIndexableError for indexing boolean literal', () {
       expect(
-        () => getIntermediateRepresentation('main = true[0]'),
+        () => getIntermediateRepresentation('main() = true[0]'),
         throwsA(isA<NotIndexableError>()),
       );
     });
 
     test('DuplicatedFunctionError message contains function name', () {
       try {
-        getIntermediateRepresentation('myFunc = 1\nmyFunc = 2\nmain = myFunc');
+        getIntermediateRepresentation(
+          'myFunc() = 1\nmyFunc() = 2\nmain() = myFunc',
+        );
         fail('Expected DuplicatedFunctionError');
       } on DuplicatedFunctionError catch (error) {
         expect(error.toString(), contains('myFunc'));
@@ -1097,7 +1103,7 @@ void main() {
       () {
         try {
           getIntermediateRepresentation(
-            'myFunc(param, param) = param\nmain = myFunc(1, 2)',
+            'myFunc(param, param) = param\nmain() = myFunc(1, 2)',
           );
           fail('Expected DuplicatedParameterError');
         } on DuplicatedParameterError catch (error) {
@@ -1109,7 +1115,7 @@ void main() {
 
     test('UndefinedIdentifierError message contains identifier name', () {
       try {
-        getIntermediateRepresentation('f(x) = unknownVar\nmain = f(1)');
+        getIntermediateRepresentation('f(x) = unknownVar\nmain() = f(1)');
         fail('Expected UndefinedIdentifierError');
       } on UndefinedIdentifierError catch (error) {
         expect(error.toString(), contains('unknownVar'));
@@ -1118,7 +1124,7 @@ void main() {
 
     test('UndefinedFunctionError message contains function name', () {
       try {
-        getIntermediateRepresentation('main = unknownFunction(1)');
+        getIntermediateRepresentation('main() = unknownFunction(1)');
         fail('Expected UndefinedFunctionError');
       } on UndefinedFunctionError catch (error) {
         expect(error.toString(), contains('unknownFunction'));
@@ -1129,7 +1135,7 @@ void main() {
       'InvalidNumberOfArgumentsError message contains expected and actual',
       () {
         try {
-          getIntermediateRepresentation('main = num.add(1)');
+          getIntermediateRepresentation('main() = num.add(1)');
           fail('Expected InvalidNumberOfArgumentsError');
         } on InvalidNumberOfArgumentsError catch (error) {
           expect(error.toString(), contains('2'));
@@ -1140,7 +1146,7 @@ void main() {
 
     test('NotCallableError message contains type', () {
       try {
-        getIntermediateRepresentation('main = 42(1)');
+        getIntermediateRepresentation('main() = 42(1)');
         fail('Expected NotCallableError');
       } on NotCallableError catch (error) {
         expect(error.toString(), contains('number'));
@@ -1149,7 +1155,7 @@ void main() {
 
     test('NotIndexableError message contains type', () {
       try {
-        getIntermediateRepresentation('main = 42[0]');
+        getIntermediateRepresentation('main() = 42[0]');
         fail('Expected NotIndexableError');
       } on NotIndexableError catch (error) {
         expect(error.toString(), contains('number'));
@@ -1286,14 +1292,14 @@ void main() {
   group('Warnings', () {
     test('SemanticWarning inherits from GenericWarning', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(unused) = 1\nmain = f(1)');
+          getIntermediateRepresentation('f(unused) = 1\nmain() = f(1)');
 
       expect(intermediateRepresentation.warnings.first, isA<GenericWarning>());
     });
 
     test('UnusedParameterWarning inherits from SemanticWarning', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(unused) = 1\nmain = f(1)');
+          getIntermediateRepresentation('f(unused) = 1\nmain() = f(1)');
 
       expect(
         intermediateRepresentation.warnings.first,
@@ -1303,7 +1309,7 @@ void main() {
 
     test('warning toString format starts with Warning prefix', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(unused) = 1\nmain = f(1)');
+          getIntermediateRepresentation('f(unused) = 1\nmain() = f(1)');
 
       expect(
         intermediateRepresentation.warnings.first.toString(),
@@ -1314,7 +1320,7 @@ void main() {
     test('no warnings when parameter is used in nested call', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(x) = num.add(x, 1)\nmain = f(5)',
+            'f(x) = num.add(x, 1)\nmain() = f(5)',
           );
 
       expect(intermediateRepresentation.warnings, isEmpty);
@@ -1322,28 +1328,28 @@ void main() {
 
     test('no warnings when parameter is used in list', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(x) = [x, x]\nmain = f(5)');
+          getIntermediateRepresentation('f(x) = [x, x]\nmain() = f(5)');
 
       expect(intermediateRepresentation.warnings, isEmpty);
     });
 
     test('no warnings when parameter is used in map key', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(x) = {x: 1}\nmain = f("key")');
+          getIntermediateRepresentation('f(x) = {x: 1}\nmain() = f("key")');
 
       expect(intermediateRepresentation.warnings, isEmpty);
     });
 
     test('no warnings when parameter is used in map value', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(x) = {"key": x}\nmain = f(5)');
+          getIntermediateRepresentation('f(x) = {"key": x}\nmain() = f(5)');
 
       expect(intermediateRepresentation.warnings, isEmpty);
     });
 
     test('warnings list is modifiable', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(unused) = 1\nmain = f(1)');
+          getIntermediateRepresentation('f(unused) = 1\nmain() = f(1)');
       final int originalLength = intermediateRepresentation.warnings.length;
 
       intermediateRepresentation.warnings.clear();
@@ -1356,7 +1362,7 @@ void main() {
   group('Lowerer integration', () {
     test('lowering SemanticBooleanNode produces BooleanTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = true');
+          getIntermediateRepresentation('main() = true');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1367,7 +1373,7 @@ void main() {
 
     test('lowering SemanticNumberNode produces NumberTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = 42');
+          getIntermediateRepresentation('main() = 42');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1378,7 +1384,7 @@ void main() {
 
     test('lowering SemanticStringNode produces StringTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = "hello"');
+          getIntermediateRepresentation('main() = "hello"');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1389,7 +1395,7 @@ void main() {
 
     test('lowering SemanticListNode produces ListTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = [1, 2, 3]');
+          getIntermediateRepresentation('main() = [1, 2, 3]');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1400,7 +1406,7 @@ void main() {
 
     test('lowering SemanticMapNode produces MapTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {"a": 1}');
+          getIntermediateRepresentation('main() = {"a": 1}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1411,7 +1417,9 @@ void main() {
 
     test('lowering SemanticBoundVariableNode produces BoundVariableTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('identity(x) = x\nmain = identity(5)');
+          getIntermediateRepresentation(
+            'identity(x) = x\nmain() = identity(5)',
+          );
       final SemanticFunction identityFunction =
           intermediateRepresentation.customFunctions['identity']!;
       const Lowerer lowerer = Lowerer({});
@@ -1424,7 +1432,7 @@ void main() {
 
     test('lowering SemanticCallNode produces CallTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = num.add(1, 2)');
+          getIntermediateRepresentation('main() = num.add(1, 2)');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1436,7 +1444,7 @@ void main() {
     test('lowering SemanticIdentifierNode produces FunctionReferenceTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'apply(f, x) = f(x)\nmain = apply(num.abs, 5)',
+            'apply(f, x) = f(x)\nmain() = apply(num.abs, 5)',
           );
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
@@ -1449,7 +1457,9 @@ void main() {
 
     test('lowered function preserves name', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('myFunction = 42\nmain = myFunction');
+          getIntermediateRepresentation(
+            'myFunction() = 42\nmain() = myFunction',
+          );
       final SemanticFunction myFunction =
           intermediateRepresentation.customFunctions['myFunction']!;
       const Lowerer lowerer = Lowerer({});
@@ -1461,7 +1471,7 @@ void main() {
     test('lowered function preserves parameter count', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'threeParams(a, b, c) = a\nmain = threeParams(1, 2, 3)',
+            'threeParams(a, b, c) = a\nmain() = threeParams(1, 2, 3)',
           );
       final SemanticFunction threeParamsFunction =
           intermediateRepresentation.customFunctions['threeParams']!;
@@ -1475,7 +1485,7 @@ void main() {
 
     test('lowering empty list produces empty ListTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = []');
+          getIntermediateRepresentation('main() = []');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1487,7 +1497,7 @@ void main() {
 
     test('lowering empty map produces empty MapTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {}');
+          getIntermediateRepresentation('main() = {}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1501,7 +1511,7 @@ void main() {
   group('Edge cases', () {
     test('function with negative number body', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = -42');
+          getIntermediateRepresentation('main() = -42');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -1510,7 +1520,7 @@ void main() {
 
     test('function with decimal number body', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = 3.14');
+          getIntermediateRepresentation('main() = 3.14');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -1520,7 +1530,7 @@ void main() {
 
     test('function with empty string body', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = ""');
+          getIntermediateRepresentation('main() = ""');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -1530,7 +1540,7 @@ void main() {
 
     test('function with single element list', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = [42]');
+          getIntermediateRepresentation('main() = [42]');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -1541,7 +1551,7 @@ void main() {
 
     test('function with single entry map', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {"key": "value"}');
+          getIntermediateRepresentation('main() = {"key": "value"}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -1552,7 +1562,7 @@ void main() {
 
     test('function with mixed type list', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = [1, "two", true]');
+          getIntermediateRepresentation('main() = [1, "two", true]');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -1566,7 +1576,7 @@ void main() {
     test('function calling itself recursively compiles', () {
       final IntermediateRepresentation
       intermediateRepresentation = getIntermediateRepresentation(
-        'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)\nmain = factorial(5)',
+        'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)\nmain() = factorial(5)',
       );
 
       expect(
@@ -1579,7 +1589,7 @@ void main() {
     test('mutually recursive functions compile', () {
       final IntermediateRepresentation
       intermediateRepresentation = getIntermediateRepresentation(
-        'isEven(n) = if (n == 0) true else isOdd(n - 1)\nisOdd(n) = if (n == 0) false else isEven(n - 1)\nmain = isEven(4)',
+        'isEven(n) = if (n == 0) true else isOdd(n - 1)\nisOdd(n) = if (n == 0) false else isEven(n - 1)\nmain() = isEven(4)',
       );
 
       expect(
@@ -1595,7 +1605,7 @@ void main() {
     test('higher-order function passing custom function compiles', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'double(x) = x * 2\nmain = list.map([1, 2, 3], double)',
+            'double(x) = x * 2\nmain() = list.map([1, 2, 3], double)',
           );
 
       expect(
@@ -1608,7 +1618,7 @@ void main() {
     test('deeply nested function calls compile', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main = num.add(num.add(num.add(1, 2), 3), 4)',
+            'main() = num.add(num.add(num.add(1, 2), 3), 4)',
           );
 
       expect(
@@ -1620,7 +1630,7 @@ void main() {
     test('function with parameter shadowing outer function name compiles', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'outer = 1\ninner(outer) = outer\nmain = inner(5)',
+            'outer() = 1\ninner(outer) = outer\nmain() = inner(5)',
           );
 
       expect(
@@ -1633,7 +1643,7 @@ void main() {
     test('chained function calls compile', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'a(x) = x + 1\nb(x) = x * 2\nc(x) = x - 1\nmain = c(b(a(5)))',
+            'a(x) = x + 1\nb(x) = x * 2\nc(x) = x - 1\nmain() = c(b(a(5)))',
           );
 
       expect(intermediateRepresentation.customFunctions.length, equals(4));
@@ -1641,7 +1651,7 @@ void main() {
 
     test('location preserves column for expression start', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(x) = x + 1\nmain = 0');
+          getIntermediateRepresentation('f(x) = x + 1\nmain() = 0');
       final SemanticFunction functionF =
           intermediateRepresentation.customFunctions['f']!;
 
@@ -1650,7 +1660,7 @@ void main() {
 
     test('list with expressions compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = [1 + 2, 3 * 4]');
+          getIntermediateRepresentation('main() = [1 + 2, 3 * 4]');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -1662,7 +1672,7 @@ void main() {
 
     test('map with expression values compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main = {"sum": 1 + 2}');
+          getIntermediateRepresentation('main() = {"sum": 1 + 2}');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 

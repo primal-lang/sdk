@@ -47,14 +47,14 @@ Pattern mismatch should raise a runtime error.
 Examples:
 
 ```primal
-main = do
+main() = do
   [a, b] = [1]
   a + b
 end
 ```
 
 ```primal
-main = do
+main() = do
   {"x": x} = {"y": 10}
   x
 end

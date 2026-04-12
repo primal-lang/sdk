@@ -1,12 +1,12 @@
-greeting = "Hello, world!"
+greeting() = "Hello, world!"
 
-farewell = 'Goodbye, world!'
+farewell() = 'Goodbye, world!'
 
-pi = 3.14
+pi() = 3.14
 
-rationalNumber = pi
+rationalNumber() = pi()
 
-isToday = true
+isToday() = true
 
 // Returns true if x is equal to zero
 isZero(x) = x == 0
@@ -29,4 +29,4 @@ factorial(n) = if (n < 0)
 			   else
                    n * factorial(n - 1)
 
-main = factorial(4)
+main() = factorial(4)

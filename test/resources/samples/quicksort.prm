@@ -29,4 +29,4 @@ greaterEq(list, pivot) =
     else
         greaterEq(list.rest(list), pivot)
 
-main = quicksort([38, 27, 43, 3, 9])
+main() = quicksort([38, 27, 43, 3, 9])

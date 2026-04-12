@@ -17,4 +17,4 @@ isPalindrome.helper(string, start, end) =
     else
         isPalindrome.helper(string, start + 1, end - 1)
 
-main = isPalindrome("level")
+main() = isPalindrome("level")

@@ -10,4 +10,4 @@ factorial(n) = if (n < 0)
                else
                    n * factorial(n - 1)
 
-main = factorial(5)
+main() = factorial(5)

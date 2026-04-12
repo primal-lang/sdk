@@ -12,7 +12,7 @@ Primal is expression-oriented, but practical scripting still needs a readable wa
 #### Syntax
 
 ```primal
-main = do
+main() = do
   xs = [1, 2, 3, 4]
   evens = list.filter(xs, isEven)
   doubled = list.map(evens, double)
@@ -23,7 +23,7 @@ end
 Blocks should also support wildcard bindings for sequencing effectful expressions:
 
 ```primal
-main = do
+main() = do
   _ = console.writeLn("starting")
   value = console.read()
   value
@@ -47,7 +47,7 @@ end
 Allow evaluating expressions in order and returning the last one:
 
 ```
-main = do
+main() = do
   console.writeLn("Enter name:")
   name = console.read()
   console.writeLn("Hello, " + name)

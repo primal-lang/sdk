@@ -71,66 +71,75 @@ void main() {
 
     test('Literal double quoted string definition', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'greeting = "Hello, world!"',
+        'greeting() = "Hello, world!"',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression: StringExpression(stringToken('Hello, world!', 1, 12)),
+          expression: StringExpression(stringToken('Hello, world!', 1, 14)),
         ),
       ]);
     });
 
     test('Literal single quoted string definition', () {
       final List<FunctionDefinition> functions = getFunctions(
-        "greeting = 'Goodbye, world!'",
+        "greeting() = 'Goodbye, world!'",
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'greeting',
           parameters: [],
-          expression: StringExpression(stringToken('Goodbye, world!', 1, 12)),
+          expression: StringExpression(stringToken('Goodbye, world!', 1, 14)),
         ),
       ]);
     });
 
     test('Literal number definition', () {
-      final List<FunctionDefinition> functions = getFunctions('pi = 3.14');
+      final List<FunctionDefinition> functions = getFunctions('pi() = 3.14');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'pi',
           parameters: [],
-          expression: NumberExpression(numberToken(3.14, 1, 6)),
+          expression: NumberExpression(numberToken(3.14, 1, 8)),
         ),
       ]);
     });
 
     test('Literal boolean definition', () {
-      final List<FunctionDefinition> functions = getFunctions('enabled = true');
+      final List<FunctionDefinition> functions = getFunctions(
+        'enabled() = true',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'enabled',
           parameters: [],
-          expression: BooleanExpression(booleanToken(true, 1, 11)),
+          expression: BooleanExpression(booleanToken(true, 1, 13)),
         ),
       ]);
     });
 
+    test('Missing parentheses throws error', () {
+      expect(
+        () => getFunctions('pi = 3.14'),
+        throwsA(isA<InvalidTokenError>()),
+      );
+    });
+
     test('Literal list definition', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'list = [1, 2, 3]',
+        'list() = [1, 2, 3]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'list',
           parameters: [],
           expression: ListExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
-              NumberExpression(numberToken(1, 1, 9)),
-              NumberExpression(numberToken(2, 1, 12)),
-              NumberExpression(numberToken(3, 1, 15)),
+              NumberExpression(numberToken(1, 1, 11)),
+              NumberExpression(numberToken(2, 1, 14)),
+              NumberExpression(numberToken(3, 1, 17)),
             ],
           ),
         ),
@@ -139,24 +148,24 @@ void main() {
 
     test('Indexing list ', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'list = [1, 2, 3][1]',
+        'list() = [1, 2, 3][1]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'list',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 17)),
+            callee: IdentifierExpression(identifierToken('@', 1, 19)),
             arguments: [
               ListExpression(
-                location: const Location(row: 1, column: 8),
+                location: const Location(row: 1, column: 10),
                 value: [
-                  NumberExpression(numberToken(1, 1, 9)),
-                  NumberExpression(numberToken(2, 1, 12)),
-                  NumberExpression(numberToken(3, 1, 15)),
+                  NumberExpression(numberToken(1, 1, 11)),
+                  NumberExpression(numberToken(2, 1, 14)),
+                  NumberExpression(numberToken(3, 1, 17)),
                 ],
               ),
-              NumberExpression(numberToken(1, 1, 18)),
+              NumberExpression(numberToken(1, 1, 20)),
             ],
           ),
         ),
@@ -165,29 +174,29 @@ void main() {
 
     test('Literal map definition', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'map = {1: "one", 2: "two", 3: "three"}',
+        'map() = {1: "one", 2: "two", 3: "three"}',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'map',
           parameters: [],
           expression: MapExpression(
-            location: const Location(row: 1, column: 7),
+            location: const Location(row: 1, column: 9),
             value: [
               MapEntryExpression(
-                location: const Location(row: 1, column: 8),
-                key: NumberExpression(numberToken(1, 1, 8)),
-                value: StringExpression(stringToken('one', 1, 11)),
+                location: const Location(row: 1, column: 10),
+                key: NumberExpression(numberToken(1, 1, 10)),
+                value: StringExpression(stringToken('one', 1, 13)),
               ),
               MapEntryExpression(
-                location: const Location(row: 1, column: 18),
-                key: NumberExpression(numberToken(2, 1, 18)),
-                value: StringExpression(stringToken('two', 1, 21)),
+                location: const Location(row: 1, column: 20),
+                key: NumberExpression(numberToken(2, 1, 20)),
+                value: StringExpression(stringToken('two', 1, 23)),
               ),
               MapEntryExpression(
-                location: const Location(row: 1, column: 28),
-                key: NumberExpression(numberToken(3, 1, 28)),
-                value: StringExpression(stringToken('three', 1, 31)),
+                location: const Location(row: 1, column: 30),
+                key: NumberExpression(numberToken(3, 1, 30)),
+                value: StringExpression(stringToken('three', 1, 33)),
               ),
             ],
           ),
@@ -197,36 +206,36 @@ void main() {
 
     test('Indexing map ', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'map = {1: "one", 2: "two", 3: "three"}[1]',
+        'map() = {1: "one", 2: "two", 3: "three"}[1]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'map',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 39)),
+            callee: IdentifierExpression(identifierToken('@', 1, 41)),
             arguments: [
               MapExpression(
-                location: const Location(row: 1, column: 7),
+                location: const Location(row: 1, column: 9),
                 value: [
                   MapEntryExpression(
-                    location: const Location(row: 1, column: 8),
-                    key: NumberExpression(numberToken(1, 1, 8)),
-                    value: StringExpression(stringToken('one', 1, 11)),
+                    location: const Location(row: 1, column: 10),
+                    key: NumberExpression(numberToken(1, 1, 10)),
+                    value: StringExpression(stringToken('one', 1, 13)),
                   ),
                   MapEntryExpression(
-                    location: const Location(row: 1, column: 18),
-                    key: NumberExpression(numberToken(2, 1, 18)),
-                    value: StringExpression(stringToken('two', 1, 21)),
+                    location: const Location(row: 1, column: 20),
+                    key: NumberExpression(numberToken(2, 1, 20)),
+                    value: StringExpression(stringToken('two', 1, 23)),
                   ),
                   MapEntryExpression(
-                    location: const Location(row: 1, column: 28),
-                    key: NumberExpression(numberToken(3, 1, 28)),
-                    value: StringExpression(stringToken('three', 1, 31)),
+                    location: const Location(row: 1, column: 30),
+                    key: NumberExpression(numberToken(3, 1, 30)),
+                    value: StringExpression(stringToken('three', 1, 33)),
                   ),
                 ],
               ),
-              NumberExpression(numberToken(1, 1, 40)),
+              NumberExpression(numberToken(1, 1, 42)),
             ],
           ),
         ),
@@ -235,17 +244,17 @@ void main() {
 
     test('MapEntryExpression has correct location', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'map = {"key": "value"}',
+        'map() = {"key": "value"}',
       );
       final MapExpression mapExpr = functions[0].expression as MapExpression;
       final MapEntryExpression entry = mapExpr.value[0];
 
-      expect(entry.location, equals(const Location(row: 1, column: 8)));
+      expect(entry.location, equals(const Location(row: 1, column: 10)));
     });
 
     test('MapEntryExpression extends Located', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'map = {"key": "value"}',
+        'map() = {"key": "value"}',
       );
       final MapExpression mapExpr = functions[0].expression as MapExpression;
       final MapEntryExpression entry = mapExpr.value[0];
@@ -254,12 +263,12 @@ void main() {
     });
 
     test('Function with no parameters', () {
-      final List<FunctionDefinition> functions = getFunctions('test = true');
+      final List<FunctionDefinition> functions = getFunctions('test() = true');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
-          expression: BooleanExpression(booleanToken(true, 1, 8)),
+          expression: BooleanExpression(booleanToken(true, 1, 10)),
         ),
       ]);
     });
@@ -393,14 +402,14 @@ void main() {
 
     test('Error: missing expression body', () {
       expect(
-        () => getFunctions('test ='),
+        () => getFunctions('test() ='),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: incomplete binary operation', () {
       expect(
-        () => getFunctions('test = 1 +'),
+        () => getFunctions('test() = 1 +'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
@@ -414,7 +423,7 @@ void main() {
 
     test('Error: if without else', () {
       expect(
-        () => getFunctions('test = if (true) 1'),
+        () => getFunctions('test() = if (true) 1'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
@@ -423,21 +432,21 @@ void main() {
 
     test('Error: if missing condition parentheses', () {
       expect(
-        () => getFunctions('test = if true 1 else 2'),
+        () => getFunctions('test() = if true 1 else 2'),
         throwsA(isA<ExpectedTokenError>()),
       );
     });
 
     test('Error: map missing colon', () {
       expect(
-        () => getFunctions('test = {1 2}'),
+        () => getFunctions('test() = {1 2}'),
         throwsA(isA<ExpectedTokenError>()),
       );
     });
 
     test('Error: list with wrong closing bracket', () {
       expect(
-        () => getFunctions('test = [1, 2)'),
+        () => getFunctions('test() = [1, 2)'),
         throwsA(isA<ExpectedTokenError>()),
       );
     });
@@ -445,16 +454,16 @@ void main() {
     // Binary operators
 
     test('Binary addition', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 1 + 2');
+      final List<FunctionDefinition> functions = getFunctions('test() = 1 + 2');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('+', 1, 10)),
+            callee: IdentifierExpression(identifierToken('+', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(1, 1, 8)),
-              NumberExpression(numberToken(2, 1, 12)),
+              NumberExpression(numberToken(1, 1, 10)),
+              NumberExpression(numberToken(2, 1, 14)),
             ],
           ),
         ),
@@ -462,16 +471,16 @@ void main() {
     });
 
     test('Binary subtraction', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 5 - 3');
+      final List<FunctionDefinition> functions = getFunctions('test() = 5 - 3');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 10)),
+            callee: IdentifierExpression(identifierToken('-', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(5, 1, 8)),
-              NumberExpression(numberToken(3, 1, 12)),
+              NumberExpression(numberToken(5, 1, 10)),
+              NumberExpression(numberToken(3, 1, 14)),
             ],
           ),
         ),
@@ -479,16 +488,16 @@ void main() {
     });
 
     test('Binary multiplication', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 2 * 3');
+      final List<FunctionDefinition> functions = getFunctions('test() = 2 * 3');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('*', 1, 10)),
+            callee: IdentifierExpression(identifierToken('*', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(2, 1, 8)),
-              NumberExpression(numberToken(3, 1, 12)),
+              NumberExpression(numberToken(2, 1, 10)),
+              NumberExpression(numberToken(3, 1, 14)),
             ],
           ),
         ),
@@ -496,16 +505,16 @@ void main() {
     });
 
     test('Binary division', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 6 / 2');
+      final List<FunctionDefinition> functions = getFunctions('test() = 6 / 2');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('/', 1, 10)),
+            callee: IdentifierExpression(identifierToken('/', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(6, 1, 8)),
-              NumberExpression(numberToken(2, 1, 12)),
+              NumberExpression(numberToken(6, 1, 10)),
+              NumberExpression(numberToken(2, 1, 14)),
             ],
           ),
         ),
@@ -513,16 +522,16 @@ void main() {
     });
 
     test('Binary less than', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 1 < 2');
+      final List<FunctionDefinition> functions = getFunctions('test() = 1 < 2');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('<', 1, 10)),
+            callee: IdentifierExpression(identifierToken('<', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(1, 1, 8)),
-              NumberExpression(numberToken(2, 1, 12)),
+              NumberExpression(numberToken(1, 1, 10)),
+              NumberExpression(numberToken(2, 1, 14)),
             ],
           ),
         ),
@@ -530,16 +539,16 @@ void main() {
     });
 
     test('Binary greater than', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 1 > 2');
+      final List<FunctionDefinition> functions = getFunctions('test() = 1 > 2');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('>', 1, 10)),
+            callee: IdentifierExpression(identifierToken('>', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(1, 1, 8)),
-              NumberExpression(numberToken(2, 1, 12)),
+              NumberExpression(numberToken(1, 1, 10)),
+              NumberExpression(numberToken(2, 1, 14)),
             ],
           ),
         ),
@@ -547,16 +556,18 @@ void main() {
     });
 
     test('Binary less than or equal', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 3 <= 5');
+      final List<FunctionDefinition> functions = getFunctions(
+        'test() = 3 <= 5',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('<=', 1, 10)),
+            callee: IdentifierExpression(identifierToken('<=', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(3, 1, 8)),
-              NumberExpression(numberToken(5, 1, 13)),
+              NumberExpression(numberToken(3, 1, 10)),
+              NumberExpression(numberToken(5, 1, 15)),
             ],
           ),
         ),
@@ -564,16 +575,18 @@ void main() {
     });
 
     test('Binary greater than or equal', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 5 >= 3');
+      final List<FunctionDefinition> functions = getFunctions(
+        'test() = 5 >= 3',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('>=', 1, 10)),
+            callee: IdentifierExpression(identifierToken('>=', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(5, 1, 8)),
-              NumberExpression(numberToken(3, 1, 13)),
+              NumberExpression(numberToken(5, 1, 10)),
+              NumberExpression(numberToken(3, 1, 15)),
             ],
           ),
         ),
@@ -581,16 +594,18 @@ void main() {
     });
 
     test('Binary not equal', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 1 != 2');
+      final List<FunctionDefinition> functions = getFunctions(
+        'test() = 1 != 2',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('!=', 1, 10)),
+            callee: IdentifierExpression(identifierToken('!=', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(1, 1, 8)),
-              NumberExpression(numberToken(2, 1, 13)),
+              NumberExpression(numberToken(1, 1, 10)),
+              NumberExpression(numberToken(2, 1, 15)),
             ],
           ),
         ),
@@ -599,17 +614,17 @@ void main() {
 
     test('Binary logical and', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true & false',
+        'test() = true & false',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('&', 1, 13)),
+            callee: IdentifierExpression(identifierToken('&', 1, 15)),
             arguments: [
-              BooleanExpression(booleanToken(true, 1, 8)),
-              BooleanExpression(booleanToken(false, 1, 15)),
+              BooleanExpression(booleanToken(true, 1, 10)),
+              BooleanExpression(booleanToken(false, 1, 17)),
             ],
           ),
         ),
@@ -618,17 +633,17 @@ void main() {
 
     test('Binary logical or', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true | false',
+        'test() = true | false',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('|', 1, 13)),
+            callee: IdentifierExpression(identifierToken('|', 1, 15)),
             arguments: [
-              BooleanExpression(booleanToken(true, 1, 8)),
-              BooleanExpression(booleanToken(false, 1, 15)),
+              BooleanExpression(booleanToken(true, 1, 10)),
+              BooleanExpression(booleanToken(false, 1, 17)),
             ],
           ),
         ),
@@ -638,16 +653,16 @@ void main() {
     // Unary operators
 
     test('Unary negation', () {
-      final List<FunctionDefinition> functions = getFunctions('test = -5');
+      final List<FunctionDefinition> functions = getFunctions('test() = -5');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 8)),
+            callee: IdentifierExpression(identifierToken('-', 1, 10)),
             arguments: [
-              NumberExpression(numberToken(0, 1, 8)),
-              NumberExpression(numberToken(5, 1, 9)),
+              NumberExpression(numberToken(0, 1, 10)),
+              NumberExpression(numberToken(5, 1, 11)),
             ],
           ),
         ),
@@ -655,15 +670,15 @@ void main() {
     });
 
     test('Unary logical not', () {
-      final List<FunctionDefinition> functions = getFunctions('test = !true');
+      final List<FunctionDefinition> functions = getFunctions('test() = !true');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('!', 1, 8)),
+            callee: IdentifierExpression(identifierToken('!', 1, 10)),
             arguments: [
-              BooleanExpression(booleanToken(true, 1, 9)),
+              BooleanExpression(booleanToken(true, 1, 11)),
             ],
           ),
         ),
@@ -674,21 +689,21 @@ void main() {
 
     test('Precedence: multiplication before addition', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 1 + 2 * 3',
+        'test() = 1 + 2 * 3',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('+', 1, 10)),
+            callee: IdentifierExpression(identifierToken('+', 1, 12)),
             arguments: [
-              NumberExpression(numberToken(1, 1, 8)),
+              NumberExpression(numberToken(1, 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('*', 1, 14)),
+                callee: IdentifierExpression(identifierToken('*', 1, 16)),
                 arguments: [
-                  NumberExpression(numberToken(2, 1, 12)),
-                  NumberExpression(numberToken(3, 1, 16)),
+                  NumberExpression(numberToken(2, 1, 14)),
+                  NumberExpression(numberToken(3, 1, 18)),
                 ],
               ),
             ],
@@ -699,23 +714,23 @@ void main() {
 
     test('Precedence: grouping overrides default', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = (1 + 2) * 3',
+        'test() = (1 + 2) * 3',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('*', 1, 16)),
+            callee: IdentifierExpression(identifierToken('*', 1, 18)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('+', 1, 11)),
+                callee: IdentifierExpression(identifierToken('+', 1, 13)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 9)),
-                  NumberExpression(numberToken(2, 1, 13)),
+                  NumberExpression(numberToken(1, 1, 11)),
+                  NumberExpression(numberToken(2, 1, 15)),
                 ],
               ),
-              NumberExpression(numberToken(3, 1, 18)),
+              NumberExpression(numberToken(3, 1, 20)),
             ],
           ),
         ),
@@ -724,23 +739,23 @@ void main() {
 
     test('Precedence: addition before equality', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 1 + 2 == 3',
+        'test() = 1 + 2 == 3',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('==', 1, 14)),
+            callee: IdentifierExpression(identifierToken('==', 1, 16)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('+', 1, 10)),
+                callee: IdentifierExpression(identifierToken('+', 1, 12)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 8)),
-                  NumberExpression(numberToken(2, 1, 12)),
+                  NumberExpression(numberToken(1, 1, 10)),
+                  NumberExpression(numberToken(2, 1, 14)),
                 ],
               ),
-              NumberExpression(numberToken(3, 1, 17)),
+              NumberExpression(numberToken(3, 1, 19)),
             ],
           ),
         ),
@@ -749,21 +764,21 @@ void main() {
 
     test('Precedence: division before subtraction', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 10 - 4 / 2',
+        'test() = 10 - 4 / 2',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 11)),
+            callee: IdentifierExpression(identifierToken('-', 1, 13)),
             arguments: [
-              NumberExpression(numberToken(10, 1, 8)),
+              NumberExpression(numberToken(10, 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('/', 1, 15)),
+                callee: IdentifierExpression(identifierToken('/', 1, 17)),
                 arguments: [
-                  NumberExpression(numberToken(4, 1, 13)),
-                  NumberExpression(numberToken(2, 1, 17)),
+                  NumberExpression(numberToken(4, 1, 15)),
+                  NumberExpression(numberToken(2, 1, 19)),
                 ],
               ),
             ],
@@ -775,13 +790,13 @@ void main() {
     // Collection edge cases
 
     test('Empty list', () {
-      final List<FunctionDefinition> functions = getFunctions('test = []');
+      final List<FunctionDefinition> functions = getFunctions('test() = []');
       checkFunctions(functions, [
         const FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: ListExpression(
-            location: Location(row: 1, column: 8),
+            location: Location(row: 1, column: 10),
             value: [],
           ),
         ),
@@ -789,13 +804,13 @@ void main() {
     });
 
     test('Empty map', () {
-      final List<FunctionDefinition> functions = getFunctions('test = {}');
+      final List<FunctionDefinition> functions = getFunctions('test() = {}');
       checkFunctions(functions, [
         const FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: MapExpression(
-            location: Location(row: 1, column: 8),
+            location: Location(row: 1, column: 10),
             value: [],
           ),
         ),
@@ -804,22 +819,22 @@ void main() {
 
     test('Nested list', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [[1], [2]]',
+        'test() = [[1], [2]]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: ListExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               ListExpression(
-                location: const Location(row: 1, column: 9),
-                value: [NumberExpression(numberToken(1, 1, 10))],
+                location: const Location(row: 1, column: 11),
+                value: [NumberExpression(numberToken(1, 1, 12))],
               ),
               ListExpression(
-                location: const Location(row: 1, column: 14),
-                value: [NumberExpression(numberToken(2, 1, 15))],
+                location: const Location(row: 1, column: 16),
+                value: [NumberExpression(numberToken(2, 1, 17))],
               ),
             ],
           ),
@@ -850,17 +865,17 @@ void main() {
 
     test('Indexing on string', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = "abc"[1]',
+        'test() = "abc"[1]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 13)),
+            callee: IdentifierExpression(identifierToken('@', 1, 15)),
             arguments: [
-              StringExpression(stringToken('abc', 1, 8)),
-              NumberExpression(numberToken(1, 1, 14)),
+              StringExpression(stringToken('abc', 1, 10)),
+              NumberExpression(numberToken(1, 1, 16)),
             ],
           ),
         ),
@@ -895,13 +910,13 @@ void main() {
     // Function calls
 
     test('No-argument function call', () {
-      final List<FunctionDefinition> functions = getFunctions('test = foo()');
+      final List<FunctionDefinition> functions = getFunctions('test() = foo()');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+            callee: IdentifierExpression(identifierToken('foo', 1, 10)),
             arguments: [],
           ),
         ),
@@ -910,18 +925,18 @@ void main() {
 
     test('Multi-argument function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(1, 2, 3)',
+        'test() = foo(1, 2, 3)',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+            callee: IdentifierExpression(identifierToken('foo', 1, 10)),
             arguments: [
-              NumberExpression(numberToken(1, 1, 12)),
-              NumberExpression(numberToken(2, 1, 15)),
-              NumberExpression(numberToken(3, 1, 18)),
+              NumberExpression(numberToken(1, 1, 14)),
+              NumberExpression(numberToken(2, 1, 17)),
+              NumberExpression(numberToken(3, 1, 20)),
             ],
           ),
         ),
@@ -930,19 +945,19 @@ void main() {
 
     test('Nested function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(bar(1))',
+        'test() = foo(bar(1))',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+            callee: IdentifierExpression(identifierToken('foo', 1, 10)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('bar', 1, 12)),
+                callee: IdentifierExpression(identifierToken('bar', 1, 14)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 16)),
+                  NumberExpression(numberToken(1, 1, 18)),
                 ],
               ),
             ],
@@ -953,7 +968,7 @@ void main() {
 
     test('Chained function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(1)(2)',
+        'test() = foo(1)(2)',
       );
       checkFunctions(functions, [
         FunctionDefinition(
@@ -961,13 +976,13 @@ void main() {
           parameters: [],
           expression: CallExpression(
             callee: CallExpression(
-              callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+              callee: IdentifierExpression(identifierToken('foo', 1, 10)),
               arguments: [
-                NumberExpression(numberToken(1, 1, 12)),
+                NumberExpression(numberToken(1, 1, 14)),
               ],
             ),
             arguments: [
-              NumberExpression(numberToken(2, 1, 15)),
+              NumberExpression(numberToken(2, 1, 17)),
             ],
           ),
         ),
@@ -1006,17 +1021,19 @@ void main() {
     // Multiple function definitions
 
     test('Multiple function definitions', () {
-      final List<FunctionDefinition> functions = getFunctions('a = 1\nb = 2');
+      final List<FunctionDefinition> functions = getFunctions(
+        'a() = 1\nb() = 2',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'a',
           parameters: [],
-          expression: NumberExpression(numberToken(1, 1, 5)),
+          expression: NumberExpression(numberToken(1, 1, 7)),
         ),
         FunctionDefinition(
           name: 'b',
           parameters: [],
-          expression: NumberExpression(numberToken(2, 2, 5)),
+          expression: NumberExpression(numberToken(2, 2, 7)),
         ),
       ]);
     });
@@ -1025,46 +1042,46 @@ void main() {
 
     test('Literal number with underscore separator', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'million = 1_000_000',
+        'million() = 1_000_000',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'million',
           parameters: [],
-          expression: NumberExpression(numberToken(1000000, 1, 11)),
+          expression: NumberExpression(numberToken(1000000, 1, 13)),
         ),
       ]);
     });
 
     test('Literal number with scientific notation', () {
-      final List<FunctionDefinition> functions = getFunctions('big = 1e10');
+      final List<FunctionDefinition> functions = getFunctions('big() = 1e10');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'big',
           parameters: [],
-          expression: NumberExpression(numberToken(1e10, 1, 7)),
+          expression: NumberExpression(numberToken(1e10, 1, 9)),
         ),
       ]);
     });
 
     test('Literal number with scientific notation and negative exponent', () {
-      final List<FunctionDefinition> functions = getFunctions('small = 1e-5');
+      final List<FunctionDefinition> functions = getFunctions('small() = 1e-5');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'small',
           parameters: [],
-          expression: NumberExpression(numberToken(1e-5, 1, 9)),
+          expression: NumberExpression(numberToken(1e-5, 1, 11)),
         ),
       ]);
     });
 
     test('Literal decimal with scientific notation', () {
-      final List<FunctionDefinition> functions = getFunctions('val = 2.5e3');
+      final List<FunctionDefinition> functions = getFunctions('val() = 2.5e3');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'val',
           parameters: [],
-          expression: NumberExpression(numberToken(2.5e3, 1, 7)),
+          expression: NumberExpression(numberToken(2.5e3, 1, 9)),
         ),
       ]);
     });
@@ -1097,16 +1114,18 @@ void main() {
     // Binary modulo operator
 
     test('Binary modulo', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 10 % 3');
+      final List<FunctionDefinition> functions = getFunctions(
+        'test() = 10 % 3',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('%', 1, 11)),
+            callee: IdentifierExpression(identifierToken('%', 1, 13)),
             arguments: [
-              NumberExpression(numberToken(10, 1, 8)),
-              NumberExpression(numberToken(3, 1, 13)),
+              NumberExpression(numberToken(10, 1, 10)),
+              NumberExpression(numberToken(3, 1, 15)),
             ],
           ),
         ),
@@ -1137,15 +1156,15 @@ void main() {
     // Single-element collections
 
     test('Single-element list', () {
-      final List<FunctionDefinition> functions = getFunctions('test = [42]');
+      final List<FunctionDefinition> functions = getFunctions('test() = [42]');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: ListExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
-              NumberExpression(numberToken(42, 1, 9)),
+              NumberExpression(numberToken(42, 1, 11)),
             ],
           ),
         ),
@@ -1154,19 +1173,19 @@ void main() {
 
     test('Single-entry map', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {1: "one"}',
+        'test() = {1: "one"}',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: MapExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               MapEntryExpression(
-                location: const Location(row: 1, column: 9),
-                key: NumberExpression(numberToken(1, 1, 9)),
-                value: StringExpression(stringToken('one', 1, 12)),
+                location: const Location(row: 1, column: 11),
+                key: NumberExpression(numberToken(1, 1, 11)),
+                value: StringExpression(stringToken('one', 1, 14)),
               ),
             ],
           ),
@@ -1178,25 +1197,25 @@ void main() {
 
     test('Nested map', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {"a": {"b": 1}}',
+        'test() = {"a": {"b": 1}}',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: MapExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               MapEntryExpression(
-                location: const Location(row: 1, column: 9),
-                key: StringExpression(stringToken('a', 1, 9)),
+                location: const Location(row: 1, column: 11),
+                key: StringExpression(stringToken('a', 1, 11)),
                 value: MapExpression(
-                  location: const Location(row: 1, column: 14),
+                  location: const Location(row: 1, column: 16),
                   value: [
                     MapEntryExpression(
-                      location: const Location(row: 1, column: 15),
-                      key: StringExpression(stringToken('b', 1, 15)),
-                      value: NumberExpression(numberToken(1, 1, 20)),
+                      location: const Location(row: 1, column: 17),
+                      key: StringExpression(stringToken('b', 1, 17)),
+                      value: NumberExpression(numberToken(1, 1, 22)),
                     ),
                   ],
                 ),
@@ -1211,41 +1230,41 @@ void main() {
 
     test('Chained indexing with brackets', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [[1, 2], [3, 4]][0][1]',
+        'test() = [[1, 2], [3, 4]][0][1]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 27)),
+            callee: IdentifierExpression(identifierToken('@', 1, 29)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('@', 1, 24)),
+                callee: IdentifierExpression(identifierToken('@', 1, 26)),
                 arguments: [
                   ListExpression(
-                    location: const Location(row: 1, column: 8),
+                    location: const Location(row: 1, column: 10),
                     value: [
                       ListExpression(
-                        location: const Location(row: 1, column: 9),
+                        location: const Location(row: 1, column: 11),
                         value: [
-                          NumberExpression(numberToken(1, 1, 10)),
-                          NumberExpression(numberToken(2, 1, 13)),
+                          NumberExpression(numberToken(1, 1, 12)),
+                          NumberExpression(numberToken(2, 1, 15)),
                         ],
                       ),
                       ListExpression(
-                        location: const Location(row: 1, column: 17),
+                        location: const Location(row: 1, column: 19),
                         value: [
-                          NumberExpression(numberToken(3, 1, 18)),
-                          NumberExpression(numberToken(4, 1, 21)),
+                          NumberExpression(numberToken(3, 1, 20)),
+                          NumberExpression(numberToken(4, 1, 23)),
                         ],
                       ),
                     ],
                   ),
-                  NumberExpression(numberToken(0, 1, 25)),
+                  NumberExpression(numberToken(0, 1, 27)),
                 ],
               ),
-              NumberExpression(numberToken(1, 1, 28)),
+              NumberExpression(numberToken(1, 1, 30)),
             ],
           ),
         ),
@@ -1256,49 +1275,49 @@ void main() {
 
     test('Error: unclosed list', () {
       expect(
-        () => getFunctions('test = [1, 2'),
+        () => getFunctions('test() = [1, 2'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: unclosed map', () {
       expect(
-        () => getFunctions('test = {1: 2'),
+        () => getFunctions('test() = {1: 2'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: unclosed parentheses in expression', () {
       expect(
-        () => getFunctions('test = (1 + 2'),
+        () => getFunctions('test() = (1 + 2'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: unclosed function call', () {
       expect(
-        () => getFunctions('test = foo(1, 2'),
+        () => getFunctions('test() = foo(1, 2'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: if missing closing paren', () {
       expect(
-        () => getFunctions('test = if (true 1 else 2'),
+        () => getFunctions('test() = if (true 1 else 2'),
         throwsA(isA<ExpectedTokenError>()),
       );
     });
 
     test('Error: map with wrong closing delimiter', () {
       expect(
-        () => getFunctions('test = {1: 2]'),
+        () => getFunctions('test() = {1: 2]'),
         throwsA(isA<ExpectedTokenError>()),
       );
     });
 
     test('Error: unclosed bracket index', () {
       expect(
-        () => getFunctions('test = list[0'),
+        () => getFunctions('test() = list[0'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
@@ -1307,23 +1326,23 @@ void main() {
 
     test('Chained addition (left associativity)', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 1 + 2 + 3',
+        'test() = 1 + 2 + 3',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('+', 1, 14)),
+            callee: IdentifierExpression(identifierToken('+', 1, 16)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('+', 1, 10)),
+                callee: IdentifierExpression(identifierToken('+', 1, 12)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 8)),
-                  NumberExpression(numberToken(2, 1, 12)),
+                  NumberExpression(numberToken(1, 1, 10)),
+                  NumberExpression(numberToken(2, 1, 14)),
                 ],
               ),
-              NumberExpression(numberToken(3, 1, 16)),
+              NumberExpression(numberToken(3, 1, 18)),
             ],
           ),
         ),
@@ -1332,23 +1351,23 @@ void main() {
 
     test('Chained subtraction (left associativity)', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 10 - 3 - 2',
+        'test() = 10 - 3 - 2',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 15)),
+            callee: IdentifierExpression(identifierToken('-', 1, 17)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('-', 1, 11)),
+                callee: IdentifierExpression(identifierToken('-', 1, 13)),
                 arguments: [
-                  NumberExpression(numberToken(10, 1, 8)),
-                  NumberExpression(numberToken(3, 1, 13)),
+                  NumberExpression(numberToken(10, 1, 10)),
+                  NumberExpression(numberToken(3, 1, 15)),
                 ],
               ),
-              NumberExpression(numberToken(2, 1, 17)),
+              NumberExpression(numberToken(2, 1, 19)),
             ],
           ),
         ),
@@ -1357,23 +1376,23 @@ void main() {
 
     test('Chained comparison operators', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 1 < 2 < 3',
+        'test() = 1 < 2 < 3',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('<', 1, 14)),
+            callee: IdentifierExpression(identifierToken('<', 1, 16)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('<', 1, 10)),
+                callee: IdentifierExpression(identifierToken('<', 1, 12)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 8)),
-                  NumberExpression(numberToken(2, 1, 12)),
+                  NumberExpression(numberToken(1, 1, 10)),
+                  NumberExpression(numberToken(2, 1, 14)),
                 ],
               ),
-              NumberExpression(numberToken(3, 1, 16)),
+              NumberExpression(numberToken(3, 1, 18)),
             ],
           ),
         ),
@@ -1382,23 +1401,23 @@ void main() {
 
     test('Chained equality operators', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true == true == false',
+        'test() = true == true == false',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('==', 1, 21)),
+            callee: IdentifierExpression(identifierToken('==', 1, 23)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('==', 1, 13)),
+                callee: IdentifierExpression(identifierToken('==', 1, 15)),
                 arguments: [
-                  BooleanExpression(booleanToken(true, 1, 8)),
-                  BooleanExpression(booleanToken(true, 1, 16)),
+                  BooleanExpression(booleanToken(true, 1, 10)),
+                  BooleanExpression(booleanToken(true, 1, 18)),
                 ],
               ),
-              BooleanExpression(booleanToken(false, 1, 24)),
+              BooleanExpression(booleanToken(false, 1, 26)),
             ],
           ),
         ),
@@ -1407,23 +1426,23 @@ void main() {
 
     test('Chained logical or', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true | false | true',
+        'test() = true | false | true',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('|', 1, 21)),
+            callee: IdentifierExpression(identifierToken('|', 1, 23)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('|', 1, 13)),
+                callee: IdentifierExpression(identifierToken('|', 1, 15)),
                 arguments: [
-                  BooleanExpression(booleanToken(true, 1, 8)),
-                  BooleanExpression(booleanToken(false, 1, 15)),
+                  BooleanExpression(booleanToken(true, 1, 10)),
+                  BooleanExpression(booleanToken(false, 1, 17)),
                 ],
               ),
-              BooleanExpression(booleanToken(true, 1, 23)),
+              BooleanExpression(booleanToken(true, 1, 25)),
             ],
           ),
         ),
@@ -1432,23 +1451,23 @@ void main() {
 
     test('Chained logical and', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true & false & true',
+        'test() = true & false & true',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('&', 1, 21)),
+            callee: IdentifierExpression(identifierToken('&', 1, 23)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('&', 1, 13)),
+                callee: IdentifierExpression(identifierToken('&', 1, 15)),
                 arguments: [
-                  BooleanExpression(booleanToken(true, 1, 8)),
-                  BooleanExpression(booleanToken(false, 1, 15)),
+                  BooleanExpression(booleanToken(true, 1, 10)),
+                  BooleanExpression(booleanToken(false, 1, 17)),
                 ],
               ),
-              BooleanExpression(booleanToken(true, 1, 23)),
+              BooleanExpression(booleanToken(true, 1, 25)),
             ],
           ),
         ),
@@ -1458,20 +1477,20 @@ void main() {
     // Double unary operations
 
     test('Double negation', () {
-      final List<FunctionDefinition> functions = getFunctions('test = --5');
+      final List<FunctionDefinition> functions = getFunctions('test() = --5');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 8)),
+            callee: IdentifierExpression(identifierToken('-', 1, 10)),
             arguments: [
-              NumberExpression(numberToken(0, 1, 8)),
+              NumberExpression(numberToken(0, 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('-', 1, 9)),
+                callee: IdentifierExpression(identifierToken('-', 1, 11)),
                 arguments: [
-                  NumberExpression(numberToken(0, 1, 9)),
-                  NumberExpression(numberToken(5, 1, 10)),
+                  NumberExpression(numberToken(0, 1, 11)),
+                  NumberExpression(numberToken(5, 1, 12)),
                 ],
               ),
             ],
@@ -1481,18 +1500,20 @@ void main() {
     });
 
     test('Double logical not', () {
-      final List<FunctionDefinition> functions = getFunctions('test = !!true');
+      final List<FunctionDefinition> functions = getFunctions(
+        'test() = !!true',
+      );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('!', 1, 8)),
+            callee: IdentifierExpression(identifierToken('!', 1, 10)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('!', 1, 9)),
+                callee: IdentifierExpression(identifierToken('!', 1, 11)),
                 arguments: [
-                  BooleanExpression(booleanToken(true, 1, 10)),
+                  BooleanExpression(booleanToken(true, 1, 12)),
                 ],
               ),
             ],
@@ -1505,21 +1526,21 @@ void main() {
 
     test('Precedence: and before or', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true | false & true',
+        'test() = true | false & true',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('|', 1, 13)),
+            callee: IdentifierExpression(identifierToken('|', 1, 15)),
             arguments: [
-              BooleanExpression(booleanToken(true, 1, 8)),
+              BooleanExpression(booleanToken(true, 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('&', 1, 21)),
+                callee: IdentifierExpression(identifierToken('&', 1, 23)),
                 arguments: [
-                  BooleanExpression(booleanToken(false, 1, 15)),
-                  BooleanExpression(booleanToken(true, 1, 23)),
+                  BooleanExpression(booleanToken(false, 1, 17)),
+                  BooleanExpression(booleanToken(true, 1, 25)),
                 ],
               ),
             ],
@@ -1530,23 +1551,23 @@ void main() {
 
     test('Precedence: comparison before equality', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 1 < 2 == true',
+        'test() = 1 < 2 == true',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('==', 1, 14)),
+            callee: IdentifierExpression(identifierToken('==', 1, 16)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('<', 1, 10)),
+                callee: IdentifierExpression(identifierToken('<', 1, 12)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 8)),
-                  NumberExpression(numberToken(2, 1, 12)),
+                  NumberExpression(numberToken(1, 1, 10)),
+                  NumberExpression(numberToken(2, 1, 14)),
                 ],
               ),
-              BooleanExpression(booleanToken(true, 1, 17)),
+              BooleanExpression(booleanToken(true, 1, 19)),
             ],
           ),
         ),
@@ -1555,23 +1576,23 @@ void main() {
 
     test('Precedence: unary before binary', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = -5 + 3',
+        'test() = -5 + 3',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('+', 1, 11)),
+            callee: IdentifierExpression(identifierToken('+', 1, 13)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('-', 1, 8)),
+                callee: IdentifierExpression(identifierToken('-', 1, 10)),
                 arguments: [
-                  NumberExpression(numberToken(0, 1, 8)),
-                  NumberExpression(numberToken(5, 1, 9)),
+                  NumberExpression(numberToken(0, 1, 10)),
+                  NumberExpression(numberToken(5, 1, 11)),
                 ],
               ),
-              NumberExpression(numberToken(3, 1, 13)),
+              NumberExpression(numberToken(3, 1, 15)),
             ],
           ),
         ),
@@ -1582,7 +1603,7 @@ void main() {
 
     test('StringExpression toString includes quotes', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = "hello"',
+        'test() = "hello"',
       );
       final StringExpression expression =
           functions[0].expression as StringExpression;
@@ -1591,7 +1612,7 @@ void main() {
 
     test('MapExpression toString formats entries', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {1: "a", 2: "b"}',
+        'test() = {1: "a", 2: "b"}',
       );
       final MapExpression expression = functions[0].expression as MapExpression;
       expect(expression.toString(), equals('{1: "a", 2: "b"}'));
@@ -1599,7 +1620,7 @@ void main() {
 
     test('CallExpression toString formats as function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(1, 2)',
+        'test() = foo(1, 2)',
       );
       final CallExpression expression =
           functions[0].expression as CallExpression;
@@ -1608,7 +1629,7 @@ void main() {
 
     test('ListExpression toString formats elements', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [1, 2, 3]',
+        'test() = [1, 2, 3]',
       );
       final ListExpression expression =
           functions[0].expression as ListExpression;
@@ -1719,18 +1740,18 @@ void main() {
 
     test('List with mixed expression types', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [1, "two", true]',
+        'test() = [1, "two", true]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: ListExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
-              NumberExpression(numberToken(1, 1, 9)),
-              StringExpression(stringToken('two', 1, 12)),
-              BooleanExpression(booleanToken(true, 1, 19)),
+              NumberExpression(numberToken(1, 1, 11)),
+              StringExpression(stringToken('two', 1, 14)),
+              BooleanExpression(booleanToken(true, 1, 21)),
             ],
           ),
         ),
@@ -1739,24 +1760,24 @@ void main() {
 
     test('Map with different key types', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {1: "a", "b": 2}',
+        'test() = {1: "a", "b": 2}',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: MapExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               MapEntryExpression(
-                location: const Location(row: 1, column: 9),
-                key: NumberExpression(numberToken(1, 1, 9)),
-                value: StringExpression(stringToken('a', 1, 12)),
+                location: const Location(row: 1, column: 11),
+                key: NumberExpression(numberToken(1, 1, 11)),
+                value: StringExpression(stringToken('a', 1, 14)),
               ),
               MapEntryExpression(
-                location: const Location(row: 1, column: 17),
-                key: StringExpression(stringToken('b', 1, 17)),
-                value: NumberExpression(numberToken(2, 1, 22)),
+                location: const Location(row: 1, column: 19),
+                key: StringExpression(stringToken('b', 1, 19)),
+                value: NumberExpression(numberToken(2, 1, 24)),
               ),
             ],
           ),
@@ -1768,27 +1789,27 @@ void main() {
 
     test('Function call with expression arguments', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(1 + 2, 3 * 4)',
+        'test() = foo(1 + 2, 3 * 4)',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+            callee: IdentifierExpression(identifierToken('foo', 1, 10)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('+', 1, 14)),
+                callee: IdentifierExpression(identifierToken('+', 1, 16)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 12)),
-                  NumberExpression(numberToken(2, 1, 16)),
+                  NumberExpression(numberToken(1, 1, 14)),
+                  NumberExpression(numberToken(2, 1, 18)),
                 ],
               ),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('*', 1, 21)),
+                callee: IdentifierExpression(identifierToken('*', 1, 23)),
                 arguments: [
-                  NumberExpression(numberToken(3, 1, 19)),
-                  NumberExpression(numberToken(4, 1, 23)),
+                  NumberExpression(numberToken(3, 1, 21)),
+                  NumberExpression(numberToken(4, 1, 25)),
                 ],
               ),
             ],
@@ -1801,20 +1822,20 @@ void main() {
 
     test('Indexing result of function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo()[0]',
+        'test() = foo()[0]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 13)),
+            callee: IdentifierExpression(identifierToken('@', 1, 15)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+                callee: IdentifierExpression(identifierToken('foo', 1, 10)),
                 arguments: [],
               ),
-              NumberExpression(numberToken(0, 1, 14)),
+              NumberExpression(numberToken(0, 1, 16)),
             ],
           ),
         ),
@@ -1846,7 +1867,7 @@ void main() {
 
     test('Error: invalid primary expression', () {
       expect(
-        () => getFunctions('test = +'),
+        () => getFunctions('test() = +'),
         throwsA(isA<InvalidTokenError>()),
       );
     });
@@ -1855,7 +1876,7 @@ void main() {
 
     test('Error: missing else keyword', () {
       expect(
-        () => getFunctions('test = if (true) 1 2'),
+        () => getFunctions('test() = if (true) 1 2'),
         throwsA(isA<ExpectedTokenError>()),
       );
     });
@@ -1904,21 +1925,21 @@ void main() {
 
     test('If expression as function argument', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(if (true) 1 else 2)',
+        'test() = foo(if (true) 1 else 2)',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+            callee: IdentifierExpression(identifierToken('foo', 1, 10)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('if', 1, 12)),
+                callee: IdentifierExpression(identifierToken('if', 1, 14)),
                 arguments: [
-                  BooleanExpression(booleanToken(true, 1, 16)),
-                  NumberExpression(numberToken(1, 1, 22)),
-                  NumberExpression(numberToken(2, 1, 29)),
+                  BooleanExpression(booleanToken(true, 1, 18)),
+                  NumberExpression(numberToken(1, 1, 24)),
+                  NumberExpression(numberToken(2, 1, 31)),
                 ],
               ),
             ],
@@ -1931,7 +1952,7 @@ void main() {
 
     test('Multiple functions separated by newlines', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'a = 1\n\nb = 2\n\nc = 3',
+        'a() = 1\n\nb() = 2\n\nc() = 3',
       );
       expect(functions.length, equals(3));
       expect(functions[0].name, equals('a'));
@@ -1975,7 +1996,7 @@ void main() {
     // ListExpression toString with single element
 
     test('ListExpression toString with single element', () {
-      final List<FunctionDefinition> functions = getFunctions('test = [42]');
+      final List<FunctionDefinition> functions = getFunctions('test() = [42]');
       final ListExpression expression =
           functions[0].expression as ListExpression;
       expect(expression.toString(), equals('[42]'));
@@ -1984,7 +2005,7 @@ void main() {
     // Empty ListExpression toString
 
     test('Empty ListExpression toString', () {
-      final List<FunctionDefinition> functions = getFunctions('test = []');
+      final List<FunctionDefinition> functions = getFunctions('test() = []');
       final ListExpression expression =
           functions[0].expression as ListExpression;
       expect(expression.toString(), equals('[]'));
@@ -1993,7 +2014,7 @@ void main() {
     // Empty MapExpression toString
 
     test('Empty MapExpression toString', () {
-      final List<FunctionDefinition> functions = getFunctions('test = {}');
+      final List<FunctionDefinition> functions = getFunctions('test() = {}');
       final MapExpression expression = functions[0].expression as MapExpression;
       expect(expression.toString(), equals('{}'));
     });
@@ -2002,7 +2023,7 @@ void main() {
 
     test('Single entry MapExpression toString', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {1: "one"}',
+        'test() = {1: "one"}',
       );
       final MapExpression expression = functions[0].expression as MapExpression;
       expect(expression.toString(), equals('{1: "one"}'));
@@ -2011,60 +2032,64 @@ void main() {
     // Expression location verification
 
     test('NumberExpression location matches token location', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 42');
+      final List<FunctionDefinition> functions = getFunctions('test() = 42');
       final NumberExpression expression =
           functions[0].expression as NumberExpression;
-      expect(expression.location, equals(const Location(row: 1, column: 8)));
+      expect(expression.location, equals(const Location(row: 1, column: 10)));
     });
 
     test('BooleanExpression location matches token location', () {
-      final List<FunctionDefinition> functions = getFunctions('test = true');
+      final List<FunctionDefinition> functions = getFunctions('test() = true');
       final BooleanExpression expression =
           functions[0].expression as BooleanExpression;
-      expect(expression.location, equals(const Location(row: 1, column: 8)));
+      expect(expression.location, equals(const Location(row: 1, column: 10)));
     });
 
     test('StringExpression location matches token location', () {
-      final List<FunctionDefinition> functions = getFunctions('test = "hi"');
+      final List<FunctionDefinition> functions = getFunctions('test() = "hi"');
       final StringExpression expression =
           functions[0].expression as StringExpression;
-      expect(expression.location, equals(const Location(row: 1, column: 8)));
+      expect(expression.location, equals(const Location(row: 1, column: 10)));
     });
 
     test('ListExpression location matches opening bracket', () {
-      final List<FunctionDefinition> functions = getFunctions('test = [1, 2]');
+      final List<FunctionDefinition> functions = getFunctions(
+        'test() = [1, 2]',
+      );
       final ListExpression expression =
           functions[0].expression as ListExpression;
-      expect(expression.location, equals(const Location(row: 1, column: 8)));
+      expect(expression.location, equals(const Location(row: 1, column: 10)));
     });
 
     test('MapExpression location matches opening brace', () {
-      final List<FunctionDefinition> functions = getFunctions('test = {1: 2}');
+      final List<FunctionDefinition> functions = getFunctions(
+        'test() = {1: 2}',
+      );
       final MapExpression expression = functions[0].expression as MapExpression;
-      expect(expression.location, equals(const Location(row: 1, column: 8)));
+      expect(expression.location, equals(const Location(row: 1, column: 10)));
     });
 
     // Chained @ operators
 
     test('Chained @ operators', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = list @ 0 @ 1',
+        'test() = list @ 0 @ 1',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 17)),
+            callee: IdentifierExpression(identifierToken('@', 1, 19)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('@', 1, 13)),
+                callee: IdentifierExpression(identifierToken('@', 1, 15)),
                 arguments: [
-                  IdentifierExpression(identifierToken('list', 1, 8)),
-                  NumberExpression(numberToken(0, 1, 15)),
+                  IdentifierExpression(identifierToken('list', 1, 10)),
+                  NumberExpression(numberToken(0, 1, 17)),
                 ],
               ),
-              NumberExpression(numberToken(1, 1, 19)),
+              NumberExpression(numberToken(1, 1, 21)),
             ],
           ),
         ),
@@ -2075,23 +2100,23 @@ void main() {
 
     test('Mixed indexing with bracket and @ operator', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = list[0] @ 1',
+        'test() = list[0] @ 1',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 16)),
+            callee: IdentifierExpression(identifierToken('@', 1, 18)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('@', 1, 12)),
+                callee: IdentifierExpression(identifierToken('@', 1, 14)),
                 arguments: [
-                  IdentifierExpression(identifierToken('list', 1, 8)),
-                  NumberExpression(numberToken(0, 1, 13)),
+                  IdentifierExpression(identifierToken('list', 1, 10)),
+                  NumberExpression(numberToken(0, 1, 15)),
                 ],
               ),
-              NumberExpression(numberToken(1, 1, 18)),
+              NumberExpression(numberToken(1, 1, 20)),
             ],
           ),
         ),
@@ -2111,13 +2136,13 @@ void main() {
 
     test('Deeply nested parentheses', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = (((1)))',
+        'test() = (((1)))',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
-          expression: NumberExpression(numberToken(1, 1, 11)),
+          expression: NumberExpression(numberToken(1, 1, 13)),
         ),
       ]);
     });
@@ -2126,13 +2151,13 @@ void main() {
 
     test('Literal boolean false', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'disabled = false',
+        'disabled() = false',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'disabled',
           parameters: [],
-          expression: BooleanExpression(booleanToken(false, 1, 12)),
+          expression: BooleanExpression(booleanToken(false, 1, 14)),
         ),
       ]);
     });
@@ -2140,12 +2165,12 @@ void main() {
     // Integer number format
 
     test('Literal integer number', () {
-      final List<FunctionDefinition> functions = getFunctions('value = 42');
+      final List<FunctionDefinition> functions = getFunctions('value() = 42');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'value',
           parameters: [],
-          expression: NumberExpression(numberToken(42, 1, 9)),
+          expression: NumberExpression(numberToken(42, 1, 11)),
         ),
       ]);
     });
@@ -2153,12 +2178,12 @@ void main() {
     // Zero number
 
     test('Literal zero', () {
-      final List<FunctionDefinition> functions = getFunctions('zero = 0');
+      final List<FunctionDefinition> functions = getFunctions('zero() = 0');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'zero',
           parameters: [],
-          expression: NumberExpression(numberToken(0, 1, 8)),
+          expression: NumberExpression(numberToken(0, 1, 10)),
         ),
       ]);
     });
@@ -2166,16 +2191,16 @@ void main() {
     // Negative number via unary operator
 
     test('Negative number', () {
-      final List<FunctionDefinition> functions = getFunctions('neg = -42');
+      final List<FunctionDefinition> functions = getFunctions('neg() = -42');
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'neg',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 7)),
+            callee: IdentifierExpression(identifierToken('-', 1, 9)),
             arguments: [
-              NumberExpression(numberToken(0, 1, 7)),
-              NumberExpression(numberToken(42, 1, 8)),
+              NumberExpression(numberToken(0, 1, 9)),
+              NumberExpression(numberToken(42, 1, 10)),
             ],
           ),
         ),
@@ -2186,20 +2211,20 @@ void main() {
 
     test('Indexing on grouped expression with operation', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = (foo())[0]',
+        'test() = (foo())[0]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 15)),
+            callee: IdentifierExpression(identifierToken('@', 1, 17)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('foo', 1, 9)),
+                callee: IdentifierExpression(identifierToken('foo', 1, 11)),
                 arguments: [],
               ),
-              NumberExpression(numberToken(0, 1, 16)),
+              NumberExpression(numberToken(0, 1, 18)),
             ],
           ),
         ),
@@ -2249,14 +2274,14 @@ void main() {
 
     test('Error: missing expression after unary minus', () {
       expect(
-        () => getFunctions('test = -'),
+        () => getFunctions('test() = -'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: missing expression after unary not', () {
       expect(
-        () => getFunctions('test = !'),
+        () => getFunctions('test() = !'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
@@ -2272,22 +2297,22 @@ void main() {
 
     test('If expression with function call branches', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = if (true) foo() else bar()',
+        'test() = if (true) foo() else bar()',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('if', 1, 8)),
+            callee: IdentifierExpression(identifierToken('if', 1, 10)),
             arguments: [
-              BooleanExpression(booleanToken(true, 1, 12)),
+              BooleanExpression(booleanToken(true, 1, 14)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('foo', 1, 18)),
+                callee: IdentifierExpression(identifierToken('foo', 1, 20)),
                 arguments: [],
               ),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('bar', 1, 29)),
+                callee: IdentifierExpression(identifierToken('bar', 1, 31)),
                 arguments: [],
               ),
             ],
@@ -2300,21 +2325,21 @@ void main() {
 
     test('List with function call elements', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [foo(), bar()]',
+        'test() = [foo(), bar()]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: ListExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('foo', 1, 9)),
+                callee: IdentifierExpression(identifierToken('foo', 1, 11)),
                 arguments: [],
               ),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('bar', 1, 16)),
+                callee: IdentifierExpression(identifierToken('bar', 1, 18)),
                 arguments: [],
               ),
             ],
@@ -2327,20 +2352,20 @@ void main() {
 
     test('Map with function call values', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {1: foo()}',
+        'test() = {1: foo()}',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: MapExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               MapEntryExpression(
-                location: const Location(row: 1, column: 9),
-                key: NumberExpression(numberToken(1, 1, 9)),
+                location: const Location(row: 1, column: 11),
+                key: NumberExpression(numberToken(1, 1, 11)),
                 value: CallExpression(
-                  callee: IdentifierExpression(identifierToken('foo', 1, 12)),
+                  callee: IdentifierExpression(identifierToken('foo', 1, 14)),
                   arguments: [],
                 ),
               ),
@@ -2372,23 +2397,23 @@ void main() {
 
     test('Chained multiplication (left associativity)', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 2 * 3 * 4',
+        'test() = 2 * 3 * 4',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('*', 1, 14)),
+            callee: IdentifierExpression(identifierToken('*', 1, 16)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('*', 1, 10)),
+                callee: IdentifierExpression(identifierToken('*', 1, 12)),
                 arguments: [
-                  NumberExpression(numberToken(2, 1, 8)),
-                  NumberExpression(numberToken(3, 1, 12)),
+                  NumberExpression(numberToken(2, 1, 10)),
+                  NumberExpression(numberToken(3, 1, 14)),
                 ],
               ),
-              NumberExpression(numberToken(4, 1, 16)),
+              NumberExpression(numberToken(4, 1, 18)),
             ],
           ),
         ),
@@ -2399,23 +2424,23 @@ void main() {
 
     test('Chained division (left associativity)', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 24 / 4 / 2',
+        'test() = 24 / 4 / 2',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('/', 1, 15)),
+            callee: IdentifierExpression(identifierToken('/', 1, 17)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('/', 1, 11)),
+                callee: IdentifierExpression(identifierToken('/', 1, 13)),
                 arguments: [
-                  NumberExpression(numberToken(24, 1, 8)),
-                  NumberExpression(numberToken(4, 1, 13)),
+                  NumberExpression(numberToken(24, 1, 10)),
+                  NumberExpression(numberToken(4, 1, 15)),
                 ],
               ),
-              NumberExpression(numberToken(2, 1, 17)),
+              NumberExpression(numberToken(2, 1, 19)),
             ],
           ),
         ),
@@ -2426,23 +2451,23 @@ void main() {
 
     test('Chained modulo (left associativity)', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 17 % 10 % 3',
+        'test() = 17 % 10 % 3',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('%', 1, 16)),
+            callee: IdentifierExpression(identifierToken('%', 1, 18)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('%', 1, 11)),
+                callee: IdentifierExpression(identifierToken('%', 1, 13)),
                 arguments: [
-                  NumberExpression(numberToken(17, 1, 8)),
-                  NumberExpression(numberToken(10, 1, 13)),
+                  NumberExpression(numberToken(17, 1, 10)),
+                  NumberExpression(numberToken(10, 1, 15)),
                 ],
               ),
-              NumberExpression(numberToken(3, 1, 18)),
+              NumberExpression(numberToken(3, 1, 20)),
             ],
           ),
         ),
@@ -2453,7 +2478,7 @@ void main() {
 
     test('Error: empty grouped expression', () {
       expect(
-        () => getFunctions('test = ()'),
+        () => getFunctions('test() = ()'),
         throwsA(isA<InvalidTokenError>()),
       );
     });
@@ -2535,21 +2560,21 @@ void main() {
 
     test('Indexing with negative index', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = list[-1]',
+        'test() = list[-1]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 12)),
+            callee: IdentifierExpression(identifierToken('@', 1, 14)),
             arguments: [
-              IdentifierExpression(identifierToken('list', 1, 8)),
+              IdentifierExpression(identifierToken('list', 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('-', 1, 13)),
+                callee: IdentifierExpression(identifierToken('-', 1, 15)),
                 arguments: [
-                  NumberExpression(numberToken(0, 1, 13)),
-                  NumberExpression(numberToken(1, 1, 14)),
+                  NumberExpression(numberToken(0, 1, 15)),
+                  NumberExpression(numberToken(1, 1, 16)),
                 ],
               ),
             ],
@@ -2562,24 +2587,24 @@ void main() {
 
     test('If expression as map value', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {1: if (true) 1 else 0}',
+        'test() = {1: if (true) 1 else 0}',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: MapExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               MapEntryExpression(
-                location: const Location(row: 1, column: 9),
-                key: NumberExpression(numberToken(1, 1, 9)),
+                location: const Location(row: 1, column: 11),
+                key: NumberExpression(numberToken(1, 1, 11)),
                 value: CallExpression(
-                  callee: IdentifierExpression(identifierToken('if', 1, 12)),
+                  callee: IdentifierExpression(identifierToken('if', 1, 14)),
                   arguments: [
-                    BooleanExpression(booleanToken(true, 1, 16)),
-                    NumberExpression(numberToken(1, 1, 22)),
-                    NumberExpression(numberToken(0, 1, 29)),
+                    BooleanExpression(booleanToken(true, 1, 18)),
+                    NumberExpression(numberToken(1, 1, 24)),
+                    NumberExpression(numberToken(0, 1, 31)),
                   ],
                 ),
               ),
@@ -2593,27 +2618,27 @@ void main() {
 
     test('Binary operator expression as list element', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [1 + 2, 3 * 4]',
+        'test() = [1 + 2, 3 * 4]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: ListExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('+', 1, 11)),
+                callee: IdentifierExpression(identifierToken('+', 1, 13)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 9)),
-                  NumberExpression(numberToken(2, 1, 13)),
+                  NumberExpression(numberToken(1, 1, 11)),
+                  NumberExpression(numberToken(2, 1, 15)),
                 ],
               ),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('*', 1, 18)),
+                callee: IdentifierExpression(identifierToken('*', 1, 20)),
                 arguments: [
-                  NumberExpression(numberToken(3, 1, 16)),
-                  NumberExpression(numberToken(4, 1, 20)),
+                  NumberExpression(numberToken(3, 1, 18)),
+                  NumberExpression(numberToken(4, 1, 22)),
                 ],
               ),
             ],
@@ -2626,7 +2651,7 @@ void main() {
 
     test('Error: map missing value after colon', () {
       expect(
-        () => getFunctions('test = {1: }'),
+        () => getFunctions('test() = {1: }'),
         throwsA(isA<InvalidTokenError>()),
       );
     });
@@ -2635,7 +2660,7 @@ void main() {
 
     test('Error: list with element missing after comma', () {
       expect(
-        () => getFunctions('test = [1, ]'),
+        () => getFunctions('test() = [1, ]'),
         throwsA(isA<InvalidTokenError>()),
       );
     });
@@ -2648,7 +2673,7 @@ void main() {
 
     test('Combined precedence: equality is lowest', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true | false & 1 == 2 < 3 + 4 * 5',
+        'test() = true | false & 1 == 2 < 3 + 4 * 5',
       );
       expect(functions.length, equals(1));
       expect(functions[0].expression, isA<CallExpression>());
@@ -2673,7 +2698,7 @@ void main() {
 
     test('Error: map starting with colon', () {
       expect(
-        () => getFunctions('test = {: 1}'),
+        () => getFunctions('test() = {: 1}'),
         throwsA(isA<InvalidTokenError>()),
       );
     });
@@ -2682,7 +2707,7 @@ void main() {
 
     test('Literal string with special characters', () {
       final List<FunctionDefinition> functions = getFunctions(
-        r'test = "hello\nworld"',
+        r'test() = "hello\nworld"',
       );
       expect(functions.length, equals(1));
       expect(functions[0].expression, isA<StringExpression>());
@@ -2692,7 +2717,7 @@ void main() {
 
     test('Triple chained function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = f(1)(2)(3)',
+        'test() = f(1)(2)(3)',
       );
       checkFunctions(functions, [
         FunctionDefinition(
@@ -2701,17 +2726,17 @@ void main() {
           expression: CallExpression(
             callee: CallExpression(
               callee: CallExpression(
-                callee: IdentifierExpression(identifierToken('f', 1, 8)),
+                callee: IdentifierExpression(identifierToken('f', 1, 10)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 10)),
+                  NumberExpression(numberToken(1, 1, 12)),
                 ],
               ),
               arguments: [
-                NumberExpression(numberToken(2, 1, 13)),
+                NumberExpression(numberToken(2, 1, 15)),
               ],
             ),
             arguments: [
-              NumberExpression(numberToken(3, 1, 16)),
+              NumberExpression(numberToken(3, 1, 18)),
             ],
           ),
         ),
@@ -2722,23 +2747,23 @@ void main() {
 
     test('Indexing after function call with arguments', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(1, 2)[0]',
+        'test() = foo(1, 2)[0]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 17)),
+            callee: IdentifierExpression(identifierToken('@', 1, 19)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+                callee: IdentifierExpression(identifierToken('foo', 1, 10)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 12)),
-                  NumberExpression(numberToken(2, 1, 15)),
+                  NumberExpression(numberToken(1, 1, 14)),
+                  NumberExpression(numberToken(2, 1, 17)),
                 ],
               ),
-              NumberExpression(numberToken(0, 1, 18)),
+              NumberExpression(numberToken(0, 1, 20)),
             ],
           ),
         ),
@@ -2749,7 +2774,7 @@ void main() {
 
     test('Error: function call with argument missing closing paren', () {
       expect(
-        () => getFunctions('test = foo(1'),
+        () => getFunctions('test() = foo(1'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
@@ -2758,7 +2783,7 @@ void main() {
 
     test('Error: if expression with incomplete else', () {
       expect(
-        () => getFunctions('test = if (true) 1 else'),
+        () => getFunctions('test() = if (true) 1 else'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
@@ -2767,17 +2792,17 @@ void main() {
 
     test('String equality comparison', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = "a" == "b"',
+        'test() = "a" == "b"',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('==', 1, 12)),
+            callee: IdentifierExpression(identifierToken('==', 1, 14)),
             arguments: [
-              StringExpression(stringToken('a', 1, 8)),
-              StringExpression(stringToken('b', 1, 15)),
+              StringExpression(stringToken('a', 1, 10)),
+              StringExpression(stringToken('b', 1, 17)),
             ],
           ),
         ),
@@ -2788,17 +2813,17 @@ void main() {
 
     test('Boolean not equal comparison', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true != false',
+        'test() = true != false',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('!=', 1, 13)),
+            callee: IdentifierExpression(identifierToken('!=', 1, 15)),
             arguments: [
-              BooleanExpression(booleanToken(true, 1, 8)),
-              BooleanExpression(booleanToken(false, 1, 16)),
+              BooleanExpression(booleanToken(true, 1, 10)),
+              BooleanExpression(booleanToken(false, 1, 18)),
             ],
           ),
         ),
@@ -2809,20 +2834,20 @@ void main() {
 
     test('Unary not on comparison expression', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = !(1 < 2)',
+        'test() = !(1 < 2)',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('!', 1, 8)),
+            callee: IdentifierExpression(identifierToken('!', 1, 10)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('<', 1, 12)),
+                callee: IdentifierExpression(identifierToken('<', 1, 14)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 10)),
-                  NumberExpression(numberToken(2, 1, 14)),
+                  NumberExpression(numberToken(1, 1, 12)),
+                  NumberExpression(numberToken(2, 1, 16)),
                 ],
               ),
             ],
@@ -2835,21 +2860,21 @@ void main() {
 
     test('Unary negation on grouped expression', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = -(1 + 2)',
+        'test() = -(1 + 2)',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 8)),
+            callee: IdentifierExpression(identifierToken('-', 1, 10)),
             arguments: [
-              NumberExpression(numberToken(0, 1, 8)),
+              NumberExpression(numberToken(0, 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('+', 1, 12)),
+                callee: IdentifierExpression(identifierToken('+', 1, 14)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 10)),
-                  NumberExpression(numberToken(2, 1, 14)),
+                  NumberExpression(numberToken(1, 1, 12)),
+                  NumberExpression(numberToken(2, 1, 16)),
                 ],
               ),
             ],
@@ -2864,7 +2889,7 @@ void main() {
 
     test('Mixed @ operator then bracket indexing parses @ first', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = list @ 0 [1]',
+        'test() = list @ 0 [1]',
       );
       // Due to precedence, this parses as: list @ (0[1])
       // which becomes: @(list, @(0, 1))
@@ -2873,14 +2898,14 @@ void main() {
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 13)),
+            callee: IdentifierExpression(identifierToken('@', 1, 15)),
             arguments: [
-              IdentifierExpression(identifierToken('list', 1, 8)),
+              IdentifierExpression(identifierToken('list', 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('@', 1, 17)),
+                callee: IdentifierExpression(identifierToken('@', 1, 19)),
                 arguments: [
-                  NumberExpression(numberToken(0, 1, 15)),
-                  NumberExpression(numberToken(1, 1, 18)),
+                  NumberExpression(numberToken(0, 1, 17)),
+                  NumberExpression(numberToken(1, 1, 20)),
                 ],
               ),
             ],
@@ -2893,28 +2918,28 @@ void main() {
 
     test('List of lists', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [[], [1], [1, 2]]',
+        'test() = [[], [1], [1, 2]]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: ListExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               const ListExpression(
-                location: Location(row: 1, column: 9),
+                location: Location(row: 1, column: 11),
                 value: [],
               ),
               ListExpression(
-                location: const Location(row: 1, column: 13),
-                value: [NumberExpression(numberToken(1, 1, 14))],
+                location: const Location(row: 1, column: 15),
+                value: [NumberExpression(numberToken(1, 1, 16))],
               ),
               ListExpression(
-                location: const Location(row: 1, column: 18),
+                location: const Location(row: 1, column: 20),
                 value: [
-                  NumberExpression(numberToken(1, 1, 19)),
-                  NumberExpression(numberToken(2, 1, 22)),
+                  NumberExpression(numberToken(1, 1, 21)),
+                  NumberExpression(numberToken(2, 1, 24)),
                 ],
               ),
             ],
@@ -2927,25 +2952,25 @@ void main() {
 
     test('Map with expression as key', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {1 + 2: "three"}',
+        'test() = {1 + 2: "three"}',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: MapExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               MapEntryExpression(
-                location: const Location(row: 1, column: 9),
+                location: const Location(row: 1, column: 11),
                 key: CallExpression(
-                  callee: IdentifierExpression(identifierToken('+', 1, 11)),
+                  callee: IdentifierExpression(identifierToken('+', 1, 13)),
                   arguments: [
-                    NumberExpression(numberToken(1, 1, 9)),
-                    NumberExpression(numberToken(2, 1, 13)),
+                    NumberExpression(numberToken(1, 1, 11)),
+                    NumberExpression(numberToken(2, 1, 15)),
                   ],
                 ),
-                value: StringExpression(stringToken('three', 1, 16)),
+                value: StringExpression(stringToken('three', 1, 18)),
               ),
             ],
           ),
@@ -2957,45 +2982,20 @@ void main() {
 
     test('Chained greater than operators', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 3 > 2 > 1',
+        'test() = 3 > 2 > 1',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('>', 1, 14)),
+            callee: IdentifierExpression(identifierToken('>', 1, 16)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('>', 1, 10)),
+                callee: IdentifierExpression(identifierToken('>', 1, 12)),
                 arguments: [
-                  NumberExpression(numberToken(3, 1, 8)),
-                  NumberExpression(numberToken(2, 1, 12)),
-                ],
-              ),
-              NumberExpression(numberToken(1, 1, 16)),
-            ],
-          ),
-        ),
-      ]);
-    });
-
-    test('Chained greater than or equal operators', () {
-      final List<FunctionDefinition> functions = getFunctions(
-        'test = 3 >= 2 >= 1',
-      );
-      checkFunctions(functions, [
-        FunctionDefinition(
-          name: 'test',
-          parameters: [],
-          expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('>=', 1, 15)),
-            arguments: [
-              CallExpression(
-                callee: IdentifierExpression(identifierToken('>=', 1, 10)),
-                arguments: [
-                  NumberExpression(numberToken(3, 1, 8)),
-                  NumberExpression(numberToken(2, 1, 13)),
+                  NumberExpression(numberToken(3, 1, 10)),
+                  NumberExpression(numberToken(2, 1, 14)),
                 ],
               ),
               NumberExpression(numberToken(1, 1, 18)),
@@ -3005,25 +3005,50 @@ void main() {
       ]);
     });
 
-    test('Chained less than or equal operators', () {
+    test('Chained greater than or equal operators', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 1 <= 2 <= 3',
+        'test() = 3 >= 2 >= 1',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('<=', 1, 15)),
+            callee: IdentifierExpression(identifierToken('>=', 1, 17)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('<=', 1, 10)),
+                callee: IdentifierExpression(identifierToken('>=', 1, 12)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 8)),
-                  NumberExpression(numberToken(2, 1, 13)),
+                  NumberExpression(numberToken(3, 1, 10)),
+                  NumberExpression(numberToken(2, 1, 15)),
                 ],
               ),
-              NumberExpression(numberToken(3, 1, 18)),
+              NumberExpression(numberToken(1, 1, 20)),
+            ],
+          ),
+        ),
+      ]);
+    });
+
+    test('Chained less than or equal operators', () {
+      final List<FunctionDefinition> functions = getFunctions(
+        'test() = 1 <= 2 <= 3',
+      );
+      checkFunctions(functions, [
+        FunctionDefinition(
+          name: 'test',
+          parameters: [],
+          expression: CallExpression(
+            callee: IdentifierExpression(identifierToken('<=', 1, 17)),
+            arguments: [
+              CallExpression(
+                callee: IdentifierExpression(identifierToken('<=', 1, 12)),
+                arguments: [
+                  NumberExpression(numberToken(1, 1, 10)),
+                  NumberExpression(numberToken(2, 1, 15)),
+                ],
+              ),
+              NumberExpression(numberToken(3, 1, 20)),
             ],
           ),
         ),
@@ -3032,23 +3057,23 @@ void main() {
 
     test('Chained not equal operators', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = 1 != 2 != 3',
+        'test() = 1 != 2 != 3',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('!=', 1, 15)),
+            callee: IdentifierExpression(identifierToken('!=', 1, 17)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('!=', 1, 10)),
+                callee: IdentifierExpression(identifierToken('!=', 1, 12)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 8)),
-                  NumberExpression(numberToken(2, 1, 13)),
+                  NumberExpression(numberToken(1, 1, 10)),
+                  NumberExpression(numberToken(2, 1, 15)),
                 ],
               ),
-              NumberExpression(numberToken(3, 1, 18)),
+              NumberExpression(numberToken(3, 1, 20)),
             ],
           ),
         ),
@@ -3059,7 +3084,7 @@ void main() {
 
     test('Multiple functions with different parameter counts', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'a = 1\nb(x) = x\nc(x, y) = x',
+        'a() = 1\nb(x) = x\nc(x, y) = x',
       );
       expect(functions.length, equals(3));
       expect(functions[0].name, equals('a'));
@@ -3074,7 +3099,7 @@ void main() {
 
     test('ListExpression value property contains elements', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [1, 2, 3]',
+        'test() = [1, 2, 3]',
       );
       final ListExpression listExpression =
           functions[0].expression as ListExpression;
@@ -3086,7 +3111,7 @@ void main() {
 
     test('MapExpression value property contains entries', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {1: "a", 2: "b"}',
+        'test() = {1: "a", 2: "b"}',
       );
       final MapExpression mapExpression =
           functions[0].expression as MapExpression;
@@ -3110,18 +3135,18 @@ void main() {
 
     test('Function call inside bracket index', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = list[foo()]',
+        'test() = list[foo()]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 12)),
+            callee: IdentifierExpression(identifierToken('@', 1, 14)),
             arguments: [
-              IdentifierExpression(identifierToken('list', 1, 8)),
+              IdentifierExpression(identifierToken('list', 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('foo', 1, 13)),
+                callee: IdentifierExpression(identifierToken('foo', 1, 15)),
                 arguments: [],
               ),
             ],
@@ -3134,25 +3159,25 @@ void main() {
 
     test('Expression result used as index', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = list[1 + 2 * 3]',
+        'test() = list[1 + 2 * 3]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('@', 1, 12)),
+            callee: IdentifierExpression(identifierToken('@', 1, 14)),
             arguments: [
-              IdentifierExpression(identifierToken('list', 1, 8)),
+              IdentifierExpression(identifierToken('list', 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('+', 1, 15)),
+                callee: IdentifierExpression(identifierToken('+', 1, 17)),
                 arguments: [
-                  NumberExpression(numberToken(1, 1, 13)),
+                  NumberExpression(numberToken(1, 1, 15)),
                   CallExpression(
-                    callee: IdentifierExpression(identifierToken('*', 1, 19)),
+                    callee: IdentifierExpression(identifierToken('*', 1, 21)),
                     arguments: [
-                      NumberExpression(numberToken(2, 1, 17)),
-                      NumberExpression(numberToken(3, 1, 21)),
+                      NumberExpression(numberToken(2, 1, 19)),
+                      NumberExpression(numberToken(3, 1, 23)),
                     ],
                   ),
                 ],
@@ -3167,17 +3192,17 @@ void main() {
 
     test('Unary not on function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = !foo()',
+        'test() = !foo()',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('!', 1, 8)),
+            callee: IdentifierExpression(identifierToken('!', 1, 10)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('foo', 1, 9)),
+                callee: IdentifierExpression(identifierToken('foo', 1, 11)),
                 arguments: [],
               ),
             ],
@@ -3190,18 +3215,18 @@ void main() {
 
     test('Unary negation on function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = -foo()',
+        'test() = -foo()',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 8)),
+            callee: IdentifierExpression(identifierToken('-', 1, 10)),
             arguments: [
-              NumberExpression(numberToken(0, 1, 8)),
+              NumberExpression(numberToken(0, 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('foo', 1, 9)),
+                callee: IdentifierExpression(identifierToken('foo', 1, 11)),
                 arguments: [],
               ),
             ],
@@ -3214,21 +3239,21 @@ void main() {
 
     test('If expression as list element', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = [if (true) 1 else 0]',
+        'test() = [if (true) 1 else 0]',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: ListExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('if', 1, 9)),
+                callee: IdentifierExpression(identifierToken('if', 1, 11)),
                 arguments: [
-                  BooleanExpression(booleanToken(true, 1, 13)),
-                  NumberExpression(numberToken(1, 1, 19)),
-                  NumberExpression(numberToken(0, 1, 26)),
+                  BooleanExpression(booleanToken(true, 1, 15)),
+                  NumberExpression(numberToken(1, 1, 21)),
+                  NumberExpression(numberToken(0, 1, 28)),
                 ],
               ),
             ],
@@ -3241,26 +3266,26 @@ void main() {
 
     test('If expression as map key', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = {if (true) 1 else 2: "value"}',
+        'test() = {if (true) 1 else 2: "value"}',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: MapExpression(
-            location: const Location(row: 1, column: 8),
+            location: const Location(row: 1, column: 10),
             value: [
               MapEntryExpression(
-                location: const Location(row: 1, column: 9),
+                location: const Location(row: 1, column: 11),
                 key: CallExpression(
-                  callee: IdentifierExpression(identifierToken('if', 1, 9)),
+                  callee: IdentifierExpression(identifierToken('if', 1, 11)),
                   arguments: [
-                    BooleanExpression(booleanToken(true, 1, 13)),
-                    NumberExpression(numberToken(1, 1, 19)),
-                    NumberExpression(numberToken(2, 1, 26)),
+                    BooleanExpression(booleanToken(true, 1, 15)),
+                    NumberExpression(numberToken(1, 1, 21)),
+                    NumberExpression(numberToken(2, 1, 28)),
                   ],
                 ),
-                value: StringExpression(stringToken('value', 1, 29)),
+                value: StringExpression(stringToken('value', 1, 31)),
               ),
             ],
           ),
@@ -3272,20 +3297,20 @@ void main() {
 
     test('Function call with binary expression argument', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(a | b)',
+        'test() = foo(a | b)',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+            callee: IdentifierExpression(identifierToken('foo', 1, 10)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('|', 1, 14)),
+                callee: IdentifierExpression(identifierToken('|', 1, 16)),
                 arguments: [
-                  IdentifierExpression(identifierToken('a', 1, 12)),
-                  IdentifierExpression(identifierToken('b', 1, 16)),
+                  IdentifierExpression(identifierToken('a', 1, 14)),
+                  IdentifierExpression(identifierToken('b', 1, 18)),
                 ],
               ),
             ],
@@ -3298,23 +3323,23 @@ void main() {
 
     test('Precedence: index operator before multiplication', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = list @ 0 * 2',
+        'test() = list @ 0 * 2',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('*', 1, 17)),
+            callee: IdentifierExpression(identifierToken('*', 1, 19)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('@', 1, 13)),
+                callee: IdentifierExpression(identifierToken('@', 1, 15)),
                 arguments: [
-                  IdentifierExpression(identifierToken('list', 1, 8)),
-                  NumberExpression(numberToken(0, 1, 15)),
+                  IdentifierExpression(identifierToken('list', 1, 10)),
+                  NumberExpression(numberToken(0, 1, 17)),
                 ],
               ),
-              NumberExpression(numberToken(2, 1, 19)),
+              NumberExpression(numberToken(2, 1, 21)),
             ],
           ),
         ),
@@ -3335,7 +3360,7 @@ void main() {
 
     test('Error: ExpectedTokenError contains expected token', () {
       try {
-        getFunctions('test = if true 1 else 2');
+        getFunctions('test() = if true 1 else 2');
         fail('Expected ExpectedTokenError');
       } on ExpectedTokenError catch (error) {
         expect(error.message, contains('('));
@@ -3346,7 +3371,7 @@ void main() {
 
     test('Negation of not expression', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = -!true',
+        'test() = -!true',
       );
       // -!true parses as -(0, !(true))
       checkFunctions(functions, [
@@ -3354,13 +3379,13 @@ void main() {
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('-', 1, 8)),
+            callee: IdentifierExpression(identifierToken('-', 1, 10)),
             arguments: [
-              NumberExpression(numberToken(0, 1, 8)),
+              NumberExpression(numberToken(0, 1, 10)),
               CallExpression(
-                callee: IdentifierExpression(identifierToken('!', 1, 9)),
+                callee: IdentifierExpression(identifierToken('!', 1, 11)),
                 arguments: [
-                  BooleanExpression(booleanToken(true, 1, 10)),
+                  BooleanExpression(booleanToken(true, 1, 12)),
                 ],
               ),
             ],
@@ -3371,7 +3396,7 @@ void main() {
 
     test('Not of negation expression', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = !-5',
+        'test() = !-5',
       );
       // !-5 parses as !(-(0, 5))
       checkFunctions(functions, [
@@ -3379,13 +3404,13 @@ void main() {
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('!', 1, 8)),
+            callee: IdentifierExpression(identifierToken('!', 1, 10)),
             arguments: [
               CallExpression(
-                callee: IdentifierExpression(identifierToken('-', 1, 9)),
+                callee: IdentifierExpression(identifierToken('-', 1, 11)),
                 arguments: [
-                  NumberExpression(numberToken(0, 1, 9)),
-                  NumberExpression(numberToken(5, 1, 10)),
+                  NumberExpression(numberToken(0, 1, 11)),
+                  NumberExpression(numberToken(5, 1, 12)),
                 ],
               ),
             ],
@@ -3443,7 +3468,7 @@ void main() {
 
     test('Function call then index then function call', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo()[0]()',
+        'test() = foo()[0]()',
       );
       checkFunctions(functions, [
         FunctionDefinition(
@@ -3451,13 +3476,13 @@ void main() {
           parameters: [],
           expression: CallExpression(
             callee: CallExpression(
-              callee: IdentifierExpression(identifierToken('@', 1, 13)),
+              callee: IdentifierExpression(identifierToken('@', 1, 15)),
               arguments: [
                 CallExpression(
-                  callee: IdentifierExpression(identifierToken('foo', 1, 8)),
+                  callee: IdentifierExpression(identifierToken('foo', 1, 10)),
                   arguments: [],
                 ),
-                NumberExpression(numberToken(0, 1, 14)),
+                NumberExpression(numberToken(0, 1, 16)),
               ],
             ),
             arguments: [],
@@ -3470,7 +3495,7 @@ void main() {
 
     test('Triple nested if expression', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = if (true) if (false) 1 else 2 else if (true) 3 else 4',
+        'test() = if (true) if (false) 1 else 2 else if (true) 3 else 4',
       );
       expect(functions.length, equals(1));
       final CallExpression outerIf = functions[0].expression as CallExpression;
@@ -3487,7 +3512,7 @@ void main() {
 
     test('Error: map entry missing comma or closing brace', () {
       expect(
-        () => getFunctions('test = {1: 2 3: 4}'),
+        () => getFunctions('test() = {1: 2 3: 4}'),
         throwsA(isA<ExpectedTokenError>()),
       );
     });
@@ -3496,7 +3521,7 @@ void main() {
 
     test('Error: list with extra closing bracket', () {
       expect(
-        () => getFunctions('test = [1]]'),
+        () => getFunctions('test() = [1]]'),
         throwsA(isA<InvalidTokenError>()),
       );
     });
@@ -3505,17 +3530,17 @@ void main() {
 
     test('Comparison with boolean literal left side', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = true < false',
+        'test() = true < false',
       );
       checkFunctions(functions, [
         FunctionDefinition(
           name: 'test',
           parameters: [],
           expression: CallExpression(
-            callee: IdentifierExpression(identifierToken('<', 1, 13)),
+            callee: IdentifierExpression(identifierToken('<', 1, 15)),
             arguments: [
-              BooleanExpression(booleanToken(true, 1, 8)),
-              BooleanExpression(booleanToken(false, 1, 15)),
+              BooleanExpression(booleanToken(true, 1, 10)),
+              BooleanExpression(booleanToken(false, 1, 17)),
             ],
           ),
         ),
@@ -3546,7 +3571,7 @@ void main() {
     // NumberExpression value property
 
     test('NumberExpression value property returns numeric value', () {
-      final List<FunctionDefinition> functions = getFunctions('test = 3.14');
+      final List<FunctionDefinition> functions = getFunctions('test() = 3.14');
       final NumberExpression numberExpression =
           functions[0].expression as NumberExpression;
       expect(numberExpression.value, equals(3.14));
@@ -3555,14 +3580,14 @@ void main() {
     // BooleanExpression value property
 
     test('BooleanExpression value property returns boolean', () {
-      final List<FunctionDefinition> functions = getFunctions('test = true');
+      final List<FunctionDefinition> functions = getFunctions('test() = true');
       final BooleanExpression booleanExpression =
           functions[0].expression as BooleanExpression;
       expect(booleanExpression.value, equals(true));
     });
 
     test('BooleanExpression value property returns false', () {
-      final List<FunctionDefinition> functions = getFunctions('test = false');
+      final List<FunctionDefinition> functions = getFunctions('test() = false');
       final BooleanExpression booleanExpression =
           functions[0].expression as BooleanExpression;
       expect(booleanExpression.value, equals(false));
@@ -3572,7 +3597,7 @@ void main() {
 
     test('StringExpression value property returns string content', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = "hello world"',
+        'test() = "hello world"',
       );
       final StringExpression stringExpression =
           functions[0].expression as StringExpression;
@@ -3583,7 +3608,7 @@ void main() {
 
     test('CallExpression callee property returns callee expression', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(1)',
+        'test() = foo(1)',
       );
       final CallExpression callExpression =
           functions[0].expression as CallExpression;
@@ -3596,7 +3621,7 @@ void main() {
 
     test('CallExpression arguments property returns argument list', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'test = foo(1, 2, 3)',
+        'test() = foo(1, 2, 3)',
       );
       final CallExpression callExpression =
           functions[0].expression as CallExpression;
@@ -3610,7 +3635,7 @@ void main() {
 
     test('FunctionDefinition name property returns function name', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'myFunction = 42',
+        'myFunction() = 42',
       );
       expect(functions[0].name, equals('myFunction'));
     });
@@ -3624,7 +3649,7 @@ void main() {
 
     test('FunctionDefinition expression property returns body expression', () {
       final List<FunctionDefinition> functions = getFunctions(
-        'answer = 42',
+        'answer() = 42',
       );
       expect(functions[0].expression, isA<NumberExpression>());
       expect(
@@ -3637,42 +3662,42 @@ void main() {
 
     test('Error: incomplete comparison expression', () {
       expect(
-        () => getFunctions('test = 1 <'),
+        () => getFunctions('test() = 1 <'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: incomplete equality expression', () {
       expect(
-        () => getFunctions('test = 1 =='),
+        () => getFunctions('test() = 1 =='),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: incomplete logical or expression', () {
       expect(
-        () => getFunctions('test = true |'),
+        () => getFunctions('test() = true |'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: incomplete logical and expression', () {
       expect(
-        () => getFunctions('test = true &'),
+        () => getFunctions('test() = true &'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: incomplete factor expression', () {
       expect(
-        () => getFunctions('test = 1 *'),
+        () => getFunctions('test() = 1 *'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });
 
     test('Error: incomplete index expression', () {
       expect(
-        () => getFunctions('test = list @'),
+        () => getFunctions('test() = list @'),
         throwsA(isA<UnexpectedEndOfFileError>()),
       );
     });

@@ -68,7 +68,7 @@ Functions can cleanly return multiple values:
 divmod(a, b) = (div(a, b), mod(a, b))
 
 // Caller destructures
-main = let (quotient, remainder) = divmod(17, 5) in
+main() = let (quotient, remainder) = divmod(17, 5) in
        concat("Q: ", str(quotient), " R: ", str(remainder))
 ```
 

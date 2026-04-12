@@ -10,4 +10,4 @@ toBinary(n) = if (n == 0)
               else
                   toBinary(to.integer(n / 2)) + to.string(n % 2)
 
-main = toBinary(10)
+main() = toBinary(10)

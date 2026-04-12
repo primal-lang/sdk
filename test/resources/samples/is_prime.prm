@@ -19,4 +19,4 @@ isPrime.helper(n, divisor) = if (divisor * divisor > n)
                              else
                                  isPrime.helper(n, divisor + 2)
 
-main = isPrime(97)
+main() = isPrime(97)

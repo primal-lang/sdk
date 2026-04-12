@@ -10,7 +10,7 @@ The syntactic analyzer (parser) converts the token list into a list of `Function
 
 ```
 program            → functionDefinition*
-functionDefinition → IDENTIFIER "=" expression | IDENTIFIER "(" parameters? ")" "=" expression
+functionDefinition → IDENTIFIER "(" parameters? ")" "=" expression
 parameters         → IDENTIFIER ( "," IDENTIFIER )*
 ```
 
@@ -40,8 +40,8 @@ pair               → expression ":" expression
 A state machine parses top-level function definitions:
 
 ```
-identifier = expression               -- nullary function
-identifier(p1, p2, ...) = expression  -- parameterized function
+identifier() = expression               -- nullary function
+identifier(p1, p2, ...) = expression    -- parameterized function
 ```
 
 A `FunctionDefinitionBuilder` accumulates the function name and parameters as the state machine progresses. When the expression body is parsed, it produces the final `FunctionDefinition`.
@@ -49,7 +49,7 @@ A `FunctionDefinitionBuilder` accumulates the function name and parameters as th
 States:
 
 1. `InitState` - expects an identifier (the function name); creates a `FunctionDefinitionBuilder`.
-2. `FunctionNameState` - expects either `=` (nullary) or `(` (parameterized).
+2. `FunctionNameState` - expects `(` (all functions require parentheses).
 3. `FunctionWithParametersState` / `FunctionWithNewParametersState` / `FunctionWithNextParametersState` - parse the comma-separated parameter list, calling `withParameter` on each identifier.
 4. `FunctionParametrizedState` - expects `=` after closing `)`.
 5. `ResultState` - expression parsing is complete; the builder produces one `FunctionDefinition`.

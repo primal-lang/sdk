@@ -54,16 +54,10 @@ class FunctionNameState extends State<Token, FunctionDefinitionBuilder> {
 
   @override
   State process(Token input) {
-    if (input is AssignToken) {
-      final ExpressionParser expressionParser = ExpressionParser(iterator);
-      return ResultState(
-        iterator,
-        output.build(expressionParser.expression()),
-      );
-    } else if (input is OpenParenthesisToken) {
+    if (input is OpenParenthesisToken) {
       return FunctionWithParametersState(iterator, output);
     } else {
-      throw InvalidTokenError(input, "'=' or parameters list");
+      throw InvalidTokenError(input, "'(' after function name");
     }
   }
 }

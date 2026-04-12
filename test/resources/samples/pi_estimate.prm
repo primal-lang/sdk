@@ -17,4 +17,4 @@ piEstimate.helper(i, terms, sum) =
             else
                 piEstimate.helper(i + 1, terms, sum - term)
 
-main = piEstimate(10)
+main() = piEstimate(10)

@@ -17,14 +17,14 @@ void main() {
   group('Compiler.compile()', () {
     test('Simple program returns IntermediateRepresentation with main', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 42');
+          .compile('main() = 42');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Function definitions create correct functions', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
           .compile(
-            'double(x) = x * 2\nmain = double(5)',
+            'double(x) = x * 2\nmain() = double(5)',
           );
       expect(intermediateRepresentation.containsFunction('double'), isTrue);
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
@@ -32,14 +32,14 @@ void main() {
 
     test('Invalid syntax throws a compilation error', () {
       expect(
-        () => compiler.compile('main = = ='),
+        () => compiler.compile('main() = = ='),
         throwsA(isA<SyntacticError>()),
       );
     });
 
     test('Semantic error throws appropriate error', () {
       expect(
-        () => compiler.compile('main = undefined_function(1)'),
+        () => compiler.compile('main() = undefined_function(1)'),
         throwsA(isA<UndefinedFunctionError>()),
       );
     });
@@ -47,7 +47,7 @@ void main() {
     test('Warnings are populated for unused parameters', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
           .compile(
-            'f(x, y) = x\nmain = f(1, 2)',
+            'f(x, y) = x\nmain() = f(1, 2)',
           );
       expect(intermediateRepresentation.warnings.length, equals(1));
     });
@@ -74,7 +74,7 @@ void main() {
     test('Multiple function definitions are all accessible', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
           .compile(
-            'add(x, y) = x + y\nmul(x, y) = x * y\nmain = add(1, mul(2, 3))',
+            'add(x, y) = x + y\nmul(x, y) = x * y\nmain() = add(1, mul(2, 3))',
           );
       expect(intermediateRepresentation.containsFunction('add'), isTrue);
       expect(intermediateRepresentation.containsFunction('mul'), isTrue);
@@ -84,7 +84,7 @@ void main() {
     test('Nested function calls compile successfully', () {
       final IntermediateRepresentation
       intermediateRepresentation = compiler.compile(
-        'double(x) = x * 2\nquadruple(x) = double(double(x))\nmain = quadruple(3)',
+        'double(x) = x * 2\nquadruple(x) = double(double(x))\nmain() = quadruple(3)',
       );
       expect(intermediateRepresentation.containsFunction('double'), isTrue);
       expect(intermediateRepresentation.containsFunction('quadruple'), isTrue);
@@ -93,7 +93,7 @@ void main() {
     test('Recursive function definition compiles successfully', () {
       final IntermediateRepresentation
       intermediateRepresentation = compiler.compile(
-        'countdown(n) = if (n <= 0) 0 else countdown(n - 1)\nmain = countdown(10)',
+        'countdown(n) = if (n <= 0) 0 else countdown(n - 1)\nmain() = countdown(10)',
       );
       expect(intermediateRepresentation.containsFunction('countdown'), isTrue);
       expect(intermediateRepresentation.warnings, isEmpty);
@@ -101,19 +101,19 @@ void main() {
 
     test('Function with if/else expression compiles successfully', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('abs(x) = if (x < 0) -x else x\nmain = abs(-5)');
+          .compile('abs(x) = if (x < 0) -x else x\nmain() = abs(-5)');
       expect(intermediateRepresentation.containsFunction('abs'), isTrue);
     });
 
     test('Function with list literal compiles successfully', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = [1, 2, 3]');
+          .compile('main() = [1, 2, 3]');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Function with map literal compiles successfully', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = {"a": 1, "b": 2}');
+          .compile('main() = {"a": 1, "b": 2}');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
@@ -133,42 +133,42 @@ void main() {
 
     test('Invalid argument count throws InvalidNumberOfArgumentsError', () {
       expect(
-        () => compiler.compile('f(x) = x\nmain = f(1, 2)'),
+        () => compiler.compile('f(x) = x\nmain() = f(1, 2)'),
         throwsA(isA<InvalidNumberOfArgumentsError>()),
       );
     });
 
     test('Too few arguments throws InvalidNumberOfArgumentsError', () {
       expect(
-        () => compiler.compile('f(x, y) = x + y\nmain = f(1)'),
+        () => compiler.compile('f(x, y) = x + y\nmain() = f(1)'),
         throwsA(isA<InvalidNumberOfArgumentsError>()),
       );
     });
 
     test('Calling non-callable literal throws NotCallableError', () {
       expect(
-        () => compiler.compile('main = 5(1)'),
+        () => compiler.compile('main() = 5(1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('Indexing non-indexable literal throws NotIndexableError', () {
       expect(
-        () => compiler.compile('main = 5[0]'),
+        () => compiler.compile('main() = 5[0]'),
         throwsA(isA<NotIndexableError>()),
       );
     });
 
     test('Undefined identifier throws UndefinedIdentifierError', () {
       expect(
-        () => compiler.compile('main = x'),
+        () => compiler.compile('main() = x'),
         throwsA(isA<UndefinedIdentifierError>()),
       );
     });
 
     test('Multiple unused parameters generate multiple warnings', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('f(x, y, z) = 42\nmain = f(1, 2, 3)');
+          .compile('f(x, y, z) = 42\nmain() = f(1, 2, 3)');
       expect(intermediateRepresentation.warnings.length, equals(3));
       expect(
         intermediateRepresentation.warnings.every(
@@ -180,13 +180,13 @@ void main() {
 
     test('No warnings when all parameters are used', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('add(x, y) = x + y\nmain = add(1, 2)');
+          .compile('add(x, y) = x + y\nmain() = add(1, 2)');
       expect(intermediateRepresentation.warnings, isEmpty);
     });
 
     test('Parameterless constant has empty parameter list', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('pi = 3.14');
+          .compile('pi() = 3.14');
       expect(
         intermediateRepresentation.customFunctions['pi']!.parameters,
         isEmpty,
@@ -195,7 +195,7 @@ void main() {
 
     test('Standard library functions are accessible', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = num.add(1, 2)');
+          .compile('main() = num.add(1, 2)');
       expect(
         intermediateRepresentation.standardLibrarySignatures.containsKey(
           'num.add',
@@ -207,7 +207,7 @@ void main() {
     test('Mutual recursion compiles successfully', () {
       final IntermediateRepresentation
       intermediateRepresentation = compiler.compile(
-        'isEven(n) = if (n == 0) true else isOdd(n - 1)\nisOdd(n) = if (n == 0) false else isEven(n - 1)\nmain = isEven(4)',
+        'isEven(n) = if (n == 0) true else isOdd(n - 1)\nisOdd(n) = if (n == 0) false else isEven(n - 1)\nmain() = isEven(4)',
       );
       expect(intermediateRepresentation.containsFunction('isEven'), isTrue);
       expect(intermediateRepresentation.containsFunction('isOdd'), isTrue);
@@ -215,19 +215,19 @@ void main() {
 
     test('Function with nested list expressions compiles successfully', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = [[1, 2], [3, 4]]');
+          .compile('main() = [[1, 2], [3, 4]]');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Function with nested map expressions compiles successfully', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = {"outer": {"inner": 1}}');
+          .compile('main() = {"outer": {"inner": 1}}');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Function body has correct location information', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 42');
+          .compile('main() = 42');
       expect(
         intermediateRepresentation.customFunctions['main']!.location.row,
         equals(1),
@@ -529,7 +529,7 @@ void main() {
   group('Compiler.functionDefinition()', () {
     test('returns FunctionDefinition for constant definition', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'pi = 3.14',
+        'pi() = 3.14',
       );
 
       expect(definition, isNotNull);
@@ -598,7 +598,7 @@ void main() {
 
     test('returns null for multiple function definitions', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'a = 1\nb = 2',
+        'a() = 1\nb = 2',
       );
 
       expect(definition, isNull);
@@ -622,7 +622,7 @@ void main() {
 
     test('returns FunctionDefinition for function with list body', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'items = [1, 2, 3]',
+        'items() = [1, 2, 3]',
       );
 
       expect(definition, isNotNull);
@@ -632,7 +632,7 @@ void main() {
 
     test('returns FunctionDefinition for function with map body', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'config = {"key": "value"}',
+        'config() = {"key": "value"}',
       );
 
       expect(definition, isNotNull);
@@ -665,7 +665,7 @@ void main() {
 
     test('returns FunctionDefinition for function with string body', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'greeting = "hello"',
+        'greeting() = "hello"',
       );
 
       expect(definition, isNotNull);
@@ -675,7 +675,7 @@ void main() {
 
     test('returns FunctionDefinition for function with boolean body', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'flag = true',
+        'flag() = true',
       );
 
       expect(definition, isNotNull);
@@ -717,7 +717,7 @@ void main() {
 
     test('returns FunctionDefinition with expression location', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'main = 42',
+        'main() = 42',
       );
 
       expect(definition, isNotNull);
@@ -728,7 +728,7 @@ void main() {
   group('Compiler.compile() - lexical errors', () {
     test('Invalid character throws LexicalError', () {
       expect(
-        () => compiler.compile('main = 1 ` 2'),
+        () => compiler.compile('main() = 1 ` 2'),
         throwsA(isA<LexicalError>()),
       );
     });
@@ -742,49 +742,49 @@ void main() {
 
     test('Invalid escape sequence throws InvalidEscapeSequenceError', () {
       expect(
-        () => compiler.compile(r'main = "hello\z"'),
+        () => compiler.compile(r'main() = "hello\z"'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Invalid hex escape throws LexicalError', () {
       expect(
-        () => compiler.compile(r'main = "\xGG"'),
+        () => compiler.compile(r'main() = "\xGG"'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Incomplete unicode escape throws LexicalError', () {
       expect(
-        () => compiler.compile(r'main = "\u00"'),
+        () => compiler.compile(r'main() = "\u00"'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Invalid braced unicode escape throws LexicalError', () {
       expect(
-        () => compiler.compile(r'main = "\u{}"'),
+        () => compiler.compile(r'main() = "\u{}"'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Trailing underscore in number throws LexicalError', () {
       expect(
-        () => compiler.compile('main = 123_'),
+        () => compiler.compile('main() = 123_'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Incomplete exponent throws LexicalError', () {
       expect(
-        () => compiler.compile('main = 1e'),
+        () => compiler.compile('main() = 1e'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Incomplete exponent with sign throws LexicalError', () {
       expect(
-        () => compiler.compile('main = 1e+'),
+        () => compiler.compile('main() = 1e+'),
         throwsA(isA<LexicalError>()),
       );
     });
@@ -840,42 +840,42 @@ void main() {
 
     test('Calling string literal throws NotCallableError', () {
       expect(
-        () => compiler.compile('main = "hello"(1)'),
+        () => compiler.compile('main() = "hello"(1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('Calling boolean literal throws NotCallableError', () {
       expect(
-        () => compiler.compile('main = true(1)'),
+        () => compiler.compile('main() = true(1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('Calling list literal throws NotCallableError', () {
       expect(
-        () => compiler.compile('main = [1, 2](1)'),
+        () => compiler.compile('main() = [1, 2](1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('Calling map literal throws NotCallableError', () {
       expect(
-        () => compiler.compile('main = {"a": 1}(1)'),
+        () => compiler.compile('main() = {"a": 1}(1)'),
         throwsA(isA<NotCallableError>()),
       );
     });
 
     test('Indexing boolean literal throws NotIndexableError', () {
       expect(
-        () => compiler.compile('main = true[0]'),
+        () => compiler.compile('main() = true[0]'),
         throwsA(isA<NotIndexableError>()),
       );
     });
 
     test('Undefined identifier in nested function throws error', () {
       expect(
-        () => compiler.compile('f(x) = x + y\nmain = f(1)'),
+        () => compiler.compile('f(x) = x + y\nmain() = f(1)'),
         throwsA(isA<UndefinedIdentifierError>()),
       );
     });
@@ -1034,25 +1034,25 @@ void main() {
   group('Compiler.compile() - comments', () {
     test('Single-line comment is ignored', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('// this is a comment\nmain = 42');
+          .compile('// this is a comment\nmain() = 42');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Multi-line comment is ignored', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('/* multi-line\ncomment */ main = 42');
+          .compile('/* multi-line\ncomment */ main() = 42');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Inline single-line comment is ignored', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 42 // inline comment');
+          .compile('main() = 42 // inline comment');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Multi-line comment within expression is handled', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 1 /* comment */ + 2');
+          .compile('main() = 1 /* comment */ + 2');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
   });
@@ -1060,7 +1060,7 @@ void main() {
   group('Compiler.compile() - shebang', () {
     test('Shebang line is ignored', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('#!/usr/bin/env primal\nmain = 42');
+          .compile('#!/usr/bin/env primal\nmain() = 42');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
   });
@@ -1068,19 +1068,19 @@ void main() {
   group('Compiler.compile() - and/or/not keywords', () {
     test('and keyword works as logical and', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = true and false');
+          .compile('main() = true and false');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('or keyword works as logical or', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = true or false');
+          .compile('main() = true or false');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('not keyword works as logical not', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = not true');
+          .compile('main() = not true');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
   });
@@ -1088,7 +1088,7 @@ void main() {
   group('IntermediateRepresentation methods', () {
     test('allFunctionNames returns custom and stdlib function names', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('myFunc = 42');
+          .compile('myFunc() = 42');
       final Set<String> allNames = intermediateRepresentation.allFunctionNames;
       expect(allNames.contains('myFunc'), isTrue);
       expect(allNames.contains('num.add'), isTrue);
@@ -1120,7 +1120,7 @@ void main() {
 
     test('getCustomFunction returns function for custom function', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('myFunc = 42');
+          .compile('myFunc() = 42');
       expect(
         intermediateRepresentation.getCustomFunction('myFunc'),
         isNotNull,
@@ -1237,25 +1237,25 @@ void main() {
   group('Compiler.compile() - operator precedence', () {
     test('Addition binds looser than multiplication', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 1 + 2 * 3');
+          .compile('main() = 1 + 2 * 3');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Comparison binds looser than arithmetic', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 1 + 2 < 3 + 4');
+          .compile('main() = 1 + 2 < 3 + 4');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Logical operators bind looser than comparison', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 1 < 2 && 3 < 4');
+          .compile('main() = 1 < 2 && 3 < 4');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Equality binds looser than logical and', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = true && false == false && true');
+          .compile('main() = true && false == false && true');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
   });
@@ -1283,7 +1283,7 @@ void main() {
 
     test('returns FunctionDefinition with dotted name', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'my.func = 42',
+        'my.func() = 42',
       );
 
       expect(definition, isNotNull);
@@ -1423,49 +1423,49 @@ void main() {
     test('Invalid code point in braced unicode escape throws LexicalError', () {
       // Code point exceeding U+10FFFF
       expect(
-        () => compiler.compile(r'main = "\u{FFFFFF}"'),
+        () => compiler.compile(r'main() = "\u{FFFFFF}"'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Too many digits in braced unicode escape throws LexicalError', () {
       expect(
-        () => compiler.compile(r'main = "\u{1234567}"'),
+        () => compiler.compile(r'main() = "\u{1234567}"'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Invalid character in braced unicode escape throws LexicalError', () {
       expect(
-        () => compiler.compile(r'main = "\u{GG}"'),
+        () => compiler.compile(r'main() = "\u{GG}"'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Double underscore in number throws LexicalError', () {
       expect(
-        () => compiler.compile('main = 1__000'),
+        () => compiler.compile('main() = 1__000'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Underscore before dot in number throws LexicalError', () {
       expect(
-        () => compiler.compile('main = 1_.0'),
+        () => compiler.compile('main() = 1_.0'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Underscore before exponent throws LexicalError', () {
       expect(
-        () => compiler.compile('main = 1_e10'),
+        () => compiler.compile('main() = 1_e10'),
         throwsA(isA<LexicalError>()),
       );
     });
 
     test('Invalid character after decimal point throws LexicalError', () {
       expect(
-        () => compiler.compile('main = 1.a'),
+        () => compiler.compile('main() = 1.a'),
         throwsA(isA<LexicalError>()),
       );
     });
@@ -1474,14 +1474,14 @@ void main() {
   group('Compiler.compile() - additional syntactic errors', () {
     test('ExpectedTokenError for missing closing bracket', () {
       expect(
-        () => compiler.compile('main = [1, 2'),
+        () => compiler.compile('main() = [1, 2'),
         throwsA(isA<SyntacticError>()),
       );
     });
 
     test('ExpectedTokenError for missing closing brace', () {
       expect(
-        () => compiler.compile('main = {"a": 1'),
+        () => compiler.compile('main() = {"a": 1'),
         throwsA(isA<SyntacticError>()),
       );
     });
@@ -1514,28 +1514,28 @@ void main() {
       () {
         // Strings are indexable in Primal (via the @ operator)
         final IntermediateRepresentation intermediateRepresentation = compiler
-            .compile('main = "hello"[0]');
+            .compile('main() = "hello"[0]');
         expect(intermediateRepresentation.containsFunction('main'), isTrue);
       },
     );
 
     test('Zero arguments to function expecting one throws error', () {
       expect(
-        () => compiler.compile('f(x) = x\nmain = f()'),
+        () => compiler.compile('f(x) = x\nmain() = f()'),
         throwsA(isA<InvalidNumberOfArgumentsError>()),
       );
     });
 
     test('Three arguments to function expecting two throws error', () {
       expect(
-        () => compiler.compile('f(x, y) = x + y\nmain = f(1, 2, 3)'),
+        () => compiler.compile('f(x, y) = x + y\nmain() = f(1, 2, 3)'),
         throwsA(isA<InvalidNumberOfArgumentsError>()),
       );
     });
 
     test('UndefinedFunctionError includes function context', () {
       try {
-        compiler.compile('f(x) = unknown(x)\nmain = f(1)');
+        compiler.compile('f(x) = unknown(x)\nmain() = f(1)');
         fail('Expected UndefinedFunctionError');
       } on UndefinedFunctionError catch (error) {
         expect(error.message, contains('f'));
@@ -1545,7 +1545,7 @@ void main() {
 
     test('UndefinedIdentifierError includes function context', () {
       try {
-        compiler.compile('f(x) = x + y\nmain = f(1)');
+        compiler.compile('f(x) = x + y\nmain() = f(1)');
         fail('Expected UndefinedIdentifierError');
       } on UndefinedIdentifierError catch (error) {
         expect(error.message, contains('f'));
@@ -1557,14 +1557,14 @@ void main() {
   group('Compiler.compile() - carriage return handling', () {
     test('Windows line endings (CRLF) are handled correctly', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('f(x) = x\r\nmain = f(1)');
+          .compile('f(x) = x\r\nmain() = f(1)');
       expect(intermediateRepresentation.containsFunction('f'), isTrue);
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Old Mac line endings (CR only) are handled correctly', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('f(x) = x\rmain = f(1)');
+          .compile('f(x) = x\rmain() = f(1)');
       expect(intermediateRepresentation.containsFunction('f'), isTrue);
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
@@ -1655,21 +1655,21 @@ void main() {
   group('Compiler.compile() - parameter handling', () {
     test('Function with parameter name containing underscore', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('f(my_param) = my_param\nmain = f(1)');
+          .compile('f(my_param) = my_param\nmain() = f(1)');
       expect(intermediateRepresentation.containsFunction('f'), isTrue);
     });
 
     test('Function with long parameter name', () {
       final String longParameter = 'verylongparametername' * 3;
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('f($longParameter) = $longParameter\nmain = f(1)');
+          .compile('f($longParameter) = $longParameter\nmain() = f(1)');
       expect(intermediateRepresentation.containsFunction('f'), isTrue);
     });
 
     test('Function with many parameters', () {
       final IntermediateRepresentation
       intermediateRepresentation = compiler.compile(
-        'f(a, b, c, d, e, f, g, h, i, j) = a\nmain = f(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)',
+        'f(a, b, c, d, e, f, g, h, i, j) = a\nmain() = f(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)',
       );
       expect(intermediateRepresentation.containsFunction('f'), isTrue);
       expect(intermediateRepresentation.warnings.length, equals(9));
@@ -1678,7 +1678,7 @@ void main() {
     test('Function parameter shadows outer function', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
           .compile(
-            'outer(x) = x\ninner(outer) = outer\nmain = inner(1)',
+            'outer(x) = x\ninner(outer) = outer\nmain() = inner(1)',
           );
       expect(intermediateRepresentation.containsFunction('outer'), isTrue);
       expect(intermediateRepresentation.containsFunction('inner'), isTrue);
@@ -1688,39 +1688,39 @@ void main() {
   group('Compiler.compile() - complex expressions', () {
     test('Deeply nested binary operations', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10');
+          .compile('main() = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Mixed arithmetic and comparison', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 1 + 2 < 3 * 4');
+          .compile('main() = 1 + 2 < 3 * 4');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Chained comparisons with logical operators', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 1 < 2 && 2 < 3 && 3 < 4');
+          .compile('main() = 1 < 2 && 2 < 3 && 3 < 4');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Nested if/else expressions', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
           .compile(
-            'main = if (true) if (false) 1 else 2 else if (true) 3 else 4',
+            'main() = if (true) if (false) 1 else 2 else if (true) 3 else 4',
           );
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('List inside map inside list', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = [{"a": [1, 2, 3]}]');
+          .compile('main() = [{"a": [1, 2, 3]}]');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Map inside list inside map', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = {"a": [{"b": 1}]}');
+          .compile('main() = {"a": [{"b": 1}]}');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
   });
@@ -1812,7 +1812,7 @@ void main() {
 
     test('InvalidNumberOfArgumentsError message contains counts', () {
       try {
-        compiler.compile('f(x) = x\nmain = f(1, 2)');
+        compiler.compile('f(x) = x\nmain() = f(1, 2)');
         fail('Expected InvalidNumberOfArgumentsError');
       } on InvalidNumberOfArgumentsError catch (error) {
         expect(error.message, contains('1'));
@@ -1822,7 +1822,7 @@ void main() {
 
     test('NotCallableError message contains type', () {
       try {
-        compiler.compile('main = 5(1)');
+        compiler.compile('main() = 5(1)');
         fail('Expected NotCallableError');
       } on NotCallableError catch (error) {
         expect(error.message, contains('number'));
@@ -1831,7 +1831,7 @@ void main() {
 
     test('NotIndexableError message contains type', () {
       try {
-        compiler.compile('main = 5[0]');
+        compiler.compile('main() = 5[0]');
         fail('Expected NotIndexableError');
       } on NotIndexableError catch (error) {
         expect(error.message, contains('number'));
@@ -1918,25 +1918,25 @@ void main() {
   group('Compiler.compile() - whitespace handling', () {
     test('Leading whitespace is ignored', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('   main = 42');
+          .compile('   main() = 42');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Trailing whitespace is ignored', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main = 42   ');
+          .compile('main() = 42   ');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Tab characters are treated as whitespace', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('\tmain\t=\t42');
+          .compile('\tmain()\t=\t42');
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });
 
     test('Multiple blank lines between definitions', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('f(x) = x\n\n\n\nmain = f(1)');
+          .compile('f(x) = x\n\n\n\nmain() = f(1)');
       expect(intermediateRepresentation.containsFunction('f'), isTrue);
       expect(intermediateRepresentation.containsFunction('main'), isTrue);
     });

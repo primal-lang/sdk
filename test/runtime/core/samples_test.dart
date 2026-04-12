@@ -153,7 +153,7 @@ void main() {
   group('Sample Error Cases', () {
     test('factorial with negative input throws CustomError', () {
       final RuntimeFacade runtime = getRuntime(
-        'factorial(n) = if (n < 0) error.throw(0, "Cannot calculate factorial of a negative number") else if (n == 0) 1 else n * factorial(n - 1)\nmain = factorial(-1)',
+        'factorial(n) = if (n < 0) error.throw(0, "Cannot calculate factorial of a negative number") else if (n == 0) 1 else n * factorial(n - 1)\nmain() = factorial(-1)',
       );
       expect(
         runtime.executeMain,
@@ -169,7 +169,7 @@ void main() {
 
     test('fibonacci with negative input throws CustomError', () {
       final RuntimeFacade runtime = getRuntime(
-        'fibonacci(n) = if (n < 0) error.throw(-1, "Cannot calculate Fibonacci with a negative number") else if (n == 0) [] else fibonacci(n - 1) + fibonacci.helper(n)\nfibonacci.helper(n) = if ((n == 1) | (n == 2)) 1 else fibonacci.helper(n - 1) + fibonacci.helper(n - 2)\nmain = fibonacci(-1)',
+        'fibonacci(n) = if (n < 0) error.throw(-1, "Cannot calculate Fibonacci with a negative number") else if (n == 0) [] else fibonacci(n - 1) + fibonacci.helper(n)\nfibonacci.helper(n) = if ((n == 1) | (n == 2)) 1 else fibonacci.helper(n - 1) + fibonacci.helper(n - 2)\nmain() = fibonacci(-1)',
       );
       expect(
         runtime.executeMain,
@@ -185,7 +185,7 @@ void main() {
 
     test('findMax with empty list throws CustomError', () {
       final RuntimeFacade runtime = getRuntime(
-        'findMax(list) = if (list.isEmpty(list)) error.throw(-1, "Cannot find max number in an empty list") else list.reduce(list.rest(list), list.first(list), num.max)\nmain = findMax([])',
+        'findMax(list) = if (list.isEmpty(list)) error.throw(-1, "Cannot find max number in an empty list") else list.reduce(list.rest(list), list.first(list), num.max)\nmain() = findMax([])',
       );
       expect(
         runtime.executeMain,
@@ -201,7 +201,7 @@ void main() {
 
     test('power with negative exponent throws CustomError', () {
       final RuntimeFacade runtime = getRuntime(
-        'power(base, exp) = if (exp < 0) error.throw(0, "Cannot calculate power with a negative exponent") else if (exp == 0) 1 else base * power(base, exp - 1)\nmain = power(2, -1)',
+        'power(base, exp) = if (exp < 0) error.throw(0, "Cannot calculate power with a negative exponent") else if (exp == 0) 1 else base * power(base, exp - 1)\nmain() = power(2, -1)',
       );
       expect(
         runtime.executeMain,
@@ -217,7 +217,7 @@ void main() {
 
     test('sumOfDigits with negative input throws CustomError', () {
       final RuntimeFacade runtime = getRuntime(
-        'sumOfDigits(n) = if (n < 0) error.throw(0, "Cannot calculate sum of digits of a negative number") else if (n == 0) 0 else n % 10 + sumOfDigits(to.integer(n / 10))\nmain = sumOfDigits(-5)',
+        'sumOfDigits(n) = if (n < 0) error.throw(0, "Cannot calculate sum of digits of a negative number") else if (n == 0) 0 else n % 10 + sumOfDigits(to.integer(n / 10))\nmain() = sumOfDigits(-5)',
       );
       expect(
         runtime.executeMain,
@@ -234,8 +234,8 @@ void main() {
     test('balancedParenthesis with invalid character throws CustomError', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/balanced_parentheses.prm').replaceAll(
-          'main = balancedParenthesis("((((()()(()))())))")',
-          'main = balancedParenthesis("(a)")',
+          'main() = balancedParenthesis("((((()()(()))())))")',
+          'main() = balancedParenthesis("(a)")',
         ),
       );
       expect(
@@ -254,7 +254,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(-1)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(-1)'),
       );
       expect(
         runtime.executeMain,
@@ -274,7 +274,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/factorial.prm',
-        ).replaceAll('main = factorial(5)', 'main = factorial(0)'),
+        ).replaceAll('main() = factorial(5)', 'main() = factorial(0)'),
       );
       checkResult(runtime, 1);
     });
@@ -283,7 +283,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/factorial.prm',
-        ).replaceAll('main = factorial(5)', 'main = factorial(1)'),
+        ).replaceAll('main() = factorial(5)', 'main() = factorial(1)'),
       );
       checkResult(runtime, 1);
     });
@@ -292,7 +292,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/fibonacci.prm',
-        ).replaceAll('main = fibonacci(10)', 'main = fibonacci(0)'),
+        ).replaceAll('main() = fibonacci(10)', 'main() = fibonacci(0)'),
       );
       checkResult(runtime, []);
     });
@@ -301,7 +301,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/fibonacci.prm',
-        ).replaceAll('main = fibonacci(10)', 'main = fibonacci(1)'),
+        ).replaceAll('main() = fibonacci(10)', 'main() = fibonacci(1)'),
       );
       checkResult(runtime, [1]);
     });
@@ -310,7 +310,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/fibonacci.prm',
-        ).replaceAll('main = fibonacci(10)', 'main = fibonacci(2)'),
+        ).replaceAll('main() = fibonacci(10)', 'main() = fibonacci(2)'),
       );
       checkResult(runtime, [1, 1]);
     });
@@ -319,7 +319,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(0)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(0)'),
       );
       checkResult(runtime, false);
     });
@@ -328,7 +328,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(1)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(1)'),
       );
       checkResult(runtime, false);
     });
@@ -337,7 +337,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(2)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(2)'),
       );
       checkResult(runtime, true);
     });
@@ -346,7 +346,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(-5)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(-5)'),
       );
       checkResult(runtime, false);
     });
@@ -355,7 +355,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(4)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(4)'),
       );
       checkResult(runtime, false);
     });
@@ -364,7 +364,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(9)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(9)'),
       );
       checkResult(runtime, false);
     });
@@ -372,8 +372,8 @@ void main() {
     test('reverseList with empty list returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/reverse_list.prm').replaceAll(
-          'main = reverseList([1, 2, 3, 4, 5])',
-          'main = reverseList([])',
+          'main() = reverseList([1, 2, 3, 4, 5])',
+          'main() = reverseList([])',
         ),
       );
       checkResult(runtime, []);
@@ -382,8 +382,8 @@ void main() {
     test('reverseList with single element returns same element', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/reverse_list.prm').replaceAll(
-          'main = reverseList([1, 2, 3, 4, 5])',
-          'main = reverseList([42])',
+          'main() = reverseList([1, 2, 3, 4, 5])',
+          'main() = reverseList([42])',
         ),
       );
       checkResult(runtime, [42]);
@@ -393,7 +393,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_binary.prm',
-        ).replaceAll('main = toBinary(10)', 'main = toBinary(0)'),
+        ).replaceAll('main() = toBinary(10)', 'main() = toBinary(0)'),
       );
       checkResult(runtime, '"0"');
     });
@@ -402,7 +402,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_binary.prm',
-        ).replaceAll('main = toBinary(10)', 'main = toBinary(1)'),
+        ).replaceAll('main() = toBinary(10)', 'main() = toBinary(1)'),
       );
       checkResult(runtime, '"1"');
     });
@@ -411,7 +411,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_binary.prm',
-        ).replaceAll('main = toBinary(10)', 'main = toBinary(8)'),
+        ).replaceAll('main() = toBinary(10)', 'main() = toBinary(8)'),
       );
       checkResult(runtime, '"1000"');
     });
@@ -419,8 +419,8 @@ void main() {
     test('quicksort with empty list returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/quicksort.prm').replaceAll(
-          'main = quicksort([38, 27, 43, 3, 9])',
-          'main = quicksort([])',
+          'main() = quicksort([38, 27, 43, 3, 9])',
+          'main() = quicksort([])',
         ),
       );
       checkResult(runtime, []);
@@ -429,8 +429,8 @@ void main() {
     test('quicksort with single element returns same element', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/quicksort.prm').replaceAll(
-          'main = quicksort([38, 27, 43, 3, 9])',
-          'main = quicksort([5])',
+          'main() = quicksort([38, 27, 43, 3, 9])',
+          'main() = quicksort([5])',
         ),
       );
       checkResult(runtime, [5]);
@@ -439,8 +439,8 @@ void main() {
     test('quicksort with already sorted list returns same list', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/quicksort.prm').replaceAll(
-          'main = quicksort([38, 27, 43, 3, 9])',
-          'main = quicksort([1, 2, 3, 4, 5])',
+          'main() = quicksort([38, 27, 43, 3, 9])',
+          'main() = quicksort([1, 2, 3, 4, 5])',
         ),
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
@@ -449,8 +449,8 @@ void main() {
     test('quicksort with reverse sorted list', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/quicksort.prm').replaceAll(
-          'main = quicksort([38, 27, 43, 3, 9])',
-          'main = quicksort([5, 4, 3, 2, 1])',
+          'main() = quicksort([38, 27, 43, 3, 9])',
+          'main() = quicksort([5, 4, 3, 2, 1])',
         ),
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
@@ -459,8 +459,8 @@ void main() {
     test('quicksort with duplicate elements', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/quicksort.prm').replaceAll(
-          'main = quicksort([38, 27, 43, 3, 9])',
-          'main = quicksort([3, 1, 2, 1, 3])',
+          'main() = quicksort([38, 27, 43, 3, 9])',
+          'main() = quicksort([3, 1, 2, 1, 3])',
         ),
       );
       checkResult(runtime, [1, 1, 2, 3, 3]);
@@ -469,8 +469,8 @@ void main() {
     test('flatten with empty list returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/flatten.prm').replaceAll(
-          'main = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
-          'main = flatten([])',
+          'main() = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
+          'main() = flatten([])',
         ),
       );
       checkResult(runtime, []);
@@ -479,8 +479,8 @@ void main() {
     test('flatten with flat list returns same list', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/flatten.prm').replaceAll(
-          'main = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
-          'main = flatten([1, 2, 3])',
+          'main() = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
+          'main() = flatten([1, 2, 3])',
         ),
       );
       checkResult(runtime, [1, 2, 3]);
@@ -489,8 +489,8 @@ void main() {
     test('flatten with nested empty lists', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/flatten.prm').replaceAll(
-          'main = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
-          'main = flatten([[], [[]]])',
+          'main() = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
+          'main() = flatten([[], [[]]])',
         ),
       );
       checkResult(runtime, []);
@@ -499,8 +499,8 @@ void main() {
     test('binarySearch with element found at beginning', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([1, 2, 3, 4, 5], 1)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([1, 2, 3, 4, 5], 1)',
         ),
       );
       checkResult(runtime, true);
@@ -509,8 +509,8 @@ void main() {
     test('binarySearch with element found at end', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([1, 2, 3, 4, 5], 5)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([1, 2, 3, 4, 5], 5)',
         ),
       );
       checkResult(runtime, true);
@@ -519,8 +519,8 @@ void main() {
     test('binarySearch with element found in middle', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([1, 2, 3, 4, 5], 3)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([1, 2, 3, 4, 5], 3)',
         ),
       );
       checkResult(runtime, true);
@@ -529,8 +529,8 @@ void main() {
     test('binarySearch with empty list returns false', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([], 1)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([], 1)',
         ),
       );
       checkResult(runtime, false);
@@ -539,8 +539,8 @@ void main() {
     test('binarySearch with single element found', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([5], 5)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([5], 5)',
         ),
       );
       checkResult(runtime, true);
@@ -549,8 +549,8 @@ void main() {
     test('binarySearch with single element not found', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([5], 3)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([5], 3)',
         ),
       );
       checkResult(runtime, false);
@@ -560,7 +560,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_palindrome.prm',
-        ).replaceAll('main = isPalindrome("level")', 'main = isPalindrome("")'),
+        ).replaceAll(
+          'main() = isPalindrome("level")',
+          'main() = isPalindrome("")',
+        ),
       );
       checkResult(runtime, true);
     });
@@ -568,8 +571,8 @@ void main() {
     test('isPalindrome with single character returns true', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/is_palindrome.prm').replaceAll(
-          'main = isPalindrome("level")',
-          'main = isPalindrome("a")',
+          'main() = isPalindrome("level")',
+          'main() = isPalindrome("a")',
         ),
       );
       checkResult(runtime, true);
@@ -578,8 +581,8 @@ void main() {
     test('isPalindrome with non-palindrome returns false', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/is_palindrome.prm').replaceAll(
-          'main = isPalindrome("level")',
-          'main = isPalindrome("hello")',
+          'main() = isPalindrome("level")',
+          'main() = isPalindrome("hello")',
         ),
       );
       checkResult(runtime, false);
@@ -588,8 +591,8 @@ void main() {
     test('isPalindrome with two character palindrome returns true', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/is_palindrome.prm').replaceAll(
-          'main = isPalindrome("level")',
-          'main = isPalindrome("aa")',
+          'main() = isPalindrome("level")',
+          'main() = isPalindrome("aa")',
         ),
       );
       checkResult(runtime, true);
@@ -598,8 +601,8 @@ void main() {
     test('isPalindrome with two character non-palindrome returns false', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/is_palindrome.prm').replaceAll(
-          'main = isPalindrome("level")',
-          'main = isPalindrome("ab")',
+          'main() = isPalindrome("level")',
+          'main() = isPalindrome("ab")',
         ),
       );
       checkResult(runtime, false);
@@ -608,8 +611,8 @@ void main() {
     test('balancedParenthesis with empty string returns true', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/balanced_parentheses.prm').replaceAll(
-          'main = balancedParenthesis("((((()()(()))())))")',
-          'main = balancedParenthesis("")',
+          'main() = balancedParenthesis("((((()()(()))())))")',
+          'main() = balancedParenthesis("")',
         ),
       );
       checkResult(runtime, true);
@@ -618,8 +621,8 @@ void main() {
     test('balancedParenthesis with single pair returns true', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/balanced_parentheses.prm').replaceAll(
-          'main = balancedParenthesis("((((()()(()))())))")',
-          'main = balancedParenthesis("()")',
+          'main() = balancedParenthesis("((((()()(()))())))")',
+          'main() = balancedParenthesis("()")',
         ),
       );
       checkResult(runtime, true);
@@ -628,8 +631,8 @@ void main() {
     test('balancedParenthesis with unbalanced opening returns false', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/balanced_parentheses.prm').replaceAll(
-          'main = balancedParenthesis("((((()()(()))())))")',
-          'main = balancedParenthesis("(()")',
+          'main() = balancedParenthesis("((((()()(()))())))")',
+          'main() = balancedParenthesis("(()")',
         ),
       );
       checkResult(runtime, false);
@@ -638,8 +641,8 @@ void main() {
     test('balancedParenthesis with unbalanced closing returns false', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/balanced_parentheses.prm').replaceAll(
-          'main = balancedParenthesis("((((()()(()))())))")',
-          'main = balancedParenthesis("())")',
+          'main() = balancedParenthesis("((((()()(()))())))")',
+          'main() = balancedParenthesis("())")',
         ),
       );
       checkResult(runtime, false);
@@ -648,8 +651,8 @@ void main() {
     test('balancedParenthesis with closing first returns false', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/balanced_parentheses.prm').replaceAll(
-          'main = balancedParenthesis("((((()()(()))())))")',
-          'main = balancedParenthesis(")(")',
+          'main() = balancedParenthesis("((((()()(()))())))")',
+          'main() = balancedParenthesis(")(")',
         ),
       );
       checkResult(runtime, false);
@@ -659,7 +662,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/divisors.prm',
-        ).replaceAll('main = divisors(10)', 'main = divisors(1)'),
+        ).replaceAll('main() = divisors(10)', 'main() = divisors(1)'),
       );
       checkResult(runtime, [1]);
     });
@@ -668,7 +671,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/divisors.prm',
-        ).replaceAll('main = divisors(10)', 'main = divisors(7)'),
+        ).replaceAll('main() = divisors(10)', 'main() = divisors(7)'),
       );
       checkResult(runtime, [1, 7]);
     });
@@ -677,7 +680,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/power.prm',
-        ).replaceAll('main = power(2, 10)', 'main = power(5, 0)'),
+        ).replaceAll('main() = power(2, 10)', 'main() = power(5, 0)'),
       );
       checkResult(runtime, 1);
     });
@@ -686,7 +689,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/power.prm',
-        ).replaceAll('main = power(2, 10)', 'main = power(7, 1)'),
+        ).replaceAll('main() = power(2, 10)', 'main() = power(7, 1)'),
       );
       checkResult(runtime, 7);
     });
@@ -695,7 +698,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/power.prm',
-        ).replaceAll('main = power(2, 10)', 'main = power(0, 5)'),
+        ).replaceAll('main() = power(2, 10)', 'main() = power(0, 5)'),
       );
       checkResult(runtime, 0);
     });
@@ -704,7 +707,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/sum_of_digits.prm',
-        ).replaceAll('main = sumOfDigits(123456789)', 'main = sumOfDigits(0)'),
+        ).replaceAll(
+          'main() = sumOfDigits(123456789)',
+          'main() = sumOfDigits(0)',
+        ),
       );
       checkResult(runtime, 0);
     });
@@ -713,7 +719,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/sum_of_digits.prm',
-        ).replaceAll('main = sumOfDigits(123456789)', 'main = sumOfDigits(7)'),
+        ).replaceAll(
+          'main() = sumOfDigits(123456789)',
+          'main() = sumOfDigits(7)',
+        ),
       );
       checkResult(runtime, 7);
     });
@@ -721,8 +730,8 @@ void main() {
     test('movingAverage with window larger than list returns empty', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/moving_averages.prm').replaceAll(
-          'main = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
-          'main = movingAverage([1, 2], 5)',
+          'main() = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
+          'main() = movingAverage([1, 2], 5)',
         ),
       );
       checkResult(runtime, []);
@@ -733,8 +742,8 @@ void main() {
       () {
         final RuntimeFacade runtime = getRuntime(
           loadFile('samples/moving_averages.prm').replaceAll(
-            'main = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
-            'main = movingAverage([10, 20, 30], 3)',
+            'main() = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
+            'main() = movingAverage([10, 20, 30], 3)',
           ),
         );
         checkResult(runtime, [20]);
@@ -744,8 +753,8 @@ void main() {
     test('frequency with empty list returns empty map', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/frequency.prm').replaceAll(
-          'main = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
-          'main = frequency([])',
+          'main() = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
+          'main() = frequency([])',
         ),
       );
       checkResult(runtime, {});
@@ -754,8 +763,8 @@ void main() {
     test('frequency with all unique elements', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/frequency.prm').replaceAll(
-          'main = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
-          'main = frequency([1, 2, 3])',
+          'main() = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
+          'main() = frequency([1, 2, 3])',
         ),
       );
       checkResult(runtime, {1: 1, 2: 1, 3: 1});
@@ -764,8 +773,8 @@ void main() {
     test('frequency with all same elements', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/frequency.prm').replaceAll(
-          'main = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
-          'main = frequency([5, 5, 5])',
+          'main() = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
+          'main() = frequency([5, 5, 5])',
         ),
       );
       checkResult(runtime, {5: 3});
@@ -774,8 +783,8 @@ void main() {
     test('findMax with single element returns that element', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/find_max.prm').replaceAll(
-          'main = findMax([1, 7, -13, 9, 2])',
-          'main = findMax([42])',
+          'main() = findMax([1, 7, -13, 9, 2])',
+          'main() = findMax([42])',
         ),
       );
       checkResult(runtime, 42);
@@ -784,8 +793,8 @@ void main() {
     test('findMax with all negative numbers', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/find_max.prm').replaceAll(
-          'main = findMax([1, 7, -13, 9, 2])',
-          'main = findMax([-5, -3, -10, -1])',
+          'main() = findMax([1, 7, -13, 9, 2])',
+          'main() = findMax([-5, -3, -10, -1])',
         ),
       );
       checkResult(runtime, -1);
@@ -794,8 +803,8 @@ void main() {
     test('findMax with max at beginning', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/find_max.prm').replaceAll(
-          'main = findMax([1, 7, -13, 9, 2])',
-          'main = findMax([99, 1, 2, 3])',
+          'main() = findMax([1, 7, -13, 9, 2])',
+          'main() = findMax([99, 1, 2, 3])',
         ),
       );
       checkResult(runtime, 99);
@@ -804,8 +813,8 @@ void main() {
     test('findMax with max at end', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/find_max.prm').replaceAll(
-          'main = findMax([1, 7, -13, 9, 2])',
-          'main = findMax([1, 2, 3, 99])',
+          'main() = findMax([1, 7, -13, 9, 2])',
+          'main() = findMax([1, 2, 3, 99])',
         ),
       );
       checkResult(runtime, 99);
@@ -815,7 +824,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(7, 7)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = gcd(7, 7)',
+        ),
       );
       checkResult(runtime, 7);
     });
@@ -824,7 +836,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(1, 15)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = gcd(1, 15)',
+        ),
       );
       checkResult(runtime, 1);
     });
@@ -833,7 +848,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(7, 11)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = gcd(7, 11)',
+        ),
       );
       checkResult(runtime, 1);
     });
@@ -842,7 +860,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = lcm(5, 5)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = lcm(5, 5)',
+        ),
       );
       checkResult(runtime, 5.0);
     });
@@ -851,7 +872,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = lcm(3, 7)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = lcm(3, 7)',
+        ),
       );
       checkResult(runtime, 21.0);
     });
@@ -860,7 +884,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(0)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(0)'),
       );
       checkResult(runtime, '""');
     });
@@ -869,7 +893,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(1)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(1)'),
       );
       checkResult(runtime, '"I"');
     });
@@ -878,7 +902,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(4)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(4)'),
       );
       checkResult(runtime, '"IV"');
     });
@@ -887,7 +911,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(9)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(9)'),
       );
       checkResult(runtime, '"IX"');
     });
@@ -896,7 +920,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(40)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(40)'),
       );
       checkResult(runtime, '"XL"');
     });
@@ -905,7 +929,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(90)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(90)'),
       );
       checkResult(runtime, '"XC"');
     });
@@ -914,7 +938,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(400)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(400)'),
       );
       checkResult(runtime, '"CD"');
     });
@@ -923,7 +947,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(900)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(900)'),
       );
       checkResult(runtime, '"CM"');
     });
@@ -932,7 +956,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/pi_estimate.prm',
-        ).replaceAll('main = piEstimate(10)', 'main = piEstimate(0)'),
+        ).replaceAll('main() = piEstimate(10)', 'main() = piEstimate(0)'),
       );
       checkResult(runtime, 0);
     });
@@ -941,7 +965,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/pi_estimate.prm',
-        ).replaceAll('main = piEstimate(10)', 'main = piEstimate(1)'),
+        ).replaceAll('main() = piEstimate(10)', 'main() = piEstimate(1)'),
       );
       checkResult(runtime, 4.0);
     });
@@ -950,7 +974,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/pi_estimate.prm',
-        ).replaceAll('main = piEstimate(10)', 'main = piEstimate(2)'),
+        ).replaceAll('main() = piEstimate(10)', 'main() = piEstimate(2)'),
       );
       // 4 * (1 - 1/3) = 4 * (2/3) = 8/3 ≈ 2.666...
       checkResult(runtime, 2.666666666666667);
@@ -959,8 +983,8 @@ void main() {
     test('matrix multiply identity matrix', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/matrix_multiply.prm').replaceAll(
-          'main = matMul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
-          'main = matMul([[1, 0], [0, 1]], [[5, 6], [7, 8]])',
+          'main() = matMul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
+          'main() = matMul([[1, 0], [0, 1]], [[5, 6], [7, 8]])',
         ),
       );
       checkResult(runtime, [
@@ -972,8 +996,8 @@ void main() {
     test('matrix multiply with zero matrix', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/matrix_multiply.prm').replaceAll(
-          'main = matMul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
-          'main = matMul([[0, 0], [0, 0]], [[5, 6], [7, 8]])',
+          'main() = matMul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
+          'main() = matMul([[0, 0], [0, 0]], [[5, 6], [7, 8]])',
         ),
       );
       checkResult(runtime, [
@@ -985,8 +1009,8 @@ void main() {
     test('matrix multiply 1x1 matrices', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/matrix_multiply.prm').replaceAll(
-          'main = matMul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
-          'main = matMul([[3]], [[7]])',
+          'main() = matMul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
+          'main() = matMul([[3]], [[7]])',
         ),
       );
       checkResult(runtime, [
@@ -998,7 +1022,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/divisors.prm',
-        ).replaceAll('main = divisors(10)', 'main = divisors(16)'),
+        ).replaceAll('main() = divisors(10)', 'main() = divisors(16)'),
       );
       checkResult(runtime, [1, 2, 4, 8, 16]);
     });
@@ -1007,7 +1031,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/divisors.prm',
-        ).replaceAll('main = divisors(10)', 'main = divisors(2)'),
+        ).replaceAll('main() = divisors(10)', 'main() = divisors(2)'),
       );
       checkResult(runtime, [1, 2]);
     });
@@ -1015,8 +1039,8 @@ void main() {
     test('quicksort with all equal elements', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/quicksort.prm').replaceAll(
-          'main = quicksort([38, 27, 43, 3, 9])',
-          'main = quicksort([5, 5, 5, 5])',
+          'main() = quicksort([38, 27, 43, 3, 9])',
+          'main() = quicksort([5, 5, 5, 5])',
         ),
       );
       checkResult(runtime, [5, 5, 5, 5]);
@@ -1025,8 +1049,8 @@ void main() {
     test('quicksort with two elements already sorted', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/quicksort.prm').replaceAll(
-          'main = quicksort([38, 27, 43, 3, 9])',
-          'main = quicksort([1, 2])',
+          'main() = quicksort([38, 27, 43, 3, 9])',
+          'main() = quicksort([1, 2])',
         ),
       );
       checkResult(runtime, [1, 2]);
@@ -1035,8 +1059,8 @@ void main() {
     test('quicksort with two elements reverse sorted', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/quicksort.prm').replaceAll(
-          'main = quicksort([38, 27, 43, 3, 9])',
-          'main = quicksort([2, 1])',
+          'main() = quicksort([38, 27, 43, 3, 9])',
+          'main() = quicksort([2, 1])',
         ),
       );
       checkResult(runtime, [1, 2]);
@@ -1045,8 +1069,8 @@ void main() {
     test('flatten with single non-list element', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/flatten.prm').replaceAll(
-          'main = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
-          'main = flatten([42])',
+          'main() = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
+          'main() = flatten([42])',
         ),
       );
       checkResult(runtime, [42]);
@@ -1055,8 +1079,8 @@ void main() {
     test('flatten with deeply nested single element', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/flatten.prm').replaceAll(
-          'main = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
-          'main = flatten([[[[[1]]]]])',
+          'main() = flatten([1, [2, 3], [4, [5, 6], 7], [8, [9, [10]]]])',
+          'main() = flatten([[[[[1]]]]])',
         ),
       );
       checkResult(runtime, [1]);
@@ -1066,7 +1090,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(0, 5)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = gcd(0, 5)',
+        ),
       );
       checkResult(runtime, 5);
     });
@@ -1075,7 +1102,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(12, 0)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = gcd(12, 0)',
+        ),
       );
       checkResult(runtime, 12);
     });
@@ -1084,7 +1114,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = gcd(12, 4)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = gcd(12, 4)',
+        ),
       );
       checkResult(runtime, 4);
     });
@@ -1093,7 +1126,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/gcd_lcm.prm',
-        ).replaceAll('main = [gcd(48, 18), lcm(48, 18)]', 'main = lcm(1, 7)'),
+        ).replaceAll(
+          'main() = [gcd(48, 18), lcm(48, 18)]',
+          'main() = lcm(1, 7)',
+        ),
       );
       checkResult(runtime, 7.0);
     });
@@ -1101,8 +1137,8 @@ void main() {
     test('movingAverage with empty list returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/moving_averages.prm').replaceAll(
-          'main = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
-          'main = movingAverage([], 3)',
+          'main() = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
+          'main() = movingAverage([], 3)',
         ),
       );
       checkResult(runtime, []);
@@ -1111,8 +1147,8 @@ void main() {
     test('movingAverage with window size one returns rounded values', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/moving_averages.prm').replaceAll(
-          'main = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
-          'main = movingAverage([10, 20, 30], 1)',
+          'main() = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)',
+          'main() = movingAverage([10, 20, 30], 1)',
         ),
       );
       checkResult(runtime, [10, 20, 30]);
@@ -1121,8 +1157,8 @@ void main() {
     test('isPalindrome with odd length longer palindrome returns true', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/is_palindrome.prm').replaceAll(
-          'main = isPalindrome("level")',
-          'main = isPalindrome("racecar")',
+          'main() = isPalindrome("level")',
+          'main() = isPalindrome("racecar")',
         ),
       );
       checkResult(runtime, true);
@@ -1131,8 +1167,8 @@ void main() {
     test('isPalindrome with even length palindrome returns true', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/is_palindrome.prm').replaceAll(
-          'main = isPalindrome("level")',
-          'main = isPalindrome("abba")',
+          'main() = isPalindrome("level")',
+          'main() = isPalindrome("abba")',
         ),
       );
       checkResult(runtime, true);
@@ -1141,8 +1177,8 @@ void main() {
     test('binarySearch with two elements target is first', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([1, 2], 1)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([1, 2], 1)',
         ),
       );
       checkResult(runtime, true);
@@ -1151,8 +1187,8 @@ void main() {
     test('binarySearch with two elements target is second', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([1, 2], 2)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([1, 2], 2)',
         ),
       );
       checkResult(runtime, true);
@@ -1161,8 +1197,8 @@ void main() {
     test('binarySearch with two elements target not found', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([1, 3], 2)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([1, 3], 2)',
         ),
       );
       checkResult(runtime, false);
@@ -1171,8 +1207,8 @@ void main() {
     test('frequency with single element returns count of one', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/frequency.prm').replaceAll(
-          'main = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
-          'main = frequency([42])',
+          'main() = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])',
+          'main() = frequency([42])',
         ),
       );
       checkResult(runtime, {42: 1});
@@ -1181,8 +1217,8 @@ void main() {
     test('findMax with two elements returns larger', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/find_max.prm').replaceAll(
-          'main = findMax([1, 7, -13, 9, 2])',
-          'main = findMax([3, 7])',
+          'main() = findMax([1, 7, -13, 9, 2])',
+          'main() = findMax([3, 7])',
         ),
       );
       checkResult(runtime, 7);
@@ -1191,8 +1227,8 @@ void main() {
     test('findMax with duplicate max values returns max', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/find_max.prm').replaceAll(
-          'main = findMax([1, 7, -13, 9, 2])',
-          'main = findMax([5, 10, 10, 3])',
+          'main() = findMax([1, 7, -13, 9, 2])',
+          'main() = findMax([5, 10, 10, 3])',
         ),
       );
       checkResult(runtime, 10);
@@ -1202,7 +1238,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/power.prm',
-        ).replaceAll('main = power(2, 10)', 'main = power(1, 100)'),
+        ).replaceAll('main() = power(2, 10)', 'main() = power(1, 100)'),
       );
       checkResult(runtime, 1);
     });
@@ -1211,7 +1247,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/power.prm',
-        ).replaceAll('main = power(2, 10)', 'main = power(2, 3)'),
+        ).replaceAll('main() = power(2, 10)', 'main() = power(2, 3)'),
       );
       checkResult(runtime, 8);
     });
@@ -1220,7 +1256,10 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/sum_of_digits.prm',
-        ).replaceAll('main = sumOfDigits(123456789)', 'main = sumOfDigits(99)'),
+        ).replaceAll(
+          'main() = sumOfDigits(123456789)',
+          'main() = sumOfDigits(99)',
+        ),
       );
       checkResult(runtime, 18);
     });
@@ -1228,8 +1267,8 @@ void main() {
     test('sumOfDigits with all same digits', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/sum_of_digits.prm').replaceAll(
-          'main = sumOfDigits(123456789)',
-          'main = sumOfDigits(1111)',
+          'main() = sumOfDigits(123456789)',
+          'main() = sumOfDigits(1111)',
         ),
       );
       checkResult(runtime, 4);
@@ -1238,8 +1277,8 @@ void main() {
     test('reverseList with two elements', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/reverse_list.prm').replaceAll(
-          'main = reverseList([1, 2, 3, 4, 5])',
-          'main = reverseList([1, 2])',
+          'main() = reverseList([1, 2, 3, 4, 5])',
+          'main() = reverseList([1, 2])',
         ),
       );
       checkResult(runtime, [2, 1]);
@@ -1249,7 +1288,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(5)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(5)'),
       );
       checkResult(runtime, '"V"');
     });
@@ -1258,7 +1297,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(10)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(10)'),
       );
       checkResult(runtime, '"X"');
     });
@@ -1267,7 +1306,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(50)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(50)'),
       );
       checkResult(runtime, '"L"');
     });
@@ -1276,7 +1315,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(100)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(100)'),
       );
       checkResult(runtime, '"C"');
     });
@@ -1285,7 +1324,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(500)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(500)'),
       );
       checkResult(runtime, '"D"');
     });
@@ -1294,7 +1333,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(1000)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(1000)'),
       );
       checkResult(runtime, '"M"');
     });
@@ -1303,7 +1342,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_roman_numerals.prm',
-        ).replaceAll('main = toRoman(1984)', 'main = toRoman(3999)'),
+        ).replaceAll('main() = toRoman(1984)', 'main() = toRoman(3999)'),
       );
       checkResult(runtime, '"MMMCMXCIX"');
     });
@@ -1312,7 +1351,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_binary.prm',
-        ).replaceAll('main = toBinary(10)', 'main = toBinary(2)'),
+        ).replaceAll('main() = toBinary(10)', 'main() = toBinary(2)'),
       );
       checkResult(runtime, '"10"');
     });
@@ -1321,7 +1360,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/to_binary.prm',
-        ).replaceAll('main = toBinary(10)', 'main = toBinary(255)'),
+        ).replaceAll('main() = toBinary(10)', 'main() = toBinary(255)'),
       );
       checkResult(runtime, '"11111111"');
     });
@@ -1330,7 +1369,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/factorial.prm',
-        ).replaceAll('main = factorial(5)', 'main = factorial(10)'),
+        ).replaceAll('main() = factorial(5)', 'main() = factorial(10)'),
       );
       checkResult(runtime, 3628800);
     });
@@ -1339,7 +1378,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(3)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(3)'),
       );
       checkResult(runtime, true);
     });
@@ -1348,7 +1387,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(101)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(101)'),
       );
       checkResult(runtime, true);
     });
@@ -1357,7 +1396,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime(
         loadFile(
           'samples/is_prime.prm',
-        ).replaceAll('main = isPrime(97)', 'main = isPrime(100)'),
+        ).replaceAll('main() = isPrime(97)', 'main() = isPrime(100)'),
       );
       checkResult(runtime, false);
     });
@@ -1365,8 +1404,8 @@ void main() {
     test('binarySearch with odd length list element in left half', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([1, 2, 3, 4, 5], 2)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([1, 2, 3, 4, 5], 2)',
         ),
       );
       checkResult(runtime, true);
@@ -1375,8 +1414,8 @@ void main() {
     test('binarySearch with odd length list element in right half', () {
       final RuntimeFacade runtime = getRuntime(
         loadFile('samples/binary_search.prm').replaceAll(
-          'main = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
-          'main = binarySearch([1, 2, 3, 4, 5], 4)',
+          'main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)',
+          'main() = binarySearch([1, 2, 3, 4, 5], 4)',
         ),
       );
       checkResult(runtime, true);

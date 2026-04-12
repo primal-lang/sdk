@@ -18,7 +18,7 @@ void main() {
   group('RuntimeFacade', () {
     group('hasMain', () {
       test('returns true when main is defined', () {
-        final RuntimeFacade runtime = getRuntime('main = 42');
+        final RuntimeFacade runtime = getRuntime('main() = 42');
         expect(runtime.hasMain, true);
       });
 
@@ -38,7 +38,7 @@ void main() {
 
     group('executeMain', () {
       test('executes parameterless main', () {
-        final RuntimeFacade runtime = getRuntime('main = 42');
+        final RuntimeFacade runtime = getRuntime('main() = 42');
         expect(runtime.executeMain(), '42');
       });
 
@@ -83,7 +83,7 @@ void main() {
 
     group('mainExpression', () {
       test('returns main() call for parameterless main', () {
-        final RuntimeFacade runtime = getRuntime('main = 42');
+        final RuntimeFacade runtime = getRuntime('main() = 42');
         final Expression expression = runtime.mainExpression([]);
         expect(expression.toString(), 'main()');
       });
@@ -120,7 +120,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'pi = 3.14',
+          'pi() = 3.14',
         )!;
 
         runtime.defineFunction(definition);
@@ -166,10 +166,10 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition1 = compiler.functionDefinition(
-          'value = 1',
+          'value() = 1',
         )!;
         final FunctionDefinition definition2 = compiler.functionDefinition(
-          'value = 2',
+          'value() = 2',
         )!;
 
         runtime.defineFunction(definition1);
@@ -203,7 +203,7 @@ void main() {
         );
         // Use a real standard library function name
         final FunctionDefinition definition = compiler.functionDefinition(
-          'num.add = 1',
+          'num.add() = 1',
         )!;
 
         expect(
@@ -292,8 +292,8 @@ void main() {
 
       test('returns signatures sorted alphabetically', () {
         final RuntimeFacade runtime = getRuntime('''
-          zeta = 26
-          alpha = 1
+          zeta() = 26
+          alpha() = 1
           mu(x) = x
         ''');
         expect(runtime.userDefinedFunctionSignatures, [
@@ -338,7 +338,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'value = 42',
+          'value() = 42',
         )!;
         runtime.defineFunction(definition);
         expect(runtime.userDefinedFunctionSignatures, isNotEmpty);
@@ -354,13 +354,13 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition1 = compiler.functionDefinition(
-          'value = 1',
+          'value() = 1',
         )!;
         runtime.defineFunction(definition1);
         runtime.reset();
 
         final FunctionDefinition definition2 = compiler.functionDefinition(
-          'value = 2',
+          'value() = 2',
         )!;
         runtime.defineFunction(definition2);
 
@@ -421,12 +421,12 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition oldFunction = compiler.functionDefinition(
-          'old = 1',
+          'old() = 1',
         )!;
         runtime.defineFunction(oldFunction);
 
         final IntermediateRepresentation representation =
-            getIntermediateRepresentation('new_ = 2');
+            getIntermediateRepresentation('new_() = 2');
         runtime.loadFromIntermediateRepresentation(representation);
 
         expect(
@@ -457,7 +457,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'value = 42',
+          'value() = 42',
         )!;
         runtime.defineFunction(definition);
 
@@ -496,13 +496,13 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition1 = compiler.functionDefinition(
-          'value = 1',
+          'value() = 1',
         )!;
         runtime.defineFunction(definition1);
         runtime.deleteFunction('value');
 
         final FunctionDefinition definition2 = compiler.functionDefinition(
-          'value = 2',
+          'value() = 2',
         )!;
         runtime.defineFunction(definition2);
 
@@ -517,7 +517,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'oldName = 42',
+          'oldName() = 42',
         )!;
         runtime.defineFunction(definition);
 
@@ -577,10 +577,10 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition1 = compiler.functionDefinition(
-          'first = 1',
+          'first() = 1',
         )!;
         final FunctionDefinition definition2 = compiler.functionDefinition(
-          'second = 2',
+          'second() = 2',
         )!;
         runtime.defineFunction(definition1);
         runtime.defineFunction(definition2);
@@ -599,7 +599,7 @@ void main() {
             compiler.expression,
           );
           final FunctionDefinition definition = compiler.functionDefinition(
-            'myFunc = 42',
+            'myFunc() = 42',
           )!;
           runtime.defineFunction(definition);
 
@@ -723,29 +723,29 @@ void main() {
 
     group('executeMain edge cases', () {
       test('executes main that returns a list', () {
-        final RuntimeFacade runtime = getRuntime('main = [1, 2, 3]');
+        final RuntimeFacade runtime = getRuntime('main() = [1, 2, 3]');
         expect(runtime.executeMain(), '[1, 2, 3]');
       });
 
       test('executes main that returns a boolean', () {
-        final RuntimeFacade runtime = getRuntime('main = true');
+        final RuntimeFacade runtime = getRuntime('main() = true');
         expect(runtime.executeMain(), 'true');
       });
 
       test('executes main that returns a string', () {
-        final RuntimeFacade runtime = getRuntime('main = "hello"');
+        final RuntimeFacade runtime = getRuntime('main() = "hello"');
         expect(runtime.executeMain(), '"hello"');
       });
 
       test('executes main with empty arguments list', () {
-        final RuntimeFacade runtime = getRuntime('main = 42');
+        final RuntimeFacade runtime = getRuntime('main() = 42');
         expect(runtime.executeMain([]), '42');
       });
 
       test('executes main that uses custom functions', () {
         final RuntimeFacade runtime = getRuntime('''
           double(x) = x * 2
-          main = double(21)
+          main() = double(21)
         ''');
         expect(runtime.executeMain(), '42');
       });
@@ -753,7 +753,7 @@ void main() {
 
     group('mainExpression edge cases', () {
       test('returns main() call with empty arguments for zero-param main', () {
-        final RuntimeFacade runtime = getRuntime('main = 42');
+        final RuntimeFacade runtime = getRuntime('main() = 42');
         final Expression expression = runtime.mainExpression(['ignored']);
         // When main has no parameters, arguments are ignored
         expect(expression.toString(), 'main()');
@@ -894,7 +894,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'constant = 100',
+          'constant() = 100',
         )!;
 
         runtime.defineFunction(definition);
@@ -1108,7 +1108,7 @@ void main() {
       test('returns true when main is one of several functions', () {
         final RuntimeFacade runtime = getRuntime('''
           helper(x) = x * 2
-          main = helper(21)
+          main() = helper(21)
         ''');
         expect(runtime.hasMain, true);
       });
@@ -1156,7 +1156,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'original = 42',
+          'original() = 42',
         )!;
         runtime.defineFunction(definition);
         runtime.renameFunction('original', 'renamed');
@@ -1189,7 +1189,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'longName = 42',
+          'longName() = 42',
         )!;
         runtime.defineFunction(definition);
 
@@ -1204,7 +1204,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'pi = 3.14',
+          'pi() = 3.14',
         )!;
         runtime.defineFunction(definition);
 
@@ -1242,7 +1242,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'value = 42',
+          'value() = 42',
         )!;
         runtime.defineFunction(definition);
 
@@ -1753,7 +1753,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'myFunc = 42',
+          'myFunc() = 42',
         )!;
         runtime.defineFunction(definition);
         runtime.renameFunction('myFunc', 'yourFunc');
@@ -1945,18 +1945,18 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'manuallyDefined = 1',
+          'manuallyDefined() = 1',
         )!;
         runtime.defineFunction(definition);
         runtime.reset();
         final FunctionDefinition anotherDefinition = compiler
             .functionDefinition(
-              'anotherFunc = 2',
+              'anotherFunc() = 2',
             )!;
         runtime.defineFunction(anotherDefinition);
 
         final IntermediateRepresentation representation =
-            getIntermediateRepresentation('loadedFunc = 3');
+            getIntermediateRepresentation('loadedFunc() = 3');
         runtime.loadFromIntermediateRepresentation(representation);
 
         // Only loadedFunc should exist
@@ -1969,7 +1969,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'toBeDeleted = 42',
+          'toBeDeleted() = 42',
         )!;
         runtime.defineFunction(definition);
         runtime.reset();
@@ -2044,13 +2044,13 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition func1 = compiler.functionDefinition(
-          'func1 = 1',
+          'func1() = 1',
         )!;
         final FunctionDefinition func2 = compiler.functionDefinition(
-          'func2 = 2',
+          'func2() = 2',
         )!;
         final FunctionDefinition func3 = compiler.functionDefinition(
-          'func3 = 3',
+          'func3() = 3',
         )!;
 
         runtime.defineFunction(func1);
@@ -2804,7 +2804,7 @@ void main() {
 
         test('let in main function', () {
           final RuntimeFacade runtime = getRuntime(
-            'main = let greeting = "Hello" in greeting',
+            'main() = let greeting = "Hello" in greeting',
           );
 
           expect(runtime.executeMain(), '"Hello"');
@@ -2821,7 +2821,7 @@ void main() {
         test('complex let in executeMain', () {
           final RuntimeFacade runtime = getRuntime('''
             helper(x) = x * 2
-            main = let x = 5, y = helper(x) in y + 1
+            main() = let x = 5, y = helper(x) in y + 1
           ''');
 
           expect(runtime.executeMain(), '11');

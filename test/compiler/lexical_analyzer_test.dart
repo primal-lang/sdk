@@ -1129,7 +1129,7 @@ void main() {
   * almost closing!
   but not yet
 */
-pi = 3.14
+pi() = 3.14
 ''');
       checkTokens(tokens, [
         IdentifierToken(
@@ -1141,12 +1141,30 @@ pi = 3.14
             ),
           ),
         ),
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 7,
+              column: 3,
+            ),
+          ),
+        ),
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 7,
+              column: 4,
+            ),
+          ),
+        ),
         AssignToken(
           const Lexeme(
             value: '=',
             location: Location(
               row: 7,
-              column: 4,
+              column: 6,
             ),
           ),
         ),
@@ -1155,7 +1173,7 @@ pi = 3.14
             value: '3.14',
             location: Location(
               row: 7,
-              column: 6,
+              column: 8,
             ),
           ),
         ),
@@ -1163,7 +1181,7 @@ pi = 3.14
     });
 
     test('Constant declaration', () {
-      final List<Token> tokens = getTokens('pi = 3.14');
+      final List<Token> tokens = getTokens('pi() = 3.14');
       checkTokens(tokens, [
         IdentifierToken(
           const Lexeme(
@@ -1174,12 +1192,30 @@ pi = 3.14
             ),
           ),
         ),
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 1,
+              column: 4,
+            ),
+          ),
+        ),
         AssignToken(
           const Lexeme(
             value: '=',
             location: Location(
               row: 1,
-              column: 4,
+              column: 6,
             ),
           ),
         ),
@@ -1188,7 +1224,7 @@ pi = 3.14
             value: '3.14',
             location: Location(
               row: 1,
-              column: 6,
+              column: 8,
             ),
           ),
         ),
@@ -1197,7 +1233,7 @@ pi = 3.14
 
     test('Invalid function definition 1', () {
       expect(
-        () => getFunctions('_isEven = true'),
+        () => getFunctions('_isEven() = true'),
         throwsA(isA<InvalidCharacterError>()),
       );
     });
@@ -1224,7 +1260,7 @@ pi = 3.14
     });
 
     test('Main function definition', () {
-      final List<Token> tokens = getTokens('main = isEven(4)');
+      final List<Token> tokens = getTokens('main() = isEven(4)');
       checkTokens(tokens, [
         IdentifierToken(
           const Lexeme(
@@ -1235,39 +1271,12 @@ pi = 3.14
             ),
           ),
         ),
-        AssignToken(
-          const Lexeme(
-            value: '=',
-            location: Location(
-              row: 1,
-              column: 6,
-            ),
-          ),
-        ),
-        IdentifierToken(
-          const Lexeme(
-            value: 'isEven',
-            location: Location(
-              row: 1,
-              column: 8,
-            ),
-          ),
-        ),
         OpenParenthesisToken(
           const Lexeme(
             value: '(',
             location: Location(
               row: 1,
-              column: 14,
-            ),
-          ),
-        ),
-        NumberToken(
-          const Lexeme(
-            value: '4',
-            location: Location(
-              row: 1,
-              column: 15,
+              column: 5,
             ),
           ),
         ),
@@ -1276,7 +1285,52 @@ pi = 3.14
             value: ')',
             location: Location(
               row: 1,
+              column: 6,
+            ),
+          ),
+        ),
+        AssignToken(
+          const Lexeme(
+            value: '=',
+            location: Location(
+              row: 1,
+              column: 8,
+            ),
+          ),
+        ),
+        IdentifierToken(
+          const Lexeme(
+            value: 'isEven',
+            location: Location(
+              row: 1,
+              column: 10,
+            ),
+          ),
+        ),
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 1,
               column: 16,
+            ),
+          ),
+        ),
+        NumberToken(
+          const Lexeme(
+            value: '4',
+            location: Location(
+              row: 1,
+              column: 17,
+            ),
+          ),
+        ),
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 1,
+              column: 18,
             ),
           ),
         ),
@@ -2046,7 +2100,7 @@ pi = 3.14
     // --- Edge cases: location tracking ---
 
     test('Multiline location tracking', () {
-      final List<Token> tokens = getTokens('x = 1\ny = 2');
+      final List<Token> tokens = getTokens('x() = 1\ny() = 2');
       checkTokens(tokens, [
         IdentifierToken(
           const Lexeme(
@@ -2057,12 +2111,30 @@ pi = 3.14
             ),
           ),
         ),
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 1,
+              column: 2,
+            ),
+          ),
+        ),
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 1,
+              column: 3,
+            ),
+          ),
+        ),
         AssignToken(
           const Lexeme(
             value: '=',
             location: Location(
               row: 1,
-              column: 3,
+              column: 5,
             ),
           ),
         ),
@@ -2071,7 +2143,7 @@ pi = 3.14
             value: '1',
             location: Location(
               row: 1,
-              column: 5,
+              column: 7,
             ),
           ),
         ),
@@ -2084,12 +2156,30 @@ pi = 3.14
             ),
           ),
         ),
+        OpenParenthesisToken(
+          const Lexeme(
+            value: '(',
+            location: Location(
+              row: 2,
+              column: 2,
+            ),
+          ),
+        ),
+        CloseParenthesisToken(
+          const Lexeme(
+            value: ')',
+            location: Location(
+              row: 2,
+              column: 3,
+            ),
+          ),
+        ),
         AssignToken(
           const Lexeme(
             value: '=',
             location: Location(
               row: 2,
-              column: 3,
+              column: 5,
             ),
           ),
         ),
@@ -2098,7 +2188,7 @@ pi = 3.14
             value: '2',
             location: Location(
               row: 2,
-              column: 5,
+              column: 7,
             ),
           ),
         ),
@@ -3756,7 +3846,7 @@ pi = 3.14
 
     group('Comment edge cases', () {
       test('Single line comment at end of input without newline', () {
-        final List<Token> tokens = getTokens('x = 1 // comment');
+        final List<Token> tokens = getTokens('x() = 1 // comment');
         checkTokens(tokens, [
           IdentifierToken(
             const Lexeme(
@@ -3764,16 +3854,28 @@ pi = 3.14
               location: Location(row: 1, column: 1),
             ),
           ),
+          OpenParenthesisToken(
+            const Lexeme(
+              value: '(',
+              location: Location(row: 1, column: 2),
+            ),
+          ),
+          CloseParenthesisToken(
+            const Lexeme(
+              value: ')',
+              location: Location(row: 1, column: 3),
+            ),
+          ),
           AssignToken(
             const Lexeme(
               value: '=',
-              location: Location(row: 1, column: 3),
+              location: Location(row: 1, column: 5),
             ),
           ),
           NumberToken(
             const Lexeme(
               value: '1',
-              location: Location(row: 1, column: 5),
+              location: Location(row: 1, column: 7),
             ),
           ),
         ]);
