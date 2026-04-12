@@ -210,11 +210,18 @@ Add to `lib/compiler/library/standard_library.dart`:
 
 ### Architecture Notes
 
-The implementation follows the pattern established by `console.writeLn`:
+The implementation extends the pattern established by `console.writeLn`:
 
 - Extend `NativeFunctionTerm` for the function definition
 - Extend `NativeFunctionTermWithArguments` for the evaluation logic
 - Use `PlatformInterface().console.outWriteLn()` for output (includes newline)
+
+Key differences from `console.writeLn`:
+
+1. **Two arguments**: Evaluate `a` first, then `b` (left-to-right order matters for error propagation)
+2. **Type checking**: Verify `b` is a `StringTerm`; throw `InvalidArgumentTypesError` if not
+3. **Return value**: Return the evaluated `a` term unchanged (not a string representation)
+4. **Output format**: Concatenate `[debug] ` + `b.value` + `: ` + `a.toString()`
 
 ## Post-Implementation
 
