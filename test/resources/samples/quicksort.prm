@@ -7,9 +7,11 @@ quicksort(list) =
     if (list.isEmpty(list))
         []
     else
-        quicksort(smaller(list.rest(list), list.first(list)))
-        + list.first(list)
-        + quicksort(greaterEq(list.rest(list), list.first(list)))
+        let
+            pivot = list.first(list),
+            rest = list.rest(list)
+        in
+            quicksort(smaller(rest, pivot)) + pivot + quicksort(greaterEq(rest, pivot))
 
 smaller(list, pivot) =
     if (list.isEmpty(list))

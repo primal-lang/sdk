@@ -7,7 +7,10 @@ binarySearch(list, element) =
     if (list.isEmpty(list))
         false
     else
-        binarySearch.helper(list, element, num.floor(list.length(list) / 2))
+        let
+            index = num.floor(list.length(list) / 2)
+        in
+            binarySearch.helper(list, element, index)
 
 binarySearch.helper(list, element, index) =
     if (element == list[index])
