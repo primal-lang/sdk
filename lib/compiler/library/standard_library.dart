@@ -83,12 +83,14 @@ import 'package:primal/compiler/library/directory/directory_path.dart';
 import 'package:primal/compiler/library/directory/directory_rename.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
 import 'package:primal/compiler/library/error/throw.dart';
+import 'package:primal/compiler/library/file/file_append.dart';
 import 'package:primal/compiler/library/file/file_copy.dart';
 import 'package:primal/compiler/library/file/file_create.dart';
 import 'package:primal/compiler/library/file/file_delete.dart';
 import 'package:primal/compiler/library/file/file_exists.dart';
 import 'package:primal/compiler/library/file/file_extension.dart';
 import 'package:primal/compiler/library/file/file_from_path.dart';
+import 'package:primal/compiler/library/file/file_last_modified.dart';
 import 'package:primal/compiler/library/file/file_length.dart';
 import 'package:primal/compiler/library/file/file_move.dart';
 import 'package:primal/compiler/library/file/file_name.dart';
@@ -384,12 +386,14 @@ class StandardLibrary {
     const Throw(),
 
     // File
+    const FileAppend(),
     const FileCopy(),
     const FileCreate(),
     const FileDelete(),
     const FileExists(),
     const FileExtension(),
     const FileFromPath(),
+    const FileLastModified(),
     const FileLength(),
     const FileMove(),
     const FileName(),

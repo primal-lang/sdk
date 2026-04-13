@@ -62,6 +62,38 @@ void main() {
       expect(targetFile.readAsStringSync(), equals(value));
     });
 
+    test('file.append', () {
+      final File targetFile = File(path.join(tempDir.path, 'append.txt'));
+      targetFile.writeAsStringSync('Hello');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = file.append(file.fromPath(${primalString(targetFile.path)}), ${primalString(', world!')})',
+      );
+      checkResult(runtime, true);
+      expect(targetFile.readAsStringSync(), equals('Hello, world!'));
+    });
+
+    test('file.append creates file if not exists', () {
+      final File targetFile = File(path.join(tempDir.path, 'append-new.txt'));
+      final RuntimeFacade runtime = getRuntime(
+        'main() = file.append(file.fromPath(${primalString(targetFile.path)}), ${primalString('content')})',
+      );
+      checkResult(runtime, true);
+      expect(targetFile.existsSync(), isTrue);
+      expect(targetFile.readAsStringSync(), equals('content'));
+    });
+
+    test('file.lastModified', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.epoch(file.lastModified(file.fromPath(${primalString(existingFile.path)})))',
+      );
+      final String result = runtime.executeMain();
+      final int epochMs = int.parse(result);
+      final DateTime now = DateTime.now();
+      final DateTime fileTime = DateTime.fromMillisecondsSinceEpoch(epochMs);
+      // The file was just created, so the timestamp should be recent (within last minute)
+      expect(now.difference(fileTime).inMinutes, lessThan(1));
+    });
+
     test('file.length', () {
       final RuntimeFacade runtime = getRuntime(
         'main() = file.length(file.fromPath(${primalString(existingFile.path)}))',
@@ -186,6 +218,74 @@ void main() {
         );
         checkResult(runtime, true);
         expect(targetFile.readAsStringSync(), equals('new content'));
+      });
+
+      test('file.append with empty string', () {
+        final File targetFile = File(
+          path.join(tempDir.path, 'append-empty.txt'),
+        );
+        targetFile.writeAsStringSync('original');
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.append(file.fromPath(${primalString(targetFile.path)}), ${primalString('')})',
+        );
+        checkResult(runtime, true);
+        expect(targetFile.readAsStringSync(), equals('original'));
+      });
+
+      test('file.append multiple times', () {
+        final File targetFile = File(
+          path.join(tempDir.path, 'append-multiple.txt'),
+        );
+        targetFile.writeAsStringSync('line1');
+        getRuntime(
+          'main() = file.append(file.fromPath(${primalString(targetFile.path)}), ${primalString('\nline2')})',
+        ).executeMain();
+        getRuntime(
+          'main() = file.append(file.fromPath(${primalString(targetFile.path)}), ${primalString('\nline3')})',
+        ).executeMain();
+        expect(targetFile.readAsStringSync(), equals('line1\nline2\nline3'));
+      });
+
+      test('file.append with unicode characters', () {
+        final File targetFile = File(
+          path.join(tempDir.path, 'append-unicode.txt'),
+        );
+        targetFile.writeAsStringSync('Hello ');
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.append(file.fromPath(${primalString(targetFile.path)}), ${primalString('\u4e16\u754c')})',
+        );
+        checkResult(runtime, true);
+        expect(targetFile.readAsStringSync(), equals('Hello \u4e16\u754c'));
+      });
+
+      test('file.append in deeply nested non-existing directory', () {
+        final File deepFile = File(
+          path.join(tempDir.path, 'a', 'b', 'c', 'append-deep.txt'),
+        );
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.append(file.fromPath(${primalString(deepFile.path)}), ${primalString('content')})',
+        );
+        checkResult(runtime, true);
+        expect(deepFile.existsSync(), isTrue);
+        expect(deepFile.readAsStringSync(), equals('content'));
+      });
+
+      test('file.lastModified returns timestamp after file modification', () {
+        final File modFile = File(path.join(tempDir.path, 'mod-time.txt'));
+        modFile.writeAsStringSync('initial');
+        final DateTime beforeModify = DateTime.now();
+        modFile.writeAsStringSync('modified');
+        final RuntimeFacade runtime = getRuntime(
+          'main() = time.epoch(file.lastModified(file.fromPath(${primalString(modFile.path)})))',
+        );
+        final String result = runtime.executeMain();
+        final int epochMs = int.parse(result);
+        final DateTime fileTime = DateTime.fromMillisecondsSinceEpoch(epochMs);
+        // Allow 1 second tolerance for filesystem timestamp granularity
+        expect(
+          fileTime.millisecondsSinceEpoch,
+          greaterThanOrEqualTo(beforeModify.millisecondsSinceEpoch - 1000),
+        );
       });
 
       test('file.length returns 0 for empty file', () {
@@ -524,6 +624,62 @@ void main() {
       test('file.write throws for boolean second argument', () {
         final RuntimeFacade runtime = getRuntime(
           'main() = file.write(file.fromPath(${primalString(existingFile.path)}), true)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.append throws for string first argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.append("not a file", "content")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.append throws for number second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.append(file.fromPath(${primalString(existingFile.path)}), 123)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.append throws for boolean second argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.append(file.fromPath(${primalString(existingFile.path)}), true)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.append throws for number first argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.append(123, "content")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.lastModified throws for string argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.lastModified("not a file")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.lastModified throws for number argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.lastModified(123)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.lastModified throws for boolean argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.lastModified(true)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      });
+
+      test('file.lastModified throws for list argument', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = file.lastModified([1, 2, 3])',
         );
         expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
       });

@@ -1,13 +1,3 @@
-8. File
-
-Function: file.append
-Signature: (a: File, b: String): Boolean
-Description: Append string to file (creates if doesn't exist)
-────────────────────────────────────────
-Function: file.lastModified
-Signature: (a: File): Timestamp
-Description: Get last modified time of file
-
 9. Environment
 
 Function: env.has

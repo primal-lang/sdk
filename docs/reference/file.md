@@ -1,6 +1,6 @@
 # File
 
-Number of functions: 14
+Number of functions: 16
 
 Note: File functions are not available on the web platform.
 
@@ -54,6 +54,19 @@ file.read(file.fromPath("data.txt")) // returns the file contents
 
 ```
 file.write(file.fromPath("data.txt"), "hello") // returns true
+```
+
+### Append
+
+- **Signature:** `file.append(a: File, b: String): Boolean`
+- **Input:** A file and a string
+- **Output:** True if successful, false otherwise
+- **Purity:** Impure
+- **Description:** Appends the string to the end of the file. Creates the file if it doesn't exist.
+- **Example:**
+
+```
+file.append(file.fromPath("log.txt"), "new entry\n") // returns true
 ```
 
 ## Operations
@@ -178,4 +191,16 @@ file.extension(file.fromPath("data.txt")) // returns "txt"
 
 ```
 file.parent(file.fromPath("/home/user/data.txt")) // returns the "/home/user" directory
+```
+
+### Last Modified
+
+- **Signature:** `file.lastModified(a: File): Timestamp`
+- **Input:** One file
+- **Output:** The last modified time of the file as a timestamp
+- **Purity:** Impure
+- **Example:**
+
+```
+file.lastModified(file.fromPath("data.txt")) // returns the last modified timestamp
 ```
