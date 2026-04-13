@@ -1319,4 +1319,679 @@ main() = [time.year(t()), time.month(t()), time.day(t()), time.hour(t()), time.m
       checkResult(runtime, -1);
     });
   });
+
+  group('time.fromEpoch', () {
+    test('time.fromEpoch creates timestamp from epoch milliseconds', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.toIso(time.fromEpoch(0))',
+      );
+      checkResult(runtime, '"1970-01-01T00:00:00.000Z"');
+    });
+
+    test('time.fromEpoch creates correct timestamp for known epoch value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.year(time.fromEpoch(1705312200000))',
+      );
+      checkResult(runtime, 2024);
+    });
+
+    test('time.fromEpoch roundtrips with time.epoch', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.epoch(time.fromEpoch(1705312200000))',
+      );
+      checkResult(runtime, 1705312200000);
+    });
+
+    test('time.fromEpoch handles negative epoch for dates before 1970', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.year(time.fromEpoch(-1000))',
+      );
+      checkResult(runtime, 1969);
+    });
+
+    test('time.fromEpoch extracts correct components', () {
+      final RuntimeFacade runtime = getRuntime('''
+t() = time.fromEpoch(0)
+main() = [time.year(t()), time.month(t()), time.day(t()), time.hour(t()), time.minute(t()), time.second(t()), time.millisecond(t())]
+''');
+      checkResult(runtime, [1970, 1, 1, 0, 0, 0, 0]);
+    });
+
+    test('time.fromEpoch handles large epoch values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.year(time.fromEpoch(32503680000000))',
+      );
+      checkResult(runtime, 3000);
+    });
+
+    test('time.fromEpoch throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.fromEpoch("hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.fromEpoch throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = time.fromEpoch(true)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.fromEpoch throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.fromEpoch([1, 2, 3])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.fromEpoch throws for timestamp argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.fromEpoch(time.now())',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('time.format', () {
+    test('time.format with yyyy-MM-dd pattern', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T10:30:45.123Z"), "yyyy-MM-dd")',
+      );
+      checkResult(runtime, '"2024-01-15"');
+    });
+
+    test('time.format with HH:mm:ss pattern', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T10:30:45.123Z"), "HH:mm:ss")',
+      );
+      checkResult(runtime, '"10:30:45"');
+    });
+
+    test('time.format with full datetime pattern', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T10:30:45.123Z"), "yyyy-MM-dd HH:mm:ss")',
+      );
+      checkResult(runtime, '"2024-01-15 10:30:45"');
+    });
+
+    test('time.format with 12-hour format and AM/PM', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T14:30:45.123Z"), "h:mm a")',
+      );
+      checkResult(runtime, '"2:30 PM"');
+    });
+
+    test('time.format with AM time', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T09:30:45.123Z"), "h:mm a")',
+      );
+      checkResult(runtime, '"9:30 AM"');
+    });
+
+    test('time.format with milliseconds', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T10:30:45.123Z"), "HH:mm:ss.SSS")',
+      );
+      checkResult(runtime, '"10:30:45.123"');
+    });
+
+    test('time.format with 2-digit year', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T10:30:45.123Z"), "yy-MM-dd")',
+      );
+      checkResult(runtime, '"24-01-15"');
+    });
+
+    test('time.format with single digit month and day', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-05T10:30:45.123Z"), "M/d/yyyy")',
+      );
+      checkResult(runtime, '"1/5/2024"');
+    });
+
+    test('time.format with padded 12-hour format', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T09:05:05.007Z"), "hh:mm:ss")',
+      );
+      checkResult(runtime, '"09:05:05"');
+    });
+
+    test('time.format handles midnight as 12 in 12-hour format', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T00:30:00.000Z"), "h:mm a")',
+      );
+      checkResult(runtime, '"12:30 AM"');
+    });
+
+    test('time.format handles noon in 12-hour format', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T12:30:00.000Z"), "h:mm a")',
+      );
+      checkResult(runtime, '"12:30 PM"');
+    });
+
+    test('time.format with empty pattern returns empty string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromIso("2024-01-15T10:30:45.123Z"), "")',
+      );
+      checkResult(runtime, '""');
+    });
+
+    test('time.format with literal text only', () {
+      final RuntimeFacade runtime = getRuntime(
+        "main() = time.format(time.fromIso(\"2024-01-15T10:30:45.123Z\"), \"'Date': \")",
+      );
+      checkResult(runtime, '"Date: "');
+    });
+
+    test('time.format with escaped single quote', () {
+      final RuntimeFacade runtime = getRuntime(
+        "main() = time.format(time.fromIso(\"2024-01-15T10:30:45.123Z\"), \"yyyy''MM''dd\")",
+      );
+      checkResult(runtime, "\"2024'01'15\"");
+    });
+
+    test('time.format throws for number first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(123, "yyyy")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.format throws for string first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format("hello", "yyyy")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.format throws for number second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.now(), 123)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.format throws for boolean arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(true, false)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('time.dayOfWeek', () {
+    test('time.dayOfWeek returns 1 for Monday', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(time.fromIso("2024-01-15T10:30:00Z"))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('time.dayOfWeek returns 2 for Tuesday', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(time.fromIso("2024-01-16T10:30:00Z"))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('time.dayOfWeek returns 3 for Wednesday', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(time.fromIso("2024-01-17T10:30:00Z"))',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('time.dayOfWeek returns 4 for Thursday', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(time.fromIso("2024-01-18T10:30:00Z"))',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('time.dayOfWeek returns 5 for Friday', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(time.fromIso("2024-01-19T10:30:00Z"))',
+      );
+      checkResult(runtime, 5);
+    });
+
+    test('time.dayOfWeek returns 6 for Saturday', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(time.fromIso("2024-01-20T10:30:00Z"))',
+      );
+      checkResult(runtime, 6);
+    });
+
+    test('time.dayOfWeek returns 7 for Sunday', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(time.fromIso("2024-01-21T10:30:00Z"))',
+      );
+      checkResult(runtime, 7);
+    });
+
+    test('time.dayOfWeek throws for number argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(123)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.dayOfWeek throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek("hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.dayOfWeek throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.dayOfWeek throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek([1, 2, 3])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('time.dayOfYear', () {
+    test('time.dayOfYear returns 1 for January 1st', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromIso("2024-01-01T00:00:00Z"))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('time.dayOfYear returns 15 for January 15th', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromIso("2024-01-15T10:30:00Z"))',
+      );
+      checkResult(runtime, 15);
+    });
+
+    test('time.dayOfYear returns 32 for February 1st', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromIso("2024-02-01T00:00:00Z"))',
+      );
+      checkResult(runtime, 32);
+    });
+
+    test('time.dayOfYear returns 60 for February 29th in leap year', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromIso("2024-02-29T00:00:00Z"))',
+      );
+      checkResult(runtime, 60);
+    });
+
+    test('time.dayOfYear returns 366 for December 31st in leap year', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromIso("2024-12-31T23:59:59Z"))',
+      );
+      checkResult(runtime, 366);
+    });
+
+    test('time.dayOfYear returns 365 for December 31st in non-leap year', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromIso("2023-12-31T23:59:59Z"))',
+      );
+      checkResult(runtime, 365);
+    });
+
+    test('time.dayOfYear returns 100 for April 9th in leap year', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromIso("2024-04-09T00:00:00Z"))',
+      );
+      checkResult(runtime, 100);
+    });
+
+    test('time.dayOfYear returns 183 for July 1st in leap year', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromIso("2024-07-01T00:00:00Z"))',
+      );
+      checkResult(runtime, 183);
+    });
+
+    test('time.dayOfYear throws for number argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(123)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.dayOfYear throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear("hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.dayOfYear throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.dayOfYear throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear([1, 2, 3])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('time.isLeapYear', () {
+    test('time.isLeapYear returns true for 2024 (divisible by 4)', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(2024)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isLeapYear returns false for 2023 (not divisible by 4)', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(2023)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('time.isLeapYear returns true for 2000 (divisible by 400)', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(2000)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test(
+      'time.isLeapYear returns false for 1900 (divisible by 100 not 400)',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = time.isLeapYear(1900)',
+        );
+        checkResult(runtime, false);
+      },
+    );
+
+    test(
+      'time.isLeapYear returns false for 2100 (divisible by 100 not 400)',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = time.isLeapYear(2100)',
+        );
+        checkResult(runtime, false);
+      },
+    );
+
+    test('time.isLeapYear returns true for 1600 (divisible by 400)', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(1600)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isLeapYear returns true for 2020', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(2020)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isLeapYear returns false for 2019', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(2019)',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('time.isLeapYear throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear("2024")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isLeapYear throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isLeapYear throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear([2024])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isLeapYear throws for timestamp argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(time.now())',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('time.isBefore', () {
+    test('time.isBefore returns true when first is before second', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2024-02-01T00:00:00Z"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isBefore returns false when first is after second', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(time.fromIso("2024-02-01T00:00:00Z"), time.fromIso("2024-01-01T00:00:00Z"))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('time.isBefore returns false when timestamps are equal', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2024-01-01T00:00:00Z"))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('time.isBefore detects millisecond differences', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(time.fromIso("2024-01-01T00:00:00.000Z"), time.fromIso("2024-01-01T00:00:00.001Z"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isBefore works across year boundary', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(time.fromIso("2023-12-31T23:59:59Z"), time.fromIso("2024-01-01T00:00:00Z"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isBefore works with epoch boundary', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(time.fromIso("1969-12-31T23:59:59Z"), time.fromIso("1970-01-01T00:00:00Z"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isBefore throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(123, 456)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isBefore throws for first argument being non-timestamp', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore("hello", time.now())',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isBefore throws for second argument being non-timestamp', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(time.now(), "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isBefore throws for boolean arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(true, false)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isBefore throws for list arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore([1, 2], [3, 4])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('time.isAfter', () {
+    test('time.isAfter returns true when first is after second', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(time.fromIso("2024-02-01T00:00:00Z"), time.fromIso("2024-01-01T00:00:00Z"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isAfter returns false when first is before second', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2024-02-01T00:00:00Z"))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('time.isAfter returns false when timestamps are equal', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2024-01-01T00:00:00Z"))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('time.isAfter detects millisecond differences', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(time.fromIso("2024-01-01T00:00:00.001Z"), time.fromIso("2024-01-01T00:00:00.000Z"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isAfter works across year boundary', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2023-12-31T23:59:59Z"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isAfter works with epoch boundary', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(time.fromIso("1970-01-01T00:00:00Z"), time.fromIso("1969-12-31T23:59:59Z"))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isAfter throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(123, 456)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isAfter throws for first argument being non-timestamp', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter("hello", time.now())',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isAfter throws for second argument being non-timestamp', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(time.now(), "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isAfter throws for boolean arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(true, false)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.isAfter throws for list arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter([1, 2], [3, 4])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('New Time Functions Composition', () {
+    test('time.fromEpoch and time.isBefore composition', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isBefore(time.fromEpoch(0), time.fromEpoch(1000))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.fromEpoch and time.isAfter composition', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isAfter(time.fromEpoch(1000), time.fromEpoch(0))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.dayOfWeek with time.fromEpoch', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfWeek(time.fromEpoch(0))',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('time.dayOfYear with time.fromEpoch', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.dayOfYear(time.fromEpoch(0))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('time.format with time.fromEpoch', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.format(time.fromEpoch(0), "yyyy-MM-dd")',
+      );
+      checkResult(runtime, '"1970-01-01"');
+    });
+
+    test('time.isLeapYear with time.year composition', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.isLeapYear(time.year(time.fromIso("2024-06-15T00:00:00Z")))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('time.isBefore and time.isAfter are inverse', () {
+      final RuntimeFacade runtime = getRuntime('''
+t1() = time.fromIso("2024-01-01T00:00:00Z")
+t2() = time.fromIso("2024-02-01T00:00:00Z")
+main() = time.isBefore(t1(), t2()) && time.isAfter(t2(), t1())
+''');
+      checkResult(runtime, true);
+    });
+
+    test('time.isBefore and time.isAfter both false for equal timestamps', () {
+      final RuntimeFacade runtime = getRuntime('''
+t() = time.fromIso("2024-01-01T00:00:00Z")
+main() = !time.isBefore(t(), t()) && !time.isAfter(t(), t())
+''');
+      checkResult(runtime, true);
+    });
+  });
 }

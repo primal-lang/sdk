@@ -1,34 +1,3 @@
-6. Timestamp Module
-
-Function: time.fromEpoch
-Signature: (a: Number): Timestamp
-Description: Create from epoch ms
-────────────────────────────────────────
-Function: time.format
-Signature: (a: Timestamp, b: String): String
-Description: Format with pattern
-────────────────────────────────────────
-Function: time.dayOfWeek
-Signature: (a: Timestamp): Number
-Description: Day 1-7 (Mon=1)
-────────────────────────────────────────
-Function: time.dayOfYear
-Signature: (a: Timestamp): Number
-Description: Day 1-366
-────────────────────────────────────────
-Function: time.isLeapYear
-Signature: (a: Number): Boolean
-Description: Check leap year
-────────────────────────────────────────
-Function: time.isBefore
-Signature: (a: Timestamp, b: Timestamp): Boolean
-Description: Returns true if the first timestamp occurs before the second.
-────────────────────────────────────────
-Function: time.isAfter
-Signature: (a: Timestamp, b: Timestamp): Boolean
-Description: Returns true if the first timestamp occurs after the second.
-────────────────────────────────────────
-
 7. Vector Module
 
 Function: vector.dot

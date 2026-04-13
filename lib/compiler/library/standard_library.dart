@@ -245,9 +245,16 @@ import 'package:primal/compiler/library/string/str_trim_right.dart';
 import 'package:primal/compiler/library/string/str_uppercase.dart';
 import 'package:primal/compiler/library/timestamp/time_compare.dart';
 import 'package:primal/compiler/library/timestamp/time_day.dart';
+import 'package:primal/compiler/library/timestamp/time_day_of_week.dart';
+import 'package:primal/compiler/library/timestamp/time_day_of_year.dart';
 import 'package:primal/compiler/library/timestamp/time_epoch.dart';
+import 'package:primal/compiler/library/timestamp/time_format.dart';
+import 'package:primal/compiler/library/timestamp/time_from_epoch.dart';
 import 'package:primal/compiler/library/timestamp/time_from_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_hour.dart';
+import 'package:primal/compiler/library/timestamp/time_is_after.dart';
+import 'package:primal/compiler/library/timestamp/time_is_before.dart';
+import 'package:primal/compiler/library/timestamp/time_is_leap_year.dart';
 import 'package:primal/compiler/library/timestamp/time_millisecond.dart';
 import 'package:primal/compiler/library/timestamp/time_minute.dart';
 import 'package:primal/compiler/library/timestamp/time_month.dart';
@@ -560,9 +567,16 @@ class StandardLibrary {
     // Timestamp
     const TimeCompare(),
     const TimeDay(),
+    const TimeDayOfWeek(),
+    const TimeDayOfYear(),
     const TimeEpoch(),
+    const TimeFormat(),
+    const TimeFromEpoch(),
     const TimeFromIso(),
     const TimeHour(),
+    const TimeIsAfter(),
+    const TimeIsBefore(),
+    const TimeIsLeapYear(),
     const TimeMillisecond(),
     const TimeMinute(),
     const TimeMonth(),
