@@ -109,7 +109,7 @@ void main() {
 
     test('uuid.v4 can be concatenated with strings', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.starts_with(str.concat("id:", uuid.v4()), "id:")',
+        'main() = str.startsWith(str.concat("id:", uuid.v4()), "id:")',
       );
       checkResult(runtime, true);
     });
