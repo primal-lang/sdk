@@ -1,18 +1,3 @@
-7. Vector Module
-
-Function: vector.dot
-Signature: (a: Vector, b: Vector): Number
-Description: Dot product of two vectors
-────────────────────────────────────────
-Function: vector.scale
-Signature: (a: Vector, b: Number): Vector
-Description: Scale vector by a number
-────────────────────────────────────────
-Function: vector.distance
-Signature: (a: Vector, b: Vector): Number
-Description: Euclidean distance between two vectors
-────────────────────────────────────────
-
 8. File
 
 Function: file.append

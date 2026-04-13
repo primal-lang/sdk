@@ -264,9 +264,12 @@ import 'package:primal/compiler/library/timestamp/time_to_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_year.dart';
 import 'package:primal/compiler/library/vector/vector_add.dart';
 import 'package:primal/compiler/library/vector/vector_angle.dart';
+import 'package:primal/compiler/library/vector/vector_distance.dart';
+import 'package:primal/compiler/library/vector/vector_dot.dart';
 import 'package:primal/compiler/library/vector/vector_magnitude.dart';
 import 'package:primal/compiler/library/vector/vector_new.dart';
 import 'package:primal/compiler/library/vector/vector_normalize.dart';
+import 'package:primal/compiler/library/vector/vector_scale.dart';
 import 'package:primal/compiler/library/vector/vector_sub.dart';
 import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/runtime/term.dart';
@@ -588,9 +591,12 @@ class StandardLibrary {
     // Vector
     const VectorAdd(),
     const VectorAngle(),
+    const VectorDistance(),
+    const VectorDot(),
     const VectorMagnitude(),
     const VectorNew(),
     const VectorNormalize(),
+    const VectorScale(),
     const VectorSub(),
   ];
 }

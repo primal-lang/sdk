@@ -1197,5 +1197,475 @@ void main() {
       // The magnitude of a normalized vector should be approximately 1
       expect(num.parse(runtime.executeMain()), closeTo(1.0, 0.000001));
     });
+
+    // ===== vector.dot tests =====
+
+    test('vector.dot of two empty vectors returns zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([]), vector.new([]))',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('vector.dot computes dot product of 2D vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([1, 2]), vector.new([3, 4]))',
+      );
+      checkResult(runtime, 11);
+    });
+
+    test('vector.dot computes dot product of 3D vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([1, 2, 3]), vector.new([4, 5, 6]))',
+      );
+      checkResult(runtime, 32);
+    });
+
+    test('vector.dot of single-element vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([5]), vector.new([7]))',
+      );
+      checkResult(runtime, 35);
+    });
+
+    test('vector.dot throws for vectors with different lengths', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([1, 2]), vector.new([3, 4, 5]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
+
+    test('vector.dot throws when first argument is not a vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot([1, 2], vector.new([3, 4]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.dot throws when second argument is not a vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([1, 2]), [3, 4])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.dot throws when both arguments are not vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot([1, 2], [3, 4])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.dot throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot("hello", "world")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.dot throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(42, 43)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.dot handles negative components', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([-1, 2, -3]), vector.new([4, -5, 6]))',
+      );
+      checkResult(runtime, -32);
+    });
+
+    test('vector.dot handles floating point numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([1.5, 2.5]), vector.new([2.0, 3.0]))',
+      );
+      checkResult(runtime, 10.5);
+    });
+
+    test('vector.dot with zero vectors returns zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([0, 0, 0]), vector.new([1, 2, 3]))',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('vector.dot is commutative', () {
+      final RuntimeFacade runtime1 = getRuntime(
+        'main() = vector.dot(vector.new([1, 2, 3]), vector.new([4, 5, 6]))',
+      );
+      final RuntimeFacade runtime2 = getRuntime(
+        'main() = vector.dot(vector.new([4, 5, 6]), vector.new([1, 2, 3]))',
+      );
+      expect(runtime1.executeMain(), equals(runtime2.executeMain()));
+    });
+
+    test('vector.dot of perpendicular vectors is zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([1, 0]), vector.new([0, 1]))',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('vector.dot of parallel vectors equals product of magnitudes', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([3, 0]), vector.new([4, 0]))',
+      );
+      checkResult(runtime, 12);
+    });
+
+    test('vector.dot of anti-parallel vectors is negative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([1, 0]), vector.new([-1, 0]))',
+      );
+      checkResult(runtime, -1);
+    });
+
+    test('vector.dot handles high-dimensional vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.dot(vector.new([1, 1, 1, 1, 1]), vector.new([2, 2, 2, 2, 2]))',
+      );
+      checkResult(runtime, 10);
+    });
+
+    // ===== vector.scale tests =====
+
+    test('vector.scale of empty vector returns empty vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([]), 5)',
+      );
+      checkResult(runtime, []);
+    });
+
+    test('vector.scale scales 2D vector by positive scalar', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2]), 3)',
+      );
+      checkResult(runtime, [3, 6]);
+    });
+
+    test('vector.scale scales 3D vector by positive scalar', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2, 3]), 2)',
+      );
+      checkResult(runtime, [2, 4, 6]);
+    });
+
+    test('vector.scale with scalar zero returns zero vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2, 3]), 0)',
+      );
+      checkResult(runtime, [0, 0, 0]);
+    });
+
+    test('vector.scale with scalar one returns same vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([5, 10, 15]), 1)',
+      );
+      checkResult(runtime, [5, 10, 15]);
+    });
+
+    test('vector.scale with negative scalar', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2, 3]), -2)',
+      );
+      checkResult(runtime, [-2, -4, -6]);
+    });
+
+    test('vector.scale with fractional scalar', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([4, 8, 12]), 0.5)',
+      );
+      checkResult(runtime, [2.0, 4.0, 6.0]);
+    });
+
+    test('vector.scale throws when first argument is not a vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale([1, 2, 3], 2)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.scale throws when second argument is not a number', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2, 3]), "two")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.scale throws for string first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale("hello", 2)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.scale throws for boolean second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2]), true)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.scale throws when second argument is a vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2]), vector.new([3, 4]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.scale handles negative vector components', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([-1, -2, -3]), 2)',
+      );
+      checkResult(runtime, [-2, -4, -6]);
+    });
+
+    test('vector.scale of single-element vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([7]), 3)',
+      );
+      checkResult(runtime, [21]);
+    });
+
+    test('vector.scale handles high-dimensional vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2, 3, 4, 5]), 10)',
+      );
+      checkResult(runtime, [10, 20, 30, 40, 50]);
+    });
+
+    test('vector.scale then magnitude equals magnitude times scalar', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.magnitude(vector.scale(vector.new([3, 4]), 2))',
+      );
+      checkResult(runtime, 10.0);
+    });
+
+    test('vector.scale with very large scalar', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2]), 1e10)',
+      );
+      checkResult(runtime, [1e10, 2e10]);
+    });
+
+    test('vector.scale with very small scalar', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.scale(vector.new([1, 2]), 1e-10)',
+      );
+      checkResult(runtime, [1e-10, 2e-10]);
+    });
+
+    // ===== vector.distance tests =====
+
+    test('vector.distance of two empty vectors returns zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([]), vector.new([]))',
+      );
+      checkResult(runtime, 0.0);
+    });
+
+    test('vector.distance computes distance between 2D points', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([0, 0]), vector.new([3, 4]))',
+      );
+      checkResult(runtime, 5.0);
+    });
+
+    test('vector.distance computes distance between 3D points', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([1, 2, 3]), vector.new([4, 6, 3]))',
+      );
+      checkResult(runtime, 5.0);
+    });
+
+    test('vector.distance of same point returns zero', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([5, 10, 15]), vector.new([5, 10, 15]))',
+      );
+      checkResult(runtime, 0.0);
+    });
+
+    test('vector.distance of single-element vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([3]), vector.new([7]))',
+      );
+      checkResult(runtime, 4.0);
+    });
+
+    test('vector.distance throws for vectors with different lengths', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([1, 2]), vector.new([3, 4, 5]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
+
+    test('vector.distance throws when first argument is not a vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance([1, 2], vector.new([3, 4]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.distance throws when second argument is not a vector', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([1, 2]), [3, 4])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.distance throws when both arguments are not vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance([1, 2], [3, 4])',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.distance throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance("hello", "world")',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.distance throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(42, 43)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<InvalidArgumentTypesError>()),
+      );
+    });
+
+    test('vector.distance is symmetric', () {
+      final RuntimeFacade runtime1 = getRuntime(
+        'main() = vector.distance(vector.new([1, 2, 3]), vector.new([4, 5, 6]))',
+      );
+      final RuntimeFacade runtime2 = getRuntime(
+        'main() = vector.distance(vector.new([4, 5, 6]), vector.new([1, 2, 3]))',
+      );
+      expect(runtime1.executeMain(), equals(runtime2.executeMain()));
+    });
+
+    test('vector.distance handles negative components', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([-1, -2]), vector.new([2, 2]))',
+      );
+      checkResult(runtime, 5.0);
+    });
+
+    test('vector.distance handles floating point numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([0.0, 0.0]), vector.new([1.0, 1.0]))',
+      );
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(1.4142135623730951, 0.000001),
+      );
+    });
+
+    test('vector.distance handles high-dimensional vectors', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([0, 0, 0, 0]), vector.new([1, 1, 1, 1]))',
+      );
+      checkResult(runtime, 2.0);
+    });
+
+    test('vector.distance with first empty and second non-empty throws', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([]), vector.new([1, 2]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
+
+    test('vector.distance with first non-empty and second empty throws', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([1, 2]), vector.new([]))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(isA<IterablesWithDifferentLengthError>()),
+      );
+    });
+
+    test('vector.distance equals magnitude of difference', () {
+      final RuntimeFacade runtime1 = getRuntime(
+        'main() = vector.distance(vector.new([1, 2, 3]), vector.new([4, 6, 3]))',
+      );
+      final RuntimeFacade runtime2 = getRuntime(
+        'main() = vector.magnitude(vector.sub(vector.new([1, 2, 3]), vector.new([4, 6, 3])))',
+      );
+      expect(runtime1.executeMain(), equals(runtime2.executeMain()));
+    });
+
+    test('vector.distance with very large coordinates', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([0, 0]), vector.new([3e10, 4e10]))',
+      );
+      expect(
+        num.parse(runtime.executeMain()),
+        closeTo(5e10, 1e5),
+      );
+    });
+
+    test('vector.distance along a single axis', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = vector.distance(vector.new([0, 0, 0]), vector.new([0, 0, 10]))',
+      );
+      checkResult(runtime, 10.0);
+    });
   });
 }

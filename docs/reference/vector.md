@@ -1,6 +1,6 @@
 # Vector
 
-Numbre of functions: 6
+Number of functions: 9
 
 ## Creation
 
@@ -58,6 +58,18 @@ vector.sub(vector.new([5, 7]), vector.new([2, 3])) // returns <3, 4>
 vector.normalize(vector.new([3, 4])) // returns <0.6, 0.8>
 ```
 
+### Scale
+
+- **Signature:** `vector.scale(a: Vector, b: Number): Vector`
+- **Input:** One vector and one number (scalar)
+- **Output:** A new vector with each component multiplied by the scalar
+- **Purity:** Pure
+- **Example:**
+
+```
+vector.scale(vector.new([1, 2, 3]), 2) // returns <2, 4, 6>
+```
+
 ## Properties
 
 ### Magnitude
@@ -83,4 +95,30 @@ vector.magnitude(vector.new([3, 4])) // returns 5
 
 ```
 vector.angle(vector.new([1, 0]), vector.new([0, 1])) // returns 1.5708...
+```
+
+### Dot
+
+- **Signature:** `vector.dot(a: Vector, b: Vector): Number`
+- **Input:** Two vectors
+- **Output:** The dot product (scalar product) of the two vectors
+- **Constraints:** Throws an error if the vectors have different lengths
+- **Purity:** Pure
+- **Example:**
+
+```
+vector.dot(vector.new([1, 2, 3]), vector.new([4, 5, 6])) // returns 32
+```
+
+### Distance
+
+- **Signature:** `vector.distance(a: Vector, b: Vector): Number`
+- **Input:** Two vectors
+- **Output:** The Euclidean distance between the two vectors
+- **Constraints:** Throws an error if the vectors have different lengths
+- **Purity:** Pure
+- **Example:**
+
+```
+vector.distance(vector.new([0, 0]), vector.new([3, 4])) // returns 5
 ```
