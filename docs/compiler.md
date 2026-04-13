@@ -62,30 +62,34 @@ Type checking is **dynamic** - it happens at runtime when native functions valid
 
 **File**: `lib/compiler/library/standard_library.dart`
 
-The standard library provides 232 built-in functions, organized by namespace:
+The standard library provides 284 built-in functions, organized by namespace:
 
 | Namespace     | Count | Examples                                                 |
 | ------------- | ----- | -------------------------------------------------------- |
-| `num.*`       | 35    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`            |
-| `str.*`       | 28    | `str.length`, `str.split`, `str.replace`, `str.reverse`  |
-| `list.*`      | 31    | `list.map`, `list.filter`, `list.reduce`, `list.sort`    |
-| `bool.*`      | 4     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`            |
+| `num.*`       | 38    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`            |
+| `str.*`       | 44    | `str.length`, `str.split`, `str.replace`, `str.reverse`  |
+| `list.*`      | 37    | `list.map`, `list.filter`, `list.reduce`, `list.sort`    |
+| `bool.*`      | 6     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`            |
 | `comp.*`      | 6     | `comp.eq`, `comp.lt`, `comp.ge`                          |
-| `map.*`       | 9     | `map.at`, `map.set`, `map.keys`, `map.values`            |
-| `set.*`       | 10    | `set.add`, `set.union`, `set.intersection`               |
+| `map.*`       | 13    | `map.at`, `map.set`, `map.keys`, `map.values`            |
+| `set.*`       | 13    | `set.add`, `set.union`, `set.intersection`               |
 | `stack.*`     | 8     | `stack.push`, `stack.pop`, `stack.peek`                  |
 | `queue.*`     | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`           |
-| `vector.*`    | 6     | `vector.add`, `vector.magnitude`, `vector.normalize`     |
-| `time.*`      | 12    | `time.now`, `time.from.iso`, `time.year`                 |
-| `file.*`      | 14    | `file.read`, `file.write`, `file.exists`                 |
+| `vector.*`    | 9     | `vector.add`, `vector.magnitude`, `vector.normalize`     |
+| `time.*`      | 19    | `time.now`, `time.fromIso`, `time.year`                  |
+| `file.*`      | 16    | `file.read`, `file.write`, `file.exists`                 |
 | `directory.*` | 11    | `directory.create`, `directory.list`, `directory.exists` |
 | `hash.*`      | 4     | `hash.md5`, `hash.sha256`                                |
 | `json.*`      | 2     | `json.encode`, `json.decode`                             |
+| `base64.*`    | 2     | `base64.encode`, `base64.decode`                         |
 | `console.*`   | 3     | `console.write`, `console.read`                          |
+| `env.*`       | 2     | `env.get`, `env.has`                                     |
+| `uuid.*`      | 1     | `uuid.v4`                                                |
+| `error.*`     | 1     | `error.throw`                                            |
 | Casting       | 22    | `is.boolean`, `to.string`, `to.integer`                  |
-| Operators     | 14    | `operator.add`, `operator.eq`, `operator.not`            |
+| Operators     | 16    | `+`, `-`, `*`, `/`, `==`, `&&`                           |
 | Control flow  | 2     | `if`, `try`                                              |
-| Other         | 3     | `@`, `env.get`, `error.throw`                            |
+| Other         | 1     | `debug`                                                  |
 
 ---
 
@@ -99,27 +103,27 @@ All diagnostics extend `GenericError(errorType, message)`.
 
 Raised during compilation and abort the pipeline:
 
-| Stage     | Error                                | Cause                                   |
-| --------- | ------------------------------------ | --------------------------------------- |
-| Lexical   | `InvalidCharacterError`              | Unrecognized character                  |
-| Lexical   | `UnterminatedStringError`            | String literal missing closing quote    |
-| Lexical   | `UnterminatedCommentError`           | Multi-line comment missing closing `*/` |
-| Lexical   | `InvalidEscapeSequenceError`         | Unrecognized escape sequence            |
-| Lexical   | `InvalidHexEscapeError`              | Malformed hex escape sequence           |
-| Lexical   | `InvalidBracedEscapeError`           | Malformed braced Unicode escape         |
-| Lexical   | `InvalidCodePointError`              | Code point exceeds U+10FFFF             |
-| Syntactic | `InvalidTokenError`                  | Unexpected token in context             |
-| Syntactic | `ExpectedTokenError`                 | Missing required token                  |
-| Syntactic | `UnexpectedEndOfFileError`           | Premature end of input                  |
+| Stage     | Error                                | Cause                                     |
+| --------- | ------------------------------------ | ----------------------------------------- |
+| Lexical   | `InvalidCharacterError`              | Unrecognized character                    |
+| Lexical   | `UnterminatedStringError`            | String literal missing closing quote      |
+| Lexical   | `UnterminatedCommentError`           | Multi-line comment missing closing `*/`   |
+| Lexical   | `InvalidEscapeSequenceError`         | Unrecognized escape sequence              |
+| Lexical   | `InvalidHexEscapeError`              | Malformed hex escape sequence             |
+| Lexical   | `InvalidBracedEscapeError`           | Malformed braced Unicode escape           |
+| Lexical   | `InvalidCodePointError`              | Code point exceeds U+10FFFF               |
+| Syntactic | `InvalidTokenError`                  | Unexpected token in context               |
+| Syntactic | `ExpectedTokenError`                 | Missing required token                    |
+| Syntactic | `UnexpectedEndOfFileError`           | Premature end of input                    |
 | Syntactic | `UnexpectedTokenError`               | Trailing tokens after complete expression |
-| Semantic  | `DuplicatedFunctionError`            | Two functions with the same name        |
-| Semantic  | `DuplicatedParameterError`           | Repeated parameter in a function        |
-| Semantic  | `UndefinedIdentifierError`           | Reference to unknown variable/function  |
-| Semantic  | `UndefinedFunctionError`             | Call to unknown function                |
-| Semantic  | `InvalidNumberOfArgumentsError`      | Wrong argument count in a call          |
-| Semantic  | `NotCallableError`                   | Calling a non-callable literal          |
-| Semantic  | `NotIndexableError`                  | Indexing a non-indexable literal        |
-| Semantic  | `CannotRedefineStandardLibraryError` | Redefining a standard library function  |
+| Semantic  | `DuplicatedFunctionError`            | Two functions with the same name          |
+| Semantic  | `DuplicatedParameterError`           | Repeated parameter in a function          |
+| Semantic  | `UndefinedIdentifierError`           | Reference to unknown variable/function    |
+| Semantic  | `UndefinedFunctionError`             | Call to unknown function                  |
+| Semantic  | `InvalidNumberOfArgumentsError`      | Wrong argument count in a call            |
+| Semantic  | `NotCallableError`                   | Calling a non-callable literal            |
+| Semantic  | `NotIndexableError`                  | Indexing a non-indexable literal          |
+| Semantic  | `CannotRedefineStandardLibraryError` | Redefining a standard library function    |
 
 ### Runtime Errors
 
