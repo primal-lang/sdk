@@ -1,42 +1,21 @@
-Based on the extensive documentation provided, here is an analysis of the Primal programming language across your specified questions:
-
 ### 1. What are the goals of Primal?
 According to its documentation, Primal's primary goals are:
 *   **Education First:** It is explicitly designed for educational purposes to teach programming concepts without the complexity and boilerplate of more advanced languages.
 *   **Simplicity and Minimalism:** It aims for a highly readable, declarative, and minimalist syntax inspired by Lambda Calculus.
 *   **Functional Foundations:** It seeks to teach pure functional programming concepts. Everything is an expression, all values are immutable, and repetitive tasks are handled via recursion rather than loops.
 *   **Accessibility:** By providing an interactive REPL, dynamic typing, and immediate execution (without a separate build step), it aims to have a very fast, friction-free development and testing cycle.
-*   **Safety via Immutability:** By enforcing immutability out of the box, it aims to help developers avoid common bugs related to shared mutable state.
 
 ### 2. How does Primal differentiate from other functional programming languages?
-*   **Dynamic Typing + Pure Functional:** Most widely known pure functional languages (like Haskell or Elm) are strictly statically typed. Primal enforces pure functional semantics (immutability, expression orientation) but uses **dynamic runtime type checking**.
 *   **Extreme Syntactic Minimalism:** There are no complex keywords, type classes, monads, or macros out of the box. A function is simply `name(args) = expression`. Even control flow (`if`, operators) is desugared into standard function calls under the hood. 
-*   **No Loops at All:** While languages like Scala or F# offer functional paradigms but still include `for`/`while` loops for pragmatism, Primal completely omits them. You *must* use recursion or higher-order functions (`list.map`, `list.reduce`).
-*   **Built-in Platform Abstraction:** It is designed from the ground up to compile and run identically on both native CLI (with File/Directory/Env I/O) and the Web (safely disabling I/O).
 
 ### 3. What does Primal offer compared to other functional programming languages?
 *   **A Massive "Batteries Included" Standard Library:** Despite its minimalist syntax, Primal ships with over 200 built-in core functions right out of the box (e.g., `list.*`, `map.*`, `num.*`, `str.*`, `time.*`). You don't need to import external packages for basic math, string manipulation, or collection processing.
 *   **A Gentle Learning Curve:** You do not need to understand Category Theory, Monads, or complex type systems to write a Primal program. A beginner can write `square(n) = n * n` instantly.
-*   **Built-in Debugging:** The `debug(label, value)` function is a first-class citizen designed to deeply evaluate and trace functional chains without breaking the expression-oriented flow.
 *   **Readability Focus:** The language mandates explicit, unabbreviated identifiers (e.g., `function` instead of `fn`, `directory` instead of `dir`) making scripts highly readable.
 
 ### 4. What is (or could be) Primal's main audience?
 *   **Students and Beginners:** People taking their first steps into programming or transitioning from imperative languages to functional programming.
 *   **Educators:** Teachers who need a lightweight, noise-free language to demonstrate Lambda Calculus, recursion, higher-order functions, and closure semantics.
-*   **Scripters & Hobbyists:** Developers looking for a quick, safe, and immutable language to write small, side-effect-managed CLI scripts or data transformations.
-*   **Web Playground Users:** Because of its seamless Dart-to-JS web compilation, it is well-suited for interactive browser-based coding playgrounds.
-
-### 5. What are the advantages/disadvantages of Primal compared to other functional programming languages?
 
 #### **Advantages:**
 *   **Zero Boilerplate:** Programs can be as short as a single line. There is no need to define modules, classes, or `main` functions if you just want to evaluate a script.
-*   **No State-Based Bugs:** Total immutability prevents an entire class of concurrency and state-mutation bugs.
-*   **Easy to Parse and Tool:** The grammar is so simple that writing tooling, linters, or extensions for Primal is trivial compared to languages like Rust or Scala.
-*   **Desugared Consistency:** Because operators (`+`, `==`) and control flow (`if`) map directly to function calls (`+()`, `if()`), the language model is highly orthogonal and predictable.
-
-#### **Disadvantages:**
-*   **Not Production Ready:** The documentation explicitly states it is not intended for production environments. 
-*   **Lack of Compile-Time Safety:** Because it relies entirely on dynamic runtime type checking, type errors (e.g., passing a String to `num.add`) will only crash the program *at runtime*, unlike Haskell, Elm, or OCaml which catch these at compile time.
-*   **Severe Recursion Limits:** The documentation notes a hard-coded `maxRecursionDepth = 1000`. For a language that *forbids* loops and relies entirely on recursion, processing a list of 1,001 items using manual recursion will cause a fatal `RecursionLimitError`.
-*   **Missing Advanced FP Features (Currently):** While planned in the roadmap, Primal currently lacks standard functional features like Pattern Matching, Destructuring, Currying/Partial Application, Option/Result types (it uses `try/catch` and exceptions instead), and Algebraic Data Types (ADTs/Enums). 
-*   **Single-threaded and Interpreted:** It will not match the performance of compiled functional languages like Haskell or OCaml, nor the concurrent capabilities of Erlang/Elixir or Clojure.
