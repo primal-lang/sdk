@@ -36,6 +36,8 @@ import 'package:primal/compiler/library/arithmetic/num_sub.dart';
 import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/arithmetic/num_tan.dart';
 import 'package:primal/compiler/library/arithmetic/num_truncate.dart';
+import 'package:primal/compiler/library/base64/base64_decode.dart';
+import 'package:primal/compiler/library/base64/base64_encode.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
 import 'package:primal/compiler/library/casting/is_directory.dart';
@@ -404,6 +406,10 @@ class StandardLibrary {
     const FileRead(),
     const FileRename(),
     const FileWrite(),
+
+    // Base64
+    const Base64Decode(),
+    const Base64Encode(),
 
     // Hash
     const HashMd5(),

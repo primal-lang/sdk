@@ -1,21 +1,3 @@
-9. Environment
-
-Function: env.has [DONE]
-Signature: (a: String): Boolean
-Description: Check if environment variable exists
-────────────────────────────────────────
-
-10. Base64 Module (base64.) [NEW]
-
-Function: base64.encode
-Signature: (a: String): String
-Description: Encode to base64
-────────────────────────────────────────
-Function: base64.decode
-Signature: (a: String): String
-Description: Decode from base64
-────────────────────────────────────────
-
 11. Path Module (path.) [NEW]
 
 Function: path.join
