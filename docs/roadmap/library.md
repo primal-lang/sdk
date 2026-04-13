@@ -1,26 +1,3 @@
-2. Number Module
-
-
-
-3. List Module
-
-Function: list.flatten
-Signature: (a: List): List
-Description: Flatten nested lists one level
-────────────────────────────────────────
-Function: list.distinct
-Signature: (a: List): List
-Description: Remove duplicates
-────────────────────────────────────────
-Function: list.count
-Signature: (a: List, b: Function): Number
-Description: Count elements matching predicate
-────────────────────────────────────────
-Function: list.chunk
-Signature: (a: List, b: Number): List
-Description: Split into chunks of size n
-────────────────────────────────────────
-
 4. Map Module
 
 Function: map.merge

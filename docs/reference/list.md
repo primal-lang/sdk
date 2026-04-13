@@ -1,6 +1,6 @@
 # List
 
-Number of functions: 33
+Number of functions: 37
 
 ## Construction
 
@@ -233,6 +233,43 @@ list.removeAt([1, 2, 3], 1) // returns [1, 3]
 list.reverse([1, 2, 3]) // returns [3, 2, 1]
 ```
 
+### Flatten
+
+- **Signature:** `list.flatten(a: List): List`
+- **Input:** One list
+- **Output:** A new list with nested lists flattened one level
+- **Purity:** Pure
+- **Example:**
+
+```
+list.flatten([[1, 2], [3, 4]]) // returns [1, 2, 3, 4]
+```
+
+### Distinct
+
+- **Signature:** `list.distinct(a: List): List`
+- **Input:** One list
+- **Output:** A new list with duplicate elements removed, preserving first occurrences
+- **Purity:** Pure
+- **Example:**
+
+```
+list.distinct([1, 2, 2, 3, 1]) // returns [1, 2, 3]
+```
+
+### Chunk
+
+- **Signature:** `list.chunk(a: List, b: Number): List`
+- **Input:** A list and a chunk size
+- **Output:** A list of lists, each containing at most n elements
+- **Constraints:** Throws an error if the chunk size is zero or negative
+- **Purity:** Pure
+- **Example:**
+
+```
+list.chunk([1, 2, 3, 4, 5], 2) // returns [[1, 2], [3, 4], [5]]
+```
+
 ### Swap
 
 - **Signature:** `list.swap(a: List, b: Number, c: Number): List`
@@ -344,6 +381,18 @@ list.map([1, 2, 3], double) // returns [2, 4, 6]
 
 ```
 list.filter([1, 2, 3, 4], isEven) // returns [2, 4]
+```
+
+### Count
+
+- **Signature:** `list.count(a: List, b: Function): Number`
+- **Input:** A list and a predicate function
+- **Output:** The count of elements satisfying the condition
+- **Purity:** Pure
+- **Example:**
+
+```
+list.count([1, 2, 3, 4], num.isEven) // returns 2
 ```
 
 ### Reduce

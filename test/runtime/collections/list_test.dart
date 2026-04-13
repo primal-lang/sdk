@@ -3201,5 +3201,263 @@ main() = list.sort([3, 1, 2], badCompare)
         );
       },
     );
+
+    // list.flatten tests
+    test('list.flatten returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list.flatten([])');
+      checkResult(runtime, []);
+    });
+
+    test('list.flatten returns same list when no nested lists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.flatten([1, 2, 3])',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.flatten flattens nested lists one level', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.flatten([[1, 2], [3, 4]])',
+      );
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.flatten handles mixed nested and flat elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.flatten([1, [2, 3], 4])',
+      );
+      checkResult(runtime, [1, 2, 3, 4]);
+    });
+
+    test('list.flatten only flattens one level', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.flatten([[[1, 2]], [[3, 4]]])',
+      );
+      checkResult(runtime, [
+        [1, 2],
+        [3, 4],
+      ]);
+    });
+
+    test('list.flatten handles empty nested lists', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.flatten([[], [1], []])',
+      );
+      checkResult(runtime, [1]);
+    });
+
+    test('list.flatten with single nested list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.flatten([[1, 2, 3]])',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    // list.distinct tests
+    test('list.distinct returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list.distinct([])');
+      checkResult(runtime, []);
+    });
+
+    test('list.distinct returns same list when no duplicates', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.distinct([1, 2, 3])',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.distinct removes duplicate numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.distinct([1, 2, 2, 3, 1])',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('list.distinct preserves first occurrence order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.distinct([3, 1, 2, 1, 3])',
+      );
+      checkResult(runtime, [3, 1, 2]);
+    });
+
+    test('list.distinct removes duplicate strings', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.distinct(["a", "b", "a", "c"])',
+      );
+      checkResult(runtime, ['"a"', '"b"', '"c"']);
+    });
+
+    test('list.distinct removes duplicate booleans', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.distinct([true, false, true, false])',
+      );
+      checkResult(runtime, [true, false]);
+    });
+
+    test('list.distinct with single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list.distinct([42])');
+      checkResult(runtime, [42]);
+    });
+
+    test('list.distinct with all duplicates', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.distinct([1, 1, 1, 1])',
+      );
+      checkResult(runtime, [1]);
+    });
+
+    // list.count tests
+    test('list.count returns zero for empty list', () {
+      final RuntimeFacade runtime = getRuntime('''
+isEven(x) = x % 2 == 0
+main() = list.count([], isEven)
+''');
+      checkResult(runtime, 0);
+    });
+
+    test('list.count counts matching elements', () {
+      final RuntimeFacade runtime = getRuntime('''
+isEven(x) = x % 2 == 0
+main() = list.count([1, 2, 3, 4, 5, 6], isEven)
+''');
+      checkResult(runtime, 3);
+    });
+
+    test('list.count returns zero when none match', () {
+      final RuntimeFacade runtime = getRuntime('''
+isNegative(x) = x < 0
+main() = list.count([1, 2, 3], isNegative)
+''');
+      checkResult(runtime, 0);
+    });
+
+    test('list.count returns length when all match', () {
+      final RuntimeFacade runtime = getRuntime('''
+isPositive(x) = x > 0
+main() = list.count([1, 2, 3], isPositive)
+''');
+      checkResult(runtime, 3);
+    });
+
+    test('list.count with lambda predicate', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.count([1, 2, 3, 4], (x) -> x > 2)',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('list.count throws error when predicate does not return boolean', () {
+      final RuntimeFacade runtime = getRuntime('''
+double(x) = x * 2
+main() = list.count([1, 2, 3], double)
+''');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidArgumentTypesError>().having(
+            (InvalidArgumentTypesError e) => e.toString(),
+            'message',
+            allOf(contains('Boolean'), contains('Number')),
+          ),
+        ),
+      );
+    });
+
+    // list.chunk tests
+    test('list.chunk returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list.chunk([], 2)');
+      checkResult(runtime, []);
+    });
+
+    test('list.chunk splits list into equal chunks', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.chunk([1, 2, 3, 4], 2)',
+      );
+      checkResult(runtime, [
+        [1, 2],
+        [3, 4],
+      ]);
+    });
+
+    test('list.chunk handles last chunk smaller than size', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.chunk([1, 2, 3, 4, 5], 2)',
+      );
+      checkResult(runtime, [
+        [1, 2],
+        [3, 4],
+        [5],
+      ]);
+    });
+
+    test('list.chunk with chunk size larger than list', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.chunk([1, 2, 3], 10)',
+      );
+      checkResult(runtime, [
+        [1, 2, 3],
+      ]);
+    });
+
+    test('list.chunk with chunk size of 1', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.chunk([1, 2, 3], 1)',
+      );
+      checkResult(runtime, [
+        [1],
+        [2],
+        [3],
+      ]);
+    });
+
+    test('list.chunk with chunk size equal to list length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.chunk([1, 2, 3], 3)',
+      );
+      checkResult(runtime, [
+        [1, 2, 3],
+      ]);
+    });
+
+    test('list.chunk throws NegativeIndexError on negative chunk size', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.chunk([1, 2, 3], -1)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<NegativeIndexError>().having(
+            (NegativeIndexError e) => e.toString(),
+            'message',
+            allOf(contains('-1'), contains('list.chunk')),
+          ),
+        ),
+      );
+    });
+
+    test('list.chunk throws error on zero chunk size', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.chunk([1, 2, 3], 0)',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidValueError>().having(
+            (InvalidValueError e) => e.toString(),
+            'message',
+            contains('Chunk size must be positive'),
+          ),
+        ),
+      );
+    });
+
+    test('list.chunk with single element', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.chunk([42], 5)',
+      );
+      checkResult(runtime, [
+        [42],
+      ]);
+    });
   });
 }

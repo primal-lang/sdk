@@ -107,12 +107,16 @@ import 'package:primal/compiler/library/json/json_encode.dart';
 import 'package:primal/compiler/library/list/list_all.dart';
 import 'package:primal/compiler/library/list/list_any.dart';
 import 'package:primal/compiler/library/list/list_at.dart';
+import 'package:primal/compiler/library/list/list_chunk.dart';
 import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_contains.dart';
+import 'package:primal/compiler/library/list/list_count.dart';
+import 'package:primal/compiler/library/list/list_distinct.dart';
 import 'package:primal/compiler/library/list/list_drop.dart';
 import 'package:primal/compiler/library/list/list_filled.dart';
 import 'package:primal/compiler/library/list/list_filter.dart';
 import 'package:primal/compiler/library/list/list_first.dart';
+import 'package:primal/compiler/library/list/list_flatten.dart';
 import 'package:primal/compiler/library/list/list_index_of.dart';
 import 'package:primal/compiler/library/list/list_init.dart';
 import 'package:primal/compiler/library/list/list_insert_end.dart';
@@ -425,6 +429,10 @@ class StandardLibrary {
     const ListSwap(),
     const ListTake(),
     const ListZip(),
+    const ListFlatten(),
+    const ListDistinct(),
+    const ListCount(),
+    const ListChunk(),
 
     // Logic
     const BoolAnd(),
