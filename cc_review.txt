@@ -29,9 +29,6 @@ Advantages
 Advantage: Minimal cognitive load
 Explanation: One concept (functions) explains everything
 ────────────────────────────────────────
-Advantage: No syntax surprises
-Explanation: a + b is literally +(a, b), no operator precedence confusion
-────────────────────────────────────────
 Advantage: Immediate feedback
 Explanation: REPL + interpreted = fast iteration
 ────────────────────────────────────────
@@ -41,72 +38,16 @@ Explanation: CLI + Web from single codebase
 Advantage: Self-contained
 Explanation: Single binary, no package manager, no dependencies
 ────────────────────────────────────────
-Advantage: Safe by default
-Explanation: Immutable values, no null, no uninitialized variables
-────────────────────────────────────────
 Advantage: Rich stdlib
 Explanation: 232 functions covering strings, collections, files, time,
-hashing,
-    JSON
+hashing, JSON
 ────────────────────────────────────────
-Advantage: Gradual complexity
-Explanation: Start with f(x) = x + 1, grow to lambdas, let bindings,
-higher-order functions
-────────────────────────────────────────
-Advantage: Lambda expressions
-Explanation: (x) -> x + 1 for inline functions
-────────────────────────────────────────
-Advantage: Let bindings
-Explanation: let x = 1, y = 2 in x + y for local scope
-Disadvantages
-Disadvantage: No static types
-Explanation: Errors caught at runtime, not compile time
-────────────────────────────────────────
-Disadvantage: No pattern matching
-Explanation: Can't dispatch on structure (roadmap feature)
-────────────────────────────────────────
-Disadvantage: No modules
-Explanation: Single-file programs only (roadmap feature)
-────────────────────────────────────────
-Disadvantage: No async/concurrency
-Explanation: Single-threaded, blocking I/O
-────────────────────────────────────────
-Disadvantage: Recursion-only iteration
-Explanation: Stack limits (1000 depth), no tail-call optimization mentioned
-────────────────────────────────────────
-Disadvantage: Limited error handling
-Explanation: Only try(expr, fallback), no typed errors or recovery
-────────────────────────────────────────
-Disadvantage: No IDE support
-Explanation: No LSP, no syntax highlighting (beyond basic)
-────────────────────────────────────────
-Disadvantage: Small ecosystem
-Explanation: No package manager, no community libraries
-────────────────────────────────────────
-Disadvantage: Not production-ready
-Explanation: Explicitly stated as not for production
-────────────────────────────────────────
-Disadvantage: Dynamic performance
-Explanation: Interpreted with substitution model, not compiled
-────────────────────────────────────────
-Disadvantage: No lazy evaluation
-Explanation: Eager except for if/&&/`
-────────────────────────────────────────
-Disadvantage: No currying
-Explanation: Must pass all arguments (roadmap feature)
----
+
 Summary
 
-Primal occupies a unique niche: a functional language designed for learning, 
-not production. It trades away advanced features (static types, pattern
-matching, modules) in favor of approachability. The closest comparisons might
-be:
-
-- Racket's student languages - Restricted dialects for teaching
-- Elm without types - Pure, simple, web-friendly
-- A "functional BASIC" - Minimal syntax, immediate results
+Primal occupies a unique niche: a functional language designed for learning.
+It trades away advanced features (static types, pattern
+matching, modules) in favor of approachability.
 
 Its value proposition is clear: understand functional programming concepts 
-without fighting tooling, syntax, or type systems. The comprehensive stdlib
-and planned features (testing, modules, types) suggest ambition beyond pure
-education toward practical utility scripting.
+without fighting tooling, syntax, or type systems.
