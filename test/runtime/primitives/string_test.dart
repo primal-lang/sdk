@@ -2023,6 +2023,614 @@ void main() {
     });
   });
 
+  group('str.repeat', () {
+    test('str.repeat repeats string n times', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.repeat("ab", 3)');
+      checkResult(runtime, '"ababab"');
+    });
+
+    test('str.repeat with zero returns empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.repeat("ab", 0)');
+      checkResult(runtime, '""');
+    });
+
+    test('str.repeat with one returns original string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.repeat("ab", 1)');
+      checkResult(runtime, '"ab"');
+    });
+
+    test('str.repeat with empty string returns empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.repeat("", 5)');
+      checkResult(runtime, '""');
+    });
+
+    test('str.repeat throws NegativeIndexError for negative count', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.repeat("ab", -1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
+    });
+
+    test('str.repeat throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.repeat(42, 3)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test(
+      'str.repeat throws InvalidArgumentTypesError for wrong second argument',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = str.repeat("ab", "x")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+  });
+
+  group('str.trimLeft', () {
+    test('str.trimLeft removes leading whitespace', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.trimLeft("  hello  ")',
+      );
+      checkResult(runtime, '"hello  "');
+    });
+
+    test('str.trimLeft returns same string when no leading whitespace', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.trimLeft("hello  ")',
+      );
+      checkResult(runtime, '"hello  "');
+    });
+
+    test('str.trimLeft returns empty string for whitespace only', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.trimLeft("   ")',
+      );
+      checkResult(runtime, '""');
+    });
+
+    test('str.trimLeft throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.trimLeft(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('str.trimRight', () {
+    test('str.trimRight removes trailing whitespace', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.trimRight("  hello  ")',
+      );
+      checkResult(runtime, '"  hello"');
+    });
+
+    test('str.trimRight returns same string when no trailing whitespace', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.trimRight("  hello")',
+      );
+      checkResult(runtime, '"  hello"');
+    });
+
+    test('str.trimRight returns empty string for whitespace only', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.trimRight("   ")',
+      );
+      checkResult(runtime, '""');
+    });
+
+    test('str.trimRight throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.trimRight(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('str.capitalize', () {
+    test('str.capitalize capitalizes first character', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.capitalize("hello")',
+      );
+      checkResult(runtime, '"Hello"');
+    });
+
+    test('str.capitalize returns empty string for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.capitalize("")');
+      checkResult(runtime, '""');
+    });
+
+    test('str.capitalize preserves rest of string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.capitalize("hELLO")',
+      );
+      checkResult(runtime, '"HELLO"');
+    });
+
+    test('str.capitalize with single character', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.capitalize("a")');
+      checkResult(runtime, '"A"');
+    });
+
+    test('str.capitalize with already capitalized string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.capitalize("Hello")',
+      );
+      checkResult(runtime, '"Hello"');
+    });
+
+    test('str.capitalize throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.capitalize(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('str.lastIndexOf', () {
+    test('str.lastIndexOf returns last occurrence index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lastIndexOf("hello", "l")',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('str.lastIndexOf returns negative one when not found', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lastIndexOf("hello", "x")',
+      );
+      checkResult(runtime, -1);
+    });
+
+    test('str.lastIndexOf returns index for single occurrence', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lastIndexOf("hello", "h")',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('str.lastIndexOf with empty pattern returns last index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lastIndexOf("hello", "")',
+      );
+      checkResult(runtime, 5);
+    });
+
+    test('str.lastIndexOf with grapheme', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lastIndexOf("a👨‍👩‍👧b👨‍👩‍👧c", "👨‍👩‍👧")',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test(
+      'str.lastIndexOf throws InvalidArgumentTypesError for wrong type',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = str.lastIndexOf(42, "x")',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+
+    test(
+      'str.lastIndexOf throws InvalidArgumentTypesError for wrong second argument',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = str.lastIndexOf("hello", 42)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+  });
+
+  group('str.count', () {
+    test('str.count counts occurrences', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.count("banana", "a")',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('str.count returns zero when not found', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.count("hello", "x")',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('str.count with overlapping pattern counts non-overlapping', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.count("aaa", "aa")',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('str.count with empty string and pattern', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.count("", "a")');
+      checkResult(runtime, 0);
+    });
+
+    test('str.count with empty pattern counts positions', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.count("abc", "")',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('str.count throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.count(42, "x")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test(
+      'str.count throws InvalidArgumentTypesError for wrong second argument',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = str.count("hello", 42)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+  });
+
+  group('str.isUppercase', () {
+    test('str.isUppercase returns true for uppercase string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isUppercase("HELLO")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isUppercase returns false for mixed case', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isUppercase("Hello")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isUppercase returns false for lowercase', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isUppercase("hello")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isUppercase returns true for uppercase with numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isUppercase("HELLO123")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isUppercase returns false for numbers only', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isUppercase("123")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isUppercase returns false for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isUppercase("")');
+      checkResult(runtime, false);
+    });
+
+    test(
+      'str.isUppercase throws InvalidArgumentTypesError for wrong type',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = str.isUppercase(42)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+  });
+
+  group('str.isLowercase', () {
+    test('str.isLowercase returns true for lowercase string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isLowercase("hello")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isLowercase returns false for mixed case', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isLowercase("Hello")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isLowercase returns false for uppercase', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isLowercase("HELLO")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isLowercase returns true for lowercase with numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isLowercase("hello123")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isLowercase returns false for numbers only', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isLowercase("123")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isLowercase returns false for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isLowercase("")');
+      checkResult(runtime, false);
+    });
+
+    test(
+      'str.isLowercase throws InvalidArgumentTypesError for wrong type',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = str.isLowercase(42)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+  });
+
+  group('str.isAlpha', () {
+    test('str.isAlpha returns true for letters only', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isAlpha("hello")');
+      checkResult(runtime, true);
+    });
+
+    test('str.isAlpha returns true for mixed case letters', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isAlpha("HeLLo")');
+      checkResult(runtime, true);
+    });
+
+    test('str.isAlpha returns false for alphanumeric', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isAlpha("hello123")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isAlpha returns false for numbers only', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isAlpha("123")');
+      checkResult(runtime, false);
+    });
+
+    test('str.isAlpha returns false for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isAlpha("")');
+      checkResult(runtime, false);
+    });
+
+    test('str.isAlpha returns false for string with spaces', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isAlpha("hello world")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isAlpha throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isAlpha(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('str.isNumeric', () {
+    test('str.isNumeric returns true for digits only', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isNumeric("12345")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isNumeric returns false for decimal numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isNumeric("123.45")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isNumeric returns false for negative numbers', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isNumeric("-123")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isNumeric returns false for letters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isNumeric("hello")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isNumeric returns false for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isNumeric("")');
+      checkResult(runtime, false);
+    });
+
+    test('str.isNumeric throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isNumeric(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('str.isAlphaNumeric', () {
+    test('str.isAlphaNumeric returns true for letters and digits', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isAlphaNumeric("hello123")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isAlphaNumeric returns true for letters only', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isAlphaNumeric("hello")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isAlphaNumeric returns true for digits only', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isAlphaNumeric("123")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isAlphaNumeric returns false for special characters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isAlphaNumeric("hello-123")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isAlphaNumeric returns false for spaces', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isAlphaNumeric("hello 123")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isAlphaNumeric returns false for empty string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isAlphaNumeric("")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test(
+      'str.isAlphaNumeric throws InvalidArgumentTypesError for wrong type',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = str.isAlphaNumeric(42)',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+  });
+
+  group('str.fromBytes', () {
+    test('str.fromBytes converts bytes to string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.fromBytes([72, 101, 108, 108, 111])',
+      );
+      checkResult(runtime, '"Hello"');
+    });
+
+    test('str.fromBytes returns empty string for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.fromBytes([])');
+      checkResult(runtime, '""');
+    });
+
+    test('str.fromBytes handles multi-byte characters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.fromBytes([226, 130, 172])',
+      );
+      checkResult(runtime, '"€"');
+    });
+
+    test('str.fromBytes roundtrips with str.bytes', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.fromBytes(str.bytes("Hello"))',
+      );
+      checkResult(runtime, '"Hello"');
+    });
+
+    test('str.fromBytes throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.fromBytes(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test(
+      'str.fromBytes throws InvalidArgumentTypesError for non-number list',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = str.fromBytes(["a", "b"])',
+        );
+        expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+      },
+    );
+  });
+
+  group('str.isBlank', () {
+    test('str.isBlank returns true for empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isBlank("")');
+      checkResult(runtime, true);
+    });
+
+    test('str.isBlank returns true for whitespace only', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isBlank("   ")');
+      checkResult(runtime, true);
+    });
+
+    test('str.isBlank returns true for tabs and newlines', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isBlank("\\t\\n\\r")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str.isBlank returns false for non-whitespace content', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.isBlank("  hello  ")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str.isBlank returns false for non-empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isBlank("hello")');
+      checkResult(runtime, false);
+    });
+
+    test('str.isBlank throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.isBlank(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('str.lines', () {
+    test('str.lines splits by newline', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lines("a\\nb\\nc")',
+      );
+      checkResult(runtime, ['"a"', '"b"', '"c"']);
+    });
+
+    test('str.lines splits by carriage return', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lines("a\\rb\\rc")',
+      );
+      checkResult(runtime, ['"a"', '"b"', '"c"']);
+    });
+
+    test('str.lines splits by carriage return newline', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lines("a\\r\\nb\\r\\nc")',
+      );
+      checkResult(runtime, ['"a"', '"b"', '"c"']);
+    });
+
+    test('str.lines returns single element for no line breaks', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.lines("hello")');
+      checkResult(runtime, ['"hello"']);
+    });
+
+    test('str.lines returns empty strings for consecutive breaks', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str.lines("a\\n\\nb")',
+      );
+      checkResult(runtime, ['"a"', '""', '"b"']);
+    });
+
+    test('str.lines returns single empty string for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.lines("")');
+      checkResult(runtime, ['""']);
+    });
+
+    test('str.lines throws InvalidArgumentTypesError for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = str.lines(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
   group('String Whitespace Edge Cases', () {
     test('str.trim with only newlines', () {
       final RuntimeFacade runtime = getRuntime(

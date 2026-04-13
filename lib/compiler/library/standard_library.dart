@@ -191,23 +191,35 @@ import 'package:primal/compiler/library/stack/stack_push.dart';
 import 'package:primal/compiler/library/stack/stack_reverse.dart';
 import 'package:primal/compiler/library/string/str_at.dart';
 import 'package:primal/compiler/library/string/str_bytes.dart';
+import 'package:primal/compiler/library/string/str_capitalize.dart';
 import 'package:primal/compiler/library/string/str_compare.dart';
 import 'package:primal/compiler/library/string/str_concat.dart';
 import 'package:primal/compiler/library/string/str_contains.dart';
+import 'package:primal/compiler/library/string/str_count.dart';
 import 'package:primal/compiler/library/string/str_drop.dart';
 import 'package:primal/compiler/library/string/str_ends_with.dart';
 import 'package:primal/compiler/library/string/str_first.dart';
+import 'package:primal/compiler/library/string/str_from_bytes.dart';
 import 'package:primal/compiler/library/string/str_index_of.dart';
 import 'package:primal/compiler/library/string/str_init.dart';
+import 'package:primal/compiler/library/string/str_is_alpha.dart';
+import 'package:primal/compiler/library/string/str_is_alpha_numeric.dart';
+import 'package:primal/compiler/library/string/str_is_blank.dart';
 import 'package:primal/compiler/library/string/str_is_empty.dart';
+import 'package:primal/compiler/library/string/str_is_lowercase.dart';
 import 'package:primal/compiler/library/string/str_is_not_empty.dart';
+import 'package:primal/compiler/library/string/str_is_numeric.dart';
+import 'package:primal/compiler/library/string/str_is_uppercase.dart';
 import 'package:primal/compiler/library/string/str_last.dart';
+import 'package:primal/compiler/library/string/str_last_index_of.dart';
 import 'package:primal/compiler/library/string/str_length.dart';
+import 'package:primal/compiler/library/string/str_lines.dart';
 import 'package:primal/compiler/library/string/str_lowercase.dart';
 import 'package:primal/compiler/library/string/str_match.dart';
 import 'package:primal/compiler/library/string/str_pad_left.dart';
 import 'package:primal/compiler/library/string/str_pad_right.dart';
 import 'package:primal/compiler/library/string/str_remove_at.dart';
+import 'package:primal/compiler/library/string/str_repeat.dart';
 import 'package:primal/compiler/library/string/str_replace.dart';
 import 'package:primal/compiler/library/string/str_rest.dart';
 import 'package:primal/compiler/library/string/str_reverse.dart';
@@ -216,6 +228,8 @@ import 'package:primal/compiler/library/string/str_starts_with.dart';
 import 'package:primal/compiler/library/string/str_substring.dart';
 import 'package:primal/compiler/library/string/str_take.dart';
 import 'package:primal/compiler/library/string/str_trim.dart';
+import 'package:primal/compiler/library/string/str_trim_left.dart';
+import 'package:primal/compiler/library/string/str_trim_right.dart';
 import 'package:primal/compiler/library/string/str_uppercase.dart';
 import 'package:primal/compiler/library/timestamp/time_compare.dart';
 import 'package:primal/compiler/library/timestamp/time_day.dart';
@@ -478,23 +492,35 @@ class StandardLibrary {
     // String
     const StrAt(),
     const StrBytes(),
+    const StrCapitalize(),
     const StrCompare(),
     const StrConcat(),
     const StrContains(),
+    const StrCount(),
     const StrDrop(),
     const StrEndsWith(),
     const StrFirst(),
+    const StrFromBytes(),
     const StrIndexOf(),
     const StrInit(),
+    const StrIsAlpha(),
+    const StrIsAlphaNumeric(),
+    const StrIsBlank(),
     const StrIsEmpty(),
+    const StrIsLowercase(),
     const StrIsNotEmpty(),
+    const StrIsNumeric(),
+    const StrIsUppercase(),
     const StrLast(),
+    const StrLastIndexOf(),
     const StrLength(),
+    const StrLines(),
     const StrLowercase(),
     const StrMatch(),
     const StrPadLeft(),
     const StrPadRight(),
     const StrRemoveAt(),
+    const StrRepeat(),
     const StrReplace(),
     const StrRest(),
     const StrReverse(),
@@ -503,6 +529,8 @@ class StandardLibrary {
     const StrSubstring(),
     const StrTake(),
     const StrTrim(),
+    const StrTrimLeft(),
+    const StrTrimRight(),
     const StrUppercase(),
 
     // Timestamp
