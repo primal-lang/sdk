@@ -20,6 +20,7 @@ import 'package:primal/compiler/library/arithmetic/num_is_odd.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_positive.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_zero.dart';
 import 'package:primal/compiler/library/arithmetic/num_log.dart';
+import 'package:primal/compiler/library/arithmetic/num_log_base.dart';
 import 'package:primal/compiler/library/arithmetic/num_max.dart';
 import 'package:primal/compiler/library/arithmetic/num_min.dart';
 import 'package:primal/compiler/library/arithmetic/num_mod.dart';
@@ -27,12 +28,14 @@ import 'package:primal/compiler/library/arithmetic/num_mul.dart';
 import 'package:primal/compiler/library/arithmetic/num_negative.dart';
 import 'package:primal/compiler/library/arithmetic/num_pow.dart';
 import 'package:primal/compiler/library/arithmetic/num_round.dart';
+import 'package:primal/compiler/library/arithmetic/num_round_to.dart';
 import 'package:primal/compiler/library/arithmetic/num_sign.dart';
 import 'package:primal/compiler/library/arithmetic/num_sin.dart';
 import 'package:primal/compiler/library/arithmetic/num_sqrt.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
 import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/arithmetic/num_tan.dart';
+import 'package:primal/compiler/library/arithmetic/num_truncate.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
 import 'package:primal/compiler/library/casting/is_directory.dart';
@@ -281,6 +284,7 @@ class StandardLibrary {
     const NumIsPositive(),
     const NumIsZero(),
     const NumLog(),
+    const NumLogBase(),
     const NumMax(),
     const NumMin(),
     const NumMod(),
@@ -288,12 +292,14 @@ class StandardLibrary {
     const NumNegative(),
     const NumPow(),
     const NumRound(),
+    const NumRoundTo(),
     const NumSign(),
     const NumSin(),
     const NumSqrt(),
     const NumSub(),
     const NumSum(),
     const NumTan(),
+    const NumTruncate(),
 
     // Casting
     const IsBoolean(),

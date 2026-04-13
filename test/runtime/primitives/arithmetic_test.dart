@@ -2643,4 +2643,354 @@ void main() {
       },
     );
   });
+
+  group('num.logBase', () {
+    test('num.logBase returns correct result for base 2', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.logBase(8, 2)');
+      checkResult(runtime, 3.0);
+    });
+
+    test('num.logBase returns correct result for base 10', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.logBase(1000, 10)',
+      );
+      expect(num.parse(runtime.executeMain()), closeTo(3.0, 0.0001));
+    });
+
+    test('num.logBase returns 1 when value equals base', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.logBase(5, 5)');
+      checkResult(runtime, 1.0);
+    });
+
+    test('num.logBase returns 0 when value is 1', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.logBase(1, 10)');
+      checkResult(runtime, 0.0);
+    });
+
+    test('num.logBase with fractional result', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.logBase(2, 4)');
+      expect(num.parse(runtime.executeMain()), closeTo(0.5, 0.0001));
+    });
+
+    test('num.logBase with decimal base', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.logBase(4, 0.5)');
+      expect(num.parse(runtime.executeMain()), closeTo(-2.0, 0.0001));
+    });
+
+    test(
+      'num.logBase throws InvalidNumericOperationError for non-positive value',
+      () {
+        final RuntimeFacade runtime = getRuntime('main() = num.logBase(0, 2)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception exception) => exception.toString(),
+              'message',
+              allOf(
+                contains('num.logBase'),
+                contains('non-positive'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'num.logBase throws InvalidNumericOperationError for negative value',
+      () {
+        final RuntimeFacade runtime = getRuntime('main() = num.logBase(-5, 2)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception exception) => exception.toString(),
+              'message',
+              allOf(
+                contains('num.logBase'),
+                contains('non-positive'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'num.logBase throws InvalidNumericOperationError for non-positive base',
+      () {
+        final RuntimeFacade runtime = getRuntime('main() = num.logBase(8, 0)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception exception) => exception.toString(),
+              'message',
+              allOf(
+                contains('num.logBase'),
+                contains('base'),
+                contains('positive'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'num.logBase throws InvalidNumericOperationError for negative base',
+      () {
+        final RuntimeFacade runtime = getRuntime('main() = num.logBase(8, -2)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception exception) => exception.toString(),
+              'message',
+              allOf(
+                contains('num.logBase'),
+                contains('base'),
+                contains('positive'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('num.logBase throws InvalidNumericOperationError for base 1', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.logBase(8, 1)');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidNumericOperationError>().having(
+            (Exception exception) => exception.toString(),
+            'message',
+            allOf(
+              contains('num.logBase'),
+              contains('base'),
+              contains('1'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('num.logBase throws for wrong type on first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.logBase("hello", 2)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.logBase throws for wrong type on second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.logBase(8, "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+  });
+
+  group('num.truncate', () {
+    test('num.truncate returns same value for positive integer', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(5)');
+      checkResult(runtime, 5);
+    });
+
+    test('num.truncate returns same value for negative integer', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(-5)');
+      checkResult(runtime, -5);
+    });
+
+    test('num.truncate truncates positive decimal toward zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(3.7)');
+      checkResult(runtime, 3);
+    });
+
+    test('num.truncate truncates negative decimal toward zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(-3.7)');
+      checkResult(runtime, -3);
+    });
+
+    test('num.truncate with positive decimal below half', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(3.2)');
+      checkResult(runtime, 3);
+    });
+
+    test('num.truncate with negative decimal below half', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(-3.2)');
+      checkResult(runtime, -3);
+    });
+
+    test('num.truncate with zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(0)');
+      checkResult(runtime, 0);
+    });
+
+    test('num.truncate with zero decimal', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(0.0)');
+      checkResult(runtime, 0);
+    });
+
+    test('num.truncate with positive infinity returns infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.truncate(num.infinity())',
+      );
+      checkResult(runtime, double.infinity);
+    });
+
+    test('num.truncate with negative infinity returns negative infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.truncate(num.negative(num.infinity()))',
+      );
+      checkResult(runtime, double.negativeInfinity);
+    });
+
+    test('num.truncate with very small positive decimal', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.truncate(0.9999)');
+      checkResult(runtime, 0);
+    });
+
+    test('num.truncate with very small negative decimal', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.truncate(-0.9999)',
+      );
+      checkResult(runtime, 0);
+    });
+
+    test('num.truncate throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.truncate("hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+  });
+
+  group('num.roundTo', () {
+    test('num.roundTo with 0 decimal places', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.roundTo(3.7, 0)');
+      checkResult(runtime, 4.0);
+    });
+
+    test('num.roundTo with 1 decimal place', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(3.14159, 1)',
+      );
+      checkResult(runtime, 3.1);
+    });
+
+    test('num.roundTo with 2 decimal places', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(3.14159, 2)',
+      );
+      checkResult(runtime, 3.14);
+    });
+
+    test('num.roundTo with 3 decimal places', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(3.14159, 3)',
+      );
+      checkResult(runtime, 3.142);
+    });
+
+    test('num.roundTo rounds up at half', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(3.145, 2)',
+      );
+      checkResult(runtime, 3.15);
+    });
+
+    test('num.roundTo rounds down below half', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(3.144, 2)',
+      );
+      checkResult(runtime, 3.14);
+    });
+
+    test('num.roundTo with negative number', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(-3.14159, 2)',
+      );
+      checkResult(runtime, -3.14);
+    });
+
+    test('num.roundTo with negative number rounds toward negative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(-3.145, 2)',
+      );
+      checkResult(runtime, -3.15);
+    });
+
+    test('num.roundTo with integer input', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.roundTo(5, 2)');
+      checkResult(runtime, 5.0);
+    });
+
+    test('num.roundTo with zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = num.roundTo(0, 2)');
+      checkResult(runtime, 0.0);
+    });
+
+    test('num.roundTo with infinity returns infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(num.infinity(), 2)',
+      );
+      checkResult(runtime, double.infinity);
+    });
+
+    test('num.roundTo with negative infinity returns negative infinity', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(num.negative(num.infinity()), 2)',
+      );
+      checkResult(runtime, double.negativeInfinity);
+    });
+
+    test(
+      'num.roundTo with decimal places parameter as decimal truncates it',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = num.roundTo(3.14159, 2.9)',
+        );
+        checkResult(runtime, 3.14);
+      },
+    );
+
+    test(
+      'num.roundTo throws InvalidNumericOperationError for negative decimal places',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = num.roundTo(3.14159, -1)',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidNumericOperationError>().having(
+              (Exception exception) => exception.toString(),
+              'message',
+              allOf(
+                contains('num.roundTo'),
+                contains('decimal places'),
+                contains('negative'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('num.roundTo throws for wrong type on first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo("hello", 2)',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+
+    test('num.roundTo throws for wrong type on second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num.roundTo(3.14159, "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
+    });
+  });
 }

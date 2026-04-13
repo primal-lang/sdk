@@ -1,6 +1,6 @@
 # Arithmetic
 
-Number of functions: 35
+Number of functions: 38
 
 ## Basic Operations
 
@@ -228,6 +228,32 @@ num.floor(3.9) // returns 3
 num.ceil(3.1) // returns 4
 ```
 
+### Truncate
+
+- **Signature:** `num.truncate(a: Number): Number`
+- **Input:** One number
+- **Output:** The integer obtained by discarding the fractional part (truncates toward zero)
+- **Purity:** Pure
+- **Example:**
+
+```
+num.truncate(3.7) // returns 3
+num.truncate(-3.7) // returns -3
+```
+
+### Round To
+
+- **Signature:** `num.roundTo(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The first number rounded to the specified number of decimal places
+- **Constraints:** Throws an error if the number of decimal places is negative
+- **Purity:** Pure
+- **Example:**
+
+```
+num.roundTo(3.14159, 2) // returns 3.14
+```
+
 ## Constraints
 
 ### Minimum
@@ -316,6 +342,19 @@ num.tan(0) // returns 0
 
 ```
 num.log(1) // returns 0
+```
+
+### Logarithm Base
+
+- **Signature:** `num.logBase(a: Number, b: Number): Number`
+- **Input:** Two numbers
+- **Output:** The logarithm of the first number with the specified base
+- **Constraints:** Throws an error if the number is not positive, if the base is not positive, or if the base is 1
+- **Purity:** Pure
+- **Example:**
+
+```
+num.logBase(8, 2) // returns 3
 ```
 
 ### To Radians

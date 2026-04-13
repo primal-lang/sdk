@@ -1,17 +1,6 @@
 2. Number Module
 
-Function: num.logBase
-Signature: (a: Number, b: Number): Number
-Description: Logarithm with specified base
-────────────────────────────────────────
-Function: num.truncate
-Signature: (a: Number): Number
-Description: Truncate toward zero
-────────────────────────────────────────
-Function: num.roundTo
-Signature: (a: Number, b: Number): Number
-Description: Round to n decimal places
-────────────────────────────────────────
+
 
 3. List Module
 
