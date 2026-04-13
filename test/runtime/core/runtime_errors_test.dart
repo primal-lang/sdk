@@ -2295,4 +2295,117 @@ main() = getVal(true)[0]
       );
     });
   });
+
+  group('Debug Function Errors', () {
+    test('debug with non-string label throws InvalidArgumentTypesError', () {
+      final RuntimeFacade runtime = getRuntime('main() = debug(123, "value")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidArgumentTypesError>().having(
+            (RuntimeError error) => error.toString(),
+            'message',
+            allOf(contains('debug'), contains('Number')),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'debug with non-string label via indirect call throws InvalidArgumentTypesError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = let f = debug in f(123, "value")',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (RuntimeError error) => error.toString(),
+              'message',
+              allOf(contains('debug'), contains('Number')),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'debug with wrong argument count via indirect call throws InvalidArgumentCountError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = let f = debug in f("only one")',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentCountError>().having(
+              (RuntimeError error) => error.toString(),
+              'message',
+              allOf(
+                contains('debug'),
+                contains('Expected: 2'),
+                contains('Actual: 1'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('debug propagates error from value expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = debug("label", num.div(1, 0))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (RuntimeError error) => error.toString(),
+            'message',
+            contains('Division by zero'),
+          ),
+        ),
+      );
+    });
+
+    test('debug propagates error from label expression first', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = debug(error.throw(0, "label failed"), num.div(1, 0))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (CustomError error) => error.toString(),
+            'message',
+            contains('label failed'),
+          ),
+        ),
+      );
+    });
+
+    test('debug propagates error from value after label succeeds', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = debug("ok", error.throw(0, "value failed"))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (CustomError error) => error.toString(),
+            'message',
+            contains('value failed'),
+          ),
+        ),
+      );
+    });
+
+    test('try catches debug type error and returns fallback', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = try(debug(123, "value"), "caught")',
+      );
+      checkResult(runtime, '"caught"');
+    });
+  });
 }

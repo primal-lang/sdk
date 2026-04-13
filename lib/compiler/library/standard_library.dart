@@ -66,6 +66,7 @@ import 'package:primal/compiler/library/console/console_write.dart';
 import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
+import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/directory/directory_copy.dart';
 import 'package:primal/compiler/library/directory/directory_create.dart';
 import 'package:primal/compiler/library/directory/directory_delete.dart';
@@ -320,6 +321,9 @@ class StandardLibrary {
     // Control
     const If(),
     const Try(),
+
+    // Debug
+    const Debug(),
 
     // Directory
     const DirectoryCopy(),

@@ -123,6 +123,29 @@ main() = apply(num.abs, 5)
     );
   });
 
+  // --- Error: debug function argument count ---
+
+  test('debug with no arguments throws InvalidNumberOfArgumentsError', () {
+    expect(
+      () => getIntermediateRepresentation('main() = debug()'),
+      throwsA(isA<InvalidNumberOfArgumentsError>()),
+    );
+  });
+
+  test('debug with one argument throws InvalidNumberOfArgumentsError', () {
+    expect(
+      () => getIntermediateRepresentation('main() = debug("only one")'),
+      throwsA(isA<InvalidNumberOfArgumentsError>()),
+    );
+  });
+
+  test('debug with three arguments throws InvalidNumberOfArgumentsError', () {
+    expect(
+      () => getIntermediateRepresentation('main() = debug("a", "b", "c")'),
+      throwsA(isA<InvalidNumberOfArgumentsError>()),
+    );
+  });
+
   // --- Error: undefined identifiers in expressions ---
 
   test('Undefined identifier in nested expression', () {

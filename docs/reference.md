@@ -4,6 +4,7 @@ Primal includes a rich set of core functions that provide essential tools for de
 
 - [Operators](reference/operators.md)
 - [Control](reference/control.md)
+- [Debug](reference/debug.md)
 - [Error](reference/error.md)
 - [Comparison](reference/comparison.md)
 - [Arithmetic](reference/arithmetic.md)
