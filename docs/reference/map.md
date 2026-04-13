@@ -1,6 +1,6 @@
 # Map
 
-Number of functions: 11
+Number of functions: 13
 
 ## Construction
 
@@ -67,6 +67,18 @@ map.keys({"a": 1, "b": 2}) // returns ["a", "b"]
 map.values({"a": 1, "b": 2}) // returns [1, 2]
 ```
 
+### Entries
+
+- **Signature:** `map.entries(a: Map): List`
+- **Input:** One map
+- **Output:** A list of [key, value] pairs
+- **Purity:** Pure
+- **Example:**
+
+```
+map.entries({"a": 1, "b": 2}) // returns [["a", 1], ["b", 2]]
+```
+
 ## Modification
 
 ### Set
@@ -79,6 +91,18 @@ map.values({"a": 1, "b": 2}) // returns [1, 2]
 
 ```
 map.set({"a": 1}, "b", 2) // returns {"a": 1, "b": 2}
+```
+
+### Merge
+
+- **Signature:** `map.merge(a: Map, b: Map): Map`
+- **Input:** Two maps
+- **Output:** A new map containing all key-value pairs from both maps (b overrides a)
+- **Purity:** Pure
+- **Example:**
+
+```
+map.merge({"a": 1, "b": 2}, {"b": 3, "c": 4}) // returns {"a": 1, "b": 3, "c": 4}
 ```
 
 ### Remove At

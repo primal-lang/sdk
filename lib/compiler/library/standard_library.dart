@@ -147,10 +147,12 @@ import 'package:primal/compiler/library/logic/bool_or_strict.dart';
 import 'package:primal/compiler/library/logic/bool_xor.dart';
 import 'package:primal/compiler/library/map/map_at.dart';
 import 'package:primal/compiler/library/map/map_contains_key.dart';
+import 'package:primal/compiler/library/map/map_entries.dart';
 import 'package:primal/compiler/library/map/map_is_empty.dart';
 import 'package:primal/compiler/library/map/map_is_not_empty.dart';
 import 'package:primal/compiler/library/map/map_keys.dart';
 import 'package:primal/compiler/library/map/map_length.dart';
+import 'package:primal/compiler/library/map/map_merge.dart';
 import 'package:primal/compiler/library/map/map_remove_at.dart';
 import 'package:primal/compiler/library/map/map_set.dart';
 import 'package:primal/compiler/library/map/map_values.dart';
@@ -445,10 +447,12 @@ class StandardLibrary {
     // Map
     const MapAt(),
     const MapContainsKey(),
+    const MapEntries(),
     const MapIsEmpty(),
     const MapIsNotEmpty(),
     const MapKeys(),
     const MapLength(),
+    const MapMerge(),
     const MapRemoveAt(),
     const MapSet(),
     const MapValues(),

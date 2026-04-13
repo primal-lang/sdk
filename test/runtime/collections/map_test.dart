@@ -1890,4 +1890,387 @@ main() = [map.length(m1()), map.length(m2()), map.length(m3()), map.length(m4())
       expect(runtime.executeMain, throwsA(isA<ElementNotFoundError>()));
     });
   });
+
+  group('Map Merge', () {
+    test('map.merge merges two empty maps', () {
+      final RuntimeFacade runtime = getRuntime('main() = map.merge({}, {})');
+      checkResult(runtime, {});
+    });
+
+    test('map.merge merges empty map with non-empty map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({}, {"a": 1})',
+      );
+      checkResult(runtime, {'"a"': 1});
+    });
+
+    test('map.merge merges non-empty map with empty map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1}, {})',
+      );
+      checkResult(runtime, {'"a"': 1});
+    });
+
+    test('map.merge merges two non-empty maps with distinct keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1}, {"b": 2})',
+      );
+      checkResult(runtime, {'"a"': 1, '"b"': 2});
+    });
+
+    test('map.merge second map overrides first map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1, "b": 2}, {"b": 3, "c": 4})',
+      );
+      checkResult(runtime, {'"a"': 1, '"b"': 3, '"c"': 4});
+    });
+
+    test('map.merge second map completely overrides first', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1}, {"a": 2})',
+      );
+      checkResult(runtime, {'"a"': 2});
+    });
+
+    test('map.merge with numeric keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({1: "one"}, {2: "two"})',
+      );
+      checkResult(runtime, {1: '"one"', 2: '"two"'});
+    });
+
+    test('map.merge with boolean keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({true: 1}, {false: 0})',
+      );
+      checkResult(runtime, {true: 1, false: 0});
+    });
+
+    test('map.merge with mixed key types', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1, 1: 2}, {"b": 3, 2: 4})',
+      );
+      checkResult(runtime, {'"a"': 1, 1: 2, '"b"': 3, 2: 4});
+    });
+
+    test('map.merge with nested map values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.at(map.at(map.merge({"a": {"x": 1}}, {"b": {"y": 2}}), "b"), "y")',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('map.merge with list values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.at(map.at(map.merge({"a": [1, 2]}, {"b": [3, 4]}), "b"), 0)',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('map.merge preserves insertion order from both maps', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.keys(map.merge({"a": 1, "b": 2}, {"c": 3, "d": 4}))',
+      );
+      checkResult(runtime, ['"a"', '"b"', '"c"', '"d"']);
+    });
+
+    test('map.merge length is correct after merge', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.length(map.merge({"a": 1, "b": 2}, {"c": 3, "d": 4}))',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('map.merge length with overlapping keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.length(map.merge({"a": 1, "b": 2}, {"b": 3, "c": 4}))',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('map.merge result is immutable', () {
+      final RuntimeFacade runtime = getRuntime('''
+original() = {"a": 1}
+overlay() = {"b": 2}
+merged() = map.merge(original(), overlay())
+main() = map.length(original())
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('map.merge chained operations', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge(map.merge({"a": 1}, {"b": 2}), {"c": 3})',
+      );
+      checkResult(runtime, {'"a"': 1, '"b"': 2, '"c"': 3});
+    });
+
+    test('map.merge followed by map.at', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.at(map.merge({"a": 1}, {"b": 2}), "b")',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('map.merge followed by map.containsKey', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.containsKey(map.merge({"a": 1}, {"b": 2}), "a")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('map.merge with large maps', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.length(map.merge({"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}, {"f": 6, "g": 7, "h": 8, "i": 9, "j": 10}))',
+      );
+      checkResult(runtime, 10);
+    });
+  });
+
+  group('Map Merge Type Errors', () {
+    test('map.merge throws for string as first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge("hello", {"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for string as second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1}, "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for number as first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge(42, {"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for number as second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1}, 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for list as first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge([1, 2], {"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for list as second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1}, [1, 2])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for boolean as first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge(true, {"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for boolean as second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.merge({"a": 1}, false)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for function as first argument', () {
+      final RuntimeFacade runtime = getRuntime('''
+identity(x) = x
+main() = map.merge(identity, {"a": 1})
+''');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.merge throws for function as second argument', () {
+      final RuntimeFacade runtime = getRuntime('''
+identity(x) = x
+main() = map.merge({"a": 1}, identity)
+''');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Map Entries', () {
+    test('map.entries returns empty list for empty map', () {
+      final RuntimeFacade runtime = getRuntime('main() = map.entries({})');
+      checkResult(runtime, []);
+    });
+
+    test('map.entries returns single entry for single-entry map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.entries({"a": 1})',
+      );
+      checkResult(runtime, [
+        ['"a"', 1],
+      ]);
+    });
+
+    test('map.entries returns multiple entries', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.entries({"a": 1, "b": 2})',
+      );
+      checkResult(runtime, [
+        ['"a"', 1],
+        ['"b"', 2],
+      ]);
+    });
+
+    test('map.entries preserves insertion order', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.entries({"z": 1, "a": 2, "m": 3})',
+      );
+      checkResult(runtime, [
+        ['"z"', 1],
+        ['"a"', 2],
+        ['"m"', 3],
+      ]);
+    });
+
+    test('map.entries with numeric keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.entries({1: "one", 2: "two"})',
+      );
+      checkResult(runtime, [
+        [1, '"one"'],
+        [2, '"two"'],
+      ]);
+    });
+
+    test('map.entries with boolean keys', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.entries({true: "yes", false: "no"})',
+      );
+      checkResult(runtime, [
+        [true, '"yes"'],
+        [false, '"no"'],
+      ]);
+    });
+
+    test('map.entries with mixed key types', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.entries({"a": 1, 1: "one", true: "yes"})',
+      );
+      checkResult(runtime, [
+        ['"a"', 1],
+        [1, '"one"'],
+        [true, '"yes"'],
+      ]);
+    });
+
+    test('map.entries with nested map values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.at(list.at(map.entries({"a": {"nested": 1}}), 0), 1)',
+      );
+      checkResult(runtime, {'"nested"': 1});
+    });
+
+    test('map.entries with list values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.at(list.at(map.entries({"a": [1, 2, 3]}), 0), 1)',
+      );
+      checkResult(runtime, [1, 2, 3]);
+    });
+
+    test('map.entries entry has two elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.length(list.at(map.entries({"a": 1}), 0))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('map.entries first element of entry is key', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.at(list.at(map.entries({"myKey": "myValue"}), 0), 0)',
+      );
+      checkResult(runtime, '"myKey"');
+    });
+
+    test('map.entries second element of entry is value', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.at(list.at(map.entries({"myKey": "myValue"}), 0), 1)',
+      );
+      checkResult(runtime, '"myValue"');
+    });
+
+    test('map.entries length matches map length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.length(map.entries({"a": 1, "b": 2, "c": 3}))',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('map.entries can be filtered', () {
+      final RuntimeFacade runtime = getRuntime('''
+hasNumericValue(entry) = list.at(entry, 1) > 1
+main() = list.length(list.filter(map.entries({"a": 1, "b": 2, "c": 3}), hasNumericValue))
+''');
+      checkResult(runtime, 2);
+    });
+
+    test('map.entries can be mapped', () {
+      final RuntimeFacade runtime = getRuntime('''
+getKey(entry) = list.at(entry, 0)
+main() = list.map(map.entries({"a": 1, "b": 2}), getKey)
+''');
+      checkResult(runtime, ['"a"', '"b"']);
+    });
+
+    test('map.entries followed by list.reduce', () {
+      final RuntimeFacade runtime = getRuntime('''
+sumValue(total, entry) = total + list.at(entry, 1)
+main() = list.reduce(map.entries({"a": 1, "b": 2, "c": 3}), 0, sumValue)
+''');
+      checkResult(runtime, 6);
+    });
+
+    test('map.entries with large map', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.length(map.entries({"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10}))',
+      );
+      checkResult(runtime, 10);
+    });
+  });
+
+  group('Map Entries Type Errors', () {
+    test('map.entries throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = map.entries("hello")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.entries throws for number argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = map.entries(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.entries throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = map.entries(true)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.entries throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = map.entries([1, 2, 3])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('map.entries throws for function argument', () {
+      final RuntimeFacade runtime = getRuntime('''
+identity(x) = x
+main() = map.entries(identity)
+''');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
 }

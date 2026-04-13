@@ -1,14 +1,3 @@
-4. Map Module
-
-Function: map.merge
-Signature: (a: Map, b: Map): Map
-Description: Merge maps (b overrides a)
-────────────────────────────────────────
-Function: map.entries
-Signature: (a: Map): List
-Description: List of [key, value] pairs
-────────────────────────────────────────
-
 5. Set Module
 
 Function: set.isSubset
