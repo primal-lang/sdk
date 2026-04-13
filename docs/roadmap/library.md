@@ -1,8 +1,9 @@
 9. Environment
 
-Function: env.has
+Function: env.has [DONE]
 Signature: (a: String): Boolean
 Description: Check if environment variable exists
+────────────────────────────────────────
 
 10. Base64 Module (base64.) [NEW]
 

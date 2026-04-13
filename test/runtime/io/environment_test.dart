@@ -462,5 +462,410 @@ void main() {
         checkResult(runtime, '""');
       });
     });
+
+    group('env.has', () {
+      test('returns false for non-existent variable', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has("INVALID_VARIABLE_THAT_DOES_NOT_EXIST_12345")',
+        );
+        checkResult(runtime, 'false');
+      });
+
+      test('returns true for existing variable HOME', () {
+        final bool hasHome = Platform.environment.containsKey('HOME');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("HOME")');
+        checkResult(runtime, '$hasHome');
+      });
+
+      test('returns true for existing variable PATH', () {
+        final bool hasPath = Platform.environment.containsKey('PATH');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("PATH")');
+        checkResult(runtime, '$hasPath');
+      });
+
+      test('returns true for existing variable USER', () {
+        final bool hasUser = Platform.environment.containsKey('USER');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("USER")');
+        checkResult(runtime, '$hasUser');
+      });
+
+      test('returns false for empty variable name', () {
+        final bool hasEmpty = Platform.environment.containsKey('');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("")');
+        checkResult(runtime, '$hasEmpty');
+      });
+
+      test('is case-sensitive for variable names', () {
+        final bool hasHomeUpper = Platform.environment.containsKey('HOME');
+        final bool hasHomeLower = Platform.environment.containsKey('home');
+        final RuntimeFacade runtimeUpper = getRuntime(
+          'main() = env.has("HOME")',
+        );
+        final RuntimeFacade runtimeLower = getRuntime(
+          'main() = env.has("home")',
+        );
+        checkResult(runtimeUpper, '$hasHomeUpper');
+        checkResult(runtimeLower, '$hasHomeLower');
+      });
+
+      test('returns false for variable name with only spaces', () {
+        final bool hasSpaces = Platform.environment.containsKey('   ');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("   ")');
+        checkResult(runtime, '$hasSpaces');
+      });
+
+      test('handles variable names with underscores', () {
+        final bool hasLcAll = Platform.environment.containsKey('LC_ALL');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("LC_ALL")');
+        checkResult(runtime, '$hasLcAll');
+      });
+    });
+
+    group('env.has type errors', () {
+      test('throws InvalidArgumentTypesError when given a number', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has(42)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (Number)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given a boolean', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has(true)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (Boolean)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given a list', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has(["HOME"])');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (List)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given a map', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has({"key": "value"})',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (Map)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given false', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has(false)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (Boolean)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given zero', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has(0)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (Number)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given negative number', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has(-1)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (Number)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given floating point', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has(3.14)');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (Number)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given empty list', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has([])');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (List)'),
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('throws InvalidArgumentTypesError when given empty map', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has({})');
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (e) => e.toString(),
+              'message',
+              allOf(
+                contains('function "env.has"'),
+                contains('Expected: (String)'),
+                contains('Actual: (Map)'),
+              ),
+            ),
+          ),
+        );
+      });
+    });
+
+    group('env.has edge cases', () {
+      test('handles single character variable name', () {
+        final bool hasSingleChar = Platform.environment.containsKey('_');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("_")');
+        checkResult(runtime, '$hasSingleChar');
+      });
+
+      test('handles TERM variable', () {
+        final bool hasTerm = Platform.environment.containsKey('TERM');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("TERM")');
+        checkResult(runtime, '$hasTerm');
+      });
+
+      test('returns false for variable name starting with number', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has("1INVALID")',
+        );
+        checkResult(runtime, 'false');
+      });
+
+      test('returns false for variable name with dash', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has("INVALID-NAME")',
+        );
+        checkResult(runtime, 'false');
+      });
+
+      test('returns false for variable name with equals sign', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has("INVALID=NAME")',
+        );
+        checkResult(runtime, 'false');
+      });
+
+      test('handles variable name with consecutive underscores', () {
+        final bool hasDoubleUnderscore = Platform.environment.containsKey('__');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("__")');
+        checkResult(runtime, '$hasDoubleUnderscore');
+      });
+
+      test('returns false for variable name with tab character', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has("TAB\\tNAME")',
+        );
+        checkResult(runtime, 'false');
+      });
+
+      test('returns false for variable name with newline', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has("NEW\\nLINE")',
+        );
+        checkResult(runtime, 'false');
+      });
+
+      test('handles very long variable name', () {
+        final String longName = 'A' * 1000;
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has("$longName")',
+        );
+        checkResult(runtime, 'false');
+      });
+
+      test('handles SHELL environment variable', () {
+        final bool hasShell = Platform.environment.containsKey('SHELL');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("SHELL")');
+        checkResult(runtime, '$hasShell');
+      });
+
+      test('handles PWD environment variable', () {
+        final bool hasPwd = Platform.environment.containsKey('PWD');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("PWD")');
+        checkResult(runtime, '$hasPwd');
+      });
+
+      test('handles LANG environment variable', () {
+        final bool hasLang = Platform.environment.containsKey('LANG');
+        final RuntimeFacade runtime = getRuntime('main() = env.has("LANG")');
+        checkResult(runtime, '$hasLang');
+      });
+    });
+
+    group('env.has in expressions', () {
+      test('result can be used in conditional', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = if (env.has("HOME")) "exists" else "not found"',
+        );
+        final bool hasHome = Platform.environment.containsKey('HOME');
+        checkResult(runtime, hasHome ? '"exists"' : '"not found"');
+      });
+
+      test('result can be negated', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = bool.not(env.has("NONEXISTENT_VAR_12345"))',
+        );
+        checkResult(runtime, 'true');
+      });
+
+      test('result can be combined with bool.and', () {
+        final bool hasHome = Platform.environment.containsKey('HOME');
+        final bool hasPath = Platform.environment.containsKey('PATH');
+        final RuntimeFacade runtime = getRuntime(
+          'main() = bool.and(env.has("HOME"), env.has("PATH"))',
+        );
+        checkResult(runtime, '${hasHome && hasPath}');
+      });
+
+      test('result can be combined with bool.or', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = bool.or(env.has("NONEXISTENT_12345"), env.has("HOME"))',
+        );
+        final bool hasHome = Platform.environment.containsKey('HOME');
+        checkResult(runtime, '$hasHome');
+      });
+
+      test('env.has with dynamic variable name from expression', () {
+        final bool hasHome = Platform.environment.containsKey('HOME');
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has(str.concat("HO", "ME"))',
+        );
+        checkResult(runtime, '$hasHome');
+      });
+
+      test('env.has and env.get can be used together', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = if (env.has("HOME")) env.get("HOME") else "default"',
+        );
+        final String home = Platform.environment['HOME'] ?? '';
+        final bool hasHome = Platform.environment.containsKey('HOME');
+        checkResult(runtime, hasHome ? '"$home"' : '"default"');
+      });
+
+      test('multiple env.has calls can be used together', () {
+        final bool hasHome = Platform.environment.containsKey('HOME');
+        final bool hasUser = Platform.environment.containsKey('USER');
+        final RuntimeFacade runtime = getRuntime(
+          'main() = [env.has("HOME"), env.has("USER")]',
+        );
+        checkResult(runtime, '[$hasHome, $hasUser]');
+      });
+    });
+
+    group('env.has return type verification', () {
+      test('always returns a boolean type', () {
+        final RuntimeFacade runtime = getRuntime('main() = env.has("HOME")');
+        final String result = runtime.executeMain();
+        expect(result == 'true' || result == 'false', isTrue);
+      });
+
+      test('returns false for definitely non-existent variable', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = env.has("DEFINITELY_DOES_NOT_EXIST_ABCDEF_12345")',
+        );
+        checkResult(runtime, 'false');
+      });
+
+      test('result type can be used with boolean functions', () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = bool.not(env.has("NONEXISTENT_VAR"))',
+        );
+        checkResult(runtime, 'true');
+      });
+    });
   });
 }

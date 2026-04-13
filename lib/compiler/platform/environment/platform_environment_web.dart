@@ -5,4 +5,8 @@ class PlatformEnvironmentWeb extends PlatformEnvironmentBase {
   @override
   String getVariable(String name) =>
       throw const UnimplementedFunctionWebError('env.get');
+
+  @override
+  bool hasVariable(String name) =>
+      throw const UnimplementedFunctionWebError('env.has');
 }

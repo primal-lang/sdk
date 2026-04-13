@@ -82,6 +82,7 @@ import 'package:primal/compiler/library/directory/directory_parent.dart';
 import 'package:primal/compiler/library/directory/directory_path.dart';
 import 'package:primal/compiler/library/directory/directory_rename.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
+import 'package:primal/compiler/library/environment/env_has.dart';
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/library/file/file_append.dart';
 import 'package:primal/compiler/library/file/file_copy.dart';
@@ -381,6 +382,7 @@ class StandardLibrary {
 
     // Environment
     const EnvGet(),
+    const EnvHas(),
 
     // Error
     const Throw(),
