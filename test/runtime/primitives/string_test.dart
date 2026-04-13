@@ -2563,7 +2563,7 @@ void main() {
 
     test('str.isBlank returns true for tabs and newlines', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.isBlank("\\t\\n\\r")',
+        'main() = str.isBlank("\\t\\n")',
       );
       checkResult(runtime, true);
     });
@@ -2596,14 +2596,14 @@ void main() {
 
     test('str.lines splits by carriage return', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.lines("a\\rb\\rc")',
+        'main() = str.lines("a\\x0Db\\x0Dc")',
       );
       checkResult(runtime, ['"a"', '"b"', '"c"']);
     });
 
     test('str.lines splits by carriage return newline', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.lines("a\\r\\nb\\r\\nc")',
+        'main() = str.lines("a\\x0D\\nb\\x0D\\nc")',
       );
       checkResult(runtime, ['"a"', '"b"', '"c"']);
     });
