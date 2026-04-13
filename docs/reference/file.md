@@ -1,5 +1,7 @@
 # File
 
+Number of functions: 14
+
 Note: File functions are not available on the web platform.
 
 ## Creation

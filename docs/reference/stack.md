@@ -1,5 +1,7 @@
 # Stack
 
+Number of functions: 8
+
 ## Creation
 
 ### New

@@ -1,5 +1,7 @@
 # Console
 
+Number of functions: 3
+
 ## Output
 
 ### Write

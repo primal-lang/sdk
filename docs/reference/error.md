@@ -1,5 +1,7 @@
 # Error
 
+Number of functions: 1
+
 ## Functions
 
 ### Throw

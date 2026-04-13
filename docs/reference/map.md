@@ -1,5 +1,7 @@
 # Map
 
+Number of functions: 11
+
 ## Construction
 
 ### Constructor

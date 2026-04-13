@@ -1,5 +1,7 @@
 # Environment
 
+Number of functions: 1
+
 Note: Environment functions are not available on the web platform.
 
 ## Functions

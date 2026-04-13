@@ -1,5 +1,7 @@
 # Casting
 
+Number of functions: 22
+
 ## Conversion Functions
 
 ### To Number

@@ -1,5 +1,7 @@
 # Control
 
+Number of functions: 2
+
 ## Control Flow
 
 ### If-Else

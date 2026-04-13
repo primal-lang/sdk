@@ -1,5 +1,7 @@
 # JSON
 
+Number of functions: 2
+
 ## Functions
 
 ### Encode

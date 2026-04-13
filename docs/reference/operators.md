@@ -1,5 +1,7 @@
 # Operators
 
+Number of functions: 16
+
 ## Comparison Operators
 
 ### Equality

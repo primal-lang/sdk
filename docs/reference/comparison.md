@@ -1,5 +1,7 @@
 # Comparison
 
+Number of functions: 6
+
 ## Functions
 
 ### Equal

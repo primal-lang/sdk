@@ -1,5 +1,7 @@
 # Hash
 
+Number of functions: 4
+
 ## Functions
 
 ### MD5

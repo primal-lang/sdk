@@ -1,5 +1,7 @@
 # Directory
 
+Number of functions: 11
+
 Note: Directory functions are not available on the web platform.
 
 ## Creation

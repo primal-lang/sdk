@@ -1,5 +1,7 @@
 # Arithmetic
 
+Number of functions: 35
+
 ## Basic Operations
 
 ### Absolute Value

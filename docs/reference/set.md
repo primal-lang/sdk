@@ -1,5 +1,7 @@
 # Set
 
+Number of functions: 10
+
 ## Creation
 
 ### New

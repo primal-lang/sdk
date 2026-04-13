@@ -1,5 +1,7 @@
 # String
 
+Number of functions: 44
+
 ## Construction
 
 ### Constructor

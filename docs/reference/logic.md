@@ -1,5 +1,7 @@
 # Logic
 
+Number of functions: 6
+
 ## Functions
 
 ### And (Short-Circuit)

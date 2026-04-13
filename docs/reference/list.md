@@ -1,5 +1,7 @@
 # List
 
+Number of functions: 33
+
 ## Construction
 
 ### Constructor

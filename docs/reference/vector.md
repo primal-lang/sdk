@@ -1,5 +1,7 @@
 # Vector
 
+Numbre of functions: 6
+
 ## Creation
 
 ### New

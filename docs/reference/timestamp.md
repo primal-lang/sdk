@@ -1,5 +1,7 @@
 # Timestamp
 
+Number of functions: 12
+
 ## Creation
 
 ### Now
