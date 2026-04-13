@@ -1,0 +1,58 @@
+**Goals**
+
+- Primal’s explicit goal is educational: teach programming and functional ideas without the complexity of more advanced languages.
+- It aims to be simple, minimalist, easy to learn, and good for small scripts.
+- It is not positioned as a production language in its current form.
+- Its design goals also imply a clean mental model: everything is a function, values are immutable, code is expression-oriented, and the runtime behavior is straightforward.
+
+**How It Differentiates**
+
+- Primal is much more beginner-oriented than most functional languages.
+- It is dynamically typed, interpreted, single-threaded, and REPL-friendly. That is very different from statically typed FP languages like Haskell, OCaml, Elm, or F#.
+- It keeps the core model very small: function declarations, calls, conditionals, `let`, lambdas, immutable values, recursion instead of loops.
+- It gives functional-style programming without requiring advanced concepts like type classes, algebraic data types, higher-kinded types, module systems, or heavy syntax.
+- It also leans more into “small practical scripting language” than many FP languages by shipping built-ins for files, directories, console I/O, environment variables, JSON, hashing, and timestamps.
+
+**What It Offers Compared To Other FP Languages**
+
+- A lower entry barrier.
+- A simpler runtime model and syntax.
+- A large built-in standard library for day-to-day tasks.
+- A consistent “operators are really function calls” model.
+- Good material for learning language implementation, because the compiler pipeline is small and well documented.
+- A bridge between functional ideas and scripting use cases.
+
+What it does not offer, compared to more mature FP languages, is equally important:
+- strong static guarantees
+- advanced abstraction tools
+- a large ecosystem
+- production-grade performance and tooling
+
+**Main Audience**
+
+- Beginners learning programming.
+- Beginners learning functional programming specifically.
+- Educators who want a small language for teaching.
+- People interested in interpreters/compiler design.
+- Possibly hobbyists who want tiny functional scripts without adopting a larger FP ecosystem.
+
+**Advantages Vs Other Functional Languages**
+
+- Easier to approach.
+- Much smaller conceptual surface area.
+- Dynamic typing can make experimentation faster.
+- Rich built-ins reduce setup for simple scripts.
+- REPL and interpreted execution support quick feedback.
+- The language model is very uniform and teachable.
+
+**Disadvantages Vs Other Functional Languages**
+
+- No static type safety, so many mistakes move to runtime.
+- Less expressive than mature FP languages.
+- Fewer abstraction tools for large programs.
+- Recursion-only repetition is elegant conceptually but can be awkward in practice.
+- Runtime limits and interpreted execution make it less suitable for serious production workloads.
+- Smaller ecosystem and fewer libraries/tools.
+- Some missing features are still only roadmap ideas, not implemented language capabilities.
+
+In short, Primal looks strongest as a teaching language and small functional scripting language. Its main strength is simplicity; its main weakness is that simplicity is bought by giving up many of the guarantees and tools that make larger functional languages powerful.
