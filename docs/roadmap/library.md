@@ -1,5 +1,3 @@
-11. Path Module (path.) [NEW]
-
 Function: path.join
 Signature: (a: String, b: String): String
 Description: Join path segments
@@ -23,11 +21,4 @@ Description: Is absolute path?
 Function: path.normalize
 Signature: (a: String): String
 Description: Normalize path
-────────────────────────────────────────
-
-12. UUID Module (uuid.) [NEW]
-
-Function: uuid.v4
-Signature: (): String
-Description: Generate random UUID
 ────────────────────────────────────────

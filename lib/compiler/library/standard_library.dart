@@ -267,6 +267,7 @@ import 'package:primal/compiler/library/timestamp/time_now.dart';
 import 'package:primal/compiler/library/timestamp/time_second.dart';
 import 'package:primal/compiler/library/timestamp/time_to_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_year.dart';
+import 'package:primal/compiler/library/uuid/uuid_v4.dart';
 import 'package:primal/compiler/library/vector/vector_add.dart';
 import 'package:primal/compiler/library/vector/vector_angle.dart';
 import 'package:primal/compiler/library/vector/vector_distance.dart';
@@ -578,6 +579,9 @@ class StandardLibrary {
     const StrTrimLeft(),
     const StrTrimRight(),
     const StrUppercase(),
+
+    // UUID
+    const UuidV4(),
 
     // Timestamp
     const TimeCompare(),

@@ -23,6 +23,7 @@ Primal includes a rich set of core functions that provide essential tools for de
 - [JSON](reference/json.md)
 - [Base64](reference/base64.md)
 - [Hash](reference/hash.md)
+- [UUID](reference/uuid.md)
 - [Console](reference/console.md)
 - [Environment](reference/environment.md)
 
