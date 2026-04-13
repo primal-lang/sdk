@@ -1,18 +1,3 @@
-5. Set Module
-
-Function: set.isSubset
-Signature: (a: Set, b: Set): Boolean
-Description: Is a subset of b?
-────────────────────────────────────────
-Function: set.isSuperset
-Signature: (a: Set, b: Set): Boolean
-Description: Is a superset of b?
-────────────────────────────────────────
-Function: set.isDisjoint
-Signature: (a: Set, b: Set): Boolean
-Description: No common elements?
-────────────────────────────────────────
-
 6. Timestamp Module
 
 Function: time.fromEpoch

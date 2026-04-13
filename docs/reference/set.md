@@ -1,6 +1,6 @@
 # Set
 
-Number of functions: 10
+Number of functions: 13
 
 ## Creation
 
@@ -92,6 +92,18 @@ set.difference(set.new([1, 2, 3]), set.new([2, 3])) // returns {1}
 set.contains(set.new([1, 2, 3]), 2) // returns true
 ```
 
+### Is Disjoint
+
+- **Signature:** `set.isDisjoint(a: Set, b: Set): Boolean`
+- **Input:** Two sets
+- **Output:** True if the sets have no common elements, false otherwise
+- **Purity:** Pure
+- **Example:**
+
+```
+set.isDisjoint(set.new([1, 2]), set.new([3, 4])) // returns true
+```
+
 ### Is Empty
 
 - **Signature:** `set.isEmpty(a: Set): Boolean`
@@ -114,6 +126,30 @@ set.isEmpty(set.new([])) // returns true
 
 ```
 set.isNotEmpty(set.new([1, 2])) // returns true
+```
+
+### Is Subset
+
+- **Signature:** `set.isSubset(a: Set, b: Set): Boolean`
+- **Input:** Two sets
+- **Output:** True if a is a subset of b, false otherwise
+- **Purity:** Pure
+- **Example:**
+
+```
+set.isSubset(set.new([1, 2]), set.new([1, 2, 3])) // returns true
+```
+
+### Is Superset
+
+- **Signature:** `set.isSuperset(a: Set, b: Set): Boolean`
+- **Input:** Two sets
+- **Output:** True if a is a superset of b, false otherwise
+- **Purity:** Pure
+- **Example:**
+
+```
+set.isSuperset(set.new([1, 2, 3]), set.new([1, 2])) // returns true
 ```
 
 ### Length

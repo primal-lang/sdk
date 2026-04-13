@@ -184,8 +184,11 @@ import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_contains.dart';
 import 'package:primal/compiler/library/set/set_difference.dart';
 import 'package:primal/compiler/library/set/set_intersection.dart';
+import 'package:primal/compiler/library/set/set_is_disjoint.dart';
 import 'package:primal/compiler/library/set/set_is_empty.dart';
 import 'package:primal/compiler/library/set/set_is_not_empty.dart';
+import 'package:primal/compiler/library/set/set_is_subset.dart';
+import 'package:primal/compiler/library/set/set_is_superset.dart';
 import 'package:primal/compiler/library/set/set_length.dart';
 import 'package:primal/compiler/library/set/set_new.dart';
 import 'package:primal/compiler/library/set/set_remove.dart';
@@ -490,8 +493,11 @@ class StandardLibrary {
     const SetContains(),
     const SetDifference(),
     const SetIntersection(),
+    const SetIsDisjoint(),
     const SetIsEmpty(),
     const SetIsNotEmpty(),
+    const SetIsSubset(),
+    const SetIsSuperset(),
     const SetLength(),
     const SetNew(),
     const SetRemove(),

@@ -2194,4 +2194,538 @@ main() = foo(set.new([2, 3]))
       checkResult(runtime, true);
     });
   });
+
+  group('Set isSubset', () {
+    test('set.isSubset returns true when a is subset of b', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1, 2]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSubset returns true when sets are equal', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1, 2, 3]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSubset returns false when a is not subset of b', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1, 2, 4]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isSubset returns true for empty set as first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSubset returns true when both sets are empty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([]), set.new([]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test(
+      'set.isSubset returns false when second set is empty and first is not',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = set.isSubset(set.new([1]), set.new([]))',
+        );
+        checkResult(runtime, false);
+      },
+    );
+
+    test('set.isSubset with single-element sets that match', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1]), set.new([1]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSubset with single-element sets that differ', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1]), set.new([2]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isSubset with string elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new(["a"]), set.new(["a", "b"]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSubset with boolean elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([true]), set.new([true, false]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSubset with mixed type elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1, "a"]), set.new([1, "a", true]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSubset throws for non-set first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset([1, 2], set.new([1, 2, 3]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for non-set second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1, 2]), [1, 2, 3])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for number first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(42, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for string first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset("hello", set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for boolean first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(true, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for map first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset({"a": 1}, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for number second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1]), 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for string second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1]), "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for boolean second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1]), true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSubset throws for map second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1]), {"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Set isSuperset', () {
+    test('set.isSuperset returns true when a is superset of b', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1, 2, 3]), set.new([1, 2]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSuperset returns true when sets are equal', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1, 2, 3]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSuperset returns false when a is not superset of b', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1, 2]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isSuperset returns true for empty set as second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1, 2, 3]), set.new([]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSuperset returns true when both sets are empty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([]), set.new([]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test(
+      'set.isSuperset returns false when first set is empty and second is not',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = set.isSuperset(set.new([]), set.new([1]))',
+        );
+        checkResult(runtime, false);
+      },
+    );
+
+    test('set.isSuperset with single-element sets that match', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1]), set.new([1]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSuperset with single-element sets that differ', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1]), set.new([2]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isSuperset with string elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new(["a", "b"]), set.new(["a"]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSuperset with boolean elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([true, false]), set.new([true]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSuperset with mixed type elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1, "a", true]), set.new([1, "a"]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isSuperset throws for non-set first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset([1, 2, 3], set.new([1, 2]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for non-set second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1, 2, 3]), [1, 2])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for number first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(42, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for string first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset("hello", set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for boolean first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(true, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for map first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset({"a": 1}, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for number second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1]), 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for string second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1]), "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for boolean second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1]), true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isSuperset throws for map second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1]), {"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Set isDisjoint', () {
+    test('set.isDisjoint returns true for disjoint sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1, 2]), set.new([3, 4]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint returns false for sets with common elements', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1, 2, 3]), set.new([3, 4, 5]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isDisjoint returns false for identical sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1, 2, 3]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isDisjoint returns true when both sets are empty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([]), set.new([]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint returns true when first set is empty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint returns true when second set is empty', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1, 2, 3]), set.new([]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint with single-element disjoint sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1]), set.new([2]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint with single-element overlapping sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1]), set.new([1]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isDisjoint with string elements disjoint', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new(["a", "b"]), set.new(["c", "d"]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint with string elements overlapping', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new(["a", "b"]), set.new(["b", "c"]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isDisjoint with boolean elements disjoint', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([true]), set.new([false]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint with boolean elements overlapping', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([true, false]), set.new([false]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isDisjoint with mixed type elements disjoint', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1, "a"]), set.new([2, "b"]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint with mixed type elements overlapping', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1, "a"]), set.new([1, "b"]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('set.isDisjoint is commutative', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([3, 4]), set.new([1, 2]))',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('set.isDisjoint throws for non-set first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint([1, 2], set.new([3, 4]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for non-set second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1, 2]), [3, 4])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for number first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(42, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for string first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint("hello", set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for boolean first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(true, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for map first arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint({"a": 1}, set.new([1]))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for number second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1]), 42)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for string second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1]), "hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for boolean second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1]), true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('set.isDisjoint throws for map second arg', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1]), {"a": 1})',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
+
+  group('Set Subset/Superset Relationship', () {
+    test('isSubset and isSuperset are inverse for same sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = [set.isSubset(set.new([1, 2]), set.new([1, 2, 3])), set.isSuperset(set.new([1, 2, 3]), set.new([1, 2]))]',
+      );
+      checkResult(runtime, [true, true]);
+    });
+
+    test('isSubset and isSuperset with disjoint sets', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = [set.isSubset(set.new([1, 2]), set.new([3, 4])), set.isSuperset(set.new([3, 4]), set.new([1, 2]))]',
+      );
+      checkResult(runtime, [false, false]);
+    });
+
+    test('proper subset is not superset', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSuperset(set.new([1, 2]), set.new([1, 2, 3]))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('proper superset is not subset', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isSubset(set.new([1, 2, 3]), set.new([1, 2]))',
+      );
+      checkResult(runtime, false);
+    });
+  });
+
+  group('Set Disjoint and Other Operations', () {
+    test('disjoint sets have empty intersection', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = [set.isDisjoint(set.new([1, 2]), set.new([3, 4])), set.isEmpty(set.intersection(set.new([1, 2]), set.new([3, 4])))]',
+      );
+      checkResult(runtime, [true, true]);
+    });
+
+    test('non-disjoint sets have non-empty intersection', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = [set.isDisjoint(set.new([1, 2, 3]), set.new([3, 4])), set.isNotEmpty(set.intersection(set.new([1, 2, 3]), set.new([3, 4])))]',
+      );
+      checkResult(runtime, [false, true]);
+    });
+
+    test('subset of disjoint sets are also disjoint', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.isDisjoint(set.new([1]), set.new([3, 4]))',
+      );
+      checkResult(runtime, true);
+    });
+  });
 }
