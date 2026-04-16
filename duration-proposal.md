@@ -49,6 +49,15 @@ duration.hours(d)              // 2
 duration.days(d)               // 0
 ```
 
+### Comparison
+
+```primal
+a = duration.fromHours(1)
+b = duration.fromMinutes(90)
+
+duration.compare(a, b)             // -1 (a < b)
+```
+
 ### Integration with Timestamp
 
 ```primal
@@ -110,6 +119,7 @@ is.duration(time.now())            // false
 | `duration.minutes`          | Duration             | Number   | Minutes component (0-59)       |
 | `duration.hours`            | Duration             | Number   | Hours component (0-23)         |
 | `duration.days`             | Duration             | Number   | Days component                 |
+| `duration.compare`          | Duration, Duration   | Number   | Compare (-1, 0, 1)             |
 | `duration.isNegative`       | Duration             | Boolean  | Check if negative              |
 | `duration.isZero`           | Duration             | Boolean  | Check if zero                  |
 | `duration.isPositive`       | Duration             | Boolean  | Check if positive              |
@@ -120,7 +130,7 @@ is.duration(time.now())            // false
 | `duration.parseIso`         | String               | Duration | Parse ISO 8601 format          |
 | `is.duration`               | Any                  | Boolean  | Type check                     |
 
-**Total: 25 functions**
+**Total: 26 functions**
 
 ## Implementation Notes
 
