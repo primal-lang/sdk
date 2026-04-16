@@ -76,22 +76,6 @@ a == b                             // false
 duration.fromHours(1) == duration.fromMinutes(60)  // true
 ```
 
-### Formatting
-
-```primal
-d = duration.from(0, 2, 30, 45, 500)
-
-duration.format(d)                 // "2:30:45.500"
-duration.formatHuman(d)            // "2 hours, 30 minutes, 45 seconds"
-```
-
-### Parsing
-
-```primal
-duration.parse("2:30:45")          // 2 hours, 30 minutes, 45 seconds
-duration.parse("PT2H30M")          // ISO 8601 duration format
-```
-
 ### Integration with Timestamp
 
 ```primal
@@ -130,9 +114,6 @@ time.between(start, end)                  // 7 days
 | `duration.hours`            | Duration             | Number   | Hours component (0-23)               |
 | `duration.days`             | Duration             | Number   | Days component (integer)             |
 | `duration.compare`          | Duration, Duration   | Number   | Compare (-1, 0, 1)                   |
-| `duration.format`           | Duration             | String   | Format as "H:MM:SS.mmm"              |
-| `duration.formatHuman`      | Duration             | String   | Format as human-readable string      |
-| `duration.parse`            | String               | Duration | Parse duration from string           |
 
 ### Timestamp Integration Functions
 
@@ -148,7 +129,7 @@ time.between(start, end)                  // 7 days
 | ------------- | ---------- | ------- | ---------------------------------------- |
 | `is.duration` | Any        | Boolean | True if argument is a Duration           |
 
-**Total: 23 functions**
+**Total: 20 functions**
 
 ## Type System Integration
 
@@ -220,7 +201,6 @@ const Parameter.duration(String name)
 ### Error Handling
 
 - `d / 0` — throws `DivisionByZeroError`
-- `duration.parse("invalid")` — throws `ParseError` with message "Invalid duration format: 'invalid'"
 - `duration.fromHours(-1)` — throws `InvalidValueError` with message "Duration cannot be negative"
 - `a - b` where `b > a` — throws `InvalidValueError` with message "Duration cannot be negative"
 - Type mismatches — throws `InvalidArgumentTypesError`
@@ -236,7 +216,7 @@ start = time.now()
 result = list.reduce([1, 2, 3, 4, 5], 0, num.add)
 end = time.now()
 elapsed = time.between(start, end)
-console.write("Took: " + duration.format(elapsed))
+console.write("Took: " + to.string(elapsed))
 ```
 
 ### Scheduling
@@ -254,7 +234,7 @@ nextRun = time.add(lastRun, interval)
 // Countdown timer
 deadline = time.fromIso("2025-12-31T23:59:59Z")
 remaining = time.between(time.now(), deadline)
-console.write("Time remaining: " + duration.formatHuman(remaining))
+console.write("Time remaining: " + to.string(remaining))
 ```
 
 ### Working Hours Calculation
@@ -330,7 +310,7 @@ This feature requires the following documentation updates:
 The implementation must include tests for:
 
 ### Happy Path
-- All 23 functions with valid inputs
+- All 20 functions with valid inputs
 - Roundtrip: `time.between(a, b)` then `time.add(a, duration)` returns `b`
 - Arithmetic operators: `+`, `-`, `*`, `/`
 - Comparison operators: `<`, `>`, `<=`, `>=`, `==`, `!=`
@@ -344,7 +324,6 @@ The implementation must include tests for:
 
 ### Error Cases
 - `d / 0` throws `DivisionByZeroError`
-- `duration.parse("invalid")` throws `ParseError`
 - Negative input (e.g., `duration.fromHours(-1)`) throws `InvalidValueError`
 - Subtraction resulting in negative (e.g., `a - b` where `b > a`) throws `InvalidValueError`
 - Type mismatches for all functions throw `InvalidArgumentTypesError`
