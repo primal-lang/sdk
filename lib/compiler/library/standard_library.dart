@@ -177,6 +177,12 @@ import 'package:primal/compiler/library/operators/operator_neq.dart';
 import 'package:primal/compiler/library/operators/operator_not.dart';
 import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
+import 'package:primal/compiler/library/path/path_basename.dart';
+import 'package:primal/compiler/library/path/path_dirname.dart';
+import 'package:primal/compiler/library/path/path_extension.dart';
+import 'package:primal/compiler/library/path/path_is_absolute.dart';
+import 'package:primal/compiler/library/path/path_join.dart';
+import 'package:primal/compiler/library/path/path_normalize.dart';
 import 'package:primal/compiler/library/queue/queue_dequeue.dart';
 import 'package:primal/compiler/library/queue/queue_enqueue.dart';
 import 'package:primal/compiler/library/queue/queue_is_empty.dart';
@@ -500,6 +506,14 @@ class StandardLibrary {
     const OperatorNot(),
     const OperatorOr(),
     const OperatorSub(),
+
+    // Path
+    const PathBasename(),
+    const PathDirname(),
+    const PathExtension(),
+    const PathIsAbsolute(),
+    const PathJoin(),
+    const PathNormalize(),
 
     // Queue
     const QueueDequeue(),

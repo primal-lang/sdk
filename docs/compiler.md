@@ -79,6 +79,7 @@ The standard library provides 284 built-in functions, organized by namespace:
 | `time.*`      | 19    | `time.now`, `time.fromIso`, `time.year`                  |
 | `file.*`      | 16    | `file.read`, `file.write`, `file.exists`                 |
 | `directory.*` | 11    | `directory.create`, `directory.list`, `directory.exists` |
+| `path.*`      | 6     | `path.join`, `path.dirname`, `path.basename`             |
 | `hash.*`      | 4     | `hash.md5`, `hash.sha256`                                |
 | `json.*`      | 2     | `json.encode`, `json.decode`                             |
 | `base64.*`    | 2     | `base64.encode`, `base64.decode`                         |

@@ -19,6 +19,7 @@ Primal includes a rich set of core functions that provide essential tools for de
 - [Timestamp](reference/timestamp.md)
 - [File](reference/file.md)
 - [Directory](reference/directory.md)
+- [Path](reference/path.md)
 - [Casting](reference/casting.md)
 - [JSON](reference/json.md)
 - [Base64](reference/base64.md)
