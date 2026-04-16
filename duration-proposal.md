@@ -25,15 +25,15 @@ duration.fromHours(2)              // 2 hours
 duration.fromDays(7)               // 7 days
 
 // Combined construction (days, hours, minutes, seconds, milliseconds)
-duration.of(0, 2, 30, 0, 0)        // 2 hours, 30 minutes
-duration.of(1, 0, 0, 0, 0)         // 1 day
-duration.of(0, 1, 30, 45, 500)     // 1 hour, 30 minutes, 45 seconds, 500 ms
+duration.from(0, 2, 30, 0, 0)        // 2 hours, 30 minutes
+duration.from(1, 0, 0, 0, 0)         // 1 day
+duration.from(0, 1, 30, 45, 500)     // 1 hour, 30 minutes, 45 seconds, 500 ms
 ```
 
 ### Extraction
 
 ```primal
-d = duration.of(0, 2, 30, 0, 0)    // 2 hours, 30 minutes
+d = duration.from(0, 2, 30, 0, 0)    // 2 hours, 30 minutes
 
 duration.toMilliseconds(d)         // 9000000
 duration.toSeconds(d)              // 9000
@@ -99,7 +99,7 @@ duration.between(start, end)              // 7 days
 ### Formatting
 
 ```primal
-d = duration.of(1, 2, 30, 45, 0)   // 1 day, 2 hours, 30 minutes, 45 seconds
+d = duration.from(1, 2, 30, 45, 0)   // 1 day, 2 hours, 30 minutes, 45 seconds
 
 duration.format(d)                 // "1d 2h 30m 45s"
 duration.formatIso(d)              // "P1DT2H30M45S" (ISO 8601)
@@ -130,7 +130,7 @@ is.duration(time.now())            // false
 | `duration.fromMinutes`      | Integer              | Duration | Create from minutes            |
 | `duration.fromHours`        | Integer              | Duration | Create from hours              |
 | `duration.fromDays`         | Integer              | Duration | Create from days               |
-| `duration.of`               | Integer x 5          | Duration | Create from d, h, m, s, ms     |
+| `duration.from`               | Integer x 5          | Duration | Create from d, h, m, s, ms     |
 | `duration.between`          | Timestamp, Timestamp | Duration | Duration between two instants  |
 | `duration.toMilliseconds`   | Duration             | Number   | Total milliseconds             |
 | `duration.toSeconds`        | Duration             | Number   | Total seconds                  |
@@ -242,9 +242,9 @@ console.write("Time remaining: " + duration.formatHuman(remaining))
 ```primal
 // Calculate total work time
 shifts = [
-  duration.of(0, 8, 30, 0, 0),   // 8h 30m
-  duration.of(0, 7, 45, 0, 0),   // 7h 45m
-  duration.of(0, 9, 0, 0, 0),    // 9h
+  duration.from(0, 8, 30, 0, 0),   // 8h 30m
+  duration.from(0, 7, 45, 0, 0),   // 7h 45m
+  duration.from(0, 9, 0, 0, 0),    // 9h
 ]
 total = list.reduce(shifts, duration.zero, duration.add)
 console.write("Total hours: " + to.string(duration.toHours(total)))
