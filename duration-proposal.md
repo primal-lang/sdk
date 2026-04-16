@@ -163,12 +163,12 @@ Note: The API uses milliseconds as the smallest unit for simplicity, but interna
 
 When a Duration is converted to a string (via `to.string` or printed), it uses the format:
 
-- `"02:30:45.500"` for 2 hours, 30 minutes, 45 seconds, 500 milliseconds
-- `"00:00:00.000"` for zero duration
-- `"50:00:00.000"` for 50 hours (hours are unbounded, not wrapped to 0-23)
-- `"2400:00:00.000"` for 100 days (displayed as cumulative hours)
+- `"2h 30m 45s 500ms"` for 2 hours, 30 minutes, 45 seconds, 500 milliseconds
+- `"0ms"` for zero duration
+- `"50h 0m 0s 0ms"` for 50 hours (hours are unbounded, not wrapped to 0-23)
+- `"2400h 0m 0s 0ms"` for 100 days (displayed as cumulative hours)
 
-Note: The format always shows cumulative hours (not days:hours), keeping output consistent and parseable.
+Note: The format always shows cumulative hours (not days:hours), keeping output consistent and human-readable.
 
 ### Dart Mapping
 
@@ -192,7 +192,10 @@ class DurationTerm extends ValueTerm<Duration> {
     final int minutes = value.inMinutes.remainder(60);
     final int seconds = value.inSeconds.remainder(60);
     final int milliseconds = value.inMilliseconds.remainder(1000);
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}.${milliseconds.toString().padLeft(3, '0')}';
+    if (hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0) {
+      return '0ms';
+    }
+    return '${hours}h ${minutes}m ${seconds}s ${milliseconds}ms';
   }
 
   @override
@@ -234,7 +237,10 @@ The following runtime files must be updated:
      final int minutes = value.inMinutes.remainder(60);
      final int seconds = value.inSeconds.remainder(60);
      final int milliseconds = value.inMilliseconds.remainder(1000);
-     return '"${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}.${milliseconds.toString().padLeft(3, '0')}"';
+     if (hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0) {
+       return '"0ms"';
+     }
+     return '"${hours}h ${minutes}m ${seconds}s ${milliseconds}ms"';
    }
    ```
 
