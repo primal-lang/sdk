@@ -70,32 +70,7 @@ time.subtract(now, duration.fromHours(3)) // 3 hours ago
 // Get duration between timestamps
 start = time.fromIso("2025-01-01T00:00:00Z")
 end = time.fromIso("2025-01-08T00:00:00Z")
-duration.between(start, end)              // 7 days
-```
-
-### Formatting
-
-```primal
-d = duration.from(1, 2, 30, 45, 0)   // 1 day, 2 hours, 30 minutes, 45 seconds
-
-duration.format(d)                 // "1d 2h 30m 45s"
-duration.formatIso(d)              // "P1DT2H30M45S" (ISO 8601)
-duration.formatHuman(d)            // "1 day, 2 hours, 30 minutes, 45 seconds"
-```
-
-### Parsing
-
-```primal
-duration.parse("2h 30m")           // 2 hours 30 minutes
-duration.parseIso("PT2H30M")       // 2 hours 30 minutes (ISO 8601)
-```
-
-## Type Checking
-
-```primal
-is.duration(duration.fromHours(1)) // true
-is.duration(42)                    // false
-is.duration(time.now())            // false
+time.between(start, end)                  // 7 days
 ```
 
 ## Standard Library Functions Summary
@@ -108,7 +83,7 @@ is.duration(time.now())            // false
 | `duration.fromHours`        | Integer              | Duration | Create from hours              |
 | `duration.fromDays`         | Integer              | Duration | Create from days               |
 | `duration.from`             | Integer x 5          | Duration | Create from d, h, m, s, ms     |
-| `duration.between`          | Timestamp, Timestamp | Duration | Duration between two instants  |
+| `time.between`              | Timestamp, Timestamp | Duration | Duration between two instants  |
 | `duration.toMilliseconds`   | Duration             | Number   | Total milliseconds             |
 | `duration.toSeconds`        | Duration             | Number   | Total seconds                  |
 | `duration.toMinutes`        | Duration             | Number   | Total minutes                  |
@@ -123,14 +98,8 @@ is.duration(time.now())            // false
 | `duration.isNegative`       | Duration             | Boolean  | Check if negative              |
 | `duration.isZero`           | Duration             | Boolean  | Check if zero                  |
 | `duration.isPositive`       | Duration             | Boolean  | Check if positive              |
-| `duration.format`           | Duration             | String   | Short format                   |
-| `duration.formatIso`        | Duration             | String   | ISO 8601 format                |
-| `duration.formatHuman`      | Duration             | String   | Human-readable format          |
-| `duration.parse`            | String               | Duration | Parse short format             |
-| `duration.parseIso`         | String               | Duration | Parse ISO 8601 format          |
-| `is.duration`               | Any                  | Boolean  | Type check                     |
 
-**Total: 26 functions**
+**Total: 20 functions**
 
 ## Implementation Notes
 
@@ -181,7 +150,7 @@ class DurationTerm extends Term {
 start = time.now()
 result = someExpensiveComputation()
 end = time.now()
-elapsed = duration.between(start, end)
+elapsed = time.between(start, end)
 console.write("Took: " + duration.format(elapsed))
 ```
 
@@ -199,7 +168,7 @@ nextRun = time.add(lastRun, interval)
 ```primal
 // Countdown timer
 deadline = time.fromIso("2025-12-31T23:59:59Z")
-remaining = duration.between(time.now(), deadline)
+remaining = time.between(time.now(), deadline)
 console.write("Time remaining: " + duration.formatHuman(remaining))
 ```
 
