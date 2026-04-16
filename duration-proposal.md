@@ -48,7 +48,7 @@ example() =
     duration.milliseconds(d),      // 500 (0-999)
     duration.seconds(d),           // 45  (0-59)
     duration.minutes(d),           // 30  (0-59)
-    duration.hours(d),             // 2   (unbounded, not 0-23)
+    duration.hours(d),             // 2   (0-23, remainder after extracting days)
     duration.days(d)               // 0   (unbounded)
   ]
 
@@ -64,7 +64,7 @@ largeExample() =
 arithmetic() =
   let a = duration.fromHours(2) in
   let b = duration.fromMinutes(30) in
-  [a + b, a - b]                   // [2h30m, 1h30m]
+  [a + b, a - b]                   // Duration values; to.string yields ["0d 2h 30m 00s 000ms", "0d 1h 30m 00s 000ms"]
 ```
 
 ### Comparison
@@ -94,11 +94,13 @@ formatting() =
 
 **Supported Patterns:**
 
-- `d` — days
-- `H` / `HH` — hours component (0-23)
-- `m` / `mm` — minutes component (0-59)
-- `s` / `ss` — seconds component (0-59)
-- `S` / `SSS` — milliseconds component (0-999)
+- `d` / `dd` — days component (unbounded; `dd` zero-pads to 2 digits)
+- `H` / `HH` — hours component after extracting days (0-23; `HH` zero-pads)
+- `m` / `mm` — minutes component (0-59; `mm` zero-pads)
+- `s` / `ss` — seconds component (0-59; `ss` zero-pads)
+- `S` / `SSS` — milliseconds component (0-999; `SSS` zero-pads to 3 digits)
+
+Note: Format patterns use **component** values (remainders after extracting larger units), not totals. For example, a duration of 50 hours formatted with `"HH:mm"` produces `"02:00"` (2 hours after extracting 2 days), not `"50:00"`. Use `duration.toHours(d)` for total hours.
 
 ### Integration with Timestamp
 
@@ -112,7 +114,7 @@ timestampIntegration() =
 durationBetween() =
   let start = time.fromIso("2025-01-01T00:00:00Z") in
   let end = time.fromIso("2025-01-08T00:00:00Z") in
-  time.between(start, end)                // 7 days
+  time.between(start, end)                // 7 days (argument order doesn't matter; returns absolute duration)
 ```
 
 ## Standard Library Functions Summary
@@ -135,18 +137,18 @@ durationBetween() =
 | `duration.milliseconds`     | Duration           | Number   | Milliseconds component (0-999)    |
 | `duration.seconds`          | Duration           | Number   | Seconds component (0-59)          |
 | `duration.minutes`          | Duration           | Number   | Minutes component (0-59)          |
-| `duration.hours`            | Duration           | Number   | Hours component (0-23, unbounded) |
+| `duration.hours`            | Duration           | Number   | Hours component after days (0-23) |
 | `duration.days`             | Duration           | Number   | Days component (unbounded)        |
 | `duration.compare`          | Duration, Duration | Number   | Compare (-1, 0, 1)                |
 | `duration.format`           | Duration, String   | String   | Format with pattern string        |
 
 ### Timestamp Integration Functions
 
-| Function        | Parameters           | Return    | Description                      |
-| --------------- | -------------------- | --------- | -------------------------------- |
-| `time.add`      | Timestamp, Duration  | Timestamp | Add duration to timestamp        |
-| `time.subtract` | Timestamp, Duration  | Timestamp | Subtract duration from timestamp |
-| `time.between`  | Timestamp, Timestamp | Duration  | Duration between two instants    |
+| Function        | Parameters           | Return    | Description                                                  |
+| --------------- | -------------------- | --------- | ------------------------------------------------------------ |
+| `time.add`      | Timestamp, Duration  | Timestamp | Add duration to timestamp                                    |
+| `time.subtract` | Timestamp, Duration  | Timestamp | Subtract duration from timestamp                             |
+| `time.between`  | Timestamp, Timestamp | Duration  | Absolute duration between two instants (always non-negative) |
 
 ### Type Checking Function
 
@@ -177,7 +179,7 @@ Store duration as a single integer representing **microseconds**. This provides:
 - No floating-point precision issues
 - Direct mapping to Dart's `Duration` class (which uses microseconds internally)
 
-Note: The API uses milliseconds as the smallest unit for simplicity, but internal storage uses microseconds for Dart compatibility. Fractional inputs are truncated to microseconds (e.g., `duration.fromMilliseconds(1.5)` stores 1500 microseconds).
+Note: The API uses milliseconds as the smallest unit for simplicity, but internal storage uses microseconds for Dart compatibility. Fractional inputs are converted to microseconds (e.g., `duration.fromMilliseconds(1.5)` stores 1500 microseconds). Sub-microsecond precision is truncated.
 
 ### String Representation
 
@@ -274,6 +276,12 @@ The following runtime files must be updated:
 4. **Operator implementations** — Add explicit `DurationTerm` handling to:
    - `lib/compiler/library/operators/operator_add.dart`
    - `lib/compiler/library/operators/operator_sub.dart`
+   - `lib/compiler/library/operators/operator_lt.dart`
+   - `lib/compiler/library/operators/operator_le.dart`
+   - `lib/compiler/library/operators/operator_gt.dart`
+   - `lib/compiler/library/operators/operator_ge.dart`
+   - `lib/compiler/library/operators/operator_eq.dart`
+   - `lib/compiler/library/operators/operator_neq.dart`
    - `lib/compiler/library/comparison/comp_lt.dart`
    - `lib/compiler/library/comparison/comp_le.dart`
    - `lib/compiler/library/comparison/comp_gt.dart`
@@ -288,7 +296,7 @@ The following runtime files must be updated:
 - `duration.fromHours(-1)` — throws `InvalidValueError` with message "Duration cannot be negative"
 - `a - b` where `b > a` — throws `InvalidValueError` with message "Duration cannot be negative"
 - Type mismatches — throws `InvalidArgumentTypesError`
-- Overflow (duration exceeding ~292,000 years) — throws `InvalidValueError`
+- Overflow (duration exceeding 292,471 years / 2^63-1 microseconds) — throws `InvalidValueError`
 
 ## Examples
 
@@ -351,7 +359,7 @@ typeChecks() =
 
 ## Compatibility
 
-- **Backward compatible** — new type, no changes to existing functionality
+- **Mostly backward compatible** — new type with no changes to existing standard library behavior
 - **Timestamp integration** — extends `time.*` namespace with duration support
 - **Platform support** — works on both CLI and web (Duration uses no I/O; verified that Dart's `Duration` class works in dart2js)
 - **BREAKING CHANGE** — users who defined custom `time.add`, `time.subtract`, or `time.between` functions will receive `CannotRedefineStandardLibraryError` at compile time. This must be clearly documented in release notes.
@@ -374,7 +382,9 @@ This feature requires the following documentation updates:
 
 3. **Fractional input:** Yes. Construction functions accept fractional numbers: `duration.fromHours(2.5)` creates a duration of 2 hours and 30 minutes. The value is converted to microseconds internally.
 
-4. **Component vs total extraction:** Component functions (`duration.seconds`, etc.) return integer parts as with `time.second` for Timestamp. Total functions (`duration.toSeconds`, etc.) return fractional totals.
+4. **Component vs total extraction:** Component functions (`duration.seconds`, etc.) return integer parts. Total functions (`duration.toSeconds`, etc.) return fractional totals.
+
+5. **Plural naming convention:** Duration component functions use plural names (`duration.seconds`, `duration.milliseconds`) to distinguish them from Timestamp property functions which use singular names (`time.second`, `time.millisecond`). This reflects the semantic difference: Timestamp properties extract a single calendar value, while Duration components extract a count of units.
 
 ## Test Requirements
 
@@ -382,7 +392,7 @@ The implementation must include tests for:
 
 ### Happy Path
 
-- All 21 functions with valid inputs
+- All 22 functions with valid inputs (18 duration + 3 timestamp integration + 1 type check)
 - `to.string(duration)` produces expected format
 - Roundtrip: `time.between(a, b)` then `time.add(a, duration)` returns `b`
 - Arithmetic operators: `+`, `-`
@@ -392,9 +402,10 @@ The implementation must include tests for:
 ### Edge Cases
 
 - Zero duration: `duration.fromMilliseconds(0)` behavior in all operations
-- Maximum precision: microsecond-level accuracy
-- Large durations: near overflow limits (~292,000 years)
-- Fractional inputs: `duration.fromSeconds(1.5)`
+- Maximum precision: microsecond-level accuracy (sub-microsecond truncation)
+- Large durations: near overflow limit (2^63-1 microseconds ≈ 292,471 years)
+- Fractional inputs: `duration.fromSeconds(1.5)` stores 1,500,000 microseconds
+- `time.between` with reversed arguments: `time.between(later, earlier)` returns same as `time.between(earlier, later)`
 
 ### Error Cases
 
@@ -402,6 +413,9 @@ The implementation must include tests for:
 - Subtraction resulting in negative (e.g., `a - b` where `b > a`) throws `InvalidValueError`
 - Type mismatches for all functions throw `InvalidArgumentTypesError`
 - Wrong argument count throws `InvalidArgumentCountError`
+- Duration passed to Timestamp function (e.g., `time.year(duration.fromHours(1))`) throws `InvalidArgumentTypesError`
+- Timestamp passed to Duration function (e.g., `duration.toHours(time.now())`) throws `InvalidArgumentTypesError`
+- `time.between(end, start)` where `end < start` returns absolute difference (no error)
 
 ### Integration
 
