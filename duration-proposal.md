@@ -210,7 +210,6 @@ const Parameter.duration(String name)
 ```primal
 // Measure elapsed time
 start = time.now()
-result = list.reduce([1, 2, 3, 4, 5], 0, num.add)
 end = time.now()
 elapsed = time.between(start, end)
 console.write("Took: " + to.string(elapsed))
@@ -254,25 +253,6 @@ d = duration.fromHours(2)
 is.duration(d)              // true
 is.duration(time.now())     // false
 is.duration(3600)           // false
-```
-
-## Alternatives Considered
-
-### 1. Use Numbers Directly
-
-**Rejected** — loses type safety and semantic meaning. A number `3600` could mean 3600 seconds, milliseconds, or anything else.
-
-### 2. Extend Timestamp
-
-**Rejected** — conceptually different. A timestamp is a point in time; a duration is a span. Mixing them leads to confusion.
-
-### 3. Use Maps/Records
-
-**Rejected** — verbose and error-prone:
-
-```primal
-// Awkward without Duration type
-d = { hours: 2, minutes: 30, seconds: 0 }
 ```
 
 ## Compatibility
