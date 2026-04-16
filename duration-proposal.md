@@ -58,8 +58,6 @@ b = duration.fromMinutes(30)
 
 a + b                              // 2 hours 30 minutes
 a - b                              // 1 hour 30 minutes
-a * 3                              // 6 hours
-a / 2                              // 1 hour
 ```
 
 ### Comparison
@@ -138,9 +136,9 @@ Duration joins the following type classes:
 - **OrderedType** — enables comparison operators (`<`, `>`, `<=`, `>=`)
 - **EquatableType** — enables equality operators (`==`, `!=`)
 - **HashableType** — enables use as map keys and set elements
-- **ArithmeticType** — enables arithmetic operators (`+`, `-`, `*`, `/`)
+- **AdditiveType** — enables arithmetic operators (`+`, `-`)
 
-Note: For `*` and `/`, the right operand must be a Number (scalar). Division by zero throws `DivisionByZeroError`. Subtraction resulting in a negative duration throws `InvalidValueError`.
+Note: Subtraction resulting in a negative duration throws `InvalidValueError`.
 
 ## Implementation Notes
 
@@ -200,7 +198,6 @@ const Parameter.duration(String name)
 
 ### Error Handling
 
-- `d / 0` — throws `DivisionByZeroError`
 - `duration.fromHours(-1)` — throws `InvalidValueError` with message "Duration cannot be negative"
 - `a - b` where `b > a` — throws `InvalidValueError` with message "Duration cannot be negative"
 - Type mismatches — throws `InvalidArgumentTypesError`
@@ -293,7 +290,7 @@ This feature requires the following documentation updates:
 2. Add Duration link to `docs/reference.md`
 3. Add Duration to the types list in `docs/primal.md` under "System" types
 4. Update `docs/reference/casting.md` to include `is.duration`
-5. Update `docs/reference/operators.md` to list Duration under arithmetic and comparison operators
+5. Update `docs/reference/operators.md` to list Duration under additive (`+`, `-`) and comparison operators
 
 ## Decisions (Resolved)
 
@@ -312,7 +309,7 @@ The implementation must include tests for:
 ### Happy Path
 - All 20 functions with valid inputs
 - Roundtrip: `time.between(a, b)` then `time.add(a, duration)` returns `b`
-- Arithmetic operators: `+`, `-`, `*`, `/`
+- Arithmetic operators: `+`, `-`
 - Comparison operators: `<`, `>`, `<=`, `>=`, `==`, `!=`
 - Use as map key and set element (HashableType)
 
@@ -323,7 +320,6 @@ The implementation must include tests for:
 - Fractional inputs: `duration.fromSeconds(1.5)`
 
 ### Error Cases
-- `d / 0` throws `DivisionByZeroError`
 - Negative input (e.g., `duration.fromHours(-1)`) throws `InvalidValueError`
 - Subtraction resulting in negative (e.g., `a - b` where `b > a`) throws `InvalidValueError`
 - Type mismatches for all functions throw `InvalidArgumentTypesError`
