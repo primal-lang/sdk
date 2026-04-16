@@ -33,17 +33,17 @@ duration.from(0, 1, 30, 45, 500)     // 1 hour, 30 minutes, 45 seconds, 500 mill
 ### Extraction
 
 ```primal
-d = duration.from(0, 2, 30, 0, 0)    // 2 hours, 30 minutes
+d = duration.from(0, 2, 30, 45, 500)    // 2 hours, 30 minutes, 45 seconds, 500 milliseconds
 
-duration.toMilliseconds(d)         // 9000000
-duration.toSeconds(d)              // 9000
-duration.toMinutes(d)              // 150
-duration.toHours(d)                // 2.5
-duration.toDays(d)                 // 0.104166...
+duration.toMilliseconds(d)         // 9045500
+duration.toSeconds(d)              // 9045.5
+duration.toMinutes(d)              // 150.758...
+duration.toHours(d)                // 2.512...
+duration.toDays(d)                 // 0.104...
 
-// Component extraction (truncated integers)
-duration.milliseconds(d)       // 0
-duration.seconds(d)            // 0
+// Component extraction
+duration.milliseconds(d)       // 500
+duration.seconds(d)            // 45.5
 duration.minutes(d)            // 30
 duration.hours(d)              // 2
 duration.days(d)               // 0
@@ -89,10 +89,10 @@ time.between(start, end)                  // 7 days
 | `duration.toMinutes`        | Duration             | Number   | Total minutes                  |
 | `duration.toHours`          | Duration             | Number   | Total hours                    |
 | `duration.toDays`           | Duration             | Number   | Total days                     |
-| `duration.milliseconds`     | Duration             | Number   | Milliseconds component (0-999) |
-| `duration.seconds`          | Duration             | Number   | Seconds component (0-59)       |
-| `duration.minutes`          | Duration             | Number   | Minutes component (0-59)       |
-| `duration.hours`            | Duration             | Number   | Hours component (0-23)         |
+| `duration.milliseconds`     | Duration             | Number   | Milliseconds component         |
+| `duration.seconds`          | Duration             | Number   | Seconds component              |
+| `duration.minutes`          | Duration             | Number   | Minutes component              |
+| `duration.hours`            | Duration             | Number   | Hours component                |
 | `duration.days`             | Duration             | Number   | Days component                 |
 | `duration.compare`          | Duration, Duration   | Number   | Compare (-1, 0, 1)             |
 | `duration.isNegative`       | Duration             | Boolean  | Check if negative              |
