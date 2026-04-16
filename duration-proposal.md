@@ -75,29 +75,28 @@ time.between(start, end)                  // 7 days
 
 ## Standard Library Functions Summary
 
-| Function                    | Parameters           | Return   | Description                    |
-| --------------------------- | -------------------- | -------- | ------------------------------ |
-| `duration.fromMilliseconds` | Integer              | Duration | Create from milliseconds       |
-| `duration.fromSeconds`      | Integer              | Duration | Create from seconds            |
-| `duration.fromMinutes`      | Integer              | Duration | Create from minutes            |
-| `duration.fromHours`        | Integer              | Duration | Create from hours              |
-| `duration.fromDays`         | Integer              | Duration | Create from days               |
-| `duration.from`             | Integer x 5          | Duration | Create from d, h, m, s, ms     |
-| `time.between`              | Timestamp, Timestamp | Duration | Duration between two instants  |
-| `duration.toMilliseconds`   | Duration             | Number   | Total milliseconds             |
-| `duration.toSeconds`        | Duration             | Number   | Total seconds                  |
-| `duration.toMinutes`        | Duration             | Number   | Total minutes                  |
-| `duration.toHours`          | Duration             | Number   | Total hours                    |
-| `duration.toDays`           | Duration             | Number   | Total days                     |
-| `duration.milliseconds`     | Duration             | Number   | Milliseconds component         |
-| `duration.seconds`          | Duration             | Number   | Seconds component              |
-| `duration.minutes`          | Duration             | Number   | Minutes component              |
-| `duration.hours`            | Duration             | Number   | Hours component                |
-| `duration.days`             | Duration             | Number   | Days component                 |
-| `duration.compare`          | Duration, Duration   | Number   | Compare (-1, 0, 1)             |
-| `duration.isNegative`       | Duration             | Boolean  | Check if negative              |
-| `duration.isZero`           | Duration             | Boolean  | Check if zero                  |
-| `duration.isPositive`       | Duration             | Boolean  | Check if positive              |
+| Function                    | Parameters           | Return    | Description                      |
+| --------------------------- | -------------------- | --------- | -------------------------------- |
+| `duration.fromMilliseconds` | Integer              | Duration  | Create from milliseconds         |
+| `duration.fromSeconds`      | Integer              | Duration  | Create from seconds              |
+| `duration.fromMinutes`      | Integer              | Duration  | Create from minutes              |
+| `duration.fromHours`        | Integer              | Duration  | Create from hours                |
+| `duration.fromDays`         | Integer              | Duration  | Create from days                 |
+| `duration.from`             | Integer x 5          | Duration  | Create from d, h, m, s, ms       |
+| `duration.toMilliseconds`   | Duration             | Number    | Total milliseconds               |
+| `duration.toSeconds`        | Duration             | Number    | Total seconds                    |
+| `duration.toMinutes`        | Duration             | Number    | Total minutes                    |
+| `duration.toHours`          | Duration             | Number    | Total hours                      |
+| `duration.toDays`           | Duration             | Number    | Total days                       |
+| `duration.milliseconds`     | Duration             | Number    | Milliseconds component           |
+| `duration.seconds`          | Duration             | Number    | Seconds component                |
+| `duration.minutes`          | Duration             | Number    | Minutes component                |
+| `duration.hours`            | Duration             | Number    | Hours component                  |
+| `duration.days`             | Duration             | Number    | Days component                   |
+| `duration.compare`          | Duration, Duration   | Number    | Compare (-1, 0, 1)               |
+| `time.add`                  | Timestamp, Duration  | Timestamp | Add duration to timestamp        |
+| `time.subtract`             | Timestamp, Duration  | Timestamp | Subtract duration from timestamp |
+| `time.between`              | Timestamp, Timestamp | Duration  | Duration between two instants    |
 
 **Total: 20 functions**
 
