@@ -1,3 +1,5 @@
+#!/usr/bin/env primal
+
 greeting() = "Hello, world!"
 
 farewell() = 'Goodbye, world!'
