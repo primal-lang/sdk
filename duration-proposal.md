@@ -163,12 +163,12 @@ Note: The API uses milliseconds as the smallest unit for simplicity, but interna
 
 When a Duration is converted to a string (via `to.string` or printed), it uses the format:
 
-- `"2h 30m 45s 500ms"` for 2 hours, 30 minutes, 45 seconds, 500 milliseconds
+- `"0d 2h 30m 45s 500ms"` for 2 hours, 30 minutes, 45 seconds, 500 milliseconds
 - `"0ms"` for zero duration
-- `"50h 0m 0s 0ms"` for 50 hours (hours are unbounded, not wrapped to 0-23)
-- `"2400h 0m 0s 0ms"` for 100 days (displayed as cumulative hours)
+- `"2d 2h 0m 0s 0ms"` for 50 hours (2 days + 2 hours)
+- `"100d 0h 0m 0s 0ms"` for 100 days
 
-Note: The format always shows cumulative hours (not days:hours), keeping output consistent and human-readable.
+Note: Days are always shown (even when zero) for consistency, except for zero duration which shows `"0ms"`.
 
 ### Dart Mapping
 
@@ -188,14 +188,15 @@ class DurationTerm extends ValueTerm<Duration> {
 
   @override
   String toString() {
-    final int hours = value.inHours;
+    final int days = value.inDays;
+    final int hours = value.inHours.remainder(24);
     final int minutes = value.inMinutes.remainder(60);
     final int seconds = value.inSeconds.remainder(60);
     final int milliseconds = value.inMilliseconds.remainder(1000);
-    if (hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0) {
+    if (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0) {
       return '0ms';
     }
-    return '${hours}h ${minutes}m ${seconds}s ${milliseconds}ms';
+    return '${days}d ${hours}h ${minutes}m ${seconds}s ${milliseconds}ms';
   }
 
   @override
@@ -233,14 +234,15 @@ The following runtime files must be updated:
 
    ```dart
    } else if (value is Duration) {
-     final int hours = value.inHours;
+     final int days = value.inDays;
+     final int hours = value.inHours.remainder(24);
      final int minutes = value.inMinutes.remainder(60);
      final int seconds = value.inSeconds.remainder(60);
      final int milliseconds = value.inMilliseconds.remainder(1000);
-     if (hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0) {
+     if (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0) {
        return '"0ms"';
      }
-     return '"${hours}h ${minutes}m ${seconds}s ${milliseconds}ms"';
+     return '"${days}d ${hours}h ${minutes}m ${seconds}s ${milliseconds}ms"';
    }
    ```
 
