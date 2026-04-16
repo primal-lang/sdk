@@ -93,25 +93,25 @@ time.between(start, end)                  // 7 days
 
 ### Duration Functions
 
-| Function                    | Parameters           | Return   | Description                          |
-| --------------------------- | -------------------- | -------- | ------------------------------------ |
-| `duration.fromMilliseconds` | Number               | Duration | Create from milliseconds             |
-| `duration.fromSeconds`      | Number               | Duration | Create from seconds                  |
-| `duration.fromMinutes`      | Number               | Duration | Create from minutes                  |
-| `duration.fromHours`        | Number               | Duration | Create from hours                    |
-| `duration.fromDays`         | Number               | Duration | Create from days                     |
-| `duration.from`             | Number x 5           | Duration | Create from d, h, m, s, ms           |
-| `duration.toMilliseconds`   | Duration             | Number   | Total milliseconds (fractional)      |
-| `duration.toSeconds`        | Duration             | Number   | Total seconds (fractional)           |
-| `duration.toMinutes`        | Duration             | Number   | Total minutes (fractional)           |
-| `duration.toHours`          | Duration             | Number   | Total hours (fractional)             |
-| `duration.toDays`           | Duration             | Number   | Total days (fractional)              |
-| `duration.milliseconds`     | Duration             | Number   | Milliseconds component (0-999)       |
-| `duration.seconds`          | Duration             | Number   | Seconds component (0-59)             |
-| `duration.minutes`          | Duration             | Number   | Minutes component (0-59)             |
-| `duration.hours`            | Duration             | Number   | Hours component (0-23)               |
-| `duration.days`             | Duration             | Number   | Days component (integer)             |
-| `duration.compare`          | Duration, Duration   | Number   | Compare (-1, 0, 1)                   |
+| Function                    | Parameters         | Return   | Description                     |
+| --------------------------- | ------------------ | -------- | ------------------------------- |
+| `duration.fromMilliseconds` | Number             | Duration | Create from milliseconds        |
+| `duration.fromSeconds`      | Number             | Duration | Create from seconds             |
+| `duration.fromMinutes`      | Number             | Duration | Create from minutes             |
+| `duration.fromHours`        | Number             | Duration | Create from hours               |
+| `duration.fromDays`         | Number             | Duration | Create from days                |
+| `duration.from`             | Number x 5         | Duration | Create from d, h, m, s, ms      |
+| `duration.toMilliseconds`   | Duration           | Number   | Total milliseconds (fractional) |
+| `duration.toSeconds`        | Duration           | Number   | Total seconds (fractional)      |
+| `duration.toMinutes`        | Duration           | Number   | Total minutes (fractional)      |
+| `duration.toHours`          | Duration           | Number   | Total hours (fractional)        |
+| `duration.toDays`           | Duration           | Number   | Total days (fractional)         |
+| `duration.milliseconds`     | Duration           | Number   | Milliseconds component (0-999)  |
+| `duration.seconds`          | Duration           | Number   | Seconds component (0-59)        |
+| `duration.minutes`          | Duration           | Number   | Minutes component (0-59)        |
+| `duration.hours`            | Duration           | Number   | Hours component (0-23)          |
+| `duration.days`             | Duration           | Number   | Days component (integer)        |
+| `duration.compare`          | Duration, Duration | Number   | Compare (-1, 0, 1)              |
 
 ### Timestamp Integration Functions
 
@@ -123,9 +123,9 @@ time.between(start, end)                  // 7 days
 
 ### Type Checking Function
 
-| Function      | Parameters | Return  | Description                              |
-| ------------- | ---------- | ------- | ---------------------------------------- |
-| `is.duration` | Any        | Boolean | True if argument is a Duration           |
+| Function      | Parameters | Return  | Description                    |
+| ------------- | ---------- | ------- | ------------------------------ |
+| `is.duration` | Any        | Boolean | True if argument is a Duration |
 
 **Total: 20 functions**
 
@@ -157,8 +157,8 @@ Note: The API uses milliseconds as the smallest unit for simplicity, but interna
 
 When a Duration is converted to a string (via `to.string` or printed), it uses the format:
 
-- `"Duration(2:30:45.500)"` for 2 hours, 30 minutes, 45 seconds, 500 milliseconds
-- `"Duration(0:00:00.000)"` for zero duration
+- `"02:30:45.500"` for 2 hours, 30 minutes, 45 seconds, 500 milliseconds
+- `"00:00:00.000"` for zero duration
 
 ### Dart Mapping
 
@@ -182,7 +182,7 @@ class DurationTerm extends ValueTerm<Duration> {
     final int minutes = value.inMinutes.remainder(60);
     final int seconds = value.inSeconds.remainder(60);
     final int milliseconds = value.inMilliseconds.remainder(1000);
-    return 'Duration($hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}.${milliseconds.toString().padLeft(3, '0')})';
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}.${milliseconds.toString().padLeft(3, '0')}';
   }
 }
 ```
@@ -307,6 +307,7 @@ This feature requires the following documentation updates:
 The implementation must include tests for:
 
 ### Happy Path
+
 - All 20 functions with valid inputs
 - Roundtrip: `time.between(a, b)` then `time.add(a, duration)` returns `b`
 - Arithmetic operators: `+`, `-`
@@ -314,18 +315,21 @@ The implementation must include tests for:
 - Use as map key and set element (HashableType)
 
 ### Edge Cases
+
 - Zero duration: `duration.fromMilliseconds(0)` behavior in all operations
 - Maximum precision: microsecond-level accuracy
 - Large durations: near overflow limits (~292,000 years)
 - Fractional inputs: `duration.fromSeconds(1.5)`
 
 ### Error Cases
+
 - Negative input (e.g., `duration.fromHours(-1)`) throws `InvalidValueError`
 - Subtraction resulting in negative (e.g., `a - b` where `b > a`) throws `InvalidValueError`
 - Type mismatches for all functions throw `InvalidArgumentTypesError`
 - Wrong argument count throws `InvalidArgumentCountError`
 
 ### Integration
+
 - `list.reduce` with `+` operator
 - `list.map` with duration functions
 - Composition with Timestamp functions
