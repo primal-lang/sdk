@@ -81,6 +81,25 @@ comparison() =
   ]
 ```
 
+### Formatting
+
+```primal
+formatting() =
+  let d = duration.from(2, 5, 30, 45, 500) in  // 2 days, 5 hours, 30 minutes, 45 seconds, 500 milliseconds
+  [
+    duration.format(d, "HH:mm:ss"),                // "05:30:45"
+    duration.format(d, "HH:mm:ss.SSS"),            // "05:30:45.500"
+  ]
+```
+
+**Supported Patterns:**
+
+- `d` — days
+- `H` / `HH` — hours component (0-23)
+- `m` / `mm` — minutes component (0-59)
+- `s` / `ss` — seconds component (0-59)
+- `S` / `SSS` — milliseconds component (0-999)
+
 ### Integration with Timestamp
 
 ```primal
@@ -119,6 +138,7 @@ durationBetween() =
 | `duration.hours`            | Duration           | Number   | Hours component (0-23, unbounded) |
 | `duration.days`             | Duration           | Number   | Days component (unbounded)        |
 | `duration.compare`          | Duration, Duration | Number   | Compare (-1, 0, 1)                |
+| `duration.format`           | Duration, String   | String   | Format with pattern string        |
 
 ### Timestamp Integration Functions
 
