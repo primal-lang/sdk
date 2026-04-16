@@ -25,6 +25,7 @@ duration.fromHours(2)              // 2 hours
 duration.fromDays(7)               // 7 days
 
 // Combined construction (days, hours, minutes, seconds, milliseconds)
+// All components must be non-negative; throws NegativeDurationError otherwise
 duration.from(0, 2, 30, 0, 0)        // 2 hours, 30 minutes
 duration.from(1, 0, 0, 0, 0)         // 1 day
 duration.from(0, 1, 30, 45, 500)     // 1 hour, 30 minutes, 45 seconds, 500 milliseconds
@@ -34,7 +35,7 @@ duration.from(0, 1, 30, 45, 500)     // 1 hour, 30 minutes, 45 seconds, 500 mill
 
 ```primal
 // Given a duration of 2 hours, 30 minutes, 45 seconds, 500 milliseconds
-example() =
+extractionExample() =
   let d = duration.from(0, 2, 30, 45, 500) in
   [
     // Total conversions (returns fractional values)
@@ -53,7 +54,7 @@ example() =
   ]
 
 // For a duration of 50 hours:
-largeExample() =
+fiftyHoursExample() =
   let d = duration.fromHours(50) in
   [duration.days(d), duration.hours(d)]  // [2, 2] (50 hours = 2 days + 2 hours)
 ```
@@ -61,7 +62,7 @@ largeExample() =
 ### Arithmetic
 
 ```primal
-arithmetic() =
+durationArithmetic() =
   let a = duration.fromHours(2) in
   let b = duration.fromMinutes(30) in
   [a + b, a - b]                   // Duration values; to.string yields ["0d 2h 30m 00s 000ms", "0d 1h 30m 00s 000ms"]
@@ -70,13 +71,14 @@ arithmetic() =
 ### Comparison
 
 ```primal
-comparison() =
+durationComparison() =
   let a = duration.fromHours(1) in
   let b = duration.fromMinutes(90) in
   [
     duration.compare(a, b),        // -1 (a < b)
     a < b,                         // true (Duration joins OrderedType)
-    a == b,                        // false
+    a == b,                        // false (Duration joins EquatableType)
+    a != b,                        // true
     duration.fromHours(1) == duration.fromMinutes(60)  // true
   ]
 ```
@@ -84,11 +86,11 @@ comparison() =
 ### Formatting
 
 ```primal
-formatting() =
+durationFormatting() =
   let d = duration.from(2, 5, 30, 45, 500) in  // 2 days, 5 hours, 30 minutes, 45 seconds, 500 milliseconds
   [
-    duration.format(d, "HH:mm:ss"),                // "05:30:45"
-    duration.format(d, "HH:mm:ss.SSS"),            // "05:30:45.500"
+    duration.format(d, "HH:mm:ss"),             // "05:30:45"
+    duration.format(d, "HH:mm:ss.SSS"),         // "05:30:45.500"
   ]
 ```
 
@@ -111,7 +113,7 @@ timestampIntegration() =
   let threeHoursAgo = time.subtract(now, duration.fromHours(3)) in
   [oneWeekLater, threeHoursAgo]
 
-durationBetween() =
+durationBetweenTimestamps() =
   let start = time.fromIso("2025-01-01T00:00:00Z") in
   let end = time.fromIso("2025-01-08T00:00:00Z") in
   time.between(start, end)                // 7 days (argument order doesn't matter; returns absolute duration)
@@ -121,40 +123,40 @@ durationBetween() =
 
 ### Duration Functions
 
-| Function                    | Parameters         | Return   | Description                       |
-| --------------------------- | ------------------ | -------- | --------------------------------- |
-| `duration.fromMilliseconds` | Number             | Duration | Create from milliseconds          |
-| `duration.fromSeconds`      | Number             | Duration | Create from seconds               |
-| `duration.fromMinutes`      | Number             | Duration | Create from minutes               |
-| `duration.fromHours`        | Number             | Duration | Create from hours                 |
-| `duration.fromDays`         | Number             | Duration | Create from days                  |
-| `duration.from`             | Number x 5         | Duration | Create from d, h, m, s, ms        |
-| `duration.toMilliseconds`   | Duration           | Number   | Total milliseconds (fractional)   |
-| `duration.toSeconds`        | Duration           | Number   | Total seconds (fractional)        |
-| `duration.toMinutes`        | Duration           | Number   | Total minutes (fractional)        |
-| `duration.toHours`          | Duration           | Number   | Total hours (fractional)          |
-| `duration.toDays`           | Duration           | Number   | Total days (fractional)           |
-| `duration.milliseconds`     | Duration           | Number   | Milliseconds component (0-999)    |
-| `duration.seconds`          | Duration           | Number   | Seconds component (0-59)          |
-| `duration.minutes`          | Duration           | Number   | Minutes component (0-59)          |
-| `duration.hours`            | Duration           | Number   | Hours component after days (0-23) |
-| `duration.days`             | Duration           | Number   | Days component (unbounded)        |
-| `duration.compare`          | Duration, Duration | Number   | Compare (-1, 0, 1)                |
-| `duration.format`           | Duration, String   | String   | Format with pattern string        |
+| Function                    | Parameters         | Return   | Purity | Description                       |
+| --------------------------- | ------------------ | -------- | ------ | --------------------------------- |
+| `duration.fromMilliseconds` | Number             | Duration | Pure   | Create from milliseconds          |
+| `duration.fromSeconds`      | Number             | Duration | Pure   | Create from seconds               |
+| `duration.fromMinutes`      | Number             | Duration | Pure   | Create from minutes               |
+| `duration.fromHours`        | Number             | Duration | Pure   | Create from hours                 |
+| `duration.fromDays`         | Number             | Duration | Pure   | Create from days                  |
+| `duration.from`             | Number x 5         | Duration | Pure   | Create from d, h, m, s, ms        |
+| `duration.toMilliseconds`   | Duration           | Number   | Pure   | Total milliseconds (fractional)   |
+| `duration.toSeconds`        | Duration           | Number   | Pure   | Total seconds (fractional)        |
+| `duration.toMinutes`        | Duration           | Number   | Pure   | Total minutes (fractional)        |
+| `duration.toHours`          | Duration           | Number   | Pure   | Total hours (fractional)          |
+| `duration.toDays`           | Duration           | Number   | Pure   | Total days (fractional)           |
+| `duration.milliseconds`     | Duration           | Number   | Pure   | Milliseconds component (0-999)    |
+| `duration.seconds`          | Duration           | Number   | Pure   | Seconds component (0-59)          |
+| `duration.minutes`          | Duration           | Number   | Pure   | Minutes component (0-59)          |
+| `duration.hours`            | Duration           | Number   | Pure   | Hours component after days (0-23) |
+| `duration.days`             | Duration           | Number   | Pure   | Days component (unbounded)        |
+| `duration.compare`          | Duration, Duration | Number   | Pure   | Compare (-1, 0, 1)                |
+| `duration.format`           | Duration, String   | String   | Pure   | Format with pattern string        |
 
 ### Timestamp Integration Functions
 
-| Function        | Parameters           | Return    | Description                                                  |
-| --------------- | -------------------- | --------- | ------------------------------------------------------------ |
-| `time.add`      | Timestamp, Duration  | Timestamp | Add duration to timestamp                                    |
-| `time.subtract` | Timestamp, Duration  | Timestamp | Subtract duration from timestamp                             |
-| `time.between`  | Timestamp, Timestamp | Duration  | Absolute duration between two instants (always non-negative) |
+| Function        | Parameters           | Return    | Purity | Description                                                  |
+| --------------- | -------------------- | --------- | ------ | ------------------------------------------------------------ |
+| `time.add`      | Timestamp, Duration  | Timestamp | Pure   | Add duration to timestamp                                    |
+| `time.subtract` | Timestamp, Duration  | Timestamp | Pure   | Subtract duration from timestamp                             |
+| `time.between`  | Timestamp, Timestamp | Duration  | Pure   | Absolute duration between two instants (always non-negative) |
 
 ### Type Checking Function
 
-| Function      | Parameters | Return  | Description                    |
-| ------------- | ---------- | ------- | ------------------------------ |
-| `is.duration` | Any        | Boolean | True if argument is a Duration |
+| Function      | Parameters | Return  | Purity | Description                    |
+| ------------- | ---------- | ------- | ------ | ------------------------------ |
+| `is.duration` | Any        | Boolean | Pure   | True if argument is a Duration |
 
 ## Type System Integration
 
@@ -163,10 +165,10 @@ Duration joins the following type classes:
 - **OrderedType** — enables comparison operators (`<`, `>`, `<=`, `>=`)
 - **EquatableType** — enables equality operators (`==`, `!=`)
 - **HashableType** — enables use as map keys and set elements
-- **AddableType** — enables `+` operator
-- **SubtractableType** — enables `-` operator
+- **AddableType** — enables `+` operator (Duration + Duration)
+- **SubtractableType** — enables `-` operator (Duration - Duration)
 
-Note: Subtraction resulting in a negative duration throws `InvalidValueError`. This differs from Number subtraction, which allows negative results. The rationale is that Duration represents a non-negative span of time; use `time.subtract` to move timestamps backward.
+Note: Subtraction resulting in a negative duration throws `NegativeDurationError`. This differs from Number subtraction, which allows negative results. The rationale is that Duration represents a non-negative span of time; use `time.subtract` to move timestamps backward.
 
 ## Implementation Notes
 
@@ -189,6 +191,19 @@ When a Duration is converted to a string (via `to.string` or printed), it uses t
 - `"0d 0h 00m 00s 000ms"` for zero duration
 - `"2d 2h 00m 00s 000ms"` for 50 hours (2 days + 2 hours)
 - `"100d 0h 00m 00s 000ms"` for 100 days
+
+Note: Days and hours are not zero-padded. Minutes and seconds are padded to 2 digits. Milliseconds are padded to 3 digits.
+
+### New Error Type
+
+Add a new semantic error type for negative duration attempts:
+
+```dart
+class NegativeDurationError extends RuntimeError {
+  const NegativeDurationError({required String function})
+    : super('Duration cannot be negative in "$function"');
+}
+```
 
 ### Dart Mapping
 
@@ -231,7 +246,7 @@ class DurationTerm extends ValueTerm<Duration> {
 
 ### Parameter Type
 
-The parameter class requires a new constructor:
+Add a new constructor to `lib/compiler/models/parameter.dart`, placed after `Parameter.timestamp`:
 
 ```dart
 const Parameter.duration(String name)
@@ -242,15 +257,14 @@ const Parameter.duration(String name)
 
 The following runtime files must be updated:
 
-1. **`lib/compiler/runtime/term.dart`** — Add Duration handling to `ValueTerm.from()`:
+1. **`lib/compiler/runtime/term.dart`** — Add Duration handling to `ValueTerm.from()`, placed after the `DateTime` check (line ~44) and before the `File` check:
 
    ```dart
    } else if (value is Duration) {
      return DurationTerm(value);
-   }
    ```
 
-2. **`lib/compiler/runtime/runtime.dart`** — Add Duration handling to `format()`:
+2. **`lib/compiler/runtime/runtime.dart`** — Add Duration handling to `format()`, placed after the `DateTime` check (line ~22) and before the `File` check:
 
    ```dart
    } else if (value is Duration) {
@@ -267,13 +281,22 @@ The following runtime files must be updated:
    ```
 
 3. **`lib/compiler/models/type.dart`** — Add `DurationType()` to:
-   - `OrderedType.memberTypes`
-   - `EquatableType.memberTypes`
-   - `HashableType.memberTypes`
-   - `AddableType.memberTypes`
-   - `SubtractableType.memberTypes`
+   - `OrderedType.memberTypes` (after `TimestampType()`)
+   - `EquatableType.memberTypes` (after `TimestampType()`)
+   - `HashableType.memberTypes` (after `TimestampType()`)
+   - `AddableType.memberTypes` (after `SetType()`)
+   - `SubtractableType.memberTypes` (after `SetType()`)
 
-4. **Operator implementations** — Add explicit `DurationTerm` handling to:
+4. **`lib/compiler/errors/runtime_error.dart`** — Add the new error class:
+
+   ```dart
+   class NegativeDurationError extends RuntimeError {
+     NegativeDurationError({required String function})
+       : super('Duration cannot be negative in "$function"');
+   }
+   ```
+
+5. **Operator implementations** — Add explicit `DurationTerm` handling to:
    - `lib/compiler/library/operators/operator_add.dart`
    - `lib/compiler/library/operators/operator_sub.dart`
    - `lib/compiler/library/operators/operator_lt.dart`
@@ -293,10 +316,15 @@ The following runtime files must be updated:
 
 ### Error Handling
 
-- `duration.fromHours(-1)` — throws `InvalidValueError` with message "Duration cannot be negative"
-- `a - b` where `b > a` — throws `InvalidValueError` with message "Duration cannot be negative"
+- `duration.fromHours(-1)` — throws `NegativeDurationError` with message `Duration cannot be negative in "duration.fromHours"`
+- `duration.from(0, -1, 0, 0, 0)` — throws `NegativeDurationError` (each component validated individually)
+- `duration.from(-1, 0, 0, 0, 0)` — throws `NegativeDurationError` (negative days)
+- `a - b` where `b > a` — throws `NegativeDurationError` with function name "-"
 - Type mismatches — throws `InvalidArgumentTypesError`
-- Overflow (duration exceeding 292,471 years / 2^63-1 microseconds) — throws `InvalidValueError`
+- Wrong argument count — throws `InvalidArgumentCountError`
+- Overflow (duration exceeding ~292,471 years / 2^63-1 microseconds on 64-bit platforms) — throws `InvalidValueError`
+
+**Platform Note:** On the web platform (JavaScript), number precision is limited to 53 bits (IEEE 754 double). This limits maximum duration to approximately 104 million days (~285,000 years) without precision loss. The CLI platform supports the full 64-bit range.
 
 ## Examples
 
@@ -304,7 +332,7 @@ The following runtime files must be updated:
 
 ```primal
 // Measure elapsed time
-measureElapsed() =
+measureElapsedTime() =
   let start = time.now() in
   let end = time.now() in
   let elapsed = time.between(start, end) in
@@ -315,7 +343,7 @@ measureElapsed() =
 
 ```primal
 // Calculate next run time
-calculateNextRun() =
+calculateNextRunTime() =
   let interval = duration.fromHours(6) in
   let lastRun = time.fromIso("2025-01-15T10:00:00Z") in
   time.add(lastRun, interval)
@@ -325,7 +353,7 @@ calculateNextRun() =
 
 ```primal
 // Countdown timer
-showTimeRemaining() =
+displayTimeRemaining() =
   let deadline = time.fromIso("2025-12-31T23:59:59Z") in
   let remaining = time.between(time.now(), deadline) in
   console.write("Time remaining: " + to.string(remaining))
@@ -335,7 +363,7 @@ showTimeRemaining() =
 
 ```primal
 // Calculate total work time
-totalWorkHours() =
+calculateTotalWorkHours() =
   let shifts = [
     duration.from(0, 8, 30, 0, 0),   // 8h 30m
     duration.from(0, 7, 45, 0, 0),   // 7h 45m
@@ -348,7 +376,7 @@ totalWorkHours() =
 ### Type Checking
 
 ```primal
-typeChecks() =
+durationTypeChecks() =
   let d = duration.fromHours(2) in
   [
     is.duration(d),             // true
@@ -362,29 +390,54 @@ typeChecks() =
 - **Mostly backward compatible** — new type with no changes to existing standard library behavior
 - **Timestamp integration** — extends `time.*` namespace with duration support
 - **Platform support** — works on both CLI and web (Duration uses no I/O; verified that Dart's `Duration` class works in dart2js)
-- **BREAKING CHANGE** — users who defined custom `time.add`, `time.subtract`, or `time.between` functions will receive `CannotRedefineStandardLibraryError` at compile time. This must be clearly documented in release notes.
+- **BREAKING CHANGE** — users who defined custom `time.add`, `time.subtract`, or `time.between` functions will receive `CannotRedefineStandardLibraryError` at compile time
+
+### Migration Guide for Breaking Change
+
+If you have user-defined functions named `time.add`, `time.subtract`, or `time.between`:
+
+1. **Rename your functions** to avoid the `time.*` namespace:
+   - `time.add` → `myTime.add` or `addToTimestamp`
+   - `time.subtract` → `myTime.subtract` or `subtractFromTimestamp`
+   - `time.between` → `myTime.between` or `timeDifference`
+
+2. **Update all call sites** to use the new function names
+
+3. **Consider using the new standard library functions** if your custom implementations were workarounds for missing duration support
+
+### Known Namespace Inconsistency
+
+The existing `timestamp.toEpoch` function uses the `timestamp.*` namespace while all other timestamp functions use `time.*`. This proposal maintains consistency with the majority by using `time.*` for the new functions. A future release may deprecate `timestamp.toEpoch` in favor of `time.toEpoch`.
 
 ## Documentation Requirements
 
 This feature requires the following documentation updates:
 
-1. Create `docs/reference/duration.md` with full function documentation
-2. Add Duration link to `docs/reference.md`
+1. Create `docs/reference/duration.md` with full function documentation (including purity annotations)
+2. Add Duration link to `docs/reference.md` (after Timestamp)
 3. Add Duration to the types list in `docs/primal.md` under "System" types
 4. Update `docs/reference/casting.md` to include `is.duration`
-5. Update `docs/reference/operators.md` to list Duration under additive (`+`, `-`) and comparison operators
+5. Update `docs/reference/operators.md`:
+   - Add `Duration == Duration` and `Duration != Duration` under Equality/Inequality
+   - Add `Duration < Duration`, `Duration > Duration`, `Duration <= Duration`, `Duration >= Duration` under comparison operators
+   - Add `Duration + Duration` under Addition
+   - Add `Duration - Duration` under Subtraction
 
 ## Decisions (Resolved)
 
 1. **Months/years support:** No. Months and years have variable lengths (28-31 days, 365-366 days). Duration represents fixed time spans only.
 
-2. **Negative durations:** No. Durations represent non-negative time spans. Construction functions throw `InvalidValueError` for negative inputs. Use `time.subtract` to move timestamps backward.
+2. **Negative durations:** No. Durations represent non-negative time spans. Construction functions throw `NegativeDurationError` for negative inputs. Each component in `duration.from` is validated individually. Use `time.subtract` to move timestamps backward.
 
 3. **Fractional input:** Yes. Construction functions accept fractional numbers: `duration.fromHours(2.5)` creates a duration of 2 hours and 30 minutes. The value is converted to microseconds internally.
 
 4. **Component vs total extraction:** Component functions (`duration.seconds`, etc.) return integer parts. Total functions (`duration.toSeconds`, etc.) return fractional totals.
 
 5. **Plural naming convention:** Duration component functions use plural names (`duration.seconds`, `duration.milliseconds`) to distinguish them from Timestamp property functions which use singular names (`time.second`, `time.millisecond`). This reflects the semantic difference: Timestamp properties extract a single calendar value, while Duration components extract a count of units.
+
+6. **Format pattern letters:** Duration uses `D`/`DD` for days (uppercase) to avoid conflict with Timestamp's `d`/`dd` (day-of-month). Single `S` for milliseconds is not supported; only `SSS` (zero-padded to 3 digits) is available to match Timestamp's behavior.
+
+7. **Error type for negative durations:** A dedicated `NegativeDurationError` provides clear, specific error messages that include the function name, rather than using the generic `InvalidValueError`.
 
 ## Test Requirements
 
@@ -396,29 +449,54 @@ The implementation must include tests for:
 - `to.string(duration)` produces expected format
 - Roundtrip: `time.between(a, b)` then `time.add(a, duration)` returns `b`
 - Arithmetic operators: `+`, `-`
-- Comparison operators: `<`, `>`, `<=`, `>=`, `==`, `!=`
+- Comparison operators: `<`, `>`, `<=`, `>=`
+- Equality operators: `==`, `!=`
 - Use as map key and set element (HashableType)
 
 ### Edge Cases
 
-- Zero duration: `duration.fromMilliseconds(0)` behavior in all operations
+- **Zero duration operations:**
+  - `duration.fromMilliseconds(0)` construction
+  - `zeroDuration + anyDuration` equals `anyDuration`
+  - `anyDuration - anyDuration` equals zero duration (same duration)
+  - `duration.compare(zero, zero)` returns 0
+  - Zero duration as map key (should work, hashable)
+  - Zero duration formatted with all patterns
+  - `duration.toHours(zeroDuration)` returns 0
 - Maximum precision: microsecond-level accuracy (sub-microsecond truncation)
 - Large durations: near overflow limit (2^63-1 microseconds ≈ 292,471 years)
+- Large durations on web: verify behavior near 2^53 limit
 - Fractional inputs: `duration.fromSeconds(1.5)` stores 1,500,000 microseconds
+- Fractional days: `duration.fromDays(0.5)` equals 12 hours
 - `time.between` with reversed arguments: `time.between(later, earlier)` returns same as `time.between(earlier, later)`
+- Duration equality across construction methods: `duration.fromHours(1) == duration.fromMinutes(60)`
 
 ### Error Cases
 
-- Negative input (e.g., `duration.fromHours(-1)`) throws `InvalidValueError`
-- Subtraction resulting in negative (e.g., `a - b` where `b > a`) throws `InvalidValueError`
+- Negative input to single-value constructors:
+  - `duration.fromMilliseconds(-1)` throws `NegativeDurationError`
+  - `duration.fromSeconds(-1)` throws `NegativeDurationError`
+  - `duration.fromMinutes(-1)` throws `NegativeDurationError`
+  - `duration.fromHours(-1)` throws `NegativeDurationError`
+  - `duration.fromDays(-1)` throws `NegativeDurationError`
+- Negative components in `duration.from`:
+  - `duration.from(-1, 0, 0, 0, 0)` throws `NegativeDurationError`
+  - `duration.from(0, -1, 0, 0, 0)` throws `NegativeDurationError`
+  - `duration.from(0, 0, -1, 0, 0)` throws `NegativeDurationError`
+  - `duration.from(0, 0, 0, -1, 0)` throws `NegativeDurationError`
+  - `duration.from(0, 0, 0, 0, -1)` throws `NegativeDurationError`
+- Subtraction resulting in negative (e.g., `a - b` where `b > a`) throws `NegativeDurationError`
 - Type mismatches for all functions throw `InvalidArgumentTypesError`
 - Wrong argument count throws `InvalidArgumentCountError`
 - Duration passed to Timestamp function (e.g., `time.year(duration.fromHours(1))`) throws `InvalidArgumentTypesError`
 - Timestamp passed to Duration function (e.g., `duration.toHours(time.now())`) throws `InvalidArgumentTypesError`
 - `time.between(end, start)` where `end < start` returns absolute difference (no error)
+- Overflow throws `InvalidValueError`
 
 ### Integration
 
 - `list.reduce` with `+` operator
 - `list.map` with duration functions
+- `list.filter` with duration comparison
 - Composition with Timestamp functions
+- Duration in conditional expressions: `if (elapsed > duration.fromHours(1)) ... else ...`
