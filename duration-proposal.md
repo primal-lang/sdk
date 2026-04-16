@@ -18,7 +18,7 @@ Currently, Primal has `Timestamp` for working with dates and times, but lacks a 
 
 ```primal
 // Named constructors for each unit
-duration.fromMilliseconds(500)     // 500 ms
+duration.fromMilliseconds(500)     // 500 milliseconds
 duration.fromSeconds(30)           // 30 seconds
 duration.fromMinutes(5)            // 5 minutes
 duration.fromHours(2)              // 2 hours
@@ -27,7 +27,7 @@ duration.fromDays(7)               // 7 days
 // Combined construction (days, hours, minutes, seconds, milliseconds)
 duration.from(0, 2, 30, 0, 0)        // 2 hours, 30 minutes
 duration.from(1, 0, 0, 0, 0)         // 1 day
-duration.from(0, 1, 30, 45, 500)     // 1 hour, 30 minutes, 45 seconds, 500 ms
+duration.from(0, 1, 30, 45, 500)     // 1 hour, 30 minutes, 45 seconds, 500 milliseconds
 ```
 
 ### Extraction
@@ -47,38 +47,6 @@ duration.seconds(d)            // 0
 duration.minutes(d)            // 30
 duration.hours(d)              // 2
 duration.days(d)               // 0
-```
-
-### Arithmetic
-
-```primal
-a = duration.fromHours(2)
-b = duration.fromMinutes(30)
-
-duration.add(a, b)                 // 2 hours 30 minutes
-duration.subtract(a, b)            // 1 hour 30 minutes
-duration.multiply(a, 3)            // 6 hours
-duration.divide(a, 2)              // 1 hour
-duration.negate(a)                 // -2 hours
-duration.abs(a)                    // 2 hours (absolute value)
-```
-
-### Comparison
-
-```primal
-a = duration.fromHours(1)
-b = duration.fromMinutes(90)
-
-duration.compare(a, b)             // -1 (a < b)
-duration.eq(a, b)                  // false
-duration.lt(a, b)                  // true
-duration.gt(a, b)                  // false
-duration.lte(a, b)                 // true
-duration.gte(a, b)                 // false
-
-duration.isNegative(a)             // false
-duration.isZero(a)                 // false
-duration.isPositive(a)             // true
 ```
 
 ### Integration with Timestamp
@@ -130,7 +98,7 @@ is.duration(time.now())            // false
 | `duration.fromMinutes`      | Integer              | Duration | Create from minutes            |
 | `duration.fromHours`        | Integer              | Duration | Create from hours              |
 | `duration.fromDays`         | Integer              | Duration | Create from days               |
-| `duration.from`               | Integer x 5          | Duration | Create from d, h, m, s, ms     |
+| `duration.from`             | Integer x 5          | Duration | Create from d, h, m, s, ms     |
 | `duration.between`          | Timestamp, Timestamp | Duration | Duration between two instants  |
 | `duration.toMilliseconds`   | Duration             | Number   | Total milliseconds             |
 | `duration.toSeconds`        | Duration             | Number   | Total seconds                  |
@@ -142,18 +110,6 @@ is.duration(time.now())            // false
 | `duration.minutes`          | Duration             | Number   | Minutes component (0-59)       |
 | `duration.hours`            | Duration             | Number   | Hours component (0-23)         |
 | `duration.days`             | Duration             | Number   | Days component                 |
-| `duration.add`              | Duration, Duration   | Duration | Add two durations              |
-| `duration.subtract`         | Duration, Duration   | Duration | Subtract two durations         |
-| `duration.multiply`         | Duration, Number     | Duration | Scale duration                 |
-| `duration.divide`           | Duration, Number     | Duration | Divide duration                |
-| `duration.negate`           | Duration             | Duration | Negate duration                |
-| `duration.abs`              | Duration             | Duration | Absolute value                 |
-| `duration.compare`          | Duration, Duration   | Number   | Compare (-1, 0, 1)             |
-| `duration.eq`               | Duration, Duration   | Boolean  | Equality check                 |
-| `duration.lt`               | Duration, Duration   | Boolean  | Less than                      |
-| `duration.gt`               | Duration, Duration   | Boolean  | Greater than                   |
-| `duration.lte`              | Duration, Duration   | Boolean  | Less than or equal             |
-| `duration.gte`              | Duration, Duration   | Boolean  | Greater than or equal          |
 | `duration.isNegative`       | Duration             | Boolean  | Check if negative              |
 | `duration.isZero`           | Duration             | Boolean  | Check if zero                  |
 | `duration.isPositive`       | Duration             | Boolean  | Check if positive              |
@@ -164,7 +120,7 @@ is.duration(time.now())            // false
 | `duration.parseIso`         | String               | Duration | Parse ISO 8601 format          |
 | `is.duration`               | Any                  | Boolean  | Type check                     |
 
-**Total: 37 functions**
+**Total: 25 functions**
 
 ## Implementation Notes
 
