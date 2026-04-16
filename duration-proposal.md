@@ -184,9 +184,9 @@ Note: The API uses milliseconds as the smallest unit for simplicity, but interna
 When a Duration is converted to a string (via `to.string` or printed), it uses the format:
 
 - `"0d 2h 30m 45s 500ms"` for 2 hours, 30 minutes, 45 seconds, 500 milliseconds
-- `"0d 0h 0m 0s 0ms"` for zero duration
-- `"2d 2h 0m 0s 0ms"` for 50 hours (2 days + 2 hours)
-- `"100d 0h 0m 0s 0ms"` for 100 days
+- `"0d 0h 00m 00s 000ms"` for zero duration
+- `"2d 2h 00m 00s 000ms"` for 50 hours (2 days + 2 hours)
+- `"100d 0h 00m 00s 000ms"` for 100 days
 
 ### Dart Mapping
 
@@ -211,7 +211,10 @@ class DurationTerm extends ValueTerm<Duration> {
     final int minutes = value.inMinutes.remainder(60);
     final int seconds = value.inSeconds.remainder(60);
     final int milliseconds = value.inMilliseconds.remainder(1000);
-    return '${days}d ${hours}h ${minutes}m ${seconds}s ${milliseconds}ms';
+    final String minutesString = minutes.toString().padLeft(2, '0');
+    final String secondsString = seconds.toString().padLeft(2, '0');
+    final String millisecondsString = milliseconds.toString().padLeft(3, '0');
+    return '${days}d ${hours}h ${minutesString}m ${secondsString}s ${millisecondsString}ms';
   }
 
   @override
@@ -254,7 +257,10 @@ The following runtime files must be updated:
      final int minutes = value.inMinutes.remainder(60);
      final int seconds = value.inSeconds.remainder(60);
      final int milliseconds = value.inMilliseconds.remainder(1000);
-     return '"${days}d ${hours}h ${minutes}m ${seconds}s ${milliseconds}ms"';
+     final String minutesString = minutes.toString().padLeft(2, '0');
+     final String secondsString = seconds.toString().padLeft(2, '0');
+     final String millisecondsString = milliseconds.toString().padLeft(3, '0');
+     return '"${days}d ${hours}h ${minutesString}m ${secondsString}s ${millisecondsString}ms"';
    }
    ```
 
