@@ -56,10 +56,10 @@ duration.days(d)                   // 0
 a = duration.fromHours(2)
 b = duration.fromMinutes(30)
 
-duration.add(a, b)                 // 2 hours 30 minutes
-duration.subtract(a, b)            // 1 hour 30 minutes
-duration.multiply(a, 3)            // 6 hours
-duration.divide(a, 2)              // 1 hour
+a + b                              // 2 hours 30 minutes
+a - b                              // 1 hour 30 minutes
+a * 3                              // 6 hours
+a / 2                              // 1 hour
 ```
 
 ### Comparison
@@ -129,10 +129,6 @@ time.between(start, end)                  // 7 days
 | `duration.minutes`          | Duration             | Number   | Minutes component (0-59)             |
 | `duration.hours`            | Duration             | Number   | Hours component (0-23)               |
 | `duration.days`             | Duration             | Number   | Days component (integer)             |
-| `duration.add`              | Duration, Duration   | Duration | Add two durations                    |
-| `duration.subtract`         | Duration, Duration   | Duration | Subtract second from first           |
-| `duration.multiply`         | Duration, Number     | Duration | Multiply duration by scalar          |
-| `duration.divide`           | Duration, Number     | Duration | Divide duration by scalar            |
 | `duration.compare`          | Duration, Duration   | Number   | Compare (-1, 0, 1)                   |
 | `duration.format`           | Duration             | String   | Format as "H:MM:SS.mmm"              |
 | `duration.formatHuman`      | Duration             | String   | Format as human-readable string      |
@@ -152,7 +148,7 @@ time.between(start, end)                  // 7 days
 | ------------- | ---------- | ------- | ---------------------------------------- |
 | `is.duration` | Any        | Boolean | True if argument is a Duration           |
 
-**Total: 27 functions**
+**Total: 23 functions**
 
 ## Type System Integration
 
@@ -161,8 +157,9 @@ Duration joins the following type classes:
 - **OrderedType** — enables comparison operators (`<`, `>`, `<=`, `>=`)
 - **EquatableType** — enables equality operators (`==`, `!=`)
 - **HashableType** — enables use as map keys and set elements
+- **ArithmeticType** — enables arithmetic operators (`+`, `-`, `*`, `/`)
 
-This matches the behavior of Timestamp.
+Note: For `*` and `/`, the right operand must be a Number (scalar). Division by zero throws `DivisionByZeroError`. Subtraction resulting in a negative duration throws `InvalidValueError`.
 
 ## Implementation Notes
 
@@ -222,10 +219,10 @@ const Parameter.duration(String name)
 
 ### Error Handling
 
-- `duration.divide(d, 0)` — throws `DivisionByZeroError`
+- `d / 0` — throws `DivisionByZeroError`
 - `duration.parse("invalid")` — throws `ParseError` with message "Invalid duration format: 'invalid'"
 - `duration.fromHours(-1)` — throws `InvalidValueError` with message "Duration cannot be negative"
-- `duration.subtract(a, b)` where `b > a` — throws `InvalidValueError` with message "Duration cannot be negative"
+- `a - b` where `b > a` — throws `InvalidValueError` with message "Duration cannot be negative"
 - Type mismatches — throws `InvalidArgumentTypesError`
 - Overflow (duration exceeding ~292,000 years) — throws `InvalidValueError`
 
@@ -269,7 +266,7 @@ shifts = [
   duration.from(0, 7, 45, 0, 0),   // 7h 45m
   duration.from(0, 9, 0, 0, 0),    // 9h
 ]
-total = list.reduce(shifts, duration.fromMilliseconds(0), duration.add)
+total = list.reduce(shifts, duration.fromMilliseconds(0), (a, b) => a + b)
 console.write("Total hours: " + to.string(duration.toHours(total)))
 ```
 
@@ -316,7 +313,7 @@ This feature requires the following documentation updates:
 2. Add Duration link to `docs/reference.md`
 3. Add Duration to the types list in `docs/primal.md` under "System" types
 4. Update `docs/reference/casting.md` to include `is.duration`
-5. Update `docs/reference/operators.md` to list Duration under comparison operators
+5. Update `docs/reference/operators.md` to list Duration under arithmetic and comparison operators
 
 ## Decisions (Resolved)
 
@@ -333,8 +330,9 @@ This feature requires the following documentation updates:
 The implementation must include tests for:
 
 ### Happy Path
-- All 27 functions with valid inputs
+- All 23 functions with valid inputs
 - Roundtrip: `time.between(a, b)` then `time.add(a, duration)` returns `b`
+- Arithmetic operators: `+`, `-`, `*`, `/`
 - Comparison operators: `<`, `>`, `<=`, `>=`, `==`, `!=`
 - Use as map key and set element (HashableType)
 
@@ -345,14 +343,14 @@ The implementation must include tests for:
 - Fractional inputs: `duration.fromSeconds(1.5)`
 
 ### Error Cases
-- `duration.divide(d, 0)` throws `DivisionByZeroError`
+- `d / 0` throws `DivisionByZeroError`
 - `duration.parse("invalid")` throws `ParseError`
 - Negative input (e.g., `duration.fromHours(-1)`) throws `InvalidValueError`
-- Subtraction resulting in negative (e.g., `duration.subtract(a, b)` where `b > a`) throws `InvalidValueError`
+- Subtraction resulting in negative (e.g., `a - b` where `b > a`) throws `InvalidValueError`
 - Type mismatches for all functions throw `InvalidArgumentTypesError`
 - Wrong argument count throws `InvalidArgumentCountError`
 
 ### Integration
-- `list.reduce` with `duration.add`
+- `list.reduce` with `+` operator
 - `list.map` with duration functions
 - Composition with Timestamp functions
