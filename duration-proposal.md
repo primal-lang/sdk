@@ -164,11 +164,9 @@ Note: The API uses milliseconds as the smallest unit for simplicity, but interna
 When a Duration is converted to a string (via `to.string` or printed), it uses the format:
 
 - `"0d 2h 30m 45s 500ms"` for 2 hours, 30 minutes, 45 seconds, 500 milliseconds
-- `"0ms"` for zero duration
+- `"0d 0h 0m 0s 0ms"` for zero duration
 - `"2d 2h 0m 0s 0ms"` for 50 hours (2 days + 2 hours)
 - `"100d 0h 0m 0s 0ms"` for 100 days
-
-Note: Days are always shown (even when zero) for consistency, except for zero duration which shows `"0ms"`.
 
 ### Dart Mapping
 
@@ -193,9 +191,6 @@ class DurationTerm extends ValueTerm<Duration> {
     final int minutes = value.inMinutes.remainder(60);
     final int seconds = value.inSeconds.remainder(60);
     final int milliseconds = value.inMilliseconds.remainder(1000);
-    if (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0) {
-      return '0ms';
-    }
     return '${days}d ${hours}h ${minutes}m ${seconds}s ${milliseconds}ms';
   }
 
@@ -239,9 +234,6 @@ The following runtime files must be updated:
      final int minutes = value.inMinutes.remainder(60);
      final int seconds = value.inSeconds.remainder(60);
      final int milliseconds = value.inMilliseconds.remainder(1000);
-     if (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0) {
-       return '"0ms"';
-     }
      return '"${days}d ${hours}h ${minutes}m ${seconds}s ${milliseconds}ms"';
    }
    ```
