@@ -2,10 +2,10 @@ import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/term.dart';
 
-class TimeEpoch extends NativeFunctionTerm {
-  const TimeEpoch()
+class TimestampToEpoch extends NativeFunctionTerm {
+  const TimestampToEpoch()
     : super(
-        name: 'time.epoch',
+        name: 'timestamp.toEpoch',
         parameters: const [
           Parameter.timestamp('a'),
         ],

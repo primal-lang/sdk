@@ -55,16 +55,16 @@ time.fromEpoch(1705312200000) // returns a timestamp for 2024-01-15T10:30:00.000
 time.toIso(time.now()) // returns "2024-01-15T10:30:00.000Z"
 ```
 
-### Epoch
+### To Epoch
 
-- **Signature:** `time.epoch(a: Timestamp): Number`
+- **Signature:** `timestamp.toEpoch(a: Timestamp): Number`
 - **Input:** One timestamp
 - **Output:** The number of milliseconds elapsed since the Unix epoch
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.epoch(time.now()) // returns 1705312200000
+timestamp.toEpoch(time.now()) // returns 1705312200000
 ```
 
 ### Format

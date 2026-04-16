@@ -258,7 +258,6 @@ import 'package:primal/compiler/library/timestamp/time_compare.dart';
 import 'package:primal/compiler/library/timestamp/time_day.dart';
 import 'package:primal/compiler/library/timestamp/time_day_of_week.dart';
 import 'package:primal/compiler/library/timestamp/time_day_of_year.dart';
-import 'package:primal/compiler/library/timestamp/time_epoch.dart';
 import 'package:primal/compiler/library/timestamp/time_format.dart';
 import 'package:primal/compiler/library/timestamp/time_from_epoch.dart';
 import 'package:primal/compiler/library/timestamp/time_from_iso.dart';
@@ -273,6 +272,7 @@ import 'package:primal/compiler/library/timestamp/time_now.dart';
 import 'package:primal/compiler/library/timestamp/time_second.dart';
 import 'package:primal/compiler/library/timestamp/time_to_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_year.dart';
+import 'package:primal/compiler/library/timestamp/timestamp_to_epoch.dart';
 import 'package:primal/compiler/library/uuid/uuid_v4.dart';
 import 'package:primal/compiler/library/vector/vector_add.dart';
 import 'package:primal/compiler/library/vector/vector_angle.dart';
@@ -602,7 +602,7 @@ class StandardLibrary {
     const TimeDay(),
     const TimeDayOfWeek(),
     const TimeDayOfYear(),
-    const TimeEpoch(),
+    const TimestampToEpoch(),
     const TimeFormat(),
     const TimeFromEpoch(),
     const TimeFromIso(),

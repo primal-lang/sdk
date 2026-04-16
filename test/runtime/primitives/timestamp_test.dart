@@ -93,10 +93,10 @@ void main() {
       expect(num.parse(runtime.executeMain()), closeTo(now.second, 999));
     });
 
-    test('time.epoch', () {
+    test('timestamp.toEpoch', () {
       final DateTime now = DateTime.now();
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.now())',
+        'main() = timestamp.toEpoch(time.now())',
       );
       expect(
         num.parse(runtime.executeMain()),
@@ -176,9 +176,9 @@ void main() {
       checkResult(runtime, 500);
     });
 
-    test('time.epoch returns correct value for Unix epoch', () {
+    test('timestamp.toEpoch returns correct value for Unix epoch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1970-01-01T00:00:00.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1970-01-01T00:00:00.000Z"))',
       );
       checkResult(runtime, 0);
     });
@@ -399,25 +399,31 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('time.epoch throws for number argument', () {
-      final RuntimeFacade runtime = getRuntime('main() = time.epoch(123)');
-      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
-    });
-
-    test('time.epoch throws for string argument', () {
-      final RuntimeFacade runtime = getRuntime('main() = time.epoch("hello")');
-      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
-    });
-
-    test('time.epoch throws for list argument', () {
+    test('timestamp.toEpoch throws for number argument', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch([1, 2, 3])',
+        'main() = timestamp.toEpoch(123)',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('time.epoch throws for boolean argument', () {
-      final RuntimeFacade runtime = getRuntime('main() = time.epoch(true)');
+    test('timestamp.toEpoch throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = timestamp.toEpoch("hello")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('timestamp.toEpoch throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = timestamp.toEpoch([1, 2, 3])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('timestamp.toEpoch throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = timestamp.toEpoch(true)',
+      );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
@@ -675,12 +681,15 @@ void main() {
   });
 
   group('Timestamp Special Dates', () {
-    test('time.epoch returns negative value for date before Unix epoch', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1969-12-31T23:59:59.000Z"))',
-      );
-      checkResult(runtime, -1000);
-    });
+    test(
+      'timestamp.toEpoch returns negative value for date before Unix epoch',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = timestamp.toEpoch(time.fromIso("1969-12-31T23:59:59.000Z"))',
+        );
+        checkResult(runtime, -1000);
+      },
+    );
 
     test('time.year handles year 1 AD', () {
       final RuntimeFacade runtime = getRuntime(
@@ -696,7 +705,7 @@ void main() {
       checkResult(runtime, 9999);
     });
 
-    test('time.epoch handles new year transition', () {
+    test('timestamp.toEpoch handles new year transition', () {
       final RuntimeFacade runtime = getRuntime(
         'main() = time.compare(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2023-12-31T23:59:59Z"))',
       );
@@ -809,9 +818,9 @@ main() = [time.year(t()), time.month(t()), time.day(t()), time.hour(t()), time.m
       checkResult(runtime, [2024, 6, 15, 10, 30, 45, 500]);
     });
 
-    test('time.epoch and components are consistent', () {
+    test('timestamp.toEpoch and components are consistent', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1970-01-01T00:00:01.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1970-01-01T00:00:01.000Z"))',
       );
       checkResult(runtime, 1000);
     });
@@ -883,8 +892,10 @@ main() = time.compare(first(), second()) <= 0
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('time.epoch throws for function argument', () {
-      final RuntimeFacade runtime = getRuntime('main() = time.epoch(num.abs)');
+    test('timestamp.toEpoch throws for function argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = timestamp.toEpoch(num.abs)',
+      );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
@@ -964,8 +975,10 @@ main() = time.compare(first(), second()) <= 0
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('time.epoch throws for map argument', () {
-      final RuntimeFacade runtime = getRuntime('main() = time.epoch({"a": 1})');
+    test('timestamp.toEpoch throws for map argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = timestamp.toEpoch({"a": 1})',
+      );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
@@ -1097,58 +1110,58 @@ main() = months()
   });
 
   group('Timestamp Epoch Edge Cases', () {
-    test('time.epoch for one millisecond after epoch', () {
+    test('timestamp.toEpoch for one millisecond after epoch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1970-01-01T00:00:00.001Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1970-01-01T00:00:00.001Z"))',
       );
       checkResult(runtime, 1);
     });
 
-    test('time.epoch for one millisecond before epoch', () {
+    test('timestamp.toEpoch for one millisecond before epoch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1969-12-31T23:59:59.999Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1969-12-31T23:59:59.999Z"))',
       );
       checkResult(runtime, -1);
     });
 
-    test('time.epoch for exactly one second after epoch', () {
+    test('timestamp.toEpoch for exactly one second after epoch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1970-01-01T00:00:01.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1970-01-01T00:00:01.000Z"))',
       );
       checkResult(runtime, 1000);
     });
 
-    test('time.epoch for exactly one minute after epoch', () {
+    test('timestamp.toEpoch for exactly one minute after epoch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1970-01-01T00:01:00.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1970-01-01T00:01:00.000Z"))',
       );
       checkResult(runtime, 60000);
     });
 
-    test('time.epoch for exactly one hour after epoch', () {
+    test('timestamp.toEpoch for exactly one hour after epoch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1970-01-01T01:00:00.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1970-01-01T01:00:00.000Z"))',
       );
       checkResult(runtime, 3600000);
     });
 
-    test('time.epoch for exactly one day after epoch', () {
+    test('timestamp.toEpoch for exactly one day after epoch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1970-01-02T00:00:00.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1970-01-02T00:00:00.000Z"))',
       );
       checkResult(runtime, 86400000);
     });
 
-    test('time.epoch for date far in past (1900)', () {
+    test('timestamp.toEpoch for date far in past (1900)', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("1900-01-01T00:00:00.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("1900-01-01T00:00:00.000Z"))',
       );
       checkResult(runtime, -2208988800000);
     });
 
-    test('time.epoch for large future date (year 3000)', () {
+    test('timestamp.toEpoch for large future date (year 3000)', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("3000-01-01T00:00:00.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("3000-01-01T00:00:00.000Z"))',
       );
       checkResult(runtime, 32503680000000);
     });
@@ -1212,7 +1225,7 @@ main() = ms() >= 0 && ms() <= 999
 
     test('time.now returns positive epoch for current time', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.now()) > 0',
+        'main() = timestamp.toEpoch(time.now()) > 0',
       );
       checkResult(runtime, true);
     });
@@ -1247,7 +1260,7 @@ main() = time.compare(t1(), t2())
     test('extracting epoch then creating new comparison', () {
       final RuntimeFacade runtime = getRuntime('''
 t() = time.fromIso("2024-06-15T10:30:45.500Z")
-e() = time.epoch(t())
+e() = timestamp.toEpoch(t())
 main() = e() > 0
 ''');
       checkResult(runtime, true);
@@ -1281,9 +1294,9 @@ main() = [time.year(t()), time.month(t()), time.day(t())]
       checkResult(runtime, [2000, 1, 1]);
     });
 
-    test('time.epoch for Y2K date', () {
+    test('timestamp.toEpoch for Y2K date', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromIso("2000-01-01T00:00:00.000Z"))',
+        'main() = timestamp.toEpoch(time.fromIso("2000-01-01T00:00:00.000Z"))',
       );
       checkResult(runtime, 946684800000);
     });
@@ -1335,9 +1348,9 @@ main() = [time.year(t()), time.month(t()), time.day(t()), time.hour(t()), time.m
       checkResult(runtime, 2024);
     });
 
-    test('time.fromEpoch roundtrips with time.epoch', () {
+    test('time.fromEpoch roundtrips with timestamp.toEpoch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(time.fromEpoch(1705312200000))',
+        'main() = timestamp.toEpoch(time.fromEpoch(1705312200000))',
       );
       checkResult(runtime, 1705312200000);
     });

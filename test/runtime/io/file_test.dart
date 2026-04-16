@@ -84,7 +84,7 @@ void main() {
 
     test('file.lastModified', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.epoch(file.lastModified(file.fromPath(${primalString(existingFile.path)})))',
+        'main() = timestamp.toEpoch(file.lastModified(file.fromPath(${primalString(existingFile.path)})))',
       );
       final String result = runtime.executeMain();
       final int epochMs = int.parse(result);
@@ -276,7 +276,7 @@ void main() {
         final DateTime beforeModify = DateTime.now();
         modFile.writeAsStringSync('modified');
         final RuntimeFacade runtime = getRuntime(
-          'main() = time.epoch(file.lastModified(file.fromPath(${primalString(modFile.path)})))',
+          'main() = timestamp.toEpoch(file.lastModified(file.fromPath(${primalString(modFile.path)})))',
         );
         final String result = runtime.executeMain();
         final int epochMs = int.parse(result);
