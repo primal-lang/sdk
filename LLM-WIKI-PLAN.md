@@ -85,12 +85,28 @@ docs/
 
 #### `/kb-lint` — Wiki Health Auditor
 
-- Detects orphan pages (no inbound [[wikilinks]])
-- Detects broken [[wikilinks]] (target page doesn't exist)
-- Detects pages without `sources:` in frontmatter
-- Detects missing TLDR sections
-- Detects pages not listed in index.md
-- Reports issues and optionally auto-fixes (create stubs, add to index)
+**Structure checks:**
+- Orphan pages (no inbound [[wikilinks]])
+- Broken [[wikilinks]] (target page doesn't exist)
+- Pages not listed in index.md
+- Index entries pointing to non-existent pages
+- No outbound links (isolated page)
+- Duplicate/similar titles
+
+**Content checks:**
+- Missing `sources:` in frontmatter
+- Missing `tags:` in frontmatter
+- Empty `related:` field
+- Missing TLDR section
+- Empty pages (only frontmatter, no content)
+
+**Freshness checks:**
+- Stale sources (`sources:` files modified since page was written)
+- Dead sources (`sources:` files that no longer exist)
+
+**Actions:**
+- Reports all issues with file paths and line numbers
+- Optionally auto-fixes: create stubs, add to index, remove dead links
 
 ## Page Conventions
 
