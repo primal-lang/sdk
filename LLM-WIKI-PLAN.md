@@ -81,6 +81,17 @@ docs/
 - User-facing tone, with examples
 - Updates `docs/lang/index.md`
 
+### Maintenance Skills
+
+#### `/kb-lint` — Wiki Health Auditor
+
+- Detects orphan pages (no inbound [[wikilinks]])
+- Detects broken [[wikilinks]] (target page doesn't exist)
+- Detects pages without `sources:` in frontmatter
+- Detects missing TLDR sections
+- Detects pages not listed in index.md
+- Reports issues and optionally auto-fixes (create stubs, add to index)
+
 ## Page Conventions
 
 ### Filenames
@@ -177,6 +188,7 @@ Create these skill files in `.claude/skills/`:
 
 1. `.claude/skills/kb-dev/SKILL.md`
 2. `.claude/skills/kb-lang/SKILL.md`
+3. `.claude/skills/kb-lint/SKILL.md`
 
 ### Step 4: Update Existing Files
 
@@ -216,10 +228,11 @@ After implementation:
 
 1. Run `/kb-dev` with test content → verify page created with wikilinks and `docs/dev/index.md` updated
 2. Run `/kb-lang` with test content → verify page created in `docs/lang/` with proper slug filename
-3. Run `/sync-docs` → verify it still works with new paths
-4. Test wikilink grep: `grep "\[\[" docs/` should find cross-references
-5. Check that all index files have correct links
-6. Verify existing docs (reference, compiler) still accessible at new paths
+3. Run `/kb-lint` → verify it detects orphan pages, broken links, missing sources/TLDR
+4. Run `/sync-docs` → verify it still works with new paths
+5. Test wikilink grep: `grep "\[\[" docs/` should find cross-references
+6. Check that all index files have correct links
+7. Verify existing docs (reference, compiler) still accessible at new paths
 
 ## Design Decisions Made
 
@@ -235,3 +248,4 @@ After implementation:
 10. **Two outputs rule**: Every significant explanation produces chat response + wiki update
 11. **TLDR requirement**: Every page starts with 1-3 sentence summary for quick scanning
 12. **Progressive disclosure**: Index files with one-line summaries enable token-efficient navigation
+13. **Wiki linting**: `/kb-lint` skill audits for orphans, broken links, missing sources/TLDR
