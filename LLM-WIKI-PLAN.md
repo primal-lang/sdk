@@ -134,7 +134,10 @@ Create these skill files in `.claude/skills/`:
 ### Step 4: Update Existing Files
 
 1. Update `CLAUDE.md`:
-   - Change doc paths from `docs/` to `docs/lang/`
+   - Update #Context section paths:
+     - `docs/primal.md` → `docs/lang/primal.md`
+     - `docs/reference.md` → `docs/lang/reference.md`
+   - Add reference to `docs/schema.md` for knowledge base structure
    - Add Knowledge Base section with automatic behavior prompts
 
 2. Update `.claude/skills/sync-docs/SKILL.md`:
