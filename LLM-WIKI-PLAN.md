@@ -68,10 +68,10 @@ docs/
 
 ### Dev Knowledge Base Skills
 
-#### `/kb-architecture` — Document Architecture and Design Rationale
+#### `/kb-dev` — Document Developer Knowledge
 
-- Creates `docs/dev/architecture/<slug>.md`
-- Covers both how something works and why it was designed that way
+- Creates pages in `docs/dev/` (architecture/, compiler/, or root level as appropriate)
+- Covers implementation details, design patterns, and rationale
 - Updates `docs/dev/index.md`
 
 ### Lang Knowledge Base Skills
@@ -130,7 +130,7 @@ mv docs/reference/ docs/lang/
 
 Create these skill files in `.claude/skills/`:
 
-1. `.claude/skills/kb-architecture/SKILL.md`
+1. `.claude/skills/kb-dev/SKILL.md`
 2. `.claude/skills/kb-concept/SKILL.md`
 3. `.claude/skills/kb-design/SKILL.md`
 
@@ -158,7 +158,7 @@ Add to `CLAUDE.md`:
 ```markdown
 ## Knowledge Base
 
-- When discussing architecture, design patterns, or rationale, run `/kb-architecture` to persist the knowledge
+- When discussing architecture, design patterns, or rationale, run `/kb-dev` to persist the knowledge
 - When explaining a language concept, run `/kb-concept` to create user-facing documentation
 ```
 
