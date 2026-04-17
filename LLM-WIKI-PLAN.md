@@ -153,13 +153,13 @@ Create these skill files in `.claude/skills/`:
 
 ## Automatic Behavior
 
-Add to `CLAUDE.md`:
+Add to `CLAUDE.md` under `# Critical Instructions`:
 
 ```markdown
 ## Knowledge Base
 
-- When discussing architecture, design patterns, or implementation rationale, run `/kb-dev` to persist the knowledge
-- When explaining language design or concepts, run `/kb-lang` to create user-facing documentation
+- When discussing architecture, design patterns, or implementation rationale, run `/kb-dev`
+- When explaining language design or concepts, run `/kb-lang`
 ```
 
 ## Verification
