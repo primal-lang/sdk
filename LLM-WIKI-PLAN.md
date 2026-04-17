@@ -50,18 +50,18 @@ docs/
 
   dev/                        # SDK development knowledge (internal)
     index.md                  # Navigation hub
+    example.md                # ← moved from docs/example.md (compiler walkthrough)
+    compiler.md               # ← moved from docs/compiler.md
+    compiler/                 # ← moved from docs/compiler/
+    roadmap/                  # ← moved from docs/roadmap/
     architecture/             # System architecture notes
     decisions/                # Key design decisions
 
   lang/                       # Language knowledge (user-facing)
     index.md                  # Navigation hub
     primal.md                 # ← moved from docs/primal.md
-    example.md                # ← moved from docs/example.md
     reference.md              # ← moved from docs/reference.md
     reference/                # ← moved from docs/reference/
-    compiler.md               # ← moved from docs/compiler.md
-    compiler/                 # ← moved from docs/compiler/
-    roadmap/                  # ← moved from docs/roadmap/
     design/                   # Language design philosophy (new)
     concepts/                 # Core concepts explained (new)
 ```
@@ -114,14 +114,16 @@ related: [other-page.md]
 mkdir -p docs/dev/{architecture,decisions}
 mkdir -p docs/lang/{design,concepts}
 
-# Move existing lang content
+# Move to dev/
+mv docs/example.md docs/dev/
+mv docs/compiler.md docs/dev/
+mv docs/compiler/ docs/dev/
+mv docs/roadmap/ docs/dev/
+
+# Move to lang/
 mv docs/primal.md docs/lang/
-mv docs/example.md docs/lang/
 mv docs/reference.md docs/lang/
 mv docs/reference/ docs/lang/
-mv docs/compiler.md docs/lang/
-mv docs/compiler/ docs/lang/
-mv docs/roadmap/ docs/lang/
 ```
 
 ### Step 2: Create New Files
@@ -146,7 +148,9 @@ Create these skill files in `.claude/skills/`:
    - Add Knowledge Base section with automatic behavior prompts
 
 2. Update `.claude/skills/sync-docs/SKILL.md`:
-   - Update all paths from `docs/` to `docs/lang/`
+   - Update reference paths from `docs/reference/` to `docs/lang/reference/`
+   - Update compiler paths from `docs/compiler/` to `docs/dev/compiler/`
+   - Update example path from `docs/example.md` to `docs/dev/example.md`
 
 3. Update `README.md` if it references docs paths
 
