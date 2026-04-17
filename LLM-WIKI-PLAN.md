@@ -37,9 +37,8 @@ Two separate knowledge bases within `docs/`:
    - Architecture documentation (patterns, implementation, and rationale)
 
 2. **`docs/lang/`** — Language knowledge (user-facing)
-   - Existing docs moved here (primal.md, reference/, compiler/, roadmap/)
-   - Language design philosophy
-   - Core concepts explained
+   - Existing docs (primal.md, reference/)
+   - Language design philosophy and core concepts
 
 ## Target Directory Structure
 
@@ -60,8 +59,7 @@ docs/
     primal.md                 # ← moved from docs/primal.md
     reference.md              # ← moved from docs/reference.md
     reference/                # ← moved from docs/reference/
-    design/                   # Language design philosophy (new)
-    concepts/                 # Core concepts explained (new)
+    design/                   # Language design philosophy and core concepts (new)
 ```
 
 ## Skills to Create
@@ -76,15 +74,11 @@ docs/
 
 ### Lang Knowledge Base Skills
 
-#### `/kb-concept` — Document a Language Concept
+#### `/kb-lang` — Document Language Knowledge
 
-- Creates `docs/lang/concepts/<slug>.md`
+- Creates pages in `docs/lang/` (design/, reference/, or root level as appropriate)
+- Covers design philosophy, concepts, and user-facing documentation
 - User-facing tone, with examples
-- Updates `docs/lang/index.md`
-
-#### `/kb-design` — Document Language Design Philosophy
-
-- Creates `docs/lang/design/<slug>.md`
 - Updates `docs/lang/index.md`
 
 ## Page Template
@@ -106,7 +100,7 @@ related: [other-page.md]
 ```bash
 # Create new structure
 mkdir -p docs/dev/architecture
-mkdir -p docs/lang/{design,concepts}
+mkdir -p docs/lang/design
 
 # Move to dev/
 mv docs/example.md docs/dev/
@@ -131,8 +125,7 @@ mv docs/reference/ docs/lang/
 Create these skill files in `.claude/skills/`:
 
 1. `.claude/skills/kb-dev/SKILL.md`
-2. `.claude/skills/kb-concept/SKILL.md`
-3. `.claude/skills/kb-design/SKILL.md`
+2. `.claude/skills/kb-lang/SKILL.md`
 
 ### Step 4: Update Existing Files
 
@@ -158,8 +151,8 @@ Add to `CLAUDE.md`:
 ```markdown
 ## Knowledge Base
 
-- When discussing architecture, design patterns, or rationale, run `/kb-dev` to persist the knowledge
-- When explaining a language concept, run `/kb-concept` to create user-facing documentation
+- When discussing architecture, design patterns, or implementation rationale, run `/kb-dev` to persist the knowledge
+- When explaining language design or concepts, run `/kb-lang` to create user-facing documentation
 ```
 
 ## Verification
