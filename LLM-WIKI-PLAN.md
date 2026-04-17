@@ -25,23 +25,21 @@ The project already has:
 
 What's missing:
 
-- No persistent capture of design rationale, investigations, architecture decisions
+- No persistent capture of design rationale, architecture decisions
 - No cross-linked entity pages
 - Knowledge from sessions disappears
 
-## Chosen Approach: Proposal B (Structured)
+## Chosen Approach: Structured
 
 Two separate knowledge bases within `docs/`:
 
 1. **`docs/dev/`** — SDK development knowledge (internal)
    - Architecture documentation
    - Design decisions with rationale
-   - Bug investigations and explorations
 
 2. **`docs/lang/`** — Language knowledge (user-facing)
    - Existing docs moved here (primal.md, reference/, compiler/, roadmap/)
    - Language design philosophy
-   - Comparisons to other languages
    - Core concepts explained
 
 ## Target Directory Structure
@@ -54,7 +52,6 @@ docs/
     index.md                  # Navigation hub
     architecture/             # System architecture notes
     decisions/                # Key design decisions
-    investigations/           # Bug investigations, explorations
 
   lang/                       # Language knowledge (user-facing)
     index.md                  # Navigation hub
@@ -66,7 +63,6 @@ docs/
     compiler/                 # ← moved from docs/compiler/
     roadmap/                  # ← moved from docs/roadmap/
     design/                   # Language design philosophy (new)
-    comparisons/              # Comparisons to other languages (new)
     concepts/                 # Core concepts explained (new)
 ```
 
@@ -78,12 +74,6 @@ docs/
 
 - Creates `docs/dev/decisions/<slug>.md` with YAML frontmatter
 - Updates `docs/dev/index.md` to include the new page
-
-#### `/kb-investigate` — Document an Investigation
-
-- Creates `docs/dev/investigations/<slug>.md`
-- Includes: problem statement, findings, resolution
-- Updates `docs/dev/index.md`
 
 #### `/kb-architecture` — Document Architecture
 
@@ -98,11 +88,6 @@ docs/
 - User-facing tone, with examples
 - Updates `docs/lang/index.md`
 
-#### `/kb-compare` — Add Language Comparison
-
-- Creates `docs/lang/comparisons/<slug>.md`
-- Updates `docs/lang/index.md`
-
 #### `/kb-design` — Document Language Design Philosophy
 
 - Creates `docs/lang/design/<slug>.md`
@@ -115,7 +100,6 @@ Each new page should have YAML frontmatter:
 ```yaml
 ---
 title: <title>
-date: YYYY-MM-DD
 tags: [tag1, tag2]
 related: [other-page.md]
 ---
@@ -127,8 +111,8 @@ related: [other-page.md]
 
 ```bash
 # Create new structure
-mkdir -p docs/dev/{architecture,decisions,investigations}
-mkdir -p docs/lang/{design,comparisons,concepts}
+mkdir -p docs/dev/{architecture,decisions}
+mkdir -p docs/lang/{design,concepts}
 
 # Move existing lang content
 mv docs/primal.md docs/lang/
@@ -151,11 +135,9 @@ mv docs/roadmap/ docs/lang/
 Create these skill files in `.claude/skills/`:
 
 1. `.claude/skills/kb-decision/SKILL.md`
-2. `.claude/skills/kb-investigate/SKILL.md`
-3. `.claude/skills/kb-architecture/SKILL.md`
-4. `.claude/skills/kb-concept/SKILL.md`
-5. `.claude/skills/kb-compare/SKILL.md`
-6. `.claude/skills/kb-design/SKILL.md`
+2. `.claude/skills/kb-architecture/SKILL.md`
+3. `.claude/skills/kb-concept/SKILL.md`
+4. `.claude/skills/kb-design/SKILL.md`
 
 ### Step 4: Update Existing Files
 
@@ -180,7 +162,6 @@ Add to `CLAUDE.md`:
 ## Knowledge Base
 
 - After significant design discussions, propose using `/kb-decision` or `/kb-design` to capture the knowledge
-- After bug investigations, propose using `/kb-investigate` to document findings
 - When explaining architecture, propose using `/kb-architecture` to persist the explanation
 ```
 
