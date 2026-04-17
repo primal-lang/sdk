@@ -34,8 +34,7 @@ What's missing:
 Two separate knowledge bases within `docs/`:
 
 1. **`docs/dev/`** — SDK development knowledge (internal)
-   - Architecture documentation
-   - Design decisions with rationale
+   - Architecture documentation (patterns, implementation, and rationale)
 
 2. **`docs/lang/`** — Language knowledge (user-facing)
    - Existing docs moved here (primal.md, reference/, compiler/, roadmap/)
@@ -54,8 +53,7 @@ docs/
     compiler.md               # ← moved from docs/compiler.md
     compiler/                 # ← moved from docs/compiler/
     roadmap/                  # ← moved from docs/roadmap/
-    architecture/             # System architecture notes
-    decisions/                # Key design decisions
+    architecture/             # Design patterns, implementation details, and rationale (lazy evaluation, type classes, immutability, etc.)
 
   lang/                       # Language knowledge (user-facing)
     index.md                  # Navigation hub
@@ -70,14 +68,10 @@ docs/
 
 ### Dev Knowledge Base Skills
 
-#### `/kb-decision` — Record a Design Decision
-
-- Creates `docs/dev/decisions/<slug>.md` with YAML frontmatter
-- Updates `docs/dev/index.md` to include the new page
-
-#### `/kb-architecture` — Document Architecture
+#### `/kb-architecture` — Document Architecture and Design Rationale
 
 - Creates `docs/dev/architecture/<slug>.md`
+- Covers both how something works and why it was designed that way
 - Updates `docs/dev/index.md`
 
 ### Lang Knowledge Base Skills
@@ -111,7 +105,7 @@ related: [other-page.md]
 
 ```bash
 # Create new structure
-mkdir -p docs/dev/{architecture,decisions}
+mkdir -p docs/dev/architecture
 mkdir -p docs/lang/{design,concepts}
 
 # Move to dev/
@@ -136,10 +130,9 @@ mv docs/reference/ docs/lang/
 
 Create these skill files in `.claude/skills/`:
 
-1. `.claude/skills/kb-decision/SKILL.md`
-2. `.claude/skills/kb-architecture/SKILL.md`
-3. `.claude/skills/kb-concept/SKILL.md`
-4. `.claude/skills/kb-design/SKILL.md`
+1. `.claude/skills/kb-architecture/SKILL.md`
+2. `.claude/skills/kb-concept/SKILL.md`
+3. `.claude/skills/kb-design/SKILL.md`
 
 ### Step 4: Update Existing Files
 
@@ -165,8 +158,7 @@ Add to `CLAUDE.md`:
 ```markdown
 ## Knowledge Base
 
-- After significant design discussions, run `/kb-decision` or `/kb-design` to capture the knowledge
-- When explaining architecture, run `/kb-architecture` to persist the explanation
+- When discussing architecture, design patterns, or rationale, run `/kb-architecture` to persist the knowledge
 - When explaining a language concept, run `/kb-concept` to create user-facing documentation
 ```
 
