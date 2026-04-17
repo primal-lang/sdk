@@ -165,8 +165,9 @@ Add to `CLAUDE.md`:
 ```markdown
 ## Knowledge Base
 
-- After significant design discussions, propose using `/kb-decision` or `/kb-design` to capture the knowledge
-- When explaining architecture, propose using `/kb-architecture` to persist the explanation
+- After significant design discussions, run `/kb-decision` or `/kb-design` to capture the knowledge
+- When explaining architecture, run `/kb-architecture` to persist the explanation
+- When explaining a language concept, run `/kb-concept` to create user-facing documentation
 ```
 
 ## Verification
@@ -185,11 +186,3 @@ After implementation:
 2. **No session logging**: This is a knowledge base, not a session log. No `/kb-log` or append-only log file.
 3. **Skill prefix**: Use `kb-*` (knowledge base) not `wiki-*`
 4. **Reorganize existing docs**: Move existing documentation under `docs/lang/` rather than keeping them at root
-
-## Estimated Effort
-
-~2 hours for full implementation
-
----
-
-_This document was created on 2026-04-17 to capture the planning discussion for implementing an LLM Wiki pattern in the Primal SDK project._
