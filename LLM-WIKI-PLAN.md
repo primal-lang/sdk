@@ -104,8 +104,13 @@ Each new page should have YAML frontmatter:
 title: Lazy Evaluation
 tags: [runtime, performance]
 related: [short-circuit-operators, thunks]
+sources: [lib/compiler/runtime/lazy_value.dart]
 ---
 ```
+
+### TLDR
+
+Every page must start with a **TLDR** (1-3 sentences) immediately after the title. This enables quick scanning without reading full articles.
 
 ### Example Page
 
@@ -114,9 +119,12 @@ related: [short-circuit-operators, thunks]
 title: Lazy Evaluation
 tags: [runtime, performance]
 related: [short-circuit-operators]
+sources: [lib/compiler/runtime/lazy_value.dart, lib/compiler/runtime/thunk.dart]
 ---
 
 # Lazy Evaluation
+
+**TLDR**: Primal uses lazy evaluation via thunks that wrap unevaluated expressions. Values are computed on first access and cached. This enables short-circuit operators and avoids unnecessary computation.
 
 Primal uses lazy evaluation for [[short-circuit-operators]].
 This is implemented using [[thunks]] in the runtime.
@@ -147,9 +155,19 @@ mv docs/reference/ docs/lang/
 
 1. `docs/schema.md` — Knowledge base maintenance instructions:
    - Directory structure (dev/ vs lang/)
-   - Page formatting conventions (frontmatter, headings)
+   - Page formatting conventions (frontmatter, TLDR, headings)
    - Guidelines for deciding where content belongs
-   - Cross-linking conventions
+   - Content integrity rules:
+     - Never invent information — every claim must trace to conversation, code, or existing docs
+     - For gaps, use `[TODO: clarify X]` markers instead of guessing
+   - Cross-linking rules:
+     - Only create [[wikilinks]] when the target page exists
+     - Link when the page title/slug appears naturally in text
+     - Do not invent conceptual links that aren't explicitly mentioned
+   - Index file guidelines:
+     - Each page listed in index.md must have a one-line summary
+     - Summaries should be enough to decide if the full page is relevant
+     - Update index.md whenever adding/removing pages
 2. `docs/dev/index.md` — Dev knowledge base index
 3. `docs/lang/index.md` — Language knowledge base index
 
@@ -189,6 +207,7 @@ Add to `CLAUDE.md` under `# Critical Instructions`:
 
 - When discussing architecture, design patterns, or implementation rationale, run `/kb-dev`
 - When explaining language design or concepts, run `/kb-lang`
+- **Two outputs rule**: Every significant explanation should produce both a chat response AND a wiki update
 ```
 
 ## Verification
@@ -210,3 +229,9 @@ After implementation:
 4. **Reorganize existing docs**: Move existing documentation under `docs/lang/` or `docs/dev/`
 5. **Wikilinks**: Use `[[page-name]]` syntax for cross-references (grep-able without tooling)
 6. **Slug-based filenames**: Lowercase with hyphens for predictable linking
+7. **Content integrity**: No content invention — use `[TODO: ...]` for gaps, trace claims to sources
+8. **Mechanical cross-links**: Only link when target exists and is mentioned in text
+9. **Source provenance**: Track source files in frontmatter `sources:` field
+10. **Two outputs rule**: Every significant explanation produces chat response + wiki update
+11. **TLDR requirement**: Every page starts with 1-3 sentence summary for quick scanning
+12. **Progressive disclosure**: Index files with one-line summaries enable token-efficient navigation
