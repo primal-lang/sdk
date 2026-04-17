@@ -116,7 +116,11 @@ mv docs/reference/ docs/lang/
 
 ### Step 2: Create New Files
 
-1. `docs/schema.md` — Knowledge base maintenance instructions
+1. `docs/schema.md` — Knowledge base maintenance instructions:
+   - Directory structure (dev/ vs lang/)
+   - Page formatting conventions (frontmatter, headings)
+   - Guidelines for deciding where content belongs
+   - Cross-linking conventions
 2. `docs/dev/index.md` — Dev knowledge base index
 3. `docs/lang/index.md` — Language knowledge base index
 
