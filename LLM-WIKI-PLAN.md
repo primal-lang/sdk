@@ -81,16 +81,45 @@ docs/
 - User-facing tone, with examples
 - Updates `docs/lang/index.md`
 
-## Page Template
+## Page Conventions
+
+### Filenames
+
+Use slug-based naming (lowercase, hyphens):
+- `lazy-evaluation.md` for "Lazy Evaluation"
+- `type-classes.md` for "Type Classes"
+
+### Wikilinks
+
+Use `[[page-name]]` for cross-references:
+- Links are grep-able: `grep "\[\[lazy" docs/`
+- Makes relationships explicit without tooling
+
+### Frontmatter
 
 Each new page should have YAML frontmatter:
 
 ```yaml
 ---
-title: <title>
-tags: [tag1, tag2]
-related: [other-page.md]
+title: Lazy Evaluation
+tags: [runtime, performance]
+related: [short-circuit-operators, thunks]
 ---
+```
+
+### Example Page
+
+```markdown
+---
+title: Lazy Evaluation
+tags: [runtime, performance]
+related: [short-circuit-operators]
+---
+
+# Lazy Evaluation
+
+Primal uses lazy evaluation for [[short-circuit-operators]].
+This is implemented using [[thunks]] in the runtime.
 ```
 
 ## Implementation Steps
@@ -166,15 +195,18 @@ Add to `CLAUDE.md` under `# Critical Instructions`:
 
 After implementation:
 
-1. Run `/kb-decision` with a test decision → verify page created and `docs/dev/index.md` updated
-2. Run `/kb-concept` with a test concept → verify page created in `docs/lang/concepts/`
+1. Run `/kb-dev` with test content → verify page created with wikilinks and `docs/dev/index.md` updated
+2. Run `/kb-lang` with test content → verify page created in `docs/lang/` with proper slug filename
 3. Run `/sync-docs` → verify it still works with new paths
-4. Check that all index files have correct links
-5. Verify existing docs (reference, compiler) still accessible at new paths
+4. Test wikilink grep: `grep "\[\[" docs/` should find cross-references
+5. Check that all index files have correct links
+6. Verify existing docs (reference, compiler) still accessible at new paths
 
 ## Design Decisions Made
 
 1. **Folder name**: Use existing `docs/` folder, not a new `wiki/` or `knowledge/` folder
 2. **No session logging**: This is a knowledge base, not a session log. No `/kb-log` or append-only log file.
 3. **Skill prefix**: Use `kb-*` (knowledge base) not `wiki-*`
-4. **Reorganize existing docs**: Move existing documentation under `docs/lang/` rather than keeping them at root
+4. **Reorganize existing docs**: Move existing documentation under `docs/lang/` or `docs/dev/`
+5. **Wikilinks**: Use `[[page-name]]` syntax for cross-references (grep-able without tooling)
+6. **Slug-based filenames**: Lowercase with hyphens for predictable linking
