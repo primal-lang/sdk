@@ -11,9 +11,16 @@ sources: []
 ## Directory Structure
 
 - **`dev/`** — SDK development knowledge (internal)
-  - Architecture patterns, implementation details, design rationale
-  - Compiler internals, roadmap items
   - Audience: SDK contributors
+  - **`architecture/`** — Implementation details and design rationale
+    - `pipeline/` — Compiler stages (reader, lexical, syntactic, semantic, runtime)
+    - `patterns/` — Design patterns (state machine, analyzer)
+    - `runtime/` — Runtime system (terms, bindings, native functions)
+    - `typing/` — Type system (representations, runtime checking)
+    - `error/` — Error handling (hierarchy, propagation)
+    - `platform/` — Platform abstraction (CLI vs web)
+    - `testing/` — Test infrastructure
+  - **`roadmap/`** — Future language features
 
 - **`lang/`** — Language knowledge (user-facing)
   - Language overview, reference documentation
