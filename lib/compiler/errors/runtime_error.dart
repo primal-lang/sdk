@@ -152,3 +152,15 @@ class RecursionLimitError extends RuntimeError {
          'Maximum recursion depth of $limit exceeded',
        );
 }
+
+class NegativeDurationError extends RuntimeError {
+  NegativeDurationError({
+    required String function,
+    String? component,
+    num? value,
+  }) : super(
+         component != null
+             ? 'Duration cannot be negative in "$function" ($component: $value)'
+             : 'Duration cannot be negative in "$function"',
+       );
+}

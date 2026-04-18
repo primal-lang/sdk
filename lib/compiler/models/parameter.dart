@@ -27,6 +27,9 @@ class Parameter {
   const Parameter.timestamp(String name)
     : this._(name: name, type: const TimestampType());
 
+  const Parameter.duration(String name)
+    : this._(name: name, type: const DurationType());
+
   const Parameter.list(String name)
     : this._(name: name, type: const ListType());
 

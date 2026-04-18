@@ -43,6 +43,8 @@ abstract class ValueTerm<T> implements Term {
       return StringTerm(value);
     } else if (value is DateTime) {
       return TimestampTerm(value);
+    } else if (value is Duration) {
+      return DurationTerm(value);
     } else if (value is File) {
       return FileTerm(value);
     } else if (value is Directory) {
@@ -99,6 +101,33 @@ class TimestampTerm extends ValueTerm<DateTime> {
 
   @override
   Type get type => const TimestampType();
+}
+
+class DurationTerm extends ValueTerm<Duration> {
+  const DurationTerm(super.value);
+
+  @override
+  Type get type => const DurationType();
+
+  @override
+  String toString() {
+    final int days = value.inDays;
+    final int hours = value.inHours.remainder(24);
+    final int minutes = value.inMinutes.remainder(60);
+    final int seconds = value.inSeconds.remainder(60);
+    final int milliseconds = value.inMilliseconds.remainder(1000);
+    final String minutesString = minutes.toString().padLeft(2, '0');
+    final String secondsString = seconds.toString().padLeft(2, '0');
+    final String millisecondsString = milliseconds.toString().padLeft(3, '0');
+    return '${days}d ${hours}h ${minutesString}m ${secondsString}s ${millisecondsString}ms';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is DurationTerm && value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 class ListTerm extends ValueTerm<List<Term>> {

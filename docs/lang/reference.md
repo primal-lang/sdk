@@ -25,6 +25,7 @@ Primal includes a rich set of core functions that provide essential tools for de
 - [Queue](reference/queue.md)
 - [Vector](reference/vector.md)
 - [Timestamp](reference/timestamp.md)
+- [Duration](reference/duration.md)
 - [File](reference/file.md)
 - [Directory](reference/directory.md)
 - [Path](reference/path.md)

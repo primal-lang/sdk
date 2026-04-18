@@ -22,6 +22,7 @@ Number of functions: 16
   - `Number == Number`
   - `String == String`
   - `Timestamp == Timestamp`
+  - `Duration == Duration`
   - `File == File` (compares absolute paths)
   - `Directory == Directory` (compares absolute paths)
   - `List == List` (element-wise)
@@ -47,6 +48,7 @@ Number of functions: 16
   - `Number != Number`
   - `String != String`
   - `Timestamp != Timestamp`
+  - `Duration != Duration`
   - `File != File` (compares absolute paths)
   - `Directory != Directory` (compares absolute paths)
   - `List != List` (element-wise)
@@ -71,6 +73,7 @@ Number of functions: 16
   - `Number > Number`
   - `String > String` (lexicographic)
   - `Timestamp > Timestamp`
+  - `Duration > Duration`
 - **Purity:** Pure
 - **Example:**
 
@@ -87,6 +90,7 @@ Number of functions: 16
   - `Number < Number`
   - `String < String` (lexicographic)
   - `Timestamp < Timestamp`
+  - `Duration < Duration`
 - **Purity:** Pure
 - **Example:**
 
@@ -103,6 +107,7 @@ Number of functions: 16
   - `Number >= Number`
   - `String >= String` (lexicographic)
   - `Timestamp >= Timestamp`
+  - `Duration >= Duration`
 - **Purity:** Pure
 - **Example:**
 
@@ -119,6 +124,7 @@ Number of functions: 16
   - `Number <= Number`
   - `String <= String` (lexicographic)
   - `Timestamp <= Timestamp`
+  - `Duration <= Duration`
 - **Purity:** Pure
 - **Example:**
 
@@ -136,6 +142,7 @@ Number of functions: 16
 - **Supported combinations:**
   - `Number + Number`
   - `String + String`
+  - `Duration + Duration`
   - `Vector + Vector`
   - `Any + List`
   - `List + Any`
@@ -157,6 +164,7 @@ Number of functions: 16
 - **Output:** The result of the subtraction
 - **Supported combinations:**
   - `Number - Number`
+  - `Duration - Duration` (throws `NegativeDurationError` if result would be negative)
   - `Vector - Vector`
   - `Set - Set` (set difference)
   - `Set - Any` (remove element)

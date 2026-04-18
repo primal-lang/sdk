@@ -8,7 +8,7 @@ sources: [lib/compiler/library/casting/]
 
 **TLDR**: Functions for converting values between types and checking runtime types including numbers, strings, booleans, collections, and file system objects.
 
-Number of functions: 22
+Number of functions: 23
 
 ## Conversion Functions
 
@@ -168,6 +168,18 @@ is.boolean(true) // returns true
 
 ```
 is.timestamp(time.now()) // returns true
+```
+
+### Is Duration
+
+- **Signature:** `is.duration(a: Any): Boolean`
+- **Input:** One argument of any type
+- **Output:** True if the argument is a duration, false otherwise
+- **Purity:** Pure
+- **Example:**
+
+```
+is.duration(duration.fromHours(2)) // returns true
 ```
 
 ### Is Function

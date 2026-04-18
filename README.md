@@ -141,6 +141,7 @@ System:
 - File
 - Directory
 - Timestamp
+- Duration
 - Function
 
 ## Runtime

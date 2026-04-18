@@ -32,6 +32,8 @@ class CompEq extends NativeFunctionTerm {
       return BooleanTerm(a.value == b.value);
     } else if ((a is TimestampTerm) && (b is TimestampTerm)) {
       return BooleanTerm(a.value.compareTo(b.value) == 0);
+    } else if ((a is DurationTerm) && (b is DurationTerm)) {
+      return BooleanTerm(a.value == b.value);
     } else if ((a is FileTerm) && (b is FileTerm)) {
       return BooleanTerm(a.value.absolute.path == b.value.absolute.path);
     } else if ((a is DirectoryTerm) && (b is DirectoryTerm)) {

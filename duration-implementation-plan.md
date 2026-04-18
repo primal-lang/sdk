@@ -10,7 +10,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/models/type.dart`
 
-- [ ] Add `DurationType` class after `TimestampType`:
+- [x] Add `DurationType` class after `TimestampType`:
   ```dart
   class DurationType extends Type {
     const DurationType();
@@ -21,7 +21,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/term.dart`
 
-- [ ] Add `DurationTerm` class after `TimestampTerm`:
+- [x] Add `DurationTerm` class after `TimestampTerm`:
   ```dart
   class DurationTerm extends ValueTerm<Duration> {
     const DurationTerm(super.value);
@@ -47,7 +47,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
   }
   ```
 
-- [ ] Update `ValueTerm.from()` factory to handle `Duration` (add after `DateTime` check, before `File` check):
+- [x] Update `ValueTerm.from()` factory to handle `Duration` (add after `DateTime` check, before `File` check):
   ```dart
   } else if (value is Duration) {
     return DurationTerm(value);
@@ -57,7 +57,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/models/parameter.dart`
 
-- [ ] Add `Parameter.duration` constructor after `Parameter.timestamp`:
+- [x] Add `Parameter.duration` constructor after `Parameter.timestamp`:
   ```dart
   const Parameter.duration(String name)
     : this._(name: name, type: const DurationType());
@@ -67,7 +67,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/errors/runtime_error.dart`
 
-- [ ] Add `NegativeDurationError` class:
+- [x] Add `NegativeDurationError` class:
   ```dart
   class NegativeDurationError extends RuntimeError {
     NegativeDurationError({required String function, String? component, num? value})
@@ -81,7 +81,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/runtime.dart`
 
-- [ ] Add Duration handling to `format()` function (after `DateTime` check, before `File` check):
+- [x] Add Duration handling to `format()` function (after `DateTime` check, before `File` check):
   ```dart
   } else if (value is Duration) {
     final int days = value.inDays;
@@ -104,23 +104,23 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 ### 2.1 OrderedType
 
-- [ ] Add `DurationType()` to `OrderedType.memberTypes` (after `TimestampType()`)
+- [x] Add `DurationType()` to `OrderedType.memberTypes` (after `TimestampType()`)
 
 ### 2.2 EquatableType
 
-- [ ] Add `DurationType()` to `EquatableType.memberTypes` (after `TimestampType()`)
+- [x] Add `DurationType()` to `EquatableType.memberTypes` (after `TimestampType()`)
 
 ### 2.3 HashableType
 
-- [ ] Add `DurationType()` to `HashableType.memberTypes` (after `TimestampType()`)
+- [x] Add `DurationType()` to `HashableType.memberTypes` (after `TimestampType()`)
 
 ### 2.4 AddableType
 
-- [ ] Add `DurationType()` to `AddableType.memberTypes` (after `SetType()`)
+- [x] Add `DurationType()` to `AddableType.memberTypes` (after `SetType()`)
 
 ### 2.5 SubtractableType
 
-- [ ] Add `DurationType()` to `SubtractableType.memberTypes` (after `SetType()`)
+- [x] Add `DurationType()` to `SubtractableType.memberTypes` (after `SetType()`)
 
 ---
 
@@ -130,7 +130,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/operators/operator_add.dart`
 
-- [ ] Add `DurationTerm` handling in `reduce()` (after `SetTerm` handling, before final `else`):
+- [x] Add `DurationTerm` handling in `reduce()` (after `SetTerm` handling, before final `else`):
   ```dart
   } else if ((a is DurationTerm) && (b is DurationTerm)) {
     return DurationTerm(a.value + b.value);
@@ -140,7 +140,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/operators/operator_sub.dart`
 
-- [ ] Add `DurationTerm` handling in `reduce()` (after `SetTerm` handling, before final `else`):
+- [x] Add `DurationTerm` handling in `reduce()` (after `SetTerm` handling, before final `else`):
   ```dart
   } else if ((a is DurationTerm) && (b is DurationTerm)) {
     final Duration result = a.value - b.value;
@@ -154,7 +154,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/comparisons/comp_lt.dart`
 
-- [ ] Add `DurationTerm` handling (after `TimestampTerm` handling):
+- [x] Add `DurationTerm` handling (after `TimestampTerm` handling):
   ```dart
   } else if ((a is DurationTerm) && (b is DurationTerm)) {
     return BooleanTerm(a.value.compareTo(b.value) < 0);
@@ -162,7 +162,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/comparisons/comp_le.dart`
 
-- [ ] Add `DurationTerm` handling (after `TimestampTerm` handling):
+- [x] Add `DurationTerm` handling (after `TimestampTerm` handling):
   ```dart
   } else if ((a is DurationTerm) && (b is DurationTerm)) {
     return BooleanTerm(a.value.compareTo(b.value) <= 0);
@@ -170,7 +170,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/comparisons/comp_gt.dart`
 
-- [ ] Add `DurationTerm` handling (after `TimestampTerm` handling):
+- [x] Add `DurationTerm` handling (after `TimestampTerm` handling):
   ```dart
   } else if ((a is DurationTerm) && (b is DurationTerm)) {
     return BooleanTerm(a.value.compareTo(b.value) > 0);
@@ -178,7 +178,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/comparisons/comp_ge.dart`
 
-- [ ] Add `DurationTerm` handling (after `TimestampTerm` handling):
+- [x] Add `DurationTerm` handling (after `TimestampTerm` handling):
   ```dart
   } else if ((a is DurationTerm) && (b is DurationTerm)) {
     return BooleanTerm(a.value.compareTo(b.value) >= 0);
@@ -188,7 +188,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/comparisons/comp_eq.dart`
 
-- [ ] Add `DurationTerm` handling:
+- [x] Add `DurationTerm` handling:
   ```dart
   } else if ((a is DurationTerm) && (b is DurationTerm)) {
     return BooleanTerm(a.value == b.value);
@@ -196,7 +196,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/comparisons/comp_neq.dart`
 
-- [ ] Add `DurationTerm` handling:
+- [x] Add `DurationTerm` handling:
   ```dart
   } else if ((a is DurationTerm) && (b is DurationTerm)) {
     return BooleanTerm(a.value != b.value);
@@ -212,7 +212,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/from_milliseconds.dart`
 
-- [ ] Create `DurationFromMilliseconds` function:
+- [x] Create `DurationFromMilliseconds` function:
   - Parameters: `Number`
   - Returns: `Duration`
   - Throws `NegativeDurationError` if input < 0
@@ -220,7 +220,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/from_seconds.dart`
 
-- [ ] Create `DurationFromSeconds` function:
+- [x] Create `DurationFromSeconds` function:
   - Parameters: `Number`
   - Returns: `Duration`
   - Throws `NegativeDurationError` if input < 0
@@ -228,7 +228,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/from_minutes.dart`
 
-- [ ] Create `DurationFromMinutes` function:
+- [x] Create `DurationFromMinutes` function:
   - Parameters: `Number`
   - Returns: `Duration`
   - Throws `NegativeDurationError` if input < 0
@@ -236,7 +236,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/from_hours.dart`
 
-- [ ] Create `DurationFromHours` function:
+- [x] Create `DurationFromHours` function:
   - Parameters: `Number`
   - Returns: `Duration`
   - Throws `NegativeDurationError` if input < 0
@@ -244,7 +244,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/from_days.dart`
 
-- [ ] Create `DurationFromDays` function:
+- [x] Create `DurationFromDays` function:
   - Parameters: `Number`
   - Returns: `Duration`
   - Throws `NegativeDurationError` if input < 0
@@ -254,7 +254,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/from.dart`
 
-- [ ] Create `DurationFrom` function:
+- [x] Create `DurationFrom` function:
   - Parameters: `Number x 5` (days, hours, minutes, seconds, milliseconds)
   - Returns: `Duration`
   - Validates left-to-right; throws `NegativeDurationError` at first negative component (includes component name and value in error)
@@ -264,35 +264,35 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/to_milliseconds.dart`
 
-- [ ] Create `DurationToMilliseconds` function:
+- [x] Create `DurationToMilliseconds` function:
   - Parameters: `Duration`
   - Returns: `Number` (fractional)
   - Returns `value.inMicroseconds / 1000`
 
 **File:** `lib/compiler/runtime/functions/duration/to_seconds.dart`
 
-- [ ] Create `DurationToSeconds` function:
+- [x] Create `DurationToSeconds` function:
   - Parameters: `Duration`
   - Returns: `Number` (fractional)
   - Returns `value.inMicroseconds / 1,000,000`
 
 **File:** `lib/compiler/runtime/functions/duration/to_minutes.dart`
 
-- [ ] Create `DurationToMinutes` function:
+- [x] Create `DurationToMinutes` function:
   - Parameters: `Duration`
   - Returns: `Number` (fractional)
   - Returns `value.inMicroseconds / 60,000,000`
 
 **File:** `lib/compiler/runtime/functions/duration/to_hours.dart`
 
-- [ ] Create `DurationToHours` function:
+- [x] Create `DurationToHours` function:
   - Parameters: `Duration`
   - Returns: `Number` (fractional)
   - Returns `value.inMicroseconds / 3,600,000,000`
 
 **File:** `lib/compiler/runtime/functions/duration/to_days.dart`
 
-- [ ] Create `DurationToDays` function:
+- [x] Create `DurationToDays` function:
   - Parameters: `Duration`
   - Returns: `Number` (fractional)
   - Returns `value.inMicroseconds / 86,400,000,000`
@@ -301,35 +301,35 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/milliseconds.dart`
 
-- [ ] Create `DurationMilliseconds` function:
+- [x] Create `DurationMilliseconds` function:
   - Parameters: `Duration`
   - Returns: `Number` (integer 0-999)
   - Returns `value.inMilliseconds.remainder(1000)`
 
 **File:** `lib/compiler/runtime/functions/duration/seconds.dart`
 
-- [ ] Create `DurationSeconds` function:
+- [x] Create `DurationSeconds` function:
   - Parameters: `Duration`
   - Returns: `Number` (integer 0-59)
   - Returns `value.inSeconds.remainder(60)`
 
 **File:** `lib/compiler/runtime/functions/duration/minutes.dart`
 
-- [ ] Create `DurationMinutes` function:
+- [x] Create `DurationMinutes` function:
   - Parameters: `Duration`
   - Returns: `Number` (integer 0-59)
   - Returns `value.inMinutes.remainder(60)`
 
 **File:** `lib/compiler/runtime/functions/duration/hours.dart`
 
-- [ ] Create `DurationHours` function:
+- [x] Create `DurationHours` function:
   - Parameters: `Duration`
   - Returns: `Number` (integer 0-23)
   - Returns `value.inHours.remainder(24)`
 
 **File:** `lib/compiler/runtime/functions/duration/days.dart`
 
-- [ ] Create `DurationDays` function:
+- [x] Create `DurationDays` function:
   - Parameters: `Duration`
   - Returns: `Number` (integer, unbounded)
   - Returns `value.inDays`
@@ -338,7 +338,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/compare.dart`
 
-- [ ] Create `DurationCompare` function:
+- [x] Create `DurationCompare` function:
   - Parameters: `Duration, Duration`
   - Returns: `Number` (-1, 0, or 1)
   - Returns `a.value.compareTo(b.value).sign` or equivalent
@@ -347,7 +347,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/duration/format.dart`
 
-- [ ] Create `DurationFormat` function:
+- [x] Create `DurationFormat` function:
   - Parameters: `Duration, String`
   - Returns: `String`
   - Supported patterns:
@@ -366,7 +366,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/time/add.dart`
 
-- [ ] Create `TimeAdd` function:
+- [x] Create `TimeAdd` function:
   - Parameters: `Timestamp, Duration`
   - Returns: `Timestamp`
   - Implementation: `timestamp.add(duration)`
@@ -375,7 +375,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/time/subtract.dart`
 
-- [ ] Create `TimeSubtract` function:
+- [x] Create `TimeSubtract` function:
   - Parameters: `Timestamp, Duration`
   - Returns: `Timestamp`
   - Implementation: `timestamp.subtract(duration)`
@@ -384,7 +384,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/time/between.dart`
 
-- [ ] Create `TimeBetween` function:
+- [x] Create `TimeBetween` function:
   - Parameters: `Timestamp, Timestamp`
   - Returns: `Duration`
   - Returns absolute difference: `(a.difference(b)).abs()`
@@ -395,7 +395,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/functions/is/duration.dart`
 
-- [ ] Create `IsDuration` function:
+- [x] Create `IsDuration` function:
   - Parameters: `Any`
   - Returns: `Boolean`
   - Returns `true` if argument is `DurationTerm`
@@ -406,8 +406,8 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `lib/compiler/runtime/standard_library.dart`
 
-- [ ] Import all new duration function files
-- [ ] Register functions in the appropriate namespace maps:
+- [x] Import all new duration function files
+- [x] Register functions in the appropriate namespace maps:
   - `duration.fromMilliseconds` -> `DurationFromMilliseconds`
   - `duration.fromSeconds` -> `DurationFromSeconds`
   - `duration.fromMinutes` -> `DurationFromMinutes`
@@ -439,27 +439,27 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 ### 8.1 Constructor Tests
 
-- [ ] `test/functions/duration/from_milliseconds_test.dart`
+- [x] `test/functions/duration/from_milliseconds_test.dart`
   - Valid inputs (integer and fractional)
   - Zero input
   - Negative input throws `NegativeDurationError`
   - Type mismatch throws `InvalidArgumentTypesError`
   - Wrong argument count throws `InvalidArgumentCountError`
 
-- [ ] `test/functions/duration/from_seconds_test.dart`
+- [x] `test/functions/duration/from_seconds_test.dart`
   - Same test patterns as above
 
-- [ ] `test/functions/duration/from_minutes_test.dart`
+- [x] `test/functions/duration/from_minutes_test.dart`
   - Same test patterns as above
 
-- [ ] `test/functions/duration/from_hours_test.dart`
+- [x] `test/functions/duration/from_hours_test.dart`
   - Same test patterns as above
 
-- [ ] `test/functions/duration/from_days_test.dart`
+- [x] `test/functions/duration/from_days_test.dart`
   - Same test patterns as above
   - Fractional days: `duration.fromDays(0.5)` equals 12 hours
 
-- [ ] `test/functions/duration/from_test.dart`
+- [x] `test/functions/duration/from_test.dart`
   - Valid combined construction
   - Zero duration
   - Each component negative individually (5 tests)
@@ -469,61 +469,61 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 ### 8.2 Total Conversion Tests
 
-- [ ] `test/functions/duration/to_milliseconds_test.dart`
+- [x] `test/functions/duration/to_milliseconds_test.dart`
   - Valid conversion with fractional result
   - Zero duration returns 0
   - Roundtrip with `fromMilliseconds` (including fractional)
   - Type mismatch throws error
 
-- [ ] `test/functions/duration/to_seconds_test.dart`
+- [x] `test/functions/duration/to_seconds_test.dart`
   - Same patterns
 
-- [ ] `test/functions/duration/to_minutes_test.dart`
+- [x] `test/functions/duration/to_minutes_test.dart`
   - Same patterns
 
-- [ ] `test/functions/duration/to_hours_test.dart`
+- [x] `test/functions/duration/to_hours_test.dart`
   - Same patterns
 
-- [ ] `test/functions/duration/to_days_test.dart`
+- [x] `test/functions/duration/to_days_test.dart`
   - Same patterns
 
 ### 8.3 Component Extraction Tests
 
-- [ ] `test/functions/duration/milliseconds_test.dart`
+- [x] `test/functions/duration/milliseconds_test.dart`
   - Returns 0-999 range
   - Various durations
   - Type mismatch
 
-- [ ] `test/functions/duration/seconds_test.dart`
+- [x] `test/functions/duration/seconds_test.dart`
   - Returns 0-59 range
   - Various durations
   - Type mismatch
 
-- [ ] `test/functions/duration/minutes_test.dart`
+- [x] `test/functions/duration/minutes_test.dart`
   - Returns 0-59 range
   - Various durations
   - Type mismatch
 
-- [ ] `test/functions/duration/hours_test.dart`
+- [x] `test/functions/duration/hours_test.dart`
   - Returns 0-23 range
   - 50 hours returns 2 (after extracting 2 days)
   - Type mismatch
 
-- [ ] `test/functions/duration/days_test.dart`
+- [x] `test/functions/duration/days_test.dart`
   - Unbounded
   - 50 hours returns 2 days
   - Type mismatch
 
 ### 8.4 Compare and Format Tests
 
-- [ ] `test/functions/duration/compare_test.dart`
+- [x] `test/functions/duration/compare_test.dart`
   - Less than returns -1
   - Equal returns 0
   - Greater than returns 1
   - Same duration via different constructors compares equal
   - Type mismatch
 
-- [ ] `test/functions/duration/format_test.dart`
+- [x] `test/functions/duration/format_test.dart`
   - Each pattern letter individually
   - Combined patterns
   - Zero-padding variants (`dd`, `HH`, `mm`, `ss`, `SSS`)
@@ -533,17 +533,17 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 ### 8.5 Timestamp Integration Tests
 
-- [ ] `test/functions/time/add_test.dart`
+- [x] `test/functions/time/add_test.dart`
   - Add duration to timestamp
   - Add zero duration
   - Type mismatch
 
-- [ ] `test/functions/time/subtract_test.dart`
+- [x] `test/functions/time/subtract_test.dart`
   - Subtract duration from timestamp
   - Subtract zero duration
   - Type mismatch
 
-- [ ] `test/functions/time/between_test.dart`
+- [x] `test/functions/time/between_test.dart`
   - Difference between timestamps
   - Reversed arguments (absolute value)
   - Same timestamp returns zero duration
@@ -551,7 +551,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 ### 8.6 Type Check Tests
 
-- [ ] `test/functions/is/duration_test.dart`
+- [x] `test/functions/is/duration_test.dart`
   - `is.duration(duration)` returns true
   - `is.duration(timestamp)` returns false
   - `is.duration(number)` returns false
@@ -559,28 +559,28 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 ### 8.7 Operator Tests
 
-- [ ] `test/operators/duration_add_test.dart`
+- [x] `test/operators/duration_add_test.dart`
   - Duration + Duration
   - Identity with zero duration
   - Type mismatch
 
-- [ ] `test/operators/duration_sub_test.dart`
+- [x] `test/operators/duration_sub_test.dart`
   - Duration - Duration
   - Subtraction resulting in zero
   - Subtraction resulting in negative throws `NegativeDurationError`
   - Type mismatch
 
-- [ ] `test/operators/duration_comparison_test.dart`
+- [x] `test/operators/duration_comparison_test.dart`
   - `<`, `>`, `<=`, `>=` operators
   - Equal durations via different constructors
 
-- [ ] `test/operators/duration_equality_test.dart`
+- [x] `test/operators/duration_equality_test.dart`
   - `==`, `!=` operators
   - Equal durations via different constructors
 
 ### 8.8 Hashable Tests
 
-- [ ] `test/types/duration_hashable_test.dart`
+- [x] `test/types/duration_hashable_test.dart`
   - Duration as map key
   - Duration in set
   - Equal durations hash to same value
@@ -588,7 +588,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 ### 8.9 Integration Tests
 
-- [ ] `test/integration/duration_integration_test.dart`
+- [x] `test/integration/duration_integration_test.dart`
   - `list.reduce` with `+` operator
   - `list.map` with duration functions
   - `list.filter` with duration comparison
@@ -598,7 +598,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 ### 8.10 Edge Case Tests
 
-- [ ] `test/edge_cases/duration_edge_cases_test.dart`
+- [x] `test/edge_cases/duration_edge_cases_test.dart`
   - Maximum precision (microsecond-level)
   - Large durations near overflow limit
   - Fractional milliseconds roundtrip: `toMilliseconds(fromMilliseconds(1.5))` returns 1.5
@@ -612,7 +612,7 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `docs/reference/duration.md`
 
-- [ ] Create comprehensive documentation including:
+- [x] Create comprehensive documentation including:
   - All 18 duration functions with signatures, descriptions, examples
   - Purity annotations (all Pure)
   - Error conditions
@@ -622,38 +622,38 @@ This plan implements the Duration type as specified in `duration-proposal.md`.
 
 **File:** `docs/reference.md`
 
-- [ ] Add Duration link after Timestamp entry
+- [x] Add Duration link after Timestamp entry
 
 ### 9.3 Update README
 
 **File:** `README.md`
 
-- [ ] Add Duration to the types list under "System" types
+- [x] Add Duration to the types list under "System" types
 
 ### 9.4 Update Casting Reference
 
 **File:** `docs/reference/casting.md`
 
-- [ ] Add `is.duration` to the type checking functions list
+- [x] Add `is.duration` to the type checking functions list
 
 ### 9.5 Update Operators Reference
 
 **File:** `docs/reference/operators.md`
 
-- [ ] Add `Duration == Duration` under Equality
-- [ ] Add `Duration != Duration` under Inequality
-- [ ] Add `Duration < Duration`, `Duration > Duration`, `Duration <= Duration`, `Duration >= Duration` under comparison operators
-- [ ] Add `Duration + Duration` under Addition
-- [ ] Add `Duration - Duration` under Subtraction
+- [x] Add `Duration == Duration` under Equality
+- [x] Add `Duration != Duration` under Inequality
+- [x] Add `Duration < Duration`, `Duration > Duration`, `Duration <= Duration`, `Duration >= Duration` under comparison operators
+- [x] Add `Duration + Duration` under Addition
+- [x] Add `Duration - Duration` under Subtraction
 
 ---
 
 ## Phase 10: Final Verification
 
-- [ ] Run full test suite: `dart test`
-- [ ] Run `/delta-review` on all changes
-- [ ] Verify web platform compatibility (if applicable)
-- [ ] Manual testing of REPL output format
+- [x] Run full test suite: `dart test`
+- [x] Run `/delta-review` on all changes
+- [x] Verify web platform compatibility (if applicable)
+- [x] Manual testing of REPL output format
 
 ---
 

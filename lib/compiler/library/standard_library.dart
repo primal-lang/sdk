@@ -41,6 +41,7 @@ import 'package:primal/compiler/library/base64/base64_encode.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
 import 'package:primal/compiler/library/casting/is_directory.dart';
+import 'package:primal/compiler/library/casting/is_duration.dart';
 import 'package:primal/compiler/library/casting/is_file.dart';
 import 'package:primal/compiler/library/casting/is_function.dart';
 import 'package:primal/compiler/library/casting/is_infinite.dart';
@@ -83,6 +84,24 @@ import 'package:primal/compiler/library/directory/directory_name.dart';
 import 'package:primal/compiler/library/directory/directory_parent.dart';
 import 'package:primal/compiler/library/directory/directory_path.dart';
 import 'package:primal/compiler/library/directory/directory_rename.dart';
+import 'package:primal/compiler/library/duration/duration_compare.dart';
+import 'package:primal/compiler/library/duration/duration_days.dart';
+import 'package:primal/compiler/library/duration/duration_format.dart';
+import 'package:primal/compiler/library/duration/duration_from.dart';
+import 'package:primal/compiler/library/duration/duration_from_days.dart';
+import 'package:primal/compiler/library/duration/duration_from_hours.dart';
+import 'package:primal/compiler/library/duration/duration_from_milliseconds.dart';
+import 'package:primal/compiler/library/duration/duration_from_minutes.dart';
+import 'package:primal/compiler/library/duration/duration_from_seconds.dart';
+import 'package:primal/compiler/library/duration/duration_hours.dart';
+import 'package:primal/compiler/library/duration/duration_milliseconds.dart';
+import 'package:primal/compiler/library/duration/duration_minutes.dart';
+import 'package:primal/compiler/library/duration/duration_seconds.dart';
+import 'package:primal/compiler/library/duration/duration_to_days.dart';
+import 'package:primal/compiler/library/duration/duration_to_hours.dart';
+import 'package:primal/compiler/library/duration/duration_to_milliseconds.dart';
+import 'package:primal/compiler/library/duration/duration_to_minutes.dart';
+import 'package:primal/compiler/library/duration/duration_to_seconds.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
 import 'package:primal/compiler/library/environment/env_has.dart';
 import 'package:primal/compiler/library/error/throw.dart';
@@ -254,6 +273,8 @@ import 'package:primal/compiler/library/string/str_trim.dart';
 import 'package:primal/compiler/library/string/str_trim_left.dart';
 import 'package:primal/compiler/library/string/str_trim_right.dart';
 import 'package:primal/compiler/library/string/str_uppercase.dart';
+import 'package:primal/compiler/library/timestamp/time_add.dart';
+import 'package:primal/compiler/library/timestamp/time_between.dart';
 import 'package:primal/compiler/library/timestamp/time_compare.dart';
 import 'package:primal/compiler/library/timestamp/time_day.dart';
 import 'package:primal/compiler/library/timestamp/time_day_of_week.dart';
@@ -270,6 +291,7 @@ import 'package:primal/compiler/library/timestamp/time_minute.dart';
 import 'package:primal/compiler/library/timestamp/time_month.dart';
 import 'package:primal/compiler/library/timestamp/time_now.dart';
 import 'package:primal/compiler/library/timestamp/time_second.dart';
+import 'package:primal/compiler/library/timestamp/time_subtract.dart';
 import 'package:primal/compiler/library/timestamp/time_to_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_year.dart';
 import 'package:primal/compiler/library/timestamp/timestamp_to_epoch.dart';
@@ -336,6 +358,7 @@ class StandardLibrary {
     const IsBoolean(),
     const IsDecimal(),
     const IsDirectory(),
+    const IsDuration(),
     const IsFile(),
     const IsFunction(),
     const IsInfinite(),
@@ -388,6 +411,26 @@ class StandardLibrary {
     const DirectoryParent(),
     const DirectoryPath(),
     const DirectoryRename(),
+
+    // Duration
+    const DurationCompare(),
+    const DurationDays(),
+    const DurationFormat(),
+    const DurationFrom(),
+    const DurationFromDays(),
+    const DurationFromHours(),
+    const DurationFromMilliseconds(),
+    const DurationFromMinutes(),
+    const DurationFromSeconds(),
+    const DurationHours(),
+    const DurationMilliseconds(),
+    const DurationMinutes(),
+    const DurationSeconds(),
+    const DurationToDays(),
+    const DurationToHours(),
+    const DurationToMilliseconds(),
+    const DurationToMinutes(),
+    const DurationToSeconds(),
 
     // Environment
     const EnvGet(),
@@ -598,6 +641,8 @@ class StandardLibrary {
     const UuidV4(),
 
     // Timestamp
+    const TimeAdd(),
+    const TimeBetween(),
     const TimeCompare(),
     const TimeDay(),
     const TimeDayOfWeek(),
@@ -615,6 +660,7 @@ class StandardLibrary {
     const TimeMonth(),
     const TimeNow(),
     const TimeSecond(),
+    const TimeSubtract(),
     const TimeToIso(),
     const TimeYear(),
 
