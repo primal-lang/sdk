@@ -1,7 +1,7 @@
 # Context
 
 - For an overview of the Primal language (syntax, typing, runtime), consult `README.md`.
-- For details on a specific core function, consult `docs/lang/reference.md` and its linked pages.
+- For details on a specific core function, consult `docs/lang/index.md` and its linked pages.
 - For knowledge base structure and conventions, consult `docs/schema.md`.
 
 # Critical Instructions

@@ -14,7 +14,7 @@ sources: []
 
 ## Reference
 
-- [[lang/reference]] — Core library reference index
+Core library functions organized by category. Note: Primal does not support static types, but function signatures in the documentation include type annotations for readability.
 
 ### Data Structures
 
@@ -48,6 +48,7 @@ sources: []
 - [[lang/reference/environment]] — Environment variables
 - [[lang/reference/console]] — Console I/O
 - [[lang/reference/timestamp]] — Timestamp operations
+- [[lang/reference/duration]] — Duration operations
 
 ### Control & Debugging
 
