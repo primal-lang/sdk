@@ -130,7 +130,12 @@ Use `[[path/page-name]]` for cross-references with explicit paths:
 
 Path is relative to `docs/` and excludes the `.md` extension. This avoids ambiguity when pages have the same name in different directories.
 
-Links are grep-able: `grep "\[\[dev/lazy" docs/`
+**Note**: Wikilinks are not standard markdown and won't render as clickable links on GitHub. They serve two purposes:
+
+1. **Grep-able references**: `grep "\[\[dev/lazy" docs/` finds all pages linking to a topic
+2. **Lint-able structure**: `/kb-lint` validates that all wikilinks resolve to existing pages
+
+For navigation, use the index files. For automated link checking, use `/kb-lint`.
 
 ### Frontmatter
 
@@ -140,7 +145,7 @@ Each page should have YAML frontmatter:
 ---
 title: Lazy Evaluation
 tags: [runtime, performance]
-sources: [lib/compiler/runtime/lazy_value.dart]
+sources: [lib/compiler/runtime/term.dart]
 ---
 ```
 
@@ -158,15 +163,20 @@ Every page must start with a **TLDR** (1-3 sentences) immediately after the titl
 ---
 title: Lazy Evaluation
 tags: [runtime, performance]
-sources: [lib/compiler/runtime/lazy_value.dart, lib/compiler/runtime/thunk.dart]
+sources: [lib/compiler/runtime/term.dart, lib/compiler/runtime/runtime.dart]
 ---
 
 # Lazy Evaluation
 
 **TLDR**: Primal uses lazy evaluation via thunks that wrap unevaluated expressions. Values are computed on first access and cached. This enables short-circuit operators and avoids unnecessary computation.
 
-Primal uses lazy evaluation for [[lang/design/short-circuit-operators]].
-This is implemented using [[dev/architecture/thunks]] in the runtime.
+## How It Works
+
+[Content explaining the implementation...]
+
+## See Also
+
+- [[dev/compiler/runtime]] — Runtime system overview
 ```
 
 ## Implementation Steps
@@ -190,7 +200,7 @@ mv docs/reference.md docs/lang/
 mv docs/reference/ docs/lang/
 ```
 
-### Step 1b: Retrofit Existing Docs
+### Step 2: Retrofit Existing Docs
 
 Add frontmatter and TLDR to moved files that lack them:
 
@@ -219,9 +229,9 @@ sources: [<path to source files if applicable>]
 - Extract from existing content or write a 1-3 sentence summary
 - Do not rewrite entire documents — only add frontmatter and TLDR
 
-### Step 2: Create New Files
+### Step 3: Create New Files
 
-#### 2.1 `docs/schema.md`
+#### 3.1 `docs/schema.md`
 
 # Knowledge Base Schema
 
@@ -297,7 +307,7 @@ Use slug-based naming (lowercase, hyphens):
 - `lazy-evaluation.md` for "Lazy Evaluation"
 - `type-classes.md` for "Type Classes"
 
-#### 2.2 `docs/dev/index.md`
+#### 3.2 `docs/dev/index.md`
 
 ```markdown
 ---
@@ -350,7 +360,7 @@ _No pages yet. Use `/kb-dev` to document architecture decisions._
 - [[dev/example]] — Compiler walkthrough with sample program
 ```
 
-#### 2.3 `docs/lang/index.md`
+#### 3.3 `docs/lang/index.md`
 
 ```markdown
 ---
@@ -370,23 +380,55 @@ sources: []
 ## Reference
 
 - [[lang/reference]] — Core library reference index
+
+### Data Structures
+
+- [[lang/reference/list]] — List operations
 - [[lang/reference/map]] — Map operations
-- [[lang/reference/hash]] — Hashing functions
+- [[lang/reference/set]] — Set operations
+- [[lang/reference/vector]] — Vector operations
+- [[lang/reference/stack]] — Stack operations
+- [[lang/reference/queue]] — Queue operations
+
+### Arithmetic & Logic
+
+- [[lang/reference/arithmetic]] — Arithmetic operations
+- [[lang/reference/comparison]] — Comparison operations
+- [[lang/reference/logic]] — Logical operations
+- [[lang/reference/operators]] — Operator reference
+
+### Strings & Encoding
+
+- [[lang/reference/string]] — String operations
 - [[lang/reference/json]] — JSON encoding/decoding
+- [[lang/reference/base64]] — Base64 encoding/decoding
+- [[lang/reference/hash]] — Hashing functions
+- [[lang/reference/uuid]] — UUID generation
+
+### I/O & System
+
 - [[lang/reference/file]] — File operations
 - [[lang/reference/directory]] — Directory operations
+- [[lang/reference/path]] — Path operations
 - [[lang/reference/environment]] — Environment variables
-- [[lang/reference/base64]] — Base64 encoding/decoding
+- [[lang/reference/console]] — Console I/O
+- [[lang/reference/timestamp]] — Timestamp operations
+
+### Control & Debugging
+
+- [[lang/reference/control]] — Control flow
 - [[lang/reference/error]] — Error handling
+- [[lang/reference/debug]] — Debugging utilities
+- [[lang/reference/casting]] — Type casting
 
 ## Design
 
 _No pages yet. Use `/kb-lang` to document language design concepts._
 ```
 
-### Step 3: Create Skills
+### Step 4: Create Skills
 
-#### 3.1 `.claude/skills/kb-dev/SKILL.md`
+#### 4.1 `.claude/skills/kb-dev/SKILL.md`
 
 ```markdown
 # kb-dev
@@ -428,7 +470,7 @@ User explicitly runs `/kb-dev`, or after explaining architecture, design pattern
 - Keep technical but accessible to SDK contributors
 ```
 
-#### 3.2 `.claude/skills/kb-lang/SKILL.md`
+#### 4.2 `.claude/skills/kb-lang/SKILL.md`
 
 ```markdown
 # kb-lang
@@ -471,7 +513,7 @@ User explicitly runs `/kb-lang`, or after explaining language design or concepts
 - Assume reader is a Primal user, not SDK contributor
 ```
 
-#### 3.3 `.claude/skills/kb-lint/SKILL.md`
+#### 4.3 `.claude/skills/kb-lint/SKILL.md`
 
 ```markdown
 # kb-lint
@@ -505,6 +547,8 @@ User explicitly runs `/kb-lint`.
 - **Stale sources**: `sources:` files modified after page was last updated
 - **Dead sources**: `sources:` files that no longer exist
 
+**Implementation**: Use `git log -1 --format=%ct <file>` to get the last commit timestamp for both the doc page and its source files. Compare timestamps to detect staleness. For files not in git, fall back to file system mtime.
+
 ## Output
 
 Report issues grouped by category with file paths and line numbers:
@@ -523,17 +567,19 @@ Report issues grouped by category with file paths and line numbers:
 
 - docs/dev/compiler/runtime.md: Stale source lib/compiler/runtime/evaluator.dart (modified 2024-01-15)
 
-## Auto-fix (optional)
+## Auto-fix
 
-If user requests fixes:
+Run `/kb-lint fix` to automatically fix issues:
 
 - Add missing pages to index.md
 - Remove dead wikilinks
 - Create stub pages for broken links
 - Add empty frontmatter template to pages missing it
+
+Without the `fix` argument, `/kb-lint` only reports issues without modifying files.
 ```
 
-### Step 4: Update Existing Files
+### Step 5: Update Existing Files
 
 1. Update `CLAUDE.md`:
    - Update #Context section paths:
@@ -543,13 +589,28 @@ If user requests fixes:
    - Add Knowledge Base section with automatic behavior prompts
 
 2. Update `.claude/skills/sync-docs/SKILL.md`:
-   - Update reference paths from `docs/reference/` to `docs/lang/reference/`
-   - Update compiler paths from `docs/compiler/` to `docs/dev/compiler/`
-   - Update example path from `docs/example.md` to `docs/dev/example.md`
+
+   Replace the source mappings table with:
+
+   | Doc file                         | Source directory                                     |
+   | -------------------------------- | ---------------------------------------------------- |
+   | `docs/lang/reference/<name>.md`  | `lib/compiler/library/<name>/`                       |
+   | `docs/dev/compiler/reader.md`    | `lib/compiler/reader/`                               |
+   | `docs/dev/compiler/lexical.md`   | `lib/compiler/lexical/`                              |
+   | `docs/dev/compiler/syntactic.md` | `lib/compiler/syntactic/`                            |
+   | `docs/dev/compiler/semantic.md`  | `lib/compiler/semantic/`, `lib/compiler/lowering/`   |
+   | `docs/dev/compiler/runtime.md`   | `lib/compiler/runtime/`                              |
+   | `docs/dev/compiler/models.md`    | `lib/compiler/models/`                               |
+   | `docs/dev/compiler.md`           | `lib/compiler/compiler.dart` and all compiler stages |
+   | `docs/dev/example.md`            | All compiler stages (end-to-end trace)               |
+
+   Also update any references to index files:
+   - `docs/compiler.md` → `docs/dev/compiler.md`
+   - `docs/reference.md` → `docs/lang/reference.md`
 
 3. Update `README.md` if it references docs paths
 
-### Step 5: Update Internal Links
+### Step 6: Update Internal Links
 
 Most relative links will continue to work after the move. Verify and fix these specific cases:
 
