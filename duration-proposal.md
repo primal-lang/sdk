@@ -435,7 +435,7 @@ This feature requires the following documentation updates:
 
 5. **Plural naming convention:** Duration component functions use plural names (`duration.seconds`, `duration.milliseconds`) to distinguish them from Timestamp property functions which use singular names (`time.second`, `time.millisecond`). This reflects the semantic difference: Timestamp properties extract a single calendar value, while Duration components extract a count of units.
 
-6. **Format pattern letters:** Duration uses `d`/`dd` for days, same as Timestamp's day-of-month pattern. This is acceptable because Duration and Timestamp are distinct types with separate `duration.format` and `time.format` functions—no ambiguity arises. Single `S` for milliseconds is not supported; only `SSS` (zero-padded to 3 digits) is available to match Timestamp's behavior.
+6. **Format pattern letters:** Duration uses `d`/`dd` for days, same as Timestamp's day-of-month pattern. This is acceptable because Duration and Timestamp are distinct types with separate `duration.format` and `time.format` functions—no ambiguity arises. Both `S` (non-padded) and `SSS` (zero-padded to 3 digits) are supported for milliseconds.
 
 7. **Error type for negative durations:** A dedicated `NegativeDurationError` provides clear, specific error messages that include the function name, rather than using the generic `InvalidValueError`.
 
