@@ -25,7 +25,7 @@ duration.fromHours(2)              // 2 hours
 duration.fromDays(7)               // 7 days
 
 // Combined construction (days, hours, minutes, seconds, milliseconds)
-// All components must be non-negative; throws NegativeDurationError otherwise
+// Components validated left-to-right; first negative throws NegativeDurationError
 duration.from(0, 2, 30, 0, 0)        // 2 hours, 30 minutes
 duration.from(1, 0, 0, 0, 0)         // 1 day
 duration.from(0, 1, 30, 45, 500)     // 1 hour, 30 minutes, 45 seconds, 500 milliseconds
@@ -81,8 +81,8 @@ durationComparison() =
   let b = duration.fromMinutes(90) in
   [
     duration.compare(a, b),        // -1 (a < b)
-    a < b,                         // true (Duration joins OrderedType)
-    a == b,                        // false (Duration joins EquatableType)
+    a < b,                         // true
+    a == b,                        // false
     a != b,                        // true
     duration.fromHours(1) == duration.fromMinutes(60)  // true
   ]
@@ -173,6 +173,8 @@ Duration joins the following type classes:
 - **AddableType** — enables `+` operator (Duration + Duration)
 - **SubtractableType** — enables `-` operator (Duration - Duration)
 
+Note: Joining a type class enables parameter validation (the operator accepts Duration arguments), but the operator implementations also require explicit `DurationTerm` handling in their `reduce()` methods. See [Runtime Updates Required](#runtime-updates-required) for implementation details.
+
 Note: Subtraction resulting in a negative duration throws `NegativeDurationError`. This differs from Number subtraction, which allows negative results. The rationale is that Duration represents a non-negative span of time; use `time.subtract` to move timestamps backward.
 
 ## Implementation Notes
@@ -205,8 +207,10 @@ Add a new semantic error type for negative duration attempts:
 
 ```dart
 class NegativeDurationError extends RuntimeError {
-  NegativeDurationError({required String function})
-    : super('Duration cannot be negative in "$function"');
+  NegativeDurationError({required String function, String? component, num? value})
+    : super(component != null
+        ? 'Duration cannot be negative in "$function" ($component: $value)'
+        : 'Duration cannot be negative in "$function"');
 }
 ```
 
@@ -296,8 +300,10 @@ The following runtime files must be updated:
 
    ```dart
    class NegativeDurationError extends RuntimeError {
-     NegativeDurationError({required String function})
-       : super('Duration cannot be negative in "$function"');
+     NegativeDurationError({required String function, String? component, num? value})
+       : super(component != null
+           ? 'Duration cannot be negative in "$function" ($component: $value)'
+           : 'Duration cannot be negative in "$function"');
    }
    ```
 
@@ -340,8 +346,8 @@ The following runtime files must be updated:
 ### Error Handling
 
 - `duration.fromHours(-1)` — throws `NegativeDurationError` with message `Duration cannot be negative in "duration.fromHours"`
-- `duration.from(0, -1, 0, 0, 0)` — throws `NegativeDurationError` (each component validated individually)
-- `duration.from(-1, 0, 0, 0, 0)` — throws `NegativeDurationError` (negative days)
+- `duration.from(0, -1, 0, 0, 0)` — throws `NegativeDurationError` with message `Duration cannot be negative in "duration.from" (hours: -1)`
+- `duration.from(-1, -2, 0, 0, 0)` — throws `NegativeDurationError` with message `Duration cannot be negative in "duration.from" (days: -1)` (validates left-to-right, stops at first negative)
 - `a - b` where `b > a` — throws `NegativeDurationError` with message `Duration cannot be negative in "-"` (uses operator name, consistent with `DivisionByZeroError` pattern)
 - Type mismatches — throws `InvalidArgumentTypesError`
 - Wrong argument count — throws `InvalidArgumentCountError`
