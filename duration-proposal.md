@@ -57,6 +57,11 @@ extractionExample() =
 fiftyHoursExample() =
   let d = duration.fromHours(50) in
   [duration.days(d), duration.hours(d)]  // [2, 2] (50 hours = 2 days + 2 hours)
+
+// Fractional precision is preserved (internal storage uses microseconds):
+fractionalExample() =
+  let d = duration.fromMilliseconds(1.5) in
+  duration.toMilliseconds(d)             // 1.5 (not truncated to 1)
 ```
 
 ### Arithmetic
@@ -467,6 +472,7 @@ The implementation must include tests for:
 - Large durations: near overflow limit (2^63-1 microseconds ≈ 292,471 years)
 - Large durations on web: verify behavior near 2^53 limit
 - Fractional inputs: `duration.fromSeconds(1.5)` stores 1,500,000 microseconds
+- Fractional milliseconds roundtrip: `duration.toMilliseconds(duration.fromMilliseconds(1.5))` returns `1.5`
 - Fractional days: `duration.fromDays(0.5)` equals 12 hours
 - `time.between` with reversed arguments: `time.between(later, earlier)` returns same as `time.between(earlier, later)`
 - Duration equality across construction methods: `duration.fromHours(1) == duration.fromMinutes(60)`
