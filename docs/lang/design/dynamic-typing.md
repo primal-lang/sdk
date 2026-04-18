@@ -1,7 +1,9 @@
 ---
 title: Dynamic Typing
 tags: [design, typing]
-sources: []
+sources:
+  - lib/compiler/library/casting/
+  - lib/compiler/runtime/
 ---
 
 # Dynamic Typing

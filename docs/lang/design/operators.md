@@ -1,7 +1,8 @@
 ---
 title: Operators
 tags: [design, operators]
-sources: []
+sources:
+  - lib/compiler/library/operators/
 ---
 
 # Operators

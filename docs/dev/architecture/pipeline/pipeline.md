@@ -1,12 +1,7 @@
 ---
 title: Compiler Architecture
 tags: [compiler, architecture]
-sources:
-  [
-    lib/compiler/,
-    lib/compiler/lowering/runtime_facade.dart,
-    lib/compiler/lowering/lowerer.dart,
-  ]
+sources: [lib/compiler/]
 ---
 
 # Compiler Architecture

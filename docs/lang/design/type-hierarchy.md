@@ -1,7 +1,9 @@
 ---
 title: Type Hierarchy
 tags: [design, types]
-sources: []
+sources:
+  - lib/compiler/models/type.dart
+  - lib/compiler/library/casting/
 ---
 
 # Type Hierarchy

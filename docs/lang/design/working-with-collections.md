@@ -1,7 +1,13 @@
 ---
 title: Working with Collections
 tags: [design, collections]
-sources: []
+sources:
+  - lib/compiler/library/list/
+  - lib/compiler/library/map/
+  - lib/compiler/library/set/
+  - lib/compiler/library/stack/
+  - lib/compiler/library/queue/
+  - lib/compiler/library/vector/
 ---
 
 # Working with Collections

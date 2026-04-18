@@ -1,7 +1,8 @@
 ---
 title: Operators
 tags: [reference, operators]
-sources: []
+sources:
+  - lib/compiler/library/operators/
 ---
 
 # Operators

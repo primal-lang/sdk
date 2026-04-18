@@ -1,7 +1,8 @@
 ---
 title: Recursion
 tags: [design, recursion]
-sources: []
+sources:
+  - lib/compiler/runtime/
 ---
 
 # Recursion

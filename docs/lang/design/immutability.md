@@ -1,7 +1,10 @@
 ---
 title: Immutability
 tags: [design, immutability]
-sources: []
+sources:
+  - lib/compiler/library/list/
+  - lib/compiler/library/map/
+  - lib/compiler/library/set/
 ---
 
 # Immutability

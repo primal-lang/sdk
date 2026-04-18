@@ -1,7 +1,8 @@
 ---
 title: Expression-Oriented Programming
 tags: [design, expressions]
-sources: []
+sources:
+  - lib/compiler/syntactic/expression.dart
 ---
 
 # Expression-Oriented Programming
