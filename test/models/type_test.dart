@@ -199,12 +199,13 @@ void main() {
         expect(const OrderedType().toString(), 'Ordered');
       });
 
-      test('memberTypes contains Number, String, and Timestamp', () {
+      test('memberTypes contains Number, String, Timestamp, and Duration', () {
         final List<Type> memberTypes = const OrderedType().memberTypes;
-        expect(memberTypes.length, 3);
+        expect(memberTypes.length, 4);
         expect(memberTypes.contains(const NumberType()), true);
         expect(memberTypes.contains(const StringType()), true);
         expect(memberTypes.contains(const TimestampType()), true);
+        expect(memberTypes.contains(const DurationType()), true);
       });
 
       test('accepts member types', () {
@@ -212,6 +213,7 @@ void main() {
         expect(orderedType.accepts(const NumberType()), true);
         expect(orderedType.accepts(const StringType()), true);
         expect(orderedType.accepts(const TimestampType()), true);
+        expect(orderedType.accepts(const DurationType()), true);
       });
 
       test('does not accept non-member types', () {
@@ -229,13 +231,14 @@ void main() {
 
       test('memberTypes contains expected types', () {
         final List<Type> memberTypes = const EquatableType().memberTypes;
-        expect(memberTypes.length, 12);
+        expect(memberTypes.length, 13);
         expect(memberTypes.contains(const BooleanType()), true);
         expect(memberTypes.contains(const NumberType()), true);
         expect(memberTypes.contains(const StringType()), true);
         expect(memberTypes.contains(const FileType()), true);
         expect(memberTypes.contains(const DirectoryType()), true);
         expect(memberTypes.contains(const TimestampType()), true);
+        expect(memberTypes.contains(const DurationType()), true);
         expect(memberTypes.contains(const VectorType()), true);
         expect(memberTypes.contains(const StackType()), true);
         expect(memberTypes.contains(const QueueType()), true);
@@ -265,14 +268,18 @@ void main() {
         expect(const HashableType().toString(), 'Hashable');
       });
 
-      test('memberTypes contains Number, String, Boolean, and Timestamp', () {
-        final List<Type> memberTypes = const HashableType().memberTypes;
-        expect(memberTypes.length, 4);
-        expect(memberTypes.contains(const NumberType()), true);
-        expect(memberTypes.contains(const StringType()), true);
-        expect(memberTypes.contains(const BooleanType()), true);
-        expect(memberTypes.contains(const TimestampType()), true);
-      });
+      test(
+        'memberTypes contains Number, String, Boolean, Timestamp, and Duration',
+        () {
+          final List<Type> memberTypes = const HashableType().memberTypes;
+          expect(memberTypes.length, 5);
+          expect(memberTypes.contains(const NumberType()), true);
+          expect(memberTypes.contains(const StringType()), true);
+          expect(memberTypes.contains(const BooleanType()), true);
+          expect(memberTypes.contains(const TimestampType()), true);
+          expect(memberTypes.contains(const DurationType()), true);
+        },
+      );
 
       test('accepts member types', () {
         const HashableType hashableType = HashableType();
@@ -280,6 +287,7 @@ void main() {
         expect(hashableType.accepts(const StringType()), true);
         expect(hashableType.accepts(const BooleanType()), true);
         expect(hashableType.accepts(const TimestampType()), true);
+        expect(hashableType.accepts(const DurationType()), true);
       });
 
       test('does not accept non-member types', () {
@@ -387,15 +395,19 @@ void main() {
         expect(const AddableType().toString(), 'Addable');
       });
 
-      test('memberTypes contains Number, String, Vector, List, and Set', () {
-        final List<Type> memberTypes = const AddableType().memberTypes;
-        expect(memberTypes.length, 5);
-        expect(memberTypes.contains(const NumberType()), true);
-        expect(memberTypes.contains(const StringType()), true);
-        expect(memberTypes.contains(const VectorType()), true);
-        expect(memberTypes.contains(const ListType()), true);
-        expect(memberTypes.contains(const SetType()), true);
-      });
+      test(
+        'memberTypes contains Number, String, Vector, List, Set, and Duration',
+        () {
+          final List<Type> memberTypes = const AddableType().memberTypes;
+          expect(memberTypes.length, 6);
+          expect(memberTypes.contains(const NumberType()), true);
+          expect(memberTypes.contains(const StringType()), true);
+          expect(memberTypes.contains(const VectorType()), true);
+          expect(memberTypes.contains(const ListType()), true);
+          expect(memberTypes.contains(const SetType()), true);
+          expect(memberTypes.contains(const DurationType()), true);
+        },
+      );
 
       test('accepts member types', () {
         const AddableType addableType = AddableType();
@@ -404,6 +416,7 @@ void main() {
         expect(addableType.accepts(const VectorType()), true);
         expect(addableType.accepts(const ListType()), true);
         expect(addableType.accepts(const SetType()), true);
+        expect(addableType.accepts(const DurationType()), true);
       });
 
       test('does not accept non-member types', () {
@@ -419,12 +432,13 @@ void main() {
         expect(const SubtractableType().toString(), 'Subtractable');
       });
 
-      test('memberTypes contains Number, Vector, and Set', () {
+      test('memberTypes contains Number, Vector, Set, and Duration', () {
         final List<Type> memberTypes = const SubtractableType().memberTypes;
-        expect(memberTypes.length, 3);
+        expect(memberTypes.length, 4);
         expect(memberTypes.contains(const NumberType()), true);
         expect(memberTypes.contains(const VectorType()), true);
         expect(memberTypes.contains(const SetType()), true);
+        expect(memberTypes.contains(const DurationType()), true);
       });
 
       test('accepts member types', () {
@@ -432,6 +446,7 @@ void main() {
         expect(subtractableType.accepts(const NumberType()), true);
         expect(subtractableType.accepts(const VectorType()), true);
         expect(subtractableType.accepts(const SetType()), true);
+        expect(subtractableType.accepts(const DurationType()), true);
       });
 
       test('does not accept non-member types', () {

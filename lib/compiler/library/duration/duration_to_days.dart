@@ -31,7 +31,10 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     final Term a = arguments[0].reduce();
 
     if (a is DurationTerm) {
-      return NumberTerm(a.value.inMicroseconds / 86400000000);
+      final double result = a.value.inMicroseconds / 86400000000;
+      return NumberTerm(
+        result == result.truncateToDouble() ? result.toInt() : result,
+      );
     } else {
       throw InvalidArgumentTypesError(
         function: name,

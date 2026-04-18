@@ -8,15 +8,7 @@ sources: [lib/compiler/library/duration/]
 
 **TLDR**: Functions for creating, converting, formatting, and comparing durations (time spans) with support for arithmetic and timestamp integration.
 
-Number of functions: 18 duration functions + 3 timestamp integration functions + 1 type check function
-
-## Overview
-
-A Duration represents a span of time, independent of any specific point in time. Unlike Timestamp which represents an instant (e.g., "January 15, 2025 at 10:30 AM"), a Duration represents a length of time (e.g., "2 hours and 30 minutes").
-
-**Internal Representation**: Durations are stored internally as microseconds for precision, but the API uses milliseconds as the smallest user-facing unit.
-
-**String Format**: When converted to string via `to.string`, durations use the format `"0d 2h 30m 45s 500ms"`.
+Number of functions: 18
 
 ## Creation
 
@@ -279,40 +271,6 @@ duration.format(duration.from(2, 5, 30, 45, 500), "HH:mm:ss.SSS")   // "05:30:45
 duration.format(duration.fromHours(50), "d days HH hours")          // "2 days 02 hours"
 ```
 
-## Arithmetic
-
-Duration supports arithmetic operators:
-
-### Addition
-
-- **Signature:** `Duration + Duration: Duration`
-- **Example:**
-
-```
-duration.fromHours(2) + duration.fromMinutes(30)  // 2 hours 30 minutes
-```
-
-### Subtraction
-
-- **Signature:** `Duration - Duration: Duration`
-- **Constraints:** Throws `NegativeDurationError` if result would be negative
-- **Example:**
-
-```
-duration.fromHours(2) - duration.fromMinutes(30)  // 1 hour 30 minutes
-duration.fromHours(1) - duration.fromHours(2)     // throws NegativeDurationError
-```
-
-## Comparison Operators
-
-Duration supports comparison operators: `<`, `<=`, `>`, `>=`, `==`, `!=`
-
-```
-duration.fromHours(1) < duration.fromHours(2)       // true
-duration.fromHours(1) == duration.fromMinutes(60)   // true
-duration.fromHours(1) != duration.fromHours(2)      // true
-```
-
 ## Timestamp Integration
 
 ### Time Add
@@ -369,13 +327,4 @@ time.between(end(), start())  // 7 days (same result)
 is.duration(duration.fromHours(2))  // true
 is.duration(time.now())             // false
 is.duration(3600)                   // false
-```
-
-## Use as Map Key / Set Element
-
-Duration is a hashable type, so it can be used as a map key or set element:
-
-```
-m() = {duration.fromHours(1): "one hour", duration.fromHours(2): "two hours"}
-map.at(m(), duration.fromMinutes(60))  // "one hour" (equal durations hash to same key)
 ```

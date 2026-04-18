@@ -43,31 +43,59 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
       final int seconds = duration.inSeconds.remainder(60);
       final int milliseconds = duration.inMilliseconds.remainder(1000);
 
-      // Replace patterns (order matters - longer patterns first)
+      // Replace patterns using regex to avoid matching within words
+      // Order matters - longer patterns first
       String result = pattern;
 
-      // Days
-      result = result.replaceAll('dd', days.toString().padLeft(2, '0'));
-      result = result.replaceAll('d', days.toString());
+      // Days - use regex to match 'dd' or 'd' not surrounded by letters
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])dd(?![a-zA-Z])'),
+        (match) => days.toString().padLeft(2, '0'),
+      );
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])d(?![a-zA-Z])'),
+        (match) => days.toString(),
+      );
 
       // Hours
-      result = result.replaceAll('HH', hours.toString().padLeft(2, '0'));
-      result = result.replaceAll('H', hours.toString());
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])HH(?![a-zA-Z])'),
+        (match) => hours.toString().padLeft(2, '0'),
+      );
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])H(?![a-zA-Z])'),
+        (match) => hours.toString(),
+      );
 
       // Minutes
-      result = result.replaceAll('mm', minutes.toString().padLeft(2, '0'));
-      result = result.replaceAll('m', minutes.toString());
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])mm(?![a-zA-Z])'),
+        (match) => minutes.toString().padLeft(2, '0'),
+      );
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])m(?![a-zA-Z])'),
+        (match) => minutes.toString(),
+      );
 
       // Seconds
-      result = result.replaceAll('ss', seconds.toString().padLeft(2, '0'));
-      result = result.replaceAll('s', seconds.toString());
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])ss(?![a-zA-Z])'),
+        (match) => seconds.toString().padLeft(2, '0'),
+      );
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])s(?![a-zA-Z])'),
+        (match) => seconds.toString(),
+      );
 
       // Milliseconds
-      result = result.replaceAll(
-        'SSS',
-        milliseconds.toString().padLeft(3, '0'),
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])SSS(?![a-zA-Z])'),
+        (match) => milliseconds.toString().padLeft(3, '0'),
       );
-      result = result.replaceAll('S', milliseconds.toString());
+      result = result.replaceAllMapped(
+        RegExp(r'(?<![a-zA-Z])S(?![a-zA-Z])'),
+        (match) => milliseconds.toString(),
+      );
 
       return StringTerm(result);
     } else {

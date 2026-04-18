@@ -85,7 +85,7 @@ A function declaration is composed of:
 - **Body:** an expression which consists of combinations of:
   - Constants: `"Hello"`, `42`, `true`, `[1, 2, 3]`, etc
   - Operations: `foo + 3`, `!foo`, `foo >= bar`, etc
-  - Function calls: `foo(x)`, `bar(10)`, etc
+  - Function calls: `foo(x)`, `bar()`, etc
   - Conditionals: `if (foo) bar else baz`
   - Let expressions: `let x = 1 in x + 1`
 

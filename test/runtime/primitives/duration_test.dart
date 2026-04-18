@@ -726,7 +726,7 @@ main() = map.at(m(), duration.fromMinutes(60))
 
     test('equal durations hash to same value in set', () {
       final RuntimeFacade runtime = getRuntime('''
-s() = {duration.fromHours(1), duration.fromMinutes(60), duration.fromHours(2)}
+s() = set.new([duration.fromHours(1), duration.fromMinutes(60), duration.fromHours(2)])
 main() = set.length(s())
 ''');
       // duration.fromHours(1) == duration.fromMinutes(60), so set has 2 elements
@@ -750,7 +750,7 @@ shifts() = [
   duration.from(0, 7, 45, 0, 0),
   duration.from(0, 9, 0, 0, 0)
 ]
-total() = list.reduce(shifts(), duration.fromMilliseconds(0), (a, b) => a + b)
+total() = list.reduce(shifts(), duration.fromMilliseconds(0), (a, b) -> a + b)
 main() = duration.toHours(total())
 ''');
       // 8.5 + 7.75 + 9 = 25.25
@@ -760,7 +760,7 @@ main() = duration.toHours(total())
     test('list.map with duration function', () {
       final RuntimeFacade runtime = getRuntime('''
 hours() = [1, 2, 3]
-durations() = list.map(hours(), (h) => duration.fromHours(h))
+durations() = list.map(hours(), (h) -> duration.fromHours(h))
 main() = duration.toMinutes(list.at(durations(), 1))
 ''');
       checkResult(runtime, 120);
@@ -773,7 +773,7 @@ durations() = [
   duration.fromHours(2),
   duration.fromHours(3)
 ]
-longDurations() = list.filter(durations(), (d) => d > duration.fromMinutes(90))
+longDurations() = list.filter(durations(), (d) -> d > duration.fromMinutes(90))
 main() = list.length(longDurations())
 ''');
       checkResult(runtime, 2);
@@ -783,7 +783,7 @@ main() = list.length(longDurations())
       final RuntimeFacade runtime = getRuntime('''
 elapsed() = duration.fromHours(2)
 threshold() = duration.fromHours(1)
-main() = if (elapsed() > threshold(), "overtime", "ok")
+main() = if (elapsed() > threshold()) "overtime" else "ok"
 ''');
       checkResult(runtime, '"overtime"');
     });
