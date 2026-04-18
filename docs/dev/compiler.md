@@ -1,7 +1,12 @@
 ---
 title: Compiler Architecture
 tags: [compiler, architecture]
-sources: [lib/compiler/]
+sources:
+  [
+    lib/compiler/,
+    lib/compiler/lowering/runtime_facade.dart,
+    lib/compiler/lowering/lowerer.dart,
+  ]
 ---
 
 # Compiler Architecture
@@ -38,7 +43,125 @@ Each pipeline stage is documented in its own file under [`compiler/`](compiler/)
 
 ---
 
-## 1. Type System
+## 1. Stage Responsibilities
+
+| Stage             | Input                        | Output                       | Primary Responsibility                                            |
+| ----------------- | ---------------------------- | ---------------------------- | ----------------------------------------------------------------- |
+| SourceReader      | `String`                     | `List<Character>`            | Character extraction with source locations                        |
+| LexicalAnalyzer   | `List<Character>`            | `List<Token>`                | Tokenization via state machine                                    |
+| SyntacticAnalyzer | `List<Token>`                | `List<FunctionDefinition>`   | Function definition parsing via state machine + recursive descent |
+| SemanticAnalyzer  | `List<FunctionDefinition>`   | `IntermediateRepresentation` | Identifier resolution, arity checking, validation                 |
+| Lowerer           | `IntermediateRepresentation` | `Map<String, FunctionTerm>`  | Strip locations, resolve function references                      |
+| Runtime           | `Term`                       | `Term`                       | Substitution-based evaluation                                     |
+
+---
+
+## 2. Compilation Entry Point
+
+**File**: `lib/compiler/compiler.dart`
+
+The primary entry point is `Compiler.compile(String input)`, which orchestrates the first four stages:
+
+```dart
+IntermediateRepresentation compile(String input) {
+  final SourceReader reader = SourceReader(input);
+  final List<Character> characters = reader.analyze();
+
+  final LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(characters);
+  final List<Token> tokens = lexicalAnalyzer.analyze();
+
+  final SyntacticAnalyzer syntacticAnalyzer = SyntacticAnalyzer(tokens);
+  final List<FunctionDefinition> functions = syntacticAnalyzer.analyze();
+
+  final SemanticAnalyzer semanticAnalyzer = SemanticAnalyzer(functions);
+
+  return semanticAnalyzer.analyze();
+}
+```
+
+The `Compiler` class also provides specialized entry points:
+
+- `expression(String input)` - Parses a single expression (used by REPL)
+- `functionDefinition(String input)` - Attempts to parse a function definition
+
+---
+
+## 3. Runtime Orchestration
+
+**File**: `lib/compiler/lowering/runtime_facade.dart`
+
+The `RuntimeFacade` class bridges compilation and execution. It receives the `IntermediateRepresentation` from compilation and manages:
+
+1. **Lowering** - Converting semantic IR to runtime terms via the `Lowerer`
+2. **Function registration** - Building the combined function map (custom + standard library)
+3. **Evaluation** - Executing expressions through the `Runtime`
+
+### Initialization Flow
+
+```dart
+factory RuntimeFacade(
+  IntermediateRepresentation intermediateRepresentation,
+  ExpressionParser parseExpression,
+) {
+  // Build RuntimeInput containing lowered functions
+  final RuntimeInput input = const RuntimeInputBuilder().build(
+    intermediateRepresentation,
+  );
+
+  // Build combined signature map for validation
+  final Map<String, FunctionSignature> allSignatures = {
+    ...intermediateRepresentation.standardLibrarySignatures,
+    // ... custom function signatures
+  };
+
+  return RuntimeFacade._internal(...);
+}
+```
+
+### Expression Evaluation Flow
+
+When evaluating an expression (e.g., from REPL or `main` execution):
+
+```dart
+Term evaluateToTerm(Expression expression) {
+  // Reset recursion tracking
+  FunctionTerm.resetDepth();
+
+  // Semantic check: Expression -> SemanticNode
+  const SemanticAnalyzer analyzer = SemanticAnalyzer([]);
+  final SemanticNode semanticNode = analyzer.checkExpression(
+    expression: expression,
+    // ... validation context
+  );
+
+  // Lower: SemanticNode -> Term
+  final Lowerer lowerer = Lowerer(_runtimeInput.functions);
+  final Term lowered = lowerer.lowerTerm(semanticNode);
+
+  // Evaluate: Term -> Term (reduced)
+  return lowered.reduce();
+}
+```
+
+---
+
+## 4. Separation of Concerns
+
+The pipeline maintains clear boundaries:
+
+1. **Compiler stages (1-4)** produce the `IntermediateRepresentation` which retains source locations and semantic metadata
+2. **Lowering (stage 5)** strips source locations and produces minimal runtime representation
+3. **Runtime (stage 6)** operates purely on terms without source context
+
+This separation enables:
+
+- Error messages with source locations from semantic IR
+- Efficient runtime representation without location overhead
+- Independent testing of compilation vs execution
+
+---
+
+## 5. Type System
 
 **File**: `lib/compiler/models/type.dart`
 
@@ -66,7 +189,7 @@ Type checking is **dynamic** - it happens at runtime when native functions valid
 
 ---
 
-## 2. Standard Library
+## 6. Standard Library
 
 **File**: `lib/compiler/library/standard_library.dart`
 
@@ -102,7 +225,7 @@ The standard library provides 284 built-in functions, organized by namespace:
 
 ---
 
-## 3. Error and Warning System
+## 7. Error and Warning System
 
 **Files**: `lib/compiler/errors/`, `lib/compiler/warnings/`
 
@@ -162,7 +285,7 @@ Raised during execution:
 
 ---
 
-## 4. Platform Abstraction
+## 8. Platform Abstraction
 
 **Files**: `lib/compiler/platform/`
 
@@ -190,7 +313,7 @@ The active platform is selected at startup based on the entry point (`main_cli.d
 
 ---
 
-## 5. Entry Points
+## 9. Entry Points
 
 ### CLI (`lib/main/main_cli.dart`)
 
@@ -218,7 +341,7 @@ Each call creates a fresh `Runtime` instance (stateless).
 
 ---
 
-## 6. Utilities
+## 10. Utilities
 
 **Files**: `lib/utils/`, `lib/extensions/`
 
@@ -234,7 +357,7 @@ Supporting infrastructure used across compiler stages:
 
 ---
 
-## 7. Design Patterns
+## 11. Design Patterns
 
 | Pattern             | Where                                | Purpose                                                     |
 | ------------------- | ------------------------------------ | ----------------------------------------------------------- |
