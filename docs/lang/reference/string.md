@@ -1,7 +1,10 @@
 ---
 title: String
-tags: [reference, strings]
-sources: [lib/compiler/library/string/]
+tags:
+  - reference
+  - strings
+sources:
+  - lib/compiler/library/string/
 ---
 
 # String

@@ -1,6 +1,8 @@
 ---
 title: String Enhancements
-tags: [roadmap, stdlib]
+tags:
+  - roadmap
+  - stdlib
 sources: []
 ---
 

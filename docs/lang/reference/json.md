@@ -1,7 +1,10 @@
 ---
 title: JSON
-tags: [reference, encoding]
-sources: [lib/compiler/library/json/]
+tags:
+  - reference
+  - encoding
+sources:
+  - lib/compiler/library/json/
 ---
 
 # JSON

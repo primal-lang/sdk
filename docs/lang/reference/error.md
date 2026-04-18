@@ -1,7 +1,10 @@
 ---
 title: Error
-tags: [reference, error-handling]
-sources: [lib/compiler/library/error/]
+tags:
+  - reference
+  - error-handling
+sources:
+  - lib/compiler/library/error/
 ---
 
 # Error

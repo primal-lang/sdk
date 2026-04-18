@@ -1,7 +1,10 @@
 ---
 title: Vector
-tags: [reference, data-structures]
-sources: [lib/compiler/library/vector/]
+tags:
+  - reference
+  - data-structures
+sources:
+  - lib/compiler/library/vector/
 ---
 
 # Vector

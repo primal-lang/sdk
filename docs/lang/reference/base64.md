@@ -1,7 +1,10 @@
 ---
 title: Base64
-tags: [reference, encoding]
-sources: [lib/compiler/library/base64/]
+tags:
+  - reference
+  - encoding
+sources:
+  - lib/compiler/library/base64/
 ---
 
 # Base64

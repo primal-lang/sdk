@@ -1,7 +1,10 @@
 ---
 title: Lexical Analysis
-tags: [compiler, lexer]
-sources: [lib/compiler/lexical/]
+tags:
+  - compiler
+  - lexer
+sources:
+  - lib/compiler/lexical/
 ---
 
 # Lexical Analysis

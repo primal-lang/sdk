@@ -1,7 +1,10 @@
 ---
 title: Runtime
-tags: [compiler, runtime]
-sources: [lib/compiler/runtime/]
+tags:
+  - compiler
+  - runtime
+sources:
+  - lib/compiler/runtime/
 ---
 
 # Runtime

@@ -1,7 +1,10 @@
 ---
 title: Logic
-tags: [reference, operators]
-sources: [lib/compiler/library/logic/]
+tags:
+  - reference
+  - operators
+sources:
+  - lib/compiler/library/logic/
 ---
 
 # Logic

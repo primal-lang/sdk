@@ -1,7 +1,10 @@
 ---
 title: Duration
-tags: [reference, time]
-sources: [lib/compiler/library/duration/]
+tags:
+  - reference
+  - time
+sources:
+  - lib/compiler/library/duration/
 ---
 
 # Duration

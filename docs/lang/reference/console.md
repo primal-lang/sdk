@@ -1,7 +1,10 @@
 ---
 title: Console
-tags: [reference, io]
-sources: [lib/compiler/library/console/]
+tags:
+  - reference
+  - io
+sources:
+  - lib/compiler/library/console/
 ---
 
 # Console

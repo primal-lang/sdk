@@ -89,8 +89,9 @@ After all sync agents complete, validate all docs and auto-fix issues:
 6. **Missing frontmatter**: Pages without YAML frontmatter block
 7. **Missing sources**: Frontmatter without `sources:` field
 8. **Missing tags**: Frontmatter without `tags:` field
-9. **Missing TLDR**: No `**TLDR**:` line after title
-10. **Empty pages**: Only frontmatter, no body content
+9. **Inline arrays**: Frontmatter lists using `[a, b]` instead of multi-line format
+10. **Missing TLDR**: No `**TLDR**:` line after title
+11. **Empty pages**: Only frontmatter, no body content
 
 ### Auto-fix Actions
 
@@ -100,8 +101,9 @@ Fix issues automatically:
 - **Dead index entries**: Remove entry from index.md
 - **Broken wikilinks**: Create stub page with empty frontmatter template, or remove the link if stub creation fails
 - **Missing frontmatter**: Add empty frontmatter template
-- **Missing sources**: Add `sources: []` to frontmatter
-- **Missing tags**: Add `tags: []` to frontmatter
+- **Missing sources**: Add empty `sources:` to frontmatter
+- **Missing tags**: Add empty `tags:` to frontmatter
+- **Inline arrays**: Convert `field: [a, b]` to multi-line list format
 
 Issues that require manual intervention (report only):
 

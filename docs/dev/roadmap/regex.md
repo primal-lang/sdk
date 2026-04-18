@@ -1,6 +1,8 @@
 ---
 title: Regex
-tags: [roadmap, stdlib]
+tags:
+  - roadmap
+  - stdlib
 sources: []
 ---
 

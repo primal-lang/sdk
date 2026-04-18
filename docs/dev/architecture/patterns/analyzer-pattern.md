@@ -1,14 +1,14 @@
 ---
 title: Analyzer Pattern
-tags: [architecture, analyzer]
+tags:
+  - architecture
+  - analyzer
 sources:
-  [
-    lib/compiler/models/analyzer.dart,
-    lib/compiler/reader/source_reader.dart,
-    lib/compiler/lexical/lexical_analyzer.dart,
-    lib/compiler/syntactic/syntactic_analyzer.dart,
-    lib/compiler/semantic/semantic_analyzer.dart,
-  ]
+  - lib/compiler/models/analyzer.dart
+  - lib/compiler/reader/source_reader.dart
+  - lib/compiler/lexical/lexical_analyzer.dart
+  - lib/compiler/syntactic/syntactic_analyzer.dart
+  - lib/compiler/semantic/semantic_analyzer.dart
 ---
 
 # Analyzer Pattern

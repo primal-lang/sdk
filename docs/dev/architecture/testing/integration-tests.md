@@ -1,7 +1,10 @@
 ---
 title: Integration Tests
-tags: [architecture, testing]
-sources: [test/]
+tags:
+  - architecture
+  - testing
+sources:
+  - test/
 ---
 
 # Integration Tests

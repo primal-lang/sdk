@@ -1,6 +1,8 @@
 ---
 title: Currification
-tags: [roadmap, runtime]
+tags:
+  - roadmap
+  - runtime
 sources: []
 ---
 

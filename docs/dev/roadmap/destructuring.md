@@ -1,6 +1,8 @@
 ---
 title: Destructuring
-tags: [roadmap, syntax]
+tags:
+  - roadmap
+  - syntax
 sources: []
 ---
 

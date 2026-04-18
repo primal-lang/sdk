@@ -1,6 +1,8 @@
 ---
 title: Function Definitions
-tags: [design, functions]
+tags:
+  - design
+  - functions
 sources:
   - lib/compiler/syntactic/function_definition.dart
 ---

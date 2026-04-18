@@ -1,6 +1,8 @@
 ---
 title: Pattern Matching
-tags: [roadmap, syntax]
+tags:
+  - roadmap
+  - syntax
 sources: []
 ---
 

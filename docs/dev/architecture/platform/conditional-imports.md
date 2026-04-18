@@ -1,7 +1,10 @@
 ---
 title: Conditional Imports
-tags: [architecture, platform]
-sources: [lib/compiler/platform/]
+tags:
+  - architecture
+  - platform
+sources:
+  - lib/compiler/platform/
 ---
 
 # Conditional Imports

@@ -1,7 +1,10 @@
 ---
 title: Environment
-tags: [reference, system]
-sources: [lib/compiler/library/environment/]
+tags:
+  - reference
+  - system
+sources:
+  - lib/compiler/library/environment/
 ---
 
 # Environment

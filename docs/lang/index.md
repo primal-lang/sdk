@@ -1,6 +1,7 @@
 ---
 title: Language Knowledge Base
-tags: [index]
+tags:
+  - index
 sources: []
 ---
 

@@ -1,7 +1,11 @@
 ---
 title: Term Hierarchy
-tags: [architecture, runtime]
-sources: [lib/compiler/runtime/term.dart, lib/compiler/runtime/runtime.dart]
+tags:
+  - architecture
+  - runtime
+sources:
+  - lib/compiler/runtime/term.dart
+  - lib/compiler/runtime/runtime.dart
 ---
 
 # Term Hierarchy

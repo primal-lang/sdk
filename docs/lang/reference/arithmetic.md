@@ -1,7 +1,10 @@
 ---
 title: Arithmetic
-tags: [reference, math]
-sources: [lib/compiler/library/arithmetic/]
+tags:
+  - reference
+  - math
+sources:
+  - lib/compiler/library/arithmetic/
 ---
 
 # Arithmetic

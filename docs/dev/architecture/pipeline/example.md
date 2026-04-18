@@ -1,7 +1,10 @@
 ---
 title: Compilation Example
-tags: [compiler, example]
-sources: [lib/compiler/]
+tags:
+  - compiler
+  - example
+sources:
+  - lib/compiler/
 ---
 
 # Compilation Example

@@ -1,12 +1,12 @@
 ---
 title: Runtime Type Checking
-tags: [architecture, runtime]
+tags:
+  - architecture
+  - runtime
 sources:
-  [
-    lib/compiler/runtime/term.dart,
-    lib/compiler/errors/runtime_error.dart,
-    lib/compiler/library/,
-  ]
+  - lib/compiler/runtime/term.dart
+  - lib/compiler/errors/runtime_error.dart
+  - lib/compiler/library/
 ---
 
 # Runtime Type Checking

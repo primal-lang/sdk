@@ -1,6 +1,8 @@
 ---
 title: Lazy Evaluation
-tags: [design, evaluation]
+tags:
+  - design
+  - evaluation
 sources:
   - lib/compiler/library/operators/
   - lib/compiler/library/control/

@@ -1,6 +1,8 @@
 ---
 title: Modules
-tags: [roadmap, architecture]
+tags:
+  - roadmap
+  - architecture
 sources: []
 ---
 

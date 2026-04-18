@@ -1,7 +1,10 @@
 ---
 title: UUID
-tags: [reference, encoding]
-sources: [lib/compiler/library/uuid/]
+tags:
+  - reference
+  - encoding
+sources:
+  - lib/compiler/library/uuid/
 ---
 
 # UUID

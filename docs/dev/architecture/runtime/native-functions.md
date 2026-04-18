@@ -1,14 +1,14 @@
 ---
 title: Native Functions
-tags: [architecture, stdlib]
+tags:
+  - architecture
+  - stdlib
 sources:
-  [
-    lib/compiler/runtime/term.dart,
-    lib/compiler/library/standard_library.dart,
-    lib/compiler/library/arithmetic/num_add.dart,
-    lib/compiler/library/control/if.dart,
-    lib/compiler/library/list/list_map.dart,
-  ]
+  - lib/compiler/runtime/term.dart
+  - lib/compiler/library/standard_library.dart
+  - lib/compiler/library/arithmetic/num_add.dart
+  - lib/compiler/library/control/if.dart
+  - lib/compiler/library/list/list_map.dart
 ---
 
 # Native Functions

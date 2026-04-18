@@ -1,6 +1,8 @@
 ---
 title: Runtime Inspection
-tags: [roadmap, runtime]
+tags:
+  - roadmap
+  - runtime
 sources: []
 ---
 

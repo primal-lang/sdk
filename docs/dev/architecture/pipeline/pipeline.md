@@ -1,7 +1,10 @@
 ---
 title: Compiler Architecture
-tags: [compiler, architecture]
-sources: [lib/compiler/]
+tags:
+  - compiler
+  - architecture
+sources:
+  - lib/compiler/
 ---
 
 # Compiler Architecture

@@ -1,6 +1,8 @@
 ---
 title: Error Handling
-tags: [design, error-handling]
+tags:
+  - design
+  - error-handling
 sources:
   - lib/compiler/library/error/
   - lib/compiler/library/control/

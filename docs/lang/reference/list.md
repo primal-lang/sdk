@@ -1,7 +1,10 @@
 ---
 title: List
-tags: [reference, data-structures]
-sources: [lib/compiler/library/list/]
+tags:
+  - reference
+  - data-structures
+sources:
+  - lib/compiler/library/list/
 ---
 
 # List

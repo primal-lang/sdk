@@ -1,6 +1,8 @@
 ---
 title: HTTP
-tags: [roadmap, stdlib]
+tags:
+  - roadmap
+  - stdlib
 sources: []
 ---
 

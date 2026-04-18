@@ -1,7 +1,10 @@
 ---
 title: SourceReader
-tags: [compiler, reader]
-sources: [lib/compiler/reader/]
+tags:
+  - compiler
+  - reader
+sources:
+  - lib/compiler/reader/
 ---
 
 # SourceReader

@@ -1,7 +1,10 @@
 ---
 title: Set
-tags: [reference, data-structures]
-sources: [lib/compiler/library/set/]
+tags:
+  - reference
+  - data-structures
+sources:
+  - lib/compiler/library/set/
 ---
 
 # Set

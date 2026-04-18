@@ -1,6 +1,8 @@
 ---
 title: Testing
-tags: [roadmap, stdlib]
+tags:
+  - roadmap
+  - stdlib
 sources: []
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: Developer Knowledge Base
-tags: [index]
+tags:
+  - index
 sources: []
 ---
 

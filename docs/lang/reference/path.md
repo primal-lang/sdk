@@ -1,7 +1,10 @@
 ---
 title: Path
-tags: [reference, io]
-sources: [lib/compiler/library/path/]
+tags:
+  - reference
+  - io
+sources:
+  - lib/compiler/library/path/
 ---
 
 # Path

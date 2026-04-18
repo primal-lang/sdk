@@ -1,7 +1,10 @@
 ---
 title: Stack
-tags: [reference, data-structures]
-sources: [lib/compiler/library/stack/]
+tags:
+  - reference
+  - data-structures
+sources:
+  - lib/compiler/library/stack/
 ---
 
 # Stack

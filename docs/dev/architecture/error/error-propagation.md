@@ -1,13 +1,13 @@
 ---
 title: Error Propagation
-tags: [architecture, error-handling]
+tags:
+  - architecture
+  - error-handling
 sources:
-  [
-    lib/compiler/library/control/try.dart,
-    lib/compiler/library/error/throw.dart,
-    lib/main/main_cli.dart,
-    lib/main/main_web.dart,
-  ]
+  - lib/compiler/library/control/try.dart
+  - lib/compiler/library/error/throw.dart
+  - lib/main/main_cli.dart
+  - lib/main/main_web.dart
 ---
 
 # Error Propagation

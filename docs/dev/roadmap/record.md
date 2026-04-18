@@ -1,6 +1,8 @@
 ---
 title: Records
-tags: [roadmap, types]
+tags:
+  - roadmap
+  - types
 sources: []
 ---
 

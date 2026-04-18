@@ -1,7 +1,10 @@
 ---
 title: Syntactic Analysis
-tags: [compiler, parser]
-sources: [lib/compiler/syntactic/]
+tags:
+  - compiler
+  - parser
+sources:
+  - lib/compiler/syntactic/
 ---
 
 # Syntactic Analysis

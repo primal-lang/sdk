@@ -1,7 +1,10 @@
 ---
 title: Control
-tags: [reference, control-flow]
-sources: [lib/compiler/library/control/]
+tags:
+  - reference
+  - control-flow
+sources:
+  - lib/compiler/library/control/
 ---
 
 # Control

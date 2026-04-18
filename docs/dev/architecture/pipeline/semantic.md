@@ -1,7 +1,11 @@
 ---
 title: Semantic Analysis
-tags: [compiler, types]
-sources: [lib/compiler/semantic/, lib/compiler/lowering/]
+tags:
+  - compiler
+  - types
+sources:
+  - lib/compiler/semantic/
+  - lib/compiler/lowering/
 ---
 
 # Semantic Analysis

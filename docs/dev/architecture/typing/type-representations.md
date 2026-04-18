@@ -1,7 +1,11 @@
 ---
 title: Type Representations
-tags: [architecture, types]
-sources: [lib/compiler/models/type.dart, lib/compiler/models/parameter.dart]
+tags:
+  - architecture
+  - types
+sources:
+  - lib/compiler/models/type.dart
+  - lib/compiler/models/parameter.dart
 ---
 
 # Type Representations

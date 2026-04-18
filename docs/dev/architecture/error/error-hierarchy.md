@@ -1,7 +1,11 @@
 ---
 title: Error Hierarchy
-tags: [architecture, error-handling]
-sources: [lib/compiler/errors/, lib/compiler/warnings/]
+tags:
+  - architecture
+  - error-handling
+sources:
+  - lib/compiler/errors/
+  - lib/compiler/warnings/
 ---
 
 # Error Hierarchy

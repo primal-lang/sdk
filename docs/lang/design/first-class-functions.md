@@ -1,6 +1,8 @@
 ---
 title: First-Class Functions
-tags: [design, functions]
+tags:
+  - design
+  - functions
 sources:
   - lib/compiler/library/list/
 ---

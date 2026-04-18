@@ -1,7 +1,10 @@
 ---
 title: Test Organization
-tags: [architecture, testing]
-sources: [test/]
+tags:
+  - architecture
+  - testing
+sources:
+  - test/
 ---
 
 # Test Organization

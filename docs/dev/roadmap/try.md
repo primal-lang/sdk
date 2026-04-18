@@ -1,6 +1,8 @@
 ---
 title: Try Expression
-tags: [roadmap, error-handling]
+tags:
+  - roadmap
+  - error-handling
 sources: []
 ---
 

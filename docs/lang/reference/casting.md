@@ -1,7 +1,10 @@
 ---
 title: Casting
-tags: [reference, types]
-sources: [lib/compiler/library/casting/]
+tags:
+  - reference
+  - types
+sources:
+  - lib/compiler/library/casting/
 ---
 
 # Casting

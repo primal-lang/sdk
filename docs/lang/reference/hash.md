@@ -1,7 +1,10 @@
 ---
 title: Hash
-tags: [reference, encoding]
-sources: [lib/compiler/library/hash/]
+tags:
+  - reference
+  - encoding
+sources:
+  - lib/compiler/library/hash/
 ---
 
 # Hash

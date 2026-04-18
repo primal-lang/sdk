@@ -1,7 +1,10 @@
 ---
 title: Debug
-tags: [reference, debugging]
-sources: [lib/compiler/library/debug/]
+tags:
+  - reference
+  - debugging
+sources:
+  - lib/compiler/library/debug/
 ---
 
 # Debug

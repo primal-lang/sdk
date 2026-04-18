@@ -1,7 +1,10 @@
 ---
 title: Map
-tags: [reference, data-structures]
-sources: [lib/compiler/library/map/]
+tags:
+  - reference
+  - data-structures
+sources:
+  - lib/compiler/library/map/
 ---
 
 # Map

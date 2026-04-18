@@ -1,7 +1,10 @@
 ---
 title: Shared Compiler Models
-tags: [compiler, models]
-sources: [lib/compiler/models/]
+tags:
+  - compiler
+  - models
+sources:
+  - lib/compiler/models/
 ---
 
 # Shared Compiler Models

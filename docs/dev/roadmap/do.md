@@ -1,6 +1,8 @@
 ---
 title: Do Blocks
-tags: [roadmap, syntax]
+tags:
+  - roadmap
+  - syntax
 sources: []
 ---
 

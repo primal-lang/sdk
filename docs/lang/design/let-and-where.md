@@ -1,6 +1,8 @@
 ---
 title: Let and Where Expressions
-tags: [design, bindings]
+tags:
+  - design
+  - bindings
 sources:
   - lib/compiler/syntactic/expression_parser.dart
 ---

@@ -1,12 +1,12 @@
 ---
 title: State Machine Pattern
-tags: [architecture, state-machine]
+tags:
+  - architecture
+  - state-machine
 sources:
-  [
-    lib/compiler/models/state.dart,
-    lib/compiler/lexical/lexical_analyzer.dart,
-    lib/compiler/syntactic/syntactic_analyzer.dart,
-  ]
+  - lib/compiler/models/state.dart
+  - lib/compiler/lexical/lexical_analyzer.dart
+  - lib/compiler/syntactic/syntactic_analyzer.dart
 ---
 
 # State Machine Pattern

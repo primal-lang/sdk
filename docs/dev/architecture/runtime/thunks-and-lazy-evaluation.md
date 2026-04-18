@@ -1,14 +1,14 @@
 ---
 title: Thunks and Lazy Evaluation
-tags: [architecture, evaluation]
+tags:
+  - architecture
+  - evaluation
 sources:
-  [
-    lib/compiler/runtime/term.dart,
-    lib/compiler/library/control/if.dart,
-    lib/compiler/library/control/try.dart,
-    lib/compiler/library/logic/bool_and.dart,
-    lib/compiler/library/logic/bool_or.dart,
-  ]
+  - lib/compiler/runtime/term.dart
+  - lib/compiler/library/control/if.dart
+  - lib/compiler/library/control/try.dart
+  - lib/compiler/library/logic/bool_and.dart
+  - lib/compiler/library/logic/bool_or.dart
 ---
 
 # Thunks and Lazy Evaluation

@@ -1,7 +1,10 @@
 ---
 title: File
-tags: [reference, io]
-sources: [lib/compiler/library/file/]
+tags:
+  - reference
+  - io
+sources:
+  - lib/compiler/library/file/
 ---
 
 # File

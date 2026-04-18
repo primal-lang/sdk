@@ -1,7 +1,10 @@
 ---
 title: Queue
-tags: [reference, data-structures]
-sources: [lib/compiler/library/queue/]
+tags:
+  - reference
+  - data-structures
+sources:
+  - lib/compiler/library/queue/
 ---
 
 # Queue

@@ -1,7 +1,10 @@
 ---
 title: Timestamp
-tags: [reference, time]
-sources: [lib/compiler/library/timestamp/]
+tags:
+  - reference
+  - time
+sources:
+  - lib/compiler/library/timestamp/
 ---
 
 # Timestamp

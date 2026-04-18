@@ -1,7 +1,10 @@
 ---
 title: Directory
-tags: [reference, io]
-sources: [lib/compiler/library/directory/]
+tags:
+  - reference
+  - io
+sources:
+  - lib/compiler/library/directory/
 ---
 
 # Directory

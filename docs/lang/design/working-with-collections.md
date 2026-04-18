@@ -1,6 +1,8 @@
 ---
 title: Working with Collections
-tags: [design, collections]
+tags:
+  - design
+  - collections
 sources:
   - lib/compiler/library/list/
   - lib/compiler/library/map/

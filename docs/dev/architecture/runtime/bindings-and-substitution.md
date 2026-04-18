@@ -1,7 +1,11 @@
 ---
 title: Bindings and Substitution
-tags: [architecture, evaluation]
-sources: [lib/compiler/runtime/bindings.dart, lib/compiler/runtime/term.dart]
+tags:
+  - architecture
+  - evaluation
+sources:
+  - lib/compiler/runtime/bindings.dart
+  - lib/compiler/runtime/term.dart
 ---
 
 # Bindings and Substitution

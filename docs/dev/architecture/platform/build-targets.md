@@ -1,7 +1,12 @@
 ---
 title: Build Targets
-tags: [architecture, build]
-sources: [scripts/, lib/main/, pubspec.yaml]
+tags:
+  - architecture
+  - build
+sources:
+  - scripts/
+  - lib/main/
+  - pubspec.yaml
 ---
 
 # Build Targets

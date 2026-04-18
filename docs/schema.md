@@ -1,6 +1,7 @@
 ---
 title: Knowledge Base Schema
-tags: [meta]
+tags:
+  - meta
 sources: []
 ---
 
@@ -35,14 +36,19 @@ Every page must have:
    ```yaml
    ---
    title: Page Title
-   tags: [tag1, tag2]
-   sources: [lib/path/to/file.dart]
+   tags:
+     - tag1
+     - tag2
+   sources:
+     - lib/path/to/file.dart
    ---
    ```
 
 - `title`: Human-readable title
-- `tags`: Freeform categorization tags
-- `sources`: Paths to source files, relative to repo root (not `docs/`)
+- `tags`: Freeform categorization tags (multi-line list format)
+- `sources`: Paths to source files, relative to repo root (multi-line list format)
+
+**List format**: Always use multi-line YAML lists, never inline arrays like `[a, b]`.
 
 2. **Title heading** (`# Page Title`) matching the frontmatter title
 

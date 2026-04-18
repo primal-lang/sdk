@@ -1,6 +1,8 @@
 ---
 title: Ranges
-tags: [roadmap, syntax]
+tags:
+  - roadmap
+  - syntax
 sources: []
 ---
 

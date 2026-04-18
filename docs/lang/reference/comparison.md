@@ -1,7 +1,10 @@
 ---
 title: Comparison
-tags: [reference, operators]
-sources: [lib/compiler/library/comparison/]
+tags:
+  - reference
+  - operators
+sources:
+  - lib/compiler/library/comparison/
 ---
 
 # Comparison
