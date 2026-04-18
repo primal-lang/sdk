@@ -7,12 +7,38 @@
 
 ## Planning
 
-- **Plan & Pause**: Propose a clear, step-by-step plan before making any code changes. Stop after planning and proceed only after I verify.
-- **Ambiguity Handling**: If any requirement is ambiguous, risky, or unclear, state your assumptions explicitly and ask for confirmation before proceeding.
+- **Plan & Pause**: Propose a clear, step-by-step plan before making any code changes. Define success criteria for each step. Stop after planning and proceed only after I verify.
+- **Surface Confusion**: If any requirement is ambiguous, risky, or unclear, stop. State your assumptions explicitly. If multiple interpretations exist, present them, don't pick silently. Ask for confirmation before proceeding.
+- **Push Back**: If a simpler approach exists, say so. Challenge complexity when warranted.
 
-## Rules
+## Implementation
 
-- **Strict Scope**: Do not add features, refactor, or reorganize beyond what was explicitly requested.
-- **Explicit Types**: Always use explicit type annotations for local variables (e.g., `final String name ...` not `final name ...`).
-- **No Abbreviations**: Use full words for all identifiers. Avoid abbreviations like `fn`, `arg`, `expr`, `idx`, `loc`, `ref`, `env`, `dir`, `dest`, `op`, `exp`, etc. Use `function`, `argument`, `expression`, `index`, `location`, `reference`, `environment`, `directory`, `destination`, `operator`, `result`, etc.
-- **Code Review**: After completing code changes, run `delta-review` before responding.
+### Simplicity
+
+Minimum code that solves the problem. Nothing speculative.
+
+- No features, abstractions, or "flexibility" beyond what was asked.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+### Surgical Changes
+
+Touch only what you must. Clean up only your own mess.
+
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated issues, mention them, don't fix them.
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+
+The test: every changed line should trace directly to the request.
+
+### Code Style
+
+- **Explicit Types**: Always use explicit type annotations (e.g., `final String name`, not `final name`).
+- **No Abbreviations**: Use full words for identifiers (`function`, `argument`, `expression`, `index`, not `fn`, `arg`, `expr`, `idx`).
+
+## Verification
+
+After completing code changes, run `delta-review` before responding.
