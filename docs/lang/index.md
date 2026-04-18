@@ -58,4 +58,15 @@ sources: []
 
 ## Design
 
-_No pages yet. Use `/kb-lang` to document language design concepts._
+- [[lang/design/function-definitions]] — Anatomy of function definitions, naming rules, and the main function
+- [[lang/design/let-and-where]] — Local bindings with let expressions and where clauses
+- [[lang/design/operators]] — Arithmetic, comparison, and logical operators with precedence rules
+- [[lang/design/dynamic-typing]] — Runtime type checking without type annotations
+- [[lang/design/type-hierarchy]] — Overview of all types in Primal
+- [[lang/design/immutability]] — All values are immutable; operations return new values
+- [[lang/design/expression-oriented]] — Everything is an expression that produces a value
+- [[lang/design/first-class-functions]] — Functions as values, higher-order functions, and composition
+- [[lang/design/lazy-evaluation]] — Deferred computation with thunks and short-circuit operators
+- [[lang/design/recursion]] — Iteration through recursion, common patterns, and higher-order alternatives
+- [[lang/design/error-handling]] — Throwing and catching errors with error.throw and try
+- [[lang/design/working-with-collections]] — Collection types and transformation patterns
