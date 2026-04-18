@@ -43,7 +43,6 @@ The test: every changed line should trace directly to the request.
 ## Verification
 
 - **Delta Review**: After completing code changes, run `delta-review` before responding.
-
 - **No Full Test Suite**: Never run the entire test suite. Always target tests to a specific file or tag.
 
 ## Knowledge Base
