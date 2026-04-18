@@ -20,11 +20,10 @@ sources: []
 
 ## Architecture
 
-### Compiler Pipeline
+### Design Patterns
 
-- [[dev/architecture/pipeline/pipeline-overview]] — How the 6 stages connect and data flows through
-- [[dev/architecture/pipeline/state-machine-pattern]] — The State<I,O> abstraction used in lexer/parser
-- [[dev/architecture/pipeline/analyzer-pattern]] — The Analyzer<I,O> base class and stage composition
+- [[dev/architecture/patterns/state-machine-pattern]] — The State<I,O> abstraction used in lexer/parser
+- [[dev/architecture/patterns/analyzer-pattern]] — The Analyzer<I,O> base class and stage composition
 
 ### Runtime System
 
