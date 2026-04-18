@@ -1,3 +1,8 @@
+---
+name: kb-dev
+description: Document developer knowledge in the SDK knowledge base. Use when explaining architecture, design patterns, or implementation rationale.
+---
+
 # kb-dev
 
 Document developer knowledge in the SDK knowledge base.

@@ -1,3 +1,8 @@
+---
+name: kb-lang
+description: Document language knowledge in the user-facing knowledge base. Use when explaining language design or concepts to users.
+---
+
 # kb-lang
 
 Document language knowledge in the user-facing knowledge base.

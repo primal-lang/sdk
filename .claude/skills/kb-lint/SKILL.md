@@ -1,3 +1,8 @@
+---
+name: kb-lint
+description: Audit knowledge base health and report issues. Checks for orphan pages, broken wikilinks, missing frontmatter, and stale sources.
+---
+
 # kb-lint
 
 Audit knowledge base health and report issues.
