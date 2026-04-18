@@ -342,12 +342,12 @@ The following runtime files must be updated:
 - `duration.fromHours(-1)` — throws `NegativeDurationError` with message `Duration cannot be negative in "duration.fromHours"`
 - `duration.from(0, -1, 0, 0, 0)` — throws `NegativeDurationError` (each component validated individually)
 - `duration.from(-1, 0, 0, 0, 0)` — throws `NegativeDurationError` (negative days)
-- `a - b` where `b > a` — throws `NegativeDurationError` with function name "-"
+- `a - b` where `b > a` — throws `NegativeDurationError` with message `Duration cannot be negative in "-"` (uses operator name, consistent with `DivisionByZeroError` pattern)
 - Type mismatches — throws `InvalidArgumentTypesError`
 - Wrong argument count — throws `InvalidArgumentCountError`
 - Overflow (duration exceeding ~292,471 years / 2^63-1 microseconds on 64-bit platforms) — throws `InvalidValueError`
 
-**Platform Note:** On the web platform (JavaScript), number precision is limited to 53 bits (IEEE 754 double). This limits maximum duration to approximately 104 million days (~285,000 years) without precision loss. The CLI platform supports the full 64-bit range.
+**Platform Note:** On the web platform (JavaScript), number precision is limited to 53 bits (IEEE 754 double). This limits maximum duration to approximately 104 million days (~285,000 years). Durations exceeding this limit will silently lose precision (matching Dart's `Duration` behavior on dart2js). No error is thrown; arithmetic results may be approximate. The CLI platform supports the full 64-bit range with exact precision.
 
 ## Examples
 
@@ -488,7 +488,7 @@ The implementation must include tests for:
   - `duration.toHours(zeroDuration)` returns 0
 - Maximum precision: microsecond-level accuracy (sub-microsecond truncation)
 - Large durations: near overflow limit (2^63-1 microseconds ≈ 292,471 years)
-- Large durations on web: verify behavior near 2^53 limit
+- Large durations on web: durations near 2^53 microseconds (~104 million days) experience silent precision loss; no error thrown; `duration.toMilliseconds(duration.fromMilliseconds(n))` may not equal `n` for very large `n`
 - Fractional inputs: `duration.fromSeconds(1.5)` stores 1,500,000 microseconds
 - Fractional milliseconds roundtrip: `duration.toMilliseconds(duration.fromMilliseconds(1.5))` returns `1.5`
 - Fractional days: `duration.fromDays(0.5)` equals 12 hours
