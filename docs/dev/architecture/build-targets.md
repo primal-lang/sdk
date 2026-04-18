@@ -6,9 +6,7 @@ sources: [scripts/, lib/main/, pubspec.yaml]
 
 # Build Targets
 
-## TLDR
-
-The Primal SDK supports two primary build targets: native CLI executables via `dart compile exe` and JavaScript bundles via `dart compile js`. Build scripts in `scripts/` automate platform-specific compilation. Each target has a dedicated entry point in `lib/main/`.
+**TLDR**: The Primal SDK supports two primary build targets: native CLI executables via `dart compile exe` and JavaScript bundles via `dart compile js`. Build scripts in `scripts/` automate platform-specific compilation. Each target has a dedicated entry point in `lib/main/`.
 
 ## Entry Points
 
@@ -211,4 +209,4 @@ The SDK requires Dart 3.11.4 or later.
 - Console output via `print()` to browser console
 - Memory managed via explicit dispose functions
 
-See [[conditional-imports]] for details on how platform-specific code is selected at compile time.
+See [[dev/architecture/conditional-imports]] for details on how platform-specific code is selected at compile time.

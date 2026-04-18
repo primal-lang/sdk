@@ -6,9 +6,7 @@ sources: [lib/compiler/platform/]
 
 # Conditional Imports
 
-## TLDR
-
-The Primal SDK uses Dart conditional imports with `dart.library.html` to select platform-specific implementations at compile time. A base/cli/web pattern separates interface definitions from platform implementations, enabling the same codebase to target both native CLI and web browser environments.
+**TLDR**: The Primal SDK uses Dart conditional imports with `dart.library.html` to select platform-specific implementations at compile time. A base/cli/web pattern separates interface definitions from platform implementations, enabling the same codebase to target both native CLI and web browser environments.
 
 ## How Dart Conditional Imports Work
 
