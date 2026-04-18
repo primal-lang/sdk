@@ -184,6 +184,8 @@ Keywords are not recognized by dedicated `InitState` branches. Instead, `Identif
 - `isBoolean` → `BooleanToken`
 - `isIf` → `IfToken`
 - `isElse` → `ElseToken`
+- `isLet` → `LetToken`
+- `isIn` → `InToken`
 - `isAnd` → `DoubleAmpersandToken` (keyword alias for `&&`, short-circuit)
 - `isOr` → `DoublePipeToken` (keyword alias for `||`, short-circuit)
 - `isNot` → `BangToken` (keyword alias for `!`)

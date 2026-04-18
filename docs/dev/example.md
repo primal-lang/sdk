@@ -22,7 +22,7 @@ This program defines:
 
 - `square(n)` — returns the square of a number
 - `max(a, b)` — returns the larger of two numbers using a conditional
-- `main` — computes `max(9, 16)` which evaluates to `16`
+- `main()` — computes `max(9, 16)` which evaluates to `16`
 
 ## Pipeline Overview
 
@@ -80,11 +80,11 @@ The input is scanned for `\r\n` (Windows) and `\r` (old Mac) line endings, which
 
 The normalized string is split by `\n`. If the last element is empty (from a trailing newline), it is removed to avoid generating a spurious empty row:
 
-| Row Index | Content                            |
-| --------- | ---------------------------------- |
-| 0         | `square(n) = n * n`                |
-| 1         | `max(a, b) = if (a >= b) a else b` |
-| 2         | `main = max(square(3), square(4))` |
+| Row Index | Content                              |
+| --------- | ------------------------------------ |
+| 0         | `square(n) = n * n`                  |
+| 1         | `max(a, b) = if (a >= b) a else b`   |
+| 2         | `main() = max(square(3), square(4))` |
 
 #### Step 3: Process Each Row
 
@@ -96,7 +96,7 @@ For each row, the reader:
 
 ### Complete Output
 
-The `SourceReader` produces a `List<Character>` with **84 elements**:
+The `SourceReader` produces a `List<Character>` with **86 elements**:
 
 #### Row 1: `square(n) = n * n`
 
@@ -159,7 +159,7 @@ The `SourceReader` produces a `List<Character>` with **84 elements**:
 | 49    | `b`   | [2, 32]  |
 | 50    | `\n`  | [2, 33]  |
 
-#### Row 3: `main = max(square(3), square(4))`
+#### Row 3: `main() = max(square(3), square(4))`
 
 | Index | Value | Location |
 | ----- | ----- | -------- |
@@ -167,35 +167,37 @@ The `SourceReader` produces a `List<Character>` with **84 elements**:
 | 52    | `a`   | [3, 2]   |
 | 53    | `i`   | [3, 3]   |
 | 54    | `n`   | [3, 4]   |
-| 55    | ` `   | [3, 5]   |
-| 56    | `=`   | [3, 6]   |
+| 55    | `(`   | [3, 5]   |
+| 56    | `)`   | [3, 6]   |
 | 57    | ` `   | [3, 7]   |
-| 58    | `m`   | [3, 8]   |
-| 59    | `a`   | [3, 9]   |
-| 60    | `x`   | [3, 10]  |
-| 61    | `(`   | [3, 11]  |
-| 62    | `s`   | [3, 12]  |
-| 63    | `q`   | [3, 13]  |
-| 64    | `u`   | [3, 14]  |
-| 65    | `a`   | [3, 15]  |
-| 66    | `r`   | [3, 16]  |
-| 67    | `e`   | [3, 17]  |
-| 68    | `(`   | [3, 18]  |
-| 69    | `3`   | [3, 19]  |
-| 70    | `)`   | [3, 20]  |
-| 71    | `,`   | [3, 21]  |
-| 72    | ` `   | [3, 22]  |
-| 73    | `s`   | [3, 23]  |
-| 74    | `q`   | [3, 24]  |
-| 75    | `u`   | [3, 25]  |
-| 76    | `a`   | [3, 26]  |
-| 77    | `r`   | [3, 27]  |
-| 78    | `e`   | [3, 28]  |
-| 79    | `(`   | [3, 29]  |
-| 80    | `4`   | [3, 30]  |
-| 81    | `)`   | [3, 31]  |
-| 82    | `)`   | [3, 32]  |
-| 83    | `\n`  | [3, 33]  |
+| 58    | `=`   | [3, 8]   |
+| 59    | ` `   | [3, 9]   |
+| 60    | `m`   | [3, 10]  |
+| 61    | `a`   | [3, 11]  |
+| 62    | `x`   | [3, 12]  |
+| 63    | `(`   | [3, 13]  |
+| 64    | `s`   | [3, 14]  |
+| 65    | `q`   | [3, 15]  |
+| 66    | `u`   | [3, 16]  |
+| 67    | `a`   | [3, 17]  |
+| 68    | `r`   | [3, 18]  |
+| 69    | `e`   | [3, 19]  |
+| 70    | `(`   | [3, 20]  |
+| 71    | `3`   | [3, 21]  |
+| 72    | `)`   | [3, 22]  |
+| 73    | `,`   | [3, 23]  |
+| 74    | ` `   | [3, 24]  |
+| 75    | `s`   | [3, 25]  |
+| 76    | `q`   | [3, 26]  |
+| 77    | `u`   | [3, 27]  |
+| 78    | `a`   | [3, 28]  |
+| 79    | `r`   | [3, 29]  |
+| 80    | `e`   | [3, 30]  |
+| 81    | `(`   | [3, 31]  |
+| 82    | `4`   | [3, 32]  |
+| 83    | `)`   | [3, 33]  |
+| 84    | `)`   | [3, 34]  |
+| 85    | `\n`  | [3, 35]  |
 
 ### Summary
 
@@ -203,8 +205,8 @@ The `SourceReader` produces a `List<Character>` with **84 elements**:
 | -------------- | ---------------------- |
 | Input type     | `String`               |
 | Output type    | `List<Character>`      |
-| Input length   | 84 characters (raw)    |
-| Output length  | 84 `Character` objects |
+| Input length   | 86 characters (raw)    |
+| Output length  | 86 `Character` objects |
 | Rows processed | 3                      |
 
 The output preserves every character from the source (including whitespace and newlines) with precise location information that will be used for error reporting in later stages.
@@ -227,7 +229,7 @@ The lexical analyzer consumes the character list and produces a list of typed to
 
 ### Transformation
 
-**Input**: `List<Character>` (84 characters with locations)
+**Input**: `List<Character>` (86 characters with locations)
 
 **Output**: `List<Token>` (typed tokens with locations)
 
@@ -288,10 +290,11 @@ The `>=` operator is recognized through lookahead:
 
 **Tokens from Row 2**: 16 tokens
 
-#### Processing Row 3: `main = max(square(3), square(4))`
+#### Processing Row 3: `main() = max(square(3), square(4))`
 
 Key observations:
 
+- `main()` uses empty parentheses (nullary function)
 - `3` and `4` → `NumberToken` with parsed `num` values
 - Nested parentheses are tokenized independently
 
@@ -302,11 +305,11 @@ Number tokenization for `3`:
 | `3`       | `InitState` → `IntegerState`   | Start number, lexeme = `"3"`                     |
 | `)`       | `IntegerState` → `ResultState` | Delimiter found; `back()`, emit `NumberToken(3)` |
 
-**Tokens from Row 3**: 14 tokens
+**Tokens from Row 3**: 16 tokens
 
 ### Complete Output
 
-The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
+The `LexicalAnalyzer` produces a `List<Token>` with **40 tokens**:
 
 #### Row 1 Tokens: `square(n) = n * n`
 
@@ -342,24 +345,26 @@ The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
 | 22    | `ElseToken`             | `"else"` | [2, 27]  |
 | 23    | `IdentifierToken`       | `"b"`    | [2, 32]  |
 
-#### Row 3 Tokens: `main = max(square(3), square(4))`
+#### Row 3 Tokens: `main() = max(square(3), square(4))`
 
 | Index | Token Type              | Value      | Location |
 | ----- | ----------------------- | ---------- | -------- |
 | 24    | `IdentifierToken`       | `"main"`   | [3, 1]   |
-| 25    | `AssignToken`           | `"="`      | [3, 6]   |
-| 26    | `IdentifierToken`       | `"max"`    | [3, 8]   |
-| 27    | `OpenParenthesisToken`  | `"("`      | [3, 11]  |
-| 28    | `IdentifierToken`       | `"square"` | [3, 12]  |
-| 29    | `OpenParenthesisToken`  | `"("`      | [3, 18]  |
-| 30    | `NumberToken`           | `3`        | [3, 19]  |
-| 31    | `CloseParenthesisToken` | `")"`      | [3, 20]  |
-| 32    | `CommaToken`            | `","`      | [3, 21]  |
-| 33    | `IdentifierToken`       | `"square"` | [3, 23]  |
-| 34    | `OpenParenthesisToken`  | `"("`      | [3, 29]  |
-| 35    | `NumberToken`           | `4`        | [3, 30]  |
-| 36    | `CloseParenthesisToken` | `")"`      | [3, 31]  |
-| 37    | `CloseParenthesisToken` | `")"`      | [3, 32]  |
+| 25    | `OpenParenthesisToken`  | `"("`      | [3, 5]   |
+| 26    | `CloseParenthesisToken` | `")"`      | [3, 6]   |
+| 27    | `AssignToken`           | `"="`      | [3, 8]   |
+| 28    | `IdentifierToken`       | `"max"`    | [3, 10]  |
+| 29    | `OpenParenthesisToken`  | `"("`      | [3, 13]  |
+| 30    | `IdentifierToken`       | `"square"` | [3, 14]  |
+| 31    | `OpenParenthesisToken`  | `"("`      | [3, 20]  |
+| 32    | `NumberToken`           | `3`        | [3, 21]  |
+| 33    | `CloseParenthesisToken` | `")"`      | [3, 22]  |
+| 34    | `CommaToken`            | `","`      | [3, 23]  |
+| 35    | `IdentifierToken`       | `"square"` | [3, 25]  |
+| 36    | `OpenParenthesisToken`  | `"("`      | [3, 31]  |
+| 37    | `NumberToken`           | `4`        | [3, 32]  |
+| 38    | `CloseParenthesisToken` | `")"`      | [3, 33]  |
+| 39    | `CloseParenthesisToken` | `")"`      | [3, 34]  |
 
 ### Summary
 
@@ -367,14 +372,14 @@ The `LexicalAnalyzer` produces a `List<Token>` with **38 tokens**:
 | --------------------- | ------------------------ |
 | Input type            | `List<Character>`        |
 | Output type           | `List<Token>`            |
-| Input length          | 84 characters            |
-| Output length         | 38 tokens                |
+| Input length          | 86 characters            |
+| Output length         | 40 tokens                |
 | Whitespace characters | 19 (skipped)             |
 | Identifiers           | 15                       |
 | Keywords              | 2 (`if`, `else`)         |
 | Numbers               | 2 (`3`, `4`)             |
 | Operators             | 5 (`=` x3, `*`, `>=`)    |
-| Delimiters            | 14 (parentheses, commas) |
+| Delimiters            | 16 (parentheses, commas) |
 
 ### Key Observations
 
@@ -400,7 +405,7 @@ The syntactic analyzer (parser) converts the token list into a list of `Function
 
 ### Transformation
 
-**Input**: `List<Token>` (38 tokens)
+**Input**: `List<Token>` (40 tokens)
 
 **Output**: `List<FunctionDefinition>` (3 function definitions with expression trees)
 
@@ -525,14 +530,16 @@ FunctionDefinition(
 )
 ```
 
-#### Parsing Function 3: `main = max(square(3), square(4))`
+#### Parsing Function 3: `main() = max(square(3), square(4))`
 
 **State Machine Trace (nullary function):**
 
-| Token                     | State Transition                    | Action                    |
-| ------------------------- | ----------------------------------- | ------------------------- |
-| `IdentifierToken("main")` | `InitState` → `FunctionNameState`   | Set name = `"main"`       |
-| `AssignToken`             | `FunctionNameState` → `ResultState` | No parameters; parse body |
+| Token                     | State Transition                                            | Action              |
+| ------------------------- | ----------------------------------------------------------- | ------------------- |
+| `IdentifierToken("main")` | `InitState` → `FunctionNameState`                           | Set name = `"main"` |
+| `OpenParenthesisToken`    | `FunctionNameState` → `FunctionWithParametersState`         | Expect parameters   |
+| `CloseParenthesisToken`   | `FunctionWithParametersState` → `FunctionParametrizedState` | No parameters       |
+| `AssignToken`             | `FunctionParametrizedState` → `ResultState`                 | Parse body          |
 
 **Expression Parsing for `max(square(3), square(4))`:**
 
@@ -578,6 +585,8 @@ FunctionDefinition(
 )
 ```
 
+Note: All function definitions require parentheses, even for nullary functions like `main()`. This is enforced by the state machine, which transitions from `FunctionNameState` to `FunctionWithParametersState` only upon seeing `OpenParenthesisToken`.
+
 ### Complete Output
 
 The `SyntacticAnalyzer` produces a `List<FunctionDefinition>` with **3 definitions**:
@@ -616,17 +625,17 @@ max(a, b) = if (a >= b) a else b
 
 main() = max(square(3), square(4))
 ────────────────────────────────
-      CallExpression [3, 8]
+      CallExpression [3, 10]
       ├─ callee: IdentifierExpression("max")
       └─ arguments:
-         ├─ CallExpression [3, 12]
+         ├─ CallExpression [3, 14]
          │  ├─ callee: IdentifierExpression("square")
          │  └─ arguments:
-         │     └─ NumberExpression(3) [3, 19]
-         └─ CallExpression [3, 23]
+         │     └─ NumberExpression(3) [3, 21]
+         └─ CallExpression [3, 25]
             ├─ callee: IdentifierExpression("square")
             └─ arguments:
-               └─ NumberExpression(4) [3, 30]
+               └─ NumberExpression(4) [3, 32]
 ```
 
 ### Summary
@@ -635,7 +644,7 @@ main() = max(square(3), square(4))
 | ------------------------------ | -------------------------- |
 | Input type                     | `List<Token>`              |
 | Output type                    | `List<FunctionDefinition>` |
-| Input length                   | 38 tokens                  |
+| Input length                   | 40 tokens                  |
 | Output length                  | 3 function definitions     |
 | Expression nodes created       | 15                         |
 | Identifiers desugared to calls | 3 (`*`, `>=`, `if`)        |
@@ -650,7 +659,7 @@ main() = max(square(3), square(4))
 
 4. **Location preservation**: Each expression node stores its source location from the originating token, enabling precise error messages in semantic analysis.
 
-5. **Nullary vs parameterized**: `main` has no parameters and uses the shorter path (`FunctionNameState` → `ResultState`), while `square` and `max` go through the parameter-parsing states.
+5. **Uniform function syntax**: All functions require parentheses. `main()` has no parameters but still goes through `FunctionWithParametersState` → `FunctionParametrizedState`, while `square(n)` and `max(a, b)` additionally go through `FunctionWithNewParametersState`.
 
 6. **Uniform call representation**: User-defined calls (`max(...)`, `square(...)`) and desugared operators (`*(n, n)`) use the same `CallExpression` structure.
 
@@ -794,7 +803,7 @@ SemanticFunction(
 )
 ```
 
-### Processing Function 3: `main = max(square(3), square(4))`
+### Processing Function 3: `main() = max(square(3), square(4))`
 
 **Context:**
 
@@ -823,17 +832,17 @@ SemanticFunction(
 SemanticFunction(
   name: "main",
   parameters: [],
-  body: SemanticCallNode [3, 8]
+  body: SemanticCallNode [3, 10]
     ├─ callee: SemanticIdentifierNode("max", signature=max(a, b))
     └─ arguments:
-       ├─ SemanticCallNode [3, 12]
+       ├─ SemanticCallNode [3, 14]
        │  ├─ callee: SemanticIdentifierNode("square", signature=square(n))
        │  └─ arguments:
-       │     └─ SemanticNumberNode(3) [3, 19]
-       └─ SemanticCallNode [3, 23]
+       │     └─ SemanticNumberNode(3) [3, 21]
+       └─ SemanticCallNode [3, 25]
           ├─ callee: SemanticIdentifierNode("square", signature=square(n))
           └─ arguments:
-             └─ SemanticNumberNode(4) [3, 30]
+             └─ SemanticNumberNode(4) [3, 32]
 )
 ```
 
@@ -868,10 +877,10 @@ IntermediateRepresentation(
 | `b` (in max)    | [2, 22], [2, 32] | Parameter "b"   | `SemanticBoundVariableNode` |
 | `>=`            | [2, 19]          | Stdlib function | `SemanticIdentifierNode`    |
 | `if`            | [2, 13]          | Stdlib function | `SemanticIdentifierNode`    |
-| `square`        | [3, 12], [3, 23] | Custom function | `SemanticIdentifierNode`    |
-| `max`           | [3, 8]           | Custom function | `SemanticIdentifierNode`    |
-| `3`             | [3, 19]          | Number literal  | `SemanticNumberNode`        |
-| `4`             | [3, 30]          | Number literal  | `SemanticNumberNode`        |
+| `square`        | [3, 14], [3, 25] | Custom function | `SemanticIdentifierNode`    |
+| `max`           | [3, 10]          | Custom function | `SemanticIdentifierNode`    |
+| `3`             | [3, 21]          | Number literal  | `SemanticNumberNode`        |
+| `4`             | [3, 32]          | Number literal  | `SemanticNumberNode`        |
 
 ### Summary
 
@@ -924,16 +933,18 @@ The lowerer operates in two phases:
 
 #### Term Type Mapping
 
-| Semantic Term               | Runtime Term            | Description                                |
-| --------------------------- | ----------------------- | ------------------------------------------ |
-| `SemanticBooleanNode`       | `BooleanTerm`           | Boolean literal                            |
-| `SemanticNumberNode`        | `NumberTerm`            | Numeric literal                            |
-| `SemanticStringNode`        | `StringTerm`            | String literal                             |
-| `SemanticListNode`          | `ListTerm`              | List literal with lowered elements         |
-| `SemanticMapNode`           | `MapTerm`               | Map literal with lowered entries           |
-| `SemanticIdentifierNode`    | `FunctionReferenceTerm` | Function reference with lookup map         |
-| `SemanticBoundVariableNode` | `BoundVariableTerm`     | Parameter reference for substitution       |
-| `SemanticCallNode`          | `CallTerm`              | Function call with lowered callee and args |
+| Semantic Term               | Runtime Term                                                             | Description                                          |
+| --------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------- |
+| `SemanticBooleanNode`       | `BooleanTerm`                                                            | Boolean literal                                      |
+| `SemanticNumberNode`        | `NumberTerm`                                                             | Numeric literal                                      |
+| `SemanticStringNode`        | `StringTerm`                                                             | String literal                                       |
+| `SemanticListNode`          | `ListTerm`                                                               | List literal with lowered elements                   |
+| `SemanticMapNode`           | `MapTerm`                                                                | Map literal with lowered entries                     |
+| `SemanticIdentifierNode`    | `FunctionReferenceTerm`                                                  | Function reference with lookup map                   |
+| `SemanticBoundVariableNode` | `BoundVariableTerm` / `LetBoundVariableTerm` / `LambdaBoundVariableTerm` | Variable reference (type depends on binding context) |
+| `SemanticCallNode`          | `CallTerm`                                                               | Function call with lowered callee and args           |
+| `SemanticLetNode`           | `LetTerm`                                                                | Let expression with lowered bindings and body        |
+| `SemanticLambdaNode`        | `LambdaTerm`                                                             | Lambda expression with lowered body                  |
 
 ### Lowering Function 1: `square(n) = n * n`
 
@@ -1040,7 +1051,7 @@ CustomFunctionTerm(
 )
 ```
 
-### Lowering Function 3: `main = max(square(3), square(4))`
+### Lowering Function 3: `main() = max(square(3), square(4))`
 
 **Input (Semantic IR):**
 
@@ -1048,17 +1059,17 @@ CustomFunctionTerm(
 SemanticFunction(
   name: "main",
   parameters: [],
-  body: SemanticCallNode [3, 8]
+  body: SemanticCallNode [3, 10]
     ├─ callee: SemanticIdentifierNode("max", signature=max(a, b))
     └─ arguments:
-       ├─ SemanticCallNode [3, 12]
+       ├─ SemanticCallNode [3, 14]
        │  ├─ callee: SemanticIdentifierNode("square", signature=square(n))
        │  └─ arguments:
-       │     └─ SemanticNumberNode(3) [3, 19]
-       └─ SemanticCallNode [3, 23]
+       │     └─ SemanticNumberNode(3) [3, 21]
+       └─ SemanticCallNode [3, 25]
           ├─ callee: SemanticIdentifierNode("square", signature=square(n))
           └─ arguments:
-             └─ SemanticNumberNode(4) [3, 30]
+             └─ SemanticNumberNode(4) [3, 32]
 )
 ```
 
@@ -1162,7 +1173,7 @@ max(a, b) = if (a >= b) a else b
             └─ BoundVariableTerm("b")      ← ifFalse
 
 main() = max(square(3), square(4))
-────────────────────────────────
+──────────────────────────────────
       CustomFunctionTerm("main")
       └─ term: CallTerm
          ├─ callee: FunctionReferenceTerm("max") → functions map

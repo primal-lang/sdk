@@ -81,7 +81,7 @@ The semantic IR is a bound AST that preserves source information lost in runtime
 | `SemanticBoundVariableNode` | Parameter, let binding, or lambda parameter reference with `name`, `isLetBinding`, and `isLambdaParameter` flags |
 | `SemanticLambdaNode`        | Lambda expression with `parameters` (List<String>) and `body` (SemanticNode)                                     |
 | `SemanticCallNode`          | Function call with `callee` (`SemanticNode`) and `arguments`                                                     |
-| `SemanticLetBindingNode`    | Let binding with `name` (String) and `value` (SemanticNode)                                                      |
+| `SemanticLetBindingNode`    | Let binding with `name` (String), `value` (SemanticNode), and `location` (Location)                              |
 | `SemanticLetNode`           | Let expression with `bindings` (List<SemanticLetBindingNode>) and `body` (SemanticNode)                          |
 
 ### SemanticFunction

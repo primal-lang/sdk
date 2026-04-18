@@ -100,6 +100,7 @@ All expressions extend `Expression` (which has a `Location`):
   - Also used to represent binary and unary operators via factory constructors (`fromBinaryOperation`, `fromUnaryOperation`, `fromIf`)
 - `LambdaExpression` - anonymous function with parameter list and body expression
 - `LetExpression` - local binding expression with bindings and body
+  - `LetBindingExpression` extends `Located` (not `Expression`, as let bindings only appear within let expressions)
 
 Operators and `if` expressions are desugared into `CallExpression` nodes at parse time, unifying all computation as function application.
 

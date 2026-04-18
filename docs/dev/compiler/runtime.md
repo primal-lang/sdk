@@ -78,7 +78,7 @@ Collection terms extend `ValueTerm`, override `substitute` to recurse into their
 
 - `FunctionReferenceTerm(name, functions)` - holds a function name and the functions map; `reduce()` returns the referenced `FunctionTerm`. Throws `NotFoundInScopeError` if the name is not in the map.
 - `BoundVariableTerm(name)` - replaced during substitution via bindings. Calling `native()` throws a `StateError` since bound variables must be substituted before evaluation.
-- `LetBoundVariableTerm(name)` - represents a reference to a let binding; replaced during `LetTerm` reduction via partial substitution. Unlike `BoundVariableTerm`, it is not affected by function parameter bindings.
+- `LetBoundVariableTerm(name)` - represents a reference to a let binding; supports partial substitution by returning itself when the name is not found in bindings. This allows function parameter substitution to pass through without affecting let binding references. Replaced with actual values during `LetTerm` reduction.
 - `LambdaBoundVariableTerm(name)` - represents a reference to a lambda parameter; replaced during `LambdaTerm.apply()` via partial substitution. Returns itself when the name is not found in bindings, allowing outer scope substitution to pass through without affecting lambda parameter references.
 
 ### Call Term
@@ -91,10 +91,9 @@ Collection terms extend `ValueTerm`, override `substitute` to recurse into their
 
 **Evaluation** (`reduce()`):
 
-1. Bindings are evaluated sequentially (call-by-value).
-2. Each binding value is reduced, then substituted into subsequent bindings and the body.
-3. `LetBoundVariableTerm` instances matching the binding name are replaced with the reduced value.
-4. After all bindings are processed, the body is reduced and returned.
+1. A binding map is built incrementally.
+2. For each binding in declaration order: the term is substituted with current bindings (so each binding sees only previously evaluated bindings), then reduced to a value, then added to the binding map.
+3. After all bindings are processed, the body is substituted with the complete binding map and reduced.
 
 **Substitution** (`substitute(Bindings bindings)`):
 
@@ -121,10 +120,10 @@ Collection terms extend `ValueTerm`, override `substitute` to recurse into their
 
 **Subclasses**:
 
-- `CustomFunctionTerm` - user-defined; holds a `term` (the function body). Overrides `apply()` to increment/decrement recursion depth, eagerly evaluate all arguments before binding (call-by-value), then substitute and reduce. Overrides `substitute(Bindings bindings)` to substitute into the body term.
+- `CustomFunctionTerm` - user-defined; holds a `term` (the function body). Overrides `apply()` to increment/decrement recursion depth, eagerly evaluate all arguments before binding (call-by-value), then substitute into the body and reduce. Overrides `substitute(Bindings bindings)` to return `this` (custom functions are closed values—external substitution doesn't affect them, preventing variable capture bugs).
 - `NativeFunctionTerm` - built-in; overrides `substitute(Bindings bindings)` to resolve each parameter from the bindings and pass the resulting argument list to the abstract `term(List<Term> arguments)` method, which returns a concrete evaluation term.
 - `NativeFunctionTermWithArguments` - holds pre-resolved `arguments`; subclasses override `reduce()` to implement the actual logic.
-- `LambdaTerm` - anonymous function created from a lambda expression; holds `body` (the lambda body term). Overrides `substitute(Bindings bindings)` to propagate substitution through the body (preserving the lambda wrapper for closures). Overrides `apply()` to substitute directly into the body and reduce, enabling proper closure semantics. Lambda parameters are represented as `LambdaBoundVariableTerm` references that survive outer substitution until the lambda is invoked.
+- `LambdaTerm` - anonymous function created from a lambda expression; holds `body` (the lambda body term). Overrides `reduce()` to return `this` (lambdas are values). Overrides `substitute(Bindings bindings)` to propagate substitution through the body while filtering out bindings for the lambda's own parameters (preventing outer substitutions from affecting inner lambda parameters with the same names). Overrides `apply()` to increment/decrement recursion depth, eagerly evaluate arguments (call-by-value), substitute directly into the body, and reduce. Lambda parameters are represented as `LambdaBoundVariableTerm` references that survive outer substitution until the lambda is invoked.
 
 ### Native Function Implementation Pattern
 
