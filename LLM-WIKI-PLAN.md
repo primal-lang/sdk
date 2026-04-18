@@ -508,7 +508,6 @@ User explicitly runs `/kb-lint`.
 ## Output
 
 Report issues grouped by category with file paths and line numbers:
-```
 
 ## Structure Issues
 
@@ -532,6 +531,7 @@ If user requests fixes:
 - Remove dead wikilinks
 - Create stub pages for broken links
 - Add empty frontmatter template to pages missing it
+```
 
 ### Step 4: Update Existing Files
 
