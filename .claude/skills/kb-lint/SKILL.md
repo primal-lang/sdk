@@ -1,5 +1,5 @@
 ---
-name: sync-docs
+name: kb-lint
 description: Synchronizes documentation in `docs/` with the source of truth in `lib/`, spawning parallel agents per doc file.
 ---
 
