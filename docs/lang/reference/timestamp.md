@@ -8,7 +8,7 @@ sources: [lib/compiler/library/timestamp/]
 
 **TLDR**: Functions for creating, converting, formatting, and comparing timestamps with support for extracting date/time components and ISO 8601 formatting.
 
-Number of functions: 19
+Number of functions: 22
 
 ## Creation
 
@@ -257,6 +257,48 @@ time.isBefore(time.fromIso("2024-02-01T00:00:00Z"), time.fromIso("2024-01-01T00:
 ```
 time.isAfter(time.fromIso("2024-02-01T00:00:00Z"), time.fromIso("2024-01-01T00:00:00Z")) // returns true
 time.isAfter(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2024-02-01T00:00:00Z")) // returns false
+```
+
+## Arithmetic
+
+### Time Add
+
+- **Signature:** `time.add(timestamp: Timestamp, duration: Duration): Timestamp`
+- **Input:** One timestamp and one duration
+- **Output:** A new timestamp with the duration added
+- **Purity:** Pure
+- **Example:**
+
+```
+time.add(time.fromIso("2025-01-01T00:00:00Z"), duration.fromDays(7))  // January 8th
+```
+
+### Time Subtract
+
+- **Signature:** `time.subtract(timestamp: Timestamp, duration: Duration): Timestamp`
+- **Input:** One timestamp and one duration
+- **Output:** A new timestamp with the duration subtracted
+- **Purity:** Pure
+- **Example:**
+
+```
+time.subtract(time.fromIso("2025-01-08T00:00:00Z"), duration.fromDays(7))  // January 1st
+```
+
+### Time Between
+
+- **Signature:** `time.between(a: Timestamp, b: Timestamp): Duration`
+- **Input:** Two timestamps
+- **Output:** The absolute duration between the two timestamps (always non-negative)
+- **Note:** Argument order doesn't matter; returns the same result either way
+- **Purity:** Pure
+- **Example:**
+
+```
+start() = time.fromIso("2025-01-01T00:00:00Z")
+end() = time.fromIso("2025-01-08T00:00:00Z")
+time.between(start(), end())  // 7 days
+time.between(end(), start())  // 7 days (same result)
 ```
 
 ## Utility
