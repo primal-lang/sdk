@@ -23,9 +23,9 @@ sources: []
   - **`roadmap/`** — Future language features
 
 - **`lang/`** — Language knowledge (user-facing)
+  - Audience: Primal users
   - Language overview, reference documentation
   - Design philosophy, core concepts
-  - Audience: Primal users
 
 ## Page Format
 
