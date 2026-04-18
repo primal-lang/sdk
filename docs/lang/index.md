@@ -8,6 +8,10 @@ sources: []
 
 **TLDR**: User-facing documentation for the Primal programming language.
 
+## Overview
+
+- [Primal](../../README.md) — Language overview, philosophy, and getting started
+
 ## Reference
 
 - [[lang/reference]] — Core library reference index
