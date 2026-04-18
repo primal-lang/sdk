@@ -11,12 +11,13 @@ sources: []
 ## Pipeline
 
 - [[dev/architecture/pipeline/pipeline]] — Compiler architecture overview
+- [[dev/architecture/pipeline/example]] — Compiler walkthrough with sample program
+- [[dev/architecture/pipeline/reader]] — Source file reading
 - [[dev/architecture/pipeline/lexical]] — Lexical analysis (tokenization)
 - [[dev/architecture/pipeline/syntactic]] — Syntactic analysis (parsing)
 - [[dev/architecture/pipeline/semantic]] — Semantic analysis (type checking, resolution)
 - [[dev/architecture/pipeline/runtime]] — Runtime system (evaluation, values)
 - [[dev/architecture/pipeline/models]] — Data models (AST nodes, types)
-- [[dev/architecture/pipeline/reader]] — Source file reading
 
 ## Architecture
 
@@ -73,6 +74,3 @@ sources: []
 - [[dev/roadmap/transpilation]] — Transpilation targets
 - [[dev/roadmap/do]] — Do notation
 
-## Examples
-
-- [[dev/example]] — Compiler walkthrough with sample program
