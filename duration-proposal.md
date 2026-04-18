@@ -70,7 +70,7 @@ fractionalExample() =
 durationArithmetic() =
   let a = duration.fromHours(2) in
   let b = duration.fromMinutes(30) in
-  [a + b, a - b]                   // Duration values; to.string yields ["0d 2h 30m 00s 000ms", "0d 1h 30m 00s 000ms"]
+  [a + b, a - b]                   // [Duration, Duration] — REPL prints: [0d 2h 30m 00s 000ms, 0d 1h 30m 00s 000ms]
 ```
 
 ### Comparison
@@ -205,7 +205,7 @@ Add a new semantic error type for negative duration attempts:
 
 ```dart
 class NegativeDurationError extends RuntimeError {
-  const NegativeDurationError({required String function})
+  NegativeDurationError({required String function})
     : super('Duration cannot be negative in "$function"');
 }
 ```
@@ -301,23 +301,41 @@ The following runtime files must be updated:
    }
    ```
 
-5. **Operator implementations** — Add explicit `DurationTerm` handling to:
-   - `lib/compiler/library/operators/operator_add.dart`
-   - `lib/compiler/library/operators/operator_sub.dart`
-   - `lib/compiler/library/operators/operator_lt.dart`
-   - `lib/compiler/library/operators/operator_le.dart`
-   - `lib/compiler/library/operators/operator_gt.dart`
-   - `lib/compiler/library/operators/operator_ge.dart`
-   - `lib/compiler/library/operators/operator_eq.dart`
-   - `lib/compiler/library/operators/operator_neq.dart`
-   - `lib/compiler/library/comparison/comp_lt.dart`
-   - `lib/compiler/library/comparison/comp_le.dart`
-   - `lib/compiler/library/comparison/comp_gt.dart`
-   - `lib/compiler/library/comparison/comp_ge.dart`
-   - `lib/compiler/library/comparison/comp_eq.dart`
-   - `lib/compiler/library/comparison/comp_neq.dart`
+5. **Operator implementations** — Add explicit `DurationTerm` handling to the files listed below. Type classes are used for parameter validation only; runtime dispatch uses explicit type checks.
 
-   Note: Type classes are used for parameter validation only. Runtime dispatch uses explicit type checks (e.g., `if (a is DurationTerm && b is DurationTerm)`).
+   **`operator_add.dart`** — Add after the `SetTerm` handling (before the final `else` block):
+
+   ```dart
+   } else if ((a is DurationTerm) && (b is DurationTerm)) {
+     return DurationTerm(a.value + b.value);
+   ```
+
+   **`operator_sub.dart`** — Add after the `SetTerm` handling (before the final `else` block):
+
+   ```dart
+   } else if ((a is DurationTerm) && (b is DurationTerm)) {
+     final Duration result = a.value - b.value;
+     if (result.isNegative) {
+       throw NegativeDurationError(function: name);
+     }
+     return DurationTerm(result);
+   ```
+
+   **`comp_lt.dart`** (and similarly `comp_le.dart`, `comp_gt.dart`, `comp_ge.dart`) — Add after the `TimestampTerm` handling:
+
+   ```dart
+   } else if ((a is DurationTerm) && (b is DurationTerm)) {
+     return BooleanTerm(a.value.compareTo(b.value) < 0);
+   ```
+
+   **`comp_eq.dart`** (and similarly `comp_neq.dart`) — Add after the existing type checks:
+
+   ```dart
+   } else if ((a is DurationTerm) && (b is DurationTerm)) {
+     return BooleanTerm(a.value == b.value);
+   ```
+
+   The operator files (`operator_lt.dart`, etc.) delegate to the corresponding `comp_*.dart` files, so no additional changes are needed there beyond updating the type classes.
 
 ### Error Handling
 
