@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/runtime/runtime_input.dart';
 import 'package:primal/compiler/runtime/term.dart';
+import 'package:primal/extensions/duration_extension.dart';
 
 class Runtime {
   final RuntimeInput input;
@@ -21,15 +22,7 @@ class Runtime {
     } else if (value is DateTime) {
       return '"${value.toIso8601String()}"';
     } else if (value is Duration) {
-      final int days = value.inDays;
-      final int hours = value.inHours.remainder(24);
-      final int minutes = value.inMinutes.remainder(60);
-      final int seconds = value.inSeconds.remainder(60);
-      final int milliseconds = value.inMilliseconds.remainder(1000);
-      final String minutesString = minutes.toString().padLeft(2, '0');
-      final String secondsString = seconds.toString().padLeft(2, '0');
-      final String millisecondsString = milliseconds.toString().padLeft(3, '0');
-      return '"${days}d ${hours}h ${minutesString}m ${secondsString}s ${millisecondsString}ms"';
+      return '"${value.toFormattedString()}"';
     } else if (value is File) {
       return '"${value.absolute.path}"';
     } else if (value is Directory) {
