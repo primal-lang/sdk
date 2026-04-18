@@ -8,15 +8,15 @@ sources: []
 
 **TLDR**: Internal documentation for SDK contributors covering architecture, compiler internals, and design rationale.
 
-## Compiler
+## Pipeline
 
-- [[dev/compiler]] — Compiler pipeline overview
-- [[dev/compiler/lexical]] — Lexical analysis (tokenization)
-- [[dev/compiler/syntactic]] — Syntactic analysis (parsing)
-- [[dev/compiler/semantic]] — Semantic analysis (type checking, resolution)
-- [[dev/compiler/runtime]] — Runtime system (evaluation, values)
-- [[dev/compiler/models]] — Data models (AST nodes, types)
-- [[dev/compiler/reader]] — Source file reading
+- [[dev/architecture/pipeline/pipeline]] — Compiler architecture overview
+- [[dev/architecture/pipeline/lexical]] — Lexical analysis (tokenization)
+- [[dev/architecture/pipeline/syntactic]] — Syntactic analysis (parsing)
+- [[dev/architecture/pipeline/semantic]] — Semantic analysis (type checking, resolution)
+- [[dev/architecture/pipeline/runtime]] — Runtime system (evaluation, values)
+- [[dev/architecture/pipeline/models]] — Data models (AST nodes, types)
+- [[dev/architecture/pipeline/reader]] — Source file reading
 
 ## Architecture
 
