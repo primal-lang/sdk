@@ -421,6 +421,6 @@ Sharing a `RuntimeFacade` across threads would cause incorrect recursion limit e
 
 ## See Also
 
-- [[dev/architecture/error-hierarchy]] - Error class hierarchy and types
+- [[dev/architecture/error/error-hierarchy]] - Error class hierarchy and types
 - [[dev/compiler/runtime]] - Runtime evaluation model
 - [[dev/compiler]] - Compiler pipeline overview

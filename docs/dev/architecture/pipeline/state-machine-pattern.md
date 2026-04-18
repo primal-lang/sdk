@@ -291,4 +291,4 @@ return ResultState(iterator, NumberToken(output));
 
 - [[dev/compiler/lexical]] - Full lexical analyzer details
 - [[dev/compiler/syntactic]] - Syntactic analyzer with expression parsing
-- [[dev/architecture/analyzer-pattern]] - The Analyzer base class pattern
+- [[dev/architecture/pipeline/analyzer-pattern]] - The Analyzer base class pattern

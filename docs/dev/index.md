@@ -22,36 +22,36 @@ sources: []
 
 ### Compiler Pipeline
 
-- [[dev/architecture/pipeline-overview]] — How the 6 stages connect and data flows through
-- [[dev/architecture/state-machine-pattern]] — The State<I,O> abstraction used in lexer/parser
-- [[dev/architecture/analyzer-pattern]] — The Analyzer<I,O> base class and stage composition
+- [[dev/architecture/pipeline/pipeline-overview]] — How the 6 stages connect and data flows through
+- [[dev/architecture/pipeline/state-machine-pattern]] — The State<I,O> abstraction used in lexer/parser
+- [[dev/architecture/pipeline/analyzer-pattern]] — The Analyzer<I,O> base class and stage composition
 
 ### Runtime System
 
-- [[dev/architecture/term-hierarchy]] — Term base class and subclasses
-- [[dev/architecture/bindings-and-substitution]] — Variable environments and substitution
-- [[dev/architecture/thunks-and-lazy-evaluation]] — Lazy evaluation via deferred reduce()
-- [[dev/architecture/native-functions]] — Standard library function implementation
+- [[dev/architecture/runtime/term-hierarchy]] — Term base class and subclasses
+- [[dev/architecture/runtime/bindings-and-substitution]] — Variable environments and substitution
+- [[dev/architecture/runtime/thunks-and-lazy-evaluation]] — Lazy evaluation via deferred reduce()
+- [[dev/architecture/runtime/native-functions]] — Standard library function implementation
 
 ### Type System
 
-- [[dev/architecture/type-representations]] — How types are modeled in the compiler
-- [[dev/architecture/runtime-type-checking]] — When and how types are validated
+- [[dev/architecture/typing/type-representations]] — How types are modeled in the compiler
+- [[dev/architecture/typing/runtime-type-checking]] — When and how types are validated
 
 ### Error Handling
 
-- [[dev/architecture/error-hierarchy]] — Built-in error types and when they're thrown
-- [[dev/architecture/error-propagation]] — How errors bubble through the runtime
+- [[dev/architecture/error/error-hierarchy]] — Built-in error types and when they're thrown
+- [[dev/architecture/error/error-propagation]] — How errors bubble through the runtime
 
 ### Platform & Build
 
-- [[dev/architecture/conditional-imports]] — Platform-specific code for CLI vs web
-- [[dev/architecture/build-targets]] — Building for different platforms
+- [[dev/architecture/platform/conditional-imports]] — Platform-specific code for CLI vs web
+- [[dev/architecture/platform/build-targets]] — Building for different platforms
 
 ### Testing
 
-- [[dev/architecture/test-organization]] — Test directory structure and conventions
-- [[dev/architecture/integration-tests]] — End-to-end compilation test patterns
+- [[dev/architecture/testing/test-organization]] — Test directory structure and conventions
+- [[dev/architecture/testing/integration-tests]] — End-to-end compilation test patterns
 
 ## Roadmap
 

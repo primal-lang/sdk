@@ -283,6 +283,6 @@ Additionally:
 
 ## See Also
 
-- [[dev/architecture/error-propagation]] - How errors bubble through the runtime
+- [[dev/architecture/error/error-propagation]] - How errors bubble through the runtime
 - [[dev/compiler]] - Compiler pipeline overview
 - [[dev/compiler/runtime]] - Runtime evaluation model

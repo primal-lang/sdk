@@ -209,4 +209,4 @@ The SDK requires Dart 3.11.4 or later.
 - Console output via `print()` to browser console
 - Memory managed via explicit dispose functions
 
-See [[dev/architecture/conditional-imports]] for details on how platform-specific code is selected at compile time.
+See [[dev/architecture/platform/conditional-imports]] for details on how platform-specific code is selected at compile time.
