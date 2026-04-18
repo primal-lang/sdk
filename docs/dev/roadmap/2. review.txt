@@ -6,7 +6,7 @@ Compare the document against:
 - the current parser, semantic analyzer, lowering, and runtime
 - existing error and warning behavior
 - existing tests
-- docs/primal.md and docs/reference.md where relevant
+- README.md and docs/reference.md where relevant
 
 Output findings first, ordered by severity. Each finding must be numbered. For each finding include:
 - what is wrong

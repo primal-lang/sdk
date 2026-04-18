@@ -415,7 +415,7 @@ This feature requires the following documentation updates:
 
 1. Create `docs/reference/duration.md` with full function documentation (including purity annotations)
 2. Add Duration link to `docs/reference.md` (after Timestamp)
-3. Add Duration to the types list in `docs/primal.md` under "System" types
+3. Add Duration to the types list in `README.md` under "System" types
 4. Update `docs/reference/casting.md` to include `is.duration`
 5. Update `docs/reference/operators.md`:
    - Add `Duration == Duration` and `Duration != Duration` under Equality/Inequality
