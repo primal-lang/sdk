@@ -482,123 +482,6 @@ void main() {
     });
   });
 
-  group('Timestamp Integration', () {
-    test('time.add adds duration to timestamp', () {
-      final RuntimeFacade runtime = getRuntime('''
-t() = time.fromIso("2024-01-01T00:00:00Z")
-main() = time.day(time.add(t(), duration.fromDays(7)))
-''');
-      checkResult(runtime, 8);
-    });
-
-    test('time.add with zero duration', () {
-      final RuntimeFacade runtime = getRuntime('''
-t() = time.fromIso("2024-01-01T00:00:00Z")
-main() = time.compare(t(), time.add(t(), duration.fromMilliseconds(0)))
-''');
-      checkResult(runtime, 0);
-    });
-
-    test('time.subtract subtracts duration from timestamp', () {
-      final RuntimeFacade runtime = getRuntime('''
-t() = time.fromIso("2024-01-08T00:00:00Z")
-main() = time.day(time.subtract(t(), duration.fromDays(7)))
-''');
-      checkResult(runtime, 1);
-    });
-
-    test('time.subtract with zero duration', () {
-      final RuntimeFacade runtime = getRuntime('''
-t() = time.fromIso("2024-01-01T00:00:00Z")
-main() = time.compare(t(), time.subtract(t(), duration.fromMilliseconds(0)))
-''');
-      checkResult(runtime, 0);
-    });
-
-    test('time.between returns duration between timestamps', () {
-      final RuntimeFacade runtime = getRuntime('''
-start() = time.fromIso("2024-01-01T00:00:00Z")
-end() = time.fromIso("2024-01-08T00:00:00Z")
-main() = duration.toDays(time.between(start(), end()))
-''');
-      checkResult(runtime, 7);
-    });
-
-    test(
-      'time.between with reversed arguments returns absolute difference',
-      () {
-        final RuntimeFacade runtime = getRuntime('''
-start() = time.fromIso("2024-01-01T00:00:00Z")
-end() = time.fromIso("2024-01-08T00:00:00Z")
-main() = duration.toDays(time.between(end(), start()))
-''');
-        checkResult(runtime, 7);
-      },
-    );
-
-    test('time.between with same timestamp returns zero duration', () {
-      final RuntimeFacade runtime = getRuntime('''
-t() = time.fromIso("2024-01-01T00:00:00Z")
-main() = duration.toMilliseconds(time.between(t(), t()))
-''');
-      checkResult(runtime, 0);
-    });
-
-    test('roundtrip: time.between then time.add', () {
-      final RuntimeFacade runtime = getRuntime('''
-a() = time.fromIso("2024-01-01T00:00:00Z")
-b() = time.fromIso("2024-01-08T00:00:00Z")
-d() = time.between(a(), b())
-main() = time.compare(time.add(a(), d()), b())
-''');
-      checkResult(runtime, 0);
-    });
-  });
-
-  group('Type Checking', () {
-    test('is.duration returns true for duration', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = is.duration(duration.fromHours(2))',
-      );
-      checkResult(runtime, true);
-    });
-
-    test('is.duration returns false for timestamp', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = is.duration(time.now())',
-      );
-      checkResult(runtime, false);
-    });
-
-    test('is.duration returns false for number', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = is.duration(3600)',
-      );
-      checkResult(runtime, false);
-    });
-
-    test('is.duration returns false for string', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = is.duration("2 hours")',
-      );
-      checkResult(runtime, false);
-    });
-
-    test('is.duration returns false for boolean', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = is.duration(true)',
-      );
-      checkResult(runtime, false);
-    });
-
-    test('is.duration returns false for list', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = is.duration([1, 2, 3])',
-      );
-      checkResult(runtime, false);
-    });
-  });
-
   group('Duration Type Errors', () {
     test('duration.fromMilliseconds throws for string argument', () {
       final RuntimeFacade runtime = getRuntime(
@@ -648,34 +531,6 @@ main() = time.compare(time.add(a(), d()), b())
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
-
-    test('time.add throws for number first argument', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time.add(123, duration.fromHours(1))',
-      );
-      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
-    });
-
-    test('time.add throws for number second argument', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time.add(time.now(), 123)',
-      );
-      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
-    });
-
-    test('time.subtract throws for number arguments', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time.subtract(123, 456)',
-      );
-      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
-    });
-
-    test('time.between throws for duration arguments', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time.between(duration.fromHours(1), duration.fromHours(2))',
-      );
-      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
-    });
   });
 
   group('Duration Edge Cases', () {
@@ -684,34 +539,6 @@ main() = time.compare(time.add(a(), d()), b())
         'main() = duration.toMilliseconds(duration.fromMilliseconds(1.5))',
       );
       checkResult(runtime, 1.5);
-    });
-
-    test('to.string produces expected format', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = to.string(duration.from(0, 2, 30, 45, 500))',
-      );
-      checkResult(runtime, '"0d 2h 30m 45s 500ms"');
-    });
-
-    test('to.string for zero duration', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = to.string(duration.fromMilliseconds(0))',
-      );
-      checkResult(runtime, '"0d 0h 00m 00s 000ms"');
-    });
-
-    test('to.string for 50 hours', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = to.string(duration.fromHours(50))',
-      );
-      checkResult(runtime, '"2d 2h 00m 00s 000ms"');
-    });
-
-    test('to.string for 100 days', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = to.string(duration.fromDays(100))',
-      );
-      checkResult(runtime, '"100d 0h 00m 00s 000ms"');
     });
   });
 

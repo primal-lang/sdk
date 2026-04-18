@@ -172,6 +172,7 @@ void main() {
     'queue': 'queue.new([1, 2, 3])',
     'function': 'num.abs',
     'timestamp': 'time.now()',
+    'duration': 'duration.fromHours(2)',
     'file': 'file.fromPath(".")',
     'directory': 'directory.fromPath(".")',
   };
@@ -189,6 +190,7 @@ void main() {
     'is.queue': {'queue'},
     'is.function': {'function'},
     'is.timestamp': {'timestamp'},
+    'is.duration': {'duration'},
     'is.file': {'file'},
     'is.directory': {'directory'},
   };
@@ -461,6 +463,34 @@ void main() {
     test('to.string converts decimal to string', () {
       final RuntimeFacade runtime = getRuntime('main() = to.string(3.14)');
       checkResult(runtime, '"3.14"');
+    });
+
+    test('to.string converts duration to string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = to.string(duration.from(0, 2, 30, 45, 500))',
+      );
+      checkResult(runtime, '"0d 2h 30m 45s 500ms"');
+    });
+
+    test('to.string for zero duration', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = to.string(duration.fromMilliseconds(0))',
+      );
+      checkResult(runtime, '"0d 0h 00m 00s 000ms"');
+    });
+
+    test('to.string for 50 hours duration', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = to.string(duration.fromHours(50))',
+      );
+      checkResult(runtime, '"2d 2h 00m 00s 000ms"');
+    });
+
+    test('to.string for 100 days duration', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = to.string(duration.fromDays(100))',
+      );
+      checkResult(runtime, '"100d 0h 00m 00s 000ms"');
     });
 
     test('to.boolean returns false for whitespace-only string', () {

@@ -2007,4 +2007,105 @@ main() = !time.isBefore(t(), t()) && !time.isAfter(t(), t())
       checkResult(runtime, true);
     });
   });
+
+  group('Timestamp Integration', () {
+    test('time.add adds duration to timestamp', () {
+      final RuntimeFacade runtime = getRuntime('''
+t() = time.fromIso("2024-01-01T00:00:00Z")
+main() = time.day(time.add(t(), duration.fromDays(7)))
+''');
+      checkResult(runtime, 8);
+    });
+
+    test('time.add with zero duration', () {
+      final RuntimeFacade runtime = getRuntime('''
+t() = time.fromIso("2024-01-01T00:00:00Z")
+main() = time.compare(t(), time.add(t(), duration.fromMilliseconds(0)))
+''');
+      checkResult(runtime, 0);
+    });
+
+    test('time.subtract subtracts duration from timestamp', () {
+      final RuntimeFacade runtime = getRuntime('''
+t() = time.fromIso("2024-01-08T00:00:00Z")
+main() = time.day(time.subtract(t(), duration.fromDays(7)))
+''');
+      checkResult(runtime, 1);
+    });
+
+    test('time.subtract with zero duration', () {
+      final RuntimeFacade runtime = getRuntime('''
+t() = time.fromIso("2024-01-01T00:00:00Z")
+main() = time.compare(t(), time.subtract(t(), duration.fromMilliseconds(0)))
+''');
+      checkResult(runtime, 0);
+    });
+
+    test('time.between returns duration between timestamps', () {
+      final RuntimeFacade runtime = getRuntime('''
+start() = time.fromIso("2024-01-01T00:00:00Z")
+end() = time.fromIso("2024-01-08T00:00:00Z")
+main() = duration.toDays(time.between(start(), end()))
+''');
+      checkResult(runtime, 7);
+    });
+
+    test(
+      'time.between with reversed arguments returns absolute difference',
+      () {
+        final RuntimeFacade runtime = getRuntime('''
+start() = time.fromIso("2024-01-01T00:00:00Z")
+end() = time.fromIso("2024-01-08T00:00:00Z")
+main() = duration.toDays(time.between(end(), start()))
+''');
+        checkResult(runtime, 7);
+      },
+    );
+
+    test('time.between with same timestamp returns zero duration', () {
+      final RuntimeFacade runtime = getRuntime('''
+t() = time.fromIso("2024-01-01T00:00:00Z")
+main() = duration.toMilliseconds(time.between(t(), t()))
+''');
+      checkResult(runtime, 0);
+    });
+
+    test('roundtrip: time.between then time.add', () {
+      final RuntimeFacade runtime = getRuntime('''
+a() = time.fromIso("2024-01-01T00:00:00Z")
+b() = time.fromIso("2024-01-08T00:00:00Z")
+d() = time.between(a(), b())
+main() = time.compare(time.add(a(), d()), b())
+''');
+      checkResult(runtime, 0);
+    });
+
+    test('time.add throws for number first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.add(123, duration.fromHours(1))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.add throws for number second argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.add(time.now(), 123)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.subtract throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.subtract(123, 456)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('time.between throws for duration arguments', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time.between(duration.fromHours(1), duration.fromHours(2))',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+  });
 }
