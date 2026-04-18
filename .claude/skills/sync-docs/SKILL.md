@@ -7,17 +7,17 @@ Synchronize the documentation in `docs/` so it accurately reflects the current i
 
 ## Source Mappings
 
-| Doc file                     | Source directory                                     |
-| ---------------------------- | ---------------------------------------------------- |
-| `docs/reference/<name>.md`   | `lib/compiler/library/<name>/`                       |
-| `docs/compiler/reader.md`    | `lib/compiler/reader/`                               |
-| `docs/compiler/lexical.md`   | `lib/compiler/lexical/`                              |
-| `docs/compiler/syntactic.md` | `lib/compiler/syntactic/`                            |
-| `docs/compiler/semantic.md`  | `lib/compiler/semantic/`, `lib/compiler/lowering/`   |
-| `docs/compiler/runtime.md`   | `lib/compiler/runtime/`                              |
-| `docs/compiler/models.md`    | `lib/compiler/models/`                               |
-| `docs/compiler.md`           | `lib/compiler/compiler.dart` and all compiler stages |
-| `docs/example.md`            | All compiler stages (end-to-end trace)               |
+| Doc file                          | Source directory                                     |
+| --------------------------------- | ---------------------------------------------------- |
+| `docs/lang/reference/<name>.md`   | `lib/compiler/library/<name>/`                       |
+| `docs/dev/compiler/reader.md`     | `lib/compiler/reader/`                               |
+| `docs/dev/compiler/lexical.md`    | `lib/compiler/lexical/`                              |
+| `docs/dev/compiler/syntactic.md`  | `lib/compiler/syntactic/`                            |
+| `docs/dev/compiler/semantic.md`   | `lib/compiler/semantic/`, `lib/compiler/lowering/`   |
+| `docs/dev/compiler/runtime.md`    | `lib/compiler/runtime/`                              |
+| `docs/dev/compiler/models.md`     | `lib/compiler/models/`                               |
+| `docs/dev/compiler.md`            | `lib/compiler/compiler.dart` and all compiler stages |
+| `docs/dev/example.md`             | All compiler stages (end-to-end trace)               |
 
 ## Execution
 
@@ -35,8 +35,8 @@ Synchronize the documentation in `docs/` so it accurately reflects the current i
 - **Update** documentation where the implementation has diverged (renamed parameters, changed signatures, modified behavior, new error cases)
 - **Remove** documentation for anything that no longer exists in `lib/`
 - **Preserve style**: match the existing tone, structure, heading hierarchy, and formatting conventions of each doc file — do not impose a different style
-- **Index files** (`docs/compiler.md`, `docs/reference.md`): ensure every sub-page is listed and no stale links remain. Add entries for new modules; remove entries for deleted modules
-- **Example file** (`docs/example.md`): verify that the pipeline stages, data structures, and evaluation steps shown in the walkthrough still match the implementation. Update any that have drifted
+- **Index files** (`docs/dev/compiler.md`, `docs/lang/reference.md`): ensure every sub-page is listed and no stale links remain. Add entries for new modules; remove entries for deleted modules
+- **Example file** (`docs/dev/example.md`): verify that the pipeline stages, data structures, and evaluation steps shown in the walkthrough still match the implementation. Update any that have drifted
 
 ## Quality Guidelines
 

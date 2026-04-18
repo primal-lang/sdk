@@ -1,7 +1,8 @@
 # Context
 
-- For an overview of the Primal language (syntax, typing, runtime), consult `docs/primal.md`.
-- For details on a specific core function, consult `docs/reference.md` and its linked pages.
+- For an overview of the Primal language (syntax, typing, runtime), consult `docs/lang/primal.md`.
+- For details on a specific core function, consult `docs/lang/reference.md` and its linked pages.
+- For knowledge base structure and conventions, consult `docs/schema.md`.
 
 # Critical Instructions
 
@@ -42,3 +43,9 @@ The test: every changed line should trace directly to the request.
 ## Verification
 
 After completing code changes, run `delta-review` before responding.
+
+## Knowledge Base
+
+- When discussing architecture, design patterns, or implementation rationale, run `/kb-dev`
+- When explaining language design or concepts, run `/kb-lang`
+- **Two outputs rule**: Every significant explanation should produce both a chat response AND a wiki update
