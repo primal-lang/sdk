@@ -18,7 +18,7 @@ Number of functions: 2
 ### Encode
 
 - **Signature:** `json.encode(a: Any): String`
-- **Input:** A map or a list.
+- **Input:** A map or a list. Other types will throw an error.
 - **Output:** A JSON string encoding of the value.
 - **Purity:** Pure
 - **Example:**

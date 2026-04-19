@@ -160,13 +160,15 @@ str.concat("hello", " world") // returns "hello world"
 ### Replace
 
 - **Signature:** `str.replace(a: String, b: String, c: String): String`
-- **Input:** A string and two substrings
-- **Output:** A new string with all occurrences of the first substring replaced by the second substring
+- **Input:** A string, a regex pattern, and a replacement string
+- **Output:** A new string with all matches of the regex pattern replaced by the replacement string
+- **Constraints:** Throws an error if the pattern is not a valid regex
 - **Purity:** Pure
 - **Example:**
 
 ```
 str.replace("hello world", "world", "there") // returns "hello there"
+str.replace("aaa123BBB", "[a-z]+", "xxx")    // returns "xxx123BBB"
 ```
 
 ### Uppercase
@@ -406,7 +408,7 @@ str.lastIndexOf("hello", "l") // returns 3
 
 - **Signature:** `str.count(a: String, b: String): Number`
 - **Input:** A string and a substring
-- **Output:** The number of occurrences of the substring in the string
+- **Output:** The number of occurrences of the substring in the string. If the substring is empty, returns the length of the string plus one (the number of positions where an empty string can be found).
 - **Purity:** Pure
 - **Example:**
 

@@ -31,12 +31,13 @@ num.abs(-5) // returns 5
 
 - **Signature:** `num.negative(a: Number): Number`
 - **Input:** One number
-- **Output:** The negative value of the number
+- **Output:** The negative of the absolute value of the number. Always returns a non-positive number.
 - **Purity:** Pure
 - **Example:**
 
 ```
-num.negative(3) // returns -3
+num.negative(3)  // returns -3
+num.negative(-5) // returns -5
 ```
 
 ### Increment

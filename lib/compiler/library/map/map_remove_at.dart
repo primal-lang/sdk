@@ -8,7 +8,7 @@ class MapRemoveAt extends NativeFunctionTerm {
         name: 'map.removeAt',
         parameters: const [
           Parameter.map('a'),
-          Parameter.number('b'),
+          Parameter.hashable('b'),
         ],
       );
 

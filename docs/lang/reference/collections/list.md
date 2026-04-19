@@ -97,7 +97,7 @@ list.last([10, 20, 30]) // returns 30
 
 - **Signature:** `list.sublist(a: List, b: Number, c: Number): List`
 - **Input:** A list and two numbers representing the start and end indices
-- **Output:** A new list from the start index to the end index
+- **Output:** A new list from the start index (inclusive) to the end index (exclusive)
 - **Constraints:** Throws an error if the start index is negative, or if the start or end index is out of bounds
 - **Purity:** Pure
 - **Example:**
