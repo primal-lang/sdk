@@ -11,7 +11,7 @@ sources:
 
 **TLDR**: Control flow constructs including conditional expressions (if-else), local variable bindings (let), and error handling (try).
 
-Number of functions: 2
+Number of functions: 3
 
 ## Control Flow
 

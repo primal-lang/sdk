@@ -17,7 +17,7 @@ Number of functions: 1
 
 - **Signature:** `debug(a: String, b: Any): Any`
 - **Input:** A label string and a value of any type.
-- **Output:** Prints the label and value to the console in the format `[debug] label: value` and returns the value.
+- **Output:** Prints the label and value to the console in the format `[debug] label: value` and returns the fully-evaluated value. For collections, all nested elements are recursively evaluated before printing and returning.
 - **Purity:** Impure
 - **Example:**
 

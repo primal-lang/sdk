@@ -42,7 +42,7 @@ comp.neq(5, 3) // returns true
 ### Greater Than
 
 - **Signature:** `comp.gt(a: Any, b: Any): Boolean`
-- **Input:** Two numbers or two strings
+- **Input:** Two numbers, two strings, two timestamps, or two durations
 - **Output:** True if the first argument is greater than the second one. False otherwise
 - **Purity:** Pure
 - **Example:**
@@ -54,7 +54,7 @@ comp.gt(5, 3) // returns true
 ### Less Than
 
 - **Signature:** `comp.lt(a: Any, b: Any): Boolean`
-- **Input:** Two numbers or two strings
+- **Input:** Two numbers, two strings, two timestamps, or two durations
 - **Output:** True if the first argument is less than the second one. False otherwise
 - **Purity:** Pure
 - **Example:**
@@ -66,7 +66,7 @@ comp.lt(3, 5) // returns true
 ### Greater Than or Equal
 
 - **Signature:** `comp.ge(a: Any, b: Any): Boolean`
-- **Input:** Two numbers or two strings
+- **Input:** Two numbers, two strings, two timestamps, or two durations
 - **Output:** True if the first argument is greater than or equal to the second one. False otherwise
 - **Purity:** Pure
 - **Example:**
@@ -78,7 +78,7 @@ comp.ge(5, 5) // returns true
 ### Less Than or Equal
 
 - **Signature:** `comp.le(a: Any, b: Any): Boolean`
-- **Input:** Two numbers or two strings
+- **Input:** Two numbers, two strings, two timestamps, or two durations
 - **Output:** True if the first argument is less than or equal to the second one. False otherwise
 - **Purity:** Pure
 - **Example:**

@@ -1435,13 +1435,13 @@ void main() {
       },
     );
 
-    test('str.replace throws FormatException for invalid regex pattern', () {
+    test('str.replace throws ParseError for invalid regex pattern', () {
       final RuntimeFacade runtime = getRuntime(
         'main() = str.replace("hello", "[invalid", "x")',
       );
       expect(
         runtime.executeMain,
-        throwsA(isA<FormatException>()),
+        throwsA(isA<ParseError>()),
       );
     });
 

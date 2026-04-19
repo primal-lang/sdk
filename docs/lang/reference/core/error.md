@@ -17,9 +17,9 @@ Number of functions: 1
 
 ### Throw Error
 
-- **Signature:** `error.throw(a: Any, b: String): Error`
+- **Signature:** `error.throw(a: Any, b: String): Never`
 - **Input:** An error code and a message string
-- **Output:** An error that wraps the provided code and message
+- **Output:** Throws an error that wraps the provided code and message. This function never returns normally.
 - **Purity:** Impure
 - **Example:**
 

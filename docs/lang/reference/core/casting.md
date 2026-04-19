@@ -66,19 +66,20 @@ to.string(42) // returns "42"
 ### To Boolean
 
 - **Signature:** `to.boolean(a: Any): Boolean`
-- **Input:** An argument of any type
+- **Input:** A string, number, or boolean. Strings convert to true if non-empty after trimming. Numbers convert to true if non-zero. Booleans pass through unchanged. Other types throw an error.
 - **Output:** The argument converted to a boolean
 - **Purity:** Pure
 - **Example:**
 
 ```
 to.boolean(1) // returns true
+to.boolean("") // returns false
 ```
 
 ### To List
 
 - **Signature:** `to.list(a: Any): List`
-- **Input:** An argument of any type
+- **Input:** A set, vector, stack, or queue. Other types throw an error.
 - **Output:** The argument converted to a list
 - **Purity:** Pure
 - **Example:**
