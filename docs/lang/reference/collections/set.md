@@ -31,8 +31,8 @@ set.new([1, 2, 3]) // returns {1, 2, 3}
 
 ### Add
 
-- **Signature:** `set.add(a: Set, b: Any): Set`
-- **Input:** A set and an element
+- **Signature:** `set.add(a: Set, b: Hashable): Set`
+- **Input:** A set and a hashable element
 - **Output:** A new set containing the element
 - **Purity:** Pure
 - **Example:**
@@ -43,8 +43,8 @@ set.add(set.new([1, 2]), 3) // returns {1, 2, 3}
 
 ### Remove
 
-- **Signature:** `set.remove(a: Set, b: Any): Set`
-- **Input:** A set and an element
+- **Signature:** `set.remove(a: Set, b: Hashable): Set`
+- **Input:** A set and a hashable element
 - **Output:** A new set without the element
 - **Purity:** Pure
 - **Example:**
@@ -93,8 +93,8 @@ set.difference(set.new([1, 2, 3]), set.new([2, 3])) // returns {1}
 
 ### Contains
 
-- **Signature:** `set.contains(a: Set, b: Any): Boolean`
-- **Input:** A set and an element
+- **Signature:** `set.contains(a: Set, b: Hashable): Boolean`
+- **Input:** A set and a hashable element
 - **Output:** True if the set contains the element, false otherwise
 - **Purity:** Pure
 - **Example:**

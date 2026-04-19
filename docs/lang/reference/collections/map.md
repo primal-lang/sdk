@@ -43,8 +43,8 @@ Number of functions: 11
 
 ### At
 
-- **Signature:** `map.at(a: Map, b: Any): Any`
-- **Input:** A map and a key
+- **Signature:** `map.at(a: Map, b: Hashable): Any`
+- **Input:** A map and a hashable key
 - **Output:** The value associated with the key
 - **Constraints:** Throws an error if the key is not found in the map
 - **Purity:** Pure
@@ -94,8 +94,8 @@ map.entries({"a": 1, "b": 2}) // returns [["a", 1], ["b", 2]]
 
 ### Set
 
-- **Signature:** `map.set(a: Map, b: Any, c: Any): Map`
-- **Input:** A map, a key, and a value
+- **Signature:** `map.set(a: Map, b: Hashable, c: Any): Map`
+- **Input:** A map, a hashable key, and a value
 - **Output:** A new map containing the new key-value pair
 - **Purity:** Pure
 - **Example:**
@@ -108,7 +108,7 @@ map.set({"a": 1}, "b", 2) // returns {"a": 1, "b": 2}
 
 - **Signature:** `map.merge(a: Map, b: Map): Map`
 - **Input:** Two maps
-- **Output:** A new map containing all key-value pairs from both maps
+- **Output:** A new map containing all key-value pairs from both maps. When both maps contain the same key, the value from the second map takes precedence
 - **Purity:** Pure
 - **Example:**
 
@@ -118,8 +118,8 @@ map.merge({"a": 1}, {"b": 2}) // returns {"a": 1, "b": 2}
 
 ### Remove At
 
-- **Signature:** `map.removeAt(a: Map, b: Any): Map`
-- **Input:** A map and a key
+- **Signature:** `map.removeAt(a: Map, b: Hashable): Map`
+- **Input:** A map and a hashable key
 - **Output:** A new map with the key removed
 - **Purity:** Pure
 - **Example:**
@@ -132,8 +132,8 @@ map.removeAt({"a": 1, "b": 2}, "a") // returns {"b": 2}
 
 ### Contains Key
 
-- **Signature:** `map.containsKey(a: Map, b: Any): Boolean`
-- **Input:** A map and a key
+- **Signature:** `map.containsKey(a: Map, b: Hashable): Boolean`
+- **Input:** A map and a hashable key
 - **Output:** True if the key is in the map, false otherwise
 - **Purity:** Pure
 - **Example:**

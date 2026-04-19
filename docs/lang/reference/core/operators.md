@@ -220,7 +220,8 @@ Number of functions: 16
 
 ### And (Short-Circuit)
 
-- **Symbols:** `&&`, `and`
+- **Symbol:** `&&`
+- **Alias:** `and` (keyword that compiles to `&&`)
 - **Input:** Two boolean arguments
 - **Output:** True only if both arguments are true, false otherwise
 - **Evaluation:** Short-circuit (lazy) - the second operand is only evaluated if the first is true
@@ -249,7 +250,8 @@ false & true // returns false (both operands evaluated)
 
 ### Or (Short-Circuit)
 
-- **Symbols:** `||`, `or`
+- **Symbol:** `||`
+- **Alias:** `or` (keyword that compiles to `||`)
 - **Input:** Two boolean arguments
 - **Output:** True if at least one argument is true, false otherwise
 - **Evaluation:** Short-circuit (lazy) - the second operand is only evaluated if the first is false
@@ -278,7 +280,8 @@ false | true  // returns true (both operands evaluated)
 
 ### Not
 
-- **Symbols:** `!`, `not`
+- **Symbol:** `!`
+- **Alias:** `not` (keyword that compiles to `!`)
 - **Input:** One boolean argument
 - **Output:** True if argument is false; false if argument is true
 - **Purity:** Pure

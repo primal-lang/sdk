@@ -18,7 +18,7 @@ Number of functions: 22
 ### Now
 
 - **Signature:** `time.now(): Timestamp`
-- **Output:** A timestamp instance with current date and time in the UTC time.
+- **Output:** A timestamp instance with the current local date and time.
 - **Purity:** Impure
 - **Example:**
 

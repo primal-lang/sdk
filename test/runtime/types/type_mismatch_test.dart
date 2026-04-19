@@ -1255,8 +1255,8 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('timestamp.toEpoch with number', () {
-      final RuntimeFacade runtime = getRuntime('main() = timestamp.toEpoch(5)');
+    test('time.toEpoch with number', () {
+      final RuntimeFacade runtime = getRuntime('main() = time.toEpoch(5)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 

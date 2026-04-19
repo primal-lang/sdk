@@ -41,7 +41,7 @@ Number of functions: 35
 
 ### Filled
 
-- **Signature:** `list.filled(b: Number, c: Any): List`
+- **Signature:** `list.filled(a: Number, b: Any): List`
 - **Input:** A number and any value
 - **Output:** A list filled with the specified value, repeated the specified number of times
 - **Constraints:** Throws an error if the number is negative
@@ -209,8 +209,8 @@ list.insertEnd([1, 2], 3) // returns [1, 2, 3]
 
 ### Remove
 
-- **Signature:** `list.remove(a: List, b: Any): List`
-- **Input:** A list and any value
+- **Signature:** `list.remove(a: List, b: Equatable): List`
+- **Input:** A list and an equatable value
 - **Output:** A new list with all the occurrences of the value removed
 - **Purity:** Pure
 - **Example:**
@@ -346,8 +346,8 @@ list.isNotEmpty([1, 2]) // returns true
 
 ### Contains
 
-- **Signature:** `list.contains(a: List, b: Any): Boolean`
-- **Input:** A list and any value
+- **Signature:** `list.contains(a: List, b: Equatable): Boolean`
+- **Input:** A list and an equatable value
 - **Output:** True if the list contains the specified value. False otherwise
 - **Purity:** Pure
 - **Example:**
@@ -358,8 +358,8 @@ list.contains([1, 2, 3], 2) // returns true
 
 ### Index Of
 
-- **Signature:** `list.indexOf(a: List, b: Any): Number`
-- **Input:** A list and any value
+- **Signature:** `list.indexOf(a: List, b: Equatable): Number`
+- **Input:** A list and an equatable value
 - **Output:** The index of the first occurrence of the value in the list, or -1 if the value is not found
 - **Purity:** Pure
 - **Example:**

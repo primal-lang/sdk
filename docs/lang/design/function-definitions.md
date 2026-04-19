@@ -60,7 +60,7 @@ Functions that take no arguments still require empty parentheses in their defini
 ```
 pi() = 3.14159
 greeting() = "Hello, world!"
-now() = timestamp.now()
+now() = time.now()
 ```
 
 To call a zero-parameter function, use empty parentheses:
