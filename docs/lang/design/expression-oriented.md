@@ -49,8 +49,8 @@ Every function in Primal returns a value. There is no concept of a "void" functi
 Even functions that perform I/O return meaningful values:
 
 ```
-// console.print returns the string it printed
-main() = console.print("Hello, world!")
+// console.writeLn returns the string it printed
+main() = console.writeLn("Hello, world!")
 ```
 
 This design means you can always compose functions and chain operations.
@@ -114,9 +114,9 @@ formatPrice(price, showCents) =
     string.concat(
         "$",
         if (showCents)
-            num.toString(price)
+            to.string(price)
         else
-            num.toString(num.floor(price))
+            to.string(num.floor(price))
     )
 ```
 

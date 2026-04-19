@@ -269,7 +269,7 @@ greet(firstName, lastName) =
 // Create a formatted message
 formatCount(count, singular, plural) =
   let noun = if (count == 1) singular else plural
-  in string.toString(count) + " " + noun
+  in to.string(count) + " " + noun
 ```
 
 ### Collection Access
