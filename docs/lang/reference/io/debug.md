@@ -9,18 +9,18 @@ sources:
 
 # Debug
 
-**TLDR**: Function for printing labeled debug output to standard output while returning the value unchanged for use in expressions.
+**TLDR**: Function for printing values with type information to the console for debugging purposes.
 
 Number of functions: 1
 
 ## Debug
 
-- **Signature:** `debug(a: String, b: Any): Any`
-- **Input:** A label string and a value of any type
-- **Output:** The value, after printing it to stdout with the label in format `[debug] label: value`
+- **Signature:** `debug(a: Any): Any`
+- **Input:** An argument of any type.
+- **Output:** Prints the value with type information to the console and returns the value.
 - **Purity:** Impure
 - **Example:**
 
 ```
-debug("result", 1 + 2) // prints "[debug] result: 3" and returns 3
+debug([1, 2, 3]) // prints "[1, 2, 3] : List" and returns [1, 2, 3]
 ```

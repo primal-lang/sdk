@@ -15,7 +15,7 @@ Number of functions: 1
 
 ## Functions
 
-### Throw
+### Throw Error
 
 - **Signature:** `error.throw(a: Any, b: String): Error`
 - **Input:** An error code and a message string
@@ -24,5 +24,5 @@ Number of functions: 1
 - **Example:**
 
 ```
-error.throw(404, "not found") // throws an error with code 404 and message "not found"
+error.throw(404, "Not Found") // throws an error with code 404 and message "Not Found"
 ```

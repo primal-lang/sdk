@@ -18,8 +18,7 @@ Number of functions: 22
 ### Now
 
 - **Signature:** `time.now(): Timestamp`
-- **Input:** None
-- **Output:** A timestamp representing the current date and time
+- **Output:** A timestamp instance with current date and time in the UTC time.
 - **Purity:** Impure
 - **Example:**
 
@@ -30,26 +29,26 @@ time.now() // returns the current timestamp
 ### From ISO
 
 - **Signature:** `time.fromIso(a: String): Timestamp`
-- **Input:** One ISO 8601 string
-- **Output:** A timestamp parsed from the string
+- **Input:** A string representation of a timestamp in ISO 8601 format.
+- **Output:** A timestamp instance.
 - **Constraints:** Throws an error if the string is not a valid ISO 8601 timestamp
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.fromIso("2024-01-15T10:30:00Z") // returns a timestamp
+time.fromIso("2024-01-15T10:30:00.000Z") // returns a timestamp
 ```
 
 ### From Epoch
 
 - **Signature:** `time.fromEpoch(a: Number): Timestamp`
-- **Input:** One number representing milliseconds since the Unix epoch
-- **Output:** A timestamp created from the epoch value
+- **Input:** The number of milliseconds since the Unix epoch.
+- **Output:** A timestamp instance.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.fromEpoch(1705312200000) // returns a timestamp for 2024-01-15T10:30:00.000Z
+time.fromEpoch(1704067200000) // returns a timestamp
 ```
 
 ## Conversion
@@ -57,32 +56,32 @@ time.fromEpoch(1705312200000) // returns a timestamp for 2024-01-15T10:30:00.000
 ### To ISO
 
 - **Signature:** `time.toIso(a: Timestamp): String`
-- **Input:** One timestamp
-- **Output:** The ISO 8601 string representation
+- **Input:** A timestamp instance.
+- **Output:** A string representation of the timestamp in ISO 8601 format.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.toIso(time.now()) // returns "2024-01-15T10:30:00.000Z"
+time.toIso(time.now()) // returns the ISO 8601 string
 ```
 
 ### To Epoch
 
 - **Signature:** `timestamp.toEpoch(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The number of milliseconds elapsed since the Unix epoch
+- **Input:** A timestamp instance.
+- **Output:** The number of milliseconds since the Unix epoch.
 - **Purity:** Pure
 - **Example:**
 
 ```
-timestamp.toEpoch(time.now()) // returns 1705312200000
+timestamp.toEpoch(time.now()) // returns the epoch time in milliseconds
 ```
 
 ### Format
 
 - **Signature:** `time.format(a: Timestamp, b: String): String`
-- **Input:** One timestamp and one format pattern string
-- **Output:** The formatted date/time string
+- **Input:** A timestamp and a format pattern string.
+- **Output:** A string representation of the timestamp in the specified format.
 - **Purity:** Pure
 - **Supported Patterns:**
   - `yyyy` - 4-digit year (e.g., 2024)
@@ -105,10 +104,7 @@ timestamp.toEpoch(time.now()) // returns 1705312200000
 - **Example:**
 
 ```
-time.format(time.fromIso("2024-01-15T14:30:45.123Z"), "yyyy-MM-dd") // returns "2024-01-15"
-time.format(time.fromIso("2024-01-15T14:30:45.123Z"), "HH:mm:ss") // returns "14:30:45"
-time.format(time.fromIso("2024-01-15T14:30:45.123Z"), "h:mm a") // returns "2:30 PM"
-time.format(time.fromIso("2024-01-15T14:30:45.123Z"), "'Date': yyyy-MM-dd") // returns "Date: 2024-01-15"
+time.format(time.now(), "yyyy-MM-dd") // returns "2024-01-15"
 ```
 
 ## Components
@@ -116,105 +112,104 @@ time.format(time.fromIso("2024-01-15T14:30:45.123Z"), "'Date': yyyy-MM-dd") // r
 ### Year
 
 - **Signature:** `time.year(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The year component of the timestamp
+- **Input:** A timestamp instance.
+- **Output:** The year of the timestamp.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.year(time.fromIso("2024-01-15T10:30:00Z")) // returns 2024
+time.year(time.fromIso("2024-01-15T10:30:00.000Z")) // returns 2024
 ```
 
 ### Month
 
 - **Signature:** `time.month(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The month component of the timestamp (1-12)
+- **Input:** A timestamp instance.
+- **Output:** The month of the timestamp (1-12).
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.month(time.fromIso("2024-01-15T10:30:00Z")) // returns 1
+time.month(time.fromIso("2024-01-15T10:30:00.000Z")) // returns 1
 ```
 
 ### Day
 
 - **Signature:** `time.day(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The day component of the timestamp (1-31)
+- **Input:** A timestamp instance.
+- **Output:** The day of the timestamp (1-31).
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.day(time.fromIso("2024-01-15T10:30:00Z")) // returns 15
+time.day(time.fromIso("2024-01-15T10:30:00.000Z")) // returns 15
 ```
 
 ### Day of Week
 
 - **Signature:** `time.dayOfWeek(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The day of the week (1-7, where Monday = 1 and Sunday = 7)
+- **Input:** A timestamp instance.
+- **Output:** The day of the week (1-7, where 1 is Monday).
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.dayOfWeek(time.fromIso("2024-01-15T10:30:00Z")) // returns 1 (Monday)
+time.dayOfWeek(time.now()) // returns 1-7 (Monday=1)
 ```
 
 ### Day of Year
 
 - **Signature:** `time.dayOfYear(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The day of the year (1-366)
+- **Input:** A timestamp instance.
+- **Output:** The day of the year (1-366).
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.dayOfYear(time.fromIso("2024-01-15T10:30:00Z")) // returns 15
-time.dayOfYear(time.fromIso("2024-12-31T10:30:00Z")) // returns 366 (leap year)
+time.dayOfYear(time.now()) // returns 1-366
 ```
 
 ### Hour
 
 - **Signature:** `time.hour(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The hour component of the timestamp (0-23)
+- **Input:** A timestamp instance.
+- **Output:** The hour of the timestamp (0-23).
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.hour(time.fromIso("2024-01-15T10:30:00Z")) // returns 10
+time.hour(time.fromIso("2024-01-15T10:30:00.000Z")) // returns 10
 ```
 
 ### Minute
 
 - **Signature:** `time.minute(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The minute component of the timestamp (0-59)
+- **Input:** A timestamp instance.
+- **Output:** The minute of the timestamp (0-59).
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.minute(time.fromIso("2024-01-15T10:30:00Z")) // returns 30
+time.minute(time.fromIso("2024-01-15T10:30:00.000Z")) // returns 30
 ```
 
 ### Second
 
 - **Signature:** `time.second(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The second component of the timestamp (0-59)
+- **Input:** A timestamp instance.
+- **Output:** The second of the timestamp (0-59).
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.second(time.fromIso("2024-01-15T10:30:00Z")) // returns 0
+time.second(time.fromIso("2024-01-15T10:30:45.000Z")) // returns 45
 ```
 
 ### Millisecond
 
 - **Signature:** `time.millisecond(a: Timestamp): Number`
-- **Input:** One timestamp
-- **Output:** The millisecond component of the timestamp (0-999)
+- **Input:** A timestamp instance.
+- **Output:** The millisecond of the timestamp (0-999).
 - **Purity:** Pure
 - **Example:**
 
@@ -227,8 +222,8 @@ time.millisecond(time.fromIso("2024-01-15T10:30:00.500Z")) // returns 500
 ### Compare
 
 - **Signature:** `time.compare(a: Timestamp, b: Timestamp): Number`
-- **Input:** Two timestamps
-- **Output:** 1 if the first timestamp is greater, -1 if smaller, 0 if equal
+- **Input:** Two timestamp instances.
+- **Output:** 1 if the first timestamp is bigger than the second. -1 if it is the smaller. 0 if they are equal.
 - **Purity:** Pure
 - **Example:**
 
@@ -239,84 +234,75 @@ time.compare(time.fromIso("2024-02-01T00:00:00Z"), time.fromIso("2024-01-01T00:0
 ### Is Before
 
 - **Signature:** `time.isBefore(a: Timestamp, b: Timestamp): Boolean`
-- **Input:** Two timestamps
-- **Output:** True if the first timestamp occurs before the second, false otherwise
+- **Input:** Two timestamps.
+- **Output:** True if the first timestamp is before the second, false otherwise.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.isBefore(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2024-02-01T00:00:00Z")) // returns true
-time.isBefore(time.fromIso("2024-02-01T00:00:00Z"), time.fromIso("2024-01-01T00:00:00Z")) // returns false
+time.isBefore(yesterday, time.now()) // returns true
 ```
 
 ### Is After
 
 - **Signature:** `time.isAfter(a: Timestamp, b: Timestamp): Boolean`
-- **Input:** Two timestamps
-- **Output:** True if the first timestamp occurs after the second, false otherwise
+- **Input:** Two timestamps.
+- **Output:** True if the first timestamp is after the second, false otherwise.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.isAfter(time.fromIso("2024-02-01T00:00:00Z"), time.fromIso("2024-01-01T00:00:00Z")) // returns true
-time.isAfter(time.fromIso("2024-01-01T00:00:00Z"), time.fromIso("2024-02-01T00:00:00Z")) // returns false
+time.isAfter(time.now(), yesterday) // returns true
 ```
 
 ## Arithmetic
 
-### Time Add
+### Add
 
-- **Signature:** `time.add(timestamp: Timestamp, duration: Duration): Timestamp`
-- **Input:** One timestamp and one duration
-- **Output:** A new timestamp with the duration added
+- **Signature:** `time.add(a: Timestamp, b: Duration): Timestamp`
+- **Input:** A timestamp and a duration.
+- **Output:** A new timestamp with the duration added.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.add(time.fromIso("2025-01-01T00:00:00Z"), duration.fromDays(7))  // January 8th
+time.add(time.now(), duration.fromHours(2)) // returns timestamp 2 hours from now
 ```
 
-### Time Subtract
+### Subtract
 
-- **Signature:** `time.subtract(timestamp: Timestamp, duration: Duration): Timestamp`
-- **Input:** One timestamp and one duration
-- **Output:** A new timestamp with the duration subtracted
+- **Signature:** `time.subtract(a: Timestamp, b: Duration): Timestamp`
+- **Input:** A timestamp and a duration.
+- **Output:** A new timestamp with the duration subtracted.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.subtract(time.fromIso("2025-01-08T00:00:00Z"), duration.fromDays(7))  // January 1st
+time.subtract(time.now(), duration.fromDays(1)) // returns timestamp 1 day ago
 ```
 
-### Time Between
+### Between
 
 - **Signature:** `time.between(a: Timestamp, b: Timestamp): Duration`
-- **Input:** Two timestamps
-- **Output:** The absolute duration between the two timestamps (always non-negative)
-- **Note:** Argument order doesn't matter; returns the same result either way
+- **Input:** Two timestamps.
+- **Output:** The duration between the two timestamps.
 - **Purity:** Pure
 - **Example:**
 
 ```
-start() = time.fromIso("2025-01-01T00:00:00Z")
-end() = time.fromIso("2025-01-08T00:00:00Z")
-time.between(start(), end())  // 7 days
-time.between(end(), start())  // 7 days (same result)
+time.between(t1, t2) // returns the duration between t1 and t2
 ```
 
 ## Utility
 
 ### Is Leap Year
 
-- **Signature:** `time.isLeapYear(a: Number): Boolean`
-- **Input:** One number representing a year
-- **Output:** True if the year is a leap year, false otherwise
+- **Signature:** `time.isLeapYear(a: Timestamp): Boolean`
+- **Input:** A timestamp instance.
+- **Output:** True if the year of the timestamp is a leap year, false otherwise.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.isLeapYear(2024) // returns true
-time.isLeapYear(2023) // returns false
-time.isLeapYear(2000) // returns true (divisible by 400)
-time.isLeapYear(1900) // returns false (divisible by 100 but not 400)
+time.isLeapYear(time.fromIso("2024-01-01T00:00:00Z")) // returns true
 ```

@@ -13,15 +13,13 @@ sources:
 
 Number of functions: 2
 
-Note: Environment functions are not available on the web platform.
-
 ## Functions
 
 ### Get
 
 - **Signature:** `env.get(a: String): String`
-- **Input:** One string name
-- **Output:** The value of the environment variable, or an empty string if it does not exist
+- **Input:** A string representing the name of the variable.
+- **Output:** The value of the variable. If the variable does not exist, an empty string is returned.
 - **Purity:** Impure
 - **Example:**
 
@@ -29,15 +27,18 @@ Note: Environment functions are not available on the web platform.
 env.get("HOME") // returns "/home/user"
 ```
 
+> **Note:** This function is not implemented on the web platform.
+
 ### Has
 
 - **Signature:** `env.has(a: String): Boolean`
-- **Input:** One string name
-- **Output:** True if the environment variable exists, false otherwise
+- **Input:** A string representing the name of the variable.
+- **Output:** True if the variable exists, false otherwise.
 - **Purity:** Impure
 - **Example:**
 
 ```
 env.has("HOME") // returns true
-env.has("NONEXISTENT") // returns false
 ```
+
+> **Note:** This function is not implemented on the web platform.

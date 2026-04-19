@@ -18,8 +18,8 @@ Number of functions: 3
 ### Write
 
 - **Signature:** `console.write(a: Any): Any`
-- **Input:** One argument of any type
-- **Output:** The argument, after writing it to standard output
+- **Input:** An argument of any type.
+- **Output:** It writes the argument in the standard output and returns it.
 - **Purity:** Impure
 - **Example:**
 
@@ -30,8 +30,8 @@ console.write("hello") // prints "hello" and returns "hello"
 ### Write Line
 
 - **Signature:** `console.writeLn(a: Any): Any`
-- **Input:** One argument of any type
-- **Output:** The argument, after writing it followed by a newline to standard output
+- **Input:** An argument of any type.
+- **Output:** It writes the argument in the standard output, followed by a newline, and returns it.
 - **Purity:** Impure
 - **Example:**
 
@@ -44,14 +44,13 @@ console.writeLn("hello") // prints "hello\n" and returns "hello"
 ### Read
 
 - **Signature:** `console.read(): String`
-- **Input:** None
-- **Output:** A line read from standard input as a string
+- **Input:** None.
+- **Output:** Reads a line from the standard input and returns it as a string.
 - **Purity:** Impure
-
-Note: This function is not available on the web platform.
-
 - **Example:**
 
 ```
 console.read() // waits for input and returns the entered string
 ```
+
+> **Note:** This function is not implemented on the web platform.

@@ -29,8 +29,8 @@ Number of functions: 13
 
 ### Indexing
 
-- **Syntax:** `Map[Hashable]: Any`
-- **Input:** A map and a hashable key
+- **Syntax:** `Map[Any]: Any`
+- **Input:** A map and a key
 - **Output:** The value associated with the key
 - **Purity:** Pure
 - **Example:**
@@ -43,8 +43,8 @@ Number of functions: 13
 
 ### At
 
-- **Signature:** `map.at(a: Map, b: Hashable): Any`
-- **Input:** A map and a hashable key
+- **Signature:** `map.at(a: Map, b: Any): Any`
+- **Input:** A map and a key
 - **Output:** The value associated with the key
 - **Constraints:** Throws an error if the key is not found in the map
 - **Purity:** Pure
@@ -57,7 +57,7 @@ map.at({"name": "Alice"}, "name") // returns "Alice"
 ### Keys
 
 - **Signature:** `map.keys(a: Map): List`
-- **Input:** One map
+- **Input:** A map
 - **Output:** A list containing all the keys
 - **Purity:** Pure
 - **Example:**
@@ -69,7 +69,7 @@ map.keys({"a": 1, "b": 2}) // returns ["a", "b"]
 ### Values
 
 - **Signature:** `map.values(a: Map): List`
-- **Input:** One map
+- **Input:** A map
 - **Output:** A list containing all the values
 - **Purity:** Pure
 - **Example:**
@@ -81,8 +81,8 @@ map.values({"a": 1, "b": 2}) // returns [1, 2]
 ### Entries
 
 - **Signature:** `map.entries(a: Map): List`
-- **Input:** One map
-- **Output:** A list of [key, value] pairs
+- **Input:** A map
+- **Output:** A list of key-value pairs as two-element lists
 - **Purity:** Pure
 - **Example:**
 
@@ -94,8 +94,8 @@ map.entries({"a": 1, "b": 2}) // returns [["a", 1], ["b", 2]]
 
 ### Set
 
-- **Signature:** `map.set(a: Map, b: Hashable, c: Any): Map`
-- **Input:** A map, a hashable key, and a value
+- **Signature:** `map.set(a: Map, b: Any, c: Any): Map`
+- **Input:** A map, a key, and a value
 - **Output:** A new map containing the new key-value pair
 - **Purity:** Pure
 - **Example:**
@@ -108,32 +108,32 @@ map.set({"a": 1}, "b", 2) // returns {"a": 1, "b": 2}
 
 - **Signature:** `map.merge(a: Map, b: Map): Map`
 - **Input:** Two maps
-- **Output:** A new map containing all key-value pairs from both maps (b overrides a)
+- **Output:** A new map containing all key-value pairs from both maps
 - **Purity:** Pure
 - **Example:**
 
 ```
-map.merge({"a": 1, "b": 2}, {"b": 3, "c": 4}) // returns {"a": 1, "b": 3, "c": 4}
+map.merge({"a": 1}, {"b": 2}) // returns {"a": 1, "b": 2}
 ```
 
 ### Remove At
 
-- **Signature:** `map.removeAt(a: Map, b: Number): Map`
-- **Input:** A map and a number key
+- **Signature:** `map.removeAt(a: Map, b: Any): Map`
+- **Input:** A map and a key
 - **Output:** A new map with the key removed
 - **Purity:** Pure
 - **Example:**
 
 ```
-map.removeAt({1: "a", 2: "b"}, 1) // returns {2: "b"}
+map.removeAt({"a": 1, "b": 2}, "a") // returns {"b": 2}
 ```
 
 ## Properties
 
 ### Contains Key
 
-- **Signature:** `map.containsKey(a: Map, b: Hashable): Boolean`
-- **Input:** A map and a hashable key
+- **Signature:** `map.containsKey(a: Map, b: Any): Boolean`
+- **Input:** A map and a key
 - **Output:** True if the key is in the map, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -145,7 +145,7 @@ map.containsKey({"a": 1}, "a") // returns true
 ### Is Empty
 
 - **Signature:** `map.isEmpty(a: Map): Boolean`
-- **Input:** One map
+- **Input:** A map
 - **Output:** True if the map is empty, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -157,7 +157,7 @@ map.isEmpty({}) // returns true
 ### Is Not Empty
 
 - **Signature:** `map.isNotEmpty(a: Map): Boolean`
-- **Input:** One map
+- **Input:** A map
 - **Output:** True if the map is not empty, false otherwise
 - **Purity:** Pure
 - **Example:**
@@ -169,7 +169,7 @@ map.isNotEmpty({"a": 1}) // returns true
 ### Length
 
 - **Signature:** `map.length(a: Map): Number`
-- **Input:** One map
+- **Input:** A map
 - **Output:** The number of key-value pairs in the map
 - **Purity:** Pure
 - **Example:**

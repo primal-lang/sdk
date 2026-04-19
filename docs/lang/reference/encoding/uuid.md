@@ -18,13 +18,12 @@ Number of functions: 1
 ### V4
 
 - **Signature:** `uuid.v4(): String`
-- **Input:** None
-- **Output:** A randomly generated UUID v4 string
+- **Output:** A randomly generated UUID v4 string.
 - **Purity:** Impure (generates random values)
 - **Example:**
 
 ```
-uuid.v4() // returns "550e8400-e29b-41d4-a716-446655440000" (example)
+uuid.v4() // returns "550e8400-e29b-41d4-a716-446655440000" (random)
 ```
 
 The generated UUID follows the RFC 4122 version 4 format:

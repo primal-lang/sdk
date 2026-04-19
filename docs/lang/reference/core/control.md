@@ -17,14 +17,26 @@ Number of functions: 2
 
 ### If-Else
 
-- **Syntax:** `if (a: Boolean) b: Any else c: Any`
-- **Input:** A boolean condition and two branch arguments
-- **Output:** The first branch argument if the condition is true, the second branch argument otherwise
+- **Syntax:**
+
+```
+if (a:Boolean)
+    b:Any
+else
+    c:Any
+```
+
+- **Input:** One conditional argument (a) and two arguments of any type (b and c). The conditional argument must evaluate to a boolean. The other two arguments must evaluate to the same type
+- **Output:** If the condition is true, it returns the first argument. Otherwise it returns the second argument
 - **Purity:** Pure
 - **Example:**
 
 ```
-if (true) "yes" else "no" // returns "yes"
+if (true)
+    "yes"
+else
+    "no"
+// returns "yes"
 ```
 
 ### Let
@@ -34,32 +46,20 @@ if (true) "yes" else "no" // returns "yes"
 - **Output:** The result of evaluating the body with bindings in scope
 - **Purity:** Pure
 - **Description:** Let expressions introduce local bindings that are only visible within the body. Bindings are evaluated sequentially (call-by-value), so later bindings can reference earlier ones. Let bindings can shadow function names but cannot shadow function parameters.
-- **Examples:**
+- **Example:**
 
 ```
 let x = 5 in x + 1 // returns 6
 ```
 
-```
-let a = 1, b = a + 1 in a + b // returns 3
-```
-
-```
-let square = num.mul in square(4, 4) // returns 16 (binding a function)
-```
-
-```
-let x = 1 in let y = x + 1 in x + y // returns 3 (nested let)
-```
-
-### Try
+### Try-Catch
 
 - **Signature:** `try(a: Any, b: Any): Any`
-- **Input:** Two arguments
-- **Output:** The first argument unless it produces an error, in which case the second argument
+- **Input:** Two arguments, which must evaluate to the same type
+- **Output:** It returns the first argument unless it evaluates to an error, in which case, it returns the second argument
 - **Purity:** Pure
 - **Example:**
 
 ```
-try(num.div(10, 0), 0) // returns 0
+try(num.div(10, 0), "Division by zero") // returns "Division by zero"
 ```

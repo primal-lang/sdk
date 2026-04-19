@@ -18,7 +18,7 @@ Number of functions: 23
 ### To Number
 
 - **Signature:** `to.number(a: Any): Number`
-- **Input:** One argument of any type
+- **Input:** An argument of any type
 - **Output:** The argument converted to a number
 - **Purity:** Pure
 - **Example:**
@@ -30,7 +30,7 @@ to.number("42") // returns 42
 ### To Integer
 
 - **Signature:** `to.integer(a: Any): Number`
-- **Input:** One argument of any type
+- **Input:** An argument of any type
 - **Output:** The argument converted to an integer
 - **Purity:** Pure
 - **Example:**
@@ -42,7 +42,7 @@ to.integer(3.7) // returns 3
 ### To Decimal
 
 - **Signature:** `to.decimal(a: Any): Number`
-- **Input:** One argument of any type
+- **Input:** An argument of any type
 - **Output:** The argument converted to a decimal number
 - **Purity:** Pure
 - **Example:**
@@ -54,7 +54,7 @@ to.decimal("3.14") // returns 3.14
 ### To String
 
 - **Signature:** `to.string(a: Any): String`
-- **Input:** One argument of any type
+- **Input:** An argument of any type
 - **Output:** The argument converted to a string
 - **Purity:** Pure
 - **Example:**
@@ -66,7 +66,7 @@ to.string(42) // returns "42"
 ### To Boolean
 
 - **Signature:** `to.boolean(a: Any): Boolean`
-- **Input:** One argument of any type
+- **Input:** An argument of any type
 - **Output:** The argument converted to a boolean
 - **Purity:** Pure
 - **Example:**
@@ -78,7 +78,7 @@ to.boolean(1) // returns true
 ### To List
 
 - **Signature:** `to.list(a: Any): List`
-- **Input:** One set, vector, stack, or queue
+- **Input:** An argument of any type
 - **Output:** The argument converted to a list
 - **Purity:** Pure
 - **Example:**
@@ -92,8 +92,8 @@ to.list(set.new([1, 2, 3])) // returns [1, 2, 3]
 ### Is Number
 
 - **Signature:** `is.number(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a number, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a number. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -104,8 +104,8 @@ is.number(42) // returns true
 ### Is Integer
 
 - **Signature:** `is.integer(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is an integer, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is an integer. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -116,8 +116,8 @@ is.integer(3) // returns true
 ### Is Decimal
 
 - **Signature:** `is.decimal(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a decimal number, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a decimal number. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -128,8 +128,8 @@ is.decimal(3.14) // returns true
 ### Is Infinite
 
 - **Signature:** `is.infinite(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is infinite, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is infinite. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -140,8 +140,8 @@ is.infinite(num.infinity()) // returns true
 ### Is String
 
 - **Signature:** `is.string(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a string, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a string. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -152,8 +152,8 @@ is.string("hello") // returns true
 ### Is Boolean
 
 - **Signature:** `is.boolean(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a boolean, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a boolean. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -164,8 +164,8 @@ is.boolean(true) // returns true
 ### Is Timestamp
 
 - **Signature:** `is.timestamp(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a timestamp, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a timestamp. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -173,23 +173,11 @@ is.boolean(true) // returns true
 is.timestamp(time.now()) // returns true
 ```
 
-### Is Duration
-
-- **Signature:** `is.duration(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a duration, false otherwise
-- **Purity:** Pure
-- **Example:**
-
-```
-is.duration(duration.fromHours(2)) // returns true
-```
-
 ### Is Function
 
 - **Signature:** `is.function(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a function, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a function. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -200,8 +188,8 @@ is.function(num.add) // returns true
 ### Is List
 
 - **Signature:** `is.list(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a list, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a list. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -212,8 +200,8 @@ is.list([1, 2, 3]) // returns true
 ### Is Map
 
 - **Signature:** `is.map(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a map, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a map. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -224,8 +212,8 @@ is.map({"a": 1}) // returns true
 ### Is Vector
 
 - **Signature:** `is.vector(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a vector, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a vector. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -236,8 +224,8 @@ is.vector(vector.new([1, 2])) // returns true
 ### Is Set
 
 - **Signature:** `is.set(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a set, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a set. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -248,8 +236,8 @@ is.set(set.new([1, 2])) // returns true
 ### Is Stack
 
 - **Signature:** `is.stack(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a stack, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a stack. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -260,8 +248,8 @@ is.stack(stack.new([1, 2])) // returns true
 ### Is Queue
 
 - **Signature:** `is.queue(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a queue, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a queue. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -272,8 +260,8 @@ is.queue(queue.new([1, 2])) // returns true
 ### Is File
 
 - **Signature:** `is.file(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a file, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a file. False otherwise
 - **Purity:** Pure
 - **Example:**
 
@@ -284,11 +272,23 @@ is.file(file.fromPath("data.txt")) // returns true
 ### Is Directory
 
 - **Signature:** `is.directory(a: Any): Boolean`
-- **Input:** One argument of any type
-- **Output:** True if the argument is a directory, false otherwise
+- **Input:** An argument of any type
+- **Output:** True if the argument is a directory. False otherwise
 - **Purity:** Pure
 - **Example:**
 
 ```
-is.directory(directory.fromPath("/home/user")) // returns true
+is.directory(directory.fromPath("/home")) // returns true
+```
+
+### Is Duration
+
+- **Signature:** `is.duration(a: Any): Boolean`
+- **Input:** An argument of any type
+- **Output:** True if the argument is a duration. False otherwise
+- **Purity:** Pure
+- **Example:**
+
+```
+is.duration(duration.fromHours(2)) // returns true
 ```

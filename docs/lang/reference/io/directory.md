@@ -13,15 +13,15 @@ sources:
 
 Number of functions: 11
 
-Note: Directory functions are not available on the web platform.
+> **Note:** Directory functions are not implemented on the web platform.
 
 ## Creation
 
 ### From Path
 
 - **Signature:** `directory.fromPath(a: String): Directory`
-- **Input:** One string path
-- **Output:** A directory object pointing to the given path
+- **Input:** A string.
+- **Output:** A directory pointing to the given path.
 - **Purity:** Pure
 - **Example:**
 
@@ -32,13 +32,13 @@ directory.fromPath("/home/user") // returns a directory object
 ### Create
 
 - **Signature:** `directory.create(a: Directory): Boolean`
-- **Input:** One directory
-- **Output:** True if successful, false otherwise
+- **Input:** A directory.
+- **Output:** True if the directory was created, false otherwise.
 - **Purity:** Impure
 - **Example:**
 
 ```
-directory.create(directory.fromPath("/home/user/new")) // returns true
+directory.create(directory.fromPath("/home/user/new")) // returns true if successful
 ```
 
 ## Operations
@@ -46,73 +46,79 @@ directory.create(directory.fromPath("/home/user/new")) // returns true
 ### Exists
 
 - **Signature:** `directory.exists(a: Directory): Boolean`
-- **Input:** One directory
-- **Output:** True if the directory exists, false otherwise
+- **Input:** A directory.
+- **Output:** True if the directory exists, false otherwise.
 - **Purity:** Impure
 - **Example:**
 
 ```
-directory.exists(directory.fromPath("/home/user")) // returns true
+directory.exists(directory.fromPath("/home/user")) // returns true if it exists
 ```
 
 ### Delete
 
 - **Signature:** `directory.delete(a: Directory): Boolean`
-- **Input:** One directory
-- **Output:** True if successful, false otherwise
+- **Input:** A directory.
+- **Output:** True if the directory was deleted, false otherwise.
 - **Purity:** Impure
 - **Example:**
 
 ```
-directory.delete(directory.fromPath("/home/user/old")) // returns true
+directory.delete(directory.fromPath("/home/user/old")) // returns true if successful
 ```
 
 ### Copy
 
 - **Signature:** `directory.copy(a: Directory, b: Directory): Boolean`
-- **Input:** Two directories
-- **Output:** True if successful, false otherwise
+- **Input:** Two directories.
+- **Output:** True if the directory was copied, false otherwise.
 - **Purity:** Impure
 - **Example:**
 
 ```
-directory.copy(directory.fromPath("src"), directory.fromPath("backup")) // returns true
+directory.copy(
+    directory.fromPath("src"),
+    directory.fromPath("backup")
+) // returns true if successful
 ```
 
 ### Move
 
 - **Signature:** `directory.move(a: Directory, b: Directory): Boolean`
-- **Input:** Two directories
-- **Output:** True if successful, false otherwise
+- **Input:** Two directories.
+- **Output:** True if the directory was moved, false otherwise.
 - **Purity:** Impure
 - **Example:**
 
 ```
-directory.move(directory.fromPath("old"), directory.fromPath("new")) // returns true
+directory.move(
+    directory.fromPath("old"),
+    directory.fromPath("new")
+) // returns true if successful
 ```
 
 ### Rename
 
 - **Signature:** `directory.rename(a: Directory, b: String): Boolean`
-- **Input:** A directory and a string
-- **Output:** True if successful, false otherwise
+- **Input:** A directory and a string.
+- **Output:** True if the directory was renamed, false otherwise.
 - **Purity:** Impure
 - **Example:**
 
 ```
-directory.rename(directory.fromPath("old"), "new") // returns true
+directory.rename(directory.fromPath("old"), "new") // returns true if successful
 ```
 
 ### List
 
 - **Signature:** `directory.list(a: Directory): List`
-- **Input:** One directory
-- **Output:** A list of all files and directories within the directory
+- **Input:** A directory.
+- **Output:** A list of directories and files in the directory.
 - **Purity:** Impure
 - **Example:**
 
 ```
-directory.list(directory.fromPath("/home/user")) // returns [file1, file2, dir1, ...]
+directory.list(directory.fromPath("/home/user")) // returns [file1, file2, ...]
 ```
 
 ## Properties
@@ -120,8 +126,8 @@ directory.list(directory.fromPath("/home/user")) // returns [file1, file2, dir1,
 ### Path
 
 - **Signature:** `directory.path(a: Directory): String`
-- **Input:** One directory
-- **Output:** The directory's path as a string
+- **Input:** A directory.
+- **Output:** The path of the directory.
 - **Purity:** Pure
 - **Example:**
 
@@ -132,8 +138,8 @@ directory.path(directory.fromPath("/home/user")) // returns "/home/user"
 ### Name
 
 - **Signature:** `directory.name(a: Directory): String`
-- **Input:** One directory
-- **Output:** The directory's name as a string
+- **Input:** A directory.
+- **Output:** The name of the directory.
 - **Purity:** Pure
 - **Example:**
 
@@ -144,11 +150,11 @@ directory.name(directory.fromPath("/home/user")) // returns "user"
 ### Parent
 
 - **Signature:** `directory.parent(a: Directory): Directory`
-- **Input:** One directory
-- **Output:** The parent directory
+- **Input:** A directory.
+- **Output:** The parent directory.
 - **Purity:** Pure
 - **Example:**
 
 ```
-directory.parent(directory.fromPath("/home/user")) // returns the "/home" directory
+directory.parent(directory.fromPath("/home/user")) // returns "/home" directory
 ```
