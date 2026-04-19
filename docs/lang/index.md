@@ -17,46 +17,49 @@ sources: []
 
 Core library functions organized by category. Note: Primal does not support static types, but function signatures in the documentation include type annotations for readability.
 
-### Data Structures
+### Core
 
-- [[lang/reference/list]] — List operations
-- [[lang/reference/map]] — Map operations
-- [[lang/reference/set]] — Set operations
-- [[lang/reference/vector]] — Vector operations
-- [[lang/reference/stack]] — Stack operations
-- [[lang/reference/queue]] — Queue operations
+- [[lang/reference/core/operators]] — Operator reference
+- [[lang/reference/core/comparison]] — Comparison operations
+- [[lang/reference/core/casting]] — Type casting
+- [[lang/reference/core/control]] — Control flow
+- [[lang/reference/core/error]] — Error handling
 
-### Arithmetic & Logic
+### Primitives
 
-- [[lang/reference/arithmetic]] — Arithmetic operations
-- [[lang/reference/comparison]] — Comparison operations
-- [[lang/reference/logic]] — Logical operations
-- [[lang/reference/operators]] — Operator reference
+- [[lang/reference/primitives/arithmetic]] — Arithmetic operations
+- [[lang/reference/primitives/string]] — String operations
+- [[lang/reference/primitives/logic]] — Logical operations
 
-### Strings & Encoding
+### Collections
 
-- [[lang/reference/string]] — String operations
-- [[lang/reference/json]] — JSON encoding/decoding
-- [[lang/reference/base64]] — Base64 encoding/decoding
-- [[lang/reference/hash]] — Hashing functions
-- [[lang/reference/uuid]] — UUID generation
+- [[lang/reference/collections/list]] — List operations
+- [[lang/reference/collections/map]] — Map operations
+- [[lang/reference/collections/set]] — Set operations
+- [[lang/reference/collections/stack]] — Stack operations
+- [[lang/reference/collections/queue]] — Queue operations
+- [[lang/reference/collections/vector]] — Vector operations
 
-### I/O & System
+### Time
 
-- [[lang/reference/file]] — File operations
-- [[lang/reference/directory]] — Directory operations
-- [[lang/reference/path]] — Path operations
-- [[lang/reference/environment]] — Environment variables
-- [[lang/reference/console]] — Console I/O
-- [[lang/reference/timestamp]] — Timestamp operations
-- [[lang/reference/duration]] — Duration operations
+- [[lang/reference/time/timestamp]] — Timestamp operations
+- [[lang/reference/time/duration]] — Duration operations
 
-### Control & Debugging
+### I/O
 
-- [[lang/reference/control]] — Control flow
-- [[lang/reference/error]] — Error handling
-- [[lang/reference/debug]] — Debugging utilities
-- [[lang/reference/casting]] — Type casting
+- [[lang/reference/io/file]] — File operations
+- [[lang/reference/io/directory]] — Directory operations
+- [[lang/reference/io/path]] — Path operations
+- [[lang/reference/io/console]] — Console I/O
+- [[lang/reference/io/environment]] — Environment variables
+- [[lang/reference/io/debug]] — Debugging utilities
+
+### Encoding
+
+- [[lang/reference/encoding/json]] — JSON encoding/decoding
+- [[lang/reference/encoding/base64]] — Base64 encoding/decoding
+- [[lang/reference/encoding/hash]] — Hashing functions
+- [[lang/reference/encoding/uuid]] — UUID generation
 
 ## Design
 
