@@ -289,6 +289,6 @@ return ResultState(iterator, NumberToken(output));
 
 ## Related Documentation
 
-- [[dev/compiler/lexical]] - Full lexical analyzer details
-- [[dev/compiler/syntactic]] - Syntactic analyzer with expression parsing
-- [[dev/architecture/pipeline/analyzer-pattern]] - The Analyzer base class pattern
+- [[dev/architecture/pipeline/lexical]] - Full lexical analyzer details
+- [[dev/architecture/pipeline/syntactic]] - Syntactic analyzer with expression parsing
+- [[dev/architecture/patterns/analyzer-pattern]] - The Analyzer base class pattern

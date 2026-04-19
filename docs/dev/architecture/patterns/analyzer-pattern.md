@@ -242,6 +242,5 @@ The `Lowerer` differs because:
 
 ## Related Documentation
 
-- [[dev/compiler]] - Overall compiler architecture
-- [[dev/architecture/pipeline/pipeline-overview]] - How stages connect
-- [[dev/architecture/pipeline/state-machine-pattern]] - State machine implementation details
+- [[dev/architecture/pipeline/pipeline]] - Overall compiler architecture
+- [[dev/architecture/patterns/state-machine-pattern]] - State machine implementation details

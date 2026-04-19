@@ -10,7 +10,7 @@ import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
 
-const String version = '0.4.4';
+const String version = '0.5.0';
 
 const String helpText = '''
 Usage: primal [options] [file] [arguments...]
