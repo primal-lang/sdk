@@ -47,6 +47,6 @@ The test: every changed line should trace directly to the request.
 
 ## Knowledge Base
 
-- When discussing architecture, design patterns, or implementation rationale, run `/kb-dev`
-- When explaining language design or concepts, run `/kb-lang`
+- When discussing architecture, design patterns, or implementation rationale, run `kb-dev`
+- When explaining language design or concepts, run `kb-lang`
 - **Two outputs rule**: Every significant explanation should produce both a chat response AND a wiki update
