@@ -179,6 +179,7 @@ Types are represented as classes extending `Type`:
 | `FileType`         | File handles                         |
 | `DirectoryType`    | Directory handles                    |
 | `TimestampType`    | Date/time values                     |
+| `DurationType`     | Time span values                     |
 | `FunctionType`     | Function values                      |
 | `FunctionCallType` | Function call expressions            |
 | `AnyType`          | Wildcard (accepts any type)          |

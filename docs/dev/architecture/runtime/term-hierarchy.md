@@ -76,6 +76,7 @@ abstract class ValueTerm<T> implements Term {
 | `FileTerm`      | `File`      | File        |
 | `DirectoryTerm` | `Directory` | Directory   |
 | `TimestampTerm` | `DateTime`  | Timestamp   |
+| `DurationTerm`  | `Duration`  | Duration    |
 
 **Collection Terms** (extend `ValueTerm`):
 
@@ -327,6 +328,7 @@ Term (abstract)
 │   ├── FileTerm
 │   ├── DirectoryTerm
 │   ├── TimestampTerm
+│   ├── DurationTerm
 │   ├── ListTerm
 │   ├── VectorTerm
 │   ├── SetTerm

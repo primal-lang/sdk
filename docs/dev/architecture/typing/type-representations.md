@@ -48,6 +48,7 @@ Primitive types represent atomic values:
 | `FileType`      | `File`            | File system files       |
 | `DirectoryType` | `Directory`       | File system directories |
 | `TimestampType` | `DateTime`        | Date and time values    |
+| `DurationType`  | `Duration`        | Time span values        |
 
 Each primitive type class is a simple extension with a `toString()` override:
 
@@ -142,16 +143,16 @@ The `accepts()` method returns `true` if the actual type equals any member type.
 
 ### Available Type Classes
 
-| Type Class         | Member Types                                     | Purpose                                  |
-| ------------------ | ------------------------------------------------ | ---------------------------------------- |
-| `OrderedType`      | `Number`, `String`, `Timestamp`                  | Types supporting comparison              |
-| `EquatableType`    | All primitives and collections except `Function` | Types supporting equality                |
-| `HashableType`     | `Number`, `String`, `Boolean`, `Timestamp`       | Types usable as map keys or set elements |
-| `IndexableType`    | `String`, `List`, `Map`                          | Types supporting index access            |
-| `CollectionType`   | `List`, `Set`, `Stack`, `Queue`, `Map`           | Container types                          |
-| `IterableType`     | `String`, `List`, `Set`, `Stack`, `Queue`        | Types supporting iteration               |
-| `AddableType`      | `Number`, `String`, `Vector`, `List`, `Set`      | Types supporting `+` operator            |
-| `SubtractableType` | `Number`, `Vector`, `Set`                        | Types supporting `-` operator            |
+| Type Class         | Member Types                                            | Purpose                                  |
+| ------------------ | ------------------------------------------------------- | ---------------------------------------- |
+| `OrderedType`      | `Number`, `String`, `Timestamp`, `Duration`             | Types supporting comparison              |
+| `EquatableType`    | All primitives and collections except `Function`        | Types supporting equality                |
+| `HashableType`     | `Number`, `String`, `Boolean`, `Timestamp`, `Duration`  | Types usable as map keys or set elements |
+| `IndexableType`    | `String`, `List`, `Map`                                 | Types supporting index access            |
+| `CollectionType`   | `List`, `Set`, `Stack`, `Queue`, `Map`                  | Container types                          |
+| `IterableType`     | `String`, `List`, `Set`, `Stack`, `Queue`               | Types supporting iteration               |
+| `AddableType`      | `Number`, `String`, `Vector`, `List`, `Set`, `Duration` | Types supporting `+` operator            |
+| `SubtractableType` | `Number`, `Vector`, `Set`, `Duration`                   | Types supporting `-` operator            |
 
 Example definition:
 
@@ -164,6 +165,7 @@ class OrderedType extends TypeClass {
     NumberType(),
     StringType(),
     TimestampType(),
+    DurationType(),
   ];
 
   @override
@@ -218,6 +220,7 @@ Each `Type` has a corresponding `Term` subclass in `lib/compiler/runtime/term.da
 | `FileType`         | `FileTerm`                             |
 | `DirectoryType`    | `DirectoryTerm`                        |
 | `TimestampType`    | `TimestampTerm`                        |
+| `DurationType`     | `DurationTerm`                         |
 | `ListType`         | `ListTerm`                             |
 | `VectorType`       | `VectorTerm`                           |
 | `SetType`          | `SetTerm`                              |

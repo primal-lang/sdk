@@ -261,7 +261,7 @@ Additional errors for specific runtime conditions:
 When a parameter uses a type class (e.g., `Parameter.ordered('value')`), the type guard must check against all member types:
 
 ```dart
-if (a is NumberTerm || a is StringTerm || a is TimestampTerm) {
+if (a is NumberTerm || a is StringTerm || a is TimestampTerm || a is DurationTerm) {
   // Handle ordered types
 }
 ```

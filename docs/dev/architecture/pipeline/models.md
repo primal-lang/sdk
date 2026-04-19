@@ -65,6 +65,7 @@ Factory constructors provide convenient creation:
 - `Parameter.file(name)` - file parameter
 - `Parameter.directory(name)` - directory parameter
 - `Parameter.timestamp(name)` - timestamp parameter
+- `Parameter.duration(name)` - duration parameter
 - `Parameter.list(name)` - list parameter
 - `Parameter.vector(name)` - vector parameter
 - `Parameter.set(name)` - set parameter

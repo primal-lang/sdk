@@ -10,7 +10,7 @@ sources:
 
 # Type Hierarchy
 
-**TLDR**: Primal has 13 built-in types organized into three categories: primitives (Boolean, Number, String), collections (List, Map, Set, Stack, Queue, Vector), and system types (File, Directory, Timestamp, Function).
+**TLDR**: Primal has 14 built-in types organized into three categories: primitives (Boolean, Number, String), collections (List, Map, Set, Stack, Queue, Vector), and system types (File, Directory, Timestamp, Duration, Function).
 
 ## Overview
 
@@ -176,6 +176,19 @@ time.year(time.now())        // extract year
 time.format(time.now(), "yyyy-MM-dd")  // format as string
 ```
 
+### Duration
+
+Represents a span of time.
+
+```
+duration.fromSeconds(30)     // 30 seconds
+duration.fromHours(2)        // 2 hours
+duration.from(1, 2, 30, 0, 0)  // 1 day, 2 hours, 30 minutes
+
+duration.toMinutes(duration.fromSeconds(90))  // returns 1.5
+duration.format(duration.fromHours(2), "HH:mm:ss")  // "02:00:00"
+```
+
 ### Function
 
 Functions are first-class values and can be passed as arguments or stored in variables.
@@ -205,6 +218,7 @@ is.vector(vector.new([]))  // returns true
 is.file(file.fromPath("x"))       // returns true
 is.directory(directory.fromPath("."))  // returns true
 is.timestamp(time.now())   // returns true
+is.duration(duration.fromSeconds(1))  // returns true
 is.function(num.add)       // returns true
 ```
 
