@@ -11,7 +11,7 @@ sources:
 
 **TLDR**: Functions for creating, accessing, manipulating, searching, and inspecting text strings including case conversion, padding, splitting, and pattern matching.
 
-Number of functions: 44
+Number of functions: 42
 
 ## Construction
 
@@ -332,8 +332,8 @@ str.lines("a\nb\nc") // returns ["a", "b", "c"]
 ### Contains
 
 - **Signature:** `str.contains(a: String, b: String): Boolean`
-- **Input:** A string and an argument of any type
-- **Output:** True if the string contains the argument. False otherwise.
+- **Input:** Two strings.
+- **Output:** True if the first string contains the second string. False otherwise.
 - **Purity:** Pure
 - **Example:**
 
@@ -380,9 +380,9 @@ str.match("hello123", "[a-z]+[0-9]+") // returns true
 
 ### Index Of
 
-- **Signature:** `str.indexOf(a: String, b: Any): Number`
-- **Input:** A string and any value
-- **Output:** The index of the first occurrence of the value in the string, or -1 if the value is not found
+- **Signature:** `str.indexOf(a: String, b: String): Number`
+- **Input:** Two strings.
+- **Output:** The index of the first occurrence of the second string in the first string, or -1 if not found
 - **Purity:** Pure
 - **Example:**
 

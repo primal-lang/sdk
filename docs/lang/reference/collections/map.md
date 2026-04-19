@@ -11,7 +11,7 @@ sources:
 
 **TLDR**: Functions for creating and manipulating key-value pair collections with support for accessing, setting, merging, and querying entries.
 
-Number of functions: 13
+Number of functions: 11
 
 ## Construction
 

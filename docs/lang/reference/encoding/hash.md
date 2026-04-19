@@ -24,7 +24,7 @@ Number of functions: 4
 - **Example:**
 
 ```
-hash.md5("hello") // returns "5d41402abc4b2a76b9719d911017c592"
+hash.md5("Hello") // returns "8b1a9953c4611296a827abf8c47804d7"
 ```
 
 ### SHA1
@@ -36,7 +36,7 @@ hash.md5("hello") // returns "5d41402abc4b2a76b9719d911017c592"
 - **Example:**
 
 ```
-hash.sha1("hello") // returns "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d"
+hash.sha1("Hello") // returns "f7ff9e8b7bb2e09b70935a5d785e0cc5d9d0abf0"
 ```
 
 ### SHA256
@@ -48,7 +48,7 @@ hash.sha1("hello") // returns "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d"
 - **Example:**
 
 ```
-hash.sha256("hello") // returns "2cf24dba5fb0a30e26e83b2ac5b9e29e..."
+hash.sha256("Hello") // returns "185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969"
 ```
 
 ### SHA512
@@ -60,5 +60,5 @@ hash.sha256("hello") // returns "2cf24dba5fb0a30e26e83b2ac5b9e29e..."
 - **Example:**
 
 ```
-hash.sha512("hello") // returns "9b71d224bd62f3785d96d46ad3ea3d73..."
+hash.sha512("Hello") // returns "3615f80c9d293ed7402687f94b22d58e529b8cc7916f8fac7fddf7fbd5af4cf777d3d795a7a00a16bf7e7f3fb9561ee9baae480da9fe7a18769e71886b03f315"
 ```

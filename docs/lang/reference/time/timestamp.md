@@ -67,14 +67,14 @@ time.toIso(time.now()) // returns the ISO 8601 string
 
 ### To Epoch
 
-- **Signature:** `timestamp.toEpoch(a: Timestamp): Number`
+- **Signature:** `time.toEpoch(a: Timestamp): Number`
 - **Input:** A timestamp instance.
 - **Output:** The number of milliseconds since the Unix epoch.
 - **Purity:** Pure
 - **Example:**
 
 ```
-timestamp.toEpoch(time.now()) // returns the epoch time in milliseconds
+time.toEpoch(time.now()) // returns the epoch time in milliseconds
 ```
 
 ### Format
@@ -297,12 +297,12 @@ time.between(t1, t2) // returns the duration between t1 and t2
 
 ### Is Leap Year
 
-- **Signature:** `time.isLeapYear(a: Timestamp): Boolean`
-- **Input:** A timestamp instance.
-- **Output:** True if the year of the timestamp is a leap year, false otherwise.
+- **Signature:** `time.isLeapYear(a: Number): Boolean`
+- **Input:** A year as a number.
+- **Output:** True if the year is a leap year, false otherwise.
 - **Purity:** Pure
 - **Example:**
 
 ```
-time.isLeapYear(time.fromIso("2024-01-01T00:00:00Z")) // returns true
+time.isLeapYear(2024) // returns true
 ```

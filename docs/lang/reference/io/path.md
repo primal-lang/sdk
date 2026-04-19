@@ -65,14 +65,14 @@ path.isAbsolute("/home/user") // returns true
 
 ### Join
 
-- **Signature:** `path.join(a: List): String`
-- **Input:** A list of path segments.
+- **Signature:** `path.join(a: String, b: String): String`
+- **Input:** Two path segments.
 - **Output:** The path segments joined together with the appropriate separator.
 - **Purity:** Pure
 - **Example:**
 
 ```
-path.join(["home", "user", "file.txt"]) // returns "home/user/file.txt"
+path.join("home/user", "file.txt") // returns "home/user/file.txt"
 ```
 
 ### Normalize

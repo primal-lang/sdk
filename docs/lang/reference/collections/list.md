@@ -11,7 +11,7 @@ sources:
 
 **TLDR**: Functions for creating, accessing, modifying, and iterating over ordered collections of elements with support for higher-order operations like map, filter, and reduce.
 
-Number of functions: 37
+Number of functions: 35
 
 ## Construction
 

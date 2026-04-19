@@ -15,12 +15,12 @@ Number of functions: 1
 
 ## Debug
 
-- **Signature:** `debug(a: Any): Any`
-- **Input:** An argument of any type.
-- **Output:** Prints the value with type information to the console and returns the value.
+- **Signature:** `debug(a: String, b: Any): Any`
+- **Input:** A label string and a value of any type.
+- **Output:** Prints the label and value to the console in the format `[debug] label: value` and returns the value.
 - **Purity:** Impure
 - **Example:**
 
 ```
-debug([1, 2, 3]) // prints "[1, 2, 3] : List" and returns [1, 2, 3]
+debug("myList", [1, 2, 3]) // prints "[debug] myList: [1, 2, 3]" and returns [1, 2, 3]
 ```
