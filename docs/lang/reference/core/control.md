@@ -49,7 +49,11 @@ else
 - **Example:**
 
 ```
-let x = 5 in x + 1 // returns 6
+let
+    a = 5,
+    b = 1
+in
+    a + b // returns 6
 ```
 
 ### Try-Catch
