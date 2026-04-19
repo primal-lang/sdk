@@ -61,7 +61,7 @@ Core library functions organized by category. Note: Primal does not support stat
 ## Design
 
 - [[lang/design/function-definitions]] — Anatomy of function definitions, naming rules, and the main function
-- [[lang/design/let-and-where]] — Local bindings with let expressions and where clauses
+- [[lang/design/let]] — Local bindings with let expressions
 - [[lang/design/operators]] — Arithmetic, comparison, and logical operators with precedence rules
 - [[lang/design/dynamic-typing]] — Runtime type checking without type annotations
 - [[lang/design/type-hierarchy]] — Overview of all types in Primal

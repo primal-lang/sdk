@@ -1,5 +1,5 @@
 ---
-title: Let and Where Expressions
+title: Let Expressions
 tags:
   - design
   - bindings
@@ -7,9 +7,9 @@ sources:
   - lib/compiler/syntactic/expression_parser.dart
 ---
 
-# Let and Where Expressions
+# Let Expressions
 
-**TLDR**: Let expressions introduce local bindings with `let name = value in body`. Where clauses provide an alternative syntax for defining auxiliary values after the main expression.
+**TLDR**: Let expressions introduce local bindings with `let name = value in body`.
 
 ## Let Expressions
 
@@ -64,57 +64,6 @@ You can bind function references to local names:
 let square = num.mul in square(4, 4)    // returns 16
 let add = num.add in list.reduce([1, 2, 3], 0, add)    // returns 6
 ```
-
-## Where Clauses
-
-The `where` clause provides an alternative way to define auxiliary bindings. Instead of introducing bindings before the main expression, `where` places them after:
-
-```
-body where name = expression
-```
-
-This can improve readability when the main expression is more important than the auxiliary definitions.
-
-### Basic Usage
-
-```
-area where area = width * height, width = 10, height = 5
-// returns 50
-```
-
-Compare with the equivalent let expression:
-
-```
-let width = 10, height = 5, area = width * height in area
-// returns 50
-```
-
-### Multiple Definitions
-
-Where clauses support multiple definitions separated by commas:
-
-```
-total where
-  total = subtotal + tax,
-  subtotal = price * quantity,
-  tax = subtotal * 0.1,
-  price = 25,
-  quantity = 4
-// returns 110
-```
-
-### When to Use Where
-
-Use `where` when:
-
-- The main result expression is the focus and auxiliary calculations are secondary
-- You want to read the code "result-first"
-- Definitions are naturally described after their usage
-
-Use `let` when:
-
-- Bindings need to be introduced before their first use for clarity
-- You prefer a top-down, step-by-step style
 
 ## Scoping Rules
 
@@ -182,25 +131,6 @@ stats(numbers) =
       count = list.length(numbers),
       average = total / count
   in { "sum": total, "count": count, "average": average }
-```
-
-### Improving Readability
-
-```
-// Distance between two points
-distance(x1, y1, x2, y2) =
-  num.sqrt(squaredDistance)
-  where
-    squaredDistance = deltaX * deltaX + deltaY * deltaY,
-    deltaX = x2 - x1,
-    deltaY = y2 - y1
-
-// Format a person's full name
-formatName(first, middle, last) =
-  fullName
-  where
-    fullName = first + " " + middleInitial + ". " + last,
-    middleInitial = string.charAt(middle, 0)
 ```
 
 ### Combining Let and Conditionals
