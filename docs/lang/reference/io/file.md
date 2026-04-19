@@ -11,7 +11,7 @@ sources:
 
 **TLDR**: Functions for creating, reading, writing, and manipulating files on the filesystem including copy, move, delete, and property access.
 
-Number of functions: 15
+Number of functions: 16
 
 > **Note:** File functions are not implemented on the web platform.
 
