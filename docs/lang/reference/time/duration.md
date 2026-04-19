@@ -82,8 +82,8 @@ duration.fromDays(7) // returns a duration of 7 days
 
 ### From
 
-- **Signature:** `duration.from(days: Number, hours: Number, minutes: Number, seconds: Number, milliseconds: Number): Duration`
-- **Input:** Five numbers representing days, hours, minutes, seconds, and milliseconds.
+- **Signature:** `duration.from(a: Number, b: Number, c: Number, d: Number, e: Number): Duration`
+- **Input:** Five numbers representing days (a), hours (b), minutes (c), seconds (d), and milliseconds (e).
 - **Output:** A duration instance created from the specified components.
 - **Constraints:** Validates left-to-right; throws `NegativeDurationError` at first negative component (includes component name and value in error message)
 - **Purity:** Pure

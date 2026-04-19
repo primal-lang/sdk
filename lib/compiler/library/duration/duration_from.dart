@@ -7,11 +7,11 @@ class DurationFrom extends NativeFunctionTerm {
     : super(
         name: 'duration.from',
         parameters: const [
-          Parameter.number('days'),
-          Parameter.number('hours'),
-          Parameter.number('minutes'),
-          Parameter.number('seconds'),
-          Parameter.number('milliseconds'),
+          Parameter.number('a'),
+          Parameter.number('b'),
+          Parameter.number('c'),
+          Parameter.number('d'),
+          Parameter.number('e'),
         ],
       );
 
@@ -32,35 +32,35 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
 
   @override
   Term reduce() {
-    final Term daysArg = arguments[0].reduce();
-    final Term hoursArg = arguments[1].reduce();
-    final Term minutesArg = arguments[2].reduce();
-    final Term secondsArg = arguments[3].reduce();
-    final Term millisecondsArg = arguments[4].reduce();
+    final Term a = arguments[0].reduce();
+    final Term b = arguments[1].reduce();
+    final Term c = arguments[2].reduce();
+    final Term d = arguments[3].reduce();
+    final Term e = arguments[4].reduce();
 
-    if (daysArg is! NumberTerm ||
-        hoursArg is! NumberTerm ||
-        minutesArg is! NumberTerm ||
-        secondsArg is! NumberTerm ||
-        millisecondsArg is! NumberTerm) {
+    if (a is! NumberTerm ||
+        b is! NumberTerm ||
+        c is! NumberTerm ||
+        d is! NumberTerm ||
+        e is! NumberTerm) {
       throw InvalidArgumentTypesError(
         function: name,
         expected: parameterTypes,
         actual: [
-          daysArg.type,
-          hoursArg.type,
-          minutesArg.type,
-          secondsArg.type,
-          millisecondsArg.type,
+          a.type,
+          b.type,
+          c.type,
+          d.type,
+          e.type,
         ],
       );
     }
 
-    final num days = daysArg.value;
-    final num hours = hoursArg.value;
-    final num minutes = minutesArg.value;
-    final num seconds = secondsArg.value;
-    final num milliseconds = millisecondsArg.value;
+    final num days = a.value;
+    final num hours = b.value;
+    final num minutes = c.value;
+    final num seconds = d.value;
+    final num milliseconds = e.value;
 
     // Validate left-to-right; throw at first negative
     if (days < 0) {
