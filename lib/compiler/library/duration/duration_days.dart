@@ -7,7 +7,7 @@ class DurationDays extends NativeFunctionTerm {
     : super(
         name: 'duration.days',
         parameters: const [
-          Parameter.duration('duration'),
+          Parameter.duration('a'),
         ],
       );
 

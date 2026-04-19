@@ -7,7 +7,7 @@ class DurationFromMinutes extends NativeFunctionTerm {
     : super(
         name: 'duration.fromMinutes',
         parameters: const [
-          Parameter.number('minutes'),
+          Parameter.number('a'),
         ],
       );
 

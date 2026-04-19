@@ -7,8 +7,8 @@ class TimeAdd extends NativeFunctionTerm {
     : super(
         name: 'time.add',
         parameters: const [
-          Parameter.timestamp('timestamp'),
-          Parameter.duration('duration'),
+          Parameter.timestamp('a'),
+          Parameter.duration('b'),
         ],
       );
 

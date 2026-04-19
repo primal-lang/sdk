@@ -7,8 +7,8 @@ class DurationFormat extends NativeFunctionTerm {
     : super(
         name: 'duration.format',
         parameters: const [
-          Parameter.duration('duration'),
-          Parameter.string('pattern'),
+          Parameter.duration('a'),
+          Parameter.string('b'),
         ],
       );
 

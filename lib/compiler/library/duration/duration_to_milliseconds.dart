@@ -7,7 +7,7 @@ class DurationToMilliseconds extends NativeFunctionTerm {
     : super(
         name: 'duration.toMilliseconds',
         parameters: const [
-          Parameter.duration('duration'),
+          Parameter.duration('a'),
         ],
       );
 

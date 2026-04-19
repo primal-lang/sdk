@@ -7,8 +7,8 @@ class TimeSubtract extends NativeFunctionTerm {
     : super(
         name: 'time.subtract',
         parameters: const [
-          Parameter.timestamp('timestamp'),
-          Parameter.duration('duration'),
+          Parameter.timestamp('a'),
+          Parameter.duration('b'),
         ],
       );
 
