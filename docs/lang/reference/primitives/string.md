@@ -168,7 +168,6 @@ str.concat("hello", " world") // returns "hello world"
 
 ```
 str.replace("hello world", "world", "there") // returns "hello there"
-str.replace("aaa123BBB", "[a-z]+", "xxx")    // returns "xxx123BBB"
 ```
 
 ### Uppercase

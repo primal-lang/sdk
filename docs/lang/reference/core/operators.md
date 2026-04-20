@@ -229,9 +229,7 @@ Number of functions: 16
 - **Example:**
 
 ```
-true && false  // returns false
-true and false // returns false
-false && error.throw(-1, "Not evaluated") // returns false (no error thrown)
+true && false // returns false
 ```
 
 ### And (Strict)
@@ -245,7 +243,6 @@ false && error.throw(-1, "Not evaluated") // returns false (no error thrown)
 
 ```
 true & false // returns false
-false & true // returns false (both operands evaluated)
 ```
 
 ### Or (Short-Circuit)
@@ -259,9 +256,7 @@ false & true // returns false (both operands evaluated)
 - **Example:**
 
 ```
-true || false  // returns true
-true or false  // returns true
-true || error.throw(-1, "Not evaluated") // returns true (no error thrown)
+true || false // returns true
 ```
 
 ### Or (Strict)
@@ -274,8 +269,7 @@ true || error.throw(-1, "Not evaluated") // returns true (no error thrown)
 - **Example:**
 
 ```
-true | false  // returns true
-false | true  // returns true (both operands evaluated)
+true | false // returns true
 ```
 
 ### Not
@@ -288,6 +282,5 @@ false | true  // returns true (both operands evaluated)
 - **Example:**
 
 ```
-!true    // returns false
-not true // returns false
+!true // returns false
 ```

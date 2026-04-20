@@ -73,7 +73,6 @@ to.string(42) // returns "42"
 
 ```
 to.boolean(1) // returns true
-to.boolean("") // returns false
 ```
 
 ### To List

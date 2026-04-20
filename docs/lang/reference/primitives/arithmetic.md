@@ -36,8 +36,7 @@ num.abs(-5) // returns 5
 - **Example:**
 
 ```
-num.negative(3)  // returns -3
-num.negative(-5) // returns -5
+num.negative(3) // returns -3
 ```
 
 ### Increment
