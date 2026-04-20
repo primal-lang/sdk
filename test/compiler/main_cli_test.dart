@@ -39,7 +39,7 @@ void main() {
 
         runCli(['--version'], console: console);
 
-        expect(platformConsole.outLines, equals(['0.4.3']));
+        expect(platformConsole.outLines, equals([version]));
       });
 
       test('-v prints version and exits', () {
@@ -48,7 +48,7 @@ void main() {
 
         runCli(['-v'], console: console);
 
-        expect(platformConsole.outLines, equals(['0.4.3']));
+        expect(platformConsole.outLines, equals([version]));
       });
 
       test('--debug enables debug output for compilation and execution', () {
@@ -58,7 +58,7 @@ void main() {
         runCli(
           ['--debug', 'program.prm'],
           console: console,
-          readFile: (_) => 'main = 42',
+          readFile: (_) => 'main() = 42',
         );
 
         final String allOutput = platformConsole.outLines.join('\n');
@@ -75,7 +75,7 @@ void main() {
         runCli(
           ['-d', 'program.prm'],
           console: console,
-          readFile: (_) => 'main = 42',
+          readFile: (_) => 'main() = 42',
         );
 
         final String allOutput = platformConsole.outLines.join('\n');
@@ -89,7 +89,7 @@ void main() {
         runCli(
           ['--debug', 'program.prm'],
           console: console,
-          readFile: (_) => 'main = unknownFunction()',
+          readFile: (_) => 'main() = unknownFunction()',
         );
 
         final String allOutput = platformConsole.outLines.join('\n');
@@ -186,7 +186,7 @@ void main() {
         runCli(
           ['program.prm'],
           console: console,
-          readFile: (_) => 'main = 42',
+          readFile: (_) => 'main() = 42',
         );
 
         // Only the result should be printed, no banner
@@ -201,7 +201,7 @@ void main() {
       runCli(
         ['program.prm'],
         console: console,
-        readFile: (_) => 'main = 42',
+        readFile: (_) => 'main() = 42',
       );
 
       expect(platformConsole.outLines, equals(['42']));
@@ -215,7 +215,7 @@ void main() {
       runCli(
         ['program.prm'],
         console: console,
-        readFile: (_) => 'f(x, y) = x\nmain = f(1, 2)',
+        readFile: (_) => 'f(x, y) = x\nmain() = f(1, 2)',
       );
 
       expect(platformConsole.outLines, equals(['1']));
@@ -339,7 +339,7 @@ void main() {
 
         // Banner (6 lines) + version
         expect(platformConsole.outLines.length, equals(7));
-        expect(platformConsole.outLines.last, equals('0.4.3'));
+        expect(platformConsole.outLines.last, equals(version));
       });
 
       test(':clear writes escape sequence', () {
@@ -691,7 +691,7 @@ void main() {
         runCli(
           [],
           console: console,
-          readFile: (_) => 'double(x) = x * 2\nmain = double(21)',
+          readFile: (_) => 'double(x) = x * 2\nmain() = double(21)',
         );
 
         final String allOutput = platformConsole.outLines.join('\n');
@@ -731,7 +731,7 @@ void main() {
         runCli(
           [],
           console: console,
-          readFile: (_) => 'unused(x, y) = x\nmain = 42',
+          readFile: (_) => 'unused(x, y) = x\nmain() = 42',
         );
 
         expect(platformConsole.errorLines.single, contains('Warning'));
@@ -845,7 +845,7 @@ void main() {
         runCli(
           ['program.prm'],
           console: console,
-          readFile: (_) => 'main = ((((',
+          readFile: (_) => 'main() = ((((',
         );
 
         expect(platformConsole.outLines, isEmpty);
@@ -1174,7 +1174,7 @@ void main() {
         runCli(
           ['program.prm', 'arg1', 'arg2'],
           console: console,
-          readFile: (_) => 'main = 42',
+          readFile: (_) => 'main() = 42',
         );
 
         expect(platformConsole.outLines, equals(['42']));
@@ -1208,7 +1208,7 @@ void main() {
         runCli(
           ['program.prm'],
           console: console,
-          readFile: (_) => 'main = 1 / 0',
+          readFile: (_) => 'main() = 1 / 0',
         );
 
         expect(platformConsole.errorLines, isNotEmpty);
@@ -1375,7 +1375,7 @@ void main() {
         runCli(['--debug', '--version'], console: console);
 
         // --version takes precedence and exits immediately
-        expect(platformConsole.outLines, equals(['0.4.3']));
+        expect(platformConsole.outLines, equals([version]));
       });
 
       test('--version before --debug only prints version', () {
@@ -1384,7 +1384,7 @@ void main() {
 
         runCli(['--version', '--debug'], console: console);
 
-        expect(platformConsole.outLines, equals(['0.4.3']));
+        expect(platformConsole.outLines, equals([version]));
       });
 
       test('--help before --debug only prints help', () {

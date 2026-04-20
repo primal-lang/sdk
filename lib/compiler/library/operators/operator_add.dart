@@ -69,6 +69,8 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
         a: b,
         b: a,
       );
+    } else if ((a is DurationTerm) && (b is DurationTerm)) {
+      return DurationTerm(a.value + b.value);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

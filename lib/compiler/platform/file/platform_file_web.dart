@@ -58,4 +58,12 @@ class PlatformFileWeb extends PlatformFileBase {
   @override
   Directory parent(File file) =>
       throw const UnimplementedFunctionWebError('file.parent');
+
+  @override
+  bool append(File file, String content) =>
+      throw const UnimplementedFunctionWebError('file.append');
+
+  @override
+  DateTime lastModified(File file) =>
+      throw const UnimplementedFunctionWebError('file.lastModified');
 }

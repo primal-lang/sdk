@@ -44,7 +44,7 @@ void main() {
     });
 
     test('returns exit code 0 for valid program', () async {
-      final File tmpFile = writeProgram('main.prm', 'main = 42');
+      final File tmpFile = writeProgram('main.prm', 'main() = 42');
       final ProcessResult result = await runCli([tmpFile.path]);
 
       expect(result.exitCode, equals(0));
@@ -62,7 +62,7 @@ void main() {
     test('reports compilation error on stderr', () async {
       final File tmpFile = writeProgram(
         'compile_error.prm',
-        'main = undefined_function(1)',
+        'main() = undefined_function(1)',
       );
       final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -72,7 +72,7 @@ void main() {
     test('reports warnings on stderr for unused parameters', () async {
       final File tmpFile = writeProgram(
         'warning.prm',
-        'f(x, y) = x\nmain = f(1, 2)',
+        'f(x, y) = x\nmain() = f(1, 2)',
       );
       final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -126,7 +126,7 @@ void main() {
       });
 
       test('--debug enables debug mode output', () async {
-        final File tmpFile = writeProgram('debug.prm', 'main = 1 + 2');
+        final File tmpFile = writeProgram('debug.prm', 'main() = 1 + 2');
         final ProcessResult result = await runCli(['--debug', tmpFile.path]);
 
         expect(result.exitCode, equals(0));
@@ -137,7 +137,7 @@ void main() {
       });
 
       test('-d enables debug mode output', () async {
-        final File tmpFile = writeProgram('debug_short.prm', 'main = 42');
+        final File tmpFile = writeProgram('debug_short.prm', 'main() = 42');
         final ProcessResult result = await runCli(['-d', tmpFile.path]);
 
         expect(result.exitCode, equals(0));
@@ -145,7 +145,7 @@ void main() {
       });
 
       test('help flag takes precedence over file argument', () async {
-        final File tmpFile = writeProgram('ignored.prm', 'main = 42');
+        final File tmpFile = writeProgram('ignored.prm', 'main() = 42');
         final ProcessResult result = await runCli(['--help', tmpFile.path]);
 
         expect(result.exitCode, equals(0));
@@ -154,7 +154,7 @@ void main() {
       });
 
       test('version flag takes precedence over file argument', () async {
-        final File tmpFile = writeProgram('ignored.prm', 'main = 42');
+        final File tmpFile = writeProgram('ignored.prm', 'main() = 42');
         final ProcessResult result = await runCli(['--version', tmpFile.path]);
 
         expect(result.exitCode, equals(0));
@@ -210,7 +210,7 @@ void main() {
       test('main without parameters ignores arguments', () async {
         final File tmpFile = writeProgram(
           'no_params.prm',
-          'main = 100',
+          'main() = 100',
         );
         final ProcessResult result = await runCli([
           tmpFile.path,
@@ -226,7 +226,7 @@ void main() {
       test('reports syntax error for malformed expression', () async {
         final File tmpFile = writeProgram(
           'syntax_error.prm',
-          'main = (1 + )',
+          'main() = (1 + )',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -236,7 +236,7 @@ void main() {
       test('reports error for missing closing parenthesis', () async {
         final File tmpFile = writeProgram(
           'paren_error.prm',
-          'main = (1 + 2',
+          'main() = (1 + 2',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -246,7 +246,7 @@ void main() {
       test('reports runtime error for division by zero', () async {
         final File tmpFile = writeProgram(
           'div_zero.prm',
-          'main = 1 / 0',
+          'main() = 1 / 0',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -256,7 +256,7 @@ void main() {
       test('reports error for type mismatch', () async {
         final File tmpFile = writeProgram(
           'type_error.prm',
-          'main = 1 + "hello"',
+          'main() = 1 + "hello"',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -266,7 +266,7 @@ void main() {
       test('reports error for wrong number of arguments', () async {
         final File tmpFile = writeProgram(
           'arity_error.prm',
-          'f(x, y) = x + y\nmain = f(1)',
+          'f(x, y) = x + y\nmain() = f(1)',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -276,7 +276,7 @@ void main() {
       test('debug flag shows stack trace on error', () async {
         final File tmpFile = writeProgram(
           'debug_error.prm',
-          'main = undefined_function(1)',
+          'main() = undefined_function(1)',
         );
         final ProcessResult result = await runCli(['--debug', tmpFile.path]);
 
@@ -292,7 +292,7 @@ void main() {
           '''
 double(x) = x * 2
 triple(x) = x * 3
-main = double(triple(5))
+main() = double(triple(5))
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -306,7 +306,7 @@ main = double(triple(5))
           'recursive.prm',
           '''
 sum(n) = if (n <= 0) 0 else n + sum(n - 1)
-main = sum(10)
+main() = sum(10)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -321,7 +321,7 @@ main = sum(10)
           '''
 /* This is a block comment */
 // This is a line comment
-main = 42 // inline comment
+main() = 42 // inline comment
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -333,7 +333,7 @@ main = 42 // inline comment
       test('returns list result', () async {
         final File tmpFile = writeProgram(
           'list_result.prm',
-          'main = [1, 2, 3]',
+          'main() = [1, 2, 3]',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -344,7 +344,7 @@ main = 42 // inline comment
       test('returns boolean result', () async {
         final File tmpFile = writeProgram(
           'bool_result.prm',
-          'main = 5 > 3',
+          'main() = 5 > 3',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -355,7 +355,7 @@ main = 42 // inline comment
       test('returns string result', () async {
         final File tmpFile = writeProgram(
           'string_result.prm',
-          'main = "hello"',
+          'main() = "hello"',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -366,7 +366,7 @@ main = 42 // inline comment
       test('returns float result', () async {
         final File tmpFile = writeProgram(
           'float_result.prm',
-          'main = 3.14',
+          'main() = 3.14',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -379,7 +379,7 @@ main = 42 // inline comment
       test('can use numeric functions', () async {
         final File tmpFile = writeProgram(
           'num_func.prm',
-          'main = num.abs(-42)',
+          'main() = num.abs(-42)',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -390,7 +390,7 @@ main = 42 // inline comment
       test('can use string functions', () async {
         final File tmpFile = writeProgram(
           'string_func.prm',
-          'main = str.uppercase("hello")',
+          'main() = str.uppercase("hello")',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -401,7 +401,7 @@ main = 42 // inline comment
       test('can use list functions', () async {
         final File tmpFile = writeProgram(
           'list_func.prm',
-          'main = list.length([1, 2, 3, 4, 5])',
+          'main() = list.length([1, 2, 3, 4, 5])',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -492,7 +492,7 @@ main = 42 // inline comment
       test('handles unicode content in program', () async {
         final File tmpFile = writeProgram(
           'unicode.prm',
-          'main = "Hello \u4E16\u754C \u{1F600}"',
+          'main() = "Hello \u4E16\u754C \u{1F600}"',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -584,7 +584,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('returns unit result from side-effect function', () async {
         final File tmpFile = writeProgram(
           'unit_result.prm',
-          'main = if (true) 42 else 0',
+          'main() = if (true) 42 else 0',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -595,7 +595,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('handles negative integer result', () async {
         final File tmpFile = writeProgram(
           'negative_result.prm',
-          'main = -42',
+          'main() = -42',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -606,7 +606,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('handles negative float result', () async {
         final File tmpFile = writeProgram(
           'negative_float.prm',
-          'main = -3.14',
+          'main() = -3.14',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -617,7 +617,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('handles deeply nested list result', () async {
         final File tmpFile = writeProgram(
           'nested_list.prm',
-          'main = [[1, [2, 3]], [[4, 5], 6]]',
+          'main() = [[1, [2, 3]], [[4, 5], 6]]',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -631,7 +631,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('handles empty list result', () async {
         final File tmpFile = writeProgram(
           'empty_list.prm',
-          'main = []',
+          'main() = []',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -642,7 +642,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('handles empty string result', () async {
         final File tmpFile = writeProgram(
           'empty_string.prm',
-          'main = ""',
+          'main() = ""',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -653,7 +653,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('handles large integer result', () async {
         final File tmpFile = writeProgram(
           'large_int.prm',
-          'main = 999999999999',
+          'main() = 999999999999',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -667,7 +667,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('handles very small float result', () async {
         final File tmpFile = writeProgram(
           'small_float.prm',
-          'main = 0.000001',
+          'main() = 0.000001',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -699,7 +699,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('debug mode shows executing message without arguments', () async {
         final File tmpFile = writeProgram(
           'debug_no_args.prm',
-          'main = 42',
+          'main() = 42',
         );
         final ProcessResult result = await runCli(['--debug', tmpFile.path]);
 
@@ -711,7 +711,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('debug flag can appear after file path', () async {
         final File tmpFile = writeProgram(
           'debug_after.prm',
-          'main = 1',
+          'main() = 1',
         );
         final ProcessResult result = await runCli([tmpFile.path, '--debug']);
 
@@ -733,7 +733,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('debug flag works with valid watch file', () async {
         final File tmpFile = writeProgram(
           'debug_watch.prm',
-          'main = 123',
+          'main() = 123',
         );
 
         // Start the process but don't wait for it since watch mode is infinite
@@ -763,7 +763,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('short flags can be combined in sequence', () async {
         final File tmpFile = writeProgram(
           'short_flags.prm',
-          'main = 99',
+          'main() = 99',
         );
         final ProcessResult result = await runCli(['-d', tmpFile.path]);
 
@@ -777,7 +777,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
       test('reports undefined function with context', () async {
         final File tmpFile = writeProgram(
           'undefined_func.prm',
-          'main = foo(1, 2)',
+          'main() = foo(1, 2)',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -790,7 +790,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
           'infinite_recursion.prm',
           '''
 recurse(n) = recurse(n + 1)
-main = recurse(0)
+main() = recurse(0)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -804,7 +804,7 @@ main = recurse(0)
           '''
 valid_function(x) = x + 1
 
-main = undefined_thing
+main() = undefined_thing
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -818,7 +818,7 @@ main = undefined_thing
           '''
 foo(x) = x + 1
 foo(x) = x * 2
-main = foo(5)
+main() = foo(5)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -831,7 +831,7 @@ main = foo(5)
           'duplicate_param.prm',
           '''
 foo(x, x) = x
-main = foo(1, 2)
+main() = foo(1, 2)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -844,7 +844,7 @@ main = foo(1, 2)
       test('handles file in subdirectory', () async {
         final File tmpFile = writeProgram(
           'subdir/nested/program.prm',
-          'main = 777',
+          'main() = 777',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -855,7 +855,7 @@ main = foo(1, 2)
       test('handles file with spaces in name', () async {
         final File tmpFile = writeProgram(
           'my program.prm',
-          'main = 888',
+          'main() = 888',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -866,7 +866,7 @@ main = foo(1, 2)
       test('handles file with special characters in name', () async {
         final File tmpFile = writeProgram(
           'test-file_v2.prm',
-          'main = 999',
+          'main() = 999',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -890,7 +890,7 @@ main = foo(1, 2)
           '''
 apply(f, x) = f(x)
 double(n) = n * 2
-main = apply(double, 21)
+main() = apply(double, 21)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -905,7 +905,7 @@ main = apply(double, 21)
           '''
 isEven(n) = if (n == 0) true else isOdd(n - 1)
 isOdd(n) = if (n == 0) false else isEven(n - 1)
-main = isEven(10)
+main() = isEven(10)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -919,7 +919,7 @@ main = isEven(10)
           'early_return.prm',
           '''
 safeDivide(a, b) = if (b == 0) 0 else a / b
-main = safeDivide(10, 2)
+main() = safeDivide(10, 2)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -932,7 +932,7 @@ main = safeDivide(10, 2)
       test('handles complex arithmetic', () async {
         final File tmpFile = writeProgram(
           'complex_arithmetic.prm',
-          'main = ((1 + 2) * 3 - 4) / 5 + 6 % 7',
+          'main() = ((1 + 2) * 3 - 4) / 5 + 6 % 7',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -943,7 +943,7 @@ main = safeDivide(10, 2)
       test('handles boolean logic', () async {
         final File tmpFile = writeProgram(
           'boolean_logic.prm',
-          'main = (true && false) || (true && !false)',
+          'main() = (true && false) || (true && !false)',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
@@ -955,7 +955,7 @@ main = safeDivide(10, 2)
         final File tmpFile = writeProgram(
           'comparisons.prm',
           '''
-main = [5 > 3, 5 >= 5, 3 < 5, 3 <= 3, 3 == 3, 3 != 4]
+main() = [5 > 3, 5 >= 5, 3 < 5, 3 <= 3, 3 == 3, 3 != 4]
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -973,7 +973,7 @@ main = [5 > 3, 5 >= 5, 3 < 5, 3 <= 3, 3 == 3, 3 != 4]
           '''
 apply(f, x) = f(x)
 double(n) = n * 2
-main = apply(double, 21)
+main() = apply(double, 21)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);
@@ -987,7 +987,7 @@ main = apply(double, 21)
           'cond_chain.prm',
           '''
 grade(score) = if (score >= 90) "A" else if (score >= 80) "B" else if (score >= 70) "C" else "F"
-main = grade(85)
+main() = grade(85)
 ''',
         );
         final ProcessResult result = await runCli([tmpFile.path]);

@@ -12,4 +12,4 @@ divisors.helper(n, x) = if (x > n)
                         else
                             divisors.helper(n, x + 1)
 
-main = divisors(10)
+main() = divisors(10)

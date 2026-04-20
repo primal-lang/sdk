@@ -1,3 +1,0 @@
-```primal
-import "foo/utils"
-```

@@ -2605,4 +2605,354 @@ void main() {
       expect((expression as MapExpression).value.length, equals(5));
     });
   });
+
+  group('Let expression parsing', () {
+    test('Single binding', () {
+      final Expression expression = getExpression('let x = 1 in x');
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1 in x');
+    });
+
+    test('Multiple bindings', () {
+      final Expression expression = getExpression('let x = 1, y = 2 in x');
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1, y = 2 in x');
+    });
+
+    test('Nested let in body', () {
+      final Expression expression = getExpression(
+        'let x = 1 in let y = 2 in y',
+      );
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1 in let y = 2 in y');
+    });
+
+    test('Nested let in binding', () {
+      final Expression expression = getExpression(
+        'let x = (let y = 1 in y) in x',
+      );
+      expect(expression, isA<LetExpression>());
+      final LetExpression letExpression = expression as LetExpression;
+      expect(letExpression.bindings.length, equals(1));
+      expect(letExpression.bindings.first.value, isA<LetExpression>());
+    });
+
+    test('Let with complex expression in body', () {
+      final Expression expression = getExpression('let x = 1 in x + 2');
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1 in +(x, 2)');
+    });
+
+    test('Let with complex expression in binding', () {
+      final Expression expression = getExpression('let x = 1 + 2 in x');
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = +(1, 2) in x');
+    });
+
+    test('Let with if in binding', () {
+      final Expression expression = getExpression(
+        'let x = if (true) 1 else 2 in x',
+      );
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = if(true, 1, 2) in x');
+    });
+
+    test('Let with if in body', () {
+      final Expression expression = getExpression(
+        'let x = 1 in if (x > 0) x else 0',
+      );
+      expect(expression, isA<LetExpression>());
+      expect(expression.toString(), 'let x = 1 in if(>(x, 0), x, 0)');
+    });
+
+    test('Let in parentheses is valid', () {
+      final Expression expression = getExpression('1 + (let x = 2 in x)');
+      expect(expression.toString(), '+(1, let x = 2 in x)');
+    });
+
+    test('Let in list element', () {
+      final Expression expression = getExpression('[let x = 1 in x, 2]');
+      expect(expression, isA<ListExpression>());
+      final ListExpression listExpression = expression as ListExpression;
+      expect(listExpression.value.first, isA<LetExpression>());
+    });
+
+    test('Let as function argument', () {
+      final Expression expression = getExpression('foo(let x = 1 in x)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression callExpression = expression as CallExpression;
+      expect(callExpression.arguments.first, isA<LetExpression>());
+    });
+
+    test('Missing in keyword', () {
+      expect(
+        () => getExpression('let x = 1 x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Missing comma between bindings', () {
+      expect(
+        () => getExpression('let x = 1 y = 2 in x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Empty bindings', () {
+      expect(
+        () => getExpression('let in x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Trailing comma', () {
+      expect(
+        () => getExpression('let x = 1, in x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Let as binary operand throws error', () {
+      expect(
+        () => getExpression('1 + let x = 2 in x'),
+        throwsA(isA<ExpectedTokenError>()),
+      );
+    });
+
+    test('Let has lowest precedence', () {
+      final Expression expression = getExpression('let x = 1 in x + 2');
+      expect(expression, isA<LetExpression>());
+      final LetExpression letExpression = expression as LetExpression;
+      expect(letExpression.body, isA<CallExpression>());
+    });
+
+    test('Let is right-associative', () {
+      final Expression expression = getExpression(
+        'let x = 1 in let y = 2 in x + y',
+      );
+      expect(expression, isA<LetExpression>());
+      final LetExpression outer = expression as LetExpression;
+      expect(outer.bindings.length, equals(1));
+      expect(outer.body, isA<LetExpression>());
+    });
+
+    test('LetBindingExpression exposes name and value', () {
+      final Expression expression = getExpression('let x = 42 in x');
+      expect(expression, isA<LetExpression>());
+      final LetExpression letExpression = expression as LetExpression;
+      expect(letExpression.bindings.length, equals(1));
+      final LetBindingExpression binding = letExpression.bindings.first;
+      expect(binding.name, equals('x'));
+      expect(binding.value, isA<NumberExpression>());
+    });
+
+    test('LetExpression location is let token location', () {
+      final Expression expression = getExpression('let x = 1 in x');
+      expect(expression.location.column, equals(1));
+    });
+
+    test('LetBindingExpression location is identifier location', () {
+      final Expression expression = getExpression('let x = 1 in x');
+      final LetExpression letExpression = expression as LetExpression;
+      final LetBindingExpression binding = letExpression.bindings.first;
+      expect(binding.location.column, equals(5));
+    });
+  });
+
+  group('Lambda expressions', () {
+    test('Zero-param lambda', () {
+      final Expression expression = getExpression('() -> 5');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.parameters, isEmpty);
+      expect(lambda.body, isA<NumberExpression>());
+    });
+
+    test('Single-param lambda', () {
+      final Expression expression = getExpression('(x) -> x');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.parameters.length, equals(1));
+      expect(lambda.parameters[0], equals('x'));
+      expect(lambda.body, isA<IdentifierExpression>());
+    });
+
+    test('Multi-param lambda', () {
+      final Expression expression = getExpression('(x, y) -> x + y');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.parameters.length, equals(2));
+      expect(lambda.parameters[0], equals('x'));
+      expect(lambda.parameters[1], equals('y'));
+      expect(lambda.body, isA<CallExpression>());
+    });
+
+    test('Three-param lambda', () {
+      final Expression expression = getExpression('(a, b, c) -> a');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.parameters.length, equals(3));
+      expect(lambda.parameters, equals(['a', 'b', 'c']));
+    });
+
+    test('Nested lambda (body)', () {
+      final Expression expression = getExpression('(x) -> (y) -> x + y');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression outer = expression as LambdaExpression;
+      expect(outer.parameters, equals(['x']));
+      expect(outer.body, isA<LambdaExpression>());
+      final LambdaExpression inner = outer.body as LambdaExpression;
+      expect(inner.parameters, equals(['y']));
+    });
+
+    test('Lambda with if body', () {
+      final Expression expression = getExpression('(x) -> if (x > 0) x else 0');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.body, isA<CallExpression>());
+    });
+
+    test('Lambda with let body', () {
+      final Expression expression = getExpression('(x) -> let y = x in y');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.body, isA<LetExpression>());
+    });
+
+    test('Grouped expression (not lambda)', () {
+      final Expression expression = getExpression('(x + y)');
+      // Grouped expression with binary operation is NOT a lambda
+      expect(expression, isA<CallExpression>());
+    });
+
+    test('Grouped identifier (not lambda)', () {
+      final Expression expression = getExpression('(x)');
+      // Just a grouped identifier is NOT a lambda
+      expect(expression, isA<IdentifierExpression>());
+    });
+
+    test('Immediately invoked lambda', () {
+      final Expression expression = getExpression('((x) -> x)(5)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect(call.callee, isA<LambdaExpression>());
+      expect(call.arguments.length, equals(1));
+    });
+
+    test('Lambda with arithmetic body', () {
+      final Expression expression = getExpression('(x) -> x * 2 + 1');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.body.toString(), equals('+(*(x, 2), 1)'));
+    });
+
+    test('Lambda with comparison body', () {
+      final Expression expression = getExpression('(x) -> x > 0');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.body, isA<CallExpression>());
+    });
+
+    test('Lambda with function call body', () {
+      final Expression expression = getExpression('(x) -> foo(x)');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.body, isA<CallExpression>());
+      final CallExpression call = lambda.body as CallExpression;
+      expect((call.callee as IdentifierExpression).value, equals('foo'));
+    });
+
+    test('Lambda with list body', () {
+      final Expression expression = getExpression('(x) -> [x, x]');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.body, isA<ListExpression>());
+    });
+
+    test('Lambda with map body', () {
+      final Expression expression = getExpression('(x) -> {"key": x}');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.body, isA<MapExpression>());
+    });
+
+    test('Lambda location is open paren location', () {
+      final Expression expression = getExpression('(x) -> x');
+      expect(expression.location.column, equals(1));
+    });
+
+    test('Lambda toString format', () {
+      final Expression expression = getExpression('(x, y) -> x + y');
+      expect(expression.toString(), equals('(x, y) -> +(x, y)'));
+    });
+
+    test('Empty list followed by arrow is syntax error', () {
+      // [] -> is not valid lambda syntax
+      const Compiler compiler = Compiler();
+      expect(
+        () => compiler.expression('[] -> 5'),
+        throwsA(isA<UnexpectedTokenError>()),
+      );
+    });
+
+    test('Lambda in list literal', () {
+      final Expression expression = getExpression('[(x) -> x, (y) -> y]');
+      expect(expression, isA<ListExpression>());
+      final ListExpression list = expression as ListExpression;
+      expect(list.value.length, equals(2));
+      expect(list.value[0], isA<LambdaExpression>());
+      expect(list.value[1], isA<LambdaExpression>());
+    });
+
+    test('Lambda as map value', () {
+      final Expression expression = getExpression('{"f": (x) -> x}');
+      expect(expression, isA<MapExpression>());
+      final MapExpression map = expression as MapExpression;
+      expect(map.value.first.value, isA<LambdaExpression>());
+    });
+
+    test('Lambda as function argument', () {
+      final Expression expression = getExpression('map(list, (x) -> x * 2)');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect(call.arguments[1], isA<LambdaExpression>());
+    });
+
+    test('Double nested lambda', () {
+      final Expression expression = getExpression(
+        '(a) -> (b) -> (c) -> a + b + c',
+      );
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda1 = expression as LambdaExpression;
+      expect(lambda1.body, isA<LambdaExpression>());
+      final LambdaExpression lambda2 = lambda1.body as LambdaExpression;
+      expect(lambda2.body, isA<LambdaExpression>());
+    });
+
+    test('Lambda with unary negation body', () {
+      final Expression expression = getExpression('(x) -> -x');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      // Unary negation is desugared to binary subtraction
+      expect(lambda.body.toString(), equals('-(0, x)'));
+    });
+
+    test('Lambda with unary not body', () {
+      final Expression expression = getExpression('(x) -> !x');
+      expect(expression, isA<LambdaExpression>());
+      final LambdaExpression lambda = expression as LambdaExpression;
+      expect(lambda.body.toString(), equals('!(x)'));
+    });
+
+    test('Chained lambda calls', () {
+      final Expression expression = getExpression(
+        '((a) -> (b) -> a + b)(1)(2)',
+      );
+      expect(expression, isA<CallExpression>());
+      final CallExpression outerCall = expression as CallExpression;
+      expect(outerCall.callee, isA<CallExpression>());
+      final CallExpression innerCall = outerCall.callee as CallExpression;
+      expect(innerCall.callee, isA<LambdaExpression>());
+    });
+  });
 }

@@ -98,4 +98,19 @@ class PlatformFileCli extends PlatformFileBase {
 
   @override
   Directory parent(File file) => file.parent;
+
+  @override
+  bool append(File file, String content) {
+    try {
+      file.parent.createSync(recursive: true);
+      file.writeAsStringSync(content, mode: FileMode.append);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  DateTime lastModified(File file) => file.lastModifiedSync();
 }

@@ -35,7 +35,11 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     final Term c = arguments[2].reduce();
 
     if ((a is StringTerm) && (b is StringTerm) && (c is StringTerm)) {
-      return StringTerm(a.value.replaceAll(RegExp(b.value), c.value));
+      try {
+        return StringTerm(a.value.replaceAll(RegExp(b.value), c.value));
+      } on FormatException {
+        throw ParseError(function: name, input: b.value, targetType: 'regex');
+      }
     } else {
       throw InvalidArgumentTypesError(
         function: name,

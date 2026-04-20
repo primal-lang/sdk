@@ -17,4 +17,4 @@ frequency.count(first, rest, result) =
     else
         frequency.helper(rest, map.set(result, first, 1))
 
-main = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])
+main() = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])

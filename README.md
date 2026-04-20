@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
-<a href="https://github.com/primal-lang/sdk/releases/tag/v0.4.3"><img src="https://img.shields.io/badge/Latest-0.4.3-blue" /></a>
+<a href="https://github.com/primal-lang/sdk/releases/tag/v0.5.0"><img src="https://img.shields.io/badge/Latest-0.5.0-blue" /></a>
 </p>
 
 # Primal
@@ -85,8 +85,9 @@ A function declaration is composed of:
 - **Body:** an expression which consists of combinations of:
   - Constants: `"Hello"`, `42`, `true`, `[1, 2, 3]`, etc
   - Operations: `foo + 3`, `!foo`, `foo >= bar`, etc
-  - Function calls: `foo(x)`, `bar(10)`, etc
+  - Function calls: `foo(x)`, `bar()`, etc
   - Conditionals: `if (foo) bar else baz`
+  - Let expressions: `let x = 1 in x + 1`
 
 Here is an example of a function with parameters:
 
@@ -97,7 +98,7 @@ cube(n) = pow(n, 3)
 And here is an example of a function without parameters:
 
 ```javascript
-pi = 3.14159;
+pi() = 3.14159;
 ```
 
 Here is an example of a conditional expression:
@@ -140,6 +141,7 @@ System:
 - File
 - Directory
 - Timestamp
+- Duration
 - Function
 
 ## Runtime

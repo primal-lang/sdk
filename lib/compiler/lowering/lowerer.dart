@@ -1,3 +1,4 @@
+import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/semantic/semantic_node.dart';
@@ -31,8 +32,15 @@ class Lowerer {
       semanticNode.name,
       functions,
     ),
-    SemanticBoundVariableNode() => BoundVariableTerm(semanticNode.name),
+    SemanticBoundVariableNode() =>
+      semanticNode.isLambdaParameter
+          ? LambdaBoundVariableTerm(semanticNode.name)
+          : semanticNode.isLetBinding
+          ? LetBoundVariableTerm(semanticNode.name)
+          : BoundVariableTerm(semanticNode.name),
     SemanticCallNode() => _lowerCall(semanticNode),
+    SemanticLetNode() => _lowerLet(semanticNode),
+    SemanticLambdaNode() => _lowerLambda(semanticNode),
     _ => throw StateError(
       'Unknown semantic node type: ${semanticNode.runtimeType}',
     ),
@@ -54,6 +62,26 @@ class Lowerer {
     return CallTerm(
       callee: lowerTerm(semanticNode.callee),
       arguments: semanticNode.arguments.map(lowerTerm).toList(),
+    );
+  }
+
+  Term _lowerLet(SemanticLetNode semanticNode) {
+    final List<(String, Term)> loweredBindings = semanticNode.bindings
+        .map((binding) => (binding.name, lowerTerm(binding.value)))
+        .toList();
+
+    return LetTerm(
+      bindings: loweredBindings,
+      body: lowerTerm(semanticNode.body),
+    );
+  }
+
+  Term _lowerLambda(SemanticLambdaNode semanticNode) {
+    return LambdaTerm(
+      name:
+          '<lambda@${semanticNode.location.row}:${semanticNode.location.column}>',
+      parameters: semanticNode.parameters.map(Parameter.any).toList(),
+      body: lowerTerm(semanticNode.body),
     );
   }
 }

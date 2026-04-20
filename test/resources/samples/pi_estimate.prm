@@ -8,9 +8,13 @@ piEstimate(terms) = 4 * piEstimate.helper(0, terms, 0)
 piEstimate.helper(i, terms, sum) =
     if (i >= terms)
         sum
-    else if (num.isEven(i))
-        piEstimate.helper(i + 1, terms, sum + 1 / (2 * i + 1))
     else
-        piEstimate.helper(i + 1, terms, sum - 1 / (2 * i + 1))
+        let
+            term = 1 / (2 * i + 1)
+        in
+            if (num.isEven(i))
+                piEstimate.helper(i + 1, terms, sum + term)
+            else
+                piEstimate.helper(i + 1, terms, sum - term)
 
-main = piEstimate(10)
+main() = piEstimate(10)

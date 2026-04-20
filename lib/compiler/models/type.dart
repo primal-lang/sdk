@@ -53,6 +53,13 @@ class TimestampType extends Type {
   String toString() => 'Timestamp';
 }
 
+class DurationType extends Type {
+  const DurationType();
+
+  @override
+  String toString() => 'Duration';
+}
+
 class VectorType extends Type {
   const VectorType();
 
@@ -139,6 +146,7 @@ class OrderedType extends TypeClass {
     NumberType(),
     StringType(),
     TimestampType(),
+    DurationType(),
   ];
 
   @override
@@ -156,6 +164,7 @@ class EquatableType extends TypeClass {
     FileType(),
     DirectoryType(),
     TimestampType(),
+    DurationType(),
     VectorType(),
     StackType(),
     QueueType(),
@@ -177,6 +186,7 @@ class HashableType extends TypeClass {
     StringType(),
     BooleanType(),
     TimestampType(),
+    DurationType(),
   ];
 
   @override
@@ -239,6 +249,7 @@ class AddableType extends TypeClass {
     VectorType(),
     ListType(),
     SetType(),
+    DurationType(),
   ];
 
   @override
@@ -253,6 +264,7 @@ class SubtractableType extends TypeClass {
     NumberType(),
     VectorType(),
     SetType(),
+    DurationType(),
   ];
 
   @override

@@ -30,6 +30,8 @@ class CompLt extends NativeFunctionTerm {
       return BooleanTerm(a.value.compareTo(b.value) < 0);
     } else if ((a is TimestampTerm) && (b is TimestampTerm)) {
       return BooleanTerm(a.value.compareTo(b.value) < 0);
+    } else if ((a is DurationTerm) && (b is DurationTerm)) {
+      return BooleanTerm(a.value.compareTo(b.value) < 0);
     } else {
       throw InvalidArgumentTypesError(
         function: function.name,

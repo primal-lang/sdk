@@ -20,6 +20,7 @@ import 'package:primal/compiler/library/arithmetic/num_is_odd.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_positive.dart';
 import 'package:primal/compiler/library/arithmetic/num_is_zero.dart';
 import 'package:primal/compiler/library/arithmetic/num_log.dart';
+import 'package:primal/compiler/library/arithmetic/num_log_base.dart';
 import 'package:primal/compiler/library/arithmetic/num_max.dart';
 import 'package:primal/compiler/library/arithmetic/num_min.dart';
 import 'package:primal/compiler/library/arithmetic/num_mod.dart';
@@ -27,15 +28,20 @@ import 'package:primal/compiler/library/arithmetic/num_mul.dart';
 import 'package:primal/compiler/library/arithmetic/num_negative.dart';
 import 'package:primal/compiler/library/arithmetic/num_pow.dart';
 import 'package:primal/compiler/library/arithmetic/num_round.dart';
+import 'package:primal/compiler/library/arithmetic/num_round_to.dart';
 import 'package:primal/compiler/library/arithmetic/num_sign.dart';
 import 'package:primal/compiler/library/arithmetic/num_sin.dart';
 import 'package:primal/compiler/library/arithmetic/num_sqrt.dart';
 import 'package:primal/compiler/library/arithmetic/num_sub.dart';
 import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/arithmetic/num_tan.dart';
+import 'package:primal/compiler/library/arithmetic/num_truncate.dart';
+import 'package:primal/compiler/library/base64/base64_decode.dart';
+import 'package:primal/compiler/library/base64/base64_encode.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
 import 'package:primal/compiler/library/casting/is_decimal.dart';
 import 'package:primal/compiler/library/casting/is_directory.dart';
+import 'package:primal/compiler/library/casting/is_duration.dart';
 import 'package:primal/compiler/library/casting/is_file.dart';
 import 'package:primal/compiler/library/casting/is_function.dart';
 import 'package:primal/compiler/library/casting/is_infinite.dart';
@@ -66,6 +72,7 @@ import 'package:primal/compiler/library/console/console_write.dart';
 import 'package:primal/compiler/library/console/console_write_ln.dart';
 import 'package:primal/compiler/library/control/if.dart';
 import 'package:primal/compiler/library/control/try.dart';
+import 'package:primal/compiler/library/debug/debug.dart';
 import 'package:primal/compiler/library/directory/directory_copy.dart';
 import 'package:primal/compiler/library/directory/directory_create.dart';
 import 'package:primal/compiler/library/directory/directory_delete.dart';
@@ -77,14 +84,35 @@ import 'package:primal/compiler/library/directory/directory_name.dart';
 import 'package:primal/compiler/library/directory/directory_parent.dart';
 import 'package:primal/compiler/library/directory/directory_path.dart';
 import 'package:primal/compiler/library/directory/directory_rename.dart';
+import 'package:primal/compiler/library/duration/duration_compare.dart';
+import 'package:primal/compiler/library/duration/duration_days.dart';
+import 'package:primal/compiler/library/duration/duration_format.dart';
+import 'package:primal/compiler/library/duration/duration_from.dart';
+import 'package:primal/compiler/library/duration/duration_from_days.dart';
+import 'package:primal/compiler/library/duration/duration_from_hours.dart';
+import 'package:primal/compiler/library/duration/duration_from_milliseconds.dart';
+import 'package:primal/compiler/library/duration/duration_from_minutes.dart';
+import 'package:primal/compiler/library/duration/duration_from_seconds.dart';
+import 'package:primal/compiler/library/duration/duration_hours.dart';
+import 'package:primal/compiler/library/duration/duration_milliseconds.dart';
+import 'package:primal/compiler/library/duration/duration_minutes.dart';
+import 'package:primal/compiler/library/duration/duration_seconds.dart';
+import 'package:primal/compiler/library/duration/duration_to_days.dart';
+import 'package:primal/compiler/library/duration/duration_to_hours.dart';
+import 'package:primal/compiler/library/duration/duration_to_milliseconds.dart';
+import 'package:primal/compiler/library/duration/duration_to_minutes.dart';
+import 'package:primal/compiler/library/duration/duration_to_seconds.dart';
 import 'package:primal/compiler/library/environment/env_get.dart';
+import 'package:primal/compiler/library/environment/env_has.dart';
 import 'package:primal/compiler/library/error/throw.dart';
+import 'package:primal/compiler/library/file/file_append.dart';
 import 'package:primal/compiler/library/file/file_copy.dart';
 import 'package:primal/compiler/library/file/file_create.dart';
 import 'package:primal/compiler/library/file/file_delete.dart';
 import 'package:primal/compiler/library/file/file_exists.dart';
 import 'package:primal/compiler/library/file/file_extension.dart';
 import 'package:primal/compiler/library/file/file_from_path.dart';
+import 'package:primal/compiler/library/file/file_last_modified.dart';
 import 'package:primal/compiler/library/file/file_length.dart';
 import 'package:primal/compiler/library/file/file_move.dart';
 import 'package:primal/compiler/library/file/file_name.dart';
@@ -103,12 +131,16 @@ import 'package:primal/compiler/library/json/json_encode.dart';
 import 'package:primal/compiler/library/list/list_all.dart';
 import 'package:primal/compiler/library/list/list_any.dart';
 import 'package:primal/compiler/library/list/list_at.dart';
+import 'package:primal/compiler/library/list/list_chunk.dart';
 import 'package:primal/compiler/library/list/list_concat.dart';
 import 'package:primal/compiler/library/list/list_contains.dart';
+import 'package:primal/compiler/library/list/list_count.dart';
+import 'package:primal/compiler/library/list/list_distinct.dart';
 import 'package:primal/compiler/library/list/list_drop.dart';
 import 'package:primal/compiler/library/list/list_filled.dart';
 import 'package:primal/compiler/library/list/list_filter.dart';
 import 'package:primal/compiler/library/list/list_first.dart';
+import 'package:primal/compiler/library/list/list_flatten.dart';
 import 'package:primal/compiler/library/list/list_index_of.dart';
 import 'package:primal/compiler/library/list/list_init.dart';
 import 'package:primal/compiler/library/list/list_insert_end.dart';
@@ -139,10 +171,12 @@ import 'package:primal/compiler/library/logic/bool_or_strict.dart';
 import 'package:primal/compiler/library/logic/bool_xor.dart';
 import 'package:primal/compiler/library/map/map_at.dart';
 import 'package:primal/compiler/library/map/map_contains_key.dart';
+import 'package:primal/compiler/library/map/map_entries.dart';
 import 'package:primal/compiler/library/map/map_is_empty.dart';
 import 'package:primal/compiler/library/map/map_is_not_empty.dart';
 import 'package:primal/compiler/library/map/map_keys.dart';
 import 'package:primal/compiler/library/map/map_length.dart';
+import 'package:primal/compiler/library/map/map_merge.dart';
 import 'package:primal/compiler/library/map/map_remove_at.dart';
 import 'package:primal/compiler/library/map/map_set.dart';
 import 'package:primal/compiler/library/map/map_values.dart';
@@ -162,6 +196,12 @@ import 'package:primal/compiler/library/operators/operator_neq.dart';
 import 'package:primal/compiler/library/operators/operator_not.dart';
 import 'package:primal/compiler/library/operators/operator_or.dart';
 import 'package:primal/compiler/library/operators/operator_sub.dart';
+import 'package:primal/compiler/library/path/path_basename.dart';
+import 'package:primal/compiler/library/path/path_dirname.dart';
+import 'package:primal/compiler/library/path/path_extension.dart';
+import 'package:primal/compiler/library/path/path_is_absolute.dart';
+import 'package:primal/compiler/library/path/path_join.dart';
+import 'package:primal/compiler/library/path/path_normalize.dart';
 import 'package:primal/compiler/library/queue/queue_dequeue.dart';
 import 'package:primal/compiler/library/queue/queue_enqueue.dart';
 import 'package:primal/compiler/library/queue/queue_is_empty.dart';
@@ -174,8 +214,11 @@ import 'package:primal/compiler/library/set/set_add.dart';
 import 'package:primal/compiler/library/set/set_contains.dart';
 import 'package:primal/compiler/library/set/set_difference.dart';
 import 'package:primal/compiler/library/set/set_intersection.dart';
+import 'package:primal/compiler/library/set/set_is_disjoint.dart';
 import 'package:primal/compiler/library/set/set_is_empty.dart';
 import 'package:primal/compiler/library/set/set_is_not_empty.dart';
+import 'package:primal/compiler/library/set/set_is_subset.dart';
+import 'package:primal/compiler/library/set/set_is_superset.dart';
 import 'package:primal/compiler/library/set/set_length.dart';
 import 'package:primal/compiler/library/set/set_new.dart';
 import 'package:primal/compiler/library/set/set_remove.dart';
@@ -190,23 +233,35 @@ import 'package:primal/compiler/library/stack/stack_push.dart';
 import 'package:primal/compiler/library/stack/stack_reverse.dart';
 import 'package:primal/compiler/library/string/str_at.dart';
 import 'package:primal/compiler/library/string/str_bytes.dart';
+import 'package:primal/compiler/library/string/str_capitalize.dart';
 import 'package:primal/compiler/library/string/str_compare.dart';
 import 'package:primal/compiler/library/string/str_concat.dart';
 import 'package:primal/compiler/library/string/str_contains.dart';
+import 'package:primal/compiler/library/string/str_count.dart';
 import 'package:primal/compiler/library/string/str_drop.dart';
 import 'package:primal/compiler/library/string/str_ends_with.dart';
 import 'package:primal/compiler/library/string/str_first.dart';
+import 'package:primal/compiler/library/string/str_from_bytes.dart';
 import 'package:primal/compiler/library/string/str_index_of.dart';
 import 'package:primal/compiler/library/string/str_init.dart';
+import 'package:primal/compiler/library/string/str_is_alpha.dart';
+import 'package:primal/compiler/library/string/str_is_alpha_numeric.dart';
+import 'package:primal/compiler/library/string/str_is_blank.dart';
 import 'package:primal/compiler/library/string/str_is_empty.dart';
+import 'package:primal/compiler/library/string/str_is_lowercase.dart';
 import 'package:primal/compiler/library/string/str_is_not_empty.dart';
+import 'package:primal/compiler/library/string/str_is_numeric.dart';
+import 'package:primal/compiler/library/string/str_is_uppercase.dart';
 import 'package:primal/compiler/library/string/str_last.dart';
+import 'package:primal/compiler/library/string/str_last_index_of.dart';
 import 'package:primal/compiler/library/string/str_length.dart';
+import 'package:primal/compiler/library/string/str_lines.dart';
 import 'package:primal/compiler/library/string/str_lowercase.dart';
 import 'package:primal/compiler/library/string/str_match.dart';
 import 'package:primal/compiler/library/string/str_pad_left.dart';
 import 'package:primal/compiler/library/string/str_pad_right.dart';
 import 'package:primal/compiler/library/string/str_remove_at.dart';
+import 'package:primal/compiler/library/string/str_repeat.dart';
 import 'package:primal/compiler/library/string/str_replace.dart';
 import 'package:primal/compiler/library/string/str_rest.dart';
 import 'package:primal/compiler/library/string/str_reverse.dart';
@@ -215,24 +270,40 @@ import 'package:primal/compiler/library/string/str_starts_with.dart';
 import 'package:primal/compiler/library/string/str_substring.dart';
 import 'package:primal/compiler/library/string/str_take.dart';
 import 'package:primal/compiler/library/string/str_trim.dart';
+import 'package:primal/compiler/library/string/str_trim_left.dart';
+import 'package:primal/compiler/library/string/str_trim_right.dart';
 import 'package:primal/compiler/library/string/str_uppercase.dart';
+import 'package:primal/compiler/library/timestamp/time_add.dart';
+import 'package:primal/compiler/library/timestamp/time_between.dart';
 import 'package:primal/compiler/library/timestamp/time_compare.dart';
 import 'package:primal/compiler/library/timestamp/time_day.dart';
-import 'package:primal/compiler/library/timestamp/time_epoch.dart';
+import 'package:primal/compiler/library/timestamp/time_day_of_week.dart';
+import 'package:primal/compiler/library/timestamp/time_day_of_year.dart';
+import 'package:primal/compiler/library/timestamp/time_format.dart';
+import 'package:primal/compiler/library/timestamp/time_from_epoch.dart';
 import 'package:primal/compiler/library/timestamp/time_from_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_hour.dart';
+import 'package:primal/compiler/library/timestamp/time_is_after.dart';
+import 'package:primal/compiler/library/timestamp/time_is_before.dart';
+import 'package:primal/compiler/library/timestamp/time_is_leap_year.dart';
 import 'package:primal/compiler/library/timestamp/time_millisecond.dart';
 import 'package:primal/compiler/library/timestamp/time_minute.dart';
 import 'package:primal/compiler/library/timestamp/time_month.dart';
 import 'package:primal/compiler/library/timestamp/time_now.dart';
 import 'package:primal/compiler/library/timestamp/time_second.dart';
+import 'package:primal/compiler/library/timestamp/time_subtract.dart';
 import 'package:primal/compiler/library/timestamp/time_to_iso.dart';
 import 'package:primal/compiler/library/timestamp/time_year.dart';
+import 'package:primal/compiler/library/timestamp/timestamp_to_epoch.dart';
+import 'package:primal/compiler/library/uuid/uuid_v4.dart';
 import 'package:primal/compiler/library/vector/vector_add.dart';
 import 'package:primal/compiler/library/vector/vector_angle.dart';
+import 'package:primal/compiler/library/vector/vector_distance.dart';
+import 'package:primal/compiler/library/vector/vector_dot.dart';
 import 'package:primal/compiler/library/vector/vector_magnitude.dart';
 import 'package:primal/compiler/library/vector/vector_new.dart';
 import 'package:primal/compiler/library/vector/vector_normalize.dart';
+import 'package:primal/compiler/library/vector/vector_scale.dart';
 import 'package:primal/compiler/library/vector/vector_sub.dart';
 import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/runtime/term.dart';
@@ -266,6 +337,7 @@ class StandardLibrary {
     const NumIsPositive(),
     const NumIsZero(),
     const NumLog(),
+    const NumLogBase(),
     const NumMax(),
     const NumMin(),
     const NumMod(),
@@ -273,17 +345,20 @@ class StandardLibrary {
     const NumNegative(),
     const NumPow(),
     const NumRound(),
+    const NumRoundTo(),
     const NumSign(),
     const NumSin(),
     const NumSqrt(),
     const NumSub(),
     const NumSum(),
     const NumTan(),
+    const NumTruncate(),
 
     // Casting
     const IsBoolean(),
     const IsDecimal(),
     const IsDirectory(),
+    const IsDuration(),
     const IsFile(),
     const IsFunction(),
     const IsInfinite(),
@@ -321,6 +396,9 @@ class StandardLibrary {
     const If(),
     const Try(),
 
+    // Debug
+    const Debug(),
+
     // Directory
     const DirectoryCopy(),
     const DirectoryCreate(),
@@ -334,19 +412,42 @@ class StandardLibrary {
     const DirectoryPath(),
     const DirectoryRename(),
 
+    // Duration
+    const DurationCompare(),
+    const DurationDays(),
+    const DurationFormat(),
+    const DurationFrom(),
+    const DurationFromDays(),
+    const DurationFromHours(),
+    const DurationFromMilliseconds(),
+    const DurationFromMinutes(),
+    const DurationFromSeconds(),
+    const DurationHours(),
+    const DurationMilliseconds(),
+    const DurationMinutes(),
+    const DurationSeconds(),
+    const DurationToDays(),
+    const DurationToHours(),
+    const DurationToMilliseconds(),
+    const DurationToMinutes(),
+    const DurationToSeconds(),
+
     // Environment
     const EnvGet(),
+    const EnvHas(),
 
     // Error
     const Throw(),
 
     // File
+    const FileAppend(),
     const FileCopy(),
     const FileCreate(),
     const FileDelete(),
     const FileExists(),
     const FileExtension(),
     const FileFromPath(),
+    const FileLastModified(),
     const FileLength(),
     const FileMove(),
     const FileName(),
@@ -355,6 +456,10 @@ class StandardLibrary {
     const FileRead(),
     const FileRename(),
     const FileWrite(),
+
+    // Base64
+    const Base64Decode(),
+    const Base64Encode(),
 
     // Hash
     const HashMd5(),
@@ -401,6 +506,10 @@ class StandardLibrary {
     const ListSwap(),
     const ListTake(),
     const ListZip(),
+    const ListFlatten(),
+    const ListDistinct(),
+    const ListCount(),
+    const ListChunk(),
 
     // Logic
     const BoolAnd(),
@@ -413,10 +522,12 @@ class StandardLibrary {
     // Map
     const MapAt(),
     const MapContainsKey(),
+    const MapEntries(),
     const MapIsEmpty(),
     const MapIsNotEmpty(),
     const MapKeys(),
     const MapLength(),
+    const MapMerge(),
     const MapRemoveAt(),
     const MapSet(),
     const MapValues(),
@@ -439,6 +550,14 @@ class StandardLibrary {
     const OperatorOr(),
     const OperatorSub(),
 
+    // Path
+    const PathBasename(),
+    const PathDirname(),
+    const PathExtension(),
+    const PathIsAbsolute(),
+    const PathJoin(),
+    const PathNormalize(),
+
     // Queue
     const QueueDequeue(),
     const QueueEnqueue(),
@@ -454,8 +573,11 @@ class StandardLibrary {
     const SetContains(),
     const SetDifference(),
     const SetIntersection(),
+    const SetIsDisjoint(),
     const SetIsEmpty(),
     const SetIsNotEmpty(),
+    const SetIsSubset(),
+    const SetIsSuperset(),
     const SetLength(),
     const SetNew(),
     const SetRemove(),
@@ -474,23 +596,35 @@ class StandardLibrary {
     // String
     const StrAt(),
     const StrBytes(),
+    const StrCapitalize(),
     const StrCompare(),
     const StrConcat(),
     const StrContains(),
+    const StrCount(),
     const StrDrop(),
     const StrEndsWith(),
     const StrFirst(),
+    const StrFromBytes(),
     const StrIndexOf(),
     const StrInit(),
+    const StrIsAlpha(),
+    const StrIsAlphaNumeric(),
+    const StrIsBlank(),
     const StrIsEmpty(),
+    const StrIsLowercase(),
     const StrIsNotEmpty(),
+    const StrIsNumeric(),
+    const StrIsUppercase(),
     const StrLast(),
+    const StrLastIndexOf(),
     const StrLength(),
+    const StrLines(),
     const StrLowercase(),
     const StrMatch(),
     const StrPadLeft(),
     const StrPadRight(),
     const StrRemoveAt(),
+    const StrRepeat(),
     const StrReplace(),
     const StrRest(),
     const StrReverse(),
@@ -499,28 +633,46 @@ class StandardLibrary {
     const StrSubstring(),
     const StrTake(),
     const StrTrim(),
+    const StrTrimLeft(),
+    const StrTrimRight(),
     const StrUppercase(),
 
+    // UUID
+    const UuidV4(),
+
     // Timestamp
+    const TimeAdd(),
+    const TimeBetween(),
     const TimeCompare(),
     const TimeDay(),
-    const TimeEpoch(),
+    const TimeDayOfWeek(),
+    const TimeDayOfYear(),
+    const TimestampToEpoch(),
+    const TimeFormat(),
+    const TimeFromEpoch(),
     const TimeFromIso(),
     const TimeHour(),
+    const TimeIsAfter(),
+    const TimeIsBefore(),
+    const TimeIsLeapYear(),
     const TimeMillisecond(),
     const TimeMinute(),
     const TimeMonth(),
     const TimeNow(),
     const TimeSecond(),
+    const TimeSubtract(),
     const TimeToIso(),
     const TimeYear(),
 
     // Vector
     const VectorAdd(),
     const VectorAngle(),
+    const VectorDistance(),
+    const VectorDot(),
     const VectorMagnitude(),
     const VectorNew(),
     const VectorNormalize(),
+    const VectorScale(),
     const VectorSub(),
   ];
 }

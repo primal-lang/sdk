@@ -11,28 +11,28 @@ void main() {
   group('Function Composition', () {
     test('nested core function calls', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = num.abs(num.negative(5))',
+        'main() = num.abs(num.negative(5))',
       );
       checkResult(runtime, 5);
     });
 
     test('composed arithmetic', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = num.pow(num.add(1, 2), num.sub(5, 2))',
+        'main() = num.pow(num.add(1, 2), num.sub(5, 2))',
       );
       checkResult(runtime, 27);
     });
 
     test('chained string operations', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.uppercase(str.reverse("hello"))',
+        'main() = str.uppercase(str.reverse("hello"))',
       );
       checkResult(runtime, '"OLLEH"');
     });
 
     test('composed list and arithmetic', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = num.add(list.first([10, 20]), list.last([30, 40]))',
+        'main() = num.add(list.first([10, 20]), list.last([30, 40]))',
       );
       checkResult(runtime, 50);
     });
@@ -41,7 +41,7 @@ void main() {
       final RuntimeFacade runtime = getRuntime('''
 square(n) = n * n
 cube(n) = n * square(n)
-main = cube(3)
+main() = cube(3)
 ''');
       checkResult(runtime, 27);
     });
@@ -51,7 +51,7 @@ main = cube(3)
 inc(n) = n + 1
 double(n) = n * 2
 apply(f, g, v) = f(g(v))
-main = apply(double, inc, 3)
+main() = apply(double, inc, 3)
 ''');
       checkResult(runtime, 8);
     });
@@ -63,7 +63,7 @@ main = apply(double, inc, 3)
 add1(n) = n + 1
 add2(n) = add1(add1(n))
 add4(n) = add2(add2(n))
-main = add4(0)
+main() = add4(0)
 ''');
       checkResult(runtime, 4);
     });
@@ -71,7 +71,7 @@ main = add4(0)
     test('conditional with custom functions', () {
       final RuntimeFacade runtime = getRuntime('''
 classify(n) = if (n > 0) "positive" else if (n < 0) "negative" else "zero"
-main = classify(-5)
+main() = classify(-5)
 ''');
       checkResult(runtime, '"negative"');
     });
@@ -79,7 +79,7 @@ main = classify(-5)
     test('conditional zero case', () {
       final RuntimeFacade runtime = getRuntime('''
 classify(n) = if (n > 0) "positive" else if (n < 0) "negative" else "zero"
-main = classify(0)
+main() = classify(0)
 ''');
       checkResult(runtime, '"zero"');
     });
@@ -88,16 +88,16 @@ main = classify(0)
       final RuntimeFacade runtime = getRuntime('''
 sumList(xs) = list.reduce(xs, 0, num.add)
 average(xs) = sumList(xs) / list.length(xs)
-main = average([10, 20, 30])
+main() = average([10, 20, 30])
 ''');
       checkResult(runtime, 20.0);
     });
 
     test('parameterless custom function', () {
       final RuntimeFacade runtime = getRuntime('''
-pi = 3.14159
+pi() = 3.14159
 circleArea(r) = pi() * r * r
-main = circleArea(1)
+main() = circleArea(1)
 ''');
       checkResult(runtime, 3.14159);
     });
@@ -105,7 +105,7 @@ main = circleArea(1)
     test('conditional positive case', () {
       final RuntimeFacade runtime = getRuntime('''
 classify(n) = if (n > 0) "positive" else if (n < 0) "negative" else "zero"
-main = classify(5)
+main() = classify(5)
 ''');
       checkResult(runtime, '"positive"');
     });
@@ -113,7 +113,7 @@ main = classify(5)
     test('identity function', () {
       final RuntimeFacade runtime = getRuntime('''
 identity(x) = x
-main = identity(42)
+main() = identity(42)
 ''');
       checkResult(runtime, 42);
     });
@@ -121,7 +121,7 @@ main = identity(42)
     test('identity function with string', () {
       final RuntimeFacade runtime = getRuntime('''
 identity(x) = x
-main = identity("hello")
+main() = identity("hello")
 ''');
       checkResult(runtime, '"hello"');
     });
@@ -129,7 +129,7 @@ main = identity("hello")
     test('function returning list', () {
       final RuntimeFacade runtime = getRuntime('''
 pair(a, b) = [a, b]
-main = pair(1, 2)
+main() = pair(1, 2)
 ''');
       checkResult(runtime, [1, 2]);
     });
@@ -137,7 +137,7 @@ main = pair(1, 2)
     test('function returning map', () {
       final RuntimeFacade runtime = getRuntime('''
 makeEntry(k, v) = {k: v}
-main = makeEntry("name", "Alice")
+main() = makeEntry("name", "Alice")
 ''');
       checkResult(runtime, '{"name": "Alice"}');
     });
@@ -145,7 +145,7 @@ main = makeEntry("name", "Alice")
     test('function returning boolean', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main = isPositive(5)
+main() = isPositive(5)
 ''');
       checkResult(runtime, true);
     });
@@ -153,7 +153,7 @@ main = isPositive(5)
     test('function returning boolean false', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main = isPositive(-5)
+main() = isPositive(-5)
 ''');
       checkResult(runtime, false);
     });
@@ -161,7 +161,7 @@ main = isPositive(-5)
     test('function with map operations', () {
       final RuntimeFacade runtime = getRuntime('''
 getValue(m, k) = map.at(m, k)
-main = getValue({"x": 10, "y": 20}, "y")
+main() = getValue({"x": 10, "y": 20}, "y")
 ''');
       checkResult(runtime, 20);
     });
@@ -169,7 +169,7 @@ main = getValue({"x": 10, "y": 20}, "y")
     test('function with set operations', () {
       final RuntimeFacade runtime = getRuntime('''
 makeSet(xs) = set.new(xs)
-main = set.length(makeSet([1, 2, 2, 3]))
+main() = set.length(makeSet([1, 2, 2, 3]))
 ''');
       checkResult(runtime, 3);
     });
@@ -182,14 +182,14 @@ a(n) = n + 1
 b(n) = a(n) * 2
 c(n) = b(n) - 3
 d(n) = c(n) / 2
-main = d(5)
+main() = d(5)
 ''');
       checkResult(runtime, 4.5);
     });
 
     test('deeply nested core function calls', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = num.abs(num.negative(num.abs(num.negative(5))))',
+        'main() = num.abs(num.negative(num.abs(num.negative(5))))',
       );
       checkResult(runtime, 5);
     });
@@ -199,7 +199,7 @@ main = d(5)
 double(n) = n * 2
 stringify(n) = to.string(n)
 prefix(s) = str.concat("Value: ", s)
-main = prefix(stringify(double(21)))
+main() = prefix(stringify(double(21)))
 ''');
       checkResult(runtime, '"Value: 42"');
     });
@@ -208,7 +208,7 @@ main = prefix(stringify(double(21)))
       final RuntimeFacade runtime = getRuntime('''
 sum(xs) = list.reduce(xs, 0, num.add)
 double(n) = n * 2
-main = double(sum([1, 2, 3, 4, 5]))
+main() = double(sum([1, 2, 3, 4, 5]))
 ''');
       checkResult(runtime, 30);
     });
@@ -217,34 +217,34 @@ main = double(sum([1, 2, 3, 4, 5]))
   group('Parameterless Function Chains', () {
     test('multiple parameterless functions calling each other', () {
       final RuntimeFacade runtime = getRuntime('''
-base = 10
-doubled = base() * 2
-tripled = doubled() + base()
-main = tripled()
+base() = 10
+doubled() = base() * 2
+tripled() = doubled() + base()
+main() = tripled()
 ''');
       checkResult(runtime, 30);
     });
 
     test('parameterless function returning list', () {
       final RuntimeFacade runtime = getRuntime('''
-numbers = [1, 2, 3, 4, 5]
-main = list.length(numbers())
+numbers() = [1, 2, 3, 4, 5]
+main() = list.length(numbers())
 ''');
       checkResult(runtime, 5);
     });
 
     test('parameterless function returning map', () {
       final RuntimeFacade runtime = getRuntime('''
-config = {"name": "test", "value": 42}
-main = map.at(config(), "value")
+config() = {"name": "test", "value": 42}
+main() = map.at(config(), "value")
 ''');
       checkResult(runtime, 42);
     });
 
     test('parameterless function returning empty list', () {
       final RuntimeFacade runtime = getRuntime('''
-empty = []
-main = list.length(empty())
+empty() = []
+main() = list.length(empty())
 ''');
       checkResult(runtime, 0);
     });
@@ -254,7 +254,7 @@ main = list.length(empty())
     test('composition with empty string', () {
       final RuntimeFacade runtime = getRuntime('''
 wrap(s) = str.concat("[", str.concat(s, "]"))
-main = wrap("")
+main() = wrap("")
 ''');
       checkResult(runtime, '"[]"');
     });
@@ -263,7 +263,7 @@ main = wrap("")
       final RuntimeFacade runtime = getRuntime('''
 count(xs) = list.length(xs)
 double(n) = n * 2
-main = double(count([]))
+main() = double(count([]))
 ''');
       checkResult(runtime, 0);
     });
@@ -272,7 +272,7 @@ main = double(count([]))
       final RuntimeFacade runtime = getRuntime('''
 getFirst(xs) = list.first(xs)
 double(n) = n * 2
-main = double(getFirst([21]))
+main() = double(getFirst([21]))
 ''');
       checkResult(runtime, 42);
     });
@@ -280,7 +280,7 @@ main = double(getFirst([21]))
     test('composition with boundary number', () {
       final RuntimeFacade runtime = getRuntime('''
 addOne(n) = n + 1
-main = addOne(0)
+main() = addOne(0)
 ''');
       checkResult(runtime, 1);
     });
@@ -289,7 +289,7 @@ main = addOne(0)
       final RuntimeFacade runtime = getRuntime('''
 subtract(a, b) = a - b
 double(n) = n * 2
-main = double(subtract(3, 10))
+main() = double(subtract(3, 10))
 ''');
       checkResult(runtime, -14);
     });
@@ -299,7 +299,7 @@ main = double(subtract(3, 10))
     test('try catches error in composed function', () {
       final RuntimeFacade runtime = getRuntime('''
 safeDivide(a, b) = try(a / b, 0)
-main = safeDivide(10, 0)
+main() = safeDivide(10, 0)
 ''');
       checkResult(runtime, 0);
     });
@@ -308,7 +308,7 @@ main = safeDivide(10, 0)
       final RuntimeFacade runtime = getRuntime('''
 getFirst(xs) = list.first(xs)
 safeFirst(xs) = try(getFirst(xs), -1)
-main = safeFirst([])
+main() = safeFirst([])
 ''');
       checkResult(runtime, -1);
     });
@@ -317,7 +317,7 @@ main = safeFirst([])
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
 unsafe(xs) = double(list.first(xs))
-main = try(unsafe([]), 0)
+main() = try(unsafe([]), 0)
 ''');
       checkResult(runtime, 0);
     });
@@ -326,7 +326,7 @@ main = try(unsafe([]), 0)
       final RuntimeFacade runtime = getRuntime('''
 parse(s) = try(to.number(s), 0)
 double(n) = n * 2
-main = double(parse("abc"))
+main() = double(parse("abc"))
 ''');
       checkResult(runtime, 0);
     });
@@ -336,7 +336,7 @@ main = double(parse("abc"))
     test('function with multiple conditional branches', () {
       final RuntimeFacade runtime = getRuntime('''
 grade(score) = if (score >= 90) "A" else if (score >= 80) "B" else if (score >= 70) "C" else if (score >= 60) "D" else "F"
-main = grade(75)
+main() = grade(75)
 ''');
       checkResult(runtime, '"C"');
     });
@@ -344,7 +344,7 @@ main = grade(75)
     test('grade function boundary at A', () {
       final RuntimeFacade runtime = getRuntime('''
 grade(score) = if (score >= 90) "A" else if (score >= 80) "B" else if (score >= 70) "C" else if (score >= 60) "D" else "F"
-main = grade(90)
+main() = grade(90)
 ''');
       checkResult(runtime, '"A"');
     });
@@ -352,7 +352,7 @@ main = grade(90)
     test('grade function boundary at F', () {
       final RuntimeFacade runtime = getRuntime('''
 grade(score) = if (score >= 90) "A" else if (score >= 80) "B" else if (score >= 70) "C" else if (score >= 60) "D" else "F"
-main = grade(59)
+main() = grade(59)
 ''');
       checkResult(runtime, '"F"');
     });
@@ -360,7 +360,7 @@ main = grade(59)
     test('function using logical operators', () {
       final RuntimeFacade runtime = getRuntime('''
 inRange(n, lo, hi) = (n >= lo) && (n <= hi)
-main = inRange(5, 1, 10)
+main() = inRange(5, 1, 10)
 ''');
       checkResult(runtime, true);
     });
@@ -368,7 +368,7 @@ main = inRange(5, 1, 10)
     test('function using logical operators out of range', () {
       final RuntimeFacade runtime = getRuntime('''
 inRange(n, lo, hi) = (n >= lo) && (n <= hi)
-main = inRange(15, 1, 10)
+main() = inRange(15, 1, 10)
 ''');
       checkResult(runtime, false);
     });
@@ -376,7 +376,7 @@ main = inRange(15, 1, 10)
     test('function using or operator', () {
       final RuntimeFacade runtime = getRuntime('''
 isEdge(n, lo, hi) = (n == lo) || (n == hi)
-main = isEdge(10, 1, 10)
+main() = isEdge(10, 1, 10)
 ''');
       checkResult(runtime, true);
     });
@@ -384,7 +384,7 @@ main = isEdge(10, 1, 10)
     test('function using not operator', () {
       final RuntimeFacade runtime = getRuntime('''
 isNonPositive(n) = !(n > 0)
-main = isNonPositive(-5)
+main() = isNonPositive(-5)
 ''');
       checkResult(runtime, true);
     });
@@ -392,7 +392,7 @@ main = isNonPositive(-5)
     test('function with list concatenation', () {
       final RuntimeFacade runtime = getRuntime('''
 combine(xs, ys) = list.concat(xs, ys)
-main = combine([1, 2], [3, 4])
+main() = combine([1, 2], [3, 4])
 ''');
       checkResult(runtime, [1, 2, 3, 4]);
     });
@@ -400,7 +400,7 @@ main = combine([1, 2], [3, 4])
     test('function with nested list access', () {
       final RuntimeFacade runtime = getRuntime('''
 getNestedValue(xs, i, j) = xs[i][j]
-main = getNestedValue([[1, 2], [3, 4]], 1, 0)
+main() = getNestedValue([[1, 2], [3, 4]], 1, 0)
 ''');
       checkResult(runtime, 3);
     });
@@ -408,7 +408,7 @@ main = getNestedValue([[1, 2], [3, 4]], 1, 0)
     test('grade function boundary at B', () {
       final RuntimeFacade runtime = getRuntime('''
 grade(score) = if (score >= 90) "A" else if (score >= 80) "B" else if (score >= 70) "C" else if (score >= 60) "D" else "F"
-main = grade(80)
+main() = grade(80)
 ''');
       checkResult(runtime, '"B"');
     });
@@ -416,7 +416,7 @@ main = grade(80)
     test('grade function boundary at D', () {
       final RuntimeFacade runtime = getRuntime('''
 grade(score) = if (score >= 90) "A" else if (score >= 80) "B" else if (score >= 70) "C" else if (score >= 60) "D" else "F"
-main = grade(60)
+main() = grade(60)
 ''');
       checkResult(runtime, '"D"');
     });
@@ -424,7 +424,7 @@ main = grade(60)
     test('grade function boundary just below B', () {
       final RuntimeFacade runtime = getRuntime('''
 grade(score) = if (score >= 90) "A" else if (score >= 80) "B" else if (score >= 70) "C" else if (score >= 60) "D" else "F"
-main = grade(79)
+main() = grade(79)
 ''');
       checkResult(runtime, '"C"');
     });
@@ -432,7 +432,7 @@ main = grade(79)
     test('inRange at lower boundary', () {
       final RuntimeFacade runtime = getRuntime('''
 inRange(n, lo, hi) = (n >= lo) && (n <= hi)
-main = inRange(1, 1, 10)
+main() = inRange(1, 1, 10)
 ''');
       checkResult(runtime, true);
     });
@@ -440,7 +440,7 @@ main = inRange(1, 1, 10)
     test('inRange at upper boundary', () {
       final RuntimeFacade runtime = getRuntime('''
 inRange(n, lo, hi) = (n >= lo) && (n <= hi)
-main = inRange(10, 1, 10)
+main() = inRange(10, 1, 10)
 ''');
       checkResult(runtime, true);
     });
@@ -448,7 +448,7 @@ main = inRange(10, 1, 10)
     test('inRange below lower boundary', () {
       final RuntimeFacade runtime = getRuntime('''
 inRange(n, lo, hi) = (n >= lo) && (n <= hi)
-main = inRange(0, 1, 10)
+main() = inRange(0, 1, 10)
 ''');
       checkResult(runtime, false);
     });
@@ -456,7 +456,7 @@ main = inRange(0, 1, 10)
     test('isEdge when n is neither lo nor hi', () {
       final RuntimeFacade runtime = getRuntime('''
 isEdge(n, lo, hi) = (n == lo) || (n == hi)
-main = isEdge(5, 1, 10)
+main() = isEdge(5, 1, 10)
 ''');
       checkResult(runtime, false);
     });
@@ -464,7 +464,7 @@ main = isEdge(5, 1, 10)
     test('isEdge when n equals lo', () {
       final RuntimeFacade runtime = getRuntime('''
 isEdge(n, lo, hi) = (n == lo) || (n == hi)
-main = isEdge(1, 1, 10)
+main() = isEdge(1, 1, 10)
 ''');
       checkResult(runtime, true);
     });
@@ -472,7 +472,7 @@ main = isEdge(1, 1, 10)
     test('function using not operator with true', () {
       final RuntimeFacade runtime = getRuntime('''
 isNonPositive(n) = !(n > 0)
-main = isNonPositive(5)
+main() = isNonPositive(5)
 ''');
       checkResult(runtime, false);
     });
@@ -480,7 +480,7 @@ main = isNonPositive(5)
     test('function with string concatenation operator', () {
       final RuntimeFacade runtime = getRuntime('''
 greet(name) = "Hello, " + name + "!"
-main = greet("World")
+main() = greet("World")
 ''');
       checkResult(runtime, '"Hello, World!"');
     });
@@ -488,7 +488,7 @@ main = greet("World")
     test('function with comparison returning different types', () {
       final RuntimeFacade runtime = getRuntime('''
 describe(n) = if (n > 0) "positive" else if (n < 0) "negative" else 0
-main = describe(0)
+main() = describe(0)
 ''');
       checkResult(runtime, 0);
     });
@@ -496,7 +496,7 @@ main = describe(0)
     test('function with many parameters', () {
       final RuntimeFacade runtime = getRuntime('''
 sum6(a, b, c, d, e, f) = a + b + c + d + e + f
-main = sum6(1, 2, 3, 4, 5, 6)
+main() = sum6(1, 2, 3, 4, 5, 6)
 ''');
       checkResult(runtime, 21);
     });
@@ -507,7 +507,7 @@ main = sum6(1, 2, 3, 4, 5, 6)
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
 apply(f, x) = f(x)
-main = apply(add, 1)
+main() = apply(add, 1)
 ''');
       expect(
         runtime.executeMain,
@@ -525,7 +525,7 @@ main = apply(add, 1)
       final RuntimeFacade runtime = getRuntime('''
 identity(x) = x
 apply3(f, a, b, c) = f(a, b, c)
-main = apply3(identity, 1, 2, 3)
+main() = apply3(identity, 1, 2, 3)
 ''');
       expect(
         runtime.executeMain,
@@ -542,8 +542,8 @@ main = apply3(identity, 1, 2, 3)
     test('undefined function in dynamic call throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 wrap(f, x) = f(x)
-getValue = 42
-main = wrap(getValue(), 5)
+getValue() = 42
+main() = wrap(getValue(), 5)
 ''');
       expect(
         runtime.executeMain,
@@ -554,7 +554,7 @@ main = wrap(getValue(), 5)
     test('type mismatch in function argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
-main = double("not a number")
+main() = double("not a number")
 ''');
       expect(
         runtime.executeMain,
@@ -566,51 +566,51 @@ main = double("not a number")
   group('Parameterless Function Variations', () {
     test('parameterless function returning boolean', () {
       final RuntimeFacade runtime = getRuntime('''
-alwaysTrue = true
-main = alwaysTrue()
+alwaysTrue() = true
+main() = alwaysTrue()
 ''');
       checkResult(runtime, true);
     });
 
     test('parameterless function returning negative number', () {
       final RuntimeFacade runtime = getRuntime('''
-negativeValue = -42
-main = negativeValue()
+negativeValue() = -42
+main() = negativeValue()
 ''');
       checkResult(runtime, -42);
     });
 
     test('parameterless function returning decimal', () {
       final RuntimeFacade runtime = getRuntime('''
-piApprox = 3.14159
-main = piApprox()
+piApprox() = 3.14159
+main() = piApprox()
 ''');
       checkResult(runtime, 3.14159);
     });
 
     test('parameterless function returning empty map', () {
       final RuntimeFacade runtime = getRuntime('''
-emptyMap = {}
-main = map.length(emptyMap())
+emptyMap() = {}
+main() = map.length(emptyMap())
 ''');
       checkResult(runtime, 0);
     });
 
     test('parameterless function returning set', () {
       final RuntimeFacade runtime = getRuntime('''
-uniqueNumbers = set.new([1, 2, 3])
-main = set.length(uniqueNumbers())
+uniqueNumbers() = set.new([1, 2, 3])
+main() = set.length(uniqueNumbers())
 ''');
       checkResult(runtime, 3);
     });
 
     test('chained parameterless function calls', () {
       final RuntimeFacade runtime = getRuntime('''
-a = 1
-b = a() + 1
-c = b() + 1
-d = c() + 1
-main = d()
+a() = 1
+b() = a() + 1
+c() = b() + 1
+d() = c() + 1
+main() = d()
 ''');
       checkResult(runtime, 4);
     });
@@ -621,7 +621,7 @@ main = d()
       final RuntimeFacade runtime = getRuntime('''
 numberToString(n) = to.string(n)
 addPrefix(s) = str.concat("Value: ", s)
-main = addPrefix(numberToString(42))
+main() = addPrefix(numberToString(42))
 ''');
       checkResult(runtime, '"Value: 42"');
     });
@@ -630,7 +630,7 @@ main = addPrefix(numberToString(42))
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
 boolToString(b) = to.string(b)
-main = boolToString(isPositive(-5))
+main() = boolToString(isPositive(-5))
 ''');
       checkResult(runtime, '"false"');
     });
@@ -638,7 +638,7 @@ main = boolToString(isPositive(-5))
     test('function with nested conditional and arithmetic', () {
       final RuntimeFacade runtime = getRuntime('''
 clamp(n, minVal, maxVal) = if (n < minVal) minVal else if (n > maxVal) maxVal else n
-main = clamp(150, 0, 100)
+main() = clamp(150, 0, 100)
 ''');
       checkResult(runtime, 100);
     });
@@ -646,7 +646,7 @@ main = clamp(150, 0, 100)
     test('clamp function returns input when in range', () {
       final RuntimeFacade runtime = getRuntime('''
 clamp(n, minVal, maxVal) = if (n < minVal) minVal else if (n > maxVal) maxVal else n
-main = clamp(50, 0, 100)
+main() = clamp(50, 0, 100)
 ''');
       checkResult(runtime, 50);
     });
@@ -654,7 +654,7 @@ main = clamp(50, 0, 100)
     test('clamp function returns min when below range', () {
       final RuntimeFacade runtime = getRuntime('''
 clamp(n, minVal, maxVal) = if (n < minVal) minVal else if (n > maxVal) maxVal else n
-main = clamp(-50, 0, 100)
+main() = clamp(-50, 0, 100)
 ''');
       checkResult(runtime, 0);
     });
@@ -662,7 +662,7 @@ main = clamp(-50, 0, 100)
     test('function returning list from computation', () {
       final RuntimeFacade runtime = getRuntime('''
 range(start, endVal) = if (start >= endVal) [] else list.insertStart(range(start + 1, endVal), start)
-main = range(1, 5)
+main() = range(1, 5)
 ''');
       checkResult(runtime, [1, 2, 3, 4]);
     });
@@ -671,7 +671,7 @@ main = range(1, 5)
       final RuntimeFacade runtime = getRuntime('''
 createPerson(name, age) = {"name": name, "age": age}
 getName(person) = map.at(person, "name")
-main = getName(createPerson("Alice", 30))
+main() = getName(createPerson("Alice", 30))
 ''');
       checkResult(runtime, '"Alice"');
     });
@@ -681,7 +681,7 @@ main = getName(createPerson("Alice", 30))
 createList(x) = [x]
 getFirst(xs) = list.first(xs)
 double(n) = n * 2
-main = double(getFirst(createList(21)))
+main() = double(getFirst(createList(21)))
 ''');
       checkResult(runtime, 42);
     });
@@ -691,7 +691,7 @@ main = double(getFirst(createList(21)))
     test('function handling zero in division', () {
       final RuntimeFacade runtime = getRuntime('''
 safeDivide(a, b) = if (b == 0) 0 else a / b
-main = safeDivide(10, 0)
+main() = safeDivide(10, 0)
 ''');
       checkResult(runtime, 0);
     });
@@ -699,7 +699,7 @@ main = safeDivide(10, 0)
     test('function with very large number', () {
       final RuntimeFacade runtime = getRuntime('''
 addLarge(n) = n + 1000000000
-main = addLarge(1)
+main() = addLarge(1)
 ''');
       checkResult(runtime, 1000000001);
     });
@@ -707,7 +707,7 @@ main = addLarge(1)
     test('function with very small decimal', () {
       final RuntimeFacade runtime = getRuntime('''
 addSmall(n) = n + 0.000001
-main = addSmall(0)
+main() = addSmall(0)
 ''');
       checkResult(runtime, 0.000001);
     });
@@ -715,7 +715,7 @@ main = addSmall(0)
     test('function preserving unicode in string', () {
       final RuntimeFacade runtime = getRuntime('''
 addEmoji(s) = str.concat(s, " \u2764")
-main = addEmoji("Hello")
+main() = addEmoji("Hello")
 ''');
       checkResult(runtime, '"Hello \u2764"');
     });
@@ -723,7 +723,7 @@ main = addEmoji("Hello")
     test('function with empty string parameter', () {
       final RuntimeFacade runtime = getRuntime('''
 wrapInBrackets(s) = str.concat("[", str.concat(s, "]"))
-main = wrapInBrackets("")
+main() = wrapInBrackets("")
 ''');
       checkResult(runtime, '"[]"');
     });
@@ -731,7 +731,7 @@ main = wrapInBrackets("")
     test('function with whitespace string', () {
       final RuntimeFacade runtime = getRuntime('''
 trimAndLength(s) = str.length(str.trim(s))
-main = trimAndLength("   ")
+main() = trimAndLength("   ")
 ''');
       checkResult(runtime, 0);
     });
@@ -745,7 +745,7 @@ level2(n) = level1(n) + 1
 level3(n) = level2(n) + 1
 level4(n) = level3(n) + 1
 level5(n) = level4(n) + 1
-main = level5(0)
+main() = level5(0)
 ''');
       checkResult(runtime, 5);
     });
@@ -756,7 +756,7 @@ addOne(n) = n + 1
 double(n) = n * 2
 triple(n) = n * 3
 combined(n) = addOne(n) + double(n) + triple(n)
-main = combined(10)
+main() = combined(10)
 ''');
       checkResult(runtime, 61);
     });
@@ -767,7 +767,7 @@ base(n) = n
 left(n) = base(n) + 1
 right(n) = base(n) + 2
 combined(n) = left(n) + right(n)
-main = combined(10)
+main() = combined(10)
 ''');
       checkResult(runtime, 23);
     });
@@ -776,7 +776,7 @@ main = combined(10)
       final RuntimeFacade runtime = getRuntime('''
 countDown(n) = if (n <= 0) 0 else helper(n)
 helper(n) = countDown(n - 1) + 1
-main = countDown(5)
+main() = countDown(5)
 ''');
       checkResult(runtime, 5);
     });
@@ -786,7 +786,7 @@ main = countDown(5)
     test('composition with modulo operator', () {
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = n % 2 == 0
-main = isEven(4)
+main() = isEven(4)
 ''');
       checkResult(runtime, true);
     });
@@ -794,7 +794,7 @@ main = isEven(4)
     test('composition with modulo operator odd case', () {
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = n % 2 == 0
-main = isEven(5)
+main() = isEven(5)
 ''');
       checkResult(runtime, false);
     });
@@ -802,7 +802,7 @@ main = isEven(5)
     test('composition with greater than or equal', () {
       final RuntimeFacade runtime = getRuntime('''
 isAdult(age) = age >= 18
-main = isAdult(18)
+main() = isAdult(18)
 ''');
       checkResult(runtime, true);
     });
@@ -810,7 +810,7 @@ main = isAdult(18)
     test('composition with less than or equal', () {
       final RuntimeFacade runtime = getRuntime('''
 isMinor(age) = age <= 17
-main = isMinor(17)
+main() = isMinor(17)
 ''');
       checkResult(runtime, true);
     });
@@ -818,7 +818,7 @@ main = isMinor(17)
     test('composition with not equal', () {
       final RuntimeFacade runtime = getRuntime('''
 isNotZero(n) = n != 0
-main = isNotZero(5)
+main() = isNotZero(5)
 ''');
       checkResult(runtime, true);
     });
@@ -826,7 +826,7 @@ main = isNotZero(5)
     test('composition with not equal false case', () {
       final RuntimeFacade runtime = getRuntime('''
 isNotZero(n) = n != 0
-main = isNotZero(0)
+main() = isNotZero(0)
 ''');
       checkResult(runtime, false);
     });
@@ -835,7 +835,7 @@ main = isNotZero(0)
       final RuntimeFacade runtime = getRuntime('''
 negate(n) = -n
 doubleNegate(n) = negate(negate(n))
-main = doubleNegate(5)
+main() = doubleNegate(5)
 ''');
       checkResult(runtime, 5);
     });
@@ -847,7 +847,7 @@ main = doubleNegate(5)
 isValidAge(age) = (age >= 0) && (age <= 120)
 isWorking(age) = (age >= 18) && (age <= 65)
 isWorkingAdult(age) = isValidAge(age) && isWorking(age)
-main = isWorkingAdult(30)
+main() = isWorkingAdult(30)
 ''');
       checkResult(runtime, true);
     });
@@ -857,7 +857,7 @@ main = isWorkingAdult(30)
 isValidAge(age) = (age >= 0) && (age <= 120)
 isWorking(age) = (age >= 18) && (age <= 65)
 isWorkingAdult(age) = isValidAge(age) && isWorking(age)
-main = isWorkingAdult(10)
+main() = isWorkingAdult(10)
 ''');
       checkResult(runtime, false);
     });
@@ -865,7 +865,7 @@ main = isWorkingAdult(10)
     test('function with triple or', () {
       final RuntimeFacade runtime = getRuntime('''
 isSpecial(n) = (n == 1) || (n == 7) || (n == 13)
-main = isSpecial(7)
+main() = isSpecial(7)
 ''');
       checkResult(runtime, true);
     });
@@ -873,7 +873,7 @@ main = isSpecial(7)
     test('isSpecial with non-special number', () {
       final RuntimeFacade runtime = getRuntime('''
 isSpecial(n) = (n == 1) || (n == 7) || (n == 13)
-main = isSpecial(5)
+main() = isSpecial(5)
 ''');
       checkResult(runtime, false);
     });
@@ -881,7 +881,7 @@ main = isSpecial(5)
     test('function with complex boolean expression', () {
       final RuntimeFacade runtime = getRuntime('''
 isValid(x, y) = ((x > 0) && (y > 0)) || ((x < 0) && (y < 0))
-main = isValid(5, 10)
+main() = isValid(5, 10)
 ''');
       checkResult(runtime, true);
     });
@@ -889,7 +889,7 @@ main = isValid(5, 10)
     test('isValid with mixed signs returns false', () {
       final RuntimeFacade runtime = getRuntime('''
 isValid(x, y) = ((x > 0) && (y > 0)) || ((x < 0) && (y < 0))
-main = isValid(5, -10)
+main() = isValid(5, -10)
 ''');
       checkResult(runtime, false);
     });
@@ -897,7 +897,7 @@ main = isValid(5, -10)
     test('isValid with both negative returns true', () {
       final RuntimeFacade runtime = getRuntime('''
 isValid(x, y) = ((x > 0) && (y > 0)) || ((x < 0) && (y < 0))
-main = isValid(-5, -10)
+main() = isValid(-5, -10)
 ''');
       checkResult(runtime, true);
     });
@@ -907,7 +907,7 @@ main = isValid(-5, -10)
     test('function returning nested list', () {
       final RuntimeFacade runtime = getRuntime('''
 makeMatrix(a, b, c, d) = [[a, b], [c, d]]
-main = makeMatrix(1, 2, 3, 4)
+main() = makeMatrix(1, 2, 3, 4)
 ''');
       checkResult(runtime, [
         [1, 2],
@@ -918,7 +918,7 @@ main = makeMatrix(1, 2, 3, 4)
     test('function returning nested map', () {
       final RuntimeFacade runtime = getRuntime('''
 makePerson(name, city, country) = {"name": name, "address": {"city": city, "country": country}}
-main = makePerson("Alice", "Paris", "France")
+main() = makePerson("Alice", "Paris", "France")
 ''');
       checkResult(
         runtime,
@@ -929,7 +929,7 @@ main = makePerson("Alice", "Paris", "France")
     test('function returning list of maps', () {
       final RuntimeFacade runtime = getRuntime('''
 makeItems(n1, n2) = [{"value": n1}, {"value": n2}]
-main = makeItems(10, 20)
+main() = makeItems(10, 20)
 ''');
       checkResult(runtime, '[{"value": 10}, {"value": 20}]');
     });
@@ -937,7 +937,7 @@ main = makeItems(10, 20)
     test('function returning map with list value', () {
       final RuntimeFacade runtime = getRuntime('''
 makeContainer(xs) = {"items": xs, "count": list.length(xs)}
-main = makeContainer([1, 2, 3])
+main() = makeContainer([1, 2, 3])
 ''');
       checkResult(runtime, '{"items": [1, 2, 3], "count": 3}');
     });
@@ -948,7 +948,7 @@ main = makeContainer([1, 2, 3])
       final RuntimeFacade runtime = getRuntime('''
 divide(a, b) = a / b
 safeDivide(a, b) = try(divide(a, b), 0)
-main = safeDivide(10, 0)
+main() = safeDivide(10, 0)
 ''');
       checkResult(runtime, 0);
     });
@@ -957,7 +957,7 @@ main = safeDivide(10, 0)
       final RuntimeFacade runtime = getRuntime('''
 getElement(xs, i) = xs[i]
 safeGet(xs, i) = try(getElement(xs, i), -1)
-main = safeGet([1, 2, 3], 10)
+main() = safeGet([1, 2, 3], 10)
 ''');
       checkResult(runtime, -1);
     });
@@ -966,7 +966,7 @@ main = safeGet([1, 2, 3], 10)
       final RuntimeFacade runtime = getRuntime('''
 getKey(m, k) = map.at(m, k)
 safeGetKey(m, k) = try(getKey(m, k), "not found")
-main = safeGetKey({"a": 1}, "b")
+main() = safeGetKey({"a": 1}, "b")
 ''');
       checkResult(runtime, '"not found"');
     });
@@ -976,7 +976,7 @@ main = safeGetKey({"a": 1}, "b")
 mayFail1(x) = if (x < 0) error.throw(0, "negative") else x
 mayFail2(x) = if (x > 100) error.throw(0, "too large") else x
 validate(x) = try(mayFail1(try(mayFail2(x), 50)), 0)
-main = validate(150)
+main() = validate(150)
 ''');
       checkResult(runtime, 50);
     });
@@ -986,7 +986,7 @@ main = validate(150)
 mayFail1(x) = if (x < 0) error.throw(0, "negative") else x
 mayFail2(x) = if (x > 100) error.throw(0, "too large") else x
 validate(x) = try(mayFail1(try(mayFail2(x), -10)), 0)
-main = validate(150)
+main() = validate(150)
 ''');
       checkResult(runtime, 0);
     });

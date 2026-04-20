@@ -15,4 +15,4 @@ fibonacci.helper(n) = if ((n == 1) || (n == 2))
                       else
                           fibonacci.helper(n - 1) + fibonacci.helper(n - 2)
 
-main = fibonacci(10)
+main() = fibonacci(10)

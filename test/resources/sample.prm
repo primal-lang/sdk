@@ -1,12 +1,14 @@
-greeting = "Hello, world!"
+#!/usr/bin/env primal
 
-farewell = 'Goodbye, world!'
+greeting() = "Hello, world!"
 
-pi = 3.14
+farewell() = 'Goodbye, world!'
 
-rationalNumber = pi
+pi() = 3.14
 
-isToday = true
+rationalNumber() = pi()
+
+isToday() = true
 
 // Returns true if x is equal to zero
 isZero(x) = x == 0
@@ -29,4 +31,4 @@ factorial(n) = if (n < 0)
 			   else
                    n * factorial(n - 1)
 
-main = factorial(4)
+main() = factorial(4)

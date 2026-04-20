@@ -33,7 +33,9 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     final Term b = arguments[1].reduce();
 
     if ((a is TimestampTerm) && (b is TimestampTerm)) {
-      return NumberTerm(a.value.compareTo(b.value));
+      final int comparison = a.value.compareTo(b.value);
+
+      return NumberTerm(comparison.sign);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

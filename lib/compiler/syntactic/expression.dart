@@ -122,3 +122,48 @@ class CallExpression extends Expression {
   @override
   String toString() => '$callee(${arguments.join(', ')})';
 }
+
+class LetBindingExpression extends Located {
+  final String name;
+  final Expression value;
+
+  const LetBindingExpression({
+    required super.location,
+    required this.name,
+    required this.value,
+  });
+
+  @override
+  String toString() => '$name = $value';
+}
+
+class LetExpression extends Expression {
+  final List<LetBindingExpression> bindings;
+  final Expression body;
+
+  const LetExpression({
+    required super.location,
+    required this.bindings,
+    required this.body,
+  });
+
+  @override
+  String toString() {
+    final String bindingsString = bindings.join(', ');
+    return 'let $bindingsString in $body';
+  }
+}
+
+class LambdaExpression extends Expression {
+  final List<String> parameters;
+  final Expression body;
+
+  const LambdaExpression({
+    required super.location,
+    required this.parameters,
+    required this.body,
+  });
+
+  @override
+  String toString() => '(${parameters.join(', ')}) -> $body';
+}

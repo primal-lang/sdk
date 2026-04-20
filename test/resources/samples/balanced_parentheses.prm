@@ -18,4 +18,4 @@ balancedParenthesis.helper(list, stack) =
     else
         error.throw(-1, 'Invalid element in the list: "' + str.first(list) + '"')
 
-main = balancedParenthesis("((((()()(()))())))")
+main() = balancedParenthesis("((((()()(()))())))")

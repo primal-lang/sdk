@@ -1,0 +1,66 @@
+import 'package:primal/compiler/errors/runtime_error.dart';
+import 'package:primal/compiler/library/comparison/comp_eq.dart';
+import 'package:primal/compiler/models/parameter.dart';
+import 'package:primal/compiler/runtime/term.dart';
+
+class ListDistinct extends NativeFunctionTerm {
+  const ListDistinct()
+    : super(
+        name: 'list.distinct',
+        parameters: const [Parameter.list('a')],
+      );
+
+  @override
+  Term term(List<Term> arguments) => TermWithArguments(
+    name: name,
+    parameters: parameters,
+    arguments: arguments,
+  );
+}
+
+class TermWithArguments extends NativeFunctionTermWithArguments {
+  const TermWithArguments({
+    required super.name,
+    required super.parameters,
+    required super.arguments,
+  });
+
+  @override
+  Term reduce() {
+    final Term a = arguments[0].reduce();
+
+    if (a is ListTerm) {
+      final List<Term> result = [];
+
+      for (final Term element in a.value) {
+        final Term reduced = element.reduce();
+        bool isDuplicate = false;
+
+        for (final Term existing in result) {
+          final BooleanTerm comparison = CompEq.execute(
+            function: this,
+            a: reduced,
+            b: existing,
+          );
+
+          if (comparison.value) {
+            isDuplicate = true;
+            break;
+          }
+        }
+
+        if (!isDuplicate) {
+          result.add(reduced);
+        }
+      }
+
+      return ListTerm(result);
+    } else {
+      throw InvalidArgumentTypesError(
+        function: name,
+        expected: parameterTypes,
+        actual: [a.type],
+      );
+    }
+  }
+}

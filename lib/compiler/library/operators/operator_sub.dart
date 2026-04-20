@@ -55,6 +55,12 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
         a: a,
         b: b,
       );
+    } else if ((a is DurationTerm) && (b is DurationTerm)) {
+      final Duration result = a.value - b.value;
+      if (result.isNegative) {
+        throw NegativeDurationError(function: name);
+      }
+      return DurationTerm(result);
     } else {
       throw InvalidArgumentTypesError(
         function: name,

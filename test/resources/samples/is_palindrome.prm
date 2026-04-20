@@ -3,7 +3,11 @@
   Output: true if the string is a palindrome, false otherwise
 */
 
-isPalindrome(string) = isPalindrome.helper(string, 0, str.length(string) - 1)
+isPalindrome(string) =
+    let
+        end = str.length(string) - 1
+    in
+        isPalindrome.helper(string, 0, end)
 
 isPalindrome.helper(string, start, end) =
     if (start >= end)
@@ -13,4 +17,4 @@ isPalindrome.helper(string, start, end) =
     else
         isPalindrome.helper(string, start + 1, end - 1)
 
-main = isPalindrome("level")
+main() = isPalindrome("level")

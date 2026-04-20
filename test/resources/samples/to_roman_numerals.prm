@@ -34,4 +34,4 @@ toRoman(n) = if (n < 0)
              else
                  ""
 
-main = toRoman(1984)
+main() = toRoman(1984)

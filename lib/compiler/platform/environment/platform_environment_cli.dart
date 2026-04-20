@@ -4,4 +4,7 @@ import 'package:primal/compiler/platform/environment/platform_environment_base.d
 class PlatformEnvironmentCli extends PlatformEnvironmentBase {
   @override
   String getVariable(String name) => Platform.environment[name] ?? '';
+
+  @override
+  bool hasVariable(String name) => Platform.environment.containsKey(name);
 }

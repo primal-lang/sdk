@@ -109,7 +109,7 @@ void main() {
 
     test('Shebang line is skipped', () {
       final List<Character> result = const SourceReader(
-        '#!/usr/bin/env primal\nmain = 42',
+        '#!/usr/bin/env primal\nmain() = 42',
       ).analyze();
       // First character should be from the second line
       expect(result[0].value, equals('m'));
@@ -119,7 +119,7 @@ void main() {
 
     test('Shebang only skips first line', () {
       final List<Character> result = const SourceReader(
-        'main = 1\n#!/usr/bin/env primal',
+        'main() = 1\n#!/usr/bin/env primal',
       ).analyze();
       // First line is processed normally
       expect(result[0].value, equals('m'));
@@ -620,7 +620,7 @@ void main() {
     });
 
     test('Input property preserves shebang before analysis', () {
-      const String source = '#!/bin/sh\nmain = 1';
+      const String source = '#!/bin/sh\nmain() = 1';
       const SourceReader reader = SourceReader(source);
       expect(reader.input, equals(source));
     });

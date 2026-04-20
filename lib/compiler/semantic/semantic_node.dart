@@ -101,15 +101,20 @@ class SemanticIdentifierNode extends SemanticNode {
   String toString() => name;
 }
 
-/// A reference to a bound parameter within a function body.
+/// A reference to a bound variable (parameter or let binding) within a function body.
 ///
-/// Created during semantic analysis when an identifier matches a parameter name.
+/// Created during semantic analysis when an identifier matches a parameter name
+/// or a let binding name.
 class SemanticBoundVariableNode extends SemanticNode {
   final String name;
+  final bool isLetBinding;
+  final bool isLambdaParameter;
 
   const SemanticBoundVariableNode({
     required super.location,
     required this.name,
+    this.isLetBinding = false,
+    this.isLambdaParameter = false,
   });
 
   @override
@@ -129,4 +134,53 @@ class SemanticCallNode extends SemanticNode {
 
   @override
   String toString() => '$callee(${arguments.join(', ')})';
+}
+
+/// A single binding within a let expression.
+class SemanticLetBindingNode {
+  final String name;
+  final SemanticNode value;
+  final Location location;
+
+  const SemanticLetBindingNode({
+    required this.name,
+    required this.value,
+    required this.location,
+  });
+
+  @override
+  String toString() => '$name = $value';
+}
+
+/// A let expression with local bindings.
+class SemanticLetNode extends SemanticNode {
+  final List<SemanticLetBindingNode> bindings;
+  final SemanticNode body;
+
+  const SemanticLetNode({
+    required super.location,
+    required this.bindings,
+    required this.body,
+  });
+
+  @override
+  String toString() {
+    final String bindingsString = bindings.join(', ');
+    return 'let $bindingsString in $body';
+  }
+}
+
+/// A lambda expression with parameters and body.
+class SemanticLambdaNode extends SemanticNode {
+  final List<String> parameters;
+  final SemanticNode body;
+
+  const SemanticLambdaNode({
+    required super.location,
+    required this.parameters,
+    required this.body,
+  });
+
+  @override
+  String toString() => '(${parameters.join(', ')}) -> $body';
 }

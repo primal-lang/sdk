@@ -13,7 +13,7 @@ import '../../helpers/pipeline_helpers.dart';
 void main() {
   group('Division and Modulo Edge Cases', () {
     test('division by zero throws DivisionByZeroError', () {
-      final RuntimeFacade runtime = getRuntime('main = 1 / 0');
+      final RuntimeFacade runtime = getRuntime('main() = 1 / 0');
       expect(
         runtime.executeMain,
         throwsA(
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('negative division by zero throws DivisionByZeroError', () {
-      final RuntimeFacade runtime = getRuntime('main = -1 / 0');
+      final RuntimeFacade runtime = getRuntime('main() = -1 / 0');
       expect(
         runtime.executeMain,
         throwsA(
@@ -41,7 +41,7 @@ void main() {
     });
 
     test('modulo by zero throws DivisionByZeroError', () {
-      final RuntimeFacade runtime = getRuntime('main = 1 % 0');
+      final RuntimeFacade runtime = getRuntime('main() = 1 % 0');
       expect(
         runtime.executeMain,
         throwsA(
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('zero divided by zero throws DivisionByZeroError', () {
-      final RuntimeFacade runtime = getRuntime('main = 0 / 0');
+      final RuntimeFacade runtime = getRuntime('main() = 0 / 0');
       expect(
         runtime.executeMain,
         throwsA(
@@ -72,7 +72,7 @@ void main() {
   group('Empty Collection Errors', () {
     test('stack.pop on empty stack has descriptive message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = stack.pop(stack.new([]))',
+        'main() = stack.pop(stack.new([]))',
       );
       expect(
         runtime.executeMain,
@@ -88,7 +88,7 @@ void main() {
 
     test('stack.peek on empty stack has descriptive message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = stack.peek(stack.new([]))',
+        'main() = stack.peek(stack.new([]))',
       );
       expect(
         runtime.executeMain,
@@ -104,7 +104,7 @@ void main() {
 
     test('queue.dequeue on empty queue has descriptive message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = queue.dequeue(queue.new([]))',
+        'main() = queue.dequeue(queue.new([]))',
       );
       expect(
         runtime.executeMain,
@@ -120,7 +120,7 @@ void main() {
 
     test('queue.peek on empty queue has descriptive message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = queue.peek(queue.new([]))',
+        'main() = queue.peek(queue.new([]))',
       );
       expect(
         runtime.executeMain,
@@ -138,7 +138,7 @@ void main() {
   group('Map Access Errors', () {
     test('map.at with non-existent key has descriptive message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = map.at({"a": 1, "b": 2}, "c")',
+        'main() = map.at({"a": 1, "b": 2}, "c")',
       );
       expect(
         runtime.executeMain,
@@ -156,7 +156,7 @@ void main() {
   group('Vector Length Mismatch', () {
     test('vector.add with different lengths has descriptive message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = vector.add(vector.new([1]), vector.new([1, 2, 3]))',
+        'main() = vector.add(vector.new([1]), vector.new([1, 2, 3]))',
       );
       expect(
         runtime.executeMain,
@@ -172,7 +172,7 @@ void main() {
 
     test('vector.sub with different lengths has descriptive message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = vector.sub(vector.new([1, 2, 3, 4]), vector.new([1]))',
+        'main() = vector.sub(vector.new([1, 2, 3, 4]), vector.new([1]))',
       );
       expect(
         runtime.executeMain,
@@ -189,7 +189,7 @@ void main() {
 
   group('Type Conversion Errors', () {
     test('to.number throws ParseError for invalid input', () {
-      final RuntimeFacade runtime = getRuntime('main = to.number("abc")');
+      final RuntimeFacade runtime = getRuntime('main() = to.number("abc")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -206,7 +206,7 @@ void main() {
     });
 
     test('to.integer throws ParseError for invalid input', () {
-      final RuntimeFacade runtime = getRuntime('main = to.integer("abc")');
+      final RuntimeFacade runtime = getRuntime('main() = to.integer("abc")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -223,7 +223,7 @@ void main() {
     });
 
     test('to.decimal throws ParseError for invalid input', () {
-      final RuntimeFacade runtime = getRuntime('main = to.decimal("abc")');
+      final RuntimeFacade runtime = getRuntime('main() = to.decimal("abc")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -243,7 +243,7 @@ void main() {
   group('Custom Errors', () {
     test('error.throw raises CustomError with message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = error.throw(42, "test error")',
+        'main() = error.throw(42, "test error")',
       );
       expect(
         runtime.executeMain,
@@ -259,19 +259,19 @@ void main() {
 
     test('try catches error and returns fallback', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = try(error.throw(0, "oops"), "recovered")',
+        'main() = try(error.throw(0, "oops"), "recovered")',
       );
       checkResult(runtime, '"recovered"');
     });
 
     test('try catches type error and returns fallback', () {
-      final RuntimeFacade runtime = getRuntime('main = try(1 + true, -1)');
+      final RuntimeFacade runtime = getRuntime('main() = try(1 + true, -1)');
       checkResult(runtime, -1);
     });
 
     test('error.throw evaluates message expression', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = error.throw(1, str.concat("hello", " world"))',
+        'main() = error.throw(1, str.concat("hello", " world"))',
       );
       expect(
         runtime.executeMain,
@@ -288,7 +288,7 @@ void main() {
     test(
       'error.throw with non-string message throws InvalidArgumentTypesError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = error.throw(1, 42)');
+        final RuntimeFacade runtime = getRuntime('main() = error.throw(1, 42)');
         expect(
           runtime.executeMain,
           throwsA(
@@ -306,7 +306,7 @@ void main() {
   group('Invalid Argument Count', () {
     test('too few arguments throws InvalidArgumentCountError', () {
       final RuntimeFacade runtime = getRuntime(
-        'apply(f, x) = f(x)\nadd(a, b) = a + b\nmain = apply(add, 1)',
+        'apply(f, x) = f(x)\nadd(a, b) = a + b\nmain() = apply(add, 1)',
       );
       expect(
         runtime.executeMain,
@@ -325,7 +325,7 @@ void main() {
 
     test('too many arguments throws InvalidArgumentCountError', () {
       final RuntimeFacade runtime = getRuntime(
-        'apply(f, x, y, z) = f(x, y, z)\nadd(a, b) = a + b\nmain = apply(add, 1, 2, 3)',
+        'apply(f, x, y, z) = f(x, y, z)\nadd(a, b) = a + b\nmain() = apply(add, 1, 2, 3)',
       );
       expect(
         runtime.executeMain,
@@ -345,7 +345,7 @@ void main() {
 
   group('Runtime Format Errors', () {
     test('format with unsupported type throws InvalidValueError', () {
-      final RuntimeFacade runtime = getRuntime('main = 1');
+      final RuntimeFacade runtime = getRuntime('main() = 1');
       expect(
         () => runtime.format(Object()),
         throwsA(isA<InvalidValueError>()),
@@ -355,7 +355,7 @@ void main() {
 
   group('Cross-Type Comparison Errors', () {
     test('list equals string throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = [1, 2] == "hello"');
+      final RuntimeFacade runtime = getRuntime('main() = [1, 2] == "hello"');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -363,7 +363,7 @@ void main() {
     });
 
     test('map equals list throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = {"a": 1} == [1]');
+      final RuntimeFacade runtime = getRuntime('main() = {"a": 1} == [1]');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -377,7 +377,7 @@ void main() {
       () {
         final RuntimeFacade runtime = getRuntime('''
 getVal(x) = x
-main = getVal(5)(1)
+main() = getVal(5)(1)
 ''');
         expect(
           runtime.executeMain,
@@ -391,7 +391,7 @@ main = getVal(5)(1)
       () {
         final RuntimeFacade runtime = getRuntime('''
 getVal(x) = x
-main = getVal(true)[0]
+main() = getVal(true)[0]
 ''');
         expect(
           runtime.executeMain,
@@ -405,7 +405,7 @@ main = getVal(true)[0]
     const Compiler compiler = Compiler();
 
     test('undefined function throws UndefinedFunctionError', () {
-      final RuntimeFacade runtime = getRuntime('main = 1');
+      final RuntimeFacade runtime = getRuntime('main() = 1');
       expect(
         () => runtime.evaluate(compiler.expression('foo()')),
         throwsA(
@@ -419,7 +419,7 @@ main = getVal(true)[0]
     });
 
     test('wrong arity throws InvalidNumberOfArgumentsError', () {
-      final RuntimeFacade runtime = getRuntime('main = 1');
+      final RuntimeFacade runtime = getRuntime('main() = 1');
       expect(
         () => runtime.evaluate(compiler.expression('num.add(1)')),
         throwsA(
@@ -437,7 +437,7 @@ main = getVal(true)[0]
     });
 
     test('non-callable literal throws NotCallableError', () {
-      final RuntimeFacade runtime = getRuntime('main = 1');
+      final RuntimeFacade runtime = getRuntime('main() = 1');
       expect(
         () => runtime.evaluate(compiler.expression('5(1)')),
         throwsA(
@@ -451,7 +451,7 @@ main = getVal(true)[0]
     });
 
     test('non-indexable literal throws NotIndexableError', () {
-      final RuntimeFacade runtime = getRuntime('main = 1');
+      final RuntimeFacade runtime = getRuntime('main() = 1');
       expect(
         () => runtime.evaluate(compiler.expression('5[0]')),
         throwsA(
@@ -467,7 +467,7 @@ main = getVal(true)[0]
 
   group('Empty Collection Errors (list/string)', () {
     test('list.first on empty list throws EmptyCollectionError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.first([])');
+      final RuntimeFacade runtime = getRuntime('main() = list.first([])');
       expect(
         runtime.executeMain,
         throwsA(
@@ -481,7 +481,7 @@ main = getVal(true)[0]
     });
 
     test('list.last on empty list throws EmptyCollectionError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.last([])');
+      final RuntimeFacade runtime = getRuntime('main() = list.last([])');
       expect(
         runtime.executeMain,
         throwsA(
@@ -495,7 +495,7 @@ main = getVal(true)[0]
     });
 
     test('str.first on empty string throws EmptyCollectionError', () {
-      final RuntimeFacade runtime = getRuntime('main = str.first("")');
+      final RuntimeFacade runtime = getRuntime('main() = str.first("")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -509,7 +509,7 @@ main = getVal(true)[0]
     });
 
     test('str.last on empty string throws EmptyCollectionError', () {
-      final RuntimeFacade runtime = getRuntime('main = str.last("")');
+      final RuntimeFacade runtime = getRuntime('main() = str.last("")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -525,7 +525,9 @@ main = getVal(true)[0]
 
   group('Index Out of Bounds Errors', () {
     test('list.at with index out of bounds throws IndexOutOfBoundsError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.at([1, 2, 3], 5)');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.at([1, 2, 3], 5)',
+      );
       expect(
         runtime.executeMain,
         throwsA(
@@ -539,7 +541,7 @@ main = getVal(true)[0]
     });
 
     test('list indexing with out of bounds throws IndexOutOfBoundsError', () {
-      final RuntimeFacade runtime = getRuntime('main = [1, 2][10]');
+      final RuntimeFacade runtime = getRuntime('main() = [1, 2][10]');
       expect(
         runtime.executeMain,
         throwsA(isA<IndexOutOfBoundsError>()),
@@ -547,7 +549,7 @@ main = getVal(true)[0]
     });
 
     test('str.at with index out of bounds throws IndexOutOfBoundsError', () {
-      final RuntimeFacade runtime = getRuntime('main = str.at("abc", 5)');
+      final RuntimeFacade runtime = getRuntime('main() = str.at("abc", 5)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -561,7 +563,7 @@ main = getVal(true)[0]
     });
 
     test('string indexing with out of bounds throws IndexOutOfBoundsError', () {
-      final RuntimeFacade runtime = getRuntime('main = "abc"[10]');
+      final RuntimeFacade runtime = getRuntime('main() = "abc"[10]');
       expect(
         runtime.executeMain,
         throwsA(isA<IndexOutOfBoundsError>()),
@@ -570,7 +572,7 @@ main = getVal(true)[0]
 
     test('list.sublist with end > length throws IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.sublist([1, 2, 3], 0, 10)',
+        'main() = list.sublist([1, 2, 3], 0, 10)',
       );
       expect(
         runtime.executeMain,
@@ -580,7 +582,7 @@ main = getVal(true)[0]
 
     test('str.substring with end > length throws IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.substring("abc", 0, 10)',
+        'main() = str.substring("abc", 0, 10)',
       );
       expect(
         runtime.executeMain,
@@ -590,7 +592,7 @@ main = getVal(true)[0]
 
     test('list.set with index out of bounds throws IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.set([1, 2, 3], 10, 99)',
+        'main() = list.set([1, 2, 3], 10, 99)',
       );
       expect(
         runtime.executeMain,
@@ -602,7 +604,7 @@ main = getVal(true)[0]
       'list.removeAt with index out of bounds throws IndexOutOfBoundsError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = list.removeAt([1, 2, 3], 10)',
+          'main() = list.removeAt([1, 2, 3], 10)',
         );
         expect(
           runtime.executeMain,
@@ -613,7 +615,7 @@ main = getVal(true)[0]
 
     test('list.swap with index out of bounds throws IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.swap([1, 2, 3], 0, 10)',
+        'main() = list.swap([1, 2, 3], 0, 10)',
       );
       expect(
         runtime.executeMain,
@@ -625,7 +627,7 @@ main = getVal(true)[0]
       'str.removeAt with index out of bounds throws IndexOutOfBoundsError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = str.removeAt("abc", 10)',
+          'main() = str.removeAt("abc", 10)',
         );
         expect(
           runtime.executeMain,
@@ -637,7 +639,9 @@ main = getVal(true)[0]
 
   group('Negative Index Errors', () {
     test('list.at with negative index throws NegativeIndexError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.at([1, 2, 3], -1)');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.at([1, 2, 3], -1)',
+      );
       expect(
         runtime.executeMain,
         throwsA(
@@ -651,7 +655,7 @@ main = getVal(true)[0]
     });
 
     test('list indexing with negative index throws NegativeIndexError', () {
-      final RuntimeFacade runtime = getRuntime('main = [1, 2, 3][-1]');
+      final RuntimeFacade runtime = getRuntime('main() = [1, 2, 3][-1]');
       expect(
         runtime.executeMain,
         throwsA(isA<NegativeIndexError>()),
@@ -659,7 +663,7 @@ main = getVal(true)[0]
     });
 
     test('str.at with negative index throws NegativeIndexError', () {
-      final RuntimeFacade runtime = getRuntime('main = str.at("abc", -1)');
+      final RuntimeFacade runtime = getRuntime('main() = str.at("abc", -1)');
       expect(
         runtime.executeMain,
         throwsA(isA<NegativeIndexError>()),
@@ -667,7 +671,7 @@ main = getVal(true)[0]
     });
 
     test('string indexing with negative index throws NegativeIndexError', () {
-      final RuntimeFacade runtime = getRuntime('main = "abc"[-1]');
+      final RuntimeFacade runtime = getRuntime('main() = "abc"[-1]');
       expect(
         runtime.executeMain,
         throwsA(isA<NegativeIndexError>()),
@@ -676,7 +680,7 @@ main = getVal(true)[0]
 
     test('list.sublist with negative start throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.sublist([1, 2, 3], -1, 2)',
+        'main() = list.sublist([1, 2, 3], -1, 2)',
       );
       expect(
         runtime.executeMain,
@@ -686,7 +690,7 @@ main = getVal(true)[0]
 
     test('str.substring with negative start throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.substring("abc", -1, 2)',
+        'main() = str.substring("abc", -1, 2)',
       );
       expect(
         runtime.executeMain,
@@ -696,7 +700,7 @@ main = getVal(true)[0]
 
     test('list.take with negative count throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.take([1, 2, 3], -1)',
+        'main() = list.take([1, 2, 3], -1)',
       );
       expect(
         runtime.executeMain,
@@ -706,7 +710,7 @@ main = getVal(true)[0]
 
     test('list.drop with negative count throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.drop([1, 2, 3], -1)',
+        'main() = list.drop([1, 2, 3], -1)',
       );
       expect(
         runtime.executeMain,
@@ -715,7 +719,7 @@ main = getVal(true)[0]
     });
 
     test('str.take with negative count throws NegativeIndexError', () {
-      final RuntimeFacade runtime = getRuntime('main = str.take("abc", -1)');
+      final RuntimeFacade runtime = getRuntime('main() = str.take("abc", -1)');
       expect(
         runtime.executeMain,
         throwsA(isA<NegativeIndexError>()),
@@ -723,7 +727,7 @@ main = getVal(true)[0]
     });
 
     test('str.drop with negative count throws NegativeIndexError', () {
-      final RuntimeFacade runtime = getRuntime('main = str.drop("abc", -1)');
+      final RuntimeFacade runtime = getRuntime('main() = str.drop("abc", -1)');
       expect(
         runtime.executeMain,
         throwsA(isA<NegativeIndexError>()),
@@ -732,7 +736,7 @@ main = getVal(true)[0]
 
     test('list.set with negative index throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.set([1, 2, 3], -1, 99)',
+        'main() = list.set([1, 2, 3], -1, 99)',
       );
       expect(
         runtime.executeMain,
@@ -742,7 +746,7 @@ main = getVal(true)[0]
 
     test('list.removeAt with negative index throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.removeAt([1, 2, 3], -1)',
+        'main() = list.removeAt([1, 2, 3], -1)',
       );
       expect(
         runtime.executeMain,
@@ -752,7 +756,7 @@ main = getVal(true)[0]
 
     test('list.swap with negative first index throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.swap([1, 2, 3], -1, 1)',
+        'main() = list.swap([1, 2, 3], -1, 1)',
       );
       expect(
         runtime.executeMain,
@@ -762,7 +766,7 @@ main = getVal(true)[0]
 
     test('list.swap with negative second index throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.swap([1, 2, 3], 0, -1)',
+        'main() = list.swap([1, 2, 3], 0, -1)',
       );
       expect(
         runtime.executeMain,
@@ -772,7 +776,7 @@ main = getVal(true)[0]
 
     test('str.removeAt with negative index throws NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.removeAt("abc", -1)',
+        'main() = str.removeAt("abc", -1)',
       );
       expect(
         runtime.executeMain,
@@ -781,7 +785,7 @@ main = getVal(true)[0]
     });
 
     test('list.filled with negative count throws NegativeIndexError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.filled(-1, 0)');
+      final RuntimeFacade runtime = getRuntime('main() = list.filled(-1, 0)');
       expect(
         runtime.executeMain,
         throwsA(isA<NegativeIndexError>()),
@@ -792,7 +796,7 @@ main = getVal(true)[0]
   group('Recursion Limit Errors', () {
     test('infinite recursion throws RecursionLimitError', () {
       final RuntimeFacade runtime = getRuntime(
-        'loop(x) = loop(x)\nmain = loop(1)',
+        'loop(x) = loop(x)\nmain() = loop(1)',
       );
       expect(
         runtime.executeMain,
@@ -808,7 +812,7 @@ main = getVal(true)[0]
 
     test('mutual recursion exceeding limit throws RecursionLimitError', () {
       final RuntimeFacade runtime = getRuntime(
-        'ping(x) = pong(x)\npong(x) = ping(x)\nmain = ping(1)',
+        'ping(x) = pong(x)\npong(x) = ping(x)\nmain() = ping(1)',
       );
       expect(
         runtime.executeMain,
@@ -819,7 +823,7 @@ main = getVal(true)[0]
 
   group('Invalid Numeric Operation Errors', () {
     test('num.log with zero throws InvalidNumericOperationError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.log(0)');
+      final RuntimeFacade runtime = getRuntime('main() = num.log(0)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -833,7 +837,7 @@ main = getVal(true)[0]
     });
 
     test('num.log with negative throws InvalidNumericOperationError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.log(-5)');
+      final RuntimeFacade runtime = getRuntime('main() = num.log(-5)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -847,7 +851,7 @@ main = getVal(true)[0]
     });
 
     test('num.sqrt with negative throws InvalidNumericOperationError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.sqrt(-4)');
+      final RuntimeFacade runtime = getRuntime('main() = num.sqrt(-4)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -863,7 +867,7 @@ main = getVal(true)[0]
     test(
       'num.pow with negative base and fractional exponent throws InvalidNumericOperationError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = num.pow(-2, 0.5)');
+        final RuntimeFacade runtime = getRuntime('main() = num.pow(-2, 0.5)');
         expect(
           runtime.executeMain,
           throwsA(
@@ -881,7 +885,7 @@ main = getVal(true)[0]
       'num.integerRandom with max < min throws InvalidNumericOperationError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = num.integerRandom(10, 5)',
+          'main() = num.integerRandom(10, 5)',
         );
         expect(
           runtime.executeMain,
@@ -900,7 +904,7 @@ main = getVal(true)[0]
   group('JSON Parse Errors', () {
     test('json.decode with invalid JSON throws JsonParseError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = json.decode("{invalid}")',
+        'main() = json.decode("{invalid}")',
       );
       expect(
         runtime.executeMain,
@@ -915,7 +919,7 @@ main = getVal(true)[0]
     });
 
     test('json.decode with null value throws RuntimeError', () {
-      final RuntimeFacade runtime = getRuntime('main = json.decode("null")');
+      final RuntimeFacade runtime = getRuntime('main() = json.decode("null")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -931,7 +935,7 @@ main = getVal(true)[0]
 
   group('Element Not Found Errors', () {
     test('map indexing with non-existent key throws ElementNotFoundError', () {
-      final RuntimeFacade runtime = getRuntime('main = {"a": 1}["missing"]');
+      final RuntimeFacade runtime = getRuntime('main() = {"a": 1}["missing"]');
       expect(
         runtime.executeMain,
         throwsA(
@@ -948,7 +952,7 @@ main = getVal(true)[0]
       'map indexing with non-existent numeric key throws ElementNotFoundError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = {1: "one", 2: "two"}[3]',
+          'main() = {1: "one", 2: "two"}[3]',
         );
         expect(
           runtime.executeMain,
@@ -967,7 +971,7 @@ main = getVal(true)[0]
   group('Vector Operation Errors', () {
     test('vector.normalize with zero vector throws DivisionByZeroError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = vector.normalize(vector.new([0, 0, 0]))',
+        'main() = vector.normalize(vector.new([0, 0, 0]))',
       );
       expect(
         runtime.executeMain,
@@ -977,7 +981,7 @@ main = getVal(true)[0]
 
     test('vector.angle with empty vectors throws RuntimeError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = vector.angle(vector.new([]), vector.new([]))',
+        'main() = vector.angle(vector.new([]), vector.new([]))',
       );
       expect(
         runtime.executeMain,
@@ -993,7 +997,7 @@ main = getVal(true)[0]
 
     test('vector.angle with zero vectors throws DivisionByZeroError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = vector.angle(vector.new([0, 0]), vector.new([1, 1]))',
+        'main() = vector.angle(vector.new([0, 0]), vector.new([1, 1]))',
       );
       expect(
         runtime.executeMain,
@@ -1005,7 +1009,7 @@ main = getVal(true)[0]
       'vector.angle with different lengths throws IterablesWithDifferentLengthError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = vector.angle(vector.new([1, 2]), vector.new([1, 2, 3]))',
+          'main() = vector.angle(vector.new([1, 2]), vector.new([1, 2, 3]))',
         );
         expect(
           runtime.executeMain,
@@ -1018,7 +1022,7 @@ main = getVal(true)[0]
   group('Parse Errors for Other Functions', () {
     test('time.fromIso with invalid format throws ParseError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = time.fromIso("not-a-date")',
+        'main() = time.fromIso("not-a-date")',
       );
       expect(
         runtime.executeMain,
@@ -1034,7 +1038,7 @@ main = getVal(true)[0]
 
     test('str.match with invalid regex throws ParseError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.match("test", "[invalid")',
+        'main() = str.match("test", "[invalid")',
       );
       expect(
         runtime.executeMain,
@@ -1051,56 +1055,58 @@ main = getVal(true)[0]
 
   group('Try Catches Various Runtime Errors', () {
     test('try catches division by zero and returns fallback', () {
-      final RuntimeFacade runtime = getRuntime('main = try(1 / 0, 999)');
+      final RuntimeFacade runtime = getRuntime('main() = try(1 / 0, 999)');
       checkResult(runtime, 999);
     });
 
     test('try catches index out of bounds and returns fallback', () {
-      final RuntimeFacade runtime = getRuntime('main = try([1, 2][10], -1)');
+      final RuntimeFacade runtime = getRuntime('main() = try([1, 2][10], -1)');
       checkResult(runtime, -1);
     });
 
     test('try catches parse error and returns fallback', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = try(to.integer("abc"), 0)',
+        'main() = try(to.integer("abc"), 0)',
       );
       checkResult(runtime, 0);
     });
 
     test('try catches empty collection error and returns fallback', () {
-      final RuntimeFacade runtime = getRuntime('main = try(list.first([]), 0)');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = try(list.first([]), 0)',
+      );
       checkResult(runtime, 0);
     });
 
     test('try catches recursion limit and returns fallback', () {
       final RuntimeFacade runtime = getRuntime(
-        'loop(x) = loop(x)\nmain = try(loop(1), "caught")',
+        'loop(x) = loop(x)\nmain() = try(loop(1), "caught")',
       );
       checkResult(runtime, '"caught"');
     });
 
     test('try catches invalid argument types and returns fallback', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = try(vector.magnitude([1, 2, 3]), 0)',
+        'main() = try(vector.magnitude([1, 2, 3]), 0)',
       );
       checkResult(runtime, 0);
     });
 
     test('try catches map key not found and returns fallback', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = try(map.at({"a": 1}, "b"), "default")',
+        'main() = try(map.at({"a": 1}, "b"), "default")',
       );
       checkResult(runtime, '"default"');
     });
 
     test('try catches negative index and returns fallback', () {
-      final RuntimeFacade runtime = getRuntime('main = try([1, 2][-1], 0)');
+      final RuntimeFacade runtime = getRuntime('main() = try([1, 2][-1], 0)');
       checkResult(runtime, 0);
     });
 
     test('try catches json parse error and returns fallback', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = try(json.decode("{broken}"), {})',
+        'main() = try(json.decode("{broken}"), {})',
       );
       checkResult(runtime, '{}');
     });
@@ -1111,7 +1117,7 @@ main = getVal(true)[0]
       'list.filter with non-boolean predicate throws InvalidArgumentTypesError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'identity(x) = x\nmain = list.filter([1, 2, 3], identity)',
+          'identity(x) = x\nmain() = list.filter([1, 2, 3], identity)',
         );
         expect(
           runtime.executeMain,
@@ -1130,7 +1136,7 @@ main = getVal(true)[0]
       'list.all with non-boolean predicate throws InvalidArgumentTypesError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'identity(x) = x\nmain = list.all([1, 2, 3], identity)',
+          'identity(x) = x\nmain() = list.all([1, 2, 3], identity)',
         );
         expect(
           runtime.executeMain,
@@ -1149,7 +1155,7 @@ main = getVal(true)[0]
       'list.any with non-boolean predicate throws InvalidArgumentTypesError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'identity(x) = x\nmain = list.any([1, 2, 3], identity)',
+          'identity(x) = x\nmain() = list.any([1, 2, 3], identity)',
         );
         expect(
           runtime.executeMain,
@@ -1168,7 +1174,7 @@ main = getVal(true)[0]
       'list.none with non-boolean predicate throws InvalidArgumentTypesError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'identity(x) = x\nmain = list.none([1, 2, 3], identity)',
+          'identity(x) = x\nmain() = list.none([1, 2, 3], identity)',
         );
         expect(
           runtime.executeMain,
@@ -1187,7 +1193,7 @@ main = getVal(true)[0]
       'list.sort with non-number comparator throws InvalidArgumentTypesError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'compare(a, b) = "string"\nmain = list.sort([3, 1, 2], compare)',
+          'compare(a, b) = "string"\nmain() = list.sort([3, 1, 2], compare)',
         );
         expect(
           runtime.executeMain,
@@ -1204,7 +1210,7 @@ main = getVal(true)[0]
 
     test('list.filter with non-function throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.filter([1, 2], 42)',
+        'main() = list.filter([1, 2], 42)',
       );
       expect(
         runtime.executeMain,
@@ -1220,7 +1226,7 @@ main = getVal(true)[0]
 
     test('list.map with non-function throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.map([1, 2], "string")',
+        'main() = list.map([1, 2], "string")',
       );
       expect(
         runtime.executeMain,
@@ -1236,7 +1242,7 @@ main = getVal(true)[0]
 
     test('list.reduce with non-function throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.reduce([1, 2], 0, 42)',
+        'main() = list.reduce([1, 2], 0, 42)',
       );
       expect(
         runtime.executeMain,
@@ -1251,7 +1257,9 @@ main = getVal(true)[0]
     });
 
     test('list.zip with non-function throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.zip([1], [2], 42)');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.zip([1], [2], 42)',
+      );
       expect(
         runtime.executeMain,
         throwsA(
@@ -1267,7 +1275,7 @@ main = getVal(true)[0]
 
   group('Division Function Call Errors', () {
     test('num.div by zero throws DivisionByZeroError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.div(10, 0)');
+      final RuntimeFacade runtime = getRuntime('main() = num.div(10, 0)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -1281,7 +1289,7 @@ main = getVal(true)[0]
     });
 
     test('num.mod by zero throws DivisionByZeroError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.mod(10, 0)');
+      final RuntimeFacade runtime = getRuntime('main() = num.mod(10, 0)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -1295,7 +1303,7 @@ main = getVal(true)[0]
     });
 
     test('num.div with non-number throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.div(10, "two")');
+      final RuntimeFacade runtime = getRuntime('main() = num.div(10, "two")');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1303,7 +1311,7 @@ main = getVal(true)[0]
     });
 
     test('num.mod with non-number throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.mod(10, true)');
+      final RuntimeFacade runtime = getRuntime('main() = num.mod(10, true)');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1313,7 +1321,9 @@ main = getVal(true)[0]
 
   group('Type Conversion Edge Cases', () {
     test('to.boolean with list throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = to.boolean([1, 2, 3])');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = to.boolean([1, 2, 3])',
+      );
       expect(
         runtime.executeMain,
         throwsA(
@@ -1327,7 +1337,7 @@ main = getVal(true)[0]
     });
 
     test('to.boolean with map throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = to.boolean({"a": 1})');
+      final RuntimeFacade runtime = getRuntime('main() = to.boolean({"a": 1})');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1335,7 +1345,7 @@ main = getVal(true)[0]
     });
 
     test('to.list with string throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = to.list("abc")');
+      final RuntimeFacade runtime = getRuntime('main() = to.list("abc")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -1349,7 +1359,7 @@ main = getVal(true)[0]
     });
 
     test('to.list with number throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = to.list(42)');
+      final RuntimeFacade runtime = getRuntime('main() = to.list(42)');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1357,7 +1367,7 @@ main = getVal(true)[0]
     });
 
     test('to.number with empty string throws ParseError', () {
-      final RuntimeFacade runtime = getRuntime('main = to.number("")');
+      final RuntimeFacade runtime = getRuntime('main() = to.number("")');
       expect(
         runtime.executeMain,
         throwsA(isA<ParseError>()),
@@ -1365,7 +1375,7 @@ main = getVal(true)[0]
     });
 
     test('to.integer with decimal string throws ParseError', () {
-      final RuntimeFacade runtime = getRuntime('main = to.integer("3.14")');
+      final RuntimeFacade runtime = getRuntime('main() = to.integer("3.14")');
       expect(
         runtime.executeMain,
         throwsA(isA<ParseError>()),
@@ -1373,7 +1383,7 @@ main = getVal(true)[0]
     });
 
     test('to.decimal with special characters throws ParseError', () {
-      final RuntimeFacade runtime = getRuntime('main = to.decimal("\$100")');
+      final RuntimeFacade runtime = getRuntime('main() = to.decimal("\$100")');
       expect(
         runtime.executeMain,
         throwsA(isA<ParseError>()),
@@ -1386,7 +1396,7 @@ main = getVal(true)[0]
       'vector.new with non-numeric list throws InvalidArgumentTypesError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = vector.new(["a", "b", "c"])',
+          'main() = vector.new(["a", "b", "c"])',
         );
         expect(
           runtime.executeMain,
@@ -1403,7 +1413,7 @@ main = getVal(true)[0]
 
     test('vector.magnitude with list throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = vector.magnitude([1, 2])',
+        'main() = vector.magnitude([1, 2])',
       );
       expect(
         runtime.executeMain,
@@ -1419,7 +1429,7 @@ main = getVal(true)[0]
 
     test('vector.add with list throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = vector.add([1, 2], vector.new([3, 4]))',
+        'main() = vector.add([1, 2], vector.new([3, 4]))',
       );
       expect(
         runtime.executeMain,
@@ -1431,7 +1441,7 @@ main = getVal(true)[0]
       'vector.sub with different lengths throws IterablesWithDifferentLengthError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = vector.sub(vector.new([1, 2, 3]), vector.new([1, 2]))',
+          'main() = vector.sub(vector.new([1, 2, 3]), vector.new([1, 2]))',
         );
         expect(
           runtime.executeMain,
@@ -1444,7 +1454,7 @@ main = getVal(true)[0]
       'vector.normalize with empty vector returns empty vector without error',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = list.length(to.list(vector.normalize(vector.new([]))))',
+          'main() = list.length(to.list(vector.normalize(vector.new([]))))',
         );
         checkResult(runtime, 0);
       },
@@ -1454,7 +1464,7 @@ main = getVal(true)[0]
   group('Sublist and Substring Range Errors', () {
     test('list.sublist with start > end throws IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.sublist([1, 2, 3], 2, 1)',
+        'main() = list.sublist([1, 2, 3], 2, 1)',
       );
       expect(
         runtime.executeMain,
@@ -1464,7 +1474,7 @@ main = getVal(true)[0]
 
     test('str.substring with start > end throws IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.substring("abc", 2, 1)',
+        'main() = str.substring("abc", 2, 1)',
       );
       expect(
         runtime.executeMain,
@@ -1474,7 +1484,7 @@ main = getVal(true)[0]
 
     test('list.sublist with negative end throws IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.sublist([1, 2, 3], 0, -1)',
+        'main() = list.sublist([1, 2, 3], 0, -1)',
       );
       expect(
         runtime.executeMain,
@@ -1484,7 +1494,7 @@ main = getVal(true)[0]
 
     test('str.substring with negative end throws IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.substring("abc", 0, -1)',
+        'main() = str.substring("abc", 0, -1)',
       );
       expect(
         runtime.executeMain,
@@ -1496,7 +1506,7 @@ main = getVal(true)[0]
   group('String Operation Type Errors', () {
     test('str.concat with number throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.concat("hello", 42)',
+        'main() = str.concat("hello", 42)',
       );
       expect(
         runtime.executeMain,
@@ -1514,7 +1524,7 @@ main = getVal(true)[0]
       'str.split with non-string delimiter throws InvalidArgumentTypesError',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main = str.split("a,b,c", 1)',
+          'main() = str.split("a,b,c", 1)',
         );
         expect(
           runtime.executeMain,
@@ -1525,7 +1535,7 @@ main = getVal(true)[0]
 
     test('str.replace with non-string throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.replace("hello", "l", 1)',
+        'main() = str.replace("hello", "l", 1)',
       );
       expect(
         runtime.executeMain,
@@ -1535,7 +1545,7 @@ main = getVal(true)[0]
 
     test('str.padLeft with non-string throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.padLeft(123, 5, " ")',
+        'main() = str.padLeft(123, 5, " ")',
       );
       expect(
         runtime.executeMain,
@@ -1545,7 +1555,7 @@ main = getVal(true)[0]
 
     test('str.padRight with non-string throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.padRight(123, 5, " ")',
+        'main() = str.padRight(123, 5, " ")',
       );
       expect(
         runtime.executeMain,
@@ -1557,7 +1567,7 @@ main = getVal(true)[0]
   group('Map Operation Errors', () {
     test('map.set with non-map throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = map.set([1, 2], "key", "value")',
+        'main() = map.set([1, 2], "key", "value")',
       );
       expect(
         runtime.executeMain,
@@ -1573,7 +1583,7 @@ main = getVal(true)[0]
 
     test('map.removeAt with non-map throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = map.removeAt([1, 2], "key")',
+        'main() = map.removeAt([1, 2], "key")',
       );
       expect(
         runtime.executeMain,
@@ -1582,7 +1592,7 @@ main = getVal(true)[0]
     });
 
     test('map.keys with non-map throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = map.keys([1, 2, 3])');
+      final RuntimeFacade runtime = getRuntime('main() = map.keys([1, 2, 3])');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1590,7 +1600,7 @@ main = getVal(true)[0]
     });
 
     test('map.values with non-map throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = map.values("string")');
+      final RuntimeFacade runtime = getRuntime('main() = map.values("string")');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1599,7 +1609,7 @@ main = getVal(true)[0]
 
     test('map.containsKey with non-map throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = map.containsKey(42, "key")',
+        'main() = map.containsKey(42, "key")',
       );
       expect(
         runtime.executeMain,
@@ -1610,7 +1620,7 @@ main = getVal(true)[0]
 
   group('Set Operation Errors', () {
     test('set.add with non-set throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = set.add([1, 2], 3)');
+      final RuntimeFacade runtime = getRuntime('main() = set.add([1, 2], 3)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -1624,7 +1634,9 @@ main = getVal(true)[0]
     });
 
     test('set.remove with non-set throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = set.remove([1, 2], 1)');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = set.remove([1, 2], 1)',
+      );
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1633,7 +1645,7 @@ main = getVal(true)[0]
 
     test('set.union with non-sets throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = set.union([1, 2], set.new([3, 4]))',
+        'main() = set.union([1, 2], set.new([3, 4]))',
       );
       expect(
         runtime.executeMain,
@@ -1643,7 +1655,7 @@ main = getVal(true)[0]
 
     test('set.intersection with non-sets throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = set.intersection(set.new([1, 2]), [3, 4])',
+        'main() = set.intersection(set.new([1, 2]), [3, 4])',
       );
       expect(
         runtime.executeMain,
@@ -1653,7 +1665,7 @@ main = getVal(true)[0]
 
     test('set.difference with non-sets throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = set.difference(set.new([1, 2]), "abc")',
+        'main() = set.difference(set.new([1, 2]), "abc")',
       );
       expect(
         runtime.executeMain,
@@ -1664,7 +1676,9 @@ main = getVal(true)[0]
 
   group('Stack and Queue Type Errors', () {
     test('stack.push with non-stack throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = stack.push([1, 2], 3)');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = stack.push([1, 2], 3)',
+      );
       expect(
         runtime.executeMain,
         throwsA(
@@ -1678,7 +1692,7 @@ main = getVal(true)[0]
     });
 
     test('stack.pop with non-stack throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = stack.pop([1, 2])');
+      final RuntimeFacade runtime = getRuntime('main() = stack.pop([1, 2])');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1686,7 +1700,7 @@ main = getVal(true)[0]
     });
 
     test('stack.peek with non-stack throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = stack.peek("string")');
+      final RuntimeFacade runtime = getRuntime('main() = stack.peek("string")');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1695,7 +1709,7 @@ main = getVal(true)[0]
 
     test('queue.enqueue with non-queue throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = queue.enqueue([1, 2], 3)',
+        'main() = queue.enqueue([1, 2], 3)',
       );
       expect(
         runtime.executeMain,
@@ -1710,7 +1724,9 @@ main = getVal(true)[0]
     });
 
     test('queue.dequeue with non-queue throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = queue.dequeue([1, 2])');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = queue.dequeue([1, 2])',
+      );
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1718,7 +1734,7 @@ main = getVal(true)[0]
     });
 
     test('queue.peek with non-queue throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = queue.peek(42)');
+      final RuntimeFacade runtime = getRuntime('main() = queue.peek(42)');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1728,7 +1744,7 @@ main = getVal(true)[0]
 
   group('List Operation Type Errors', () {
     test('list.at with non-list throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.at("abc", 0)');
+      final RuntimeFacade runtime = getRuntime('main() = list.at("abc", 0)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -1743,7 +1759,7 @@ main = getVal(true)[0]
 
     test('list.at with non-number index throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.at([1, 2], "zero")',
+        'main() = list.at([1, 2], "zero")',
       );
       expect(
         runtime.executeMain,
@@ -1753,7 +1769,7 @@ main = getVal(true)[0]
 
     test('list.insertStart with non-list throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.insertStart("abc", 1)',
+        'main() = list.insertStart("abc", 1)',
       );
       expect(
         runtime.executeMain,
@@ -1762,7 +1778,9 @@ main = getVal(true)[0]
     });
 
     test('list.insertEnd with non-list throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.insertEnd(42, 1)');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.insertEnd(42, 1)',
+      );
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1771,7 +1789,7 @@ main = getVal(true)[0]
 
     test('list.concat with non-lists throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.concat([1, 2], "abc")',
+        'main() = list.concat([1, 2], "abc")',
       );
       expect(
         runtime.executeMain,
@@ -1780,7 +1798,9 @@ main = getVal(true)[0]
     });
 
     test('list.join with non-list throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.join("abc", ",")');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.join("abc", ",")',
+      );
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1788,7 +1808,7 @@ main = getVal(true)[0]
     });
 
     test('list.reverse with non-list throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = list.reverse("abc")');
+      final RuntimeFacade runtime = getRuntime('main() = list.reverse("abc")');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1798,7 +1818,7 @@ main = getVal(true)[0]
 
   group('Arithmetic Operation Type Errors', () {
     test('num.add with non-numbers throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.add(1, "two")');
+      final RuntimeFacade runtime = getRuntime('main() = num.add(1, "two")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -1812,7 +1832,7 @@ main = getVal(true)[0]
     });
 
     test('num.sub with non-numbers throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.sub("one", 2)');
+      final RuntimeFacade runtime = getRuntime('main() = num.sub("one", 2)');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1820,7 +1840,7 @@ main = getVal(true)[0]
     });
 
     test('num.mul with non-numbers throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.mul(true, 2)');
+      final RuntimeFacade runtime = getRuntime('main() = num.mul(true, 2)');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1828,7 +1848,7 @@ main = getVal(true)[0]
     });
 
     test('num.pow with non-numbers throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.pow(2, [3])');
+      final RuntimeFacade runtime = getRuntime('main() = num.pow(2, [3])');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1836,7 +1856,7 @@ main = getVal(true)[0]
     });
 
     test('num.sqrt with non-number throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.sqrt("four")');
+      final RuntimeFacade runtime = getRuntime('main() = num.sqrt("four")');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1844,7 +1864,7 @@ main = getVal(true)[0]
     });
 
     test('num.log with non-number throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.log([10])');
+      final RuntimeFacade runtime = getRuntime('main() = num.log([10])');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1852,7 +1872,7 @@ main = getVal(true)[0]
     });
 
     test('num.abs with non-number throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = num.abs("negative")');
+      final RuntimeFacade runtime = getRuntime('main() = num.abs("negative")');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1864,7 +1884,7 @@ main = getVal(true)[0]
     test(
       'comparison with incompatible types throws InvalidArgumentTypesError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = 1 < "two"');
+        final RuntimeFacade runtime = getRuntime('main() = 1 < "two"');
         expect(
           runtime.executeMain,
           throwsA(isA<InvalidArgumentTypesError>()),
@@ -1875,7 +1895,7 @@ main = getVal(true)[0]
     test(
       'greater than with incompatible types throws InvalidArgumentTypesError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = [1] > 2');
+        final RuntimeFacade runtime = getRuntime('main() = [1] > 2');
         expect(
           runtime.executeMain,
           throwsA(isA<InvalidArgumentTypesError>()),
@@ -1886,7 +1906,7 @@ main = getVal(true)[0]
     test(
       'less or equal with incompatible types throws InvalidArgumentTypesError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = {"a": 1} <= 1');
+        final RuntimeFacade runtime = getRuntime('main() = {"a": 1} <= 1');
         expect(
           runtime.executeMain,
           throwsA(isA<InvalidArgumentTypesError>()),
@@ -1897,7 +1917,7 @@ main = getVal(true)[0]
     test(
       'greater or equal with incompatible types throws InvalidArgumentTypesError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = true >= 1');
+        final RuntimeFacade runtime = getRuntime('main() = true >= 1');
         expect(
           runtime.executeMain,
           throwsA(isA<InvalidArgumentTypesError>()),
@@ -1906,7 +1926,7 @@ main = getVal(true)[0]
     );
 
     test('not operator with non-boolean throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = !42');
+      final RuntimeFacade runtime = getRuntime('main() = !42');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1917,7 +1937,7 @@ main = getVal(true)[0]
   group('JSON Encoding Errors', () {
     test('json.encode with function throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'identity(x) = x\nmain = json.encode(identity)',
+        'identity(x) = x\nmain() = json.encode(identity)',
       );
       expect(
         runtime.executeMain,
@@ -1934,7 +1954,7 @@ main = getVal(true)[0]
 
   group('Timestamp Operation Errors', () {
     test('time.fromIso with empty string throws ParseError', () {
-      final RuntimeFacade runtime = getRuntime('main = time.fromIso("")');
+      final RuntimeFacade runtime = getRuntime('main() = time.fromIso("")');
       expect(
         runtime.executeMain,
         throwsA(
@@ -1948,7 +1968,7 @@ main = getVal(true)[0]
     });
 
     test('time.fromIso with non-string throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = time.fromIso(12345)');
+      final RuntimeFacade runtime = getRuntime('main() = time.fromIso(12345)');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -1958,63 +1978,63 @@ main = getVal(true)[0]
 
   group('Edge Cases for Empty Collections', () {
     test('list.rest on empty list returns empty list', () {
-      final RuntimeFacade runtime = getRuntime('main = list.rest([])');
+      final RuntimeFacade runtime = getRuntime('main() = list.rest([])');
       checkResult(runtime, '[]');
     });
 
     test('list.init on empty list returns empty list', () {
-      final RuntimeFacade runtime = getRuntime('main = list.init([])');
+      final RuntimeFacade runtime = getRuntime('main() = list.init([])');
       checkResult(runtime, '[]');
     });
 
     test('str.rest on empty string returns empty string', () {
-      final RuntimeFacade runtime = getRuntime('main = str.rest("")');
+      final RuntimeFacade runtime = getRuntime('main() = str.rest("")');
       checkResult(runtime, '""');
     });
 
     test('str.init on empty string returns empty string', () {
-      final RuntimeFacade runtime = getRuntime('main = str.init("")');
+      final RuntimeFacade runtime = getRuntime('main() = str.init("")');
       checkResult(runtime, '""');
     });
 
     test('list.reduce on empty list returns initial value', () {
       final RuntimeFacade runtime = getRuntime(
-        'add(a, b) = a + b\nmain = list.reduce([], 0, add)',
+        'add(a, b) = a + b\nmain() = list.reduce([], 0, add)',
       );
       checkResult(runtime, 0);
     });
 
     test('list.filter on empty list returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'isPositive(x) = x > 0\nmain = list.filter([], isPositive)',
+        'isPositive(x) = x > 0\nmain() = list.filter([], isPositive)',
       );
       checkResult(runtime, '[]');
     });
 
     test('list.map on empty list returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'double(x) = x * 2\nmain = list.map([], double)',
+        'double(x) = x * 2\nmain() = list.map([], double)',
       );
       checkResult(runtime, '[]');
     });
 
     test('list.all on empty list returns true', () {
       final RuntimeFacade runtime = getRuntime(
-        'isPositive(x) = x > 0\nmain = list.all([], isPositive)',
+        'isPositive(x) = x > 0\nmain() = list.all([], isPositive)',
       );
       checkResult(runtime, true);
     });
 
     test('list.any on empty list returns false', () {
       final RuntimeFacade runtime = getRuntime(
-        'isPositive(x) = x > 0\nmain = list.any([], isPositive)',
+        'isPositive(x) = x > 0\nmain() = list.any([], isPositive)',
       );
       checkResult(runtime, false);
     });
 
     test('list.none on empty list returns true', () {
       final RuntimeFacade runtime = getRuntime(
-        'isPositive(x) = x > 0\nmain = list.none([], isPositive)',
+        'isPositive(x) = x > 0\nmain() = list.none([], isPositive)',
       );
       checkResult(runtime, true);
     });
@@ -2022,61 +2042,63 @@ main = getVal(true)[0]
 
   group('Boundary Value Tests', () {
     test('list.at with index 0 on single element list succeeds', () {
-      final RuntimeFacade runtime = getRuntime('main = list.at([42], 0)');
+      final RuntimeFacade runtime = getRuntime('main() = list.at([42], 0)');
       checkResult(runtime, 42);
     });
 
     test('list.at with index at last position succeeds', () {
-      final RuntimeFacade runtime = getRuntime('main = list.at([1, 2, 3], 2)');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list.at([1, 2, 3], 2)',
+      );
       checkResult(runtime, 3);
     });
 
     test('list.sublist with start equals end returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.sublist([1, 2, 3], 1, 1)',
+        'main() = list.sublist([1, 2, 3], 1, 1)',
       );
       checkResult(runtime, '[]');
     });
 
     test('str.substring with start equals end returns empty string', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = str.substring("abc", 1, 1)',
+        'main() = str.substring("abc", 1, 1)',
       );
       checkResult(runtime, '""');
     });
 
     test('list.take with count 0 returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.take([1, 2, 3], 0)',
+        'main() = list.take([1, 2, 3], 0)',
       );
       checkResult(runtime, '[]');
     });
 
     test('list.drop with count 0 returns original list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = list.drop([1, 2, 3], 0)',
+        'main() = list.drop([1, 2, 3], 0)',
       );
       checkResult(runtime, '[1, 2, 3]');
     });
 
     test('str.take with count 0 returns empty string', () {
-      final RuntimeFacade runtime = getRuntime('main = str.take("abc", 0)');
+      final RuntimeFacade runtime = getRuntime('main() = str.take("abc", 0)');
       checkResult(runtime, '""');
     });
 
     test('str.drop with count 0 returns original string', () {
-      final RuntimeFacade runtime = getRuntime('main = str.drop("abc", 0)');
+      final RuntimeFacade runtime = getRuntime('main() = str.drop("abc", 0)');
       checkResult(runtime, '"abc"');
     });
 
     test('list.filled with count 0 returns empty list', () {
-      final RuntimeFacade runtime = getRuntime('main = list.filled(0, 42)');
+      final RuntimeFacade runtime = getRuntime('main() = list.filled(0, 42)');
       checkResult(runtime, '[]');
     });
 
     test('vector with single element operations work correctly', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = vector.magnitude(vector.new([5]))',
+        'main() = vector.magnitude(vector.new([5]))',
       );
       checkResult(runtime, 5.0);
     });
@@ -2084,7 +2106,7 @@ main = getVal(true)[0]
 
   group('Operator Type Errors', () {
     test('addition of map and number throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = {"a": 1} + 2');
+      final RuntimeFacade runtime = getRuntime('main() = {"a": 1} + 2');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -2094,7 +2116,7 @@ main = getVal(true)[0]
     test(
       'subtraction with incompatible types throws InvalidArgumentTypesError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = "abc" - 1');
+        final RuntimeFacade runtime = getRuntime('main() = "abc" - 1');
         expect(
           runtime.executeMain,
           throwsA(isA<InvalidArgumentTypesError>()),
@@ -2105,7 +2127,7 @@ main = getVal(true)[0]
     test(
       'multiplication with incompatible types throws InvalidArgumentTypesError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = true * 2');
+        final RuntimeFacade runtime = getRuntime('main() = true * 2');
         expect(
           runtime.executeMain,
           throwsA(isA<InvalidArgumentTypesError>()),
@@ -2116,7 +2138,7 @@ main = getVal(true)[0]
     test(
       'division with incompatible types throws InvalidArgumentTypesError',
       () {
-        final RuntimeFacade runtime = getRuntime('main = "abc" / 2');
+        final RuntimeFacade runtime = getRuntime('main() = "abc" / 2');
         expect(
           runtime.executeMain,
           throwsA(isA<InvalidArgumentTypesError>()),
@@ -2125,7 +2147,7 @@ main = getVal(true)[0]
     );
 
     test('modulo with incompatible types throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = [1, 2] % 3');
+      final RuntimeFacade runtime = getRuntime('main() = [1, 2] % 3');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -2135,7 +2157,7 @@ main = getVal(true)[0]
 
   group('Hash Function Errors', () {
     test('hash.md5 with non-string throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = hash.md5(12345)');
+      final RuntimeFacade runtime = getRuntime('main() = hash.md5(12345)');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -2143,7 +2165,9 @@ main = getVal(true)[0]
     });
 
     test('hash.sha256 with non-string throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = hash.sha256([1, 2, 3])');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = hash.sha256([1, 2, 3])',
+      );
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -2151,7 +2175,7 @@ main = getVal(true)[0]
     });
 
     test('hash.sha512 with non-string throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = hash.sha512(true)');
+      final RuntimeFacade runtime = getRuntime('main() = hash.sha512(true)');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -2161,7 +2185,9 @@ main = getVal(true)[0]
 
   group('Control Flow Errors', () {
     test('if with non-boolean condition throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = if (1) "yes" else "no"');
+      final RuntimeFacade runtime = getRuntime(
+        'main() = if (1) "yes" else "no"',
+      );
       expect(
         runtime.executeMain,
         throwsA(
@@ -2175,7 +2201,7 @@ main = getVal(true)[0]
     });
 
     test('if with string condition throws InvalidArgumentTypesError', () {
-      final RuntimeFacade runtime = getRuntime('main = if ("true") 1 else 0');
+      final RuntimeFacade runtime = getRuntime('main() = if ("true") 1 else 0');
       expect(
         runtime.executeMain,
         throwsA(isA<InvalidArgumentTypesError>()),
@@ -2184,7 +2210,7 @@ main = getVal(true)[0]
 
     test('if with list condition throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = if ([1, 2]) "yes" else "no"',
+        'main() = if ([1, 2]) "yes" else "no"',
       );
       expect(
         runtime.executeMain,
@@ -2194,7 +2220,7 @@ main = getVal(true)[0]
 
     test('if with map condition throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = if ({"a": 1}) "yes" else "no"',
+        'main() = if ({"a": 1}) "yes" else "no"',
       );
       expect(
         runtime.executeMain,
@@ -2206,7 +2232,7 @@ main = getVal(true)[0]
   group('Variable Scope Errors', () {
     test('accessing undefined variable in expression throws error', () {
       const Compiler compiler = Compiler();
-      final RuntimeFacade runtime = getRuntime('main = 1');
+      final RuntimeFacade runtime = getRuntime('main() = 1');
       expect(
         () => runtime.evaluate(compiler.expression('undefinedVar')),
         throwsA(isA<UndefinedIdentifierError>()),
@@ -2217,7 +2243,7 @@ main = getVal(true)[0]
   group('CustomError Properties', () {
     test('CustomError preserves numeric code value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = error.throw(42, "error message")',
+        'main() = error.throw(42, "error message")',
       );
       expect(
         runtime.executeMain,
@@ -2239,7 +2265,7 @@ main = getVal(true)[0]
 
     test('CustomError preserves string code value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = error.throw("ERROR_CODE", "details")',
+        'main() = error.throw("ERROR_CODE", "details")',
       );
       expect(
         runtime.executeMain,
@@ -2255,7 +2281,7 @@ main = getVal(true)[0]
 
     test('CustomError preserves boolean code value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main = error.throw(false, "failure")',
+        'main() = error.throw(false, "failure")',
       );
       expect(
         runtime.executeMain,
@@ -2267,6 +2293,119 @@ main = getVal(true)[0]
           ),
         ),
       );
+    });
+  });
+
+  group('Debug Function Errors', () {
+    test('debug with non-string label throws InvalidArgumentTypesError', () {
+      final RuntimeFacade runtime = getRuntime('main() = debug(123, "value")');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidArgumentTypesError>().having(
+            (RuntimeError error) => error.toString(),
+            'message',
+            allOf(contains('debug'), contains('Number')),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'debug with non-string label via indirect call throws InvalidArgumentTypesError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = let f = debug in f(123, "value")',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentTypesError>().having(
+              (RuntimeError error) => error.toString(),
+              'message',
+              allOf(contains('debug'), contains('Number')),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'debug with wrong argument count via indirect call throws InvalidArgumentCountError',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = let f = debug in f("only one")',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            isA<InvalidArgumentCountError>().having(
+              (RuntimeError error) => error.toString(),
+              'message',
+              allOf(
+                contains('debug'),
+                contains('Expected: 2'),
+                contains('Actual: 1'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('debug propagates error from value expression', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = debug("label", num.div(1, 0))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (RuntimeError error) => error.toString(),
+            'message',
+            contains('Division by zero'),
+          ),
+        ),
+      );
+    });
+
+    test('debug propagates error from label expression first', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = debug(error.throw(0, "label failed"), num.div(1, 0))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (CustomError error) => error.toString(),
+            'message',
+            contains('label failed'),
+          ),
+        ),
+      );
+    });
+
+    test('debug propagates error from value after label succeeds', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = debug("ok", error.throw(0, "value failed"))',
+      );
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<CustomError>().having(
+            (CustomError error) => error.toString(),
+            'message',
+            contains('value failed'),
+          ),
+        ),
+      );
+    });
+
+    test('try catches debug type error and returns fallback', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = try(debug(123, "value"), "caught")',
+      );
+      checkResult(runtime, '"caught"');
     });
   });
 }

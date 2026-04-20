@@ -133,10 +133,34 @@ class JsonParseError extends RuntimeError {
       s.length > 50 ? '${s.substring(0, 50)}...' : s;
 }
 
+class Base64ParseError extends RuntimeError {
+  Base64ParseError({
+    required String input,
+    required String details,
+  }) : super(
+         'Invalid Base64: $details. Input: "${_truncate(input)}"',
+       );
+
+  static String _truncate(String s) =>
+      s.length > 50 ? '${s.substring(0, 50)}...' : s;
+}
+
 class RecursionLimitError extends RuntimeError {
   RecursionLimitError({
     required int limit,
   }) : super(
          'Maximum recursion depth of $limit exceeded',
+       );
+}
+
+class NegativeDurationError extends RuntimeError {
+  NegativeDurationError({
+    required String function,
+    String? component,
+    num? value,
+  }) : super(
+         component != null
+             ? 'Duration cannot be negative in "$function" ($component: $value)'
+             : 'Duration cannot be negative in "$function"',
        );
 }

@@ -4,6 +4,7 @@ import 'package:primal/compiler/models/function_signature.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/models/type.dart';
 import 'package:primal/compiler/runtime/bindings.dart';
+import 'package:primal/extensions/duration_extension.dart';
 
 abstract class Term {
   const Term();
@@ -43,6 +44,8 @@ abstract class ValueTerm<T> implements Term {
       return StringTerm(value);
     } else if (value is DateTime) {
       return TimestampTerm(value);
+    } else if (value is Duration) {
+      return DurationTerm(value);
     } else if (value is File) {
       return FileTerm(value);
     } else if (value is Directory) {
@@ -99,6 +102,23 @@ class TimestampTerm extends ValueTerm<DateTime> {
 
   @override
   Type get type => const TimestampType();
+}
+
+class DurationTerm extends ValueTerm<Duration> {
+  const DurationTerm(super.value);
+
+  @override
+  Type get type => const DurationType();
+
+  @override
+  String toString() => value.toFormattedString();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is DurationTerm && value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 class ListTerm extends ValueTerm<List<Term>> {
@@ -263,6 +283,125 @@ class BoundVariableTerm extends Term {
       throw StateError('BoundVariableTerm cannot be converted to native');
 }
 
+/// A reference to a let-bound variable within a let expression body.
+///
+/// Unlike [BoundVariableTerm] (for function parameters), this term supports
+/// partial substitution—it returns itself when the name is not found in
+/// bindings, allowing function parameter substitution to pass through
+/// without affecting let binding references.
+class LetBoundVariableTerm extends Term {
+  final String name;
+
+  const LetBoundVariableTerm(this.name);
+
+  @override
+  Term substitute(Bindings bindings) =>
+      bindings.data.containsKey(name) ? bindings.data[name]! : this;
+
+  @override
+  Term reduce() => this;
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  String toString() => name;
+
+  @override
+  dynamic native() =>
+      throw StateError('LetBoundVariableTerm "$name" was not substituted');
+}
+
+/// A reference to a lambda parameter within a lambda body.
+///
+/// Unlike [BoundVariableTerm] (for function parameters), this term supports
+/// partial substitution—it returns itself when the name is not found in
+/// bindings, allowing outer scope substitution to pass through without
+/// affecting lambda parameter references.
+class LambdaBoundVariableTerm extends Term {
+  final String name;
+
+  const LambdaBoundVariableTerm(this.name);
+
+  @override
+  Term substitute(Bindings bindings) =>
+      bindings.data.containsKey(name) ? bindings.data[name]! : this;
+
+  @override
+  Term reduce() => this; // Cannot reduce further; must be substituted first
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  String toString() => name;
+
+  @override
+  dynamic native() =>
+      throw StateError('LambdaBoundVariableTerm "$name" was not substituted');
+}
+
+/// A let expression that introduces local variable bindings.
+///
+/// Bindings are evaluated sequentially in declaration order (call-by-value).
+/// Each binding is fully evaluated before the next, and previous bindings
+/// are visible to subsequent bindings and the body.
+class LetTerm extends Term {
+  final List<(String, Term)> bindings;
+  final Term body;
+
+  const LetTerm({
+    required this.bindings,
+    required this.body,
+  });
+
+  @override
+  Type get type => const AnyType();
+
+  @override
+  Term substitute(Bindings bindings) {
+    // Since shadowing is disallowed, no let binding name can conflict with
+    // incoming bindings. Simply propagate substitutions through.
+    return LetTerm(
+      bindings: this.bindings
+          .map((b) => (b.$1, b.$2.substitute(bindings)))
+          .toList(),
+      body: body.substitute(bindings),
+    );
+  }
+
+  @override
+  Term reduce() {
+    // Build binding map incrementally. We use Bindings(map) directly instead
+    // of Bindings.from() because:
+    // 1. Bindings.from() takes List<Parameter> + List<Term> for function calls
+    // 2. Here we build the map incrementally as each binding is evaluated
+    // 3. Each binding must see only previously evaluated bindings, not all
+    final Map<String, Term> bindingMap = {};
+    for (final (String name, Term term) in bindings) {
+      // Create a snapshot of current bindings for substitution.
+      // This ensures each binding only sees previously evaluated bindings.
+      final Term substituted = term.substitute(
+        Bindings(Map<String, Term>.of(bindingMap)),
+      );
+      final Term value = substituted.reduce();
+      bindingMap[name] = value;
+    }
+    return body.substitute(Bindings(bindingMap)).reduce();
+  }
+
+  @override
+  dynamic native() => reduce().native();
+
+  @override
+  String toString() {
+    final String bindingString = bindings
+        .map((b) => '${b.$1} = ${b.$2}')
+        .join(', ');
+    return 'let $bindingString in $body';
+  }
+}
+
 class CallTerm extends Term {
   final Term callee;
   final List<Term> arguments;
@@ -411,14 +550,114 @@ class CustomFunctionTerm extends FunctionTerm {
         arguments: evaluatedArguments,
       );
 
-      return substitute(bindings).reduce();
+      // Directly substitute into body and reduce.
+      return term.substitute(bindings).reduce();
+    } finally {
+      FunctionTerm.decrementDepth();
+    }
+  }
+
+  // Custom functions are closed values - external substitution doesn't affect
+  // them. The function's internal variables are bound at application time via
+  // apply(), not during external substitution. This prevents variable capture
+  // bugs when a function is captured by a lambda that uses the same variable
+  // names.
+  @override
+  Term substitute(Bindings bindings) => this;
+}
+
+/// A lambda function term (anonymous inline function).
+///
+/// Lambdas are first-class values that capture their definition environment.
+/// They support closures—captured variables from outer scope are substituted
+/// into the body at creation time, while lambda parameters remain as
+/// [LambdaBoundVariableTerm] references until the lambda is applied.
+class LambdaTerm extends FunctionTerm {
+  final Term body;
+
+  const LambdaTerm({
+    required super.name,
+    required super.parameters,
+    required this.body,
+  });
+
+  @override
+  Term substitute(Bindings bindings) {
+    // Propagate substitution through the body.
+    // LambdaBoundVariableTerm references survive (partial substitution).
+    // Other bound variables (captured from outer scope) get substituted.
+    //
+    // IMPORTANT: Remove bindings for this lambda's own parameters before
+    // substituting into the body. This prevents outer substitutions from
+    // affecting inner lambda parameters with the same names. For example,
+    // in `((x) -> (x) -> x)(1)`, substituting {x: 1} into the outer lambda
+    // should NOT affect the inner lambda's parameter x.
+    final Map<String, Term> filteredBindings = Map.of(bindings.data);
+    for (final Parameter parameter in parameters) {
+      filteredBindings.remove(parameter.name);
+    }
+
+    return LambdaTerm(
+      name: name,
+      parameters: parameters,
+      body: body.substitute(Bindings(filteredBindings)),
+    );
+  }
+
+  @override
+  Term reduce() => this; // Lambdas are values; they don't reduce further
+
+  // Why we override apply() instead of using FunctionTerm.apply():
+  //
+  // FunctionTerm.apply() uses: substitute(bindings).reduce()
+  // CustomFunctionTerm.substitute() returns: term.substitute(bindings) [unwrapped body]
+  // LambdaTerm.substitute() returns: LambdaTerm(..., body.substitute(bindings)) [preserves wrapper]
+  //
+  // If we used the base class pattern:
+  //   1. substitute(bindings) → returns a LambdaTerm (wrapper preserved)
+  //   2. reduce() on LambdaTerm → returns this (lambdas are values)
+  //   3. Result: a LambdaTerm, NOT the evaluated body!
+  //
+  // So we must substitute directly into the body and reduce that result.
+  // This is analogous to CustomFunctionTerm.apply() which also overrides
+  // to add call-by-value argument evaluation.
+  @override
+  Term apply(List<Term> arguments) {
+    if (arguments.length != parameters.length) {
+      throw InvalidArgumentCountError(
+        function: name,
+        expected: parameters.length,
+        actual: arguments.length,
+      );
+    }
+    FunctionTerm.incrementDepth();
+    try {
+      // Evaluate arguments (call-by-value)
+      final List<Term> evaluatedArguments = arguments
+          .map((argument) => argument.reduce())
+          .toList();
+
+      // Create bindings and substitute into body
+      final Bindings bindings = Bindings.from(
+        parameters: parameters,
+        arguments: evaluatedArguments,
+      );
+      final Term substituted = body.substitute(bindings);
+      return substituted.reduce();
     } finally {
       FunctionTerm.decrementDepth();
     }
   }
 
   @override
-  Term substitute(Bindings bindings) => term.substitute(bindings);
+  dynamic native() => toString();
+
+  // Override to print parameter names only (no types).
+  // Lambda parameters are always untyped in source, so showing ": any" is noise.
+  // Named functions print "f(x: Number)" but lambdas print "<lambda@1:1>(x)".
+  @override
+  String toString() =>
+      '$name(${parameters.map((parameter) => parameter.name).join(', ')})';
 }
 
 abstract class NativeFunctionTerm extends FunctionTerm {

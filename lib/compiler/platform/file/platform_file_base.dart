@@ -28,4 +28,8 @@ abstract class PlatformFileBase {
   bool move(File source, File destination);
 
   Directory parent(File file);
+
+  bool append(File file, String content);
+
+  DateTime lastModified(File file);
 }

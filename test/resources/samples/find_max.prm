@@ -8,4 +8,4 @@ findMax(list) = if (list.isEmpty(list))
                 else
                     list.reduce(list.rest(list), list.first(list), num.max)
 
-main = findMax([1, 7, -13, 9, 2])
+main() = findMax([1, 7, -13, 9, 2])

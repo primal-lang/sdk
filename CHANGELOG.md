@@ -1,5 +1,106 @@
 # CHANGELOG
 
+## 0.5.0 - Bronze Axe
+
+### Language
+
+#### Added
+
+- Let expressions for local variable bindings
+- Lambda expressions (anonymous functions)
+
+#### Changed
+
+- Nullary functions now require parentheses: `main()` instead of `main`
+
+### Standard Library
+
+#### Added
+
+- **Duration type** - New primitive type for representing time intervals
+  - `duration.from(days, hours, minutes, seconds, milliseconds)` - Create from components
+  - `duration.fromDays`, `duration.fromHours`, `duration.fromMinutes`, `duration.fromSeconds`, `duration.fromMilliseconds` - Create from single unit
+  - `duration.days`, `duration.hours`, `duration.minutes`, `duration.seconds`, `duration.milliseconds` - Extract components
+  - `duration.toDays`, `duration.toHours`, `duration.toMinutes`, `duration.toSeconds`, `duration.toMilliseconds` - Convert to single unit
+  - `duration.format` - Format as human-readable string
+  - `duration.compare` - Compare two durations
+  - Operator support: `+`, `-`, comparison operators
+- **Base64 encoding/decoding**
+  - `base64.encode` - Encode string to Base64
+  - `base64.decode` - Decode Base64 to string
+- **UUID generation**
+  - `uuid.v4` - Generate random UUID v4
+- **Debug function**
+  - `debug` - Print value with type information for debugging
+- **Path utilities**
+  - `path.basename` - Extract filename from path
+  - `path.dirname` - Extract directory from path
+  - `path.extension` - Extract file extension
+  - `path.isAbsolute` - Check if path is absolute
+  - `path.join` - Join path segments
+  - `path.normalize` - Normalize path separators
+- **Timestamp functions**
+  - `time.add` - Add duration to timestamp
+  - `time.subtract` - Subtract duration from timestamp
+  - `time.between` - Get duration between two timestamps
+  - `time.format` - Format timestamp with pattern
+  - `time.fromEpoch` - Create timestamp from Unix epoch
+  - `time.toEpoch` (renamed from `time.epoch`)
+  - `time.dayOfWeek` - Get day of week (1-7)
+  - `time.dayOfYear` - Get day of year (1-366)
+  - `time.isAfter` - Check if timestamp is after another
+  - `time.isBefore` - Check if timestamp is before another
+  - `time.isLeapYear` - Check if year is a leap year
+- **String functions**
+  - `str.capitalize` - Capitalize first character
+  - `str.count` - Count occurrences of substring
+  - `str.fromBytes` - Create string from byte list
+  - `str.isAlpha` - Check if string contains only letters
+  - `str.isAlphaNumeric` - Check if string contains only letters and digits
+  - `str.isBlank` - Check if string is empty or whitespace
+  - `str.isLowercase` - Check if string is all lowercase
+  - `str.isNumeric` - Check if string contains only digits
+  - `str.isUppercase` - Check if string is all uppercase
+  - `str.lastIndexOf` - Find last occurrence of substring
+  - `str.lines` - Split string into lines
+  - `str.repeat` - Repeat string n times
+  - `str.trimLeft` - Trim whitespace from left
+  - `str.trimRight` - Trim whitespace from right
+- **List functions**
+  - `list.chunk` - Split list into chunks of size n
+  - `list.count` - Count elements matching predicate
+  - `list.distinct` - Remove duplicates (preserve order)
+  - `list.flatten` - Flatten nested lists
+- **Map functions**
+  - `map.entries` - Get list of key-value pairs
+  - `map.merge` - Merge two maps
+- **Set functions**
+  - `set.isDisjoint` - Check if sets have no common elements
+  - `set.isSubset` - Check if set is subset of another
+  - `set.isSuperset` - Check if set is superset of another
+- **Vector functions**
+  - `vector.distance` - Euclidean distance between vectors
+  - `vector.dot` - Dot product of two vectors
+  - `vector.scale` - Multiply vector by scalar
+- **Arithmetic functions**
+  - `num.logBase` - Logarithm with custom base
+  - `num.roundTo` - Round to n decimal places
+  - `num.truncate` - Truncate to integer
+- **File functions**
+  - `file.append` - Append content to file
+  - `file.lastModified` - Get file modification timestamp
+- **Environment functions**
+  - `env.has` - Check if environment variable exists
+- **Type checking**
+  - `is.duration` - Check if value is a Duration
+
+### Documentation
+
+#### Added
+
+- Developer knowledge base (`docs/dev/`)
+- Language reference (`docs/lang/`)
+
 ## 0.4.3 - Copper Chisel
 
 ### CLI
