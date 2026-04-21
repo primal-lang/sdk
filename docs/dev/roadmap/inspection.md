@@ -103,7 +103,9 @@ For lambda expressions, these are the parameter names from the lambda syntax (e.
 - Any error during argument reduction propagates before type checking occurs. This includes:
   - `NotFoundInScopeError` for unresolved references
   - `RecursionLimitError` for expressions exceeding the recursion depth limit
+  - User-thrown errors via `error.throw`
   - Other runtime errors from nested function calls
+- When the argument is a `FunctionReferenceTerm` (e.g., `addNumbers` or `num.add`), `reduce()` resolves it to the underlying `FunctionTerm` before inspection. This handles both user-defined function references and library function references transparently
 
 ## Key Edge Cases
 
@@ -117,7 +119,9 @@ let alias = greet in function.name(alias) // returns "greet", not "alias"
 
 ```primal
 // Lambda expressions return synthetic location-based names
-function.name((x) -> x) // returns "<lambda@1:1>" (row:column of lambda)
+// The position reflects where the lambda appears in source code
+id() = (x) -> x
+function.name(id()) // returns "<lambda@2:8>" (row 2, column 8 where lambda starts)
 ```
 
 ```primal
@@ -140,6 +144,13 @@ function.parameters(num.add) // returns ["a", "b"]
 isEven(n) = if (n == 0) true else isOdd(n - 1)
 isOdd(n) = if (n == 0) false else isEven(n - 1)
 function.name(isEven) // returns "isEven"
+```
+
+```primal
+// Wrapping a function creates a new lambda with its own identity
+partial() = (x) -> num.add(x, 5)
+function.arity(partial()) // returns 1, not 2
+function.parameters(partial()) // returns ["x"], not ["a", "b"]
 ```
 
 ## Examples
@@ -202,12 +213,20 @@ function.parameters("hello")
 - Add native runtime functions following the existing `NativeFunctionTerm` pattern
 - Each `function.*` implementation must call `reduce()` on its argument, then check `is FunctionTerm` and throw `InvalidArgumentTypesError` if the check fails
 - `type.of` must call `reduce()` on its argument, then return `StringTerm(reducedValue.type.toString())`
+- Error construction should follow the existing library pattern (e.g., `list_map.dart`):
+  ```dart
+  throw InvalidArgumentTypesError(
+    function: name,
+    expected: parameterTypes,  // [FunctionType()]
+    actual: [a.type],          // e.g., [NumberType()]
+  );
+  ```
 
 ## Post-Implementation
 
-- Update documentation in `docs/lang/reference/core/casting.md`
+- Create documentation in `docs/lang/reference/core/introspection.md` (these are reflection functions, not casting functions)
 - Implement tests covering:
-  - `type.of` with each of the 15 listed runtime types
+  - `type.of` with each of the 14 listed runtime types
   - `type.of` with nested expressions that require reduction
   - `function.name`, `function.arity`, `function.parameters` with user-defined functions
   - `function.name`, `function.arity`, `function.parameters` with standard-library functions
@@ -215,7 +234,8 @@ function.parameters("hello")
   - Lambda introspection: synthetic names, correct arity for nested lambdas
   - Let bindings return the bound function's intrinsic name
   - Error cases: passing non-function values to `function.*`
-  - Error propagation: unresolved references, recursion limits
+  - Error propagation: unresolved references, recursion limits, user-thrown errors
+  - Consistency: `function.name(x)` throws iff `is.function(x)` returns false
 
 ## Implementation Complexity
 
