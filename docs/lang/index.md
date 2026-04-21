@@ -22,6 +22,7 @@ Core library functions organized by category. Note: Primal does not support stat
 - [[lang/reference/core/operators]] — Operator reference
 - [[lang/reference/core/comparison]] — Comparison operations
 - [[lang/reference/core/casting]] — Type casting
+- [[lang/reference/core/introspection]] — Runtime introspection
 - [[lang/reference/core/control]] — Control flow
 - [[lang/reference/core/error]] — Error handling
 
