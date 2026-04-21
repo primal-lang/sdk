@@ -205,7 +205,7 @@ function.parameters("hello")
 
 ## Post-Implementation
 
-- Update documentation in `docs/`
+- Update documentation in `docs/lang/reference/core/casting.md`
 - Implement tests covering:
   - `type.of` with each of the 15 listed runtime types
   - `type.of` with nested expressions that require reduction
