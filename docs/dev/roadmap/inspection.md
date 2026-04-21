@@ -48,7 +48,7 @@ function.parameters(value)
 - **Purity:** Pure
 - **Behavior:** Reduces its argument to a value and returns the canonical runtime type name as a string. Intermediate types such as `FunctionCall` or `Any` never appear in the result because the argument is always fully reduced before inspection
 
-Possible result strings:
+Possible result strings (PascalCase, matching runtime type names):
 
 - `Boolean`
 - `Number`
@@ -62,13 +62,21 @@ Possible result strings:
 - `File`
 - `Directory`
 - `Timestamp`
+- `Duration`
 - `Function`
 
 ### `function.name`
 
 - **Signature:** `function.name(f: Function): String`
 - **Purity:** Pure
-- **Behavior:** Reduces its argument and returns the function's declared name as a string (without parentheses or parameter list). For aliased references, returns the original function name, not the alias
+- **Behavior:** Reduces its argument and returns the function's intrinsic name as a string (without parentheses or parameter list)
+
+Name resolution by function kind:
+
+- **User-defined functions:** Returns the declared name (e.g., `"addNumbers"`)
+- **Standard-library functions:** Returns the qualified name (e.g., `"num.add"`)
+- **Lambda expressions:** Returns the synthetic location-based name (e.g., `"<lambda@1:5>"`)
+- **Let bindings:** Returns the bound function's intrinsic name, not the binding name. Writing `let alias = f in function.name(alias)` returns the name of `f`, not `"alias"`
 
 ### `function.arity`
 
@@ -80,25 +88,41 @@ Possible result strings:
 
 - **Signature:** `function.parameters(f: Function): List`
 - **Purity:** Pure
-- **Behavior:** Reduces its argument and returns the function parameter names, in declaration order, as a list of strings
+- **Behavior:** Reduces its argument and returns the function parameter names, in declaration order, as a list of strings. Only names are returned; type information is not included
 
 For user-defined functions, these are the original parameter names from the function definition.
 
-For standard-library functions, these are the declared runtime parameter names. Most use generic names such as `"a"` and `"b"` rather than descriptive names
+For standard-library functions, these are the declared runtime parameter names. Most use generic names such as `"a"` and `"b"` rather than descriptive names.
+
+For lambda expressions, these are the parameter names from the lambda syntax (e.g., `(x, y) -> x + y` yields `["x", "y"]`)
 
 ## Error Behavior
 
 - Wrong arity remains an existing call-site error
 - `function.name`, `function.arity`, and `function.parameters` must raise `InvalidArgumentTypesError` when their reduced argument is not a `FunctionTerm`
-- `type.of` propagates any error raised while reducing its argument
-- If a `FunctionReferenceTerm` fails to resolve (e.g., the referenced function does not exist), the `NotFoundInScopeError` propagates before the type check occurs
+- Any error during argument reduction propagates before type checking occurs. This includes:
+  - `NotFoundInScopeError` for unresolved references
+  - `RecursionLimitError` for expressions exceeding the recursion depth limit
+  - Other runtime errors from nested function calls
 
 ## Key Edge Cases
 
+Note: `//` comments in examples below are annotations for clarity; Primal does not have comment syntax.
+
 ```primal
-// Aliased function references resolve to the original name
+// Let bindings do not create aliases; the function's intrinsic name is returned
 greet(name) = str.concat("Hello, ", name)
-let alias = greet in function.name(alias) // returns "greet"
+let alias = greet in function.name(alias) // returns "greet", not "alias"
+```
+
+```primal
+// Lambda expressions return synthetic location-based names
+function.name((x) -> x) // returns "<lambda@1:1>" (row:column of lambda)
+```
+
+```primal
+// Lambda arity reflects parameter count, not curried depth
+function.arity((x) -> (y) -> x + y) // returns 1, not 2
 ```
 
 ```primal
@@ -124,6 +148,10 @@ function.name(isEven) // returns "isEven"
 
 ```primal
 type.of([1, 2, 3]) // returns "List"
+```
+
+```primal
+type.of(duration.fromHours(2)) // returns "Duration"
 ```
 
 ```primal
@@ -179,13 +207,15 @@ function.parameters("hello")
 
 - Update documentation in `docs/`
 - Implement tests covering:
-  - `type.of` with each of the 14 listed runtime types
+  - `type.of` with each of the 15 listed runtime types
   - `type.of` with nested expressions that require reduction
   - `function.name`, `function.arity`, `function.parameters` with user-defined functions
   - `function.name`, `function.arity`, `function.parameters` with standard-library functions
-  - Aliased function references (via `let` bindings)
+  - `function.name`, `function.arity`, `function.parameters` with lambda expressions
+  - Lambda introspection: synthetic names, correct arity for nested lambdas
+  - Let bindings return the bound function's intrinsic name
   - Error cases: passing non-function values to `function.*`
-  - Error propagation: invalid expressions that fail during reduction
+  - Error propagation: unresolved references, recursion limits
 
 ## Implementation Complexity
 
