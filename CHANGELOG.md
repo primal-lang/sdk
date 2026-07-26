@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 0.5.1 - Bronze Axe
+
+### Standard Library
+
+#### Added
+
+- **Introspection functions** - Inspect values and functions at runtime
+  - `type.of` - Get the canonical runtime type name of any value as a string
+  - `function.name` - Get a function's intrinsic name
+  - `function.arity` - Get the number of parameters a function accepts
+  - `function.parameters` - Get a function's parameter names as a list, in declaration order
+
 ## 0.5.0 - Bronze Axe
 
 ### Language

@@ -160,6 +160,6 @@ The `safeDefault()` is only evaluated if `riskyOperation()` throws an error.
 
 ## Related Topics
 
-- [[lang/reference/operators]] - Operator reference including lazy and strict variants
-- [[lang/reference/logic]] - Boolean logic functions with evaluation details
-- [[lang/reference/control]] - Control flow constructs
+- [[lang/reference/core/operators]] - Operator reference including lazy and strict variants
+- [[lang/reference/primitives/logic]] - Boolean logic functions with evaluation details
+- [[lang/reference/core/control]] - Control flow constructs

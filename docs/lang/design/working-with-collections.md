@@ -402,9 +402,9 @@ pairsToMap(pairs) =
 
 ## See Also
 
-- [[lang/reference/list]] - List function reference
-- [[lang/reference/map]] - Map function reference
-- [[lang/reference/set]] - Set function reference
-- [[lang/reference/stack]] - Stack function reference
-- [[lang/reference/queue]] - Queue function reference
-- [[lang/reference/vector]] - Vector function reference
+- [[lang/reference/collections/list]] - List function reference
+- [[lang/reference/collections/map]] - Map function reference
+- [[lang/reference/collections/set]] - Set function reference
+- [[lang/reference/collections/stack]] - Stack function reference
+- [[lang/reference/collections/queue]] - Queue function reference
+- [[lang/reference/collections/vector]] - Vector function reference

@@ -233,5 +233,5 @@ Primal enforces a maximum recursion depth of 1000 to prevent stack overflow. If 
 
 ## Related Topics
 
-- [[lang/reference/list]] - List operations including `map`, `filter`, and `reduce`
-- [[lang/reference/control]] - Control flow constructs like `if-else` and `let`
+- [[lang/reference/collections/list]] - List operations including `map`, `filter`, and `reduce`
+- [[lang/reference/core/control]] - Control flow constructs like `if-else` and `let`
