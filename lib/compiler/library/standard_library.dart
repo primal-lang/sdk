@@ -126,6 +126,10 @@ import 'package:primal/compiler/library/hash/hash_sha1.dart';
 import 'package:primal/compiler/library/hash/hash_sha256.dart';
 import 'package:primal/compiler/library/hash/hash_sha512.dart';
 import 'package:primal/compiler/library/index/element_at.dart';
+import 'package:primal/compiler/library/introspection/function_arity.dart';
+import 'package:primal/compiler/library/introspection/function_name.dart';
+import 'package:primal/compiler/library/introspection/function_parameters.dart';
+import 'package:primal/compiler/library/introspection/type_of.dart';
 import 'package:primal/compiler/library/json/json_decode.dart';
 import 'package:primal/compiler/library/json/json_encode.dart';
 import 'package:primal/compiler/library/list/list_all.dart';
@@ -469,6 +473,12 @@ class StandardLibrary {
 
     // Index
     const ElementAt(),
+
+    // Introspection
+    const FunctionArity(),
+    const FunctionName(),
+    const FunctionParameters(),
+    const TypeOf(),
 
     // Json
     const JsonDecode(),

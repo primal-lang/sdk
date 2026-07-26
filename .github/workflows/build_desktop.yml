@@ -1,0 +1,71 @@
+name: Build Desktop
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Analyze
+        run: dart analyze
+
+  build:
+    name: Build ${{ matrix.target }}
+    needs: verify
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: primal-linux-x86-64
+          - os: macos-latest
+            target: primal-macos-arm64
+          - os: windows-latest
+            target: primal-windows-x86-64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install dependencies
+        run: dart pub get
+
+      # The committed binaries in bin/ are removed first so a failed compilation
+      # can never cause a stale binary to be uploaded as the artifact.
+      - name: Build
+        shell: bash
+        run: |
+          rm -f "bin/${{ matrix.target }}"
+          bash scripts/build_desktop.sh
+
+      - name: Upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.target }}
+          path: bin/${{ matrix.target }}
+          if-no-files-found: error

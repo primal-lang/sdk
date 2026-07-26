@@ -7,6 +7,7 @@ sources:
   - scripts/
   - lib/main/
   - pubspec.yaml
+  - .github/workflows/build_desktop.yml
 ---
 
 # Build Targets
@@ -67,31 +68,45 @@ The web target exposes:
 
 Build scripts are located in `scripts/`:
 
-### Desktop Build (`scripts/build-desktop.sh`)
+### Desktop Build (`scripts/build_desktop.sh`)
 
-Compiles native executables for the current operating system:
+Compiles a native executable for the current operating system and architecture:
 
 ```bash
 #!/bin/bash
 set -e
-mkdir -p output
+mkdir -p bin
 
 OS="$(uname -s)"
-case "$OS" in
-  Linux*)   dart compile exe lib/main/main_cli.dart -o bin/primal-linux-x86-64 ;;
-  Darwin*)  dart compile exe lib/main/main_cli.dart -o bin/primal-macos-x86-64 ;;
-  MINGW*|MSYS*|CYGWIN*) dart compile exe lib/main/main_cli.dart -o bin/primal-windows-x86-64.exe ;;
-  *)        echo "Unknown OS: $OS" && exit 1 ;;
+ARCHITECTURE="$(uname -m)"
+
+case "$ARCHITECTURE" in
+  x86_64|amd64)  ARCHITECTURE="x86-64" ;;
+  arm64|aarch64) ARCHITECTURE="arm64" ;;
+  *)             echo "Unknown architecture: $ARCHITECTURE" >&2 && exit 1 ;;
 esac
+
+case "$OS" in
+  Linux*)               OUTPUT="bin/primal-linux-$ARCHITECTURE" ;;
+  Darwin*)              OUTPUT="bin/primal-macos-$ARCHITECTURE" ;;
+  MINGW*|MSYS*|CYGWIN*) OUTPUT="bin/primal-windows-$ARCHITECTURE" ;;
+  *)                    echo "Unknown OS: $OS" >&2 && exit 1 ;;
+esac
+
+dart compile exe lib/main/main_cli.dart -o "$OUTPUT"
 ```
 
-Output binaries:
+The binary name always reflects the machine it was built on. Released binaries:
 
 - Linux: `bin/primal-linux-x86-64`
-- macOS: `bin/primal-macos-x86-64`
-- Windows: `bin/primal-windows-x86-64.exe`
+- macOS: `bin/primal-macos-arm64`
+- Windows: `bin/primal-windows-x86-64`
 
-### Web Build (`scripts/build-web.sh`)
+The Windows binary carries no `.exe` extension because the installer at
+`primal-lang.org/install.sh` downloads `bin/primal-windows-<architecture>` from the
+release tag and appends the extension when writing the file locally.
+
+### Web Build (`scripts/build_web.sh`)
 
 Compiles to optimized JavaScript:
 
@@ -110,8 +125,8 @@ The `-O2` flag enables size and speed optimizations. Output is written to `outpu
 ### Native Executable
 
 ```bash
-# Using build script (auto-detects OS)
-./scripts/build-desktop.sh
+# Using build script (auto-detects OS and architecture)
+./scripts/build_desktop.sh
 
 # Direct compilation
 dart compile exe lib/main/main_cli.dart -o bin/primal
@@ -123,7 +138,7 @@ The `dart compile exe` command produces a self-contained native executable that 
 
 ```bash
 # Using build script
-./scripts/build-web.sh
+./scripts/build_web.sh
 
 # Direct compilation
 dart compile js lib/main/main_web.dart -O2 -o output/primal.js
@@ -191,12 +206,17 @@ The SDK requires Dart 3.11.4 or later.
 3. **Build Targets**:
 
    ```bash
-   ./scripts/build-desktop.sh  # Native executable
-   ./scripts/build-web.sh      # JavaScript bundle
+   ./scripts/build_desktop.sh  # Native executable for the current machine
+   ./scripts/build_web.sh      # JavaScript bundle
    ```
 
+   Release binaries for all three desktop platforms come from the `Build Desktop`
+   GitHub Actions workflow (`.github/workflows/build_desktop.yml`), triggered manually
+   from the Actions tab. It runs `scripts/build_desktop.sh` on a Linux, macOS and
+   Windows runner, and publishes one artifact per platform.
+
 4. **Output Artifacts**:
-   - `bin/primal-<os>-x86-64` - Native executables
+   - `bin/primal-linux-x86-64`, `bin/primal-macos-arm64`, `bin/primal-windows-x86-64` - Native executables
    - `output/primal.js` - JavaScript bundle
 
 ## Platform Considerations

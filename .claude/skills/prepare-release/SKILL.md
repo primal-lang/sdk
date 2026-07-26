@@ -34,7 +34,7 @@ description: Prepares the next SDK release by updating version, syncing document
    ```
 
 4. **Web Build**: Build the JavaScript binary for web deployment.
-   a. Run `scripts/build-web.sh`
+   a. Run `scripts/build_web.sh`
    b. Verify the build succeeded with no errors
    c. Confirm that `output/primal.js` was created
    d. If the build fails, report the error and stop
@@ -42,6 +42,6 @@ description: Prepares the next SDK release by updating version, syncing document
 5. **Manual Steps Reminder**: Inform the user of the remaining manual steps:
    - **Website updates**: Run the skill `sync-sdk` in the website repository
    - **Deploy website**: Deploy the updated website
-   - **Desktop binaries**: Generate binaries for all desktop platforms (macOS, Windows, Linux)
    - **Git workflow**: Merge the release branch into `main`
+   - **Desktop binaries**: Trigger the `Build Desktop` workflow from the Actions tab, then download its three artifacts and commit them to `bin/`
    - **GitHub release**: Create a new GitHub release tagged with the version number

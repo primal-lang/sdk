@@ -221,5 +221,5 @@ loadConfig(path) =
 
 ## See Also
 
-- [[lang/reference/error]] - Error function reference
-- [[lang/reference/control]] - Control flow including `try`
+- [[lang/reference/core/error]] - Error function reference
+- [[lang/reference/core/control]] - Control flow including `try`

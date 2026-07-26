@@ -15,7 +15,7 @@ class LineEditor {
   /// stdout is typically unbuffered when connected to a terminal.
   static final bool _shouldFlush = Platform.isWindows;
 
-  LineEditor({String prompt = ''}) : _prompt = prompt;
+  LineEditor({this._prompt = ''});
 
   /// Flushes stdout on Windows only to ensure characters appear immediately.
   void _flushIfNeeded() {

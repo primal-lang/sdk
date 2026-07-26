@@ -56,21 +56,37 @@ sources: []
 
 ## Roadmap
 
-- [[dev/roadmap/destructuring]] — Destructuring syntax
-- [[dev/roadmap/pattern]] — Pattern matching
-- [[dev/roadmap/modules]] — Module system
-- [[dev/roadmap/tuples]] — Tuple types
-- [[dev/roadmap/enums]] — Enum types
-- [[dev/roadmap/option]] — Option type
-- [[dev/roadmap/try]] — Try/catch expressions
-- [[dev/roadmap/ranges]] — Range syntax
-- [[dev/roadmap/string]] — String improvements
-- [[dev/roadmap/regex]] — Regular expressions
-- [[dev/roadmap/record]] — Record types
-- [[dev/roadmap/typing]] — Type system enhancements
-- [[dev/roadmap/currification]] — Automatic currying
-- [[dev/roadmap/inspection]] — Runtime inspection
-- [[dev/roadmap/http]] — HTTP client
-- [[dev/roadmap/testing]] — Testing framework
-- [[dev/roadmap/transpilation]] — Transpilation targets
-- [[dev/roadmap/do]] — Do notation
+### 0.5.0
+
+- [[dev/roadmap/0.5.0/testing]] — Testing framework
+
+### 0.6.0
+
+- [[dev/roadmap/0.6.0/enums]] — Enum types
+- [[dev/roadmap/0.6.0/option]] — Option type
+- [[dev/roadmap/0.6.0/record]] — Record types
+- [[dev/roadmap/0.6.0/regex]] — Regular expressions
+- [[dev/roadmap/0.6.0/string]] — String improvements
+- [[dev/roadmap/0.6.0/tuples]] — Tuple types
+
+### 0.7.0
+
+- [[dev/roadmap/0.7.0/http]] — HTTP client
+- [[dev/roadmap/0.7.0/modules]] — Module system
+
+### 0.8.0
+
+- [[dev/roadmap/0.8.0/destructuring]] — Destructuring syntax
+- [[dev/roadmap/0.8.0/do]] — Do notation
+- [[dev/roadmap/0.8.0/ranges]] — Range syntax
+- [[dev/roadmap/0.8.0/try]] — Try/catch expressions
+
+### 0.9.0
+
+- [[dev/roadmap/0.9.0/transpilation]] — Transpilation targets
+
+### 1.0.0
+
+- [[dev/roadmap/1.0.0/currification]] — Automatic currying
+- [[dev/roadmap/1.0.0/pattern]] — Pattern matching
+- [[dev/roadmap/1.0.0/typing]] — Type system enhancements
