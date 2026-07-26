@@ -2,6 +2,7 @@
 @TestOn('vm')
 library;
 
+import 'dart:async';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -746,18 +747,59 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
           },
         );
 
-        // Give it more time to compile and execute
-        await Future<void>.delayed(const Duration(seconds: 3));
+        // Watch mode never exits, so collect output until the first execution
+        // completes rather than waiting a fixed amount of time, which is
+        // unreliable when the machine is loaded by the rest of the suite.
+        final StringBuffer output = StringBuffer();
+        final Completer<void> executed = Completer<void>();
 
-        // Kill the process
-        process.kill();
+        // The result is printed on its own line after the debug lines, so it
+        // is matched exactly: a substring match would also accept the elapsed
+        // milliseconds reported by '[debug] Compilation:'.
+        bool hasExecuted(String captured) =>
+            captured.contains('[debug] Executing:') &&
+            captured.split('\n').any((String line) => line.trim() == '123');
 
-        final String stdout = await process.stdout
+        final StreamSubscription<String> subscription = process.stdout
             .transform(const SystemEncoding().decoder)
-            .join();
+            .listen(
+              (String chunk) {
+                output.write(chunk);
 
-        expect(stdout, contains('[debug]'));
-        expect(stdout, contains('123'));
+                if (!executed.isCompleted && hasExecuted(output.toString())) {
+                  executed.complete();
+                }
+              },
+              // The process exited before printing the expected output, so
+              // fail immediately instead of waiting for the timeout.
+              onDone: () {
+                if (!executed.isCompleted) {
+                  executed.complete();
+                }
+              },
+            );
+
+        // Watch mode holds the file open, so stderr must be drained to keep a
+        // full pipe from blocking the process before it produces stdout.
+        unawaited(process.stderr.drain<void>());
+
+        try {
+          await executed.future.timeout(const Duration(seconds: 60));
+        } on TimeoutException {
+          // Fall through: the assertions below report the captured output.
+        }
+
+        // Kill the process, then stop reading and reap it so the temporary
+        // directory can be removed while no file watcher is still open.
+        process.kill();
+        await subscription.cancel();
+        await process.exitCode;
+
+        expect(output.toString(), contains('[debug] Executing:'));
+        expect(
+          output.toString().split('\n').map((String line) => line.trim()),
+          contains('123'),
+        );
       });
 
       test('short flags can be combined in sequence', () async {
