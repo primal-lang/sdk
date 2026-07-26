@@ -26,7 +26,7 @@ sources:
 
 # Testing
 
-**TLDR**: Four standard-library assertion functions (`assert.equal`, `assert.true`, `assert.false`, `assert.throws`) that raise a dedicated `AssertionFailedError`, paired with a CLI test mode (`primal --test file.prm`) that discovers zero-argument `test.*` functions, runs them in source order, and classifies each result as pass, fail, or error.
+**TLDR**: Five standard-library assertion functions (`assert.equal`, `assert.notEqual`, `assert.true`, `assert.false`, `assert.throws`) that raise a dedicated `AssertionFailedError`, paired with a CLI test mode (`primal --test file.prm`) that discovers zero-argument `test.*` functions, runs them in source order, and classifies each result as pass, fail, or error.
 
 This specification adds a testing workflow to Primal without introducing any new
 syntax. Assertions are ordinary native functions; tests are ordinary
@@ -46,7 +46,7 @@ therefore has two halves:
   independently, and reports results.
 
 `assert.throws` is the only helper that adds capability the language does not
-already have. The other three are ergonomic shorthands (see
+already have. The other four are ergonomic shorthands (see
 [§3.1](#31-overlap-with-existing-constructs)), and the runner is what makes any
 of it usable in a real project.
 
@@ -175,18 +175,28 @@ this document, and why.
 
 ### 3.1 Overlap With Existing Constructs
 
-Three of the four helpers are already expressible:
+Four of the five helpers are already expressible:
 
 ```primal
-assert.true(c)     ≡  if (c) true else error.throw("assertion", "…")
-assert.false(c)    ≡  if (!c) true else error.throw("assertion", "…")
-assert.equal(a, b) ≡  if (a == b) true else error.throw("assertion", "…")
+assert.true(c)        ≡  if (c) true else error.throw("assertion", "…")
+assert.false(c)       ≡  if (!c) true else error.throw("assertion", "…")
+assert.equal(a, b)    ≡  if (a == b) true else error.throw("assertion", "…")
+assert.notEqual(a, b) ≡  if (a != b) true else error.throw("assertion", "…")
 ```
 
 Only `assert.throws` adds capability, because it cannot be written in Primal at
 all ([§2.2](#22-native-functions-receive-unreduced-arguments)). The assertions
-are ergonomics; the runner is the feature. This keeps the assertion surface
-deliberately small — four functions, no variants.
+are ergonomics; the runner is the feature. The surface stays deliberately small —
+five functions, no variants.
+
+`assert.notEqual` earns its place on the same ground as `assert.equal`: the
+alternative, `assert.true(a != b)`, collapses both operands into a single boolean
+before the assertion sees them, so its failure message can only say "expected
+true, actual false". `assert.notEqual` keeps the values and reports them
+([§4.4](#44-failure-representation)). It is a genuine widening of the surface
+this section otherwise argues against — accepted deliberately, because inequality
+is a common enough expectation that users would otherwise reach for the
+diagnostically blind form.
 
 ### 3.2 No `message` Parameter
 
@@ -249,10 +259,11 @@ for no benefit and makes ordering ASCII-dependent (`test.A` before `test.a`).
 
 ### 4.1 Scope
 
-Add four standard-library functions:
+Add five standard-library functions:
 
 ```primal
 assert.equal(actual, expected)
+assert.notEqual(actual, expected)
 assert.true(condition)
 assert.false(condition)
 assert.throws(expression)
@@ -296,6 +307,7 @@ test_name  ::= "test." identifier_tail   (* runner convention, not grammar *)
 
 ```primal
 assert.equal(actual: Equatable, expected: Equatable): Boolean
+assert.notEqual(actual: Equatable, expected: Equatable): Boolean
 assert.true(condition: Boolean): Boolean
 assert.false(condition: Boolean): Boolean
 assert.throws(expression: Any): Boolean
@@ -323,6 +335,25 @@ Common behaviour:
 3. `true` → return `true`.
 4. `false` → throw `AssertionFailedError`.
 5. Any error raised by the comparison itself propagates **unchanged**.
+
+#### `assert.notEqual(actual, expected)`
+
+The mirror of `assert.equal`, and specified only by its differences:
+
+1. Reduce `actual`, then reduce `expected`.
+2. Compare with `CompNeq.execute`, passing `this` as the `function` argument —
+   identical semantics to `!=` and `comp.neq`. `CompNeq.execute` delegates to
+   `CompEq.execute` and negates the result
+   (`lib/compiler/library/comparison/comp_neq.dart`), so the type rules,
+   the recursive collection comparison, and the error attribution are exactly
+   those of [`assert.equal`](#43-assertion-functions).
+3. `true` (the operands differ) → return `true`.
+4. `false` (the operands are equal) → throw `AssertionFailedError`.
+5. Any error raised by the comparison itself propagates **unchanged**.
+
+Implementation note: `CompNeq.execute` is declared to return `Term`, not
+`BooleanTerm` (unlike `CompEq.execute`), even though it only ever produces a
+`BooleanTerm`. The native must narrow the result rather than assume it.
 
 #### `assert.true(condition)` / `assert.false(condition)`
 
@@ -360,14 +391,20 @@ AssertionFailedError extends RuntimeError
   message: 'Assertion "<function>" failed: expected <expected>, actual <actual>'
 ```
 
-All four helpers supply both values, so neither field is optional:
+All five helpers supply both values, so neither field is optional:
 
-| Helper          | `expected`                | `actual`                                |
-| --------------- | ------------------------- | --------------------------------------- |
-| `assert.equal`  | the reduced `expected`    | the reduced `actual`                    |
-| `assert.true`   | `true`                    | the reduced condition                   |
-| `assert.false`  | `false`                   | the reduced condition                   |
-| `assert.throws` | `a thrown error`          | the value the expression produced       |
+| Helper            | `expected`                        | `actual`                          |
+| ----------------- | --------------------------------- | --------------------------------- |
+| `assert.equal`    | the reduced `expected`            | the reduced `actual`              |
+| `assert.notEqual` | `not ` + the reduced `expected`   | the reduced `actual`              |
+| `assert.true`     | `true`                            | the reduced condition             |
+| `assert.false`    | `false`                           | the reduced condition             |
+| `assert.throws`   | `a thrown error`                  | the value the expression produced |
+
+`assert.notEqual` is the one helper whose `actual` and `expected` hold the *same*
+value on failure — being equal is what failure means for it — so the `not` prefix
+is what keeps the shared template readable:
+`Assertion "assert.notEqual" failed: expected not 1, actual 1`.
 
 (The first draft declared both fields `String?` without defining what the message
 renders when either is absent. Making them required removes the question rather
@@ -400,6 +437,10 @@ that is not in the stage table in [§7](#7-compiler-impact-by-stage). See
   kinds *throws*
   ([§6.4](#64-collection-comparison-splits-three-ways)). Map values behave the
   same way.
+- `assert.notEqual` inherits the identical rules, because `CompNeq.execute` is a
+  negation wrapper around `CompEq.execute`. In particular a type mismatch is an
+  **error** for both, never a passing "not equal" — `assert.notEqual(1, "1")`
+  throws rather than succeeding.
 - Arguments are lazy because the helpers are native, but only `assert.throws`
   depends on that.
 - Assertions are available on the web target too, since they live in the shared
@@ -413,6 +454,8 @@ that is not in the stage table in [§7](#7-compiler-impact-by-stage). See
 | `assert.equal` across incomparable types          | `InvalidArgumentTypesError` from `CompEq.execute`, reported against `assert.equal` → test **error** |
 | `assert.equal` over equal-length collections with mismatched element kinds | `InvalidArgumentTypesError` from the recursive element comparison → test **error** |
 | `assert.equal` values differ                      | `AssertionFailedError` → test **fail**                                            |
+| `assert.notEqual` across incomparable types       | `InvalidArgumentTypesError` — `CompNeq.execute` delegates to `CompEq.execute` → test **error** |
+| `assert.notEqual` values are equal                | `AssertionFailedError` → test **fail**                                            |
 | `assert.throws` over a non-throwing expression    | `AssertionFailedError` → test **fail**                                            |
 | `assert.throws` over a nested failed assertion    | rethrown unchanged → test **fail**, attributed to the inner assertion             |
 | errors from nested expressions                    | propagate unchanged unless intentionally caught by `assert.throws`                |
@@ -484,9 +527,10 @@ test.math.addition() = assert.equal(1 + 1, 2)
 
 test.parse.invalidNumber() = assert.throws(to.number("not a number"))
 
-// several assertions in one test: && short-circuits, each returns true
+// several assertions in one test: each returns true, so && chains them
 test.string.basics() =
     assert.equal(str.length("abc"), 3) &&
+    assert.notEqual(str.length("abc"), 0) &&
     assert.true(str.startsWith("abc", "a")) &&
     assert.false(str.isEmpty("abc"))
 
@@ -526,6 +570,15 @@ test.crossType() = assert.equal("1", 1)
 ```text
 Runtime error: Invalid argument types for function "assert.equal". Expected: (Equatable, Equatable). Actual: (String, Number)
 → test ERROR
+```
+
+```primal
+test.stillEqual() = assert.notEqual(1, 1)
+```
+
+```text
+Runtime error: Assertion "assert.notEqual" failed: expected not 1, actual 1
+→ test FAIL
 ```
 
 ```primal
@@ -575,6 +628,10 @@ Must **fail**, attributed to the inner `assert.equal`. Under a
 ([§2.7](#27-equality-semantics)). Integer and decimal representations of the
 same value are indistinguishable to `assert.equal`; pair it with `is.integer`
 when the distinction matters.
+
+The mirror holds and is the sharper trap: `assert.notEqual(1, 1.0)` **fails**,
+even though the two literals are written differently and `is.integer`
+distinguishes them.
 
 ### 6.3 `assert.throws` Cannot Be Abstracted
 
@@ -647,19 +704,20 @@ Produces `RecursionLimitError` → classified as **error**, and
 | Syntactic | **None.** Ordinary calls and ordinary zero-argument definitions.                                                                            |
 | Semantic  | **None.** Signatures are auto-derived from the standard library ([§2.5](#25-standard-library-signatures-are-auto-derived)).                 |
 | Lowering  | **None.** Assertions lower as ordinary native calls; tests lower like any other custom function.                                            |
-| Runtime   | Four new natives following the two-class pattern, plus `AssertionFailedError`. `assert.throws` reduces its argument under a guarded region. |
+| Runtime   | Five new natives following the two-class pattern, plus `AssertionFailedError`. `assert.throws` reduces its argument under a guarded region. |
 | CLI       | New `--test` / `-t` mode; discovery, execution, classification, and reporting; `runCli` returns `int` and `main` assigns `exitCode`.        |
 
 ## 8. Performance
 
-- `assert.equal`, `assert.true`, and `assert.false` add one native call each —
-  negligible.
+- `assert.equal`, `assert.notEqual`, `assert.true`, and `assert.false` add one
+  native call each — negligible. `assert.notEqual` adds a second, since
+  `CompNeq.execute` delegates to `CompEq.execute`; still negligible.
 - `assert.throws` adds a guarded region around one reduction; low overhead, and
   paid only where used.
 - Test mode compiles the file **once** and evaluates each discovered test
   against the same `RuntimeFacade`. Per-test cost is a single expression
   evaluation plus a recursion-depth reset.
-- Compile-time cost is four extra standard-library entries in the signature map.
+- Compile-time cost is five extra standard-library entries in the signature map.
 
 ## 9. Open Questions
 
@@ -706,7 +764,7 @@ Produces `RecursionLimitError` → classified as **error**, and
   `test/compiler/main_cli_test.dart` and `test/compiler/cli_test.dart` assert on
   the help text, so it must change together with its tests.
 - Update [[dev/architecture/pipeline/pipeline]]: standard-library function count
-  (311 → 315), a new `assert.*` row (count 4) in the namespace table, the
+  (311 → 316), a new `assert.*` row (count 5) in the namespace table, the
   runtime-error table, and the CLI entry point section (`--test`, exit codes).
   The count stated there today (284) is already stale and its own namespace table
   sums to 290 — count `StandardLibrary.get()` rather than trusting either figure.
@@ -729,6 +787,13 @@ Runtime coverage:
   `1` versus `1.0`.
 - `assert.equal`'s type error names `assert.equal`, not `comp.eq`
   ([§9](#9-open-questions), item 6).
+- `assert.notEqual`: the same matrix as `assert.equal` with the outcomes
+  inverted, plus the two cases where it is *not* a simple inversion — a type
+  mismatch is an **error**, not a pass, and `assert.notEqual(1, 1.0)` fails
+  ([§6.2](#62-assertequal1-10-passes)). Its type error must name
+  `assert.notEqual`, not `comp.neq` or `comp.eq`.
+- The `not ` prefix appears in `assert.notEqual`'s failure message
+  ([§4.4](#44-failure-representation)).
 - `&&` chaining of assertions.
 
 CLI coverage (see [[dev/architecture/testing/integration-tests]]):
@@ -759,7 +824,7 @@ existing tests — plus discovery, classification, and reporting. Dropping the
 
 ## 12. Recommendation
 
-**Adopt.** Four assertion natives raising a dedicated `AssertionFailedError`,
+**Adopt.** Five assertion natives raising a dedicated `AssertionFailedError`,
 plus a minimal `primal --test file.prm` runner that discovers zero-argument
 `test.*` functions, ignores `main`, executes in source order, and classifies
 results as pass, fail, or error. This gives Primal a usable testing workflow
