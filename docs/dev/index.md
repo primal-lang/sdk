@@ -56,9 +56,9 @@ sources: []
 
 ## Roadmap
 
-### 0.5.0
+### 0.5.2
 
-- [[dev/roadmap/0.5.0/testing]] — Testing framework
+- [[dev/roadmap/0.5.2/testing]] — Testing framework
 
 ### 0.6.0
 
