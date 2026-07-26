@@ -200,8 +200,9 @@ diagnostically blind form.
 
 ### 3.2 No `message` Parameter
 
-The first draft gave every helper a mandatory, lazily evaluated `message`
-argument. This specification drops it and auto-generates failure text instead.
+**Decided — the parameter is dropped.** The first draft gave every helper a
+mandatory, lazily evaluated `message` argument. This specification removes it and
+auto-generates failure text instead.
 
 - The language has no optional parameters, no variadic parameters, and no
   overloading (functions are keyed by name in a `Map<String, FunctionTerm>`), so
@@ -277,9 +278,13 @@ Add one CLI mode:
 primal --test file.prm
 ```
 
+Reserve the `test.` prefix for user tests
+([§4.7](#47-cli-test-runner)).
+
 Out of scope for the first version: directory or project-level discovery, test
-filtering, fixtures, tagging, setup/teardown, structured (JSON) output, and
-asserting _which_ error was thrown.
+filtering, fixtures, tagging, setup/teardown, structured (JSON) output, asserting
+_which_ error was thrown, a second discovery prefix, and any `*_test.prm`
+filename convention.
 
 ### 4.2 Pseudo-Grammar
 
@@ -331,7 +336,7 @@ Common behaviour:
    builds its type error from `function.name` and `function.parameterTypes`
    (`lib/compiler/library/comparison/comp_eq.dart`), so a type mismatch is
    reported against **`assert.equal`**, not `comp.eq`. See
-   [§9](#9-open-questions), item 6.
+   [§9](#9-open-questions), *type-error attribution*.
 3. `true` → return `true`.
 4. `false` → throw `AssertionFailedError`.
 5. Any error raised by the comparison itself propagates **unchanged**.
@@ -386,10 +391,22 @@ Add to `lib/compiler/errors/runtime_error.dart`, alongside the existing
 subclasses:
 
 ```text
+RuntimeError
+  constructor gains an optional category:
+    const RuntimeError(String message, {String category = 'Runtime error'})
+      : super(category, message)
+
 AssertionFailedError extends RuntimeError
-  fields:  function: String, actual: String, expected: String
-  message: 'Assertion "<function>" failed: expected <expected>, actual <actual>'
+  category: 'Assertion error'
+  fields:   function: String, actual: String, expected: String
+  message:  '"<function>" failed: expected <expected>, actual <actual>'
+  renders:  'Assertion error: "assert.equal" failed: expected 2, actual 3'
 ```
+
+The optional named parameter defaults to `'Runtime error'`, so every existing
+`RuntimeError` subclass compiles unchanged — none of them pass a category. The
+message body deliberately omits the word "Assertion": the category already
+supplies it, and `Assertion error: Assertion "…" failed` reads as a stutter.
 
 All five helpers supply both values, so neither field is optional:
 
@@ -404,7 +421,7 @@ All five helpers supply both values, so neither field is optional:
 `assert.notEqual` is the one helper whose `actual` and `expected` hold the *same*
 value on failure — being equal is what failure means for it — so the `not` prefix
 is what keeps the shared template readable:
-`Assertion "assert.notEqual" failed: expected not 1, actual 1`.
+`Assertion error: "assert.notEqual" failed: expected not 1, actual 1`.
 
 (The first draft declared both fields `String?` without defining what the message
 renders when either is absent. Making them required removes the question rather
@@ -413,15 +430,16 @@ than adding template branches for a case no helper produces.)
 Because it is a `RuntimeError`, it is still catchable by `try` — consistent with
 the rest of the language, and noted as [§6.7](#67-try-swallows-assertions).
 
-**Display prefix.** `RuntimeError`'s constructor hard-codes the category string
-`'Runtime error'` (`lib/compiler/errors/runtime_error.dart`) and
-`GenericError.toString()` renders `'<errorType>: <message>'`. An assertion
-failure therefore prints as `Runtime error: Assertion "…" failed: …` — the same
-prefix that marks a genuine error, which is exactly the distinction the runner
-draws in [§4.7](#47-cli-test-runner). Giving it its own category requires a new
-constructor on `RuntimeError` that lets a subclass supply the category string;
-that is not in the stage table in [§7](#7-compiler-impact-by-stage). See
-[§9](#9-open-questions), item 7.
+**Display prefix — decided.** `RuntimeError`'s constructor currently hard-codes
+the category string `'Runtime error'`
+(`lib/compiler/errors/runtime_error.dart`) and `GenericError.toString()` renders
+`'<errorType>: <message>'`, so without a change an assertion failure would print
+under the same prefix that marks a genuine error — exactly the distinction the
+runner draws in [§4.7](#47-cli-test-runner). This specification therefore adds
+the optional `category` parameter above and prints failures as
+`Assertion error: …`. The change is confined to one constructor, but it is a
+change to a shared base class rather than a pure addition, and
+[§7](#7-compiler-impact-by-stage) records it.
 
 ### 4.5 Runtime And Type Behaviour
 
@@ -482,6 +500,12 @@ primal -t file.prm
   `main` is absent.
 - Select custom functions whose name starts with `test.` **and** whose parameter
   list is empty.
+- The `test.` prefix is **reserved**: the standard library must never register a
+  function under it. Nothing enforces this in code — `StandardLibrary.get()` is a
+  hand-maintained list — so it is a policy recorded here and in
+  [[dev/architecture/pipeline/pipeline]]. Without it, adding a `test.*` namespace
+  later would turn every existing user test into a `DuplicatedFunctionError`
+  ([§4.6](#46-error-conditions)).
 - `test.*` functions with one or more parameters are skipped and **reported** on
   stderr. They are never skipped silently — a test that accidentally gained a
   parameter must not disappear.
@@ -577,7 +601,7 @@ test.stillEqual() = assert.notEqual(1, 1)
 ```
 
 ```text
-Runtime error: Assertion "assert.notEqual" failed: expected not 1, actual 1
+Assertion error: "assert.notEqual" failed: expected not 1, actual 1
 → test FAIL
 ```
 
@@ -586,7 +610,7 @@ test.noThrow() = assert.throws(42)
 ```
 
 ```text
-Runtime error: Assertion "assert.throws" failed: expected a thrown error, actual 42
+Assertion error: "assert.throws" failed: expected a thrown error, actual 42
 → test FAIL
 ```
 
@@ -704,7 +728,7 @@ Produces `RecursionLimitError` → classified as **error**, and
 | Syntactic | **None.** Ordinary calls and ordinary zero-argument definitions.                                                                            |
 | Semantic  | **None.** Signatures are auto-derived from the standard library ([§2.5](#25-standard-library-signatures-are-auto-derived)).                 |
 | Lowering  | **None.** Assertions lower as ordinary native calls; tests lower like any other custom function.                                            |
-| Runtime   | Five new natives following the two-class pattern, plus `AssertionFailedError`. `assert.throws` reduces its argument under a guarded region. |
+| Runtime   | Five new natives following the two-class pattern, plus `AssertionFailedError`. `assert.throws` reduces its argument under a guarded region. `RuntimeError` gains an optional `category` parameter (default-valued, so existing subclasses are untouched) so failures print as `Assertion error` ([§4.4](#44-failure-representation)). |
 | CLI       | New `--test` / `-t` mode; discovery, execution, classification, and reporting; `runCli` returns `int` and `main` assigns `exitCode`.        |
 
 ## 8. Performance
@@ -721,36 +745,45 @@ Produces `RecursionLimitError` → classified as **error**, and
 
 ## 9. Open Questions
 
-1. **Confirm dropping the `message` parameter** ([§3.2](#32-no-message-parameter)).
-   This is the largest departure from the first draft: better `assert.equal`
-   diagnostics and no lazy-message hazard, at the cost of per-assertion labels
-   inside a `&&` chain.
-2. **Confirm that `assert.throws` should be narrower than `try`**
-   ([§3.3](#33-assertthrows-is-narrower-than-try)). The alternative is literal
-   parity with `try`'s catch-all, which masks nested assertion failures and
-   interpreter defects.
-3. **Is "must return exactly `true`" the right pass rule**, or should "completed
-   without throwing" count as a pass (the xUnit convention)? The former catches
-   assertion-free tests; the latter removes a classification and is friendlier
-   when a test's last expression performs I/O.
-4. **Should the `test.` prefix be reserved** so the standard library never claims
-   it, and should a second prefix or a `*_test.prm` filename convention be
-   supported later?
-5. **Should "no tests discovered" exit `2` or exit `0` with a warning?** This
-   specification chooses `2`, on the grounds that a mistyped prefix silently
-   passing in CI is the worse failure mode.
-6. **Should `assert.equal`'s type error name `assert.equal` or `comp.eq`?**
-   [§4.3](#43-assertion-functions) chooses `assert.equal`, by passing `this` to
-   `CompEq.execute` the way every other native does. It names the function the
-   user actually called. The alternative — passing `const CompEq()` — names the
-   comparison primitive, which is more truthful about where the check happened
-   but deviates from the established pattern and leaks an implementation detail.
-7. **Should `AssertionFailedError` print under a category other than
-   `Runtime error`?** ([§4.4](#44-failure-representation)) A **fail** currently
-   renders with the same prefix as an **error**, which is the one distinction the
-   runner exists to make. Fixing it means adding a constructor to `RuntimeError`
-   that lets subclasses supply the category string — small, contained, but wider
-   than the stage table in [§7](#7-compiler-impact-by-stage) admits.
+**None outstanding.** Every question raised in review has been decided, and the
+specification above already reflects each decision. Resolutions are recorded
+below and referenced elsewhere in this document by their **bold lead-in**, not by
+number.
+
+### Resolved
+
+- **Drop the `message` parameter** — confirmed. No helper takes a message;
+  every failure text is auto-generated ([§4.4](#44-failure-representation)).
+  Custom messages remain available with no new machinery through the `if` /
+  `error.throw` form. Rationale and the accepted trade-off — per-assertion labels
+  are lost inside a `&&` chain — are recorded in
+  [§3.2](#32-no-message-parameter).
+- **`assert.throws` stays narrower than `try`** — confirmed. It catches
+  `RuntimeError` only, rethrowing `AssertionFailedError` and any
+  non-`RuntimeError` unchanged ([§3.3](#33-assertthrows-is-narrower-than-try),
+  [§4.3](#43-assertion-functions)).
+- **A test must return exactly `true` to pass** — confirmed. "Completed without
+  throwing" was rejected because a test containing no assertions at all would
+  pass silently. The cost is the extra "returned a non-`true` value"
+  classification in [§4.7](#47-cli-test-runner), and that a test whose final
+  expression is a side effect must end in an assertion.
+- **The `test.` prefix is reserved** — confirmed; the standard library must never
+  claim it ([§4.7](#47-cli-test-runner)). A second discovery prefix and any
+  `*_test.prm` filename convention stay out of scope
+  ([§4.1](#41-scope)).
+- **`AssertionFailedError` prints under its own category** — confirmed.
+  `RuntimeError` gains an optional, default-valued `category` parameter and
+  failures render as `Assertion error: …`
+  ([§4.4](#44-failure-representation), [§7](#7-compiler-impact-by-stage)).
+- **"No tests discovered" exits `2`** — confirmed. A mistyped prefix or a file
+  that quietly stops matching must fail the build rather than report green. This
+  is consistent with the uniform exit-code contract: `2` means the invocation was
+  wrong, not that the tests passed ([§4.7](#47-cli-test-runner)).
+- **Type-error attribution names the assertion** — confirmed. `assert.equal` and
+  `assert.notEqual` pass `this` to `CompEq.execute` / `CompNeq.execute`, so an
+  incomparable-operand error reads
+  `Invalid argument types for function "assert.equal"` — the function the user
+  wrote, not the primitive underneath ([§4.3](#43-assertion-functions)).
 
 ## 10. Post-Implementation
 
@@ -768,7 +801,13 @@ Produces `RecursionLimitError` → classified as **error**, and
   runtime-error table, and the CLI entry point section (`--test`, exit codes).
   The count stated there today (284) is already stale and its own namespace table
   sums to 290 — count `StandardLibrary.get()` rather than trusting either figure.
-- Update [[dev/architecture/error/error-hierarchy]] with the new error type.
+- Update [[dev/architecture/error/error-hierarchy]] with the new error type
+  **and** with `RuntimeError`'s optional `category` parameter — the hierarchy is
+  no longer "one category per base class"
+  ([§4.4](#44-failure-representation)).
+- Record the reserved `test.` prefix in [[dev/architecture/pipeline/pipeline]]
+  alongside the namespace table, since nothing in code enforces it
+  ([§4.7](#47-cli-test-runner)).
 - Document the abstraction limitation ([§6.3](#63-assertthrows-cannot-be-abstracted))
   wherever `if`/`try` laziness is already explained.
 - Update `CHANGELOG.md`. `README.md` does not list CLI flags today, so it needs
@@ -779,6 +818,9 @@ Produces `RecursionLimitError` → classified as **error**, and
 Runtime coverage:
 
 - Each helper: success, failure, and argument type error.
+- `AssertionFailedError.toString()` starts with `Assertion error:`, and — as a
+  regression guard on the shared base class — every other `RuntimeError`
+  subclass still starts with `Runtime error:`.
 - `assert.throws`: custom error caught, non-throwing expression fails, nested
   assertion rethrown, non-`RuntimeError` rethrown.
 - `assert.equal`: cross-type propagation, unequal-length collections,
@@ -786,7 +828,7 @@ Runtime coverage:
   mismatched value kinds ([§6.4](#64-collection-comparison-splits-three-ways)),
   `1` versus `1.0`.
 - `assert.equal`'s type error names `assert.equal`, not `comp.eq`
-  ([§9](#9-open-questions), item 6).
+  ([§9](#9-open-questions), *type-error attribution*).
 - `assert.notEqual`: the same matrix as `assert.equal` with the outcomes
   inverted, plus the two cases where it is *not* a simple inversion — a type
   mismatch is an **error**, not a pass, and `assert.notEqual(1, 1.0)` fails
