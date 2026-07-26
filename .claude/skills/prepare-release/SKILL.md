@@ -45,4 +45,4 @@ description: Prepares the next SDK release by updating version, syncing document
    - **Git workflow**: Merge the release branch into `main`
    - **Desktop binaries**: Trigger the `Build Desktop` workflow from the Actions tab, then download its three artifacts and commit them to `bin/`
    - **GitHub release**: Create a new GitHub release tagged with the version number
-   - **Create new branch**: Create a new release branch for the next version (e.g., `feat/next-version`) and push it to the remote repository
+   - **Create new branch**: Create a new release branch for the next version (e.g., `release/next-version`) and push it to the remote repository
