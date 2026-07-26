@@ -3,541 +3,674 @@ title: Testing
 tags:
   - roadmap
   - stdlib
-sources: []
+  - testing
+sources:
+  - lib/compiler/runtime/term.dart
+  - lib/compiler/library/control/try.dart
+  - lib/compiler/library/control/if.dart
+  - lib/compiler/library/error/throw.dart
+  - lib/compiler/library/comparison/comp_eq.dart
+  - lib/compiler/library/operators/operator_double_and.dart
+  - lib/compiler/errors/runtime_error.dart
+  - lib/compiler/semantic/semantic_analyzer.dart
+  - lib/compiler/lowering/runtime_facade.dart
+  - lib/extensions/string_extensions.dart
+  - lib/main/main_cli.dart
 ---
 
-# Testing Assertions
+# Testing
 
-**TLDR**: A testing framework with assertion functions (`assert.equal`, `assert.true`, `assert.false`, `assert.throws`) and a CLI test runner (`primal --test file.prm`) that discovers and executes zero-argument `test.*` functions, classifying results as pass, fail, or error.
+**TLDR**: Four standard-library assertion functions (`assert.equal`, `assert.true`, `assert.false`, `assert.throws`) that raise a dedicated `AssertionFailedError`, paired with a CLI test mode (`primal --test file.prm`) that discovers zero-argument `test.*` functions, runs them in source order, and classifies each result as pass, fail, or error.
 
-This document reviews the testing-function draft against the existing Primal
-language and compiler, then proposes a revised specification for a focused
-assertion library paired with a minimal CLI test runner.
+This specification adds a testing workflow to Primal without introducing any new
+syntax. Assertions are ordinary native functions; tests are ordinary
+zero-argument function definitions; discovery is a naming convention enforced by
+the CLI, not by the compiler.
 
-## 1. Short Summary Of Feature Intent
+## 1. Feature Intent
 
-The feature should provide standard-library helpers for writing assertions
-directly in Primal code so that test expectations can be expressed in the
-language itself.
+Primal is expression-oriented and has no statement sequencing, so a program
+cannot run many assertions one after another inside `main()`. The feature
+therefore has two halves:
 
-The library should include these assertion helpers:
+- **An assertion library** — helpers that express test expectations in Primal
+  itself and signal failure through the runtime error system.
+- **A CLI test runner** — a mode that compiles one file, discovers
+  zero-argument functions whose names begin with `test.`, executes them
+  independently, and reports results.
 
-- `assert.throws`
-- `assert.equal`
-- `assert.true`
-- `assert.false`
+`assert.throws` is the only helper that adds capability the language does not
+already have. The other three are ergonomic shorthands (see
+[§3.1](#31-overlap-with-existing-constructs)), and the runner is what makes any
+of it usable in a real project.
 
-Assertions alone are not enough for a practical testing workflow because
-Primal is expression-oriented and does not have statement-style sequencing for
-running many tests one after another inside `main()`. The intended execution
-model is therefore a CLI test mode that compiles one file, discovers
-zero-argument functions whose names start with `test.`, and executes them one
-by one.
+## 2. Confirmed Observations
 
-`assert.throws` is the most implementation-sensitive helper because it must
-intercept runtime failures under Primal's eager call model. The CLI runner is
-the other important piece because it makes the assertion library usable in
-real projects without introducing new test-specific syntax.
+Every claim below was verified against the current implementation.
 
-## 2. Pros, Costs, And Technical Considerations
+### 2.1 Dotted Names Lex As Single Identifiers
 
-### Pros
+`isIdentifier` accepts letters, digits, dots, and underscores
+(`lib/extensions/string_extensions.dart`), and keyword classification compares
+the **whole** lexeme (`isBoolean => this == 'true' || this == 'false'`;
+`_identifierOrKeywordToken` in `lib/compiler/lexical/lexical_analyzer.dart`).
 
-- Dotted names such as `assert.true`, `assert.equal`, and `test.math.addition`
-  are syntactically valid function names in Primal.
-- Adding assertions as standard-library functions fits the current
-  language philosophy better than introducing assertion syntax.
-- A library-based design fits the existing compiler pipeline
-  cleanly, because ordinary function calls already pass through lexical,
-  syntactic, semantic, lowering, and runtime evaluation stages.
-- A CLI runner that discovers `test.*` functions avoids needing new block
-  syntax only for testing.
-- Convenience helpers can improve test readability even when they mirror
-  existing equality or boolean checks.
-- A shared failure representation makes assertion behavior predictable across
-  all helpers.
+Consequently `assert.true`, `assert.false`, and `test.math.addition` each
+produce a single `IdentifierToken`. There is **no keyword conflict** with the
+`true`/`false` literals, and no lexer change is required.
 
-### Costs
+### 2.2 Native Functions Receive Unreduced Arguments
 
-- Several helpers overlap with functionality that already exists in the
-  language.
-- The feature is no longer only a library change because it also introduces a
-  CLI execution mode.
-- Lazy message evaluation means these helpers are not trivial wrappers over
-  existing functions under Primal's eager call model.
+`FunctionTerm.apply` is `substitute(bindings).reduce()`, and
+`NativeFunctionTerm.substitute` binds argument terms without reducing them
+(`lib/compiler/runtime/term.dart`). Only `CustomFunctionTerm.apply` and
+`LambdaTerm.apply` force call-by-value.
 
-### Technical Considerations
+Native functions are therefore **lazy in their arguments by default** — this is
+exactly how `if` and `try` implement short-circuiting. Laziness inside a native
+assertion costs nothing. See
+[[dev/architecture/runtime/native-functions]] and
+[[dev/architecture/runtime/thunks-and-lazy-evaluation]].
 
-- The specification must define one common success return value.
-- The specification must define one common assertion-failure runtime
-  representation.
-- The specification must define whether `assert.throws` catches every runtime
-  error that `try` catches.
-- The specification must define how the CLI discovers test functions.
-- The specification must define how test results are classified as pass, fail,
-  or error.
+The converse also holds and is a hard constraint: an assertion **cannot** be
+written as a Primal-level custom function, because the argument would be
+reduced at the call boundary before the body ever runs (see
+[§6.3](#63-assertthrows-cannot-be-abstracted)).
 
-## 3. Assumptions And Scope
+### 2.3 `try` Catches Every Throwable
 
-### Confirmed Observations
+`Try.reduce()` is `try { a.reduce() } catch (_) { b.reduce() }`
+(`lib/compiler/library/control/try.dart`). The bare `catch (_)` intercepts every
+Dart throwable, not just `RuntimeError` — including `RecursionLimitError`,
+`StackOverflowError`, `StateError`, and any interpreter defect.
 
-- Primal has first-class functions.
-- `if` and `try` are special native functions with lazy evaluation behavior.
-- Runtime type validation is performed by native functions at evaluation time.
-- Existing language and library behavior already provide the underlying
-  predicates needed by these helpers, especially ordinary equality and boolean
-  expressions.
-- Primal programs can define many named functions in one file, so a runner can
-  discover tests from function names without requiring new source syntax.
+"Behaves like `try`" is therefore a much wider contract than it appears, and
+this specification deliberately does not adopt it for `assert.throws`
+(see [§3.3](#33-assertthrows-is-narrower-than-try)).
 
-### Scope Of This Proposal
+### 2.4 Errors Carry No Inspectable Payload
 
-- This proposal includes both an assertion library and a minimal CLI test
-  runner.
-- Assertion helpers should be available as standard-library functions.
-- No new language syntax is added.
-- The CLI runner is intentionally small:
-  - one file per invocation
-  - discovery by `test.` name prefix
-  - no filtering, fixtures, tagging, or directory walking in the first version
+`error.throw(code: Any, message: String)` raises
+`CustomError(Term code, String message)`
+(`lib/compiler/library/error/throw.dart`), and `try(a, b)` discards the caught
+error entirely. Primal code cannot read an error's code or message today, so an
+error's identity is only meaningful to the Dart-side runner. Typed catch and an
+optional `error.throw` message are planned in [[dev/roadmap/0.8.0/try]].
 
-## 4. Revised Specification
+### 2.5 Standard-Library Signatures Are Auto-Derived
 
-### Final Scope
+`standardLibrarySignatures` is built from `StandardLibrary.getSignatures()`
+(`lib/compiler/semantic/semantic_analyzer.dart`). Registering a native in the
+standard library automatically supplies its signature to arity checking, so
+**semantic analysis requires no change**.
 
-Add these standard-library functions:
+### 2.6 Native Parameter Types Are Not Enforced Generically
+
+`NativeFunctionTerm.substitute` performs no type validation; every native
+validates its arguments by hand inside `reduce()` (`if.dart`, `throw.dart`,
+`comp_eq.dart`). Declared `Parameter` types are metadata used for introspection
+and error messages only. Each assertion must perform its own type checks. See
+[[dev/architecture/typing/runtime-type-checking]].
+
+### 2.7 Equality Semantics
+
+`CompEq.execute` (`lib/compiler/library/comparison/comp_eq.dart`) throws
+`InvalidArgumentTypesError` when the two operands are of different kinds, but
+returns `false` for same-kind collections of differing length. Numeric
+comparison uses Dart's `num ==`, so `1 == 1.0` is `true`.
+
+### 2.8 `&&` Short-Circuits
+
+`OperatorDoubleAnd` delegates to `BoolAnd.execute`, which reduces the second
+argument only when the first is `true`
+(`lib/compiler/library/operators/operator_double_and.dart`). This is the
+mechanism that lets a single-expression test body hold several assertions.
+
+### 2.9 The CLI Has No Exit-Code Contract
+
+`runCli` returns `void` and never sets an exit code
+(`lib/main/main_cli.dart`); a program that throws prints in red and the process
+still exits `0`. `exit()` is called only for `:quit` and SIGINT. `runCli` is
+also unit-tested in-process with a fake console
+(`test/compiler/main_cli_test.dart`), so calling `exit()` inside it would
+terminate the test runner.
+
+Adding exit codes therefore requires changing `runCli` to return `int` and
+having `main` assign `exitCode`.
+
+### 2.10 Miscellaneous
+
+- Zero-argument function definitions parse today (`main()` is one).
+- `customFunctions` is a `Map` populated in source order during semantic
+  analysis, so declaration order is available at no cost.
+- No "unused function" warning exists — only unused-parameter warnings
+  (`lib/compiler/warnings/semantic_warning.dart`). `test.*` functions will not
+  produce warnings in a normal run.
+- `RuntimeFacade.evaluateToTerm` calls `FunctionTerm.resetDepth()`, so
+  evaluating each test through the facade isolates recursion depth for free.
+- Redefining a standard-library name is a compile error
+  (`CannotRedefineStandardLibraryError`).
+
+## 3. Design Decisions And Rationale
+
+This section records where the specification departs from the first draft of
+this document, and why.
+
+### 3.1 Overlap With Existing Constructs
+
+Three of the four helpers are already expressible:
 
 ```primal
-assert.throws(expression, message)
-assert.equal(actual, expected, message)
-assert.true(condition, message)
-assert.false(condition, message)
+assert.true(c)     ≡  if (c) true else error.throw("assertion", "…")
+assert.false(c)    ≡  if (!c) true else error.throw("assertion", "…")
+assert.equal(a, b) ≡  if (a == b) true else error.throw("assertion", "…")
 ```
 
-Add one CLI test mode:
+Only `assert.throws` adds capability, because it cannot be written in Primal at
+all ([§2.2](#22-native-functions-receive-unreduced-arguments)). The assertions
+are ergonomics; the runner is the feature. This keeps the assertion surface
+deliberately small — four functions, no variants.
+
+### 3.2 No `message` Parameter
+
+The first draft gave every helper a mandatory, lazily evaluated `message`
+argument. This specification drops it and auto-generates failure text instead.
+
+- The language has no optional parameters, no variadic parameters, and no
+  overloading (functions are keyed by name in a `Map<String, FunctionTerm>`), so
+  a message parameter can only be **mandatory** — verbose at every call site.
+- A user-supplied string cannot report actual versus expected, which is the only
+  reason to prefer `assert.equal(a, b)` over `assert.true(a == b)`. An
+  auto-generated message can, and does.
+- Lazy messages make message type errors path-dependent: `assert.false(true, 123)`
+  raises `InvalidArgumentTypesError`, but `assert.false(false, 123)` passes
+  silently with a malformed message. Removing the parameter removes the hazard.
+
+Trade-off, stated plainly: per-assertion labels are lost inside a `&&` chain.
+The failing test's name plus the generated message must carry the diagnosis.
+Custom messages remain available with no new machinery via the `if` /
+`error.throw` form above.
+
+### 3.3 `assert.throws` Is Narrower Than `try`
+
+Adopting `try`'s catch-all ([§2.3](#23-try-catches-every-throwable)) would mean
+`assert.throws(assert.equal(1, 2))` **passes**, and that an interpreter defect
+inside the asserted expression is reported as a successful test. This
+specification catches `RuntimeError` only, and never `AssertionFailedError`.
+
+### 3.4 A Dedicated Error Type, Not A Magic Code
+
+The first draft represented failure as `error.throw("assertion", message)`, on
+the grounds that reusing `CustomError` is more consistent than a new error type.
+The codebase does the opposite: `lib/compiler/errors/runtime_error.dart` defines
+a dedicated `RuntimeError` subclass per failure category. A magic string code is
+also:
+
+- **forgeable** — user code calling `error.throw("assertion", "x")` would be
+  classified as a test _failure_ rather than an _error_, with no way for the
+  runner to tell them apart;
+- **diagnostically empty** — `CustomError` carries only the user's string, so
+  actual and expected values cannot be reported.
+
+This specification adds `AssertionFailedError extends RuntimeError`. See
+[[dev/architecture/error/error-hierarchy]].
+
+### 3.5 Discovery Is A Runner Concern
+
+Test discovery reads `IntermediateRepresentation.customFunctions` after
+compilation. It belongs to the CLI, not to semantic analysis — the semantic
+analyzer needs no change whatsoever
+([§2.5](#25-standard-library-signatures-are-auto-derived)).
+
+### 3.6 Source Order, Not Lexicographic Order
+
+`customFunctions` already preserves declaration order, so source order is
+deterministic, free, and correlates directly with the file. Sorting adds work
+for no benefit and makes ordering ASCII-dependent (`test.A` before `test.a`).
+
+## 4. Specification
+
+### 4.1 Scope
+
+Add four standard-library functions:
+
+```primal
+assert.equal(actual, expected)
+assert.true(condition)
+assert.false(condition)
+assert.throws(expression)
+```
+
+Add one runtime error type, `AssertionFailedError`.
+
+Add one CLI mode:
 
 ```text
 primal --test file.prm
 ```
 
-### Why This Revision Is Better
+Out of scope for the first version: directory or project-level discovery, test
+filtering, fixtures, tagging, setup/teardown, structured (JSON) output, and
+asserting _which_ error was thrown.
 
-- It preserves the goal of keeping assertions inside the language rather than
-  adding assertion syntax.
-- It gives the assertion library a concrete real-world execution model.
-- It keeps the assertion surface small while still covering the main testing
-  needs.
-- It avoids introducing test-specific language syntax when a CLI runner is
-  sufficient.
-- It keeps the implementation inside the existing compiler, runtime, and CLI
-  model.
+### 4.2 Pseudo-Grammar
 
-### Informal Pseudo-Grammar
-
-No new syntax is added.
+No grammar changes. Assertions are ordinary calls and tests are ordinary
+definitions; the relevant productions are unchanged and reproduced only to show
+that nothing is added:
 
 ```ebnf
-assert_call ::= "assert.throws" "(" expression "," expression ")"
-              | "assert.equal" "(" expression "," expression "," expression ")"
-              | "assert.true" "(" expression "," expression ")"
-              | "assert.false" "(" expression "," expression ")"
-
-test_function ::= test_name "(" ")" "=" expression
-test_name ::= ordinary_function_name_with_test_prefix
+function_definition ::= identifier "(" [ parameter_list ] ")" "=" expression
+call                ::= identifier "(" [ argument_list ] ")"
+identifier          ::= letter { letter | digit | "." | "_" }   (* dots included *)
 ```
 
-These are ordinary function calls and ordinary function declarations with
-ordinary identifiers.
+Only the CLI surface grows:
 
-### CLI Test Execution Model
+```ebnf
+invocation ::= "primal" { option } [ file ] { program_arg }
+option     ::= "--help" | "-h" | "--version" | "-v"
+             | "--debug" | "-d" | "--watch" | "-w"
+             | "--test"  | "-t"                        (* new *)
+test_name  ::= "test." identifier_tail   (* runner convention, not grammar *)
+```
+
+### 4.3 Assertion Functions
+
+```primal
+assert.equal(actual: Equatable, expected: Equatable): Boolean
+assert.true(condition: Boolean): Boolean
+assert.false(condition: Boolean): Boolean
+assert.throws(expression: Any): Boolean
+```
+
+Common behaviour:
+
+- On success every helper returns `true`.
+- On failure every helper throws `AssertionFailedError`.
+- No helper ever returns `false`.
+- All are implemented with the two-class native pattern
+  (`NativeFunctionTerm` + `NativeFunctionTermWithArguments`), validating
+  argument types by hand ([§2.6](#26-native-parameter-types-are-not-enforced-generically)).
+
+#### `assert.equal(actual, expected)`
+
+1. Reduce `actual`, then reduce `expected`.
+2. Compare with `CompEq.execute` — identical semantics to `==` and `comp.eq`.
+3. `true` → return `true`.
+4. `false` → throw `AssertionFailedError`.
+5. Any error raised by the comparison itself propagates **unchanged**.
+
+#### `assert.true(condition)` / `assert.false(condition)`
+
+1. Reduce `condition`.
+2. If it is not a `BooleanTerm`, throw `InvalidArgumentTypesError` — same shape
+   as `if` (`lib/compiler/library/control/if.dart`).
+3. If the value matches the expected polarity, return `true`; otherwise throw
+   `AssertionFailedError`.
+
+#### `assert.throws(expression)`
+
+Reduce `expression` inside a guarded region and classify the outcome:
+
+| Outcome of reducing `expression`                                                 | Result                                                              |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| throws `AssertionFailedError`                                                    | rethrow **unchanged** — a nested assertion failure is not "a throw" |
+| throws any other `RuntimeError` (including `CustomError`, `RecursionLimitError`) | return `true`                                                       |
+| throws a non-`RuntimeError`                                                      | rethrow **unchanged** — an interpreter defect must not be masked    |
+| completes normally                                                               | throw `AssertionFailedError`                                        |
+
+Documented limitation: because errors carry no inspectable payload
+([§2.4](#24-errors-carry-no-inspectable-payload)), `assert.throws` cannot assert
+_which_ error was raised. An expression that fails for the wrong reason still
+passes. A future `assert.throwsCode` becomes possible once
+[[dev/roadmap/0.8.0/try]] lands.
+
+### 4.4 Failure Representation
+
+Add to `lib/compiler/errors/runtime_error.dart`, alongside the existing
+subclasses:
+
+```text
+AssertionFailedError extends RuntimeError
+  fields:  function: String, actual: String?, expected: String?
+  message: 'Assertion "<function>" failed: expected <expected>, actual <actual>'
+```
+
+Because it is a `RuntimeError`, it is still catchable by `try` — consistent with
+the rest of the language, and noted as [§6.7](#67-try-swallows-assertions).
+
+### 4.5 Runtime And Type Behaviour
+
+- Success value is always `true`, which makes `&&` the natural composition
+  operator for multiple assertions in one test body
+  ([§2.8](#28--short-circuits)).
+- `assert.true` and `assert.false` require a boolean, matching `if`.
+- `assert.equal` inherits `comp.eq`'s type rules exactly — including
+  `1 == 1.0` being `true` and unequal-length collections comparing `false`
+  rather than erroring.
+- Arguments are lazy because the helpers are native, but only `assert.throws`
+  depends on that.
+- Assertions are available on the web target too, since they live in the shared
+  standard library. Only `--test` is CLI-only.
+
+### 4.6 Error Conditions
+
+| Condition                                         | Result                                                                            |
+| ------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `assert.true` / `assert.false` with a non-boolean | `InvalidArgumentTypesError` → test **error**                                      |
+| `assert.equal` across incomparable types          | `InvalidArgumentTypesError` from `comp.eq`, propagated unchanged → test **error** |
+| `assert.equal` values differ                      | `AssertionFailedError` → test **fail**                                            |
+| `assert.throws` over a non-throwing expression    | `AssertionFailedError` → test **fail**                                            |
+| `assert.throws` over a nested failed assertion    | rethrown unchanged → test **fail**, attributed to the inner assertion             |
+| errors from nested expressions                    | propagate unchanged unless intentionally caught by `assert.throws`                |
+| user function named `assert.*`                    | `CannotRedefineStandardLibraryError` at compile time                              |
+
+### 4.7 CLI Test Runner
 
 #### Invocation
 
-- The CLI should support a test mode:
-
 ```text
 primal --test file.prm
+primal -t file.prm
 ```
 
-- Test mode accepts exactly one source file argument in the first version.
+- Exactly one file argument. Zero or more than one is a usage error.
+- `--test` with `--watch` is a usage error in the first version.
+- `--test` with `--debug` is allowed and prints compile and per-test timings.
 
 #### Discovery
 
-- Compile the provided file once.
-- Ignore `main()` completely in test mode.
-- Discover custom functions whose names start with `test.`.
-- Only zero-argument `test.*` functions are valid tests.
-- Execute discovered tests in lexicographic order for deterministic output.
-- If no matching test functions are found, test mode should report an error.
+- Compile the file once and print any warnings.
+- Do **not** execute `main`, and do **not** fall through to the REPL when
+  `main` is absent.
+- Select custom functions whose name starts with `test.` **and** whose parameter
+  list is empty.
+- `test.*` functions with one or more parameters are skipped and **reported** on
+  stderr. They are never skipped silently — a test that accidentally gained a
+  parameter must not disappear.
+- Discovering zero tests is an error.
 
-#### Per-Test Execution
+#### Execution
 
-- Each discovered test is invoked as a normal zero-argument function call.
-- Each test is evaluated independently through the ordinary runtime pipeline.
+- Execute in source-declaration order
+  ([§3.6](#36-source-order-not-lexicographic-order)).
+- Evaluate each test as `test.name()` through `RuntimeFacade.evaluate`, which
+  resets recursion depth per test
+  ([§2.10](#210-miscellaneous)).
+- Compile once, evaluate N times. Never recompile per test.
 
 #### Result Classification
 
-- If a test returns `true`, it passes.
-- If a test throws `CustomError(code = "assertion", message = ...)`, it fails.
-- If a test throws any other runtime error, it is an error.
-- If a test completes normally but returns any value other than `true`, it is
-  an error.
+| Test outcome                    | Classification                              |
+| ------------------------------- | ------------------------------------------- |
+| returns `true`                  | **pass**                                    |
+| throws `AssertionFailedError`   | **fail**                                    |
+| throws any other `RuntimeError` | **error**                                   |
+| returns any other value         | **error** — "test did not return true"      |
+| throws a non-`RuntimeError`     | **abort** with exit code 2 (internal error) |
 
-#### Process Exit Behavior
+#### Process Exit Behaviour
 
-- Exit code `0` if all discovered tests pass.
-- Exit code `1` if at least one discovered test fails or errors.
-- Exit code `2` for CLI usage errors or compile-time errors in test mode.
+| Code | Meaning                                                            |
+| ---- | ------------------------------------------------------------------ |
+| `0`  | every discovered test passed                                       |
+| `1`  | at least one test failed or errored                                |
+| `2`  | usage error, compile error, no tests discovered, or internal error |
 
-### Common Assertion Behavior
-
-- Success return value: `true`
-- In every helper, `message` is lazy and is evaluated only on failure.
-- On a failing path, `message` must reduce to a string.
-- Failed assertions should reuse the existing custom-error mechanism rather
-  than introducing a separate assertion-specific runtime error type.
-- The recommended failure representation is:
-
-```primal
-error.throw("assertion", message)
-```
-
-This means a failed assertion is represented as a `CustomError` whose code is
-`"assertion"` and whose message is the supplied string.
-
-If evaluating the predicate or helper-specific operation itself throws before
-the assertion outcome is known, that error should propagate unchanged unless
-the helper explicitly defines that thrown error as success, as `assert.throws`
-does.
-
-### Semantic Rules
-
-#### `assert.throws(expression, message)`
-
-- Evaluate `expression` under runtime error interception.
-- If evaluating `expression` throws any runtime error that `try` would catch,
-  return `true`.
-- If evaluating `expression` completes normally, evaluate `message`.
-- `message` must reduce to a string.
-- Raise an assertion failure with that message.
-
-#### `assert.equal(actual, expected, message)`
-
-- Evaluate `actual`.
-- Evaluate `expected`.
-- Compare them using Primal's ordinary equality semantics, equivalent to `==`
-  or `comp.eq`.
-- If the comparison reduces to `true`, return `true`.
-- If the comparison reduces to `false`, evaluate `message`.
-- `message` must reduce to a string.
-- Raise an assertion failure with that message.
-
-#### `assert.true(condition, message)`
-
-- Evaluate `condition`.
-- `condition` must reduce to a boolean.
-- If `condition` reduces to `true`, return `true`.
-- If `condition` reduces to `false`, evaluate `message`.
-- `message` must reduce to a string.
-- Raise an assertion failure with that message.
-
-This is a readability helper for asserting truth directly.
-
-#### `assert.false(condition, message)`
-
-- Evaluate `condition`.
-- `condition` must reduce to a boolean.
-- If `condition` reduces to `false`, return `true`.
-- If `condition` reduces to `true`, evaluate `message`.
-- `message` must reduce to a string.
-- Raise an assertion failure with that message.
-
-### Runtime And Type Behavior
-
-- Success return value: `true`
-- All assertion helpers use lazy message evaluation.
-- `assert.true` and `assert.false` require a boolean condition.
-- `assert.equal` follows the same runtime type rules as ordinary equality.
-- `assert.throws` catches any runtime error that `try` would catch.
-
-### Error Conditions
-
-- `assert.true` with a non-boolean condition:
-  - `InvalidArgumentTypesError`
-- `assert.false` with a non-boolean condition:
-  - `InvalidArgumentTypesError`
-- Any assertion helper with a failing condition and non-string message:
-  - `InvalidArgumentTypesError`
-- `assert.equal` with arguments rejected by ordinary equality:
-  - propagate the underlying runtime error unchanged
-- `assert.throws` with a non-throwing expression:
-  - assertion failure
-- Errors from nested expressions:
-  - propagate unchanged unless they are the error being intentionally caught by
-    `assert.throws`
-
-### Implementation Impact
-
-#### Lexical Analysis
-
-- No new tokens
-- No new keywords
-- No keyword conflicts expected
-
-#### Syntactic Analysis
-
-- No grammar changes
-- Parsed as ordinary function calls and ordinary function declarations
-
-#### Semantic Analysis
-
-- Add four standard-library signatures
-- Preserve ordinary arity checking and function-resolution behavior
-- Test discovery should inspect custom functions after successful compilation
-
-#### Lowering
-
-- No structural lowering changes required
-- All assertions lower as ordinary calls to standard-library functions
-- Test functions lower exactly like any other user-defined zero-argument
-  function
-
-#### Runtime Evaluation
-
-- All assertion helpers must be implemented as native functions or an
-  equivalent runtime mechanism that preserves lazy message evaluation.
-- `assert.throws` must additionally evaluate its first argument under runtime
-  error interception.
-- The runner must evaluate discovered tests one by one through the existing
-  runtime pipeline.
-- These helpers cannot be modeled correctly as ordinary eager custom functions
-  if lazy failure messages are required.
-
-#### CLI Integration
-
-- Add a `--test` mode to the CLI.
-- Test mode compiles one file and does not execute `main()`.
-- Test mode discovers zero-argument custom functions whose names start with
-  `test.`.
-- Test mode prints per-test results and a final summary.
-
-### Performance Considerations
-
-- Runtime overhead is low for `assert.equal`, `assert.true`, and
-  `assert.false`.
-- Runtime overhead is low to medium for `assert.throws` because it requires
-  evaluation under error interception.
-- Test mode should compile the source file once, then execute discovered tests
-  without recompiling the file for each test.
+Implementation constraint: `runCli` must **return** `int` and `main` must assign
+`exitCode`. `exit()` must not be called inside `runCli`
+([§2.9](#29-the-cli-has-no-exit-code-contract)).
 
 ## 5. Examples
 
-### Minimal Test File
+### 5.1 Valid
 
 ```primal
-test.math.addition() =
-    assert.equal(1 + 1, 2, "math failed")
+test.math.addition() = assert.equal(1 + 1, 2)
 
-test.parse.invalidNumber() =
-    assert.throws(to.number("not a number"), "expected parsing to fail")
+test.parse.invalidNumber() = assert.throws(to.number("not a number"))
 
-main() = "ignored in test mode"
+// several assertions in one test: && short-circuits, each returns true
+test.string.basics() =
+    assert.equal(str.length("abc"), 3) &&
+    assert.true(str.startsWith("abc", "a")) &&
+    assert.false(str.isEmpty("abc"))
+
+// custom message, no new machinery required
+test.custom() =
+    if (num.isEven(4)) true else error.throw("assertion", "4 should be even")
+
+main() = "not executed under --test"
 ```
-
-Running:
 
 ```text
 primal --test sample.prm
 ```
 
-Should:
+Runs the four tests in source order, skips `main`, exits `0`.
 
-- ignore `main()`
-- discover `test.math.addition` and `test.parse.invalidNumber`
-- run them in lexicographic order
-
-### Valid Assertion Examples
+### 5.2 Invalid, With Expected Results
 
 ```primal
-assert.equal(1 + 1, 2, "math failed")
+assert.true(1)
 ```
-
-```primal
-assert.true(str.match("hello123", "[a-z]+[0-9]+"), "pattern mismatch")
-```
-
-```primal
-assert.throws(to.number("not a number"), "expected parsing to fail")
-```
-
-```primal
-assert.equal(true, true, error.throw(-1, "message should not evaluate"))
-```
-
-### Invalid Assertion Examples With Expected Errors
-
-```primal
-assert.true(1, "expected boolean")
-```
-
-Expected error:
 
 ```text
-InvalidArgumentTypesError
+Runtime error: Invalid argument types for function "assert.true". Expected: (Boolean). Actual: (Number)
+→ test ERROR
 ```
 
 ```primal
-assert.false(true, 123)
+assert.equal("1", 1)
 ```
 
-Expected error:
-
 ```text
-InvalidArgumentTypesError
+Runtime error: Invalid argument types for function "comp.eq". Expected: (Equatable, Equatable). Actual: (String, Number)
+→ test ERROR
 ```
 
 ```primal
-assert.equal("1", 1, "expected equal")
+assert.throws(42)
 ```
 
-Expected error:
-
 ```text
-InvalidArgumentTypesError
+Runtime error: Assertion "assert.throws" failed: expected a thrown error, actual 42
+→ test FAIL
 ```
 
 ```primal
-assert.throws(42, "expected failure")
+test.bad() = 42
 ```
-
-Expected result:
 
 ```text
-Assertion failure via CustomError(code = "assertion", message = "expected failure")
+→ test ERROR: test "test.bad" did not return true (returned 42)
 ```
 
-### Invalid Test-Mode Example
+### 5.3 Invalid Test-Mode Example
 
 ```primal
 helper() = true
 main() = 42
 ```
 
-Running:
-
 ```text
 primal --test sample.prm
+Error: no zero-argument functions with the "test." prefix found in sample.prm
+→ exit code 2
 ```
 
-Expected result:
+## 6. Edge Cases
 
-```text
-Error because no zero-argument custom functions whose names start with "test." were found
-```
-
-## 6. Concrete Edge Cases
-
-### Edge Case 1: Lazy Message Evaluation
+### 6.1 Nested Assertion Inside `assert.throws`
 
 ```primal
-assert.equal(true, true, error.throw(-1, "unused"))
+test.wrong() = assert.throws(assert.equal(1, 2))
 ```
 
-This must succeed without evaluating the message.
+Must **fail**, attributed to the inner `assert.equal`. Under a
+`try`-equivalent catch-all this would incorrectly pass.
 
-### Edge Case 2: `assert.throws` Around A Successful Expression
+### 6.2 `assert.equal(1, 1.0)` Passes
+
+`CompEq` compares numbers with Dart's `num ==`
+([§2.7](#27-equality-semantics)). Integer and decimal representations of the
+same value are indistinguishable to `assert.equal`; pair it with `is.integer`
+when the distinction matters.
+
+### 6.3 `assert.throws` Cannot Be Abstracted
 
 ```primal
-assert.throws(1 + 2, "expected a throw")
+expectThrow(e) = assert.throws(e)
+test.x() = expectThrow(to.number("z"))   // ERROR, not pass
 ```
 
-This must fail with an assertion failure, not succeed.
+`CustomFunctionTerm.apply` reduces arguments eagerly, so the error escapes at
+the call boundary before `assert.throws` ever runs. This is the same limitation
+that already applies to `if` and `try` — consistent, but a real footgun that
+must be documented for users. See [[lang/design/lazy-evaluation]].
 
-### Edge Case 3: Underlying Equality Type Error
+### 6.4 Collection Comparison Splits Two Ways
 
 ```primal
-assert.equal("1", 1, "should not coerce types")
+assert.equal([1, 2], [1, 2, 3])   // FAIL  — comp.eq returns false
+assert.equal([1], "x")            // ERROR — comp.eq throws
 ```
 
-This should propagate `InvalidArgumentTypesError` rather than convert it into
-an assertion failure.
+The same call site produces different classifications depending on operand
+kinds.
 
-### Edge Case 4: `assert.throws` Catches A Custom Error
+### 6.5 `test.*` With Parameters
 
 ```primal
-assert.throws(error.throw(404, "not found"), "should throw")
+test.helper(x) = x + 1
 ```
 
-This should succeed.
+Skipped, and reported on stderr. Silent skipping would hide a genuine test that
+accidentally acquired a parameter.
 
-### Edge Case 5: `main()` Is Ignored In Test Mode
+### 6.6 User-Thrown Custom Errors Are Errors, Not Failures
 
 ```primal
-test.example() = true
-main() = error.throw(-1, "should not run")
+test.x() = error.throw("assertion", "hand-rolled")
 ```
 
-Running:
+Classified as **error**, because `CustomError` is not `AssertionFailedError`.
+The magic-string design could not make this distinction.
 
-```text
-primal --test sample.prm
-```
-
-This should pass because `main()` is not executed.
-
-### Edge Case 6: Non-True Test Result
+### 6.7 `try` Swallows Assertions
 
 ```primal
-test.bad() = 42
+test.x() = try(assert.equal(1, 2), true)
 ```
 
-Running:
+**Passes.** Inherent to `try`'s catch-all
+([§2.3](#23-try-catches-every-throwable)); unavoidable without changing `try`,
+which is out of scope here. Document it. See
+[[dev/architecture/error/error-propagation]].
 
-```text
-primal --test sample.prm
-```
+### 6.8 Runaway Recursion In A Test
 
-This should be reported as an error, not as a passing test.
+Produces `RecursionLimitError` → classified as **error**, and
+`FunctionTerm.resetDepth()` guarantees the next test starts from a clean depth.
 
-## 7. High-Value Open Questions
+## 7. Compiler Impact By Stage
 
-1. Should a later version support directory-level or project-level discovery in
-   addition to single-file test mode?
-2. Should lexicographic order remain the permanent execution order, or should
-   explicit ordering ever be supported?
-3. Should future versions add richer result reporting such as structured JSON
-   output or stack traces for failing tests?
+| Stage     | Impact                                                                                                                                      |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lexical   | **None.** No new tokens or keywords; dotted names already lex as single identifiers ([§2.1](#21-dotted-names-lex-as-single-identifiers)).   |
+| Syntactic | **None.** Ordinary calls and ordinary zero-argument definitions.                                                                            |
+| Semantic  | **None.** Signatures are auto-derived from the standard library ([§2.5](#25-standard-library-signatures-are-auto-derived)).                 |
+| Lowering  | **None.** Assertions lower as ordinary native calls; tests lower like any other custom function.                                            |
+| Runtime   | Four new natives following the two-class pattern, plus `AssertionFailedError`. `assert.throws` reduces its argument under a guarded region. |
+| CLI       | New `--test` / `-t` mode; discovery, execution, classification, and reporting; `runCli` returns `int` and `main` assigns `exitCode`.        |
 
-## 8. Post-Implementation
+## 8. Performance
 
-- Update documentation in `docs/`
-- Implement runtime coverage for all four assertion helpers
-- Implement CLI coverage for:
-  - discovery of zero-argument `test.*` functions
-  - ignored `main()` in test mode
-  - no-test-file error behavior
-  - pass, fail, and error classification
-- Implement tests for lazy message behavior, equality type errors, and
-  `assert.throws` error interception
+- `assert.equal`, `assert.true`, and `assert.false` add one native call each —
+  negligible.
+- `assert.throws` adds a guarded region around one reduction; low overhead, and
+  paid only where used.
+- Test mode compiles the file **once** and evaluates each discovered test
+  against the same `RuntimeFacade`. Per-test cost is a single expression
+  evaluation plus a recursion-depth reset.
+- Compile-time cost is four extra standard-library entries in the signature map.
 
-## 9. Implementation Complexity
+## 9. Open Questions
 
-Medium
+1. **Confirm dropping the `message` parameter** ([§3.2](#32-no-message-parameter)).
+   This is the largest departure from the first draft: better `assert.equal`
+   diagnostics and no lazy-message hazard, at the cost of per-assertion labels
+   inside a `&&` chain.
+2. **Confirm that `assert.throws` should be narrower than `try`**
+   ([§3.3](#33-assertthrows-is-narrower-than-try)). The alternative is literal
+   parity with `try`'s catch-all, which masks nested assertion failures and
+   interpreter defects.
+3. **Is "must return exactly `true`" the right pass rule**, or should "completed
+   without throwing" count as a pass (the xUnit convention)? The former catches
+   assertion-free tests; the latter removes a classification and is friendlier
+   when a test's last expression performs I/O.
+4. **Should the `test.` prefix be reserved** so the standard library never claims
+   it, and should a second prefix or a `*_test.prm` filename convention be
+   supported later?
+5. **Should "no tests discovered" exit `2` or exit `0` with a warning?** This
+   specification chooses `2`, on the grounds that a mistyped prefix silently
+   passing in CI is the worse failure mode.
 
-Justification:
+## 10. Post-Implementation
 
-- No lexer or parser work should be required.
-- The assertion surface is small and cohesive.
-- The main complexity is preserving lazy message behavior across all helpers,
-  implementing error interception for `assert.throws`, and integrating a small
-  but well-defined CLI discovery and reporting mode.
+### Documentation
 
-## 10. Final Recommendation
+- Add `docs/lang/reference/core/assert.md` and link it from
+  [[lang/index]] under Core.
+- Cross-reference `AssertionFailedError` from [[lang/reference/core/error]].
+- Update [[dev/architecture/pipeline/pipeline]]: standard-library function count
+  (284 → 288), the namespace table, the runtime-error table, and the CLI entry
+  point section (`--test`, exit codes).
+- Update [[dev/architecture/error/error-hierarchy]] with the new error type.
+- Document the abstraction limitation ([§6.3](#63-assertthrows-cannot-be-abstracted))
+  wherever `if`/`try` laziness is already explained.
+- Update `README.md` if it lists CLI flags, and `CHANGELOG.md`.
 
-Adopt
+### Tests
 
-Adopt the focused four-function assertion library together with a minimal CLI
-runner invoked as `primal --test file.prm`. The runner should discover
-zero-argument `test.*` functions, ignore `main()` in test mode, and classify
+Runtime coverage:
+
+- Each helper: success, failure, and argument type error.
+- `assert.throws`: custom error caught, non-throwing expression fails, nested
+  assertion rethrown, non-`RuntimeError` rethrown.
+- `assert.equal`: cross-type propagation, unequal-length collections,
+  `1` versus `1.0`.
+- `&&` chaining of assertions.
+
+CLI coverage (see [[dev/architecture/testing/integration-tests]]):
+
+- Discovery of zero-argument `test.*` functions.
+- Arity-mismatched `test.*` functions skipped **and reported**.
+- `main` not executed; no REPL fallthrough when `main` is absent.
+- No-tests-found error.
+- All three classifications plus the non-`true` return case.
+- Exit codes asserted through `runCli`'s return value, never via `exit()`.
+- `--test` combined with `--watch`, with multiple files, and with no file.
+
+## 11. Implementation Complexity
+
+**Low to medium.**
+
+The lexer, parser, semantic analyzer, and lowerer need no changes at all, and
+argument laziness comes free with the native calling convention. Each helper is
+a short two-class native, plus one error class.
+
+The only non-trivial work is on the CLI: threading an exit code out of `runCli`
+without calling `exit()` — a small but real signature change that touches
+existing tests — plus discovery, classification, and reporting. Dropping the
+`message` parameter removes roughly a third of the per-helper logic.
+
+## 12. Recommendation
+
+**Adopt.** Four assertion natives raising a dedicated `AssertionFailedError`,
+plus a minimal `primal --test file.prm` runner that discovers zero-argument
+`test.*` functions, ignores `main`, executes in source order, and classifies
 results as pass, fail, or error. This gives Primal a usable testing workflow
-without introducing new test-specific syntax.
+with no new syntax, no compiler-stage changes before the runtime, and an
+assertion surface small enough to keep.

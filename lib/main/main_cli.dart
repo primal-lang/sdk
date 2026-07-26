@@ -23,10 +23,10 @@ Options:
 
 Examples:
   primal                     Start the REPL
-  primal program.pri         Run a program with a main function
-  primal program.pri arg1    Run a program with arguments
+  primal program.prm         Run a program with a main function
+  primal program.prm arg1    Run a program with arguments
   primal -d                  Start the REPL in debug mode
-  primal -w program.pri      Watch and re-run on changes
+  primal -w program.prm      Watch and re-run on changes
 ''';
 
 const String replHelpText = '''
