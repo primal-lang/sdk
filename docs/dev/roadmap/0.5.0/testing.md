@@ -10,10 +10,16 @@ sources:
   - lib/compiler/library/control/if.dart
   - lib/compiler/library/error/throw.dart
   - lib/compiler/library/comparison/comp_eq.dart
+  - lib/compiler/library/logic/bool_and.dart
   - lib/compiler/library/operators/operator_double_and.dart
   - lib/compiler/errors/runtime_error.dart
+  - lib/compiler/errors/semantic_error.dart
+  - lib/compiler/lexical/lexical_analyzer.dart
+  - lib/compiler/syntactic/syntactic_analyzer.dart
   - lib/compiler/semantic/semantic_analyzer.dart
+  - lib/compiler/semantic/intermediate_representation.dart
   - lib/compiler/lowering/runtime_facade.dart
+  - lib/compiler/warnings/semantic_warning.dart
   - lib/extensions/string_extensions.dart
   - lib/main/main_cli.dart
 ---
@@ -123,8 +129,15 @@ comparison uses Dart's `num ==`, so `1 == 1.0` is `true`.
 
 `OperatorDoubleAnd` delegates to `BoolAnd.execute`, which reduces the second
 argument only when the first is `true`
-(`lib/compiler/library/operators/operator_double_and.dart`). This is the
-mechanism that lets a single-expression test body hold several assertions.
+(`lib/compiler/library/operators/operator_double_and.dart`,
+`lib/compiler/library/logic/bool_and.dart`).
+
+What lets a single-expression test body hold several assertions is **left-to-right
+reduction**, not short-circuiting: assertions never return `false`
+([§4.3](#43-assertion-functions)), so the short-circuit branch is unreachable on
+success and strict `&` would chain them identically. Short-circuiting matters
+only on failure — the first assertion to throw prevents the rest from running,
+so a test reports one failure at a time.
 
 ### 2.9 The CLI Has No Exit-Code Contract
 
@@ -148,8 +161,12 @@ having `main` assign `exitCode`.
   produce warnings in a normal run.
 - `RuntimeFacade.evaluateToTerm` calls `FunctionTerm.resetDepth()`, so
   evaluating each test through the facade isolates recursion depth for free.
-- Redefining a standard-library name is a compile error
-  (`CannotRedefineStandardLibraryError`).
+- Defining a function whose name collides with the standard library is a compile
+  error, but the error is `DuplicatedFunctionError`, raised by
+  `SemanticAnalyzer.analyze` (`lib/compiler/semantic/semantic_analyzer.dart`).
+  `CannotRedefineStandardLibraryError` is a **different** path: it is thrown only
+  by `RuntimeFacade.defineFunction`, i.e. when a name is redefined interactively
+  in the REPL.
 
 ## 3. Design Decisions And Rationale
 
@@ -297,6 +314,12 @@ Common behaviour:
 
 1. Reduce `actual`, then reduce `expected`.
 2. Compare with `CompEq.execute` — identical semantics to `==` and `comp.eq`.
+   Pass `this` as the `function` argument, following the existing pattern
+   (`OperatorDoubleAnd` passes `this` to `BoolAnd.execute`). `CompEq.execute`
+   builds its type error from `function.name` and `function.parameterTypes`
+   (`lib/compiler/library/comparison/comp_eq.dart`), so a type mismatch is
+   reported against **`assert.equal`**, not `comp.eq`. See
+   [§9](#9-open-questions), item 6.
 3. `true` → return `true`.
 4. `false` → throw `AssertionFailedError`.
 5. Any error raised by the comparison itself propagates **unchanged**.
@@ -333,12 +356,35 @@ subclasses:
 
 ```text
 AssertionFailedError extends RuntimeError
-  fields:  function: String, actual: String?, expected: String?
+  fields:  function: String, actual: String, expected: String
   message: 'Assertion "<function>" failed: expected <expected>, actual <actual>'
 ```
 
+All four helpers supply both values, so neither field is optional:
+
+| Helper          | `expected`                | `actual`                                |
+| --------------- | ------------------------- | --------------------------------------- |
+| `assert.equal`  | the reduced `expected`    | the reduced `actual`                    |
+| `assert.true`   | `true`                    | the reduced condition                   |
+| `assert.false`  | `false`                   | the reduced condition                   |
+| `assert.throws` | `a thrown error`          | the value the expression produced       |
+
+(The first draft declared both fields `String?` without defining what the message
+renders when either is absent. Making them required removes the question rather
+than adding template branches for a case no helper produces.)
+
 Because it is a `RuntimeError`, it is still catchable by `try` — consistent with
 the rest of the language, and noted as [§6.7](#67-try-swallows-assertions).
+
+**Display prefix.** `RuntimeError`'s constructor hard-codes the category string
+`'Runtime error'` (`lib/compiler/errors/runtime_error.dart`) and
+`GenericError.toString()` renders `'<errorType>: <message>'`. An assertion
+failure therefore prints as `Runtime error: Assertion "…" failed: …` — the same
+prefix that marks a genuine error, which is exactly the distinction the runner
+draws in [§4.7](#47-cli-test-runner). Giving it its own category requires a new
+constructor on `RuntimeError` that lets a subclass supply the category string;
+that is not in the stage table in [§7](#7-compiler-impact-by-stage). See
+[§9](#9-open-questions), item 7.
 
 ### 4.5 Runtime And Type Behaviour
 
@@ -348,7 +394,12 @@ the rest of the language, and noted as [§6.7](#67-try-swallows-assertions).
 - `assert.true` and `assert.false` require a boolean, matching `if`.
 - `assert.equal` inherits `comp.eq`'s type rules exactly — including
   `1 == 1.0` being `true` and unequal-length collections comparing `false`
-  rather than erroring.
+  rather than erroring. Equal-length collections do **not** get the same
+  treatment: `CompEq.compareLists` delegates each element back to
+  `CompEq.execute`, so a same-length collection whose elements are of different
+  kinds *throws*
+  ([§6.4](#64-collection-comparison-splits-three-ways)). Map values behave the
+  same way.
 - Arguments are lazy because the helpers are native, but only `assert.throws`
   depends on that.
 - Assertions are available on the web target too, since they live in the shared
@@ -359,12 +410,14 @@ the rest of the language, and noted as [§6.7](#67-try-swallows-assertions).
 | Condition                                         | Result                                                                            |
 | ------------------------------------------------- | --------------------------------------------------------------------------------- |
 | `assert.true` / `assert.false` with a non-boolean | `InvalidArgumentTypesError` → test **error**                                      |
-| `assert.equal` across incomparable types          | `InvalidArgumentTypesError` from `comp.eq`, propagated unchanged → test **error** |
+| `assert.equal` across incomparable types          | `InvalidArgumentTypesError` from `CompEq.execute`, reported against `assert.equal` → test **error** |
+| `assert.equal` over equal-length collections with mismatched element kinds | `InvalidArgumentTypesError` from the recursive element comparison → test **error** |
 | `assert.equal` values differ                      | `AssertionFailedError` → test **fail**                                            |
 | `assert.throws` over a non-throwing expression    | `AssertionFailedError` → test **fail**                                            |
 | `assert.throws` over a nested failed assertion    | rethrown unchanged → test **fail**, attributed to the inner assertion             |
 | errors from nested expressions                    | propagate unchanged unless intentionally caught by `assert.throws`                |
-| user function named `assert.*`                    | `CannotRedefineStandardLibraryError` at compile time                              |
+| user function named `assert.*` in a source file   | `DuplicatedFunctionError` at compile time                                         |
+| user function named `assert.*` in the REPL        | `CannotRedefineStandardLibraryError`                                              |
 
 ### 4.7 CLI Test Runner
 
@@ -452,8 +505,13 @@ Runs the four tests in source order, skips `main`, exits `0`.
 
 ### 5.2 Invalid, With Expected Results
 
+A source file is a list of function definitions
+(`lib/compiler/syntactic/syntactic_analyzer.dart`), so a bare `assert.true(1)` at
+file scope is a *syntax* error, not the runtime error shown. Each case below is
+therefore written as a whole test.
+
 ```primal
-assert.true(1)
+test.notBoolean() = assert.true(1)
 ```
 
 ```text
@@ -462,16 +520,16 @@ Runtime error: Invalid argument types for function "assert.true". Expected: (Boo
 ```
 
 ```primal
-assert.equal("1", 1)
+test.crossType() = assert.equal("1", 1)
 ```
 
 ```text
-Runtime error: Invalid argument types for function "comp.eq". Expected: (Equatable, Equatable). Actual: (String, Number)
+Runtime error: Invalid argument types for function "assert.equal". Expected: (Equatable, Equatable). Actual: (String, Number)
 → test ERROR
 ```
 
 ```primal
-assert.throws(42)
+test.noThrow() = assert.throws(42)
 ```
 
 ```text
@@ -530,15 +588,22 @@ the call boundary before `assert.throws` ever runs. This is the same limitation
 that already applies to `if` and `try` — consistent, but a real footgun that
 must be documented for users. See [[lang/design/lazy-evaluation]].
 
-### 6.4 Collection Comparison Splits Two Ways
+### 6.4 Collection Comparison Splits Three Ways
 
 ```primal
-assert.equal([1, 2], [1, 2, 3])   // FAIL  — comp.eq returns false
-assert.equal([1], "x")            // ERROR — comp.eq throws
+assert.equal([1, 2], [1, 2, 3])   // FAIL  — length differs, comp.eq returns false
+assert.equal([1], "x")            // ERROR — operand kinds differ, comp.eq throws
+assert.equal([1], ["x"])          // ERROR — same kind, same length, but the
+                                  //         element comparison throws
 ```
 
-The same call site produces different classifications depending on operand
-kinds.
+The same call site produces different classifications depending on operand kinds
+*and* on element kinds. The third case is the surprising one: both operands are
+lists of length one, yet the result is an **error** rather than a **fail**,
+because `CompEq.compareLists` delegates each element back to `CompEq.execute`,
+which throws on `Number` versus `String`
+(`lib/compiler/library/comparison/comp_eq.dart`). `CompEq.compareMaps` does the
+same for map values.
 
 ### 6.5 `test.*` With Parameters
 
@@ -616,6 +681,18 @@ Produces `RecursionLimitError` → classified as **error**, and
 5. **Should "no tests discovered" exit `2` or exit `0` with a warning?** This
    specification chooses `2`, on the grounds that a mistyped prefix silently
    passing in CI is the worse failure mode.
+6. **Should `assert.equal`'s type error name `assert.equal` or `comp.eq`?**
+   [§4.3](#43-assertion-functions) chooses `assert.equal`, by passing `this` to
+   `CompEq.execute` the way every other native does. It names the function the
+   user actually called. The alternative — passing `const CompEq()` — names the
+   comparison primitive, which is more truthful about where the check happened
+   but deviates from the established pattern and leaks an implementation detail.
+7. **Should `AssertionFailedError` print under a category other than
+   `Runtime error`?** ([§4.4](#44-failure-representation)) A **fail** currently
+   renders with the same prefix as an **error**, which is the one distinction the
+   runner exists to make. Fixing it means adding a constructor to `RuntimeError`
+   that lets subclasses supply the category string — small, contained, but wider
+   than the stage table in [§7](#7-compiler-impact-by-stage) admits.
 
 ## 10. Post-Implementation
 
@@ -624,13 +701,20 @@ Produces `RecursionLimitError` → classified as **error**, and
 - Add `docs/lang/reference/core/assert.md` and link it from
   [[lang/index]] under Core.
 - Cross-reference `AssertionFailedError` from [[lang/reference/core/error]].
+- Add `--test` / `-t` to the `helpText` constant in `lib/main/main_cli.dart`.
+  This is user-visible output rather than documentation, and both
+  `test/compiler/main_cli_test.dart` and `test/compiler/cli_test.dart` assert on
+  the help text, so it must change together with its tests.
 - Update [[dev/architecture/pipeline/pipeline]]: standard-library function count
-  (284 → 288), the namespace table, the runtime-error table, and the CLI entry
-  point section (`--test`, exit codes).
+  (311 → 315), a new `assert.*` row (count 4) in the namespace table, the
+  runtime-error table, and the CLI entry point section (`--test`, exit codes).
+  The count stated there today (284) is already stale and its own namespace table
+  sums to 290 — count `StandardLibrary.get()` rather than trusting either figure.
 - Update [[dev/architecture/error/error-hierarchy]] with the new error type.
 - Document the abstraction limitation ([§6.3](#63-assertthrows-cannot-be-abstracted))
   wherever `if`/`try` laziness is already explained.
-- Update `README.md` if it lists CLI flags, and `CHANGELOG.md`.
+- Update `CHANGELOG.md`. `README.md` does not list CLI flags today, so it needs
+  no change unless that section grows.
 
 ### Tests
 
@@ -640,7 +724,11 @@ Runtime coverage:
 - `assert.throws`: custom error caught, non-throwing expression fails, nested
   assertion rethrown, non-`RuntimeError` rethrown.
 - `assert.equal`: cross-type propagation, unequal-length collections,
+  equal-length collections with mismatched element kinds and maps with
+  mismatched value kinds ([§6.4](#64-collection-comparison-splits-three-ways)),
   `1` versus `1.0`.
+- `assert.equal`'s type error names `assert.equal`, not `comp.eq`
+  ([§9](#9-open-questions), item 6).
 - `&&` chaining of assertions.
 
 CLI coverage (see [[dev/architecture/testing/integration-tests]]):
@@ -652,6 +740,9 @@ CLI coverage (see [[dev/architecture/testing/integration-tests]]):
 - All three classifications plus the non-`true` return case.
 - Exit codes asserted through `runCli`'s return value, never via `exit()`.
 - `--test` combined with `--watch`, with multiple files, and with no file.
+- `--help` output lists `--test` and `-t`.
+- A user function named `assert.*` in a source file fails compilation with
+  `DuplicatedFunctionError` (not `CannotRedefineStandardLibraryError`).
 
 ## 11. Implementation Complexity
 
