@@ -23,6 +23,9 @@ const String version = '0.5.1';
 /// compile error.
 const String testPrefix = 'test.';
 
+/// Width of the widest `--test` result status (`ERROR`), used to align names.
+const int _statusWidth = 5;
+
 const String helpText = '''
 Usage: primal [options] [file] [arguments...]
 
@@ -285,6 +288,7 @@ int _runTests({
         console.print(
           _testLine(
             status: 'PASS',
+            color: Console.green,
             name: function.name,
             debug: debug,
             executionWatch: executionWatch,
@@ -295,6 +299,7 @@ int _runTests({
         console.print(
           _testLine(
             status: 'ERROR',
+            color: Console.red,
             name: function.name,
             debug: debug,
             executionWatch: executionWatch,
@@ -313,6 +318,7 @@ int _runTests({
       console.print(
         _testLine(
           status: 'FAIL',
+          color: Console.red,
           name: function.name,
           debug: debug,
           executionWatch: executionWatch,
@@ -325,6 +331,7 @@ int _runTests({
       console.print(
         _testLine(
           status: 'ERROR',
+          color: Console.red,
           name: function.name,
           debug: debug,
           executionWatch: executionWatch,
@@ -415,11 +422,16 @@ RuntimeFacade? _buildForTests({
 
 String _testLine({
   required String status,
+  required String color,
   required String name,
   required bool debug,
   required Stopwatch executionWatch,
 }) {
-  final String line = '${status.padRight(5)} $name';
+  // Padded to the width of the longest status so names line up. The padding
+  // sits outside the colour codes: padRight would otherwise count the escape
+  // sequences as visible characters and misalign the column.
+  final String padding = ' ' * (_statusWidth - status.length);
+  final String line = '$color$status${Console.reset}$padding $name';
 
   return debug ? '$line [${executionWatch.elapsedMilliseconds}ms]' : line;
 }

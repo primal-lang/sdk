@@ -7,6 +7,7 @@ class Console {
   static const String inputPrompt = '> ';
   static const String reset = '\x1b[0m';
   static const String red = '\x1b[31m';
+  static const String green = '\x1b[32m';
   static const yellow = '\x1b[93m';
 
   final PlatformConsoleBase _platformConsole;

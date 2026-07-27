@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import '../helpers/temp_helpers.dart';
+import '../helpers/test_line_helpers.dart';
 
 void main() {
   group('CLI', () {
@@ -1089,11 +1090,11 @@ main() = "not executed under --test"
         expect(result.exitCode, equals(0));
         expect(
           result.stdout.toString(),
-          contains('PASS  test.math.addition'),
+          contains(passLine('test.math.addition')),
         );
         expect(
           result.stdout.toString(),
-          contains('PASS  test.parse.invalidNumber'),
+          contains(passLine('test.parse.invalidNumber')),
         );
         expect(result.stdout.toString(), contains('2 tests: 2 passed'));
         expect(
@@ -1121,7 +1122,10 @@ main() = "not executed under --test"
         final ProcessResult result = await runCli(['--test', tmpFile.path]);
 
         expect(result.exitCode, equals(1));
-        expect(result.stdout.toString(), contains('FAIL  test.stillEqual'));
+        expect(
+          result.stdout.toString(),
+          contains(failLine('test.stillEqual')),
+        );
         expect(
           result.stdout.toString(),
           contains(
@@ -1140,7 +1144,10 @@ main() = "not executed under --test"
         final ProcessResult result = await runCli(['--test', tmpFile.path]);
 
         expect(result.exitCode, equals(1));
-        expect(result.stdout.toString(), contains('ERROR test.notBoolean'));
+        expect(
+          result.stdout.toString(),
+          contains(errorLine('test.notBoolean')),
+        );
         expect(result.stdout.toString(), contains('1 test: 1 error'));
       });
 
@@ -1153,7 +1160,7 @@ test.real() = assert.true(true)
 
         expect(result.exitCode, equals(2));
         expect(result.stderr.toString(), contains('skipped "test.helper"'));
-        expect(result.stdout.toString(), contains('PASS  test.real'));
+        expect(result.stdout.toString(), contains(passLine('test.real')));
         expect(
           result.stdout.toString(),
           contains('2 tests: 1 passed, 1 skipped'),
@@ -1230,7 +1237,7 @@ test.real() = assert.true(true)
         final ProcessResult result = await runCli([tmpFile.path, '--test']);
 
         expect(result.exitCode, equals(0));
-        expect(result.stdout.toString(), contains('PASS  test.only'));
+        expect(result.stdout.toString(), contains(passLine('test.only')));
       });
 
       test('--test with --debug prints compile and per-test timings', () async {
@@ -1248,7 +1255,9 @@ test.real() = assert.true(true)
         expect(result.stdout.toString(), contains('[debug] Compilation:'));
         expect(
           result.stdout.toString(),
-          matches(RegExp(r'PASS  test\.only \[\d+ms\]')),
+          matches(
+            RegExp('${RegExp.escape(passLine('test.only'))} \\[\\d+ms\\]'),
+          ),
         );
       });
 
@@ -1265,11 +1274,11 @@ test.real() = assert.true(true)
         ]);
 
         expect(result.exitCode, equals(0));
-        expect(result.stdout.toString(), contains('PASS  test.greeting'));
-        expect(result.stdout.toString(), contains('PASS  test.isOdd'));
+        expect(result.stdout.toString(), contains(passLine('test.greeting')));
+        expect(result.stdout.toString(), contains(passLine('test.isOdd')));
         expect(
           result.stdout.toString(),
-          contains('PASS  test.factorial.negative'),
+          contains(passLine('test.factorial.negative')),
         );
         expect(result.stdout.toString(), contains('14 tests: 14 passed'));
         expect(result.stderr.toString(), isEmpty);

@@ -8,6 +8,7 @@ import 'package:primal/main/main_cli.dart';
 import 'package:primal/utils/console.dart';
 import 'package:test/test.dart';
 import '../helpers/console_fakes.dart';
+import '../helpers/test_line_helpers.dart';
 
 void main() {
   group('runCli()', () {
@@ -2041,9 +2042,9 @@ main() = "not executed under --test"
         expect(
           platformConsole.outLines,
           equals([
-            'PASS  test.first',
-            'PASS  test.second',
-            'PASS  test.third',
+            passLine('test.first'),
+            passLine('test.second'),
+            passLine('test.third'),
             '',
             '3 tests: 3 passed',
           ]),
@@ -2061,7 +2062,7 @@ main() = "not executed under --test"
         );
 
         expect(code, equals(0));
-        expect(platformConsole.outLines.first, equals('PASS  test.only'));
+        expect(platformConsole.outLines.first, equals(passLine('test.only')));
       });
 
       test('executes tests in source-declaration order', () {
@@ -2079,7 +2080,7 @@ test.apple() = assert.true(true)
 
         expect(
           platformConsole.outLines.take(2),
-          equals(['PASS  test.zebra', 'PASS  test.apple']),
+          equals([passLine('test.zebra'), passLine('test.apple')]),
         );
       });
 
@@ -2140,7 +2141,7 @@ main() = console.writeLn("main ran")
         expect(
           platformConsole.outLines,
           equals([
-            'FAIL  test.stillEqual',
+            failLine('test.stillEqual'),
             detail,
             '',
             '1 test: 1 failed',
@@ -2166,7 +2167,7 @@ main() = console.writeLn("main ran")
         expect(
           platformConsole.outLines,
           equals([
-            'ERROR test.notBoolean',
+            errorLine('test.notBoolean'),
             detail,
             '',
             '1 test: 1 error',
@@ -2188,7 +2189,7 @@ main() = console.writeLn("main ran")
         expect(
           platformConsole.outLines,
           equals([
-            'ERROR test.bad',
+            errorLine('test.bad'),
             '      test "test.bad" did not return true (returned 42)',
             '',
             '1 test: 1 error',
@@ -2210,7 +2211,7 @@ main() = console.writeLn("main ran")
         expect(
           platformConsole.outLines,
           equals([
-            'ERROR test.bad',
+            errorLine('test.bad'),
             '      test "test.bad" did not return true (returned "true")',
             '',
             '1 test: 1 error',
@@ -2236,6 +2237,37 @@ test.notBoolean() = assert.true(1)
         expect(
           platformConsole.outLines.last,
           equals('3 tests: 1 passed, 1 failed, 1 error'),
+        );
+      });
+
+      test('colours PASS green and FAIL/ERROR red', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => '''
+test.ok() = assert.true(true)
+test.stillEqual() = assert.notEqual(1, 1)
+test.notBoolean() = assert.true(1)
+''',
+        );
+
+        // Written as raw escape sequences rather than via Console: this pins
+        // the exact bytes, so redefining the colour constants cannot silently
+        // change what the runner emits.
+        expect(
+          platformConsole.outLines[0],
+          equals('\x1b[32mPASS\x1b[0m  test.ok'),
+        );
+        expect(
+          platformConsole.outLines[1],
+          equals('\x1b[31mFAIL\x1b[0m  test.stillEqual'),
+        );
+        expect(
+          platformConsole.outLines[3],
+          equals('\x1b[31mERROR\x1b[0m test.notBoolean'),
         );
       });
 
@@ -2275,7 +2307,11 @@ test.real() = assert.true(true)
         );
         expect(
           platformConsole.outLines,
-          equals(['PASS  test.real', '', '2 tests: 1 passed, 1 skipped']),
+          equals([
+            passLine('test.real'),
+            '',
+            '2 tests: 1 passed, 1 skipped',
+          ]),
         );
       });
 
@@ -2386,7 +2422,7 @@ test.real() = assert.true(true)
         );
 
         expect(code, equals(0));
-        expect(platformConsole.outLines.first, equals('PASS  test.only'));
+        expect(platformConsole.outLines.first, equals(passLine('test.only')));
       });
 
       test('combines with --debug written first', () {
@@ -2405,7 +2441,9 @@ test.real() = assert.true(true)
         );
         expect(
           platformConsole.outLines[1],
-          matches(r'^PASS  test\.only \[\d+ms\]$'),
+          matches(
+            RegExp('^${RegExp.escape(passLine('test.only'))} \\[\\d+ms\\]\$'),
+          ),
         );
       });
 
@@ -2425,7 +2463,9 @@ test.real() = assert.true(true)
         );
         expect(
           platformConsole.outLines[1],
-          matches(r'^PASS  test\.only \[\d+ms\]$'),
+          matches(
+            RegExp('^${RegExp.escape(passLine('test.only'))} \\[\\d+ms\\]\$'),
+          ),
         );
       });
 
@@ -2466,7 +2506,7 @@ test.only() = assert.equal(unused(1), 1)
         );
 
         expect(platformConsole.errorLines.join('\n'), contains('Warning'));
-        expect(platformConsole.outLines.first, equals('PASS  test.only'));
+        expect(platformConsole.outLines.first, equals(passLine('test.only')));
       });
 
       test('aborts on a non-RuntimeError, keeping the partial report', () {
@@ -2487,7 +2527,7 @@ test.third() = assert.true(true)
         expect(code, equals(2));
         expect(
           platformConsole.outLines,
-          equals(['PASS  test.first', '', '1 test: 1 passed']),
+          equals([passLine('test.first'), '', '1 test: 1 passed']),
         );
         expect(
           platformConsole.errorLines.single,
