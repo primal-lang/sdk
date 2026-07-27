@@ -228,6 +228,27 @@ return ValueTerm.from(computedDartValue);
 
 This factory handles: `bool`, `num`, `String`, `DateTime`, `File`, `Directory`, `Set<Term>`, `List<Term>`, `Map<Term, Term>`.
 
+### Rendering a Term for a Message
+
+A native that needs to *describe* a value — for example when building an error
+message — must not use `Term.toString()`: `ValueTerm` renders through
+`value.toString()`, which drops the quotes on strings and makes `"3"`
+indistinguishable from `3`.
+
+`Runtime.format` is the renderer the CLI already uses to print a program's
+result, and it is **static** precisely so a native can reach it. Native terms
+live in `lib/compiler/library/**` and see nothing but `Term`s — they have no
+`Runtime` handle and no route to one.
+
+```dart
+Runtime.render(term)  // guarded: falls back to term.toString()
+```
+
+Prefer `Runtime.render`. Both `Runtime.format` (via `InvalidValueError`) and
+`Term.native()` (via `StateError` on an unsubstituted bound variable) can throw,
+and a native that lets rendering escape while building its own error message
+turns a controlled failure into an interpreter-level crash.
+
 ## Adding a New Native Function
 
 ### Step 1: Create the File
@@ -364,13 +385,16 @@ Native functions typically throw these runtime errors:
 | `KeyNotFoundError`          | Map key does not exist                            |
 | `DivisionByZeroError`       | Division or modulo by zero                        |
 | `InvalidValueError`         | Value cannot be processed                         |
+| `AssertionFailedError`      | An assertion's expectation was not met            |
+| `AssertionArgumentError`    | An assertion was misused (`assert.*` only)        |
 
 ## Standard Library Organization
 
 Functions are organized by namespace prefix:
 
-| Prefix   | Domain          | Example Functions                        |
-| -------- | --------------- | ---------------------------------------- |
+| Prefix     | Domain          | Example Functions                        |
+| ---------- | --------------- | ---------------------------------------- |
+| `assert.*` | Assertions      | `assert.equal`, `assert.true`, `assert.throws` |
 | `num.*`  | Arithmetic      | `num.add`, `num.sqrt`, `num.max`         |
 | `bool.*` | Logic           | `bool.and`, `bool.or`, `bool.not`        |
 | `str.*`  | Strings         | `str.length`, `str.concat`, `str.split`  |

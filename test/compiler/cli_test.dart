@@ -1076,5 +1076,209 @@ main() = grade(85)
         expect(result.stdout.toString().trim(), isNotEmpty);
       });
     });
+
+    group('test mode', () {
+      test('--test runs the tests and exits 0 when they all pass', () async {
+        final File tmpFile = writeProgram('all_pass.prm', '''
+test.math.addition() = assert.equal(1 + 1, 2)
+test.parse.invalidNumber() = assert.throws(to.number("not a number"))
+main() = "not executed under --test"
+''');
+        final ProcessResult result = await runCli(['--test', tmpFile.path]);
+
+        expect(result.exitCode, equals(0));
+        expect(
+          result.stdout.toString(),
+          contains('PASS  test.math.addition'),
+        );
+        expect(
+          result.stdout.toString(),
+          contains('PASS  test.parse.invalidNumber'),
+        );
+        expect(result.stdout.toString(), contains('2 tests: 2 passed'));
+        expect(
+          result.stdout.toString(),
+          isNot(contains('not executed under --test')),
+        );
+      });
+
+      test('-t is accepted as the short form', () async {
+        final File tmpFile = writeProgram(
+          'short_flag.prm',
+          'test.only() = assert.true(true)',
+        );
+        final ProcessResult result = await runCli(['-t', tmpFile.path]);
+
+        expect(result.exitCode, equals(0));
+        expect(result.stdout.toString(), contains('1 test: 1 passed'));
+      });
+
+      test('a failing test exits 1 and reports on stdout', () async {
+        final File tmpFile = writeProgram(
+          'failing.prm',
+          'test.stillEqual() = assert.notEqual(1, 1)',
+        );
+        final ProcessResult result = await runCli(['--test', tmpFile.path]);
+
+        expect(result.exitCode, equals(1));
+        expect(result.stdout.toString(), contains('FAIL  test.stillEqual'));
+        expect(
+          result.stdout.toString(),
+          contains(
+            'Assertion error: "assert.notEqual" failed: expected not 1, '
+            'actual 1',
+          ),
+        );
+        expect(result.stderr.toString(), isEmpty);
+      });
+
+      test('an erroring test exits 1', () async {
+        final File tmpFile = writeProgram(
+          'erroring.prm',
+          'test.notBoolean() = assert.true(1)',
+        );
+        final ProcessResult result = await runCli(['--test', tmpFile.path]);
+
+        expect(result.exitCode, equals(1));
+        expect(result.stdout.toString(), contains('ERROR test.notBoolean'));
+        expect(result.stdout.toString(), contains('1 test: 1 error'));
+      });
+
+      test('a skipped test is reported on stderr and exits 2', () async {
+        final File tmpFile = writeProgram('skipped.prm', '''
+test.helper(x) = assert.equal(x, x)
+test.real() = assert.true(true)
+''');
+        final ProcessResult result = await runCli(['--test', tmpFile.path]);
+
+        expect(result.exitCode, equals(2));
+        expect(result.stderr.toString(), contains('skipped "test.helper"'));
+        expect(result.stdout.toString(), contains('PASS  test.real'));
+        expect(
+          result.stdout.toString(),
+          contains('2 tests: 1 passed, 1 skipped'),
+        );
+      });
+
+      test('a file with no test. function exits 2', () async {
+        final File tmpFile = writeProgram(
+          'no_tests.prm',
+          'helper() = true\nmain() = 42',
+        );
+        final ProcessResult result = await runCli(['--test', tmpFile.path]);
+
+        expect(result.exitCode, equals(2));
+        expect(
+          result.stderr.toString(),
+          contains('no zero-argument functions with the "test." prefix'),
+        );
+        expect(result.stdout.toString().trim(), isEmpty);
+      });
+
+      test('a compile error under --test exits 2, not 1', () async {
+        final File tmpFile = writeProgram(
+          'broken_test.prm',
+          'test.x() = undefined_function(1)',
+        );
+        final ProcessResult result = await runCli(['--test', tmpFile.path]);
+
+        expect(result.exitCode, equals(2));
+        expect(result.stderr.toString(), isNotEmpty);
+      });
+
+      test('a nonexistent file under --test exits 2', () async {
+        final String missingFile = path.join(tempDir.path, 'missing.prm');
+        final ProcessResult result = await runCli(['--test', missingFile]);
+
+        expect(result.exitCode, equals(2));
+        expect(result.stderr.toString(), isNotEmpty);
+      });
+
+      test('--test with --watch exits 2', () async {
+        final File tmpFile = writeProgram(
+          'watch_test.prm',
+          'test.only() = assert.true(true)',
+        );
+        final ProcessResult result = await runCli([
+          '--test',
+          '--watch',
+          tmpFile.path,
+        ]);
+
+        expect(result.exitCode, equals(2));
+        expect(
+          result.stderr.toString(),
+          contains('--test cannot be combined with --watch'),
+        );
+      });
+
+      test('--test without a file exits 2', () async {
+        final ProcessResult result = await runCli(['--test']);
+
+        expect(result.exitCode, equals(2));
+        expect(
+          result.stderr.toString(),
+          contains('--test requires exactly one file argument'),
+        );
+      });
+
+      test('--test written after the file path still applies', () async {
+        final File tmpFile = writeProgram(
+          'after_path.prm',
+          'test.only() = assert.true(true)',
+        );
+        final ProcessResult result = await runCli([tmpFile.path, '--test']);
+
+        expect(result.exitCode, equals(0));
+        expect(result.stdout.toString(), contains('PASS  test.only'));
+      });
+
+      test('--test with --debug prints compile and per-test timings', () async {
+        final File tmpFile = writeProgram(
+          'debug_test.prm',
+          'test.only() = assert.true(true)',
+        );
+        final ProcessResult result = await runCli([
+          '--test',
+          '--debug',
+          tmpFile.path,
+        ]);
+
+        expect(result.exitCode, equals(0));
+        expect(result.stdout.toString(), contains('[debug] Compilation:'));
+        expect(
+          result.stdout.toString(),
+          matches(RegExp(r'PASS  test\.only \[\d+ms\]')),
+        );
+      });
+
+      test('--help lists --test', () async {
+        final ProcessResult result = await runCli(['--help']);
+
+        expect(result.stdout.toString(), contains('--test'));
+      });
+
+      test('a failing non-test run now exits 1', () async {
+        final File tmpFile = writeProgram(
+          'runtime_error.prm',
+          'main() = 1 / 0',
+        );
+        final ProcessResult result = await runCli([tmpFile.path]);
+
+        expect(result.exitCode, equals(1));
+        expect(result.stderr.toString(), contains('Division by zero'));
+      });
+
+      test('a non-test run that fails to compile now exits 1', () async {
+        final File tmpFile = writeProgram(
+          'compile_failure.prm',
+          'main() = undefined_function(1)',
+        );
+        final ProcessResult result = await runCli([tmpFile.path]);
+
+        expect(result.exitCode, equals(1));
+        expect(result.stderr.toString(), isNotEmpty);
+      });
+    });
   });
 }

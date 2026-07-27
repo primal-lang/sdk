@@ -2,12 +2,19 @@ import 'package:primal/compiler/errors/generic_error.dart';
 import 'package:primal/compiler/models/type.dart';
 
 class RuntimeError extends GenericError {
-  const RuntimeError(String message) : super('Runtime error', message);
+  const RuntimeError(String message, {String category = 'Runtime error'})
+    : super(category, message);
 }
 
 class InvalidArgumentTypesError extends RuntimeError {
+  /// The function that rejected the arguments.
+  ///
+  /// Retained so a caller can tell an error it raised itself apart from one
+  /// that merely propagated through it.
+  final String function;
+
   InvalidArgumentTypesError({
-    required String function,
+    required this.function,
     required List<Type> expected,
     required List<Type> actual,
   }) : super(
@@ -151,6 +158,33 @@ class RecursionLimitError extends RuntimeError {
   }) : super(
          'Maximum recursion depth of $limit exceeded',
        );
+}
+
+/// Raised by an assertion whose expectation was not satisfied.
+///
+/// Renders under its own category so a test failure is distinguishable from a
+/// genuine runtime error. The constructor arguments are folded into the
+/// message and not retained.
+class AssertionFailedError extends RuntimeError {
+  AssertionFailedError({
+    required String function,
+    required String actual,
+    required String expected,
+  }) : super(
+         '"$function" failed: expected $expected, actual $actual',
+         category: 'Assertion error',
+       );
+}
+
+/// Raised by an assertion that was *misused* rather than unsatisfied.
+///
+/// Wraps the [InvalidArgumentTypesError] the assertion would otherwise have
+/// thrown and forwards its message verbatim, so rendering is identical. The
+/// type exists only to be recognisable to `assert.throws`, which must not
+/// absorb a broken assertion as a satisfied expectation.
+class AssertionArgumentError extends RuntimeError {
+  AssertionArgumentError(InvalidArgumentTypesError cause)
+    : super(cause.message);
 }
 
 class NegativeDurationError extends RuntimeError {

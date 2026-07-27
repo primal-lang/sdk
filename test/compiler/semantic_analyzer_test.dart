@@ -403,6 +403,40 @@ main() = matrix[0][1]
     );
   });
 
+  test(
+    'custom function named assert.equal conflicts with standard library',
+    () {
+      expect(
+        () => getIntermediateRepresentation('assert.equal(a, b) = true'),
+        throwsA(isA<DuplicatedFunctionError>()),
+      );
+    },
+  );
+
+  test(
+    'custom function named assert.throws conflicts with standard library',
+    () {
+      expect(
+        () => getIntermediateRepresentation('assert.throws(a) = true'),
+        throwsA(isA<DuplicatedFunctionError>()),
+      );
+    },
+  );
+
+  test('the assert. prefix is not reserved, only the whole names collide', () {
+    final IntermediateRepresentation intermediateRepresentation =
+        getIntermediateRepresentation('''
+assert.somethingElse() = true
+main() = assert.somethingElse()
+''');
+    expect(
+      intermediateRepresentation.customFunctions.containsKey(
+        'assert.somethingElse',
+      ),
+      isTrue,
+    );
+  });
+
   // --- Edge cases: empty and minimal inputs ---
 
   test('empty input produces no functions and no warnings', () {

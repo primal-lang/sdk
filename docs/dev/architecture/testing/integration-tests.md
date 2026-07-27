@@ -152,6 +152,39 @@ These tests use temporary directories (via `createTempTestDirectory()`) that are
 
 **Source**: `test/compiler/cli_test.dart`
 
+### Exit Codes and Test Mode
+
+`runCli` returns an `int` rather than calling `exit()`, so the two CLI test
+files cover it from different angles:
+
+- `test/compiler/main_cli_test.dart` runs `runCli` **in-process** with a
+  `FakePlatformConsole` and asserts on the returned code directly. This is the
+  only way to reach the REPL path, since `ScriptedConsole` replaces
+  `Console.prompt`'s infinite loop with a bounded one.
+- `test/compiler/cli_test.dart` spawns a real process and asserts on
+  `ProcessResult.exitCode`, which is what a CI step actually sees.
+
+```dart
+// in-process: the return value is the contract
+expect(
+  runCli(['--test', 'tests.prm'], console: console, readFile: (_) => source),
+  equals(2),
+);
+```
+
+Two rules apply when asserting on `--test` output:
+
+- **Assert per stream.** Results go to stdout (`outLines`), while skips, aborts
+  and build failures go to stderr (`errorLines`). The two sinks are
+  independently buffered, so their relative order is undefined — never assert
+  against a single interleaved transcript.
+- **Never call `exit()`.** Asserting an exit code always means asserting
+  `runCli`'s return value or a subprocess's `exitCode`.
+
+The runner's abort path (a non-`RuntimeError` escaping a test) has no
+Primal-level trigger, so it is exercised by injecting a `Compiler` subclass
+whose `expression()` throws for one specific test call.
+
 ## Temporary File Management
 
 For tests requiring temporary files or directories, use `temp_helpers.dart`:

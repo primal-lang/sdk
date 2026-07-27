@@ -36,6 +36,11 @@ import 'package:primal/compiler/library/arithmetic/num_sub.dart';
 import 'package:primal/compiler/library/arithmetic/num_sum.dart';
 import 'package:primal/compiler/library/arithmetic/num_tan.dart';
 import 'package:primal/compiler/library/arithmetic/num_truncate.dart';
+import 'package:primal/compiler/library/assert/assert_equal.dart';
+import 'package:primal/compiler/library/assert/assert_false.dart';
+import 'package:primal/compiler/library/assert/assert_not_equal.dart';
+import 'package:primal/compiler/library/assert/assert_throws.dart';
+import 'package:primal/compiler/library/assert/assert_true.dart';
 import 'package:primal/compiler/library/base64/base64_decode.dart';
 import 'package:primal/compiler/library/base64/base64_encode.dart';
 import 'package:primal/compiler/library/casting/is_boolean.dart';
@@ -357,6 +362,13 @@ class StandardLibrary {
     const NumSum(),
     const NumTan(),
     const NumTruncate(),
+
+    // Assert
+    const AssertEqual(),
+    const AssertFalse(),
+    const AssertNotEqual(),
+    const AssertThrows(),
+    const AssertTrue(),
 
     // Casting
     const IsBoolean(),

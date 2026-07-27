@@ -192,10 +192,11 @@ Type checking is **dynamic** - it happens at runtime when native functions valid
 
 **File**: `lib/compiler/library/standard_library.dart`
 
-The standard library provides 284 built-in functions, organized by namespace:
+The standard library provides 316 built-in functions, organized by namespace:
 
 | Namespace     | Count | Examples                                                 |
 | ------------- | ----- | -------------------------------------------------------- |
+| `assert.*`    | 5     | `assert.equal`, `assert.true`, `assert.throws`           |
 | `num.*`       | 38    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`            |
 | `str.*`       | 44    | `str.length`, `str.split`, `str.replace`, `str.reverse`  |
 | `list.*`      | 37    | `list.map`, `list.filter`, `list.reduce`, `list.sort`    |
@@ -221,6 +222,22 @@ The standard library provides 284 built-in functions, organized by namespace:
 | Operators     | 16    | `+`, `-`, `*`, `/`, `==`, `&&`                           |
 | Control flow  | 2     | `if`, `try`                                              |
 | Other         | 1     | `debug`                                                  |
+
+The per-namespace counts above are indicative; `StandardLibrary.get()` is the
+only authority for the total.
+
+### Reserved Namespaces
+
+The `test.` prefix is **reserved for user test functions** and the standard
+library must never register a function under it. Nothing enforces this in code —
+`StandardLibrary.get()` is a hand-maintained list — so it is a policy recorded
+here. Claiming `test.` later would turn every existing user test into a
+`DuplicatedFunctionError`, since collision detection compares whole names.
+
+The reservation runs in that direction only, and it is **not** extended to
+`assert.`: users may define `assert.somethingElse` today and still may
+afterwards. Only the five exact names `assert.equal`, `assert.notEqual`,
+`assert.true`, `assert.false` and `assert.throws` collide.
 
 ---
 
@@ -280,6 +297,9 @@ Raised during execution:
 | `ParseError`                        | Failed string conversion                           |
 | `JsonParseError`                    | Invalid JSON string                                |
 | `RecursionLimitError`               | Maximum recursion depth exceeded                   |
+| `NegativeDurationError`             | Negative duration where disallowed                 |
+| `AssertionFailedError`              | An assertion's expectation was not met (renders as `Assertion error`) |
+| `AssertionArgumentError`            | An assertion was given the wrong argument type     |
 | `CustomError`                       | Explicitly raised via `error.throw`                |
 
 ---
@@ -321,6 +341,43 @@ The active platform is selected at startup based on the entry point (`main_cli.d
 3. Prints any warnings to the console.
 4. If a `main` function is defined, executes it with the remaining CLI arguments.
 5. Otherwise, enters a **REPL** loop where the user can type expressions and see their reduced results.
+
+Flags are scanned across **all** arguments regardless of position, so
+`primal file.prm --debug` and `primal --debug file.prm` are equivalent. The
+first non-flag argument is the file; the rest are program arguments.
+
+#### Test Mode (`--test` / `-t`)
+
+`primal --test file.prm` compiles the file once and executes every
+zero-argument custom function whose name starts with `test.`, in
+source-declaration order, against a single `RuntimeFacade`. `main` is never
+executed and there is no REPL fallthrough. Each test is evaluated with
+`RuntimeFacade.evaluateToTerm` (not `evaluate`, whose formatted `String` would
+couple pass/fail to output formatting) and passes only when the result is
+`BooleanTerm(true)`.
+
+The runner installs its **own** error boundary around the file read and the
+compile. Left to `runCli`'s catch-all, a build failure would return `1` and
+`2` would stop meaning "the run did not measure what it claimed to".
+
+#### Exit Codes
+
+`runCli` returns an `int` and `main` assigns it to `exitCode`; `exit()` is never
+called from inside `runCli`, because it is unit-tested in-process.
+
+| Path                                     | Returns |
+| ---------------------------------------- | ------- |
+| `--help`, `--version`                    | `0`     |
+| file executed successfully               | `0`     |
+| watch mode started, REPL                 | `0`     |
+| compile or runtime failure (non-test)    | `1`     |
+| watch-mode usage errors                  | `2`     |
+| `--test`: all tests passed, none skipped | `0`     |
+| `--test`: a test failed or errored       | `1`     |
+| `--test`: usage error, unreadable file, compile error, no tests found, a skipped `test.` function, or an internal abort | `2` |
+
+The `1` for a failing non-test run is a change from earlier versions, which
+exited `0` on every failure and could therefore not be scripted.
 
 ### Web (`lib/main/main_web.dart`)
 
