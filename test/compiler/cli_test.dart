@@ -1258,6 +1258,23 @@ test.real() = assert.true(true)
         expect(result.stdout.toString(), contains('--test'));
       });
 
+      test('the sample program passes under --test', () async {
+        final ProcessResult result = await runCli([
+          '--test',
+          'test/resources/sample.prm',
+        ]);
+
+        expect(result.exitCode, equals(0));
+        expect(result.stdout.toString(), contains('PASS  test.greeting'));
+        expect(result.stdout.toString(), contains('PASS  test.isOdd'));
+        expect(
+          result.stdout.toString(),
+          contains('PASS  test.factorial.negative'),
+        );
+        expect(result.stdout.toString(), contains('14 tests: 14 passed'));
+        expect(result.stderr.toString(), isEmpty);
+      });
+
       test('a failing non-test run now exits 1', () async {
         final File tmpFile = writeProgram(
           'runtime_error.prm',
