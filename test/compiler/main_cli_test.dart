@@ -109,6 +109,16 @@ void main() {
         expect(platformConsole.outLines.single, contains('-w'));
       });
 
+      test('--update and --uninstall are shown in help text', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['--help'], console: console);
+
+        expect(platformConsole.outLines.single, contains('--update'));
+        expect(platformConsole.outLines.single, contains('--uninstall'));
+      });
+
       test('--watch without file shows error', () {
         final FakePlatformConsole platformConsole = FakePlatformConsole();
         final Console console = Console(platformConsole);

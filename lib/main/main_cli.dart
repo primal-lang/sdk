@@ -13,6 +13,7 @@ import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
+import 'package:primal/utils/self_install.dart';
 
 const String version = '0.5.1';
 
@@ -35,6 +36,8 @@ Options:
   --debug, -d      Enable debug mode (timing, trace, verbose errors)
   --watch, -w      Watch file for changes and re-run on modification
   --test, -t       Run the "test." functions in a file
+  --update         Install the latest release over this one
+  --uninstall      Remove Primal and its PATH entry
 
 Examples:
   primal                     Start the REPL
@@ -60,7 +63,14 @@ REPL Commands:
   :reset               Clear all user-defined functions
 ''';
 
-void main(List<String> args) => exitCode = runCli(args);
+/// Answered ahead of [runCli]: updating and uninstalling replace or delete the
+/// running executable itself, which is the installer's job rather than anything
+/// the compiler can do to the program it was handed.
+Future<void> main(List<String> args) async {
+  exitCode = isSelfInstallRequest(args)
+      ? await runSelfInstall(args)
+      : runCli(args);
+}
 
 /// Runs the CLI and returns the process exit code.
 ///
