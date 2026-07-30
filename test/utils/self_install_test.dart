@@ -204,5 +204,65 @@ void main() {
       expect(code, equals(1));
       expect(platformConsole.errorLines.single, contains('bash'));
     });
+
+    test('reports a temporary directory that cannot be created', () async {
+      final int code = await runSelfInstall(
+        <String>['--update'],
+        console: console,
+        resolveExecutable: () => '/usr/local/bin/primal',
+        downloadScript: download,
+        runCommand: recordCommand(),
+        createWorkingDirectory: () =>
+            throw const PathAccessException('/nope', OSError('denied', 13)),
+      );
+
+      // 1, not an escaped exception: an unhandled error here would exit 255
+      // with a stack trace rather than the documented "could not run at all".
+      expect(code, equals(1));
+      expect(executables, isEmpty);
+      expect(
+        platformConsole.errorLines.single,
+        contains('could not write the installer to a temporary file'),
+      );
+    });
+
+    test('reports a script that cannot be written', () async {
+      final Directory workingDirectory = Directory.systemTemp.createTempSync(
+        'primal_installer_test_',
+      );
+
+      // The staged script cannot be written over a directory of the same name,
+      // on any platform.
+      Directory(
+        '${workingDirectory.path}${Platform.pathSeparator}install.sh',
+      ).createSync();
+
+      try {
+        final int code = await runSelfInstall(
+          <String>['--update'],
+          console: console,
+          resolveExecutable: () => '/usr/local/bin/primal',
+          downloadScript: download,
+          runCommand: recordCommand(),
+          createWorkingDirectory: () => workingDirectory,
+        );
+
+        expect(code, equals(1));
+        expect(executables, isEmpty);
+        // The staging message, not the shell one: the assertion has to say
+        // which of the two clauses answered.
+        expect(
+          platformConsole.errorLines.single,
+          contains('could not write the installer to a temporary file'),
+        );
+        // The cleanup still ran, on the failure path as much as on the happy
+        // one.
+        expect(workingDirectory.existsSync(), isFalse);
+      } finally {
+        if (workingDirectory.existsSync()) {
+          workingDirectory.deleteSync(recursive: true);
+        }
+      }
+    });
   });
 }

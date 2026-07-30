@@ -32,6 +32,7 @@ Future<int> runSelfInstall(
   String Function()? resolveExecutable,
   Future<List<int>> Function(String url)? downloadScript,
   Future<int> Function(String executable, List<String> arguments)? runCommand,
+  Directory Function()? createWorkingDirectory,
 }) async {
   final Console currentConsole = console ?? Console();
   final bool uninstall = arguments.contains(uninstallFlag);
@@ -75,14 +76,17 @@ Future<int> runSelfInstall(
     return 1;
   }
 
-  final Directory workingDirectory = Directory.systemTemp.createTempSync(
-    'primal_installer_',
-  );
-  final File script = File(
-    '${workingDirectory.path}${Platform.pathSeparator}install.sh',
-  );
+  // Left null until the directory exists, so the cleanup below can tell a run
+  // that never got one apart from a run that did.
+  Directory? workingDirectory;
 
   try {
+    workingDirectory = (createWorkingDirectory ?? _createWorkingDirectory)();
+
+    final File script = File(
+      '${workingDirectory.path}${Platform.pathSeparator}install.sh',
+    );
+
     // Written to a file and handed to bash rather than piped into it: a
     // download that was cut short midway would otherwise be run as far as it
     // got, leaving the installation in whatever state half a script produces.
@@ -104,12 +108,27 @@ Future<int> runSelfInstall(
     );
 
     return 1;
+  } on FileSystemException catch (error) {
+    // Staging the downloaded script is the only part of this that writes to the
+    // local disk, so an unusable temporary directory surfaces here: an unset or
+    // read-only TMPDIR, a full filesystem, a sandbox policy. Left unhandled it
+    // would escape through the asynchronous main and exit 255 with a stack
+    // trace, instead of the 1 this function promises.
+    currentConsole.error(
+      'Error: $flag could not write the installer to a temporary file '
+      '($error). Reinstall from https://primal-lang.org/start instead.',
+    );
+
+    return 1;
   } finally {
-    workingDirectory.deleteSync(recursive: true);
+    workingDirectory?.deleteSync(recursive: true);
   }
 }
 
 String _resolveExecutable() => Platform.resolvedExecutable;
+
+Directory _createWorkingDirectory() =>
+    Directory.systemTemp.createTempSync('primal_installer_');
 
 Future<List<int>> _downloadScript(String url) async {
   final HttpClient client = HttpClient();
