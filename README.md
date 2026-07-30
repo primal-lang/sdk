@@ -103,13 +103,13 @@ A function declaration is composed of:
 Here is an example of a function with parameters:
 
 ```javascript
-cube(n) = pow(n, 3)
+cube(n) = num.pow(n, 3)
 ```
 
 And here is an example of a function without parameters:
 
 ```javascript
-pi() = 3.14159;
+pi() = 3.14159
 ```
 
 Here is an example of a conditional expression:
