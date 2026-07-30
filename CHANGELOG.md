@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 0.5.2 - Bronze Axe
+
+### CLI
+
+#### Added
+
+- **Self-update and uninstall** - An installed binary maintains itself
+  - `--update` - Install the latest release over the current one
+  - `--uninstall` - Remove Primal
+
+### Standard Library
+
+#### Added
+
+- **Assertion functions** - Return `true` when their expectation holds, so several can be chained with `&&`, and raise a dedicated `Assertion error` when it does not
+  - `assert.equal` - Assert that two values are equal
+  - `assert.notEqual` - Assert that two values differ
+  - `assert.true` - Assert that a condition is `true`
+  - `assert.false` - Assert that a condition is `false`
+  - `assert.throws` - Assert that an expression raises a runtime error
+
 ## 0.5.1 - Bronze Axe
 
 ### Standard Library

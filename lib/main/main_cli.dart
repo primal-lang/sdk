@@ -15,7 +15,7 @@ import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
 import 'package:primal/utils/self_install.dart';
 
-const String version = '0.5.1';
+const String version = '0.5.2';
 
 /// Reserved prefix for user test functions discovered by `--test`.
 ///
