@@ -23,13 +23,13 @@ sources:
 
 Because the lexer swallows dots into identifiers, `.` can never be a member access operator. That blocks a large part of the roadmap:
 
-| Feature                              | Needs `.` as                       |
-| ------------------------------------ | ---------------------------------- |
-| [[dev/roadmap/0.7.0/record]]         | field access — `alice().name`      |
-| [[dev/roadmap/0.7.0/enums]]          | variant access — `Color.Red`       |
-| [[dev/roadmap/0.7.0/tuples]]         | positional access — `point().0`    |
-| [[dev/roadmap/0.6.0/modules]]        | module qualification               |
-| [[dev/roadmap/0.8.0/ranges]]         | `..` and `..<` range operators     |
+| Feature                       | Needs `.` as                    |
+| ----------------------------- | ------------------------------- |
+| [[dev/roadmap/0.7.0/record]]  | field access — `alice().name`   |
+| [[dev/roadmap/0.7.0/enums]]   | variant access — `Color.Red`    |
+| [[dev/roadmap/0.7.0/tuples]]  | positional access — `point().0` |
+| [[dev/roadmap/0.6.0/modules]] | module qualification            |
+| [[dev/roadmap/0.8.0/ranges]]  | `..` and `..<` range operators  |
 
 Keeping `list.filter` as a name while also making `.` an operator leaves the grammar permanently ambiguous. The standard library therefore has to give up its dots.
 
@@ -111,22 +111,22 @@ It must rewrite only known standard library names, not every dot, so that decima
 
 Occurrence counts from a prefix-anchored grep over the 27 namespaces:
 
-| Area                     | Files | Occurrences | Method                            |
-| ------------------------ | ----- | ----------- | --------------------------------- |
+| Area                     | Files | Occurrences | Method                                                   |
+| ------------------------ | ----- | ----------- | -------------------------------------------------------- |
 | `lib/`                   | —     | 325 strings | 296 `name:` declarations + 29 web platform stub messages |
-| `test/`                  | 92    | ~15,000     | script                            |
-| `test/resources/*.prm`   | 19    | 96          | script                            |
-| `docs/lang/`             | 39    | ~1,231      | script                            |
-| `docs/dev/architecture/` | 18    | ~234        | script                            |
-| `docs/dev/roadmap/`      | 9     | ~71         | **by hand** — see below           |
-| `README.md`              | 0     | 0           | contains no dotted calls          |
-| `CHANGELOG.md`           | —     | —           | history left intact               |
+| `test/`                  | 92    | ~15,000     | script                                                   |
+| `test/resources/*.prm`   | 19    | 96          | script                                                   |
+| `docs/lang/`             | 39    | ~1,231      | script                                                   |
+| `docs/dev/architecture/` | 18    | ~234        | script                                                   |
+| `docs/dev/roadmap/`      | 9     | ~71         | **by hand** — see below                                  |
+| `README.md`              | 0     | 0           | contains no dotted calls                                 |
+| `CHANGELOG.md`           | —     | —           | history left intact                                      |
 
 The 29 non-declaration strings in `lib/` are error messages in the web platform stubs: `platform_file_web.dart` (16), `platform_directory_web.dart` (11), `platform_environment_web.dart` (2), plus one each in `platform_console_web.dart` and `utils/self_install.dart`.
 
 ### Roadmap docs must be edited by hand
 
-Nine roadmap documents reference dotted standard library names. A blind substitution corrupts them, because they also contain dots that are *already* member access and must be preserved:
+Nine roadmap documents reference dotted standard library names. A blind substitution corrupts them, because they also contain dots that are _already_ member access and must be preserved:
 
 ```primal
 enum.name(Color.Red)
@@ -167,15 +167,15 @@ Historical entries are **not** rewritten. The 0.5.2 entry lists `assert.equal`, 
 
 ## Decisions and rationale
 
-| Decision                                          | Rationale                                                                                     |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Rename the standard library, not just user names   | Banning dots only for users would not free `.`, since the lexer would still swallow them.       |
-| Flatten to `list_filter`, not namespace values     | Making `list` a real value would reserve 27 common words; `total(str) = str.length(str)` works today and would break. |
-| Keep camelCase members                             | Matches existing user-code convention; pure substitution, no judgment calls, no collisions.     |
-| Generic `InvalidCharacterError`                    | Minimal diff; identical to the error `.foo` already produces.                                   |
-| Ban `.` and nothing else                           | One rule changes, so a broken program has exactly one cause.                                    |
-| Publish the migration script                       | Needed internally anyway; marginal cost of publishing is near zero.                             |
-| Leave CHANGELOG history intact                     | Rewriting it would misstate what past releases shipped.                                         |
+| Decision                                         | Rationale                                                                                                             |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| Rename the standard library, not just user names | Banning dots only for users would not free `.`, since the lexer would still swallow them.                             |
+| Flatten to `list_filter`, not namespace values   | Making `list` a real value would reserve 27 common words; `total(str) = str.length(str)` works today and would break. |
+| Keep camelCase members                           | Matches existing user-code convention; pure substitution, no judgment calls, no collisions.                           |
+| Generic `InvalidCharacterError`                  | Minimal diff; identical to the error `.foo` already produces.                                                         |
+| Ban `.` and nothing else                         | One rule changes, so a broken program has exactly one cause.                                                          |
+| Publish the migration script                     | Needed internally anyway; marginal cost of publishing is near zero.                                                   |
+| Leave CHANGELOG history intact                   | Rewriting it would misstate what past releases shipped.                                                               |
 
 ## Risks
 
@@ -183,3 +183,31 @@ Historical entries are **not** rewritten. The 0.5.2 entry lists `assert.equal`, 
 - **`is` as a prefix vs. `is` as a keyword.** [[dev/roadmap/0.7.0/enums]] proposes `c is Color.Red`, which would make `is` a keyword. The 17 `is_*` functions are unaffected as names, but the interaction should be checked when enums are specced.
 - **Migration script over-matching.** Rewriting every `.` rather than only known library names would corrupt decimal literals and string contents. The script must be table-driven.
 - **Test churn hides regressions.** A ~15,000-line mechanical diff across `test/` makes a genuine behavioural change easy to miss in review. Run the full suite before and after the sweep and compare results, rather than reading the diff.
+
+## Implementation complexity
+
+**Medium** — trivial to design, laborious to land.
+
+The engineering content is close to zero: a one-line lexer change with a single consumer, no new token, no new error type, and no change to the syntactic, semantic, lowering, or runtime stages. There is no ambiguity to resolve, because substituting `.` for `_` across all 296 names produces zero collisions and therefore no judgment calls.
+
+The cost is volume and coordination:
+
+| Component                        | Effort                                                      |
+| -------------------------------- | ----------------------------------------------------------- |
+| Lexer change                     | Low — one line, one consumer                                |
+| Standard library rename          | Low — 325 string literals, scripted                         |
+| Migration script                 | Low–Medium — must be table-driven, not a blanket regex      |
+| `test/` sweep                    | Medium — ~15,000 occurrences, scripted but must be verified |
+| `docs/lang/` + `docs/dev/` sweep | Medium — ~1,465 occurrences across 57 files                 |
+| Roadmap docs                     | Medium — 9 files, hand-edited, ~71 occurrences              |
+| New tests                        | Low — five focused lexical tests                            |
+
+It is not **Low** because a missed rename in any of ~17,000 occurrences produces a broken build or a stale doc, and the sheer diff size makes review by reading impractical. It is not **High** because nothing here is hard — no new language semantics, no runtime work, and no unresolved design questions.
+
+## Recommendation
+
+**Accept.**
+
+The change unblocks five separate roadmap features ([[dev/roadmap/0.7.0/record]], [[dev/roadmap/0.7.0/enums]], [[dev/roadmap/0.7.0/tuples]], [[dev/roadmap/0.6.0/modules]], [[dev/roadmap/0.8.0/ranges]]) that cannot be built while the lexer swallows `.` into identifiers. It is provably mechanical, and its cost grows monotonically with every function added to the standard library and every program written against it — so doing it now is strictly cheaper than doing it later.
+
+One reservation, raised and explicitly accepted: shipping a change that breaks 100% of existing programs as a patch release (0.5.2 -> 0.5.3) misrepresents its impact to anyone depending on `^0.5.0`. A 0.6.0 minor bump was recommended and declined in favour of keeping the current release branch. This does not block the change, but the CHANGELOG entry should be unambiguous about the break.
