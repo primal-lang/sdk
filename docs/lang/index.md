@@ -25,6 +25,7 @@ Core library functions organized by category. Note: Primal does not support stat
 - [[lang/reference/core/introspection]] — Runtime introspection
 - [[lang/reference/core/control]] — Control flow
 - [[lang/reference/core/error]] — Error handling
+- [[lang/reference/core/assert]] — Assertions and the `--test` runner
 
 ### Primitives
 

@@ -1013,4 +1013,144 @@ void main() {
       );
     });
   });
+
+  group('AssertionFailedError', () {
+    test('has errorType "Assertion error"', () {
+      final AssertionFailedError error = AssertionFailedError(
+        function: 'assert.equal',
+        actual: '3',
+        expected: '2',
+      );
+
+      expect(error.errorType, equals('Assertion error'));
+    });
+
+    test('toString() reports expected before actual', () {
+      final AssertionFailedError error = AssertionFailedError(
+        function: 'assert.equal',
+        actual: '3',
+        expected: '2',
+      );
+
+      expect(
+        error.toString(),
+        equals('Assertion error: "assert.equal" failed: expected 2, actual 3'),
+      );
+    });
+
+    test('toString() keeps the "not" prefix of assert.notEqual', () {
+      final AssertionFailedError error = AssertionFailedError(
+        function: 'assert.notEqual',
+        actual: '1',
+        expected: 'not 1',
+      );
+
+      expect(
+        error.toString(),
+        equals(
+          'Assertion error: "assert.notEqual" failed: expected not 1, actual 1',
+        ),
+      );
+    });
+
+    test('is a RuntimeError', () {
+      final AssertionFailedError error = AssertionFailedError(
+        function: 'assert.true',
+        actual: 'false',
+        expected: 'true',
+      );
+
+      expect(error, isA<RuntimeError>());
+    });
+  });
+
+  group('AssertionArgumentError', () {
+    test('renders identically to the error it wraps', () {
+      final InvalidArgumentTypesError cause = InvalidArgumentTypesError(
+        function: 'assert.true',
+        expected: const [BooleanType()],
+        actual: const [NumberType()],
+      );
+      final AssertionArgumentError error = AssertionArgumentError(cause);
+
+      expect(error.toString(), equals(cause.toString()));
+      expect(
+        error.toString(),
+        equals(
+          'Runtime error: Invalid argument types for function "assert.true". '
+          'Expected: (Boolean). Actual: (Number)',
+        ),
+      );
+    });
+
+    test('keeps the "Runtime error" category, not "Assertion error"', () {
+      final AssertionArgumentError error = AssertionArgumentError(
+        InvalidArgumentTypesError(
+          function: 'assert.equal',
+          expected: const [EquatableType(), EquatableType()],
+          actual: const [StringType(), NumberType()],
+        ),
+      );
+
+      expect(error.errorType, equals('Runtime error'));
+    });
+
+    test('is not an AssertionFailedError', () {
+      final AssertionArgumentError error = AssertionArgumentError(
+        InvalidArgumentTypesError(
+          function: 'assert.true',
+          expected: const [BooleanType()],
+          actual: const [NumberType()],
+        ),
+      );
+
+      expect(error, isNot(isA<AssertionFailedError>()));
+    });
+  });
+
+  group('RuntimeError category regression', () {
+    test('every other subclass still renders as "Runtime error"', () {
+      final List<RuntimeError> errors = [
+        InvalidArgumentTypesError(
+          function: 'f',
+          expected: const [NumberType()],
+          actual: const [StringType()],
+        ),
+        InvalidArgumentCountError(function: 'f', expected: 1, actual: 2),
+        const IterablesWithDifferentLengthError(iterable1: 'a', iterable2: 'b'),
+        const InvalidLiteralValueError('x'),
+        const InvalidValueError('x'),
+        const InvalidMapIndexError('x'),
+        const ElementNotFoundError('0'),
+        const NotFoundInScopeError('x'),
+        const InvalidFunctionError('x'),
+        const UnimplementedFunctionWebError('file.read'),
+        EmptyCollectionError(function: 'f', collectionType: 'list'),
+        IndexOutOfBoundsError(function: 'f', index: 5, length: 2),
+        NegativeIndexError(function: 'f', index: -1),
+        DivisionByZeroError(function: '/'),
+        InvalidNumericOperationError(function: 'f', reason: 'why'),
+        ParseError(function: 'f', input: 'x', targetType: 'number'),
+        JsonParseError(input: 'x', details: 'bad'),
+        Base64ParseError(input: 'x', details: 'bad'),
+        RecursionLimitError(limit: 1000),
+        NegativeDurationError(function: 'f'),
+        AssertionArgumentError(
+          InvalidArgumentTypesError(
+            function: 'assert.true',
+            expected: const [BooleanType()],
+            actual: const [NumberType()],
+          ),
+        ),
+      ];
+
+      for (final RuntimeError error in errors) {
+        expect(
+          error.toString(),
+          startsWith('Runtime error: '),
+          reason: '${error.runtimeType} changed category',
+        );
+      }
+    });
+  });
 }

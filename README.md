@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
-<a href="https://github.com/primal-lang/sdk/releases/tag/v0.5.1"><img src="https://img.shields.io/badge/Latest-0.5.1-blue" /></a>
+<a href="https://github.com/primal-lang/sdk/releases/tag/v0.5.2"><img src="https://img.shields.io/badge/Latest-0.5.2-blue" /></a>
 </p>
 
 # Primal
@@ -65,6 +65,17 @@ primal program.prm
 ```
 
 If no source file is provided, the interpreter starts in interactive mode.
+
+### Updating and uninstalling
+
+An installed binary maintains itself by re-running the published installer against its own location:
+
+```bash
+primal --update      # install the latest release over this one
+primal --uninstall   # remove Primal and its PATH entry
+```
+
+Both flags must be used on their own, and require `bash` to be available.
 
 ## Philosophy
 

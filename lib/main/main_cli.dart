@@ -2,15 +2,30 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
+import 'package:primal/compiler/runtime/runtime.dart';
+import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
+import 'package:primal/compiler/semantic/semantic_function.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
+import 'package:primal/utils/self_install.dart';
 
-const String version = '0.5.1';
+const String version = '0.5.2';
+
+/// Reserved prefix for user test functions discovered by `--test`.
+///
+/// The standard library must never register a function under this prefix:
+/// doing so would turn every existing user test into a duplicated-function
+/// compile error.
+const String testPrefix = 'test.';
+
+/// Width of the widest `--test` result status (`ERROR`), used to align names.
+const int _statusWidth = 5;
 
 const String helpText = '''
 Usage: primal [options] [file] [arguments...]
@@ -20,13 +35,17 @@ Options:
   --version, -v    Print the version string
   --debug, -d      Enable debug mode (timing, trace, verbose errors)
   --watch, -w      Watch file for changes and re-run on modification
+  --test, -t       Run the "test." functions in a file
+  --update         Install the latest release over this one
+  --uninstall      Remove Primal and its PATH entry
 
 Examples:
   primal                     Start the REPL
-  primal program.pri         Run a program with a main function
-  primal program.pri arg1    Run a program with arguments
+  primal program.prm         Run a program with a main function
+  primal program.prm arg1    Run a program with arguments
   primal -d                  Start the REPL in debug mode
-  primal -w program.pri      Watch and re-run on changes
+  primal -w program.prm      Watch and re-run on changes
+  primal -t program.prm      Run the tests in a file
 ''';
 
 const String replHelpText = '''
@@ -44,9 +63,26 @@ REPL Commands:
   :reset               Clear all user-defined functions
 ''';
 
-void main(List<String> args) => runCli(args);
+/// Answered ahead of [runCli]: updating and uninstalling replace or delete the
+/// running executable itself, which is the installer's job rather than anything
+/// the compiler can do to the program it was handed.
+Future<void> main(List<String> args) async {
+  exitCode = isSelfInstallRequest(args)
+      ? await runSelfInstall(args)
+      : runCli(args);
+}
 
-void runCli(
+/// Runs the CLI and returns the process exit code.
+///
+/// `exit()` is never called from here: the function is unit-tested in-process,
+/// so terminating the VM would take the test runner down with it. Callers are
+/// responsible for assigning the returned code to [exitCode].
+///
+/// - `0` — the run succeeded.
+/// - `1` — the program under test failed to compile or threw at runtime.
+/// - `2` — the invocation was wrong, so the run did not measure what it claimed
+///   to (usage errors, and every failure of a `--test` run to reach the tests).
+int runCli(
   List<String> args, {
   Console? console,
   Compiler compiler = const Compiler(),
@@ -59,28 +95,51 @@ void runCli(
   // Parse flags
   bool debug = false;
   bool watch = false;
+  bool test = false;
   final List<String> remainingArgs = [];
 
   for (final String argument in args) {
     switch (argument) {
       case '--help' || '-h':
         currentConsole.print(helpText);
-        return;
+        return 0;
       case '--version' || '-v':
         currentConsole.print(version);
-        return;
+        return 0;
       case '--debug' || '-d':
         debug = true;
       case '--watch' || '-w':
         watch = true;
+      case '--test' || '-t':
+        test = true;
       default:
         remainingArgs.add(argument);
     }
   }
 
+  if (test) {
+    if (watch) {
+      currentConsole.error('Error: --test cannot be combined with --watch.');
+      return 2;
+    }
+
+    if (remainingArgs.length != 1) {
+      currentConsole.error('Error: --test requires exactly one file argument.');
+      return 2;
+    }
+
+    return _runTests(
+      filePath: remainingArgs[0],
+      compiler: compiler,
+      console: currentConsole,
+      debug: debug,
+      sourceReader: sourceReader,
+    );
+  }
+
   if (watch && remainingArgs.isEmpty) {
     currentConsole.error('Watch mode requires a file argument.');
-    return;
+    return 2;
   }
 
   try {
@@ -134,7 +193,7 @@ void runCli(
         currentConsole.error(
           'Watch mode requires a file with a main function.',
         );
-        return;
+        return 2;
       }
       _runRepl(
         runtime: runtime,
@@ -144,12 +203,277 @@ void runCli(
         sourceReader: sourceReader,
       );
     }
+
+    // Watch mode returns while the process is still alive: the file
+    // subscription is what keeps it up, and SIGINT exits with 0. The REPL is
+    // unreachable here in production because Console.prompt loops forever.
+    return 0;
   } catch (e, stackTrace) {
     currentConsole.error(e);
     if (debug) {
       currentConsole.print('[debug] Stack trace:\n$stackTrace');
     }
+
+    return 1;
   }
+}
+
+/// Compiles and runs the `test.` functions of a single file.
+///
+/// The file is compiled once and every discovered test is evaluated against the
+/// same runtime, in source-declaration order.
+int _runTests({
+  required String filePath,
+  required Compiler compiler,
+  required Console console,
+  required bool debug,
+  required String Function(String) sourceReader,
+}) {
+  // The runner owns its error boundary rather than relying on runCli's
+  // catch-all: a file that cannot be read or built means the run did not
+  // measure what it claimed to, which is 2 and not 1.
+  final RuntimeFacade? runtime = _buildForTests(
+    filePath: filePath,
+    compiler: compiler,
+    console: console,
+    debug: debug,
+    sourceReader: sourceReader,
+  );
+
+  if (runtime == null) {
+    return 2;
+  }
+
+  final List<SemanticFunction> discovered = runtime
+      .intermediateRepresentation
+      .customFunctions
+      .values
+      .where(
+        (SemanticFunction function) => function.name.startsWith(testPrefix),
+      )
+      .toList();
+
+  if (discovered.isEmpty) {
+    console.error(
+      'Error: no zero-argument functions with the "$testPrefix" prefix '
+      'found in $filePath',
+    );
+    return 2;
+  }
+
+  int passed = 0;
+  int failed = 0;
+  int errored = 0;
+  int skipped = 0;
+
+  for (final SemanticFunction function in discovered) {
+    // Reported rather than silently skipped: a test that accidentally gained a
+    // parameter must not disappear from the run.
+    if (function.parameters.isNotEmpty) {
+      skipped++;
+      console.error(
+        'Error: skipped "${function.name}" — test functions must take no '
+        'parameters',
+      );
+      continue;
+    }
+
+    final Stopwatch executionWatch = Stopwatch();
+
+    if (debug) {
+      executionWatch.start();
+    }
+
+    try {
+      // Built the way RuntimeFacade.mainExpression already builds its call.
+      final Expression expression = compiler.expression('${function.name}()');
+
+      // evaluateToTerm, not evaluate: classification must read the term rather
+      // than formatted output, and this is also what resets recursion depth.
+      final Term result = runtime.evaluateToTerm(expression);
+      executionWatch.stop();
+
+      if ((result is BooleanTerm) && result.value) {
+        passed++;
+        console.print(
+          _testLine(
+            status: 'PASS',
+            color: Console.green,
+            name: function.name,
+            debug: debug,
+            executionWatch: executionWatch,
+          ),
+        );
+      } else {
+        errored++;
+        console.print(
+          _testLine(
+            status: 'ERROR',
+            color: Console.red,
+            name: function.name,
+            debug: debug,
+            executionWatch: executionWatch,
+          ),
+        );
+        console.print(
+          _detailLine(
+            'test "${function.name}" did not return true '
+            '(returned ${Runtime.render(result)})',
+          ),
+        );
+      }
+    } on AssertionFailedError catch (error) {
+      executionWatch.stop();
+      failed++;
+      console.print(
+        _testLine(
+          status: 'FAIL',
+          color: Console.red,
+          name: function.name,
+          debug: debug,
+          executionWatch: executionWatch,
+        ),
+      );
+      console.print(_detailLine(error.toString()));
+    } on RuntimeError catch (error) {
+      executionWatch.stop();
+      errored++;
+      console.print(
+        _testLine(
+          status: 'ERROR',
+          color: Console.red,
+          name: function.name,
+          debug: debug,
+          executionWatch: executionWatch,
+        ),
+      );
+      console.print(_detailLine(error.toString()));
+    } catch (throwable, stackTrace) {
+      // A non-RuntimeError means the runtime can no longer be trusted, so no
+      // further tests run. The partial report is still printed: discarding it
+      // would hide which tests had already passed.
+      executionWatch.stop();
+      _printTestSummary(
+        console,
+        passed: passed,
+        failed: failed,
+        errored: errored,
+        skipped: skipped,
+      );
+      console.error('Error: aborted at "${function.name}": $throwable');
+
+      if (debug) {
+        console.print('[debug] Stack trace:\n$stackTrace');
+      }
+
+      return 2;
+    }
+  }
+
+  _printTestSummary(
+    console,
+    passed: passed,
+    failed: failed,
+    errored: errored,
+    skipped: skipped,
+  );
+
+  if (skipped > 0) {
+    return 2;
+  }
+
+  if ((failed > 0) || (errored > 0)) {
+    return 1;
+  }
+
+  return 0;
+}
+
+/// Reads and compiles [filePath], returning null when the file cannot be built.
+RuntimeFacade? _buildForTests({
+  required String filePath,
+  required Compiler compiler,
+  required Console console,
+  required bool debug,
+  required String Function(String) sourceReader,
+}) {
+  try {
+    final Stopwatch compileWatch = Stopwatch();
+
+    if (debug) {
+      compileWatch.start();
+    }
+
+    final IntermediateRepresentation intermediateRepresentation = compiler
+        .compile(sourceReader(filePath));
+
+    if (debug) {
+      compileWatch.stop();
+      console.print(
+        '[debug] Compilation: ${compileWatch.elapsedMilliseconds}ms',
+      );
+    }
+
+    for (final GenericWarning warning in intermediateRepresentation.warnings) {
+      console.warning(warning);
+    }
+
+    return RuntimeFacade(intermediateRepresentation, compiler.expression);
+  } catch (e, stackTrace) {
+    console.error(e);
+
+    if (debug) {
+      console.print('[debug] Stack trace:\n$stackTrace');
+    }
+
+    return null;
+  }
+}
+
+String _testLine({
+  required String status,
+  required String color,
+  required String name,
+  required bool debug,
+  required Stopwatch executionWatch,
+}) {
+  // Padded to the width of the longest status so names line up. The padding
+  // sits outside the colour codes: padRight would otherwise count the escape
+  // sequences as visible characters and misalign the column.
+  final String padding = ' ' * (_statusWidth - status.length);
+  final String line = '$color$status${Console.reset}$padding $name';
+
+  return debug ? '$line [${executionWatch.elapsedMilliseconds}ms]' : line;
+}
+
+String _detailLine(String message) => '      $message';
+
+void _printTestSummary(
+  Console console, {
+  required int passed,
+  required int failed,
+  required int errored,
+  required int skipped,
+}) {
+  final int total = passed + failed + errored + skipped;
+
+  // Only reachable when a run aborts on its very first test: there is no
+  // partial report to summarise, and "0 tests: 0 passed" would read green.
+  if (total == 0) {
+    return;
+  }
+
+  final List<String> categories = [
+    if (passed > 0) '$passed passed',
+    if (failed > 0) '$failed failed',
+    if (errored > 0) '$errored error',
+    if (skipped > 0) '$skipped skipped',
+  ];
+
+  console.print('');
+  console.print(
+    '$total test${total == 1 ? '' : 's'}: ${categories.join(', ')}',
+  );
 }
 
 void _printBanner(Console console) {

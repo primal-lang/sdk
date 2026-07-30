@@ -141,7 +141,8 @@ import '../helpers/pipeline_helpers.dart';  // Pipeline only
 
 The `test/resources/` directory contains test fixtures:
 
-- `sample.prm` - A sample Primal program with various language features
+- `sample.prm` - A sample Primal program with various language features, plus a
+  suite of `test.` functions exercised by the `--test` runner
 - `samples/` - Complete Primal programs for integration tests (factorial, fibonacci, quicksort, etc.)
 - `files/` - Test files for file system operations
 

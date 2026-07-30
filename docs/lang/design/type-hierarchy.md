@@ -84,13 +84,13 @@ list.map([1, 2, 3], double)  // returns [2, 4, 6]
 
 ### Map
 
-A collection of key-value pairs with unique keys. Keys must be strings.
+A collection of key-value pairs with unique keys. Keys must be hashable: numbers, strings, booleans, timestamps or durations.
 
 ```
 {"name": "Alice", "age": 30}   // map literal
 {}                              // empty map
 
-map.get({"a": 1}, "a")          // returns 1
+map.at({"a": 1}, "a")           // returns 1
 map.set({"a": 1}, "b", 2)       // returns {"a": 1, "b": 2}
 map.keys({"x": 1, "y": 2})      // returns ["x", "y"]
 ```

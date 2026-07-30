@@ -395,7 +395,7 @@ void main() {
     test('Sample file', () {
       final String source = loadFile('sample.prm');
       final List<FunctionDefinition> functions = getFunctions(source);
-      expect(functions.length, equals(11));
+      expect(functions.length, equals(25));
     });
 
     // Error cases: UnexpectedEndOfFileError

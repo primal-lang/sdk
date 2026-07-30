@@ -90,6 +90,9 @@ GenericError
 │   ├── JsonParseError
 │   ├── Base64ParseError
 │   ├── RecursionLimitError
+│   ├── NegativeDurationError
+│   ├── AssertionFailedError ... renders as "Assertion error"
+│   ├── AssertionArgumentError
 │   └── CustomError
 └── GenericWarning ............ Non-fatal diagnostics
 ```
@@ -172,9 +175,15 @@ Detected by the semantic analyzer. These occur when the program structure is syn
 
 ```dart
 class RuntimeError extends GenericError {
-  const RuntimeError(String message) : super('Runtime error', message);
+  const RuntimeError(String message, {String category = 'Runtime error'})
+    : super(category, message);
 }
 ```
+
+The optional `category` parameter means the hierarchy is no longer "one category
+per base class": a `RuntimeError` subclass can render under its own label. Only
+`AssertionFailedError` uses it today; every other subclass takes the default and
+still prints `Runtime error: …`.
 
 ### Type and Argument Errors
 
@@ -250,6 +259,62 @@ class CustomError extends RuntimeError {
 
 The `code` can be any value (number, string, list, etc.), allowing users to attach structured error identifiers.
 
+### Assertion Errors
+
+| Error                    | When Thrown                                                   |
+| ------------------------ | ------------------------------------------------------------- |
+| `AssertionFailedError`   | An assertion's expectation was not met                        |
+| `AssertionArgumentError` | An assertion was given an argument of the wrong type          |
+
+**File**: `lib/compiler/errors/runtime_error.dart`, raised from `lib/compiler/library/assert/`
+
+`AssertionFailedError` is the only subclass that overrides the category:
+
+```dart
+class AssertionFailedError extends RuntimeError {
+  AssertionFailedError({
+    required String function,
+    required String actual,
+    required String expected,
+  }) : super(
+         '"$function" failed: expected $expected, actual $actual',
+         category: 'Assertion error',
+       );
+}
+```
+
+It stores none of its three arguments — nothing reads them back, so it keeps
+only the composed message. Rendering under its own category is what lets the
+`--test` runner and the reader tell an unmet expectation apart from a genuine
+error. Values are rendered with `Runtime.render`, so a string keeps its quotes.
+
+`AssertionArgumentError` is the opposite: a pure recognisability wrapper that
+adds no message of its own.
+
+```dart
+class AssertionArgumentError extends RuntimeError {
+  AssertionArgumentError(InvalidArgumentTypesError cause)
+    : super(cause.message);
+}
+```
+
+It forwards `cause.message` verbatim and keeps the inherited `Runtime error`
+category, so it renders byte-identically to the `InvalidArgumentTypesError` it
+wraps. It exists solely so `assert.throws` can refuse to absorb it: a misused
+nested assertion (`assert.throws(assert.true(1))`) must be an error, while a
+type error raised by the code under test (`assert.throws(num.add(1, "x"))`)
+must still pass. The two are the same Dart class, so they can only be
+distinguished by who raised them.
+
+That is also why `InvalidArgumentTypesError` retains a `function` field. The
+assertion helpers wrap only errors whose `function` is their own name: an
+`assert.equal` over collections reduces its elements lazily inside `CompEq`, so
+a type error from the *expression under test* surfaces at exactly the same
+`catch` as a genuine element-kind mismatch. Comparing the name is what separates
+`assert.equal([1], ["x"])` (the assertion's own error, wrapped) from
+`assert.equal([num.add(1, "x")], [2])` (the code under test's error, rethrown
+unchanged).
+
 ---
 
 ## Warnings
@@ -272,14 +337,16 @@ Warnings are collected during semantic analysis and reported to the user without
 
 All error classes share these characteristics:
 
-| Property    | Type     | Description                                         |
-| ----------- | -------- | --------------------------------------------------- |
-| `errorType` | `String` | Category label (e.g., `"Error"`, `"Runtime error"`) |
-| `message`   | `String` | Human-readable description of the error             |
+| Property    | Type     | Description                                                              |
+| ----------- | -------- | ------------------------------------------------------------------------ |
+| `errorType` | `String` | Category label (e.g., `"Error"`, `"Runtime error"`, `"Assertion error"`) |
+| `message`   | `String` | Human-readable description of the error                                  |
 
 Additionally:
 
 - `CustomError` adds `code: Term` for user-defined error identifiers
+- `InvalidArgumentTypesError` adds `function: String`, so a caller can tell an
+  error it raised itself apart from one that propagated through it
 - All errors implement `Exception` for Dart interoperability
 - The `toString()` method returns `'$errorType: $message'`
 
@@ -290,3 +357,4 @@ Additionally:
 - [[dev/architecture/error/error-propagation]] - How errors bubble through the runtime
 - [[dev/architecture/pipeline/pipeline]] - Compiler pipeline overview
 - [[dev/architecture/pipeline/runtime]] - Runtime evaluation model
+- [[lang/reference/core/assert]] - The assertions that raise the two assertion error types

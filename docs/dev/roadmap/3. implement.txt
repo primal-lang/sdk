@@ -1,4 +1,4 @@
-i want to implement a new the feature in the language. the feature is documented in: @docs/roadmap/XXX
+i want to implement a new the feature in the language. the feature is documented in this file.
 
 steps:
 1. read the document carefully
@@ -8,6 +8,6 @@ steps:
 3. proceed to implement the plan
 
 constraints:
-- you are forbidden to run any test command
-- you will have to implement all the tests "blindly"
-- i will run the tests manually after you finish and inform you if there are any problems
+- you are forbidden to run the whole test suite
+- you can only run individual tests or just a few (only for the ones you implemented in this session)
+- i will run the whole test suite manually after you finish and inform you if there are any problems

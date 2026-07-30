@@ -5,6 +5,8 @@ tags:
   - operators
 sources:
   - lib/compiler/library/operators/
+  - lib/compiler/library/index/
+  - lib/compiler/syntactic/expression_parser.dart
 ---
 
 # Operators
@@ -15,19 +17,27 @@ sources:
 
 Every operator in Primal is syntactic sugar for a function call. When the compiler sees an operator expression, it transforms it into the corresponding function invocation:
 
-| Expression | Desugars To                              |
-| ---------- | ---------------------------------------- |
-| `a + b`    | `num.add(a, b)` or `string.concat(a, b)` |
-| `a - b`    | `num.sub(a, b)`                          |
-| `a * b`    | `num.mul(a, b)`                          |
-| `a / b`    | `num.div(a, b)`                          |
-| `a % b`    | `num.mod(a, b)`                          |
-| `a == b`   | `compare.eq(a, b)`                       |
-| `a != b`   | `compare.neq(a, b)`                      |
-| `a > b`    | `compare.gt(a, b)`                       |
-| `a < b`    | `compare.lt(a, b)`                       |
-| `a >= b`   | `compare.gte(a, b)`                      |
-| `a <= b`   | `compare.lte(a, b)`                      |
+| Expression | Desugars To |
+| ---------- | ----------- |
+| `a + b`    | `+(a, b)`   |
+| `a - b`    | `-(a, b)`   |
+| `a * b`    | `*(a, b)`   |
+| `a / b`    | `/(a, b)`   |
+| `a % b`    | `%(a, b)`   |
+| `a == b`   | `==(a, b)`  |
+| `a != b`   | `!=(a, b)`  |
+| `a > b`    | `>(a, b)`   |
+| `a < b`    | `<(a, b)`   |
+| `a >= b`   | `>=(a, b)`  |
+| `a <= b`   | `<=(a, b)`  |
+| `!a`       | `!(a)`      |
+| `-a`       | `-(0, a)`   |
+| `a @ b`    | `@(a, b)`   |
+| `a[b]`     | `@(a, b)`   |
+
+Each symbol names a core function of its own, so an operator accepts every type that function accepts: `+` adds numbers, concatenates strings and lists, merges sets, and adds durations, while `num.add` only adds numbers.
+
+These names exist inside the compiler and are not valid source: the functions are reachable only through the operator syntax, so `+(1, 2)` does not parse.
 
 This design keeps the language simple: operators are just convenient syntax, not special constructs.
 
@@ -167,9 +177,9 @@ true & false       // returns false (both evaluated)
 false | true       // returns true (both evaluated)
 ```
 
-## Collection Indexing: `[]`
+## Collection Indexing: `[]` and `@`
 
-Access elements in lists and maps using bracket notation:
+Access elements in strings, lists and maps using bracket notation. The infix `@` operator performs the same operation, and `a[b]` and `a @ b` desugar to the same call. They differ only in how tightly they bind: `[]` binds tighter than the unary operators, while `@` binds looser, so `-list[0]` negates the element while `-list @ 0` tries to negate the list:
 
 ### List Indexing
 
@@ -177,9 +187,19 @@ Access elements in lists and maps using bracket notation:
 [10, 20, 30][0]    // returns 10
 [10, 20, 30][1]    // returns 20
 ["a", "b", "c"][2] // returns "c"
+[10, 20, 30] @ 1   // returns 20
 ```
 
-Indices are zero-based. Accessing an out-of-bounds index throws an error.
+Indices are zero-based, and a non-integer index is truncated towards zero, so `[10, 20, 30][1.7]` returns `20`. Accessing an out-of-bounds index throws an error.
+
+### String Indexing
+
+```
+"hello"[0]         // returns "h"
+"hello"[4]         // returns "o"
+```
+
+Strings are indexed by character, not by byte, so multi-byte characters count as one position.
 
 ### Map Access
 
@@ -188,19 +208,32 @@ Indices are zero-based. Accessing an out-of-bounds index throws an error.
 {"x": 1, "y": 2}["y"]                 // returns 2
 ```
 
-Accessing a non-existent key throws an error. Use `map.get` with a default value for safe access.
+Accessing a non-existent key throws an error. Guard the access with `map.containsKey`, or wrap it in `try` to supply a fallback:
+
+```
+try({"x": 1}["y"], 0) // returns 0
+```
 
 ## Operator Precedence
 
 Operators follow standard mathematical precedence (highest to lowest):
 
-1. `!`, `not` (unary negation)
-2. `*`, `/`, `%` (multiplicative)
-3. `+`, `-` (additive)
-4. `<`, `>`, `<=`, `>=` (relational)
-5. `==`, `!=` (equality)
-6. `&&`, `and` (logical and)
-7. `||`, `or` (logical or)
+1. `f(...)`, `[]` (function application and bracket access)
+2. `!`, `not`, unary `-` (unary)
+3. `@` (element access)
+4. `*`, `/`, `%` (multiplicative)
+5. `+`, `-` (additive)
+6. `<`, `>`, `<=`, `>=` (relational)
+7. `&&`, `&`, `and` (logical and)
+8. `||`, `|`, `or` (logical or)
+9. `==`, `!=` (equality)
+
+Note that equality binds loosest of all, below the logical operators. This makes `a == b || c` parse as `a == (b || c)`, which is rarely what is intended:
+
+```
+false == false || true   // returns false (parses as false == (false || true))
+(false == false) || true // returns true
+```
 
 Use parentheses to override precedence:
 
@@ -209,6 +242,7 @@ Use parentheses to override precedence:
 (2 + 3) * 4        // returns 20 (addition first)
 true || false && false   // returns true (&& binds tighter)
 (true || false) && false // returns false
+[10, 20, 30] @ 1 * 2     // returns 40 (indexing binds tighter than *)
 ```
 
 ## Practical Examples

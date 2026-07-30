@@ -56,23 +56,23 @@ sources: []
 
 ## Roadmap
 
-### 0.5.0
+### 0.5.3
 
-- [[dev/roadmap/0.5.0/testing]] — Testing framework
+- [[dev/roadmap/0.5.3/dot-to-underscore]] — Disallow `.` in function names
 
 ### 0.6.0
 
-- [[dev/roadmap/0.6.0/enums]] — Enum types
-- [[dev/roadmap/0.6.0/option]] — Option type
-- [[dev/roadmap/0.6.0/record]] — Record types
+- [[dev/roadmap/0.6.0/http]] — HTTP client
+- [[dev/roadmap/0.6.0/modules]] — Module system
 - [[dev/roadmap/0.6.0/regex]] — Regular expressions
 - [[dev/roadmap/0.6.0/string]] — String improvements
-- [[dev/roadmap/0.6.0/tuples]] — Tuple types
 
 ### 0.7.0
 
-- [[dev/roadmap/0.7.0/http]] — HTTP client
-- [[dev/roadmap/0.7.0/modules]] — Module system
+- [[dev/roadmap/0.7.0/enums]] — Enum types
+- [[dev/roadmap/0.7.0/option]] — Option type
+- [[dev/roadmap/0.7.0/record]] — Record types
+- [[dev/roadmap/0.7.0/tuples]] — Tuple types
 
 ### 0.8.0
 

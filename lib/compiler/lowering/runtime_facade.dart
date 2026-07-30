@@ -21,7 +21,6 @@ class RuntimeFacade {
   final IntermediateRepresentation intermediateRepresentation;
   final ExpressionParser _parseExpression;
   final RuntimeInput _runtimeInput;
-  final Runtime _runtime;
   final Map<String, FunctionSignature> _allSignatures;
   final Set<String> _userDefinedFunctions;
 
@@ -31,7 +30,7 @@ class RuntimeFacade {
     this._runtimeInput,
     this._allSignatures,
     this._userDefinedFunctions,
-  ) : _runtime = Runtime(_runtimeInput);
+  );
 
   factory RuntimeFacade(
     IntermediateRepresentation intermediateRepresentation,
@@ -211,7 +210,7 @@ class RuntimeFacade {
 
   String evaluate(Expression expression) {
     final Term result = evaluateToTerm(expression);
-    return _runtime.format(result.native()).toString();
+    return Runtime.format(result.native()).toString();
   }
 
   /// Evaluates an expression and returns the runtime term.
@@ -247,7 +246,7 @@ class RuntimeFacade {
     return lowered.reduce();
   }
 
-  dynamic format(dynamic value) => _runtime.format(value);
+  dynamic format(dynamic value) => Runtime.format(value);
 
   /// Defines a new function in the runtime.
   ///

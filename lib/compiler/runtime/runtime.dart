@@ -1,18 +1,32 @@
 import 'dart:io';
 
 import 'package:primal/compiler/errors/runtime_error.dart';
-import 'package:primal/compiler/runtime/runtime_input.dart';
 import 'package:primal/compiler/runtime/term.dart';
 import 'package:primal/extensions/duration_extension.dart';
 
+/// The shared value renderer.
+///
+/// Every member is static so that native functions, which see nothing but
+/// [Term]s and have no route to a runtime instance, can still render a value
+/// the same way the CLI renders a program's result.
 class Runtime {
-  final RuntimeInput input;
+  const Runtime._();
 
-  const Runtime(this.input);
+  /// Renders a term for display, falling back to [Term.toString] when the
+  /// value cannot be formatted.
+  ///
+  /// Both [format] and [Term.native] can throw (an unrecognized value and an
+  /// unsubstituted bound variable respectively), so callers that render a term
+  /// while building an error message must not let that escape.
+  static String render(Term term) {
+    try {
+      return format(term.native()).toString();
+    } catch (_) {
+      return term.toString();
+    }
+  }
 
-  Term reduceTerm(Term term) => term.reduce();
-
-  dynamic format(dynamic value) {
+  static dynamic format(dynamic value) {
     if (value is bool) {
       return value;
     } else if (value is num) {
@@ -38,11 +52,11 @@ class Runtime {
     }
   }
 
-  dynamic getList(List<dynamic> element) => element.map(format).toList();
+  static dynamic getList(List<dynamic> element) => element.map(format).toList();
 
-  dynamic getSet(Set<dynamic> element) => element.map(format).toSet();
+  static dynamic getSet(Set<dynamic> element) => element.map(format).toSet();
 
-  dynamic getMap(Map<dynamic, dynamic> element) {
+  static dynamic getMap(Map<dynamic, dynamic> element) {
     final Map<dynamic, dynamic> result = {};
 
     element.forEach((key, value) {

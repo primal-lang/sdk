@@ -121,6 +121,23 @@ When `n` is zero, the division is never attempted because the `else` branch is n
 | `if-else` branches        | Lazy (non-taken branch)       |
 | `let` bindings            | Eager (sequential)            |
 | `try` arguments           | Lazy (fallback only on error) |
+| `assert.throws` argument  | Lazy (evaluated under a guard) |
+
+## Laziness Cannot Be Passed Along
+
+Laziness belongs to the construct, not to the value. A user-defined function
+always evaluates its arguments before its body runs, so wrapping a lazy
+construct in a function loses the laziness:
+
+```
+expectThrow(e) = assert.throws(e)
+test.x() = expectThrow(to.number("z"))   // errors; the call never reaches assert.throws
+```
+
+`to.number("z")` is evaluated at the call boundary of `expectThrow`, so its
+error escapes before `assert.throws` can guard it. The same applies to `if` and
+`try`: `myIf(c, a, b) = if (c) a else b` evaluates both branches. Lazy
+constructs must be written at the site where the laziness is needed.
 
 ## Practical Applications
 
@@ -163,3 +180,4 @@ The `safeDefault()` is only evaluated if `riskyOperation()` throws an error.
 - [[lang/reference/core/operators]] - Operator reference including lazy and strict variants
 - [[lang/reference/primitives/logic]] - Boolean logic functions with evaluation details
 - [[lang/reference/core/control]] - Control flow constructs
+- [[lang/reference/core/assert]] - Assertions, including `assert.throws` and its abstraction limit

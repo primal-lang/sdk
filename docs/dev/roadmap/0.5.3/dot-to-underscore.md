@@ -1,0 +1,1 @@
+Don't allow . in a function name

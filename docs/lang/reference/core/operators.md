@@ -5,13 +5,14 @@ tags:
   - operators
 sources:
   - lib/compiler/library/operators/
+  - lib/compiler/library/index/
 ---
 
 # Operators
 
-**TLDR**: Built-in infix operators for comparison, arithmetic, and logical operations including equality, addition, subtraction, multiplication, division, and boolean logic.
+**TLDR**: Built-in infix operators for comparison, arithmetic, logical, and element access operations including equality, addition, subtraction, multiplication, division, boolean logic, and indexing.
 
-Number of functions: 16
+Number of functions: 17
 
 ## Comparison Operators
 
@@ -283,4 +284,29 @@ true | false // returns true
 
 ```
 !true // returns false
+```
+
+## Element Access Operator
+
+### Element At
+
+- **Symbol:** `@`
+- **Alias:** `a[b]` (bracket notation that compiles to `@(a, b)`)
+- **Input:** An indexable argument (`String`, `List` or `Map`) and a hashable argument
+- **Output:** The element at the given position or key
+- **Supported combinations:**
+  - `List @ Number` (zero-based index)
+  - `String @ Number` (zero-based index, counted in characters)
+  - `Map @ Hashable` (key lookup)
+- **Errors:**
+  - Throws `NegativeIndexError` if the index is negative
+  - Throws `IndexOutOfBoundsError` if the index is greater than or equal to the length
+  - Throws `ElementNotFoundError` if the key is not present in the map
+- **Purity:** Pure
+- **Example:**
+
+```
+[10, 20, 30] @ 1 // returns 20
+"abc"[2] // returns "c"
+{"name": "Alice"}["name"] // returns "Alice"
 ```

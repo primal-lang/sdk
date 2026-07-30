@@ -32,3 +32,50 @@ factorial(n) = if (n < 0)
                    n * factorial(n - 1)
 
 main() = factorial(4)
+
+// --- Constants ---
+
+test.greeting() = assert.equal(greeting(), "Hello, world!")
+
+test.farewell() = assert.equal(farewell(), "Goodbye, world!")
+
+test.pi() = assert.equal(pi(), 3.14)
+
+test.rationalNumber() = assert.equal(rationalNumber(), pi())
+
+test.isToday() = assert.true(isToday())
+
+// --- Predicates ---
+
+test.isZero() =
+    assert.true(isZero(0)) &&
+    assert.false(isZero(1)) &&
+    assert.false(isZero(-1))
+
+test.isEven() =
+    assert.true(isEven(0)) &&
+    assert.true(isEven(4)) &&
+    assert.true(isEven(-2)) &&
+    assert.false(isEven(3))
+
+test.isOdd() =
+    assert.true(isOdd(3)) &&
+    assert.false(isOdd(4)) &&
+    assert.notEqual(isOdd(7), isEven(7))
+
+test.isBiggerThan10() =
+    assert.true(isBiggerThan10(11)) &&
+    assert.false(isBiggerThan10(10)) &&
+    assert.false(isBiggerThan10(-5))
+
+// --- Factorial ---
+
+test.factorial.base() = assert.equal(factorial(0), 1)
+
+test.factorial.one() = assert.equal(factorial(1), 1)
+
+test.factorial.small() = assert.equal(factorial(4), 24)
+
+test.factorial.larger() = assert.equal(factorial(5), 120)
+
+test.factorial.negative() = assert.throws(factorial(-1))

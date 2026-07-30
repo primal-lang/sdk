@@ -2,10 +2,13 @@
 @TestOn('vm')
 library;
 
+import 'package:primal/compiler/compiler.dart';
+import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/main/main_cli.dart';
 import 'package:primal/utils/console.dart';
 import 'package:test/test.dart';
 import '../helpers/console_fakes.dart';
+import '../helpers/test_line_helpers.dart';
 
 void main() {
   group('runCli()', () {
@@ -104,6 +107,16 @@ void main() {
 
         expect(platformConsole.outLines.single, contains('--watch'));
         expect(platformConsole.outLines.single, contains('-w'));
+      });
+
+      test('--update and --uninstall are shown in help text', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['--help'], console: console);
+
+        expect(platformConsole.outLines.single, contains('--update'));
+        expect(platformConsole.outLines.single, contains('--uninstall'));
       });
 
       test('--watch without file shows error', () {
@@ -1898,5 +1911,686 @@ void main() {
         expect(platformConsole.errorLines, isNotEmpty);
       });
     });
+
+    group('exit codes', () {
+      test('--help returns 0', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        expect(runCli(['--help'], console: console), equals(0));
+      });
+
+      test('--version returns 0', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        expect(runCli(['--version'], console: console), equals(0));
+      });
+
+      test('a program that runs successfully returns 0', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        expect(
+          runCli(
+            ['program.prm'],
+            console: console,
+            readFile: (_) => 'main() = 42',
+          ),
+          equals(0),
+        );
+      });
+
+      test('a program that fails at runtime returns 1', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        expect(
+          runCli(
+            ['program.prm'],
+            console: console,
+            readFile: (_) => 'main() = 1 / 0',
+          ),
+          equals(1),
+        );
+      });
+
+      test('a program that fails to compile returns 1', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        expect(
+          runCli(
+            ['program.prm'],
+            console: console,
+            readFile: (_) => 'main() = unknownFunction()',
+          ),
+          equals(1),
+        );
+      });
+
+      test('an unreadable file returns 1 outside test mode', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        expect(
+          runCli(
+            ['missing.prm'],
+            console: console,
+            readFile: (_) => throw Exception('cannot read file'),
+          ),
+          equals(1),
+        );
+      });
+
+      test('the REPL returns 0', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['42'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        expect(runCli([], console: console), equals(0));
+      });
+
+      test('the REPL returns 0 even when the last input raised an error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['1 / 0'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        expect(runCli([], console: console), equals(0));
+        expect(platformConsole.errorLines, isNotEmpty);
+      });
+
+      test('watch mode without a file returns 2', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        expect(runCli(['-w'], console: console), equals(2));
+      });
+
+      test('watch mode on a file without main returns 2', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        expect(
+          runCli(
+            ['-w', 'library.prm'],
+            console: console,
+            readFile: (_) => 'double(x) = x * 2',
+          ),
+          equals(2),
+        );
+      });
+    });
+
+    group('--test mode', () {
+      const String threeTests = '''
+test.first() = assert.equal(1 + 1, 2)
+test.second() = assert.true(true)
+test.third() = assert.throws(to.number("x"))
+main() = "not executed under --test"
+''';
+
+      test('runs every zero-argument test. function and returns 0', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => threeTests,
+        );
+
+        expect(code, equals(0));
+        expect(
+          platformConsole.outLines,
+          equals([
+            passLine('test.first'),
+            passLine('test.second'),
+            passLine('test.third'),
+            '',
+            '3 tests: 3 passed',
+          ]),
+        );
+      });
+
+      test('-t is accepted as the short form', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['-t', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.only() = assert.true(true)',
+        );
+
+        expect(code, equals(0));
+        expect(platformConsole.outLines.first, equals(passLine('test.only')));
+      });
+
+      test('executes tests in source-declaration order', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => '''
+test.zebra() = assert.true(true)
+test.apple() = assert.true(true)
+''',
+        );
+
+        expect(
+          platformConsole.outLines.take(2),
+          equals([passLine('test.zebra'), passLine('test.apple')]),
+        );
+      });
+
+      test('does not execute main', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => '''
+test.only() = assert.true(true)
+main() = console.writeLn("main ran")
+''',
+        );
+
+        expect(
+          platformConsole.outLines.join('\n'),
+          isNot(contains('main ran')),
+        );
+      });
+
+      test('does not fall through to the REPL when main is absent', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['42'],
+        );
+        final ScriptedConsole console = ScriptedConsole(
+          platformConsole,
+          promptIterations: 1,
+        );
+
+        runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.only() = assert.true(true)',
+        );
+
+        // The REPL banner is the observable sign of a fallthrough.
+        expect(platformConsole.outLines.join('\n'), isNot(contains('PRIMAL')));
+        expect(platformConsole.outWrites, isEmpty);
+      });
+
+      test('reports a failing assertion as FAIL and returns 1', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.stillEqual() = assert.notEqual(1, 1)',
+        );
+
+        const String detail =
+            '      Assertion error: "assert.notEqual" failed: '
+            'expected not 1, actual 1';
+
+        expect(code, equals(1));
+        expect(
+          platformConsole.outLines,
+          equals([
+            failLine('test.stillEqual'),
+            detail,
+            '',
+            '1 test: 1 failed',
+          ]),
+        );
+      });
+
+      test('reports a runtime error as ERROR and returns 1', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.notBoolean() = assert.true(1)',
+        );
+
+        const String detail =
+            '      Runtime error: Invalid argument types for function '
+            '"assert.true". Expected: (Boolean). Actual: (Number)';
+
+        expect(code, equals(1));
+        expect(
+          platformConsole.outLines,
+          equals([
+            errorLine('test.notBoolean'),
+            detail,
+            '',
+            '1 test: 1 error',
+          ]),
+        );
+      });
+
+      test('reports a test that does not return true as an error', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.bad() = 42',
+        );
+
+        expect(code, equals(1));
+        expect(
+          platformConsole.outLines,
+          equals([
+            errorLine('test.bad'),
+            '      test "test.bad" did not return true (returned 42)',
+            '',
+            '1 test: 1 error',
+          ]),
+        );
+      });
+
+      test('a test returning the string "true" is an error, not a pass', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.bad() = "true"',
+        );
+
+        expect(code, equals(1));
+        expect(
+          platformConsole.outLines,
+          equals([
+            errorLine('test.bad'),
+            '      test "test.bad" did not return true (returned "true")',
+            '',
+            '1 test: 1 error',
+          ]),
+        );
+      });
+
+      test('mixes the three classifications in one summary', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => '''
+test.math.addition() = assert.equal(1 + 1, 2)
+test.stillEqual() = assert.notEqual(1, 1)
+test.notBoolean() = assert.true(1)
+''',
+        );
+
+        expect(code, equals(1));
+        expect(
+          platformConsole.outLines.last,
+          equals('3 tests: 1 passed, 1 failed, 1 error'),
+        );
+      });
+
+      test('colours PASS green and FAIL/ERROR red', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => '''
+test.ok() = assert.true(true)
+test.stillEqual() = assert.notEqual(1, 1)
+test.notBoolean() = assert.true(1)
+''',
+        );
+
+        // Written as raw escape sequences rather than via Console: this pins
+        // the exact bytes, so redefining the colour constants cannot silently
+        // change what the runner emits.
+        expect(
+          platformConsole.outLines[0],
+          equals('\x1b[32mPASS\x1b[0m  test.ok'),
+        );
+        expect(
+          platformConsole.outLines[1],
+          equals('\x1b[31mFAIL\x1b[0m  test.stillEqual'),
+        );
+        expect(
+          platformConsole.outLines[3],
+          equals('\x1b[31mERROR\x1b[0m test.notBoolean'),
+        );
+      });
+
+      test('summarises a single test in the singular', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.only() = assert.true(true)',
+        );
+
+        expect(platformConsole.outLines.last, equals('1 test: 1 passed'));
+      });
+
+      test('reports a skipped test on stderr and returns 2', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => '''
+test.helper(x) = assert.equal(x, x)
+test.real() = assert.true(true)
+''',
+        );
+
+        expect(code, equals(2));
+        expect(
+          platformConsole.errorLines.single,
+          contains(
+            'Error: skipped "test.helper" — test functions must take no '
+            'parameters',
+          ),
+        );
+        expect(
+          platformConsole.outLines,
+          equals([
+            passLine('test.real'),
+            '',
+            '2 tests: 1 passed, 1 skipped',
+          ]),
+        );
+      });
+
+      test('returns 2 when no test. function is found', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'sample.prm'],
+          console: console,
+          readFile: (_) => 'helper() = true\nmain() = 42',
+        );
+
+        expect(code, equals(2));
+        expect(platformConsole.outLines, isEmpty);
+        expect(
+          platformConsole.errorLines.single,
+          contains(
+            'Error: no zero-argument functions with the "test." prefix found '
+            'in sample.prm',
+          ),
+        );
+      });
+
+      test('returns 2 when the file does not compile', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'broken.prm'],
+          console: console,
+          readFile: (_) => 'test.x() = undefined_function(1)',
+        );
+
+        expect(code, equals(2));
+        expect(platformConsole.errorLines, isNotEmpty);
+      });
+
+      test('returns 2 when the file cannot be read', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'missing.prm'],
+          console: console,
+          readFile: (_) => throw Exception('cannot read file'),
+        );
+
+        expect(code, equals(2));
+        expect(platformConsole.errorLines, isNotEmpty);
+      });
+
+      test('returns 2 when combined with --watch', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', '--watch', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.only() = assert.true(true)',
+        );
+
+        expect(code, equals(2));
+        expect(
+          platformConsole.errorLines.single,
+          contains('Error: --test cannot be combined with --watch.'),
+        );
+      });
+
+      test('returns 2 without a file argument', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(['--test'], console: console);
+
+        expect(code, equals(2));
+        expect(
+          platformConsole.errorLines.single,
+          contains('Error: --test requires exactly one file argument.'),
+        );
+      });
+
+      test('returns 2 with more than one file argument', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'a.prm', 'b.prm'],
+          console: console,
+          readFile: (_) => 'test.only() = assert.true(true)',
+        );
+
+        expect(code, equals(2));
+        expect(
+          platformConsole.errorLines.single,
+          contains('Error: --test requires exactly one file argument.'),
+        );
+      });
+
+      test('takes effect when written after the file path', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['tests.prm', '--test'],
+          console: console,
+          readFile: (_) => 'test.only() = assert.true(true)',
+        );
+
+        expect(code, equals(0));
+        expect(platformConsole.outLines.first, equals(passLine('test.only')));
+      });
+
+      test('combines with --debug written first', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--debug', '--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.only() = assert.true(true)',
+        );
+
+        expect(
+          platformConsole.outLines.first,
+          startsWith('[debug] Compilation:'),
+        );
+        expect(
+          platformConsole.outLines[1],
+          matches(
+            RegExp('^${RegExp.escape(passLine('test.only'))} \\[\\d+ms\\]\$'),
+          ),
+        );
+      });
+
+      test('combines with --debug written last', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--test', 'tests.prm', '--debug'],
+          console: console,
+          readFile: (_) => 'test.only() = assert.true(true)',
+        );
+
+        expect(
+          platformConsole.outLines.first,
+          startsWith('[debug] Compilation:'),
+        );
+        expect(
+          platformConsole.outLines[1],
+          matches(
+            RegExp('^${RegExp.escape(passLine('test.only'))} \\[\\d+ms\\]\$'),
+          ),
+        );
+      });
+
+      test('the summary and the error line carry no timing', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--test', '--debug', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.bad() = assert.equal(1, 2)',
+        );
+
+        expect(
+          platformConsole.outLines.last,
+          equals('1 test: 1 failed'),
+        );
+        expect(
+          platformConsole.outLines[2],
+          equals(
+            '      Assertion error: "assert.equal" failed: '
+            'expected 2, actual 1',
+          ),
+        );
+      });
+
+      test('prints compilation warnings before the results', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => '''
+unused(x) = 1
+test.only() = assert.equal(unused(1), 1)
+''',
+        );
+
+        expect(platformConsole.errorLines.join('\n'), contains('Warning'));
+        expect(platformConsole.outLines.first, equals(passLine('test.only')));
+      });
+
+      test('aborts on a non-RuntimeError, keeping the partial report', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          compiler: const _ExplodingCompiler('test.second()'),
+          readFile: (_) => '''
+test.first() = assert.true(true)
+test.second() = assert.true(true)
+test.third() = assert.true(true)
+''',
+        );
+
+        expect(code, equals(2));
+        expect(
+          platformConsole.outLines,
+          equals([passLine('test.first'), '', '1 test: 1 passed']),
+        );
+        expect(
+          platformConsole.errorLines.single,
+          contains('Error: aborted at "test.second"'),
+        );
+      });
+
+      test('aborting on the first test prints no summary at all', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          compiler: const _ExplodingCompiler('test.first()'),
+          readFile: (_) => 'test.first() = assert.true(true)',
+        );
+
+        // "0 tests: 0 passed" would read green on a run that measured nothing.
+        expect(code, equals(2));
+        expect(platformConsole.outLines, isEmpty);
+        expect(
+          platformConsole.errorLines.single,
+          contains('Error: aborted at "test.first"'),
+        );
+      });
+
+      test('--help lists --test and -t', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        runCli(['--help'], console: console);
+
+        expect(platformConsole.outLines.single, contains('--test'));
+        expect(platformConsole.outLines.single, contains('-t'));
+      });
+    });
   });
+}
+
+/// A compiler that throws a non-[RuntimeError] when asked to parse a specific
+/// call expression, so the runner's abort path can be exercised.
+class _ExplodingCompiler extends Compiler {
+  final String failingExpression;
+
+  const _ExplodingCompiler(this.failingExpression);
+
+  @override
+  Expression expression(String input) {
+    if (input == failingExpression) {
+      throw StateError('interpreter defect');
+    }
+
+    return super.expression(input);
+  }
 }
