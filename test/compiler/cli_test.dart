@@ -1170,7 +1170,7 @@ test_real() = assert_true(true)
         );
       });
 
-      test('a file with no test. function exits 2', () async {
+      test('a file with no test_ function exits 2', () async {
         final File tmpFile = writeProgram(
           'no_tests.prm',
           'helper() = true\nmain() = 42',

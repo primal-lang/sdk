@@ -392,21 +392,21 @@ Native functions typically throw these runtime errors:
 
 Functions are organized by namespace prefix:
 
-| Prefix     | Domain          | Example Functions                              |
-| ---------- | --------------- | ---------------------------------------------- |
-| `assert_*` | Assertions      | `assert_equal`, `assert_true`, `assert_throws` |
-| `num_*`    | Arithmetic      | `num_add`, `num_sqrt`, `num_max`               |
-| `bool_*`   | Logic           | `bool_and`, `bool_or`, `bool_not`              |
-| `str_*`    | Strings         | `str_length`, `str_concat`, `str_split`        |
-| `list_*`   | Lists           | `list_map`, `list_filter`, `list_reduce`       |
-| `map_*`    | Maps            | `map_at`, `map_keys`, `map_set`                |
-| `set_*`    | Sets            | `set_add`, `set_union`, `set_contains`         |
-| `file_*`   | File I/O        | `file_read`, `file_write`, `file_exists`       |
-| `dir.*`    | Directory I/O   | `dir.list`, `dir.create`, `dir.delete`         |
-| `time_*`   | Timestamps      | `time_now`, `time_format`, `time_year`         |
-| `json_*`   | JSON            | `json_encode`, `json_decode`                   |
-| `comp_*`   | Comparison      | `comp_eq`, `comp_lt`, `comp_gt`                |
-| `is_*`     | Type checking   | `is_number`, `is_string`, `is_list`            |
-| `to_*`     | Type conversion | `to_integer`, `to_string`, `to_list`           |
+| Prefix        | Domain          | Example Functions                                        |
+| ------------- | --------------- | -------------------------------------------------------- |
+| `assert_*`    | Assertions      | `assert_equal`, `assert_true`, `assert_throws`           |
+| `num_*`       | Arithmetic      | `num_add`, `num_sqrt`, `num_max`                         |
+| `bool_*`      | Logic           | `bool_and`, `bool_or`, `bool_not`                        |
+| `str_*`       | Strings         | `str_length`, `str_concat`, `str_split`                  |
+| `list_*`      | Lists           | `list_map`, `list_filter`, `list_reduce`                 |
+| `map_*`       | Maps            | `map_at`, `map_keys`, `map_set`                          |
+| `set_*`       | Sets            | `set_add`, `set_union`, `set_contains`                   |
+| `file_*`      | File I/O        | `file_read`, `file_write`, `file_exists`                 |
+| `directory_*` | Directory I/O   | `directory_list`, `directory_create`, `directory_delete` |
+| `time_*`      | Timestamps      | `time_now`, `time_format`, `time_year`                   |
+| `json_*`      | JSON            | `json_encode`, `json_decode`                             |
+| `comp_*`      | Comparison      | `comp_eq`, `comp_lt`, `comp_gt`                          |
+| `is_*`        | Type checking   | `is_number`, `is_string`, `is_list`                      |
+| `to_*`        | Type conversion | `to_integer`, `to_string`, `to_list`                     |
 
 Control flow functions (`if`, `try`) and infix operators (`+`, `-`, `&&`, etc.) use simple names without namespace prefixes.

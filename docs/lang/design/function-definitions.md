@@ -21,7 +21,7 @@ name(parameters) = body
 
 Where:
 
-- **name** identifies the function and must match the pattern `[a-zA-Z][\w.]*`
+- **name** identifies the function and must match the pattern `[a-zA-Z]\w*`
 - **parameters** is a comma-separated list of parameter names (can be empty)
 - **body** is a single expression that produces the result
 
