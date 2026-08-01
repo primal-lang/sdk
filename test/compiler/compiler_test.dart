@@ -1065,6 +1065,65 @@ void main() {
     });
   });
 
+  group('Compiler.compile() - let expressions', () {
+    test('Let expression compiles through the full pipeline', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main() = let x = 1, y = x + 1 in x + y');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+      expect(intermediateRepresentation.warnings, isEmpty);
+    });
+
+    test('Nested let expressions compile', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main() = let x = 1 in let y = 2 in x + y');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test(
+      'Let binding shadowing a parameter throws ShadowedLetBindingError',
+      () {
+        expect(
+          () => compiler.compile('f(x) = let x = 1 in x'),
+          throwsA(isA<ShadowedLetBindingError>()),
+        );
+      },
+    );
+
+    test('Duplicated let binding throws DuplicatedLetBindingError', () {
+      expect(
+        () => compiler.compile('f(n) = let x = 1, x = 2 in x'),
+        throwsA(isA<DuplicatedLetBindingError>()),
+      );
+    });
+  });
+
+  group('Compiler.compile() - lambdas', () {
+    test('Lambda argument compiles through the full pipeline', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main() = list_map([1, 2, 3], (x) -> x * 2)');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+      expect(intermediateRepresentation.warnings, isEmpty);
+    });
+
+    test('Zero-parameter lambda compiles', () {
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile('main() = (() -> 42)()');
+      expect(intermediateRepresentation.containsFunction('main'), isTrue);
+    });
+
+    test('Compiler.expression() parses a lambda', () {
+      final Expression expression = compiler.expression('(x) -> x + 1');
+      expect(expression, isA<LambdaExpression>());
+    });
+
+    test('Duplicated lambda parameter throws', () {
+      expect(
+        () => compiler.compile('main() = (x, x) -> x'),
+        throwsA(isA<DuplicatedLambdaParameterError>()),
+      );
+    });
+  });
+
   group('Compiler.compile() - and/or/not keywords', () {
     test('and keyword works as logical and', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
@@ -1364,7 +1423,14 @@ void main() {
     test('returns representation with standard library signatures', () {
       final IntermediateRepresentation representation =
           IntermediateRepresentation.empty();
-      expect(representation.standardLibrarySignatures, isNotEmpty);
+      expect(
+        representation.standardLibrarySignatures.containsKey('num_add'),
+        isTrue,
+      );
+      expect(
+        representation.standardLibrarySignatures.containsKey('list_map'),
+        isTrue,
+      );
     });
 
     test('returns representation with empty warnings list', () {

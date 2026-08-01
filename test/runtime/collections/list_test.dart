@@ -2699,7 +2699,7 @@ main() = list_sort([3, 1, 2], badCompare)
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list_filled throws for non-integer count', () {
+    test('list_filled truncates a non-integer count', () {
       final RuntimeFacade runtime = getRuntime('main() = list_filled(2.5, 1)');
       checkResult(runtime, [1, 1]);
     });
@@ -2713,6 +2713,37 @@ main() = list_sort([3, 1, 2], badCompare)
         expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
       },
     );
+
+    test('list_chunk throws for wrong first argument type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list_chunk("abc", 2)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('list_chunk throws for wrong second argument type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list_chunk([1, 2, 3], "2")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('list_count throws for wrong first argument type', () {
+      final RuntimeFacade runtime = getRuntime(
+        'isPositive(x) = x > 0\nmain() = list_count("abc", isPositive)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('list_distinct throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_distinct(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('list_flatten throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_flatten("abc")');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
   });
 
   group('List Error Cases', () {

@@ -44,18 +44,24 @@ void main() {
       });
 
       test('is case-sensitive for variable names', () {
-        final String home = Platform.environment['HOME'] ?? '';
-        final RuntimeFacade runtimeLower = getRuntime(
-          'main() = env_get("home")',
+        // PATH is set in every environment this suite runs in, and the
+        // lowercase spelling is not — so the two lookups must disagree.
+        final String path = Platform.environment['PATH'] ?? '';
+        expect(
+          path,
+          isNotEmpty,
+          reason: 'PATH must be set for this test to be meaningful',
         );
+
         final RuntimeFacade runtimeUpper = getRuntime(
-          'main() = env_get("HOME")',
+          'main() = env_get("PATH")',
         );
-        // On Unix systems, HOME exists but home likely does not
-        checkResult(runtimeUpper, '"$home"');
-        // home (lowercase) should return empty string if not set
-        final String homeLower = Platform.environment['home'] ?? '';
-        checkResult(runtimeLower, '"$homeLower"');
+        final RuntimeFacade runtimeLower = getRuntime(
+          'main() = env_get("path")',
+        );
+
+        checkResult(runtimeUpper, '"$path"');
+        checkResult(runtimeLower, '""');
       });
 
       test('returns empty string for variable name with only spaces', () {

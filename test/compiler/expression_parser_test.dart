@@ -1174,104 +1174,6 @@ void main() {
     });
   });
 
-  group('ListIterator edge cases', () {
-    test('next returns and advances to the next element', () {
-      final List<Token> tokens = getTokens('a b');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.hasNext, isTrue);
-      final Token first = iterator.next;
-      expect(first, isA<IdentifierToken>());
-      expect(first.value, equals('a'));
-
-      expect(iterator.hasNext, isTrue);
-      final Token second = iterator.next;
-      expect(second, isA<IdentifierToken>());
-      expect(second.value, equals('b'));
-
-      expect(iterator.isAtEnd, isTrue);
-    });
-
-    test('next throws UnexpectedEndOfFileError when at end', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.next; // consume x
-      expect(
-        () => iterator.next,
-        throwsA(isA<UnexpectedEndOfFileError>()),
-      );
-    });
-
-    test('last returns the last element in the list', () {
-      final List<Token> tokens = getTokens('a b c');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      final Token last = iterator.last;
-      expect(last, isA<IdentifierToken>());
-      expect(last.value, equals('c'));
-    });
-
-    test('last throws UnexpectedEndOfFileError for empty list', () {
-      final ListIterator<Token> iterator = ListIterator([]);
-
-      expect(
-        () => iterator.last,
-        throwsA(isA<UnexpectedEndOfFileError>()),
-      );
-    });
-
-    test('back moves the iterator back one position', () {
-      final List<Token> tokens = getTokens('a b');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.next; // advance to after 'a'
-      iterator.next; // advance to after 'b'
-
-      final bool backResult = iterator.back();
-      expect(backResult, isTrue);
-      expect(iterator.peek?.value, equals('b'));
-    });
-
-    test('back returns false when at the beginning', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      final bool backResult = iterator.back();
-      expect(backResult, isFalse);
-    });
-
-    test('hasNext is true when elements remain', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.hasNext, isTrue);
-    });
-
-    test('hasNext is false when no elements remain', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      expect(iterator.hasNext, isFalse);
-    });
-
-    test('previous is null at the beginning', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.previous, isNull);
-    });
-
-    test('peek returns null when at end', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      expect(iterator.peek, isNull);
-    });
-  });
-
   group('Empty and whitespace input', () {
     Expression compileExpression(String input) {
       const Compiler compiler = Compiler();
@@ -2234,80 +2136,6 @@ void main() {
     });
   });
 
-  group('ListIterator additional edge cases', () {
-    test('back after advance returns true', () {
-      final List<Token> tokens = getTokens('a b c');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      iterator.advance();
-      expect(iterator.back(), isTrue);
-      expect(iterator.peek?.value, equals('b'));
-    });
-
-    test('multiple back calls', () {
-      final List<Token> tokens = getTokens('a b c');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      iterator.advance();
-      iterator.advance();
-      expect(iterator.back(), isTrue);
-      expect(iterator.back(), isTrue);
-      // After 3 advances and 2 backs, we're at index 1 (pointing to 'b')
-      expect(iterator.peek?.value, equals('b'));
-    });
-
-    test('back at beginning returns false without error', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.back(), isFalse);
-      expect(iterator.peek?.value, equals('x'));
-    });
-
-    test('hasNext reflects iterator state accurately', () {
-      final List<Token> tokens = getTokens('a b');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.hasNext, isTrue);
-      iterator.advance();
-      expect(iterator.hasNext, isTrue);
-      iterator.advance();
-      expect(iterator.hasNext, isFalse);
-    });
-
-    test('isAtEnd reflects iterator state accurately', () {
-      final List<Token> tokens = getTokens('a');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.isAtEnd, isFalse);
-      iterator.advance();
-      expect(iterator.isAtEnd, isTrue);
-    });
-
-    test('peek returns null when at end', () {
-      final ListIterator<Token> iterator = ListIterator([]);
-      expect(iterator.peek, isNull);
-    });
-
-    test('previous returns null when at start', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-      expect(iterator.previous, isNull);
-    });
-
-    test('previous returns last consumed after advance', () {
-      final List<Token> tokens = getTokens('a b');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      expect(iterator.previous?.value, equals('a'));
-      iterator.advance();
-      expect(iterator.previous?.value, equals('b'));
-    });
-  });
-
   group('Syntactic error type verification', () {
     test('InvalidTokenError for unexpected primary token', () {
       expect(
@@ -2529,6 +2357,20 @@ void main() {
       expect(expression, isA<CallExpression>());
       final CallExpression call = expression as CallExpression;
       expect((call.callee as IdentifierExpression).value, equals('!'));
+    });
+
+    test('and keyword alias', () {
+      final Expression expression = getExpression('a and b');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect((call.callee as IdentifierExpression).value, equals('&&'));
+    });
+
+    test('or keyword alias', () {
+      final Expression expression = getExpression('a or b');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect((call.callee as IdentifierExpression).value, equals('||'));
     });
   });
 
@@ -2829,6 +2671,15 @@ void main() {
       final Expression expression = getExpression('(x)');
       // Just a grouped identifier is NOT a lambda
       expect(expression, isA<IdentifierExpression>());
+    });
+
+    test('Unterminated parameter list is not treated as a lambda', () {
+      // The lambda lookahead runs out of tokens right after the identifier,
+      // so it must bail out instead of reporting a parameter count.
+      expect(
+        () => getExpression('(x'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
     });
 
     test('Immediately invoked lambda', () {

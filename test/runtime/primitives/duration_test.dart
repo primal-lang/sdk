@@ -355,6 +355,27 @@ void main() {
       // 50 hours = 2 days + 2 hours, so HH should be 02
       checkResult(runtime, '"02:00"');
     });
+
+    test('a duration returned from main is rendered as a quoted string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_fromHours(2)',
+      );
+      checkResult(runtime, '"0d 2h 00m 00s 000ms"');
+    });
+
+    test('duration_format with unpadded H:m:s.S pattern', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_format(duration_from(0, 1, 2, 3, 4), "H:m:s.S")',
+      );
+      checkResult(runtime, '"1:2:3.4"');
+    });
+
+    test('duration_format unpadded specifiers keep multi-digit values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_format(duration_from(0, 11, 22, 33, 444), "H:m:s.S")',
+      );
+      checkResult(runtime, '"11:22:33.444"');
+    });
   });
 
   group('Duration Arithmetic', () {
@@ -528,6 +549,100 @@ void main() {
     test('duration_format throws for number second argument', () {
       final RuntimeFacade runtime = getRuntime(
         'main() = duration_format(duration_fromHours(1), 123)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_from throws for string first argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_from("0", 1, 0, 0, 0)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_fromDays throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_fromDays("7")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_fromHours throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_fromHours([1])',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_fromMinutes throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_fromMinutes(true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_fromSeconds throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_fromSeconds("60")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_toDays throws for number argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = duration_toDays(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_toHours throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_toHours("1h")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_toMinutes throws for timestamp argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_toMinutes(time_now())',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_toSeconds throws for number argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_toSeconds(1000)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_days throws for number argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = duration_days(42)');
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_hours throws for timestamp argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_hours(time_now())',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_minutes throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_minutes("x")',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_seconds throws for boolean argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_seconds(true)',
+      );
+      expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
+    });
+
+    test('duration_milliseconds throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = duration_milliseconds([1])',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });

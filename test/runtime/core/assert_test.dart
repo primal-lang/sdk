@@ -173,6 +173,29 @@ void main() {
       );
     });
 
+    test(
+      'assert_notEqual propagates a type error raised by a lazily reduced element',
+      () {
+        final RuntimeFacade runtime = getRuntime(
+          'main() = assert_notEqual([num_add(1, "x")], [2])',
+        );
+        expect(
+          runtime.executeMain,
+          throwsA(
+            allOf(
+              isA<InvalidArgumentTypesError>(),
+              isNot(isA<AssertionArgumentError>()),
+              isA<InvalidArgumentTypesError>().having(
+                (InvalidArgumentTypesError error) => error.function,
+                'function',
+                equals('num_add'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
     test('declares its parameters as a and b', () {
       final RuntimeFacade runtime = getRuntime(
         'main() = function_parameters(assert_equal)',

@@ -7,21 +7,17 @@ import 'dart:io';
 import 'package:primal/utils/file_reader.dart';
 import 'package:test/test.dart';
 
+import '../helpers/temp_helpers.dart';
+
 void main() {
   group('FileReader', () {
     late File tempFile;
     late Directory tempDirectory;
 
     setUp(() {
-      tempDirectory = Directory.systemTemp;
+      tempDirectory = createTempTestDirectory('primal_file_reader_test_');
       tempFile = File('${tempDirectory.path}/primal_test_file_reader.txt');
       tempFile.writeAsStringSync('test content');
-    });
-
-    tearDown(() {
-      if (tempFile.existsSync()) {
-        tempFile.deleteSync();
-      }
     });
 
     group('read', () {

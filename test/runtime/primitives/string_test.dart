@@ -256,6 +256,34 @@ void main() {
       checkResult(runtime, '"00012345"');
     });
 
+    test('str_padLeft pads an empty subject to the full width', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_padLeft("", 3, "x")',
+      );
+      checkResult(runtime, '"xxx"');
+    });
+
+    test('str_padRight pads an empty subject to the full width', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_padRight("", 3, "x")',
+      );
+      checkResult(runtime, '"xxx"');
+    });
+
+    test('str_replace on an empty subject returns an empty string', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_replace("", "a", "b")',
+      );
+      checkResult(runtime, '""');
+    });
+
+    test('str_lastIndexOf on an empty subject returns -1', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_lastIndexOf("", "a")',
+      );
+      checkResult(runtime, -1);
+    });
+
     test('str_padRight does not pad when target width is zero', () {
       final RuntimeFacade runtime = getRuntime(
         'main() = str_padRight("12345", 0, "0")',
@@ -2155,6 +2183,20 @@ void main() {
       checkResult(runtime, '"Hello"');
     });
 
+    test('str_capitalize capitalizes a non-ASCII first character', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_capitalize("émile")',
+      );
+      checkResult(runtime, '"Émile"');
+    });
+
+    test('str_capitalize leaves a grapheme cluster intact', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_capitalize("👨‍👩‍👧 family")',
+      );
+      checkResult(runtime, '"👨‍👩‍👧 family"');
+    });
+
     test('str_capitalize throws InvalidArgumentTypesError for wrong type', () {
       final RuntimeFacade runtime = getRuntime('main() = str_capitalize(42)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
@@ -2243,6 +2285,13 @@ void main() {
     test('str_count with empty string and pattern', () {
       final RuntimeFacade runtime = getRuntime('main() = str_count("", "a")');
       checkResult(runtime, 0);
+    });
+
+    test('str_count counts multi-codepoint grapheme clusters', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_count("a👨‍👩‍👧b👨‍👩‍👧c", "👨‍👩‍👧")',
+      );
+      checkResult(runtime, 2);
     });
 
     test('str_count with empty pattern counts positions', () {
@@ -2548,6 +2597,20 @@ void main() {
         expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
       },
     );
+
+    test('str_fromBytes throws ParseError for invalid UTF-8 sequence', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_fromBytes([255])');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<ParseError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('str_fromBytes'),
+          ),
+        ),
+      );
+    });
   });
 
   group('str_isBlank', () {

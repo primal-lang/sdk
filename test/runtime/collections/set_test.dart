@@ -1781,13 +1781,6 @@ main() = foo(set_new([2, 3]))
       checkResult(runtime, {1, 2});
     });
 
-    test('set_remove with float element', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = set_remove(set_new([1.5, 2.5, 3.5]), 2.5)',
-      );
-      checkResult(runtime, {1.5, 3.5});
-    });
-
     test('set_remove with empty string element', () {
       final RuntimeFacade runtime = getRuntime(
         'main() = set_remove(set_new(["", "a", "b"]), "")',

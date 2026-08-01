@@ -767,6 +767,26 @@ void main() {
       checkResult(runtime, 5);
     });
 
+    test('num_max with decimal operands', () {
+      final RuntimeFacade runtime = getRuntime('main() = num_max(1.5, 2.5)');
+      checkResult(runtime, 2.5);
+    });
+
+    test('num_min with decimal operands', () {
+      final RuntimeFacade runtime = getRuntime('main() = num_min(1.5, 2.5)');
+      checkResult(runtime, 1.5);
+    });
+
+    test('num_ceil of zero returns zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = num_ceil(0)');
+      checkResult(runtime, 0);
+    });
+
+    test('num_floor of zero returns zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = num_floor(0)');
+      checkResult(runtime, 0);
+    });
+
     test('num_log(1) returns 0', () {
       final RuntimeFacade runtime = getRuntime('main() = num_log(1)');
       checkResult(runtime, 0.0);
@@ -2193,6 +2213,70 @@ void main() {
         'main() = num_mul(0, num_infinity())',
       );
       checkResult(runtime, double.nan);
+    });
+
+    test('NaN is not equal to itself', () {
+      final RuntimeFacade runtime = getRuntime(
+        'nan() = num_mul(0, num_infinity())\nmain() = nan() == nan()',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('is_infinite returns false for NaN', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = is_infinite(num_mul(0, num_infinity()))',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('to_string renders NaN', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = to_string(num_mul(0, num_infinity()))',
+      );
+      checkResult(runtime, '"NaN"');
+    });
+
+    test('num_max with NaN operand returns NaN', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = num_max(num_mul(0, num_infinity()), 5)',
+      );
+      checkResult(runtime, double.nan);
+    });
+  });
+
+  group('Overflow and Underflow', () {
+    test('multiplication overflowing the double range yields infinity', () {
+      final RuntimeFacade runtime = getRuntime('main() = 1e308 * 10');
+      checkResult(runtime, double.infinity);
+    });
+
+    test('addition overflowing the double range yields infinity', () {
+      final RuntimeFacade runtime = getRuntime('main() = 1e308 + 1e308');
+      checkResult(runtime, double.infinity);
+    });
+
+    test('negative multiplication overflow yields negative infinity', () {
+      final RuntimeFacade runtime = getRuntime('main() = -1e308 * 10');
+      checkResult(runtime, double.negativeInfinity);
+    });
+
+    test('is_infinite detects an overflowed multiplication', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = is_infinite(1e308 * 10)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('division below the smallest subnormal underflows to zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = 5e-324 / 2');
+      checkResult(runtime, 0.0);
+    });
+
+    test('integer addition beyond 2^53 keeps full precision', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = 9007199254740992 + 1 == 9007199254740992',
+      );
+      checkResult(runtime, false);
     });
   });
 

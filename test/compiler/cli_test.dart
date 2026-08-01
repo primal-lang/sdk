@@ -87,7 +87,7 @@ void main() {
       final String missingFile = path.join(tempDir.path, 'missing.prm');
       final ProcessResult result = await runCli([missingFile]);
 
-      expect(result.stderr.toString(), isNotEmpty);
+      expect(result.stderr.toString(), contains('missing.prm'));
     });
 
     group('flags', () {
@@ -252,7 +252,7 @@ void main() {
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
-        expect(result.stderr.toString(), isNotEmpty);
+        expect(result.stderr.toString(), contains('Division by zero'));
       });
 
       test('reports error for type mismatch', () async {
@@ -838,7 +838,10 @@ main() = recurse(0)
         );
         final ProcessResult result = await runCli([tmpFile.path]);
 
-        expect(result.stderr.toString(), isNotEmpty);
+        expect(
+          result.stderr.toString(),
+          contains('Maximum recursion depth'),
+        );
       });
 
       test('reports error with line information', () async {
@@ -922,7 +925,7 @@ main() = foo(1, 2)
         subDir.createSync();
         final ProcessResult result = await runCli([subDir.path]);
 
-        expect(result.stderr.toString(), isNotEmpty);
+        expect(result.stderr.toString().toLowerCase(), contains('error'));
       });
     });
 

@@ -247,7 +247,7 @@ void main() {
     test('can instantiate PlatformEnvironmentCli', () {
       final PlatformEnvironmentCli instance = PlatformEnvironmentCli();
 
-      expect(instance, isNotNull);
+      expect(instance, isA<PlatformEnvironmentBase>());
     });
 
     test('multiple instances are independent', () {

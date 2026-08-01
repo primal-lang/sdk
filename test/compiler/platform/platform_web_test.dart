@@ -615,6 +615,32 @@ void main() {
       );
     });
 
+    test('append throws UnimplementedFunctionWebError', () {
+      expect(
+        () => platform.append(File('dummy'), 'content'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('file_append'),
+          ),
+        ),
+      );
+    });
+
+    test('lastModified throws UnimplementedFunctionWebError', () {
+      expect(
+        () => platform.lastModified(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('file_lastModified'),
+          ),
+        ),
+      );
+    });
+
     test('write throws with empty content', () {
       expect(
         () => platform.write(File('dummy'), ''),
@@ -1388,6 +1414,19 @@ void main() {
       expect(
         () => platform.getVariable('HOME'),
         throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('hasVariable throws UnimplementedFunctionWebError', () {
+      expect(
+        () => platform.hasVariable('HOME'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('env_has'),
+          ),
+        ),
       );
     });
 

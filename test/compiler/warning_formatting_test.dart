@@ -201,6 +201,35 @@ void main() {
     });
   });
 
+  group('UnusedLambdaParameterWarning', () {
+    test('toString() includes function and parameter names', () {
+      const warning = UnusedLambdaParameterWarning(
+        parameter: 'x',
+        inFunction: 'f',
+      );
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused lambda parameter "x" in function "f"'),
+      );
+    });
+
+    test('toString() omits the function clause when inFunction is null', () {
+      const warning = UnusedLambdaParameterWarning(parameter: 'x');
+
+      expect(
+        warning.toString(),
+        equals('Warning: Unused lambda parameter "x"'),
+      );
+    });
+
+    test('is a SemanticWarning', () {
+      const warning = UnusedLambdaParameterWarning(parameter: 'x');
+
+      expect(warning, isA<SemanticWarning>());
+    });
+  });
+
   group('UnusedParameterWarning', () {
     test('toString() includes function and parameter names', () {
       const warning = UnusedParameterWarning(

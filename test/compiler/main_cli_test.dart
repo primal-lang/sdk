@@ -862,7 +862,10 @@ void main() {
         );
 
         expect(platformConsole.outLines, isEmpty);
-        expect(platformConsole.errorLines, isNotEmpty);
+        expect(
+          platformConsole.errorLines.join('\n').toLowerCase(),
+          contains('error'),
+        );
       });
 
       test('whitespace-only input is ignored', () {
@@ -1224,7 +1227,10 @@ void main() {
           readFile: (_) => 'main() = 1 / 0',
         );
 
-        expect(platformConsole.errorLines, isNotEmpty);
+        expect(
+          platformConsole.errorLines.join('\n'),
+          contains('Division by zero'),
+        );
       });
 
       test('runtime error in REPL shows error and continues', () {
@@ -1239,7 +1245,10 @@ void main() {
         runCli([], console: console);
 
         // Should have error from first expression
-        expect(platformConsole.errorLines, isNotEmpty);
+        expect(
+          platformConsole.errorLines.join('\n'),
+          contains('Division by zero'),
+        );
         // Should continue and evaluate second expression
         expect(platformConsole.outLines.last, equals('42'));
       });
@@ -1908,7 +1917,10 @@ void main() {
         );
 
         // Should show error for mismatched argument count
-        expect(platformConsole.errorLines, isNotEmpty);
+        expect(
+          platformConsole.errorLines.join('\n').toLowerCase(),
+          contains('argument'),
+        );
       });
     });
 
@@ -2005,7 +2017,10 @@ void main() {
         );
 
         expect(runCli([], console: console), equals(0));
-        expect(platformConsole.errorLines, isNotEmpty);
+        expect(
+          platformConsole.errorLines.join('\n'),
+          contains('Division by zero'),
+        );
       });
 
       test('watch mode without a file returns 2', () {

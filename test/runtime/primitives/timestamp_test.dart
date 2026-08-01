@@ -39,69 +39,80 @@ void main() {
       );
     });
 
-    test('time_year', () {
-      final DateTime now = DateTime.now();
+    // Component extraction is asserted against a fixed timestamp so the tests
+    // cannot fail when a year/month/day/hour/minute/second boundary is crossed
+    // between reading the clock and evaluating the program.
+    const String fixedIso = '2020-01-02T03:04:05.678';
+
+    test('time_year extracts the year', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_year(time_fromIso("$fixedIso"))',
+      );
+      checkResult(runtime, 2020);
+    });
+
+    test('time_month extracts the month', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_month(time_fromIso("$fixedIso"))',
+      );
+      checkResult(runtime, 1);
+    });
+
+    test('time_day extracts the day', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_day(time_fromIso("$fixedIso"))',
+      );
+      checkResult(runtime, 2);
+    });
+
+    test('time_hour extracts the hour', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_hour(time_fromIso("$fixedIso"))',
+      );
+      checkResult(runtime, 3);
+    });
+
+    test('time_minute extracts the minute', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_minute(time_fromIso("$fixedIso"))',
+      );
+      checkResult(runtime, 4);
+    });
+
+    test('time_second extracts the second', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_second(time_fromIso("$fixedIso"))',
+      );
+      checkResult(runtime, 5);
+    });
+
+    test('time_millisecond extracts the millisecond', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_millisecond(time_fromIso("$fixedIso"))',
+      );
+      checkResult(runtime, 678);
+    });
+
+    test('time_year reads the live clock', () {
+      final int before = DateTime.now().year;
       final RuntimeFacade runtime = getRuntime(
         'main() = time_year(time_now())',
       );
-      expect(num.parse(runtime.executeMain()), closeTo(now.year, 0));
-    });
+      final int actual = num.parse(runtime.executeMain()).toInt();
+      final int after = DateTime.now().year;
 
-    test('time_month', () {
-      final DateTime now = DateTime.now();
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time_month(time_now())',
-      );
-      expect(num.parse(runtime.executeMain()), closeTo(now.month, 0));
-    });
-
-    test('time_day', () {
-      final DateTime now = DateTime.now();
-      final RuntimeFacade runtime = getRuntime('main() = time_day(time_now())');
-      expect(num.parse(runtime.executeMain()), closeTo(now.day, 0));
-    });
-
-    test('time_hour', () {
-      final DateTime now = DateTime.now();
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time_hour(time_now())',
-      );
-      expect(num.parse(runtime.executeMain()), closeTo(now.hour, 0));
-    });
-
-    test('time_minute', () {
-      final DateTime now = DateTime.now();
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time_minute(time_now())',
-      );
-      expect(num.parse(runtime.executeMain()), closeTo(now.minute, 0));
-    });
-
-    test('time_second', () {
-      final DateTime now = DateTime.now();
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time_second(time_now())',
-      );
-      expect(num.parse(runtime.executeMain()), closeTo(now.second, 1));
-    });
-
-    test('time_millisecond', () {
-      final DateTime now = DateTime.now();
-      final RuntimeFacade runtime = getRuntime(
-        'main() = time_millisecond(time_now())',
-      );
-      expect(num.parse(runtime.executeMain()), closeTo(now.second, 999));
+      expect(actual, inInclusiveRange(before, after));
     });
 
     test('time_toEpoch', () {
-      final DateTime now = DateTime.now();
+      final int before = DateTime.now().millisecondsSinceEpoch;
       final RuntimeFacade runtime = getRuntime(
         'main() = time_toEpoch(time_now())',
       );
-      expect(
-        num.parse(runtime.executeMain()),
-        closeTo(now.millisecondsSinceEpoch, 500),
-      );
+      final num actual = num.parse(runtime.executeMain());
+      final int after = DateTime.now().millisecondsSinceEpoch;
+
+      expect(actual, inInclusiveRange(before, after));
     });
 
     test('time_compare returns -1 for earlier date', () {
@@ -1480,6 +1491,20 @@ main() = [time_year(t()), time_month(t()), time_day(t()), time_hour(t()), time_m
         'main() = time_format(time_fromIso("2024-01-15T12:30:00.000Z"), "h:mm a")',
       );
       checkResult(runtime, '"12:30 PM"');
+    });
+
+    test('time_format with unpadded H:m:s pattern', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_format(time_fromIso("2020-01-02T03:04:05"), "H:m:s")',
+      );
+      checkResult(runtime, '"3:4:5"');
+    });
+
+    test('time_format unpadded specifiers keep two-digit values', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = time_format(time_fromIso("2020-01-02T13:24:35"), "H:m:s")',
+      );
+      checkResult(runtime, '"13:24:35"');
     });
 
     test('time_format with empty pattern returns empty string', () {

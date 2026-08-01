@@ -67,6 +67,54 @@ void main() {
         ),
       );
     });
+
+    test('division by decimal zero throws DivisionByZeroError', () {
+      final RuntimeFacade runtime = getRuntime('main() = 1.5 / 0.0');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Division by zero'), contains('/')),
+          ),
+        ),
+      );
+    });
+
+    test('integer divided by decimal zero throws DivisionByZeroError', () {
+      final RuntimeFacade runtime = getRuntime('main() = 1 / 0.0');
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('division by negative decimal zero throws DivisionByZeroError', () {
+      final RuntimeFacade runtime = getRuntime('main() = 1.5 / -0.0');
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('modulo by decimal zero throws DivisionByZeroError', () {
+      final RuntimeFacade runtime = getRuntime('main() = 1.5 % 0.0');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<DivisionByZeroError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Division by zero'),
+          ),
+        ),
+      );
+    });
+
+    test('num_div by decimal zero throws DivisionByZeroError', () {
+      final RuntimeFacade runtime = getRuntime('main() = num_div(7.5, 0.0)');
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
+
+    test('num_mod by decimal zero throws DivisionByZeroError', () {
+      final RuntimeFacade runtime = getRuntime('main() = num_mod(7.5, 0.0)');
+      expect(runtime.executeMain, throwsA(isA<DivisionByZeroError>()));
+    });
   });
 
   group('Empty Collection Errors', () {
