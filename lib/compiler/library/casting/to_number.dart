@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ToNumber extends NativeFunctionTerm {
   const ToNumber()
     : super(
-        name: 'to.number',
+        name: 'to_number',
         parameters: const [
           Parameter.any('a'),
         ],

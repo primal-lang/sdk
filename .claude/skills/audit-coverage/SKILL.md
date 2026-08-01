@@ -47,7 +47,7 @@ For each language feature (literals, operators, control flow, collections, etc.)
 
 | Category   | Function | Has Test | Edge Cases | Error Cases |
 | ---------- | -------- | -------- | ---------- | ----------- |
-| Arithmetic | num.abs  | ✓/✗      | ✓/✗        | ✓/✗         |
+| Arithmetic | num_abs  | ✓/✗      | ✓/✗        | ✓/✗         |
 | ...        |          |          |            |             |
 
 **Flag**: Functions without tests or missing edge/error case coverage.
@@ -83,7 +83,7 @@ For each tested feature, verify these edge cases are covered:
 
 **Collections**:
 
-- Empty collections `[]`, `{}`, `set.new()`, `stack.new()`, `queue.new()`, `vector.new()`
+- Empty collections `[]`, `{}`, `set_new()`, `stack_new()`, `queue_new()`, `vector_new()`
 - Single-element collections
 - Nested collections `[[1], [2]]`, `{"a": {"b": 1}}`
 - Large collections (performance edge case)
@@ -93,7 +93,7 @@ For each tested feature, verify these edge cases are covered:
 - Division by zero
 - Modulo by zero
 - Index out of bounds (negative, beyond length)
-- Operations on empty collections (`list.head([])`, `list.tail([])`)
+- Operations on empty collections (`list_first([])`, `list_rest([])`)
 
 **Control Flow**:
 

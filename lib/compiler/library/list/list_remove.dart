@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListRemove extends NativeFunctionTerm {
   const ListRemove()
     : super(
-        name: 'list.remove',
+        name: 'list_remove',
         parameters: const [
           Parameter.list('a'),
           Parameter.equatable('b'),

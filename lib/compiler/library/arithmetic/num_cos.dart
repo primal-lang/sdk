@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumCos extends NativeFunctionTerm {
   const NumCos()
     : super(
-        name: 'num.cos',
+        name: 'num_cos',
         parameters: const [
           Parameter.number('a'),
         ],

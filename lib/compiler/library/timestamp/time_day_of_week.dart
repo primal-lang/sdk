@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeDayOfWeek extends NativeFunctionTerm {
   const TimeDayOfWeek()
     : super(
-        name: 'time.dayOfWeek',
+        name: 'time_dayOfWeek',
         parameters: const [
           Parameter.timestamp('a'),
         ],

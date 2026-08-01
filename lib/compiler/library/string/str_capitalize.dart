@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrCapitalize extends NativeFunctionTerm {
   const StrCapitalize()
     : super(
-        name: 'str.capitalize',
+        name: 'str_capitalize',
         parameters: const [
           Parameter.string('a'),
         ],

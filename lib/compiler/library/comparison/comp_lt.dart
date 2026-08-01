@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class CompLt extends NativeFunctionTerm {
   const CompLt()
     : super(
-        name: 'comp.lt',
+        name: 'comp_lt',
         parameters: const [
           Parameter.ordered('a'),
           Parameter.ordered('b'),

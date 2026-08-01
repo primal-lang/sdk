@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class AssertNotEqual extends NativeFunctionTerm {
   const AssertNotEqual()
     : super(
-        name: 'assert.notEqual',
+        name: 'assert_notEqual',
         parameters: const [
           Parameter.equatable('a'),
           Parameter.equatable('b'),

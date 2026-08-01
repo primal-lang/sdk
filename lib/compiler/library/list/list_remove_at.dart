@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListRemoveAt extends NativeFunctionTerm {
   const ListRemoveAt()
     : super(
-        name: 'list.removeAt',
+        name: 'list_removeAt',
         parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),

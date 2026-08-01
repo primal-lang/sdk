@@ -3,6 +3,7 @@ library;
 
 import 'package:primal/compiler/errors/semantic_error.dart';
 import 'package:primal/compiler/models/function_signature.dart';
+import 'package:primal/compiler/models/location.dart';
 import 'package:primal/compiler/models/parameter.dart';
 import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/semantic/semantic_function.dart';
@@ -10,6 +11,7 @@ import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/compiler/warnings/semantic_warning.dart';
 import 'package:test/test.dart';
+import '../helpers/assertion_helpers.dart';
 import '../helpers/pipeline_helpers.dart';
 
 void main() {
@@ -79,7 +81,7 @@ main() = foo(5)
   test('Valid program 2', () {
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
-bar() = num.abs
+bar() = num_abs
 foo(x) = bar()(x) * 2
 main() = foo(5)
 ''');
@@ -90,7 +92,7 @@ main() = foo(5)
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
 apply(f, v) = f(v)
-main() = apply(num.abs, 5)
+main() = apply(num_abs, 5)
 ''');
     expect(intermediateRepresentation.warnings.length, equals(0));
   });
@@ -354,7 +356,7 @@ main() = apply(10, 5)
   test('calling identifier is valid (runtime checked)', () {
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
-foo(x) = num.abs(x)
+foo(x) = num_abs(x)
 main() = foo(-5)
 ''');
     expect(intermediateRepresentation.warnings.length, equals(0));
@@ -372,7 +374,7 @@ main() = foo[0]
   test('calling call result is valid (runtime checked)', () {
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
-getFunc() = num.abs
+getFunc() = num_abs
 main() = getFunc()(-5)
 ''');
     expect(intermediateRepresentation.warnings.length, equals(0));
@@ -391,47 +393,47 @@ main() = matrix[0][1]
 
   test('custom function conflicts with standard library', () {
     expect(
-      () => getIntermediateRepresentation('num.abs(x) = x'),
+      () => getIntermediateRepresentation('num_abs(x) = x'),
       throwsA(isA<DuplicatedFunctionError>()),
     );
   });
 
-  test('custom function conflicts with stdlib function list.map', () {
+  test('custom function conflicts with stdlib function list_map', () {
     expect(
-      () => getIntermediateRepresentation('list.map(a, b) = a'),
+      () => getIntermediateRepresentation('list_map(a, b) = a'),
       throwsA(isA<DuplicatedFunctionError>()),
     );
   });
 
   test(
-    'custom function named assert.equal conflicts with standard library',
+    'custom function named assert_equal conflicts with standard library',
     () {
       expect(
-        () => getIntermediateRepresentation('assert.equal(a, b) = true'),
+        () => getIntermediateRepresentation('assert_equal(a, b) = true'),
         throwsA(isA<DuplicatedFunctionError>()),
       );
     },
   );
 
   test(
-    'custom function named assert.throws conflicts with standard library',
+    'custom function named assert_throws conflicts with standard library',
     () {
       expect(
-        () => getIntermediateRepresentation('assert.throws(a) = true'),
+        () => getIntermediateRepresentation('assert_throws(a) = true'),
         throwsA(isA<DuplicatedFunctionError>()),
       );
     },
   );
 
-  test('the assert. prefix is not reserved, only the whole names collide', () {
+  test('the assert_ prefix is not reserved, only the whole names collide', () {
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
-assert.somethingElse() = true
-main() = assert.somethingElse()
+assert_somethingElse() = true
+main() = assert_somethingElse()
 ''');
     expect(
       intermediateRepresentation.customFunctions.containsKey(
-        'assert.somethingElse',
+        'assert_somethingElse',
       ),
       isTrue,
     );
@@ -457,16 +459,10 @@ main() = assert.somethingElse()
   // --- IntermediateRepresentation helper methods ---
 
   group('IntermediateRepresentation', () {
-    test('containsFunction returns true for custom function', () {
-      final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('myFunc(x) = x * 2');
-      expect(intermediateRepresentation.containsFunction('myFunc'), isTrue);
-    });
-
     test('containsFunction returns true for stdlib function', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('main() = 1');
-      expect(intermediateRepresentation.containsFunction('num.abs'), isTrue);
+      expect(intermediateRepresentation.containsFunction('num_abs'), isTrue);
     });
 
     test('containsFunction returns false for unknown function', () {
@@ -483,7 +479,7 @@ main() = assert.somethingElse()
           getIntermediateRepresentation('myFunc() = 1');
       final Set<String> names = intermediateRepresentation.allFunctionNames;
       expect(names.contains('myFunc'), isTrue);
-      expect(names.contains('num.abs'), isTrue);
+      expect(names.contains('num_abs'), isTrue);
     });
 
     test('getCustomFunction returns function when exists', () {
@@ -508,7 +504,7 @@ main() = assert.somethingElse()
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('main() = 1');
       expect(
-        intermediateRepresentation.getStandardLibrarySignature('num.abs'),
+        intermediateRepresentation.getStandardLibrarySignature('num_abs'),
         isNotNull,
       );
     });
@@ -531,7 +527,7 @@ main() = assert.somethingElse()
         intermediateRepresentation.standardLibrarySignatures.isNotEmpty,
         isTrue,
       );
-      expect(intermediateRepresentation.containsFunction('num.abs'), isTrue);
+      expect(intermediateRepresentation.containsFunction('num_abs'), isTrue);
     });
   });
 
@@ -548,7 +544,7 @@ main() = double
 
   test('stdlib function reference without call is valid', () {
     final IntermediateRepresentation intermediateRepresentation =
-        getIntermediateRepresentation('main() = num.abs');
+        getIntermediateRepresentation('main() = num_abs');
     expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
@@ -558,7 +554,7 @@ main() = double
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
 apply(f, x) = f(x)
-main() = apply(num.abs, -5)
+main() = apply(num_abs, -5)
 ''');
     expect(intermediateRepresentation.warnings.length, equals(0));
   });
@@ -567,7 +563,7 @@ main() = apply(num.abs, -5)
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
 apply2(f, x, y) = f(x, y)
-main() = apply2(num.add, 1, 2)
+main() = apply2(num_add, 1, 2)
 ''');
     expect(intermediateRepresentation.warnings.length, equals(0));
   });
@@ -638,7 +634,7 @@ g(x, y, z) = 2
   test('calling index result is valid (runtime checked)', () {
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
-funcs() = [num.abs]
+funcs() = [num_abs]
 main() = funcs[0](-5)
 ''');
     expect(intermediateRepresentation.warnings.length, equals(0));
@@ -647,7 +643,7 @@ main() = funcs[0](-5)
   test('nested call expression as callee is valid', () {
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation('''
-getFunc() = num.abs
+getFunc() = num_abs
 main() = getFunc()(-5)
 ''');
     expect(intermediateRepresentation.warnings.length, equals(0));
@@ -671,14 +667,14 @@ main() = getFunc()(-5)
 
   test('list with function calls as elements is valid', () {
     final IntermediateRepresentation intermediateRepresentation =
-        getIntermediateRepresentation('main() = [num.abs(-1), num.abs(-2)]');
+        getIntermediateRepresentation('main() = [num_abs(-1), num_abs(-2)]');
     expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('map with function call values is valid', () {
     final IntermediateRepresentation intermediateRepresentation =
         getIntermediateRepresentation(
-          'main() = {"a": num.abs(-1), "b": num.abs(-2)}',
+          'main() = {"a": num_abs(-1), "b": num_abs(-2)}',
         );
     expect(intermediateRepresentation.warnings.length, equals(0));
   });
@@ -815,20 +811,20 @@ main() = bar(5)
 
   test('calling stdlib function with correct arity succeeds', () {
     final IntermediateRepresentation intermediateRepresentation =
-        getIntermediateRepresentation('main() = num.abs(-5)');
+        getIntermediateRepresentation('main() = num_abs(-5)');
     expect(intermediateRepresentation.warnings.length, equals(0));
   });
 
   test('calling stdlib function with wrong arity fails', () {
     expect(
-      () => getIntermediateRepresentation('main() = num.abs(1, 2)'),
+      () => getIntermediateRepresentation('main() = num_abs(1, 2)'),
       throwsA(isA<InvalidNumberOfArgumentsError>()),
     );
   });
 
   test('calling stdlib function with zero args when it needs one', () {
     expect(
-      () => getIntermediateRepresentation('main() = num.abs()'),
+      () => getIntermediateRepresentation('main() = num_abs()'),
       throwsA(isA<InvalidNumberOfArgumentsError>()),
     );
   });
@@ -936,7 +932,7 @@ main() = foo
 
     test('call expression produces SemanticCallNode', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.abs(-5)');
+          getIntermediateRepresentation('main() = num_abs(-5)');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
       expect(function, isNotNull);
@@ -1010,10 +1006,10 @@ main() = foo
 
     test('SemanticCallNode toString returns call representation', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.abs(5)');
+          getIntermediateRepresentation('main() = num_abs(5)');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
-      expect(function!.body.toString(), equals('num.abs(5)'));
+      expect(function!.body.toString(), equals('num_abs(5)'));
     });
   });
 
@@ -1036,14 +1032,13 @@ main() = foo
       expect(function!.toString(), equals('constant()'));
     });
 
-    test('location is preserved', () {
+    test('SemanticFunction location is preserved', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('myFunc() = 1');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('myFunc');
-      expect(function!.location, isNotNull);
-      expect(function.location.row, greaterThan(0));
-      expect(function.location.column, greaterThan(0));
+      // SemanticFunction.location points at the body expression, not the name.
+      checkLocations(function!.location, const Location(row: 1, column: 12));
     });
   });
 
@@ -1150,7 +1145,7 @@ main() = foo
 
     test('stdlib function reference has resolvedSignature', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.abs');
+          getIntermediateRepresentation('main() = num_abs');
       final SemanticFunction? mainFunction = intermediateRepresentation
           .getCustomFunction('main');
       expect(mainFunction, isNotNull);
@@ -1158,7 +1153,7 @@ main() = foo
       final SemanticIdentifierNode identifierNode =
           mainFunction.body as SemanticIdentifierNode;
       expect(identifierNode.resolvedSignature, isNotNull);
-      expect(identifierNode.resolvedSignature!.name, equals('num.abs'));
+      expect(identifierNode.resolvedSignature!.name, equals('num_abs'));
     });
   });
 
@@ -1207,7 +1202,7 @@ main() = foo
     test('calling index expression result is valid', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('''
-funcs() = [num.abs]
+funcs() = [num_abs]
 main() = funcs[0](-5)
 ''');
       expect(intermediateRepresentation.warnings.length, equals(0));
@@ -1225,7 +1220,7 @@ main() = getList[0]
     test('deeply nested call and index expressions are valid', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('''
-matrix() = [[num.abs]]
+matrix() = [[num_abs]]
 main() = matrix[0][0](-5)
 ''');
       expect(intermediateRepresentation.warnings.length, equals(0));
@@ -1234,7 +1229,7 @@ main() = matrix[0][0](-5)
     test('calling if expression result is valid (runtime checked)', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('''
-main() = (if (true) num.abs else num.abs)(-5)
+main() = (if (true) num_abs else num_abs)(-5)
 ''');
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
@@ -1275,7 +1270,59 @@ main() = (if (true) num.abs else num.abs)(-5)
     test('string with special characters', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(r'main() = "hello\nworld"');
-      expect(intermediateRepresentation.warnings.length, equals(0));
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('main');
+      expect(function!.body, isA<SemanticStringNode>());
+      expect(
+        (function.body as SemanticStringNode).value,
+        equals('hello\nworld'),
+      );
+    });
+
+    test('escape sequences are decoded into control characters', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(r'main() = "a\nb\tc\\d\"e"');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('main');
+      expect(
+        (function!.body as SemanticStringNode).value,
+        equals('a\nb\tc\\d"e'),
+      );
+    });
+
+    test('hex and unicode escapes are decoded', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(r'main() = "\x41B\u{43}"');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('main');
+      expect((function!.body as SemanticStringNode).value, equals('ABC'));
+    });
+
+    test('single-quoted string produces the same node as double-quoted', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation("main() = 'hello'");
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('main');
+      expect(function!.body, isA<SemanticStringNode>());
+      expect((function.body as SemanticStringNode).value, equals('hello'));
+    });
+
+    test('scientific notation is resolved to its numeric value', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('main() = 1.5e3');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('main');
+      expect(function!.body, isA<SemanticNumberNode>());
+      expect((function.body as SemanticNumberNode).value, equals(1500));
+    });
+
+    test('underscore separators are stripped from numeric literals', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('main() = 1_000_000');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('main');
+      expect(function!.body, isA<SemanticNumberNode>());
+      expect((function.body as SemanticNumberNode).value, equals(1000000));
     });
 
     test('single element list', () {
@@ -1328,14 +1375,14 @@ bar() = 2
       final Set<String> names = intermediateRepresentation.allFunctionNames;
       expect(names.contains('foo'), isTrue);
       expect(names.contains('bar'), isTrue);
-      expect(names.contains('num.abs'), isTrue);
+      expect(names.contains('num_abs'), isTrue);
     });
 
     test('getCustomFunction returns null for stdlib function', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('main() = 1');
       expect(
-        intermediateRepresentation.getCustomFunction('num.abs'),
+        intermediateRepresentation.getCustomFunction('num_abs'),
         isNull,
       );
     });
@@ -1347,12 +1394,6 @@ bar() = 2
         intermediateRepresentation.getStandardLibrarySignature('myFunc'),
         isNull,
       );
-    });
-
-    test('containsFunction returns true for custom function', () {
-      final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('myFunc() = 1');
-      expect(intermediateRepresentation.containsFunction('myFunc'), isTrue);
     });
 
     test('containsFunction returns false for undefined function', () {
@@ -1372,7 +1413,7 @@ bar() = 2
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('''
 apply(f) = f()
-main() = apply(num.abs)
+main() = apply(num_abs)
 ''');
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
@@ -1380,8 +1421,8 @@ main() = apply(num.abs)
     test('parameter called with nested function result', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('''
-apply(f, x) = f(num.abs(x))
-main() = apply(num.abs, -5)
+apply(f, x) = f(num_abs(x))
+main() = apply(num_abs, -5)
 ''');
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
@@ -1444,10 +1485,46 @@ orOp() = true || false
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
 
+    test('strict logical operations resolve their own signatures', () {
+      // "&" and "&&" are distinct standard library functions, so the strict
+      // form exercises a signature lookup the short-circuit form never reaches.
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('''
+andOp() = true & false
+orOp() = true | false
+''');
+      expect(intermediateRepresentation.customFunctions.length, equals(2));
+      expect(intermediateRepresentation.warnings.length, equals(0));
+
+      final SemanticCallNode andCall =
+          intermediateRepresentation.getCustomFunction('andOp')!.body
+              as SemanticCallNode;
+      final SemanticCallNode orCall =
+          intermediateRepresentation.getCustomFunction('orOp')!.body
+              as SemanticCallNode;
+
+      expect((andCall.callee as SemanticIdentifierNode).name, equals('&'));
+      expect((orCall.callee as SemanticIdentifierNode).name, equals('|'));
+    });
+
+    test('@ infix indexing resolves the same as bracket indexing', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('''
+values() = [1, 2, 3]
+main() = values() @ 0
+''');
+      expect(intermediateRepresentation.warnings.length, equals(0));
+
+      final SemanticCallNode call =
+          intermediateRepresentation.getCustomFunction('main')!.body
+              as SemanticCallNode;
+      expect((call.callee as SemanticIdentifierNode).name, equals('@'));
+    });
+
     test('string concatenation is valid', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main() = str.concat("hello", " world")',
+            'main() = str_concat("hello", " world")',
           );
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
@@ -1510,7 +1587,7 @@ bar() = 2
   group('SemanticCallNode callee types', () {
     test('callee is SemanticIdentifierNode for function call', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.abs(5)');
+          getIntermediateRepresentation('main() = num_abs(5)');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
       final SemanticCallNode callNode = function!.body as SemanticCallNode;
@@ -1529,7 +1606,7 @@ bar() = 2
     test('callee is SemanticCallNode for chained calls', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('''
-getFunc() = num.abs
+getFunc() = num_abs
 main() = getFunc()(-5)
 ''');
       final SemanticFunction? function = intermediateRepresentation
@@ -1547,27 +1624,38 @@ main() = getFunc()(-5)
           getIntermediateRepresentation('main() = 42');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
-      expect(function!.body.location, isNotNull);
+      checkLocations(
+        function!.body.location,
+        const Location(row: 1, column: 10),
+      );
     });
 
     test('SemanticCallNode callee location is preserved', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.abs(5)');
+          getIntermediateRepresentation('main() = num_abs(5)');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
       final SemanticCallNode callNode = function!.body as SemanticCallNode;
-      expect(callNode.callee.location, isNotNull);
+      checkLocations(
+        callNode.callee.location,
+        const Location(row: 1, column: 10),
+      );
     });
 
     test('SemanticCallNode arguments locations are preserved', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.add(1, 2)');
+          getIntermediateRepresentation('main() = num_add(1, 2)');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
       final SemanticCallNode callNode = function!.body as SemanticCallNode;
-      for (final SemanticNode argument in callNode.arguments) {
-        expect(argument.location, isNotNull);
-      }
+      checkLocations(
+        callNode.arguments[0].location,
+        const Location(row: 1, column: 18),
+      );
+      checkLocations(
+        callNode.arguments[1].location,
+        const Location(row: 1, column: 21),
+      );
     });
   });
 
@@ -1576,16 +1664,16 @@ main() = getFunc()(-5)
   group('Additional SemanticError types', () {
     test('CannotRedefineStandardLibraryError message format', () {
       const CannotRedefineStandardLibraryError error =
-          CannotRedefineStandardLibraryError(function: 'num.abs');
-      expect(error.message.contains('num.abs'), isTrue);
+          CannotRedefineStandardLibraryError(function: 'num_abs');
+      expect(error.message.contains('num_abs'), isTrue);
       expect(error.message.contains('redefine'), isTrue);
       expect(error.message.contains('standard library'), isTrue);
     });
 
     test('CannotDeleteStandardLibraryError message format', () {
       const CannotDeleteStandardLibraryError error =
-          CannotDeleteStandardLibraryError(function: 'num.abs');
-      expect(error.message.contains('num.abs'), isTrue);
+          CannotDeleteStandardLibraryError(function: 'num_abs');
+      expect(error.message.contains('num_abs'), isTrue);
       expect(error.message.contains('delete'), isTrue);
       expect(error.message.contains('standard library'), isTrue);
     });
@@ -1600,8 +1688,8 @@ main() = getFunc()(-5)
 
     test('CannotRenameStandardLibraryError message format', () {
       const CannotRenameStandardLibraryError error =
-          CannotRenameStandardLibraryError(function: 'num.abs');
-      expect(error.message.contains('num.abs'), isTrue);
+          CannotRenameStandardLibraryError(function: 'num_abs');
+      expect(error.message.contains('num_abs'), isTrue);
       expect(error.message.contains('rename'), isTrue);
       expect(error.message.contains('standard library'), isTrue);
     });
@@ -1907,7 +1995,7 @@ main() = getList[0]
     test('callee is SemanticIndexNode for indexed function call', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('''
-funcs() = [num.abs]
+funcs() = [num_abs]
 main() = funcs[0](-5)
 ''');
       final SemanticFunction? function = intermediateRepresentation
@@ -1926,9 +2014,18 @@ main() = funcs[0](-5)
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
       final SemanticListNode listNode = function!.body as SemanticListNode;
-      for (final SemanticNode element in listNode.value) {
-        expect(element.location, isNotNull);
-      }
+      checkLocations(
+        listNode.value[0].location,
+        const Location(row: 1, column: 11),
+      );
+      checkLocations(
+        listNode.value[1].location,
+        const Location(row: 1, column: 14),
+      );
+      checkLocations(
+        listNode.value[2].location,
+        const Location(row: 1, column: 17),
+      );
     });
 
     test('SemanticMapNode entries have locations', () {
@@ -1937,10 +2034,22 @@ main() = funcs[0](-5)
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
       final SemanticMapNode mapNode = function!.body as SemanticMapNode;
-      for (final SemanticMapEntryNode entry in mapNode.value) {
-        expect(entry.key.location, isNotNull);
-        expect(entry.value.location, isNotNull);
-      }
+      checkLocations(
+        mapNode.value[0].key.location,
+        const Location(row: 1, column: 11),
+      );
+      checkLocations(
+        mapNode.value[0].value.location,
+        const Location(row: 1, column: 16),
+      );
+      checkLocations(
+        mapNode.value[1].key.location,
+        const Location(row: 1, column: 19),
+      );
+      checkLocations(
+        mapNode.value[1].value.location,
+        const Location(row: 1, column: 24),
+      );
     });
 
     test(
@@ -1996,8 +2105,8 @@ customB() = 2
       final Set<String> names = intermediateRepresentation.allFunctionNames;
       expect(names.contains('customA'), isTrue);
       expect(names.contains('customB'), isTrue);
-      expect(names.contains('num.abs'), isTrue);
-      expect(names.contains('str.concat'), isTrue);
+      expect(names.contains('num_abs'), isTrue);
+      expect(names.contains('str_concat'), isTrue);
     });
   });
 
@@ -2018,7 +2127,7 @@ customB() = 2
 
     test('function call as map key is valid', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = {str.concat("a", "b"): 1}');
+          getIntermediateRepresentation('main() = {str_concat("a", "b"): 1}');
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
 
@@ -2087,7 +2196,7 @@ funcB(unusedB) = 2
 
     test('parameter used in nested call is tracked', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(x) = num.abs(num.abs(x))');
+          getIntermediateRepresentation('f(x) = num_abs(num_abs(x))');
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
 
@@ -2192,7 +2301,7 @@ funcB(unusedB) = 2
         final IntermediateRepresentation intermediateRepresentation =
             IntermediateRepresentation.empty();
         final FunctionSignature? signature = intermediateRepresentation
-            .getStandardLibrarySignature('num.add');
+            .getStandardLibrarySignature('num_add');
         expect(signature, isNotNull);
         expect(signature!.arity, equals(2));
       },
@@ -2247,7 +2356,7 @@ funcB(unusedB) = 2
 
     test('map entry with function call value', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = {"abs": num.abs(-5)}');
+          getIntermediateRepresentation('main() = {"abs": num_abs(-5)}');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
       final SemanticMapNode mapNode = function!.body as SemanticMapNode;
@@ -2280,26 +2389,26 @@ funcB(unusedB) = 2
   group('SemanticCallNode toString detailed', () {
     test('call with no arguments', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = time.now()');
+          getIntermediateRepresentation('main() = time_now()');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
-      expect(function!.body.toString(), equals('time.now()'));
+      expect(function!.body.toString(), equals('time_now()'));
     });
 
     test('call with multiple arguments', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.add(1, 2)');
+          getIntermediateRepresentation('main() = num_add(1, 2)');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
-      expect(function!.body.toString(), equals('num.add(1, 2)'));
+      expect(function!.body.toString(), equals('num_add(1, 2)'));
     });
 
     test('nested call toString', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.abs(num.abs(5))');
+          getIntermediateRepresentation('main() = num_abs(num_abs(5))');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('main');
-      expect(function!.body.toString(), equals('num.abs(num.abs(5))'));
+      expect(function!.body.toString(), equals('num_abs(num_abs(5))'));
     });
   });
 
@@ -2470,7 +2579,7 @@ f(n) = let double = 10 in double
 
     test('let binding as callee is valid', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(n) = let g = num.abs in g(n)');
+          getIntermediateRepresentation('f(n) = let g = num_abs in g(n)');
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
 
@@ -2483,7 +2592,7 @@ f(n) = let double = 10 in double
     test('chained call on let binding is valid', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(n) = let g = num.abs in g(n) + 1',
+            'f(n) = let g = num_abs in g(n) + 1',
           );
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
@@ -2539,7 +2648,7 @@ f(n) = let double = 10 in double
 
     test('let in function argument is valid', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('f(n) = num.abs(let x = n in x)');
+          getIntermediateRepresentation('f(n) = num_abs(let x = n in x)');
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
 
@@ -2562,7 +2671,7 @@ f(n) = let double = 10 in double
     test('capture function before shadow is valid', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(n) = let g = num.abs, abs = 0 in g(n)',
+            'f(n) = let g = num_abs, abs = 0 in g(n)',
           );
       expect(intermediateRepresentation.warnings.length, equals(0));
     });
@@ -2620,13 +2729,13 @@ f(n) = let double = 10 in double
       expect(function.body.toString(), contains('in'));
     });
 
-    test('location is preserved', () {
+    test('SemanticLetNode location is preserved', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation('f(n) = let x = 1 in x');
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('f');
       final SemanticLetNode letNode = function!.body as SemanticLetNode;
-      expect(letNode.location, isNotNull);
+      checkLocations(letNode.location, const Location(row: 1, column: 8));
     });
 
     test('binding locations are preserved', () {
@@ -2635,9 +2744,14 @@ f(n) = let double = 10 in double
       final SemanticFunction? function = intermediateRepresentation
           .getCustomFunction('f');
       final SemanticLetNode letNode = function!.body as SemanticLetNode;
-      for (final SemanticLetBindingNode binding in letNode.bindings) {
-        expect(binding.location, isNotNull);
-      }
+      checkLocations(
+        letNode.bindings[0].location,
+        const Location(row: 1, column: 12),
+      );
+      checkLocations(
+        letNode.bindings[1].location,
+        const Location(row: 1, column: 19),
+      );
     });
   });
 
@@ -2817,7 +2931,25 @@ f(n) = let double = 10 in double
           .getCustomFunction('f');
       final SemanticLambdaNode lambdaNode =
           function!.body as SemanticLambdaNode;
-      expect(lambdaNode.location, isNotNull);
+      checkLocations(lambdaNode.location, const Location(row: 1, column: 7));
+    });
+
+    test('SemanticLambdaNode toString renders parameters and body', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('f() = (x, y) -> x + y');
+      final SemanticFunction? function = intermediateRepresentation
+          .getCustomFunction('f');
+
+      expect(function!.body.toString(), equals('(x, y) -> +(x, y)'));
+    });
+
+    test('a lambda parameter called as a function is marked as used', () {
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation('main() = ((f) -> f(1))((x) -> x + 1)');
+
+      // If the callee "f" were not tracked as a used lambda parameter, the
+      // analyzer would emit an UnusedLambdaParameterWarning for it.
+      expect(intermediateRepresentation.warnings, isEmpty);
     });
 
     test('Function parameter is not lambda parameter', () {

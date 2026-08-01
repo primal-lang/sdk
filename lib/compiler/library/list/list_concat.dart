@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListConcat extends NativeFunctionTerm {
   const ListConcat()
     : super(
-        name: 'list.concat',
+        name: 'list_concat',
         parameters: const [
           Parameter.list('a'),
           Parameter.list('b'),

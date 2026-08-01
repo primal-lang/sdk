@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class VectorNormalize extends NativeFunctionTerm {
   const VectorNormalize()
     : super(
-        name: 'vector.normalize',
+        name: 'vector_normalize',
         parameters: const [
           Parameter.vector('a'),
         ],

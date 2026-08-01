@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.5.3 - Bronze Axe
+
+### Language
+
+#### Changed
+
+- **Breaking change: dots are no longer valid in identifiers** - Function names, parameter names, `let` binding names and lambda parameter names must now match `[a-zA-Z]\w*`.
+
 ## 0.5.2 - Bronze Axe
 
 ### CLI

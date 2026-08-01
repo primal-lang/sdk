@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DirectoryRename extends NativeFunctionTerm {
   const DirectoryRename()
     : super(
-        name: 'directory.rename',
+        name: 'directory_rename',
         parameters: const [
           Parameter.directory('a'),
           Parameter.string('b'),

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeIsBefore extends NativeFunctionTerm {
   const TimeIsBefore()
     : super(
-        name: 'time.isBefore',
+        name: 'time_isBefore',
         parameters: const [
           Parameter.timestamp('a'),
           Parameter.timestamp('b'),

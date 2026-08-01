@@ -10,7 +10,7 @@ sources:
 
 # Error Handling
 
-**TLDR**: Primal provides a simple yet effective error handling model using `error.throw` to raise errors and `try` to catch them, enabling you to write robust code that gracefully handles failure cases.
+**TLDR**: Primal provides a simple yet effective error handling model using `error_throw` to raise errors and `try` to catch them, enabling you to write robust code that gracefully handles failure cases.
 
 ## Overview
 
@@ -18,15 +18,15 @@ In Primal, errors are values that can be thrown and caught. Unlike exceptions in
 
 The error handling model consists of two core mechanisms:
 
-- **Throwing errors** with `error.throw(code, message)`
+- **Throwing errors** with `error_throw(code, message)`
 - **Catching errors** with `try(expression, fallback)`
 
 ## Throwing Errors
 
-Use `error.throw` to raise an error with a custom code and message:
+Use `error_throw` to raise an error with a custom code and message:
 
 ```
-error.throw(code, message)
+error_throw(code, message)
 ```
 
 The code can be any value (commonly a number or string), and the message should be a descriptive string explaining what went wrong.
@@ -35,12 +35,12 @@ The code can be any value (commonly a number or string), and the message should 
 
 ```
 // Throwing a simple error
-error.throw(404, "Resource not found")
+error_throw(404, "Resource not found")
 
 // Using error codes for different scenarios
 validateAge(age) =
-  if (age < 0) error.throw("INVALID_AGE", "Age cannot be negative")
-  else if (age > 150) error.throw("INVALID_AGE", "Age is unrealistically high")
+  if (age < 0) error_throw("INVALID_AGE", "Age cannot be negative")
+  else if (age > 150) error_throw("INVALID_AGE", "Age is unrealistically high")
   else age
 ```
 
@@ -58,13 +58,13 @@ If the expression evaluates successfully, its result is returned. If the express
 
 ```
 // Catching a division by zero error
-try(num.div(10, 0), 0) // returns 0
+try(num_div(10, 0), 0) // returns 0
 
 // Providing a default value when parsing fails
-try(json.decode(input), {})
+try(json_decode(input), {})
 
 // Safe list access with a default
-safeGet(items, index) = try(list.at(items, index), "not found")
+safeGet(items, index) = try(list_at(items, index), "not found")
 ```
 
 ## Built-in Error Types
@@ -75,36 +75,36 @@ Many core functions throw errors when given invalid input. Here are common scena
 
 | Operation           | Error Condition                                          |
 | ------------------- | -------------------------------------------------------- |
-| `num.div(a, b)`     | Division by zero                                         |
-| `num.mod(a, b)`     | Division by zero                                         |
-| `num.sqrt(a)`       | Negative number                                          |
-| `num.pow(a, b)`     | Negative base with fractional exponent, or overflow      |
-| `num.log(a)`        | Non-positive number                                      |
-| `num.logBase(a, b)` | Non-positive number, non-positive base, or base equals 1 |
+| `num_div(a, b)`     | Division by zero                                         |
+| `num_mod(a, b)`     | Division by zero                                         |
+| `num_sqrt(a)`       | Negative number                                          |
+| `num_pow(a, b)`     | Negative base with fractional exponent, or overflow      |
+| `num_log(a)`        | Non-positive number                                      |
+| `num_logBase(a, b)` | Non-positive number, non-positive base, or base equals 1 |
 
 ### Collection Errors
 
 | Operation                        | Error Condition                 |
 | -------------------------------- | ------------------------------- |
-| `list.at(list, index)`           | Index out of bounds or negative |
-| `list.first(list)`               | Empty list                      |
-| `list.last(list)`                | Empty list                      |
-| `list.sublist(list, start, end)` | Invalid indices                 |
-| `list.chunk(list, size)`         | Size is zero or negative        |
-| `map.at(map, key)`               | Key not found                   |
-| `stack.pop(stack)`               | Empty stack                     |
-| `stack.peek(stack)`              | Empty stack                     |
-| `queue.dequeue(queue)`           | Empty queue                     |
-| `queue.peek(queue)`              | Empty queue                     |
+| `list_at(list, index)`           | Index out of bounds or negative |
+| `list_first(list)`               | Empty list                      |
+| `list_last(list)`                | Empty list                      |
+| `list_sublist(list, start, end)` | Invalid indices                 |
+| `list_chunk(list, size)`         | Size is zero or negative        |
+| `map_at(map, key)`               | Key not found                   |
+| `stack_pop(stack)`               | Empty stack                     |
+| `stack_peek(stack)`              | Empty stack                     |
+| `queue_dequeue(queue)`           | Empty queue                     |
+| `queue_peek(queue)`              | Empty queue                     |
 
 ### Vector Errors
 
 | Operation             | Error Condition                                     |
 | --------------------- | --------------------------------------------------- |
-| `vector.new(list)`    | List contains non-numeric elements                  |
-| `vector.add(a, b)`    | Vectors have different lengths                      |
-| `vector.normalize(v)` | Zero magnitude                                      |
-| `vector.angle(a, b)`  | Different lengths, empty vectors, or zero magnitude |
+| `vector_new(list)`    | List contains non-numeric elements                  |
+| `vector_add(a, b)`    | Vectors have different lengths                      |
+| `vector_normalize(v)` | Zero magnitude                                      |
+| `vector_angle(a, b)`  | Different lengths, empty vectors, or zero magnitude |
 
 ## Best Practices
 
@@ -114,10 +114,10 @@ Error messages should clearly explain what went wrong and, when possible, sugges
 
 ```
 // Good: Descriptive message
-error.throw("INVALID_EMAIL", "Email must contain an @ symbol")
+error_throw("INVALID_EMAIL", "Email must contain an @ symbol")
 
 // Avoid: Vague message
-error.throw(1, "error")
+error_throw(1, "error")
 ```
 
 ### Use Consistent Error Codes
@@ -129,8 +129,8 @@ Choose a consistent format for error codes throughout your program. Common appro
 
 ```
 // Define error codes as functions for consistency
-errorNotFound() = error.throw("NOT_FOUND", "The requested item was not found")
-errorInvalidInput(field) = error.throw("INVALID_INPUT", str.concat("Invalid value for: ", field))
+errorNotFound() = error_throw("NOT_FOUND", "The requested item was not found")
+errorInvalidInput(field) = error_throw("INVALID_INPUT", str_concat("Invalid value for: ", field))
 ```
 
 ### Validate Early
@@ -139,9 +139,9 @@ Check inputs at the beginning of your functions to catch errors early:
 
 ```
 calculateDiscount(price, percentage) =
-  if (price < 0) error.throw("INVALID_PRICE", "Price cannot be negative")
-  else if (percentage < 0) error.throw("INVALID_PERCENTAGE", "Percentage cannot be negative")
-  else if (percentage > 100) error.throw("INVALID_PERCENTAGE", "Percentage cannot exceed 100")
+  if (price < 0) error_throw("INVALID_PRICE", "Price cannot be negative")
+  else if (percentage < 0) error_throw("INVALID_PERCENTAGE", "Percentage cannot be negative")
+  else if (percentage > 100) error_throw("INVALID_PERCENTAGE", "Percentage cannot exceed 100")
   else price * (1 - percentage / 100)
 ```
 
@@ -151,10 +151,10 @@ When catching errors, choose fallback values that make sense for your use case:
 
 ```
 // Return an empty list when the source might fail
-safeParse(jsonString) = try(json.decode(jsonString), [])
+safeParse(jsonString) = try(json_decode(jsonString), [])
 
 // Return a neutral value for numeric operations
-safeSquareRoot(n) = try(num.sqrt(n), 0)
+safeSquareRoot(n) = try(num_sqrt(n), 0)
 ```
 
 ### Chain Operations Safely
@@ -164,9 +164,9 @@ When performing multiple operations that might fail, use nested `try` expression
 ```
 // Process user data with multiple potential failure points
 processUser(userData) =
-  let parsed = try(json.decode(userData), {})
-  in let name = try(map.at(parsed, "name"), "Anonymous")
-  in let age = try(map.at(parsed, "age"), 0)
+  let parsed = try(json_decode(userData), {})
+  in let name = try(map_at(parsed, "name"), "Anonymous")
+  in let age = try(map_at(parsed, "age"), 0)
   in {"name": name, "age": age}
 ```
 
@@ -175,7 +175,7 @@ processUser(userData) =
 ### Safe Division Function
 
 ```
-safeDivide(a, b) = try(num.div(a, b), 0)
+safeDivide(a, b) = try(num_div(a, b), 0)
 
 main() = safeDivide(10, 0) // returns 0 instead of throwing an error
 ```
@@ -184,10 +184,10 @@ main() = safeDivide(10, 0) // returns 0 instead of throwing an error
 
 ```
 validateUsername(username) =
-  if (str.length(username) < 3)
-    error.throw("USERNAME_TOO_SHORT", "Username must be at least 3 characters")
-  else if (str.length(username) > 20)
-    error.throw("USERNAME_TOO_LONG", "Username cannot exceed 20 characters")
+  if (str_length(username) < 3)
+    error_throw("USERNAME_TOO_SHORT", "Username must be at least 3 characters")
+  else if (str_length(username) > 20)
+    error_throw("USERNAME_TOO_LONG", "Username cannot exceed 20 characters")
   else
     username
 
@@ -201,21 +201,21 @@ createUser(username) =
 ```
 // Parse each item, using a default if parsing fails
 parseItems(items) =
-  list.map(items, (item) => try(json.decode(item), {}))
+  list_map(items, (item) => try(json_decode(item), {}))
 
 // Filter out items that would cause errors
 safeFilter(items) =
-  list.filter(items, (item) => try(let check = list.at(item, 0) in true, false))
+  list_filter(items, (item) => try(let check = list_at(item, 0) in true, false))
 ```
 
 ### Configuration Loading
 
 ```
 loadConfig(path) =
-  let content = try(file.read(path), "{}")
-  in let config = try(json.decode(content), {})
-  in let port = try(map.at(config, "port"), 8080)
-  in let host = try(map.at(config, "host"), "localhost")
+  let content = try(file_read(path), "{}")
+  in let config = try(json_decode(content), {})
+  in let port = try(map_at(config, "port"), 8080)
+  in let host = try(map_at(config, "host"), "localhost")
   in {"port": port, "host": host}
 ```
 

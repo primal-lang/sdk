@@ -55,7 +55,7 @@ Test files follow the `<module>_test.dart` naming convention:
 
 - `lexical_analyzer_test.dart` - Tests for the lexical analyzer
 - `compiler_test.dart` - Tests for the main `Compiler` class
-- `file_test.dart` - Tests for `file.*` standard library functions
+- `file_test.dart` - Tests for `file_*` standard library functions
 - `samples_test.dart` - Integration tests using sample programs
 
 Tests are grouped by logical units rather than individual classes when multiple classes work together.
@@ -142,7 +142,7 @@ import '../helpers/pipeline_helpers.dart';  // Pipeline only
 The `test/resources/` directory contains test fixtures:
 
 - `sample.prm` - A sample Primal program with various language features, plus a
-  suite of `test.` functions exercised by the `--test` runner
+  suite of `test_` functions exercised by the `--test` runner
 - `samples/` - Complete Primal programs for integration tests (factorial, fibonacci, quicksort, etc.)
 - `files/` - Test files for file system operations
 

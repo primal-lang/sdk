@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrTake extends NativeFunctionTerm {
   const StrTake()
     : super(
-        name: 'str.take',
+        name: 'str_take',
         parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),

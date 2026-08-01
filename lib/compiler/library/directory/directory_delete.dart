@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DirectoryDelete extends NativeFunctionTerm {
   const DirectoryDelete()
     : super(
-        name: 'directory.delete',
+        name: 'directory_delete',
         parameters: const [
           Parameter.directory('a'),
         ],

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListSwap extends NativeFunctionTerm {
   const ListSwap()
     : super(
-        name: 'list.swap',
+        name: 'list_swap',
         parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),

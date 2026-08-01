@@ -32,19 +32,19 @@ void main() {
 
       expect(
         intermediateRepresentation.standardLibrarySignatures.containsKey(
-          'num.add',
+          'num_add',
         ),
         isTrue,
       );
       expect(
         intermediateRepresentation.standardLibrarySignatures.containsKey(
-          'str.length',
+          'str_length',
         ),
         isTrue,
       );
       expect(
         intermediateRepresentation.standardLibrarySignatures.containsKey(
-          'list.map',
+          'list_map',
         ),
         isTrue,
       );
@@ -80,7 +80,7 @@ void main() {
         );
         expect(
           intermediateRepresentation.standardLibrarySignatures.containsKey(
-            'num.add',
+            'num_add',
           ),
           isTrue,
         );
@@ -164,7 +164,7 @@ void main() {
           );
       final FunctionSignature? numAddSig = intermediateRepresentation
           .getStandardLibrarySignature(
-            'num.add',
+            'num_add',
           );
 
       expect(numAddSig, isA<FunctionSignature>());
@@ -197,7 +197,7 @@ void main() {
             'main() = 42',
           );
 
-      expect(intermediateRepresentation.containsFunction('num.add'), isTrue);
+      expect(intermediateRepresentation.containsFunction('num_add'), isTrue);
     });
 
     test('containsFunction returns false for unknown functions', () {
@@ -224,7 +224,7 @@ void main() {
         isTrue,
       );
       expect(
-        intermediateRepresentation.allFunctionNames.contains('num.add'),
+        intermediateRepresentation.allFunctionNames.contains('num_add'),
         isTrue,
       );
     });
@@ -235,7 +235,7 @@ void main() {
 
       expect(intermediateRepresentation.allFunctionNames, isNotEmpty);
       expect(
-        intermediateRepresentation.allFunctionNames.contains('num.add'),
+        intermediateRepresentation.allFunctionNames.contains('num_add'),
         isTrue,
       );
       expect(
@@ -287,7 +287,7 @@ void main() {
           );
 
       expect(
-        intermediateRepresentation.getCustomFunction('num.add'),
+        intermediateRepresentation.getCustomFunction('num_add'),
         isNull,
       );
     });
@@ -470,7 +470,7 @@ void main() {
       final IntermediateRepresentation intermediateRepresentation =
           IntermediateRepresentation.empty();
       final FunctionSignature? notSig = intermediateRepresentation
-          .getStandardLibrarySignature('bool.not');
+          .getStandardLibrarySignature('bool_not');
 
       expect(notSig, isNotNull);
       expect(notSig?.arity, equals(1));
@@ -525,7 +525,7 @@ void main() {
             );
 
         expect(
-          intermediateRepresentation.getCustomFunction('str.length'),
+          intermediateRepresentation.getCustomFunction('str_length'),
           isNull,
         );
       },
@@ -575,7 +575,7 @@ void main() {
     test('function with nested call body compiles correctly', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main() = num.add(1, num.mul(2, 3))',
+            'main() = num_add(1, num_mul(2, 3))',
           );
 
       expect(
@@ -697,19 +697,19 @@ void main() {
 
       expect(
         intermediateRepresentation.standardLibrarySignatures.containsKey(
-          'list.map',
+          'list_map',
         ),
         isTrue,
       );
       expect(
         intermediateRepresentation.standardLibrarySignatures.containsKey(
-          'str.concat',
+          'str_concat',
         ),
         isTrue,
       );
       expect(
         intermediateRepresentation.standardLibrarySignatures.containsKey(
-          'bool.and',
+          'bool_and',
         ),
         isTrue,
       );
@@ -788,7 +788,7 @@ void main() {
 
     test('body is a SemanticCallNode for function call', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.add(1, 2)');
+          getIntermediateRepresentation('main() = num_add(1, 2)');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
@@ -815,7 +815,7 @@ void main() {
       () {
         final IntermediateRepresentation intermediateRepresentation =
             getIntermediateRepresentation(
-              'apply(f, x) = f(x)\nmain() = apply(num.abs, 5)',
+              'apply(f, x) = f(x)\nmain() = apply(num_abs, 5)',
             );
         final SemanticFunction mainFunction =
             intermediateRepresentation.customFunctions['main']!;
@@ -939,14 +939,14 @@ void main() {
     test('SemanticIdentifierNode toString returns name', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'apply(f, x) = f(x)\nmain() = apply(num.abs, 5)',
+            'apply(f, x) = f(x)\nmain() = apply(num_abs, 5)',
           );
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       final SemanticCallNode callNode = mainFunction.body as SemanticCallNode;
       final SemanticNode functionArgument = callNode.arguments[0];
 
-      expect(functionArgument.toString(), equals('num.abs'));
+      expect(functionArgument.toString(), equals('num_abs'));
     });
 
     test('SemanticBoundVariableNode toString returns name', () {
@@ -962,11 +962,11 @@ void main() {
 
     test('SemanticCallNode toString returns function and arguments', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.add(1, 2)');
+          getIntermediateRepresentation('main() = num_add(1, 2)');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
 
-      expect(mainFunction.body.toString(), equals('num.add(1, 2)'));
+      expect(mainFunction.body.toString(), equals('num_add(1, 2)'));
     });
 
     test('SemanticMapEntryNode toString returns key colon value', () {
@@ -992,9 +992,10 @@ void main() {
     test(
       'throws DuplicatedFunctionError when custom function shadows standard library',
       () {
-        // Standard library functions use dotted names like 'num.add', which are valid identifiers
+        // Standard library functions use underscored names like 'num_add',
+        // which a user program is free to spell but not to redefine
         expect(
-          () => getIntermediateRepresentation('num.add(x, y) = x\nmain() = 0'),
+          () => getIntermediateRepresentation('num_add(x, y) = x\nmain() = 0'),
           throwsA(isA<DuplicatedFunctionError>()),
         );
       },
@@ -1026,14 +1027,14 @@ void main() {
 
     test('throws InvalidNumberOfArgumentsError for wrong arity', () {
       expect(
-        () => getIntermediateRepresentation('main() = num.add(1)'),
+        () => getIntermediateRepresentation('main() = num_add(1)'),
         throwsA(isA<InvalidNumberOfArgumentsError>()),
       );
     });
 
     test('throws InvalidNumberOfArgumentsError for too many arguments', () {
       expect(
-        () => getIntermediateRepresentation('main() = num.add(1, 2, 3)'),
+        () => getIntermediateRepresentation('main() = num_add(1, 2, 3)'),
         throwsA(isA<InvalidNumberOfArgumentsError>()),
       );
     });
@@ -1135,7 +1136,7 @@ void main() {
       'InvalidNumberOfArgumentsError message contains expected and actual',
       () {
         try {
-          getIntermediateRepresentation('main() = num.add(1)');
+          getIntermediateRepresentation('main() = num_add(1)');
           fail('Expected InvalidNumberOfArgumentsError');
         } on InvalidNumberOfArgumentsError catch (error) {
           expect(error.toString(), contains('2'));
@@ -1320,7 +1321,7 @@ void main() {
     test('no warnings when parameter is used in nested call', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'f(x) = num.add(x, 1)\nmain() = f(5)',
+            'f(x) = num_add(x, 1)\nmain() = f(5)',
           );
 
       expect(intermediateRepresentation.warnings, isEmpty);
@@ -1432,7 +1433,7 @@ void main() {
 
     test('lowering SemanticCallNode produces CallTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
-          getIntermediateRepresentation('main() = num.add(1, 2)');
+          getIntermediateRepresentation('main() = num_add(1, 2)');
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
       const Lowerer lowerer = Lowerer({});
@@ -1444,7 +1445,7 @@ void main() {
     test('lowering SemanticIdentifierNode produces FunctionReferenceTerm', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'apply(f, x) = f(x)\nmain() = apply(num.abs, 5)',
+            'apply(f, x) = f(x)\nmain() = apply(num_abs, 5)',
           );
       final SemanticFunction mainFunction =
           intermediateRepresentation.customFunctions['main']!;
@@ -1605,7 +1606,7 @@ void main() {
     test('higher-order function passing custom function compiles', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'double(x) = x * 2\nmain() = list.map([1, 2, 3], double)',
+            'double(x) = x * 2\nmain() = list_map([1, 2, 3], double)',
           );
 
       expect(
@@ -1618,7 +1619,7 @@ void main() {
     test('deeply nested function calls compile', () {
       final IntermediateRepresentation intermediateRepresentation =
           getIntermediateRepresentation(
-            'main() = num.add(num.add(num.add(1, 2), 3), 4)',
+            'main() = num_add(num_add(num_add(1, 2), 3), 4)',
           );
 
       expect(

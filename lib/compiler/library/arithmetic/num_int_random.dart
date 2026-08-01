@@ -8,7 +8,7 @@ final Random _random = Random();
 class NumIntegerRandom extends NativeFunctionTerm {
   const NumIntegerRandom()
     : super(
-        name: 'num.integerRandom',
+        name: 'num_integerRandom',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

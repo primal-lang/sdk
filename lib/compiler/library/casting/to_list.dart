@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ToList extends NativeFunctionTerm {
   const ToList()
     : super(
-        name: 'to.list',
+        name: 'to_list',
         parameters: const [
           Parameter.any('a'),
         ],

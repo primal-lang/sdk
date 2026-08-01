@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrRest extends NativeFunctionTerm {
   const StrRest()
     : super(
-        name: 'str.rest',
+        name: 'str_rest',
         parameters: const [
           Parameter.string('a'),
         ],

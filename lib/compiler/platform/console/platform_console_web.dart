@@ -16,5 +16,5 @@ class PlatformConsoleWeb extends PlatformConsoleBase {
 
   @override
   String readLine() =>
-      throw const UnimplementedFunctionWebError('console.read');
+      throw const UnimplementedFunctionWebError('console_read');
 }

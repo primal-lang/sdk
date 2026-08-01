@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class Base64Decode extends NativeFunctionTerm {
   const Base64Decode()
     : super(
-        name: 'base64.decode',
+        name: 'base64_decode',
         parameters: const [
           Parameter.string('a'),
         ],

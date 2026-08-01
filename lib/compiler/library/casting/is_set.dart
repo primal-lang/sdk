@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsSet extends NativeFunctionTerm {
   const IsSet()
     : super(
-        name: 'is.set',
+        name: 'is_set',
         parameters: const [
           Parameter.any('a'),
         ],

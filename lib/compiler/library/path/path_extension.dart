@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class PathExtension extends NativeFunctionTerm {
   const PathExtension()
     : super(
-        name: 'path.extension',
+        name: 'path_extension',
         parameters: const [Parameter.string('a')],
       );
 

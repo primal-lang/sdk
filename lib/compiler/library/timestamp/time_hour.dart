@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeHour extends NativeFunctionTerm {
   const TimeHour()
     : super(
-        name: 'time.hour',
+        name: 'time_hour',
         parameters: const [
           Parameter.timestamp('a'),
         ],

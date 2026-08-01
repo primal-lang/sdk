@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileExists extends NativeFunctionTerm {
   const FileExists()
     : super(
-        name: 'file.exists',
+        name: 'file_exists',
         parameters: const [
           Parameter.file('a'),
         ],

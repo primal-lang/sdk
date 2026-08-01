@@ -3,7 +3,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeNow extends NativeFunctionTerm {
   const TimeNow()
     : super(
-        name: 'time.now',
+        name: 'time_now',
         parameters: const [],
       );
 

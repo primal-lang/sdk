@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumTan extends NativeFunctionTerm {
   const NumTan()
     : super(
-        name: 'num.tan',
+        name: 'num_tan',
         parameters: const [
           Parameter.number('a'),
         ],

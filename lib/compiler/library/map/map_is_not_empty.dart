@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MapIsNotEmpty extends NativeFunctionTerm {
   const MapIsNotEmpty()
     : super(
-        name: 'map.isNotEmpty',
+        name: 'map_isNotEmpty',
         parameters: const [
           Parameter.map('a'),
         ],

@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrLast extends NativeFunctionTerm {
   const StrLast()
     : super(
-        name: 'str.last',
+        name: 'str_last',
         parameters: const [
           Parameter.string('a'),
         ],

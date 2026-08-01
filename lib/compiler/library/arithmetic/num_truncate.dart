@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumTruncate extends NativeFunctionTerm {
   const NumTruncate()
     : super(
-        name: 'num.truncate',
+        name: 'num_truncate',
         parameters: const [
           Parameter.number('a'),
         ],

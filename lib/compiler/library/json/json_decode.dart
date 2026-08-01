@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class JsonDecode extends NativeFunctionTerm {
   const JsonDecode()
     : super(
-        name: 'json.decode',
+        name: 'json_decode',
         parameters: const [
           Parameter.string('a'),
         ],
@@ -49,6 +49,11 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
     }
   }
 
+  /// Converts a value produced by [jsonDecode] into a [Term].
+  ///
+  /// [jsonDecode] is called without a reviver, so its output domain is closed:
+  /// `null`, [bool], [num], [String], [List] and [Map]. Every member is handled
+  /// here, which is why the [Map] case needs no further type test.
   Term getValue(dynamic value) {
     if (value == null) {
       throw const RuntimeError('JSON null values are not supported');
@@ -60,10 +65,8 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
       return StringTerm(value);
     } else if (value is List) {
       return getList(value);
-    } else if (value is Map) {
-      return getMap(value);
     } else {
-      throw InvalidValueError(value.toString());
+      return getMap(value as Map);
     }
   }
 

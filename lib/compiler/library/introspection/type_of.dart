@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TypeOf extends NativeFunctionTerm {
   const TypeOf()
     : super(
-        name: 'type.of',
+        name: 'type_of',
         parameters: const [
           Parameter.any('a'),
         ],

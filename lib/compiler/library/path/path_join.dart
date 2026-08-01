@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class PathJoin extends NativeFunctionTerm {
   const PathJoin()
     : super(
-        name: 'path.join',
+        name: 'path_join',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

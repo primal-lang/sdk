@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeIsAfter extends NativeFunctionTerm {
   const TimeIsAfter()
     : super(
-        name: 'time.isAfter',
+        name: 'time_isAfter',
         parameters: const [
           Parameter.timestamp('a'),
           Parameter.timestamp('b'),

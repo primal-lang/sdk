@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DirectoryMove extends NativeFunctionTerm {
   const DirectoryMove()
     : super(
-        name: 'directory.move',
+        name: 'directory_move',
         parameters: const [
           Parameter.directory('a'),
           Parameter.directory('b'),

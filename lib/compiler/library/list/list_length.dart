@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListLength extends NativeFunctionTerm {
   const ListLength()
     : super(
-        name: 'list.length',
+        name: 'list_length',
         parameters: const [
           Parameter.list('a'),
         ],

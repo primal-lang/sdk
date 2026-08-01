@@ -17,50 +17,50 @@ Number of functions: 4
 
 ### Type Of
 
-- **Signature:** `type.of(a: Any): String`
+- **Signature:** `type_of(a: Any): String`
 - **Input:** An argument of any type
 - **Output:** The canonical runtime type name as a string
 - **Purity:** Pure
 - **Example:**
 
 ```
-type.of([1, 2, 3]) // returns "List"
+type_of([1, 2, 3]) // returns "List"
 ```
 
 ## Function Inspection
 
 ### Function Name
 
-- **Signature:** `function.name(a: Function): String`
+- **Signature:** `function_name(a: Function): String`
 - **Input:** A function value
 - **Output:** The function's intrinsic name as a string
 - **Purity:** Pure
 - **Example:**
 
 ```
-function.name(num.add) // returns "num.add"
+function_name(num_add) // returns "num_add"
 ```
 
 ### Function Arity
 
-- **Signature:** `function.arity(a: Function): Number`
+- **Signature:** `function_arity(a: Function): Number`
 - **Input:** A function value
 - **Output:** The number of parameters accepted by the function
 - **Purity:** Pure
 - **Example:**
 
 ```
-function.arity(num.add) // returns 2
+function_arity(num_add) // returns 2
 ```
 
 ### Function Parameters
 
-- **Signature:** `function.parameters(a: Function): List`
+- **Signature:** `function_parameters(a: Function): List`
 - **Input:** A function value
 - **Output:** The function parameter names as a list of strings, in declaration order
 - **Purity:** Pure
 - **Example:**
 
 ```
-function.parameters(num.add) // returns ["a", "b"]
+function_parameters(num_add) // returns ["a", "b"]
 ```

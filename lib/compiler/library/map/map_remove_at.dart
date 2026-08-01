@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MapRemoveAt extends NativeFunctionTerm {
   const MapRemoveAt()
     : super(
-        name: 'map.removeAt',
+        name: 'map_removeAt',
         parameters: const [
           Parameter.map('a'),
           Parameter.hashable('b'),

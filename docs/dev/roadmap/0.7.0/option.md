@@ -18,15 +18,15 @@ Add explicit values for present or absent results:
 
 ```primal
 safeHead(xs) =
-  if (list.isEmpty(xs)) none else some(list.first(xs))
+  if (list_isEmpty(xs)) none else some(list_first(xs))
 
-value() = maybe.unwrapOr(safeHead([]), 0)
+value() = maybe_unwrapOr(safeHead([]), 0)
 ```
 
 **Design notes:**
 
 - A minimal representation could be atoms/tags plus payload, but a dedicated runtime type is cleaner.
-- The standard library would need helpers such as `maybe.map`, `maybe.flatMap`, `maybe.unwrapOr`, and `maybe.isSome`.
+- The standard library would need helpers such as `maybe_map`, `maybe_flatMap`, `maybe_unwrapOr`, and `maybe_isSome`.
 - This becomes especially valuable if safe indexing/lookups are added.
 - It also reduces overuse of `try(a, b)` for non-exceptional control flow.
 
@@ -94,21 +94,21 @@ process(a) = if(isFailure(a), true, false)
 ```
 
 ```primal
-result.success(a: Any): Result
+result_success(a: Any): Result
 ```
 
 ```primal
-result.failure(a: Any): Result
+result_failure(a: Any): Result
 ```
 
 ```primal
-result.isSuccess(a: Result): Boolean
+result_isSuccess(a: Result): Boolean
 ```
 
 ```primal
-result.isFailure(a: Result): Boolean
+result_isFailure(a: Result): Boolean
 ```
 
 ```primal
-result.get(a: Result): Any
+result_get(a: Result): Any
 ```

@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumMax extends NativeFunctionTerm {
   const NumMax()
     : super(
-        name: 'num.max',
+        name: 'num_max',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumIsNegative extends NativeFunctionTerm {
   const NumIsNegative()
     : super(
-        name: 'num.isNegative',
+        name: 'num_isNegative',
         parameters: const [
           Parameter.number('a'),
         ],

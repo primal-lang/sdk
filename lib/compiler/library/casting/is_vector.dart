@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsVector extends NativeFunctionTerm {
   const IsVector()
     : super(
-        name: 'is.vector',
+        name: 'is_vector',
         parameters: const [
           Parameter.any('a'),
         ],

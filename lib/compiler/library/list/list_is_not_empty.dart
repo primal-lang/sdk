@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListIsNotEmpty extends NativeFunctionTerm {
   const ListIsNotEmpty()
     : super(
-        name: 'list.isNotEmpty',
+        name: 'list_isNotEmpty',
         parameters: const [
           Parameter.list('a'),
         ],

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumDec extends NativeFunctionTerm {
   const NumDec()
     : super(
-        name: 'num.dec',
+        name: 'num_dec',
         parameters: const [
           Parameter.number('a'),
         ],

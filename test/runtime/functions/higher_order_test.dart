@@ -12,14 +12,14 @@ void main() {
     test('Function as parameter', () {
       final RuntimeFacade runtime = getRuntime('''
 foo(f, v) = f(v)
-main() = foo(num.abs, -4)
+main() = foo(num_abs, -4)
 ''');
       checkResult(runtime, 4);
     });
 
     test('function stored in variable and called indirectly', () {
       final RuntimeFacade runtime = getRuntime('''
-bar() = num.abs
+bar() = num_abs
 foo(v) = bar()(v)
 main() = foo(-4)
 ''');
@@ -28,7 +28,7 @@ main() = foo(-4)
 
     test('function stored in variable and passed as argument', () {
       final RuntimeFacade runtime = getRuntime('''
-bar() = num.abs
+bar() = num_abs
 foo(f, v) = f(v)
 main() = foo(bar(), -4)
 ''');
@@ -36,8 +36,8 @@ main() = foo(bar(), -4)
     });
 
     test('core function prints its signature', () {
-      final RuntimeFacade runtime = getRuntime('main() = num.add');
-      checkResult(runtime, '"num.add(a: Number, b: Number)"');
+      final RuntimeFacade runtime = getRuntime('main() = num_add');
+      checkResult(runtime, '"num_add(a: Number, b: Number)"');
     });
 
     test('custom function prints its signature', () {
@@ -49,215 +49,215 @@ main() = foo
     });
 
     test('list of functions prints their signatures', () {
-      final RuntimeFacade runtime = getRuntime('main() = [num.add, num.abs]');
+      final RuntimeFacade runtime = getRuntime('main() = [num_add, num_abs]');
       checkResult(
         runtime,
-        '["num.add(a: Number, b: Number)", "num.abs(a: Number)"]',
+        '["num_add(a: Number, b: Number)", "num_abs(a: Number)"]',
       );
     });
   });
 
   group('Custom Functions with Higher-Order', () {
-    test('list.map with custom function', () {
+    test('list_map with custom function', () {
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
-main() = list.map([1, 2, 3], double)
+main() = list_map([1, 2, 3], double)
 ''');
       checkResult(runtime, [2, 4, 6]);
     });
 
-    test('list.filter with custom predicate', () {
+    test('list_filter with custom predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 isSmall(n) = n < 5
-main() = list.filter([1, 7, 3, 9, 2], isSmall)
+main() = list_filter([1, 7, 3, 9, 2], isSmall)
 ''');
       checkResult(runtime, [1, 3, 2]);
     });
 
-    test('list.reduce with custom function', () {
+    test('list_reduce with custom function', () {
       final RuntimeFacade runtime = getRuntime('''
 mul(a, b) = a * b
-main() = list.reduce([1, 2, 3, 4], 1, mul)
+main() = list_reduce([1, 2, 3, 4], 1, mul)
 ''');
       checkResult(runtime, 24);
     });
 
-    test('list.sort with custom comparator', () {
+    test('list_sort with custom comparator', () {
       final RuntimeFacade runtime = getRuntime('''
-reverseCompare(a, b) = num.compare(b, a)
-main() = list.sort([3, 1, 5, 2, 4], reverseCompare)
+reverseCompare(a, b) = num_compare(b, a)
+main() = list_sort([3, 1, 5, 2, 4], reverseCompare)
 ''');
       checkResult(runtime, [5, 4, 3, 2, 1]);
     });
 
-    test('list.all with custom predicate', () {
+    test('list_all with custom predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.all([1, 2, 3], isPositive)
+main() = list_all([1, 2, 3], isPositive)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.any with custom predicate', () {
+    test('list_any with custom predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 isNeg(n) = n < 0
-main() = list.any([1, -2, 3], isNeg)
+main() = list_any([1, -2, 3], isNeg)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.none with custom predicate', () {
+    test('list_none with custom predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 isNeg(n) = n < 0
-main() = list.none([1, 2, 3], isNeg)
+main() = list_none([1, 2, 3], isNeg)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.zip with custom function', () {
+    test('list_zip with custom function', () {
       final RuntimeFacade runtime = getRuntime('''
 multiply(a, b) = a * b
-main() = list.zip([1, 2, 3], [4, 5, 6], multiply)
+main() = list_zip([1, 2, 3], [4, 5, 6], multiply)
 ''');
       checkResult(runtime, [4, 10, 18]);
     });
   });
 
   group('Empty List Edge Cases with Custom Functions', () {
-    test('list.map with custom function on empty list', () {
+    test('list_map with custom function on empty list', () {
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
-main() = list.map([], double)
+main() = list_map([], double)
 ''');
       checkResult(runtime, []);
     });
 
-    test('list.filter with custom predicate on empty list', () {
+    test('list_filter with custom predicate on empty list', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.filter([], isPositive)
+main() = list_filter([], isPositive)
 ''');
       checkResult(runtime, []);
     });
 
-    test('list.reduce with custom function on empty list', () {
+    test('list_reduce with custom function on empty list', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.reduce([], 100, add)
+main() = list_reduce([], 100, add)
 ''');
       checkResult(runtime, 100);
     });
 
-    test('list.all with custom predicate on empty list returns true', () {
+    test('list_all with custom predicate on empty list returns true', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.all([], isPositive)
+main() = list_all([], isPositive)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.any with custom predicate on empty list returns false', () {
+    test('list_any with custom predicate on empty list returns false', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.any([], isPositive)
+main() = list_any([], isPositive)
 ''');
       checkResult(runtime, false);
     });
 
-    test('list.none with custom predicate on empty list returns true', () {
+    test('list_none with custom predicate on empty list returns true', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.none([], isPositive)
+main() = list_none([], isPositive)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.sort with custom comparator on empty list', () {
+    test('list_sort with custom comparator on empty list', () {
       final RuntimeFacade runtime = getRuntime('''
-descending(a, b) = num.compare(b, a)
-main() = list.sort([], descending)
+descending(a, b) = num_compare(b, a)
+main() = list_sort([], descending)
 ''');
       checkResult(runtime, []);
     });
 
-    test('list.zip with custom function on empty lists', () {
+    test('list_zip with custom function on empty lists', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.zip([], [], add)
+main() = list_zip([], [], add)
 ''');
       checkResult(runtime, []);
     });
   });
 
   group('Single-Element List Cases with Custom Functions', () {
-    test('list.map with custom function on single element', () {
+    test('list_map with custom function on single element', () {
       final RuntimeFacade runtime = getRuntime('''
 triple(n) = n * 3
-main() = list.map([5], triple)
+main() = list_map([5], triple)
 ''');
       checkResult(runtime, [15]);
     });
 
-    test('list.filter with custom predicate matching single element', () {
+    test('list_filter with custom predicate matching single element', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.filter([5], isPositive)
+main() = list_filter([5], isPositive)
 ''');
       checkResult(runtime, [5]);
     });
 
-    test('list.filter with custom predicate not matching single element', () {
+    test('list_filter with custom predicate not matching single element', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(n) = n < 0
-main() = list.filter([5], isNegative)
+main() = list_filter([5], isNegative)
 ''');
       checkResult(runtime, []);
     });
 
-    test('list.reduce with custom function on single element', () {
+    test('list_reduce with custom function on single element', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.reduce([10], 5, add)
+main() = list_reduce([10], 5, add)
 ''');
       checkResult(runtime, 15);
     });
 
-    test('list.all with custom predicate on single matching element', () {
+    test('list_all with custom predicate on single matching element', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.all([5], isPositive)
+main() = list_all([5], isPositive)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.all with custom predicate on single non-matching element', () {
+    test('list_all with custom predicate on single non-matching element', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(n) = n < 0
-main() = list.all([5], isNegative)
+main() = list_all([5], isNegative)
 ''');
       checkResult(runtime, false);
     });
 
-    test('list.any with custom predicate on single matching element', () {
+    test('list_any with custom predicate on single matching element', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.any([5], isPositive)
+main() = list_any([5], isPositive)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.any with custom predicate on single non-matching element', () {
+    test('list_any with custom predicate on single non-matching element', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(n) = n < 0
-main() = list.any([5], isNegative)
+main() = list_any([5], isNegative)
 ''');
       checkResult(runtime, false);
     });
 
-    test('list.sort with custom comparator on single element', () {
+    test('list_sort with custom comparator on single element', () {
       final RuntimeFacade runtime = getRuntime('''
-descending(a, b) = num.compare(b, a)
-main() = list.sort([42], descending)
+descending(a, b) = num_compare(b, a)
+main() = list_sort([42], descending)
 ''');
       checkResult(runtime, [42]);
     });
@@ -268,7 +268,7 @@ main() = list.sort([42], descending)
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
 increment(n) = n + 1
-main() = list.map(list.map([1, 2, 3], double), increment)
+main() = list_map(list_map([1, 2, 3], double), increment)
 ''');
       checkResult(runtime, [3, 5, 7]);
     });
@@ -277,7 +277,7 @@ main() = list.map(list.map([1, 2, 3], double), increment)
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
 double(n) = n * 2
-main() = list.map(list.filter([-1, 2, -3, 4], isPositive), double)
+main() = list_map(list_filter([-1, 2, -3, 4], isPositive), double)
 ''');
       checkResult(runtime, [4, 8]);
     });
@@ -286,7 +286,7 @@ main() = list.map(list.filter([-1, 2, -3, 4], isPositive), double)
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
 isSmall(n) = n < 10
-main() = list.filter(list.map([1, 2, 3, 4, 5], double), isSmall)
+main() = list_filter(list_map([1, 2, 3, 4, 5], double), isSmall)
 ''');
       checkResult(runtime, [2, 4, 6, 8]);
     });
@@ -295,7 +295,7 @@ main() = list.filter(list.map([1, 2, 3, 4, 5], double), isSmall)
       final RuntimeFacade runtime = getRuntime('''
 square(n) = n * n
 add(a, b) = a + b
-main() = list.reduce(list.map([1, 2, 3], square), 0, add)
+main() = list_reduce(list_map([1, 2, 3], square), 0, add)
 ''');
       checkResult(runtime, 14);
     });
@@ -304,16 +304,16 @@ main() = list.reduce(list.map([1, 2, 3], square), 0, add)
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = n % 2 == 0
 add(a, b) = a + b
-main() = list.reduce(list.filter([1, 2, 3, 4, 5, 6], isEven), 0, add)
+main() = list_reduce(list_filter([1, 2, 3, 4, 5, 6], isEven), 0, add)
 ''');
       checkResult(runtime, 12);
     });
 
     test('sort then map with custom functions', () {
       final RuntimeFacade runtime = getRuntime('''
-descending(a, b) = num.compare(b, a)
+descending(a, b) = num_compare(b, a)
 double(n) = n * 2
-main() = list.map(list.sort([3, 1, 2], descending), double)
+main() = list_map(list_sort([3, 1, 2], descending), double)
 ''');
       checkResult(runtime, [6, 4, 2]);
     });
@@ -322,71 +322,71 @@ main() = list.map(list.sort([3, 1, 2], descending), double)
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
 isGreaterThanFour(n) = n > 4
-main() = list.filter(list.zip([1, 2, 3], [3, 4, 5], add), isGreaterThanFour)
+main() = list_filter(list_zip([1, 2, 3], [3, 4, 5], add), isGreaterThanFour)
 ''');
       checkResult(runtime, [6, 8]);
     });
   });
 
   group('Multi-Parameter Custom Functions as Higher-Order Arguments', () {
-    test('list.reduce with custom three-operation combiner', () {
+    test('list_reduce with custom three-operation combiner', () {
       final RuntimeFacade runtime = getRuntime('''
 combineWithBonus(accumulated, current) = accumulated + current + 1
-main() = list.reduce([10, 20, 30], 0, combineWithBonus)
+main() = list_reduce([10, 20, 30], 0, combineWithBonus)
 ''');
       checkResult(runtime, 63);
     });
 
-    test('list.sort with custom multi-condition comparator', () {
+    test('list_sort with custom multi-condition comparator', () {
       final RuntimeFacade runtime = getRuntime('''
-compareAbsolute(a, b) = num.compare(num.abs(a), num.abs(b))
-main() = list.sort([-5, 3, -1, 4, -2], compareAbsolute)
+compareAbsolute(a, b) = num_compare(num_abs(a), num_abs(b))
+main() = list_sort([-5, 3, -1, 4, -2], compareAbsolute)
 ''');
       checkResult(runtime, [-1, -2, 3, 4, -5]);
     });
 
-    test('list.zip with custom arithmetic combiner', () {
+    test('list_zip with custom arithmetic combiner', () {
       final RuntimeFacade runtime = getRuntime('''
 weightedSum(a, b) = a * 2 + b * 3
-main() = list.zip([1, 2, 3], [4, 5, 6], weightedSum)
+main() = list_zip([1, 2, 3], [4, 5, 6], weightedSum)
 ''');
       checkResult(runtime, [14, 19, 24]);
     });
   });
 
   group('Recursive Custom Functions with Higher-Order Functions', () {
-    test('list.map with recursive factorial function', () {
+    test('list_map with recursive factorial function', () {
       final RuntimeFacade runtime = getRuntime('''
 factorial(n) = if (n <= 1) 1 else n * factorial(n - 1)
-main() = list.map([1, 2, 3, 4, 5], factorial)
+main() = list_map([1, 2, 3, 4, 5], factorial)
 ''');
       checkResult(runtime, [1, 2, 6, 24, 120]);
     });
 
-    test('list.filter with recursive fibonacci predicate', () {
+    test('list_filter with recursive fibonacci predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 fib(n) = if (n <= 1) n else fib(n - 1) + fib(n - 2)
 isFibLessThan10(n) = fib(n) < 10
-main() = list.filter([1, 2, 3, 4, 5, 6, 7], isFibLessThan10)
+main() = list_filter([1, 2, 3, 4, 5, 6, 7], isFibLessThan10)
 ''');
       checkResult(runtime, [1, 2, 3, 4, 5, 6]);
     });
 
-    test('list.reduce with recursive sum helper', () {
+    test('list_reduce with recursive sum helper', () {
       final RuntimeFacade runtime = getRuntime('''
-sumDigits(n) = if (n < 10) n else (n % 10) + sumDigits(num.floor(n / 10))
-addDigitSums(a, b) = a + sumDigits(num.floor(b))
-main() = list.reduce([123, 456, 789], 0, addDigitSums)
+sumDigits(n) = if (n < 10) n else (n % 10) + sumDigits(num_floor(n / 10))
+addDigitSums(a, b) = a + sumDigits(num_floor(b))
+main() = list_reduce([123, 456, 789], 0, addDigitSums)
 ''');
       checkResult(runtime, 45);
     });
   });
 
   group('Higher-Order Function Error Cases', () {
-    test('list.filter throws when custom predicate returns number', () {
+    test('list_filter throws when custom predicate returns number', () {
       final RuntimeFacade runtime = getRuntime('''
 returnNumber(n) = n * 2
-main() = list.filter([1, 2, 3], returnNumber)
+main() = list_filter([1, 2, 3], returnNumber)
 ''');
       expect(
         runtime.executeMain,
@@ -395,7 +395,7 @@ main() = list.filter([1, 2, 3], returnNumber)
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
             allOf(
-              contains('list.filter'),
+              contains('list_filter'),
               contains('Boolean'),
               contains('Number'),
             ),
@@ -404,10 +404,10 @@ main() = list.filter([1, 2, 3], returnNumber)
       );
     });
 
-    test('list.filter throws when custom predicate returns string', () {
+    test('list_filter throws when custom predicate returns string', () {
       final RuntimeFacade runtime = getRuntime('''
 returnString(n) = "not a boolean"
-main() = list.filter([1, 2, 3], returnString)
+main() = list_filter([1, 2, 3], returnString)
 ''');
       expect(
         runtime.executeMain,
@@ -416,7 +416,7 @@ main() = list.filter([1, 2, 3], returnString)
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
             allOf(
-              contains('list.filter'),
+              contains('list_filter'),
               contains('Boolean'),
               contains('String'),
             ),
@@ -425,10 +425,10 @@ main() = list.filter([1, 2, 3], returnString)
       );
     });
 
-    test('list.all throws when custom predicate returns number', () {
+    test('list_all throws when custom predicate returns number', () {
       final RuntimeFacade runtime = getRuntime('''
 returnNumber(n) = n + 1
-main() = list.all([1, 2, 3], returnNumber)
+main() = list_all([1, 2, 3], returnNumber)
 ''');
       expect(
         runtime.executeMain,
@@ -437,7 +437,7 @@ main() = list.all([1, 2, 3], returnNumber)
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
             allOf(
-              contains('list.all'),
+              contains('list_all'),
               contains('Boolean'),
               contains('Number'),
             ),
@@ -446,10 +446,10 @@ main() = list.all([1, 2, 3], returnNumber)
       );
     });
 
-    test('list.any throws when custom predicate returns string', () {
+    test('list_any throws when custom predicate returns string', () {
       final RuntimeFacade runtime = getRuntime('''
 returnString(n) = "hello"
-main() = list.any([1, 2, 3], returnString)
+main() = list_any([1, 2, 3], returnString)
 ''');
       expect(
         runtime.executeMain,
@@ -458,7 +458,7 @@ main() = list.any([1, 2, 3], returnString)
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
             allOf(
-              contains('list.any'),
+              contains('list_any'),
               contains('Boolean'),
               contains('String'),
             ),
@@ -467,10 +467,10 @@ main() = list.any([1, 2, 3], returnString)
       );
     });
 
-    test('list.none throws when custom predicate returns list', () {
+    test('list_none throws when custom predicate returns list', () {
       final RuntimeFacade runtime = getRuntime('''
 returnList(n) = [n]
-main() = list.none([1, 2, 3], returnList)
+main() = list_none([1, 2, 3], returnList)
 ''');
       expect(
         runtime.executeMain,
@@ -479,7 +479,7 @@ main() = list.none([1, 2, 3], returnList)
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
             allOf(
-              contains('list.none'),
+              contains('list_none'),
               contains('Boolean'),
               contains('List'),
             ),
@@ -488,10 +488,10 @@ main() = list.none([1, 2, 3], returnList)
       );
     });
 
-    test('list.sort throws when custom comparator returns boolean', () {
+    test('list_sort throws when custom comparator returns boolean', () {
       final RuntimeFacade runtime = getRuntime('''
 badCompare(a, b) = a > b
-main() = list.sort([3, 1, 2], badCompare)
+main() = list_sort([3, 1, 2], badCompare)
 ''');
       expect(
         runtime.executeMain,
@@ -500,7 +500,7 @@ main() = list.sort([3, 1, 2], badCompare)
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
             allOf(
-              contains('list.sort'),
+              contains('list_sort'),
               contains('Number'),
               contains('Boolean'),
             ),
@@ -509,10 +509,10 @@ main() = list.sort([3, 1, 2], badCompare)
       );
     });
 
-    test('list.sort throws when custom comparator returns string', () {
+    test('list_sort throws when custom comparator returns string', () {
       final RuntimeFacade runtime = getRuntime('''
 stringCompare(a, b) = "comparison"
-main() = list.sort([3, 1, 2], stringCompare)
+main() = list_sort([3, 1, 2], stringCompare)
 ''');
       expect(
         runtime.executeMain,
@@ -521,7 +521,7 @@ main() = list.sort([3, 1, 2], stringCompare)
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
             allOf(
-              contains('list.sort'),
+              contains('list_sort'),
               contains('Number'),
               contains('String'),
             ),
@@ -530,9 +530,9 @@ main() = list.sort([3, 1, 2], stringCompare)
       );
     });
 
-    test('list.map with non-function second argument throws error', () {
+    test('list_map with non-function second argument throws error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 2, 3], 42)',
+        'main() = list_map([1, 2, 3], 42)',
       );
       expect(
         runtime.executeMain,
@@ -540,15 +540,15 @@ main() = list.sort([3, 1, 2], stringCompare)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.map'),
+            contains('list_map'),
           ),
         ),
       );
     });
 
-    test('list.filter with non-function second argument throws error', () {
+    test('list_filter with non-function second argument throws error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([1, 2, 3], "not a function")',
+        'main() = list_filter([1, 2, 3], "not a function")',
       );
       expect(
         runtime.executeMain,
@@ -556,15 +556,15 @@ main() = list.sort([3, 1, 2], stringCompare)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.filter'),
+            contains('list_filter'),
           ),
         ),
       );
     });
 
-    test('list.reduce with non-function third argument throws error', () {
+    test('list_reduce with non-function third argument throws error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([1, 2, 3], 0, true)',
+        'main() = list_reduce([1, 2, 3], 0, true)',
       );
       expect(
         runtime.executeMain,
@@ -572,15 +572,15 @@ main() = list.sort([3, 1, 2], stringCompare)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.reduce'),
+            contains('list_reduce'),
           ),
         ),
       );
     });
 
-    test('list.sort with non-function second argument throws error', () {
+    test('list_sort with non-function second argument throws error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([3, 1, 2], [1, 2, 3])',
+        'main() = list_sort([3, 1, 2], [1, 2, 3])',
       );
       expect(
         runtime.executeMain,
@@ -588,15 +588,15 @@ main() = list.sort([3, 1, 2], stringCompare)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.sort'),
+            contains('list_sort'),
           ),
         ),
       );
     });
 
-    test('list.zip with non-function third argument throws error', () {
+    test('list_zip with non-function third argument throws error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 2], [3, 4], 99)',
+        'main() = list_zip([1, 2], [3, 4], 99)',
       );
       expect(
         runtime.executeMain,
@@ -604,7 +604,7 @@ main() = list.sort([3, 1, 2], stringCompare)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.zip'),
+            contains('list_zip'),
           ),
         ),
       );
@@ -614,7 +614,7 @@ main() = list.sort([3, 1, 2], stringCompare)
   group('Functions Returning Functions', () {
     test('function returning core function reference', () {
       final RuntimeFacade runtime = getRuntime('''
-getAbs() = num.abs
+getAbs() = num_abs
 main() = getAbs()(-5)
 ''');
       checkResult(runtime, 5);
@@ -649,350 +649,350 @@ main() = selectOp(false)(5)
       checkResult(runtime, 15);
     });
 
-    test('returned function used with list.map', () {
+    test('returned function used with list_map', () {
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
 triple(n) = n * 3
 selectOp(useDouble) = if (useDouble) double else triple
-main() = list.map([1, 2, 3], selectOp(true))
+main() = list_map([1, 2, 3], selectOp(true))
 ''');
       checkResult(runtime, [2, 4, 6]);
     });
   });
 
   group('Boundary Value Cases', () {
-    test('list.all returns false on first failing element (short-circuit)', () {
+    test('list_all returns false on first failing element (short-circuit)', () {
       final RuntimeFacade runtime = getRuntime('''
 lessThanThree(n) = n < 3
-main() = list.all([1, 2, 5, 1], lessThanThree)
+main() = list_all([1, 2, 5, 1], lessThanThree)
 ''');
       checkResult(runtime, false);
     });
 
-    test('list.any returns true on first matching element (short-circuit)', () {
+    test('list_any returns true on first matching element (short-circuit)', () {
       final RuntimeFacade runtime = getRuntime('''
 greaterThanThree(n) = n > 3
-main() = list.any([1, 2, 5, 1], greaterThanThree)
+main() = list_any([1, 2, 5, 1], greaterThanThree)
 ''');
       checkResult(runtime, true);
     });
 
     test(
-      'list.none returns false on first matching element (short-circuit)',
+      'list_none returns false on first matching element (short-circuit)',
       () {
         final RuntimeFacade runtime = getRuntime('''
 isZero(n) = n == 0
-main() = list.none([1, 0, 2, 3], isZero)
+main() = list_none([1, 0, 2, 3], isZero)
 ''');
         checkResult(runtime, false);
       },
     );
 
-    test('list.filter with predicate matching all elements', () {
+    test('list_filter with predicate matching all elements', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.filter([1, 2, 3, 4, 5], isPositive)
+main() = list_filter([1, 2, 3, 4, 5], isPositive)
 ''');
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.filter with predicate matching no elements', () {
+    test('list_filter with predicate matching no elements', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(n) = n < 0
-main() = list.filter([1, 2, 3, 4, 5], isNegative)
+main() = list_filter([1, 2, 3, 4, 5], isNegative)
 ''');
       checkResult(runtime, []);
     });
 
-    test('list.reduce accumulates from left to right', () {
+    test('list_reduce accumulates from left to right', () {
       final RuntimeFacade runtime = getRuntime('''
 subtract(a, b) = a - b
-main() = list.reduce([1, 2, 3], 10, subtract)
+main() = list_reduce([1, 2, 3], 10, subtract)
 ''');
       checkResult(runtime, 4);
     });
 
-    test('list.zip with unequal lists retains extra first list elements', () {
+    test('list_zip with unequal lists retains extra first list elements', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.zip([1, 2, 3, 4, 5], [10, 20], add)
+main() = list_zip([1, 2, 3, 4, 5], [10, 20], add)
 ''');
       checkResult(runtime, [11, 22, 3, 4, 5]);
     });
 
-    test('list.zip with unequal lists retains extra second list elements', () {
+    test('list_zip with unequal lists retains extra second list elements', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.zip([1, 2], [10, 20, 30, 40], add)
+main() = list_zip([1, 2], [10, 20, 30, 40], add)
 ''');
       checkResult(runtime, [11, 22, 30, 40]);
     });
   });
 
   group('Two-Element List Cases with Custom Functions', () {
-    test('list.map with custom function on two elements', () {
+    test('list_map with custom function on two elements', () {
       final RuntimeFacade runtime = getRuntime('''
 square(n) = n * n
-main() = list.map([3, 4], square)
+main() = list_map([3, 4], square)
 ''');
       checkResult(runtime, [9, 16]);
     });
 
-    test('list.filter with custom predicate on two elements both match', () {
+    test('list_filter with custom predicate on two elements both match', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.filter([5, 10], isPositive)
+main() = list_filter([5, 10], isPositive)
 ''');
       checkResult(runtime, [5, 10]);
     });
 
-    test('list.filter with custom predicate on two elements one matches', () {
+    test('list_filter with custom predicate on two elements one matches', () {
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = n % 2 == 0
-main() = list.filter([3, 4], isEven)
+main() = list_filter([3, 4], isEven)
 ''');
       checkResult(runtime, [4]);
     });
 
-    test('list.filter with custom predicate on two elements none match', () {
+    test('list_filter with custom predicate on two elements none match', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(n) = n < 0
-main() = list.filter([5, 10], isNegative)
+main() = list_filter([5, 10], isNegative)
 ''');
       checkResult(runtime, []);
     });
 
-    test('list.reduce with custom function on two elements', () {
+    test('list_reduce with custom function on two elements', () {
       final RuntimeFacade runtime = getRuntime('''
 multiply(a, b) = a * b
-main() = list.reduce([3, 4], 2, multiply)
+main() = list_reduce([3, 4], 2, multiply)
 ''');
       checkResult(runtime, 24);
     });
 
-    test('list.all with custom predicate on two elements both match', () {
+    test('list_all with custom predicate on two elements both match', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.all([5, 10], isPositive)
+main() = list_all([5, 10], isPositive)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.all with custom predicate on two elements one fails', () {
+    test('list_all with custom predicate on two elements one fails', () {
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = n % 2 == 0
-main() = list.all([4, 5], isEven)
+main() = list_all([4, 5], isEven)
 ''');
       checkResult(runtime, false);
     });
 
-    test('list.any with custom predicate on two elements one matches', () {
+    test('list_any with custom predicate on two elements one matches', () {
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = n % 2 == 0
-main() = list.any([3, 4], isEven)
+main() = list_any([3, 4], isEven)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.any with custom predicate on two elements none match', () {
+    test('list_any with custom predicate on two elements none match', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(n) = n < 0
-main() = list.any([5, 10], isNegative)
+main() = list_any([5, 10], isNegative)
 ''');
       checkResult(runtime, false);
     });
 
-    test('list.none with custom predicate on two elements none match', () {
+    test('list_none with custom predicate on two elements none match', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(n) = n < 0
-main() = list.none([5, 10], isNegative)
+main() = list_none([5, 10], isNegative)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.none with custom predicate on two elements one matches', () {
+    test('list_none with custom predicate on two elements one matches', () {
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = n % 2 == 0
-main() = list.none([3, 4], isEven)
+main() = list_none([3, 4], isEven)
 ''');
       checkResult(runtime, false);
     });
 
-    test('list.sort with custom comparator on two elements', () {
+    test('list_sort with custom comparator on two elements', () {
       final RuntimeFacade runtime = getRuntime('''
-descending(a, b) = num.compare(b, a)
-main() = list.sort([3, 7], descending)
+descending(a, b) = num_compare(b, a)
+main() = list_sort([3, 7], descending)
 ''');
       checkResult(runtime, [7, 3]);
     });
 
-    test('list.zip with custom function on two element lists', () {
+    test('list_zip with custom function on two element lists', () {
       final RuntimeFacade runtime = getRuntime('''
 subtract(a, b) = a - b
-main() = list.zip([10, 20], [3, 5], subtract)
+main() = list_zip([10, 20], [3, 5], subtract)
 ''');
       checkResult(runtime, [7, 15]);
     });
   });
 
   group('Core Functions as Higher-Order Arguments', () {
-    test('list.map with num.abs', () {
+    test('list_map with num_abs', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([-1, -2, -3], num.abs)',
+        'main() = list_map([-1, -2, -3], num_abs)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.map with num.inc', () {
+    test('list_map with num_inc', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 2, 3], num.inc)',
+        'main() = list_map([1, 2, 3], num_inc)',
       );
       checkResult(runtime, [2, 3, 4]);
     });
 
-    test('list.map with num.dec', () {
+    test('list_map with num_dec', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 2, 3], num.dec)',
+        'main() = list_map([1, 2, 3], num_dec)',
       );
       checkResult(runtime, [0, 1, 2]);
     });
 
-    test('list.map with num.floor', () {
+    test('list_map with num_floor', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1.5, 2.7, 3.9], num.floor)',
+        'main() = list_map([1.5, 2.7, 3.9], num_floor)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.map with num.ceil', () {
+    test('list_map with num_ceil', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1.1, 2.3, 3.5], num.ceil)',
+        'main() = list_map([1.1, 2.3, 3.5], num_ceil)',
       );
       checkResult(runtime, [2, 3, 4]);
     });
 
-    test('list.map with num.round', () {
+    test('list_map with num_round', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1.4, 2.5, 3.6], num.round)',
+        'main() = list_map([1.4, 2.5, 3.6], num_round)',
       );
       checkResult(runtime, [1, 3, 4]);
     });
 
-    test('list.map with num.sign', () {
+    test('list_map with num_sign', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([-5, 0, 5], num.sign)',
+        'main() = list_map([-5, 0, 5], num_sign)',
       );
       checkResult(runtime, [-1, 0, 1]);
     });
 
-    test('list.map with num.sqrt', () {
+    test('list_map with num_sqrt', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 4, 9], num.sqrt)',
+        'main() = list_map([1, 4, 9], num_sqrt)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.map with num.isEven', () {
+    test('list_map with num_isEven', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 2, 3, 4], num.isEven)',
+        'main() = list_map([1, 2, 3, 4], num_isEven)',
       );
       checkResult(runtime, [false, true, false, true]);
     });
 
-    test('list.map with num.isOdd', () {
+    test('list_map with num_isOdd', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 2, 3, 4], num.isOdd)',
+        'main() = list_map([1, 2, 3, 4], num_isOdd)',
       );
       checkResult(runtime, [true, false, true, false]);
     });
 
-    test('list.map with num.isPositive', () {
+    test('list_map with num_isPositive', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([-1, 0, 1], num.isPositive)',
+        'main() = list_map([-1, 0, 1], num_isPositive)',
       );
       checkResult(runtime, [false, false, true]);
     });
 
-    test('list.map with num.isNegative', () {
+    test('list_map with num_isNegative', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([-1, 0, 1], num.isNegative)',
+        'main() = list_map([-1, 0, 1], num_isNegative)',
       );
       checkResult(runtime, [true, false, false]);
     });
 
-    test('list.map with num.isZero', () {
+    test('list_map with num_isZero', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([-1, 0, 1], num.isZero)',
+        'main() = list_map([-1, 0, 1], num_isZero)',
       );
       checkResult(runtime, [false, true, false]);
     });
 
-    test('list.map with bool.not', () {
+    test('list_map with bool_not', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([true, false, true], bool.not)',
+        'main() = list_map([true, false, true], bool_not)',
       );
       checkResult(runtime, [false, true, false]);
     });
 
-    test('list.map with str.length', () {
+    test('list_map with str_length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map(["a", "bb", "ccc"], str.length)',
+        'main() = list_map(["a", "bb", "ccc"], str_length)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.map with str.uppercase', () {
+    test('list_map with str_uppercase', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map(["hello", "world"], str.uppercase)',
+        'main() = list_map(["hello", "world"], str_uppercase)',
       );
       checkResult(runtime, ['"HELLO"', '"WORLD"']);
     });
 
-    test('list.map with str.lowercase', () {
+    test('list_map with str_lowercase', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map(["HELLO", "WORLD"], str.lowercase)',
+        'main() = list_map(["HELLO", "WORLD"], str_lowercase)',
       );
       checkResult(runtime, ['"hello"', '"world"']);
     });
 
-    test('list.map with str.trim', () {
+    test('list_map with str_trim', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map(["  a  ", "  b  "], str.trim)',
+        'main() = list_map(["  a  ", "  b  "], str_trim)',
       );
       checkResult(runtime, ['"a"', '"b"']);
     });
 
-    test('list.map with str.reverse', () {
+    test('list_map with str_reverse', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map(["abc", "def"], str.reverse)',
+        'main() = list_map(["abc", "def"], str_reverse)',
       );
       checkResult(runtime, ['"cba"', '"fed"']);
     });
 
-    test('list.map with str.isEmpty', () {
+    test('list_map with str_isEmpty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map(["", "a", ""], str.isEmpty)',
+        'main() = list_map(["", "a", ""], str_isEmpty)',
       );
       checkResult(runtime, [true, false, true]);
     });
 
-    test('list.map with str.isNotEmpty', () {
+    test('list_map with str_isNotEmpty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map(["", "a", ""], str.isNotEmpty)',
+        'main() = list_map(["", "a", ""], str_isNotEmpty)',
       );
       checkResult(runtime, [false, true, false]);
     });
 
-    test('list.map with list.length', () {
+    test('list_map with list_length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([[1], [1, 2], [1, 2, 3]], list.length)',
+        'main() = list_map([[1], [1, 2], [1, 2, 3]], list_length)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.map with list.reverse', () {
+    test('list_map with list_reverse', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([[1, 2], [3, 4]], list.reverse)',
+        'main() = list_map([[1, 2], [3, 4]], list_reverse)',
       );
       checkResult(runtime, [
         [2, 1],
@@ -1000,146 +1000,146 @@ main() = list.zip([10, 20], [3, 5], subtract)
       ]);
     });
 
-    test('list.map with list.isEmpty', () {
+    test('list_map with list_isEmpty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([[], [1], []], list.isEmpty)',
+        'main() = list_map([[], [1], []], list_isEmpty)',
       );
       checkResult(runtime, [true, false, true]);
     });
 
-    test('list.map with list.isNotEmpty', () {
+    test('list_map with list_isNotEmpty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([[], [1], []], list.isNotEmpty)',
+        'main() = list_map([[], [1], []], list_isNotEmpty)',
       );
       checkResult(runtime, [false, true, false]);
     });
 
-    test('list.map with list.first', () {
+    test('list_map with list_first', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([[1, 2], [3, 4], [5, 6]], list.first)',
+        'main() = list_map([[1, 2], [3, 4], [5, 6]], list_first)',
       );
       checkResult(runtime, [1, 3, 5]);
     });
 
-    test('list.map with list.last', () {
+    test('list_map with list_last', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([[1, 2], [3, 4], [5, 6]], list.last)',
+        'main() = list_map([[1, 2], [3, 4], [5, 6]], list_last)',
       );
       checkResult(runtime, [2, 4, 6]);
     });
 
-    test('list.reduce with num.add', () {
+    test('list_reduce with num_add', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([1, 2, 3, 4], 0, num.add)',
+        'main() = list_reduce([1, 2, 3, 4], 0, num_add)',
       );
       checkResult(runtime, 10);
     });
 
-    test('list.reduce with num.mul', () {
+    test('list_reduce with num_mul', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([1, 2, 3, 4], 1, num.mul)',
+        'main() = list_reduce([1, 2, 3, 4], 1, num_mul)',
       );
       checkResult(runtime, 24);
     });
 
-    test('list.reduce with num.max', () {
+    test('list_reduce with num_max', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([3, 1, 4, 1, 5], 0, num.max)',
+        'main() = list_reduce([3, 1, 4, 1, 5], 0, num_max)',
       );
       checkResult(runtime, 5);
     });
 
-    test('list.reduce with num.min', () {
+    test('list_reduce with num_min', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([3, 1, 4, 1, 5], 100, num.min)',
+        'main() = list_reduce([3, 1, 4, 1, 5], 100, num_min)',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.reduce with str.concat', () {
+    test('list_reduce with str_concat', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce(["a", "b", "c"], "", str.concat)',
+        'main() = list_reduce(["a", "b", "c"], "", str_concat)',
       );
       checkResult(runtime, '"abc"');
     });
 
-    test('list.sort with num.compare', () {
+    test('list_sort with num_compare', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([3, 1, 4, 1, 5], num.compare)',
+        'main() = list_sort([3, 1, 4, 1, 5], num_compare)',
       );
       checkResult(runtime, [1, 1, 3, 4, 5]);
     });
 
-    test('list.sort with str.compare', () {
+    test('list_sort with str_compare', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort(["banana", "apple", "cherry"], str.compare)',
+        'main() = list_sort(["banana", "apple", "cherry"], str_compare)',
       );
       checkResult(runtime, ['"apple"', '"banana"', '"cherry"']);
     });
 
-    test('list.zip with num.add', () {
+    test('list_zip with num_add', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 2, 3], [4, 5, 6], num.add)',
+        'main() = list_zip([1, 2, 3], [4, 5, 6], num_add)',
       );
       checkResult(runtime, [5, 7, 9]);
     });
 
-    test('list.zip with num.mul', () {
+    test('list_zip with num_mul', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 2, 3], [4, 5, 6], num.mul)',
+        'main() = list_zip([1, 2, 3], [4, 5, 6], num_mul)',
       );
       checkResult(runtime, [4, 10, 18]);
     });
 
-    test('list.zip with num.sub', () {
+    test('list_zip with num_sub', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([10, 20, 30], [1, 2, 3], num.sub)',
+        'main() = list_zip([10, 20, 30], [1, 2, 3], num_sub)',
       );
       checkResult(runtime, [9, 18, 27]);
     });
 
-    test('list.zip with str.concat', () {
+    test('list_zip with str_concat', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip(["hello", "good"], [" world", "bye"], str.concat)',
+        'main() = list_zip(["hello", "good"], [" world", "bye"], str_concat)',
       );
       checkResult(runtime, ['"hello world"', '"goodbye"']);
     });
 
-    test('list.zip with bool.and', () {
+    test('list_zip with bool_and', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([true, true, false], [true, false, false], bool.and)',
+        'main() = list_zip([true, true, false], [true, false, false], bool_and)',
       );
       checkResult(runtime, [true, false, false]);
     });
 
-    test('list.zip with bool.or', () {
+    test('list_zip with bool_or', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([true, true, false], [true, false, false], bool.or)',
+        'main() = list_zip([true, true, false], [true, false, false], bool_or)',
       );
       checkResult(runtime, [true, true, false]);
     });
 
-    test('list.zip with bool.xor', () {
+    test('list_zip with bool_xor', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([true, true, false], [true, false, false], bool.xor)',
+        'main() = list_zip([true, true, false], [true, false, false], bool_xor)',
       );
       checkResult(runtime, [false, true, false]);
     });
   });
 
   group('Mixed Types in Lists with Higher-Order Functions', () {
-    test('list.map with identity function on mixed types', () {
+    test('list_map with identity function on mixed types', () {
       final RuntimeFacade runtime = getRuntime('''
 identity(x) = x
-main() = list.map([1, "two", true], identity)
+main() = list_map([1, "two", true], identity)
 ''');
       checkResult(runtime, [1, '"two"', true]);
     });
 
-    test('list.filter with always true predicate on mixed types', () {
+    test('list_filter with always true predicate on mixed types', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysTrue(x) = true
-main() = list.filter([1, "two", true, [3]], alwaysTrue)
+main() = list_filter([1, "two", true, [3]], alwaysTrue)
 ''');
       checkResult(runtime, [
         1,
@@ -1149,108 +1149,108 @@ main() = list.filter([1, "two", true, [3]], alwaysTrue)
       ]);
     });
 
-    test('list.filter with always false predicate on mixed types', () {
+    test('list_filter with always false predicate on mixed types', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysFalse(x) = false
-main() = list.filter([1, "two", true, [3]], alwaysFalse)
+main() = list_filter([1, "two", true, [3]], alwaysFalse)
 ''');
       checkResult(runtime, []);
     });
 
-    test('list.all with always true predicate on mixed types', () {
+    test('list_all with always true predicate on mixed types', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysTrue(x) = true
-main() = list.all([1, "two", true], alwaysTrue)
+main() = list_all([1, "two", true], alwaysTrue)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.any with always false predicate on mixed types', () {
+    test('list_any with always false predicate on mixed types', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysFalse(x) = false
-main() = list.any([1, "two", true], alwaysFalse)
+main() = list_any([1, "two", true], alwaysFalse)
 ''');
       checkResult(runtime, false);
     });
 
-    test('list.none with always false predicate on mixed types', () {
+    test('list_none with always false predicate on mixed types', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysFalse(x) = false
-main() = list.none([1, "two", true], alwaysFalse)
+main() = list_none([1, "two", true], alwaysFalse)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.reduce on mixed types building a list', () {
+    test('list_reduce on mixed types building a list', () {
       final RuntimeFacade runtime = getRuntime('''
-appendToList(accumulator, element) = list.insertEnd(accumulator, element)
-main() = list.reduce([1, "two", true], [], appendToList)
+appendToList(accumulator, element) = list_insertEnd(accumulator, element)
+main() = list_reduce([1, "two", true], [], appendToList)
 ''');
       checkResult(runtime, [1, '"two"', true]);
     });
   });
 
   group('Stress Testing with Large Lists', () {
-    test('list.map on large list', () {
+    test('list_map on large list', () {
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
-main() = list.length(list.map(list.filled(100, 1), double))
+main() = list_length(list_map(list_filled(100, 1), double))
 ''');
       checkResult(runtime, 100);
     });
 
-    test('list.filter on large list keeping all', () {
+    test('list_filter on large list keeping all', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.length(list.filter(list.filled(100, 1), isPositive))
+main() = list_length(list_filter(list_filled(100, 1), isPositive))
 ''');
       checkResult(runtime, 100);
     });
 
-    test('list.filter on large list keeping none', () {
+    test('list_filter on large list keeping none', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(n) = n < 0
-main() = list.length(list.filter(list.filled(100, 1), isNegative))
+main() = list_length(list_filter(list_filled(100, 1), isNegative))
 ''');
       checkResult(runtime, 0);
     });
 
-    test('list.reduce on large list', () {
+    test('list_reduce on large list', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.reduce(list.filled(100, 1), 0, add)
+main() = list_reduce(list_filled(100, 1), 0, add)
 ''');
       checkResult(runtime, 100);
     });
 
-    test('list.all on large list all true', () {
+    test('list_all on large list all true', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.all(list.filled(100, 1), isPositive)
+main() = list_all(list_filled(100, 1), isPositive)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.any on large list first element matches', () {
+    test('list_any on large list first element matches', () {
       final RuntimeFacade runtime = getRuntime('''
 isOne(n) = n == 1
-main() = list.any(list.filled(100, 1), isOne)
+main() = list_any(list_filled(100, 1), isOne)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.none on large list all fail predicate', () {
+    test('list_none on large list all fail predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 isZero(n) = n == 0
-main() = list.none(list.filled(100, 1), isZero)
+main() = list_none(list_filled(100, 1), isZero)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.zip on two large lists', () {
+    test('list_zip on two large lists', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.length(list.zip(list.filled(100, 1), list.filled(100, 2), add))
+main() = list_length(list_zip(list_filled(100, 1), list_filled(100, 2), add))
 ''');
       checkResult(runtime, 100);
     });
@@ -1262,7 +1262,7 @@ main() = list.length(list.zip(list.filled(100, 1), list.filled(100, 2), add))
 double(n) = n * 2
 increment(n) = n + 1
 square(n) = n * n
-main() = list.map(list.map(list.map([1, 2], double), increment), square)
+main() = list_map(list_map(list_map([1, 2], double), increment), square)
 ''');
       checkResult(runtime, [9, 25]);
     });
@@ -1272,7 +1272,7 @@ main() = list.map(list.map(list.map([1, 2], double), increment), square)
 isPositive(n) = n > 0
 double(n) = n * 2
 add(a, b) = a + b
-main() = list.reduce(list.map(list.filter([-1, 2, -3, 4], isPositive), double), 0, add)
+main() = list_reduce(list_map(list_filter([-1, 2, -3, 4], isPositive), double), 0, add)
 ''');
       checkResult(runtime, 12);
     });
@@ -1281,9 +1281,9 @@ main() = list.reduce(list.map(list.filter([-1, 2, -3, 4], isPositive), double), 
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
 isLessThan10(n) = n < 10
-descending(a, b) = num.compare(b, a)
+descending(a, b) = num_compare(b, a)
 add(a, b) = a + b
-main() = list.reduce(list.sort(list.filter(list.map([1, 2, 3, 4, 5, 6], double), isLessThan10), descending), 0, add)
+main() = list_reduce(list_sort(list_filter(list_map([1, 2, 3, 4, 5, 6], double), isLessThan10), descending), 0, add)
 ''');
       checkResult(runtime, 20);
     });
@@ -1293,7 +1293,7 @@ main() = list.reduce(list.sort(list.filter(list.map([1, 2, 3, 4, 5, 6], double),
 add(a, b) = a + b
 double(n) = n * 2
 isGreaterThan10(n) = n > 10
-main() = list.filter(list.map(list.zip([1, 2, 3], [4, 5, 6], add), double), isGreaterThan10)
+main() = list_filter(list_map(list_zip([1, 2, 3], [4, 5, 6], add), double), isGreaterThan10)
 ''');
       checkResult(runtime, [14, 18]);
     });
@@ -1302,7 +1302,7 @@ main() = list.filter(list.map(list.zip([1, 2, 3], [4, 5, 6], add), double), isGr
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
 isEven(n) = n % 2 == 0
-main() = list.all(list.filter([1, 2, 3, 4, 5, 6], isEven), isPositive)
+main() = list_all(list_filter([1, 2, 3, 4, 5, 6], isEven), isPositive)
 ''');
       checkResult(runtime, true);
     });
@@ -1311,7 +1311,7 @@ main() = list.all(list.filter([1, 2, 3, 4, 5, 6], isEven), isPositive)
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
 isGreaterThan5(n) = n > 5
-main() = list.any(list.map([1, 2, 3], double), isGreaterThan5)
+main() = list_any(list_map([1, 2, 3], double), isGreaterThan5)
 ''');
       checkResult(runtime, true);
     });
@@ -1335,7 +1335,7 @@ main() = [double, triple]
 double(n) = n * 2
 addOne(n) = n + 1
 applyFunction(value, function) = function(value)
-main() = list.reduce([double, addOne], 5, applyFunction)
+main() = list_reduce([double, addOne], 5, applyFunction)
 ''');
       checkResult(runtime, 11);
     });
@@ -1362,59 +1362,59 @@ main() = applyBoth(4)
   });
 
   group('Identity and Constant Functions', () {
-    test('list.map with identity function', () {
+    test('list_map with identity function', () {
       final RuntimeFacade runtime = getRuntime('''
 identity(x) = x
-main() = list.map([1, 2, 3], identity)
+main() = list_map([1, 2, 3], identity)
 ''');
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.filter with constant true predicate', () {
+    test('list_filter with constant true predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysTrue(x) = true
-main() = list.filter([1, 2, 3], alwaysTrue)
+main() = list_filter([1, 2, 3], alwaysTrue)
 ''');
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.filter with constant false predicate', () {
+    test('list_filter with constant false predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysFalse(x) = false
-main() = list.filter([1, 2, 3], alwaysFalse)
+main() = list_filter([1, 2, 3], alwaysFalse)
 ''');
       checkResult(runtime, []);
     });
 
-    test('list.reduce with constant function ignoring accumulator', () {
+    test('list_reduce with constant function ignoring accumulator', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysSecond(a, b) = b
-main() = list.reduce([1, 2, 3], 100, alwaysSecond)
+main() = list_reduce([1, 2, 3], 100, alwaysSecond)
 ''');
       checkResult(runtime, 3);
     });
 
-    test('list.reduce with constant function ignoring element', () {
+    test('list_reduce with constant function ignoring element', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysFirst(a, b) = a
-main() = list.reduce([1, 2, 3], 100, alwaysFirst)
+main() = list_reduce([1, 2, 3], 100, alwaysFirst)
 ''');
       checkResult(runtime, 100);
     });
 
-    test('list.sort with constant zero comparator maintains order', () {
+    test('list_sort with constant zero comparator maintains order', () {
       final RuntimeFacade runtime = getRuntime('''
 alwaysZero(a, b) = 0
-main() = list.sort([3, 1, 4, 1, 5], alwaysZero)
+main() = list_sort([3, 1, 4, 1, 5], alwaysZero)
 ''');
       checkResult(runtime, [3, 1, 4, 1, 5]);
     });
   });
 
   group('Additional Error Cases', () {
-    test('list.all with non-function second argument throws error', () {
+    test('list_all with non-function second argument throws error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([1, 2, 3], 42)',
+        'main() = list_all([1, 2, 3], 42)',
       );
       expect(
         runtime.executeMain,
@@ -1422,15 +1422,15 @@ main() = list.sort([3, 1, 4, 1, 5], alwaysZero)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.all'),
+            contains('list_all'),
           ),
         ),
       );
     });
 
-    test('list.any with non-function second argument throws error', () {
+    test('list_any with non-function second argument throws error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([1, 2, 3], "not a function")',
+        'main() = list_any([1, 2, 3], "not a function")',
       );
       expect(
         runtime.executeMain,
@@ -1438,15 +1438,15 @@ main() = list.sort([3, 1, 4, 1, 5], alwaysZero)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.any'),
+            contains('list_any'),
           ),
         ),
       );
     });
 
-    test('list.none with non-function second argument throws error', () {
+    test('list_none with non-function second argument throws error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([1, 2, 3], true)',
+        'main() = list_none([1, 2, 3], true)',
       );
       expect(
         runtime.executeMain,
@@ -1454,16 +1454,16 @@ main() = list.sort([3, 1, 4, 1, 5], alwaysZero)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.none'),
+            contains('list_none'),
           ),
         ),
       );
     });
 
-    test('list.map with non-list first argument throws error', () {
+    test('list_map with non-list first argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
-main() = list.map("not a list", double)
+main() = list_map("not a list", double)
 ''');
       expect(
         runtime.executeMain,
@@ -1471,16 +1471,16 @@ main() = list.map("not a list", double)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.map'),
+            contains('list_map'),
           ),
         ),
       );
     });
 
-    test('list.filter with non-list first argument throws error', () {
+    test('list_filter with non-list first argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.filter(123, isPositive)
+main() = list_filter(123, isPositive)
 ''');
       expect(
         runtime.executeMain,
@@ -1488,16 +1488,16 @@ main() = list.filter(123, isPositive)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.filter'),
+            contains('list_filter'),
           ),
         ),
       );
     });
 
-    test('list.reduce with non-list first argument throws error', () {
+    test('list_reduce with non-list first argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.reduce(true, 0, add)
+main() = list_reduce(true, 0, add)
 ''');
       expect(
         runtime.executeMain,
@@ -1505,16 +1505,16 @@ main() = list.reduce(true, 0, add)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.reduce'),
+            contains('list_reduce'),
           ),
         ),
       );
     });
 
-    test('list.sort with non-list first argument throws error', () {
+    test('list_sort with non-list first argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
-compare(a, b) = num.compare(a, b)
-main() = list.sort("not a list", compare)
+compare(a, b) = num_compare(a, b)
+main() = list_sort("not a list", compare)
 ''');
       expect(
         runtime.executeMain,
@@ -1522,33 +1522,16 @@ main() = list.sort("not a list", compare)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.sort'),
+            contains('list_sort'),
           ),
         ),
       );
     });
 
-    test('list.all with non-list first argument throws error', () {
-      final RuntimeFacade runtime = getRuntime('''
-isPositive(n) = n > 0
-main() = list.all(42, isPositive)
-''');
-      expect(
-        runtime.executeMain,
-        throwsA(
-          isA<InvalidArgumentTypesError>().having(
-            (InvalidArgumentTypesError e) => e.toString(),
-            'message',
-            contains('list.all'),
-          ),
-        ),
-      );
-    });
-
-    test('list.any with non-list first argument throws error', () {
+    test('list_all with non-list first argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.any("not a list", isPositive)
+main() = list_all(42, isPositive)
 ''');
       expect(
         runtime.executeMain,
@@ -1556,16 +1539,16 @@ main() = list.any("not a list", isPositive)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.any'),
+            contains('list_all'),
           ),
         ),
       );
     });
 
-    test('list.none with non-list first argument throws error', () {
+    test('list_any with non-list first argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-main() = list.none(true, isPositive)
+main() = list_any("not a list", isPositive)
 ''');
       expect(
         runtime.executeMain,
@@ -1573,16 +1556,33 @@ main() = list.none(true, isPositive)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.none'),
+            contains('list_any'),
           ),
         ),
       );
     });
 
-    test('list.zip with non-list first argument throws error', () {
+    test('list_none with non-list first argument throws error', () {
+      final RuntimeFacade runtime = getRuntime('''
+isPositive(n) = n > 0
+main() = list_none(true, isPositive)
+''');
+      expect(
+        runtime.executeMain,
+        throwsA(
+          isA<InvalidArgumentTypesError>().having(
+            (InvalidArgumentTypesError e) => e.toString(),
+            'message',
+            contains('list_none'),
+          ),
+        ),
+      );
+    });
+
+    test('list_zip with non-list first argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.zip("not a list", [1, 2, 3], add)
+main() = list_zip("not a list", [1, 2, 3], add)
 ''');
       expect(
         runtime.executeMain,
@@ -1590,16 +1590,16 @@ main() = list.zip("not a list", [1, 2, 3], add)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.zip'),
+            contains('list_zip'),
           ),
         ),
       );
     });
 
-    test('list.zip with non-list second argument throws error', () {
+    test('list_zip with non-list second argument throws error', () {
       final RuntimeFacade runtime = getRuntime('''
 add(a, b) = a + b
-main() = list.zip([1, 2, 3], 42, add)
+main() = list_zip([1, 2, 3], 42, add)
 ''');
       expect(
         runtime.executeMain,
@@ -1607,7 +1607,7 @@ main() = list.zip([1, 2, 3], 42, add)
           isA<InvalidArgumentTypesError>().having(
             (InvalidArgumentTypesError e) => e.toString(),
             'message',
-            contains('list.zip'),
+            contains('list_zip'),
           ),
         ),
       );
@@ -1618,7 +1618,7 @@ main() = list.zip([1, 2, 3], 42, add)
     test('custom function modifying list through map', () {
       final RuntimeFacade runtime = getRuntime('''
 wrapInList(n) = [n]
-main() = list.map([1, 2, 3], wrapInList)
+main() = list_map([1, 2, 3], wrapInList)
 ''');
       checkResult(runtime, [
         [1],
@@ -1629,16 +1629,16 @@ main() = list.map([1, 2, 3], wrapInList)
 
     test('custom function extracting from nested list', () {
       final RuntimeFacade runtime = getRuntime('''
-getFirst(lst) = list.first(lst)
-main() = list.map([[1, 2], [3, 4], [5, 6]], getFirst)
+getFirst(lst) = list_first(lst)
+main() = list_map([[1, 2], [3, 4], [5, 6]], getFirst)
 ''');
       checkResult(runtime, [1, 3, 5]);
     });
 
     test('custom function computing list length', () {
       final RuntimeFacade runtime = getRuntime('''
-getLength(lst) = list.length(lst)
-main() = list.map([[1], [1, 2], [1, 2, 3]], getLength)
+getLength(lst) = list_length(lst)
+main() = list_map([[1], [1, 2], [1, 2, 3]], getLength)
 ''');
       checkResult(runtime, [1, 2, 3]);
     });
@@ -1648,7 +1648,7 @@ main() = list.map([[1], [1, 2], [1, 2, 3]], getLength)
     test('custom function with conditional in map', () {
       final RuntimeFacade runtime = getRuntime('''
 absValue(n) = if (n < 0) (0 - n) else n
-main() = list.map([-3, -2, -1, 0, 1, 2, 3], absValue)
+main() = list_map([-3, -2, -1, 0, 1, 2, 3], absValue)
 ''');
       checkResult(runtime, [3, 2, 1, 0, 1, 2, 3]);
     });
@@ -1656,7 +1656,7 @@ main() = list.map([-3, -2, -1, 0, 1, 2, 3], absValue)
     test('custom function with nested conditionals in map', () {
       final RuntimeFacade runtime = getRuntime('''
 classify(n) = if (n < 0) "negative" else if (n > 0) "positive" else "zero"
-main() = list.map([-1, 0, 1], classify)
+main() = list_map([-1, 0, 1], classify)
 ''');
       checkResult(runtime, ['"negative"', '"zero"', '"positive"']);
     });
@@ -1664,7 +1664,7 @@ main() = list.map([-1, 0, 1], classify)
     test('filter with conditional predicate', () {
       final RuntimeFacade runtime = getRuntime('''
 isInRange(n) = if (n >= 0) (n <= 10) else false
-main() = list.filter([-5, 0, 5, 10, 15], isInRange)
+main() = list_filter([-5, 0, 5, 10, 15], isInRange)
 ''');
       checkResult(runtime, [0, 5, 10]);
     });
@@ -1672,15 +1672,15 @@ main() = list.filter([-5, 0, 5, 10, 15], isInRange)
     test('reduce with conditional combiner', () {
       final RuntimeFacade runtime = getRuntime('''
 maxPositive(a, b) = if (b > 0) (if (b > a) b else a) else a
-main() = list.reduce([-5, 3, -2, 7, -1, 4], 0, maxPositive)
+main() = list_reduce([-5, 3, -2, 7, -1, 4], 0, maxPositive)
 ''');
       checkResult(runtime, 7);
     });
 
     test('sort with conditional comparator', () {
       final RuntimeFacade runtime = getRuntime('''
-compareAbs(a, b) = if (num.abs(a) < num.abs(b)) -1 else if (num.abs(a) > num.abs(b)) 1 else 0
-main() = list.sort([-5, 3, -1, 4, -2], compareAbs)
+compareAbs(a, b) = if (num_abs(a) < num_abs(b)) -1 else if (num_abs(a) > num_abs(b)) 1 else 0
+main() = list_sort([-5, 3, -1, 4, -2], compareAbs)
 ''');
       checkResult(runtime, [-1, -2, 3, 4, -5]);
     });
@@ -1689,32 +1689,32 @@ main() = list.sort([-5, 3, -1, 4, -2], compareAbs)
   group('String Functions in Higher-Order Context', () {
     test('filter strings by length predicate', () {
       final RuntimeFacade runtime = getRuntime('''
-isShort(s) = str.length(s) < 4
-main() = list.filter(["a", "bb", "ccc", "dddd", "eeeee"], isShort)
+isShort(s) = str_length(s) < 4
+main() = list_filter(["a", "bb", "ccc", "dddd", "eeeee"], isShort)
 ''');
       checkResult(runtime, ['"a"', '"bb"', '"ccc"']);
     });
 
     test('map strings with transformation', () {
       final RuntimeFacade runtime = getRuntime('''
-reverseStr(s) = str.reverse(s)
-main() = list.map(["abc", "def"], reverseStr)
+reverseStr(s) = str_reverse(s)
+main() = list_map(["abc", "def"], reverseStr)
 ''');
       checkResult(runtime, ['"cba"', '"fed"']);
     });
 
     test('reduce strings with custom concat', () {
       final RuntimeFacade runtime = getRuntime('''
-joinWithComma(a, b) = str.concat(str.concat(a, ", "), b)
-main() = list.reduce(["apple", "banana", "cherry"], "fruits:", joinWithComma)
+joinWithComma(a, b) = str_concat(str_concat(a, ", "), b)
+main() = list_reduce(["apple", "banana", "cherry"], "fruits:", joinWithComma)
 ''');
       checkResult(runtime, '"fruits:, apple, banana, cherry"');
     });
 
     test('sort strings by length', () {
       final RuntimeFacade runtime = getRuntime('''
-compareByLength(a, b) = num.compare(str.length(a), str.length(b))
-main() = list.sort(["aaa", "b", "cc"], compareByLength)
+compareByLength(a, b) = num_compare(str_length(a), str_length(b))
+main() = list_sort(["aaa", "b", "cc"], compareByLength)
 ''');
       checkResult(runtime, ['"b"', '"cc"', '"aaa"']);
     });
@@ -1724,7 +1724,7 @@ main() = list.sort(["aaa", "b", "cc"], compareByLength)
     test('map boolean values with not', () {
       final RuntimeFacade runtime = getRuntime('''
 negate(b) = !b
-main() = list.map([true, false, true, false], negate)
+main() = list_map([true, false, true, false], negate)
 ''');
       checkResult(runtime, [false, true, false, true]);
     });
@@ -1732,7 +1732,7 @@ main() = list.map([true, false, true, false], negate)
     test('filter to keep only true values', () {
       final RuntimeFacade runtime = getRuntime('''
 isTrue(b) = b
-main() = list.filter([true, false, true, false, true], isTrue)
+main() = list_filter([true, false, true, false, true], isTrue)
 ''');
       checkResult(runtime, [true, true, true]);
     });
@@ -1740,7 +1740,7 @@ main() = list.filter([true, false, true, false, true], isTrue)
     test('reduce booleans with and logic', () {
       final RuntimeFacade runtime = getRuntime('''
 andLogic(a, b) = a && b
-main() = list.reduce([true, true, true], true, andLogic)
+main() = list_reduce([true, true, true], true, andLogic)
 ''');
       checkResult(runtime, true);
     });
@@ -1748,7 +1748,7 @@ main() = list.reduce([true, true, true], true, andLogic)
     test('reduce booleans with or logic', () {
       final RuntimeFacade runtime = getRuntime('''
 orLogic(a, b) = a || b
-main() = list.reduce([false, false, true], false, orLogic)
+main() = list_reduce([false, false, true], false, orLogic)
 ''');
       checkResult(runtime, true);
     });
@@ -1756,7 +1756,7 @@ main() = list.reduce([false, false, true], false, orLogic)
     test('all booleans are true', () {
       final RuntimeFacade runtime = getRuntime('''
 isTrue(b) = b
-main() = list.all([true, true, true], isTrue)
+main() = list_all([true, true, true], isTrue)
 ''');
       checkResult(runtime, true);
     });
@@ -1764,7 +1764,7 @@ main() = list.all([true, true, true], isTrue)
     test('any boolean is true', () {
       final RuntimeFacade runtime = getRuntime('''
 isTrue(b) = b
-main() = list.any([false, false, true], isTrue)
+main() = list_any([false, false, true], isTrue)
 ''');
       checkResult(runtime, true);
     });
@@ -1772,7 +1772,7 @@ main() = list.any([false, false, true], isTrue)
     test('none booleans are true when all false', () {
       final RuntimeFacade runtime = getRuntime('''
 isTrue(b) = b
-main() = list.none([false, false, false], isTrue)
+main() = list_none([false, false, false], isTrue)
 ''');
       checkResult(runtime, true);
     });
@@ -1783,7 +1783,7 @@ main() = list.none([false, false, false], isTrue)
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = if (n == 0) true else isOdd(n - 1)
 isOdd(n) = if (n == 0) false else isEven(n - 1)
-main() = list.filter([0, 1, 2, 3, 4, 5], isEven)
+main() = list_filter([0, 1, 2, 3, 4, 5], isEven)
 ''');
       checkResult(runtime, [0, 2, 4]);
     });
@@ -1792,65 +1792,65 @@ main() = list.filter([0, 1, 2, 3, 4, 5], isEven)
       final RuntimeFacade runtime = getRuntime('''
 isEven(n) = if (n == 0) true else isOdd(n - 1)
 isOdd(n) = if (n == 0) false else isEven(n - 1)
-main() = list.map([0, 1, 2, 3], isEven)
+main() = list_map([0, 1, 2, 3], isEven)
 ''');
       checkResult(runtime, [true, false, true, false]);
     });
   });
 
   group('Empty and Single Element Edge Cases with Core Functions', () {
-    test('list.map with core function on empty list', () {
+    test('list_map with core function on empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([], num.abs)',
+        'main() = list_map([], num_abs)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.map with core function on single element', () {
+    test('list_map with core function on single element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([-5], num.abs)',
+        'main() = list_map([-5], num_abs)',
       );
       checkResult(runtime, [5]);
     });
 
-    test('list.reduce with core function on empty list', () {
+    test('list_reduce with core function on empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([], 42, num.add)',
+        'main() = list_reduce([], 42, num_add)',
       );
       checkResult(runtime, 42);
     });
 
-    test('list.reduce with core function on single element', () {
+    test('list_reduce with core function on single element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([10], 5, num.add)',
+        'main() = list_reduce([10], 5, num_add)',
       );
       checkResult(runtime, 15);
     });
 
-    test('list.sort with core function on empty list', () {
+    test('list_sort with core function on empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([], num.compare)',
+        'main() = list_sort([], num_compare)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.sort with core function on single element', () {
+    test('list_sort with core function on single element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([42], num.compare)',
+        'main() = list_sort([42], num_compare)',
       );
       checkResult(runtime, [42]);
     });
 
-    test('list.zip with core function on empty lists', () {
+    test('list_zip with core function on empty lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([], [], num.add)',
+        'main() = list_zip([], [], num_add)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.zip with core function on single element lists', () {
+    test('list_zip with core function on single element lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([3], [4], num.add)',
+        'main() = list_zip([3], [4], num_add)',
       );
       checkResult(runtime, [7]);
     });
@@ -1861,7 +1861,7 @@ main() = list.map([0, 1, 2, 3], isEven)
       final RuntimeFacade runtime = getRuntime('''
 helper(x) = x + 10
 wrapper(n) = helper(n) * 2
-main() = list.map([1, 2, 3], wrapper)
+main() = list_map([1, 2, 3], wrapper)
 ''');
       checkResult(runtime, [22, 24, 26]);
     });
@@ -1870,7 +1870,7 @@ main() = list.map([1, 2, 3], wrapper)
       final RuntimeFacade runtime = getRuntime('''
 computeThreshold(n) = n * 2
 isAboveThreshold(n) = n > computeThreshold(2)
-main() = list.filter([1, 3, 5, 7], isAboveThreshold)
+main() = list_filter([1, 3, 5, 7], isAboveThreshold)
 ''');
       checkResult(runtime, [5, 7]);
     });
@@ -1883,16 +1883,16 @@ main() = list.filter([1, 3, 5, 7], isAboveThreshold)
 double(n) = n * 2
 addOne(n) = n + 1
 combineWithHelpers(a, b) = double(a) + addOne(b)
-main() = list.reduce([1, 2, 3], 0, combineWithHelpers)
+main() = list_reduce([1, 2, 3], 0, combineWithHelpers)
 ''');
       checkResult(runtime, 18);
     });
 
     test('comparator using custom transform', () {
       final RuntimeFacade runtime = getRuntime('''
-transform(n) = num.abs(n) * 2
-compareTransformed(a, b) = num.compare(transform(a), transform(b))
-main() = list.sort([2, -3, 1, -4], compareTransformed)
+transform(n) = num_abs(n) * 2
+compareTransformed(a, b) = num_compare(transform(a), transform(b))
+main() = list_sort([2, -3, 1, -4], compareTransformed)
 ''');
       checkResult(runtime, [1, 2, -3, -4]);
     });
@@ -1949,18 +1949,18 @@ main() = applyFunction(getDoubler(), 7)
   });
 
   group('Higher-Order Functions with Nested Lists', () {
-    test('list.map on list of lists', () {
+    test('list_map on list of lists', () {
       final RuntimeFacade runtime = getRuntime('''
-sumList(lst) = list.reduce(lst, 0, num.add)
-main() = list.map([[1, 2], [3, 4], [5, 6]], sumList)
+sumList(lst) = list_reduce(lst, 0, num_add)
+main() = list_map([[1, 2], [3, 4], [5, 6]], sumList)
 ''');
       checkResult(runtime, [3, 7, 11]);
     });
 
-    test('list.filter on list of lists by length', () {
+    test('list_filter on list of lists by length', () {
       final RuntimeFacade runtime = getRuntime('''
-hasMultipleElements(lst) = list.length(lst) > 1
-main() = list.filter([[1], [2, 3], [4], [5, 6, 7]], hasMultipleElements)
+hasMultipleElements(lst) = list_length(lst) > 1
+main() = list_filter([[1], [2, 3], [4], [5, 6, 7]], hasMultipleElements)
 ''');
       checkResult(runtime, [
         [2, 3],
@@ -1968,17 +1968,17 @@ main() = list.filter([[1], [2, 3], [4], [5, 6, 7]], hasMultipleElements)
       ]);
     });
 
-    test('list.reduce on list of lists to flatten', () {
+    test('list_reduce on list of lists to flatten', () {
       final RuntimeFacade runtime = getRuntime('''
-main() = list.reduce([[1, 2], [3, 4], [5, 6]], [], list.concat)
+main() = list_reduce([[1, 2], [3, 4], [5, 6]], [], list_concat)
 ''');
       checkResult(runtime, [1, 2, 3, 4, 5, 6]);
     });
 
-    test('list.sort on list of lists by first element', () {
+    test('list_sort on list of lists by first element', () {
       final RuntimeFacade runtime = getRuntime('''
-compareByFirst(a, b) = num.compare(list.first(a), list.first(b))
-main() = list.sort([[3, 1], [1, 2], [2, 3]], compareByFirst)
+compareByFirst(a, b) = num_compare(list_first(a), list_first(b))
+main() = list_sort([[3, 1], [1, 2], [2, 3]], compareByFirst)
 ''');
       checkResult(runtime, [
         [1, 2],
@@ -1987,26 +1987,26 @@ main() = list.sort([[3, 1], [1, 2], [2, 3]], compareByFirst)
       ]);
     });
 
-    test('list.all checking all sublists have elements', () {
+    test('list_all checking all sublists have elements', () {
       final RuntimeFacade runtime = getRuntime('''
-hasElements(lst) = list.isNotEmpty(lst)
-main() = list.all([[1], [2, 3], [4, 5, 6]], hasElements)
+hasElements(lst) = list_isNotEmpty(lst)
+main() = list_all([[1], [2, 3], [4, 5, 6]], hasElements)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.any checking if any sublist is empty', () {
+    test('list_any checking if any sublist is empty', () {
       final RuntimeFacade runtime = getRuntime('''
-isEmpty(lst) = list.isEmpty(lst)
-main() = list.any([[1], [], [3]], isEmpty)
+isEmpty(lst) = list_isEmpty(lst)
+main() = list_any([[1], [], [3]], isEmpty)
 ''');
       checkResult(runtime, true);
     });
 
-    test('list.none checking no sublists have more than 5 elements', () {
+    test('list_none checking no sublists have more than 5 elements', () {
       final RuntimeFacade runtime = getRuntime('''
-hasManyElements(lst) = list.length(lst) > 5
-main() = list.none([[1, 2], [3, 4, 5], [6]], hasManyElements)
+hasManyElements(lst) = list_length(lst) > 5
+main() = list_none([[1, 2], [3, 4, 5], [6]], hasManyElements)
 ''');
       checkResult(runtime, true);
     });

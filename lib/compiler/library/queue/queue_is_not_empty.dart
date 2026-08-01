@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class QueueIsNotEmpty extends NativeFunctionTerm {
   const QueueIsNotEmpty()
     : super(
-        name: 'queue.isNotEmpty',
+        name: 'queue_isNotEmpty',
         parameters: const [
           Parameter.queue('a'),
         ],

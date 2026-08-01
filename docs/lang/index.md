@@ -75,5 +75,5 @@ Core library functions organized by category. Note: Primal does not support stat
 - [[lang/design/first-class-functions]] — Functions as values, higher-order functions, and composition
 - [[lang/design/lazy-evaluation]] — Deferred computation with thunks and short-circuit operators
 - [[lang/design/recursion]] — Iteration through recursion, common patterns, and higher-order alternatives
-- [[lang/design/error-handling]] — Throwing and catching errors with error.throw and try
+- [[lang/design/error-handling]] — Throwing and catching errors with error_throw and try
 - [[lang/design/working-with-collections]] — Collection types and transformation patterns

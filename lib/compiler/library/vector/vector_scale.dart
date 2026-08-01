@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class VectorScale extends NativeFunctionTerm {
   const VectorScale()
     : super(
-        name: 'vector.scale',
+        name: 'vector_scale',
         parameters: const [
           Parameter.vector('a'),
           Parameter.number('b'),

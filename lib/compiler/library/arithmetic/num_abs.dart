@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumAbs extends NativeFunctionTerm {
   const NumAbs()
     : super(
-        name: 'num.abs',
+        name: 'num_abs',
         parameters: const [
           Parameter.number('a'),
         ],

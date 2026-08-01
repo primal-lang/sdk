@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListZip extends NativeFunctionTerm {
   const ListZip()
     : super(
-        name: 'list.zip',
+        name: 'list_zip',
         parameters: const [
           Parameter.list('a'),
           Parameter.list('b'),

@@ -3,9 +3,9 @@
   Output: a list with the elements in reverse order
 */
 
-reverseList(list) = if (list.isEmpty(list))
+reverseList(list) = if (list_isEmpty(list))
                         []
                     else
-                        reverseList(list.rest(list)) + list.first(list)
+                        reverseList(list_rest(list)) + list_first(list)
 
 main() = reverseList([1, 2, 3, 4, 5])

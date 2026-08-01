@@ -44,7 +44,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('console.read'),
+            contains('console_read'),
           ),
         ),
       );
@@ -407,7 +407,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"console.read"'),
+            contains('"console_read"'),
           ),
         ),
       );
@@ -426,7 +426,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.fromPath'),
+            contains('file_fromPath'),
           ),
         ),
       );
@@ -453,7 +453,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.exists'),
+            contains('file_exists'),
           ),
         ),
       );
@@ -466,7 +466,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.read'),
+            contains('file_read'),
           ),
         ),
       );
@@ -479,7 +479,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.write'),
+            contains('file_write'),
           ),
         ),
       );
@@ -492,7 +492,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.length'),
+            contains('file_length'),
           ),
         ),
       );
@@ -505,7 +505,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.create'),
+            contains('file_create'),
           ),
         ),
       );
@@ -518,7 +518,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.delete'),
+            contains('file_delete'),
           ),
         ),
       );
@@ -531,7 +531,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.path'),
+            contains('file_path'),
           ),
         ),
       );
@@ -544,7 +544,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.name'),
+            contains('file_name'),
           ),
         ),
       );
@@ -557,7 +557,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.rename'),
+            contains('file_rename'),
           ),
         ),
       );
@@ -570,7 +570,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.extension'),
+            contains('file_extension'),
           ),
         ),
       );
@@ -583,7 +583,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.copy'),
+            contains('file_copy'),
           ),
         ),
       );
@@ -596,7 +596,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.move'),
+            contains('file_move'),
           ),
         ),
       );
@@ -609,7 +609,33 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('file.parent'),
+            contains('file_parent'),
+          ),
+        ),
+      );
+    });
+
+    test('append throws UnimplementedFunctionWebError', () {
+      expect(
+        () => platform.append(File('dummy'), 'content'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('file_append'),
+          ),
+        ),
+      );
+    });
+
+    test('lastModified throws UnimplementedFunctionWebError', () {
+      expect(
+        () => platform.lastModified(File('dummy')),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('file_lastModified'),
           ),
         ),
       );
@@ -771,7 +797,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.fromPath"'),
+            contains('"file_fromPath"'),
           ),
         ),
       );
@@ -784,7 +810,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.exists"'),
+            contains('"file_exists"'),
           ),
         ),
       );
@@ -797,7 +823,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.read"'),
+            contains('"file_read"'),
           ),
         ),
       );
@@ -810,7 +836,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.write"'),
+            contains('"file_write"'),
           ),
         ),
       );
@@ -823,7 +849,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.length"'),
+            contains('"file_length"'),
           ),
         ),
       );
@@ -836,7 +862,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.create"'),
+            contains('"file_create"'),
           ),
         ),
       );
@@ -849,7 +875,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.delete"'),
+            contains('"file_delete"'),
           ),
         ),
       );
@@ -862,7 +888,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.path"'),
+            contains('"file_path"'),
           ),
         ),
       );
@@ -875,7 +901,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.name"'),
+            contains('"file_name"'),
           ),
         ),
       );
@@ -888,7 +914,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.rename"'),
+            contains('"file_rename"'),
           ),
         ),
       );
@@ -901,7 +927,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.extension"'),
+            contains('"file_extension"'),
           ),
         ),
       );
@@ -914,7 +940,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.copy"'),
+            contains('"file_copy"'),
           ),
         ),
       );
@@ -927,7 +953,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.move"'),
+            contains('"file_move"'),
           ),
         ),
       );
@@ -940,7 +966,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"file.parent"'),
+            contains('"file_parent"'),
           ),
         ),
       );
@@ -959,7 +985,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.fromPath'),
+            contains('directory_fromPath'),
           ),
         ),
       );
@@ -986,7 +1012,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.exists'),
+            contains('directory_exists'),
           ),
         ),
       );
@@ -999,7 +1025,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.create'),
+            contains('directory_create'),
           ),
         ),
       );
@@ -1012,7 +1038,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.delete'),
+            contains('directory_delete'),
           ),
         ),
       );
@@ -1025,7 +1051,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.copy'),
+            contains('directory_copy'),
           ),
         ),
       );
@@ -1038,7 +1064,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.move'),
+            contains('directory_move'),
           ),
         ),
       );
@@ -1051,7 +1077,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.rename'),
+            contains('directory_rename'),
           ),
         ),
       );
@@ -1064,7 +1090,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.path'),
+            contains('directory_path'),
           ),
         ),
       );
@@ -1077,7 +1103,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.name'),
+            contains('directory_name'),
           ),
         ),
       );
@@ -1090,7 +1116,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.parent'),
+            contains('directory_parent'),
           ),
         ),
       );
@@ -1103,7 +1129,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('directory.list'),
+            contains('directory_list'),
           ),
         ),
       );
@@ -1229,7 +1255,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.fromPath"'),
+            contains('"directory_fromPath"'),
           ),
         ),
       );
@@ -1242,7 +1268,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.exists"'),
+            contains('"directory_exists"'),
           ),
         ),
       );
@@ -1255,7 +1281,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.create"'),
+            contains('"directory_create"'),
           ),
         ),
       );
@@ -1268,7 +1294,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.delete"'),
+            contains('"directory_delete"'),
           ),
         ),
       );
@@ -1281,7 +1307,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.copy"'),
+            contains('"directory_copy"'),
           ),
         ),
       );
@@ -1294,7 +1320,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.move"'),
+            contains('"directory_move"'),
           ),
         ),
       );
@@ -1307,7 +1333,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.rename"'),
+            contains('"directory_rename"'),
           ),
         ),
       );
@@ -1320,7 +1346,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.path"'),
+            contains('"directory_path"'),
           ),
         ),
       );
@@ -1333,7 +1359,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.name"'),
+            contains('"directory_name"'),
           ),
         ),
       );
@@ -1346,7 +1372,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.parent"'),
+            contains('"directory_parent"'),
           ),
         ),
       );
@@ -1359,7 +1385,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"directory.list"'),
+            contains('"directory_list"'),
           ),
         ),
       );
@@ -1378,7 +1404,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('env.get'),
+            contains('env_get'),
           ),
         ),
       );
@@ -1388,6 +1414,19 @@ void main() {
       expect(
         () => platform.getVariable('HOME'),
         throwsA(isA<RuntimeError>()),
+      );
+    });
+
+    test('hasVariable throws UnimplementedFunctionWebError', () {
+      expect(
+        () => platform.hasVariable('HOME'),
+        throwsA(
+          isA<UnimplementedFunctionWebError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('env_has'),
+          ),
+        ),
       );
     });
 
@@ -1448,7 +1487,7 @@ void main() {
           isA<UnimplementedFunctionWebError>().having(
             (e) => e.toString(),
             'message',
-            contains('"env.get"'),
+            contains('"env_get"'),
           ),
         ),
       );

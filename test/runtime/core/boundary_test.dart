@@ -9,43 +9,43 @@ import '../../helpers/pipeline_helpers.dart';
 
 void main() {
   group('Empty Collection Operations', () {
-    test('list.first empty throws', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.first([])');
+    test('list_first empty throws', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_first([])');
       expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
-    test('list.last empty throws', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.last([])');
+    test('list_last empty throws', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_last([])');
       expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
-    test('list.init empty returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.init([])');
+    test('list_init empty returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_init([])');
       checkResult(runtime, []);
     });
 
-    test('str.first empty throws', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.first("")');
+    test('str_first empty throws', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_first("")');
       expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
-    test('str.last empty throws', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.last("")');
+    test('str_last empty throws', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_last("")');
       expect(runtime.executeMain, throwsA(isA<EmptyCollectionError>()));
     });
 
-    test('str.init empty returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.init("")');
+    test('str_init empty returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_init("")');
       checkResult(runtime, '""');
     });
 
-    test('list.at empty throws', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.at([], 0)');
+    test('list_at empty throws', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_at([], 0)');
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('str.at empty throws', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.at("", 0)');
+    test('str_at empty throws', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_at("", 0)');
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
   });
@@ -61,964 +61,964 @@ void main() {
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.at out of bounds', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.at([1, 2], 5)');
+    test('list_at out of bounds', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_at([1, 2], 5)');
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('str.at out of bounds', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.at("Hi", 5)');
+    test('str_at out of bounds', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_at("Hi", 5)');
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.removeAt out of bounds', () {
+    test('list_removeAt out of bounds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2], 5)',
+        'main() = list_removeAt([1, 2], 5)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.swap out of bounds', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.swap([1], 0, 5)');
+    test('list_swap out of bounds', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_swap([1], 0, 5)');
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.sublist out of bounds', () {
+    test('list_sublist out of bounds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2], 0, 10)',
+        'main() = list_sublist([1, 2], 0, 10)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('str.substring out of bounds', () {
+    test('str_substring out of bounds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.substring("Hi", 0, 10)',
+        'main() = str_substring("Hi", 0, 10)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
     test('list negative index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([1, 2, 3], -1)',
+        'main() = list_at([1, 2, 3], -1)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('str.removeAt out of bounds', () {
+    test('str_removeAt out of bounds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.removeAt("Hi", 5)',
+        'main() = str_removeAt("Hi", 5)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('str.removeAt negative index', () {
+    test('str_removeAt negative index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.removeAt("Hi", -1)',
+        'main() = str_removeAt("Hi", -1)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('list.removeAt negative index', () {
+    test('list_removeAt negative index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2], -1)',
+        'main() = list_removeAt([1, 2], -1)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('list.swap negative first index', () {
+    test('list_swap negative first index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2], -1, 0)',
+        'main() = list_swap([1, 2], -1, 0)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('list.swap negative second index', () {
+    test('list_swap negative second index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2], 0, -1)',
+        'main() = list_swap([1, 2], 0, -1)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('list.swap first index out of bounds', () {
+    test('list_swap first index out of bounds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2], 5, 0)',
+        'main() = list_swap([1, 2], 5, 0)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.set negative index', () {
+    test('list_set negative index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2], -1, 99)',
-      );
-      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
-    });
-
-    test('list.set out of bounds index', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2], 10, 99)',
-      );
-      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
-    });
-
-    test('list.set index equal to length', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2], 2, 99)',
-      );
-      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
-    });
-
-    test('list.set empty list at index 0', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([], 0, 99)',
-      );
-      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
-    });
-
-    test('list.set empty list at index 1', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([], 1, 99)',
-      );
-      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
-    });
-
-    test('list.set single element list at index 1', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1], 1, 99)',
-      );
-      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
-    });
-
-    test('list.sublist negative start index', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], -1, 2)',
+        'main() = list_set([1, 2], -1, 99)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('list.sublist end less than start', () {
+    test('list_set out of bounds index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 2, 1)',
+        'main() = list_set([1, 2], 10, 99)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.sublist start greater than length', () {
+    test('list_set index equal to length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 10, 12)',
+        'main() = list_set([1, 2], 2, 99)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('str.take negative count', () {
+    test('list_set empty list at index 0', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.take("Hello", -1)',
+        'main() = list_set([], 0, 99)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list_set empty list at index 1', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list_set([], 1, 99)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list_set single element list at index 1', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list_set([1], 1, 99)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list_sublist negative start index', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list_sublist([1, 2, 3], -1, 2)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('str.drop negative count', () {
+    test('list_sublist end less than start', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.drop("Hello", -1)',
+        'main() = list_sublist([1, 2, 3], 2, 1)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list_sublist start greater than length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list_sublist([1, 2, 3], 10, 12)',
+      );
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('str_take negative count', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_take("Hello", -1)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('str.substring negative start', () {
+    test('str_drop negative count', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.substring("Hello", -1, 3)',
+        'main() = str_drop("Hello", -1)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('str.substring end less than start', () {
+    test('str_substring negative start', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.substring("Hello", 3, 1)',
+        'main() = str_substring("Hello", -1, 3)',
       );
-      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
-    });
-
-    test('str.at negative index', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.at("Hello", -1)');
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('str.substring start greater than length', () {
+    test('str_substring end less than start', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.substring("Hi", 5, 6)',
+        'main() = str_substring("Hello", 3, 1)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('str.removeAt on empty string', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.removeAt("", 0)');
-      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    test('str_at negative index', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_at("Hello", -1)');
+      expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('list.removeAt on empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.removeAt([], 0)');
-      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
-    });
-
-    test('list.at index equal to length', () {
+    test('str_substring start greater than length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([1, 2, 3], 3)',
+        'main() = str_substring("Hi", 5, 6)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('str.at index equal to length', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.at("abc", 3)');
+    test('str_removeAt on empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_removeAt("", 0)');
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.swap on empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.swap([], 0, 0)');
+    test('list_removeAt on empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_removeAt([], 0)');
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.swap on single element list with out of bounds', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.swap([1], 0, 1)');
+    test('list_at index equal to length', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = list_at([1, 2, 3], 3)',
+      );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('map.at on empty map', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.at({}, "key")');
+    test('str_at index equal to length', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_at("abc", 3)');
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list_swap on empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_swap([], 0, 0)');
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('list_swap on single element list with out of bounds', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_swap([1], 0, 1)');
+      expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
+    });
+
+    test('map_at on empty map', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_at({}, "key")');
       expect(runtime.executeMain, throwsA(isA<InvalidMapIndexError>()));
     });
 
-    test('map.at non-existent key', () {
+    test('map_at non-existent key', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = map.at({"a": 1}, "b")',
+        'main() = map_at({"a": 1}, "b")',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidMapIndexError>()));
     });
 
-    test('list.sublist negative end index', () {
+    test('list_sublist negative end index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 0, -1)',
+        'main() = list_sublist([1, 2, 3], 0, -1)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('str.substring negative end index', () {
+    test('str_substring negative end index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.substring("Hello", 0, -1)',
+        'main() = str_substring("Hello", 0, -1)',
       );
       expect(runtime.executeMain, throwsA(isA<IndexOutOfBoundsError>()));
     });
 
-    test('list.take negative count', () {
+    test('list_take negative count', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2], -1)',
+        'main() = list_take([1, 2], -1)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('list.drop negative count', () {
+    test('list_drop negative count', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2], -1)',
+        'main() = list_drop([1, 2], -1)',
       );
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
   });
 
   group('Boundary Value Operations', () {
-    test('list.sublist empty list returns empty', () {
+    test('list_sublist empty list returns empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([], 0, 0)',
+        'main() = list_sublist([], 0, 0)',
       );
       checkResult(runtime, []);
     });
 
-    test('str.substring empty string returns empty', () {
+    test('str_substring empty string returns empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.substring("", 0, 0)',
+        'main() = str_substring("", 0, 0)',
       );
       checkResult(runtime, '""');
     });
 
-    test('str.init single character returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.init("a")');
+    test('str_init single character returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_init("a")');
       checkResult(runtime, '""');
     });
 
-    test('str.rest single character returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.rest("a")');
+    test('str_rest single character returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_rest("a")');
       checkResult(runtime, '""');
     });
 
-    test('list.init single element returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.init([1])');
+    test('list_init single element returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_init([1])');
       checkResult(runtime, []);
     });
 
-    test('list.rest single element returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.rest([1])');
+    test('list_rest single element returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_rest([1])');
       checkResult(runtime, []);
     });
 
-    test('list.sublist end equal to length', () {
+    test('list_sublist end equal to length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 1, 3)',
+        'main() = list_sublist([1, 2, 3], 1, 3)',
       );
       checkResult(runtime, [2, 3]);
     });
 
-    test('str.substring end equal to length', () {
+    test('str_substring end equal to length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.substring("Hello", 2, 5)',
+        'main() = str_substring("Hello", 2, 5)',
       );
       checkResult(runtime, '"llo"');
     });
 
-    test('list.sublist start equal to length returns empty', () {
+    test('list_sublist start equal to length returns empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 3, 3)',
+        'main() = list_sublist([1, 2, 3], 3, 3)',
       );
       checkResult(runtime, []);
     });
 
-    test('str.substring start equal to length returns empty', () {
+    test('str_substring start equal to length returns empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.substring("Hi", 2, 2)',
+        'main() = str_substring("Hi", 2, 2)',
       );
       checkResult(runtime, '""');
     });
 
-    test('list.take count equal to length', () {
+    test('list_take count equal to length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3], 3)',
+        'main() = list_take([1, 2, 3], 3)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('str.take count equal to length', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.take("abc", 3)');
+    test('str_take count equal to length', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_take("abc", 3)');
       checkResult(runtime, '"abc"');
     });
 
-    test('list.drop count equal to length', () {
+    test('list_drop count equal to length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3], 3)',
+        'main() = list_drop([1, 2, 3], 3)',
       );
       checkResult(runtime, []);
     });
 
-    test('str.drop count equal to length', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.drop("abc", 3)');
+    test('str_drop count equal to length', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_drop("abc", 3)');
       checkResult(runtime, '""');
     });
 
-    test('list.take exceeds length clamps to length', () {
+    test('list_take exceeds length clamps to length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2], 10)',
+        'main() = list_take([1, 2], 10)',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('str.take exceeds length clamps to length', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.take("ab", 10)');
+    test('str_take exceeds length clamps to length', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_take("ab", 10)');
       checkResult(runtime, '"ab"');
     });
 
-    test('list.drop exceeds length returns empty', () {
+    test('list_drop exceeds length returns empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2], 10)',
+        'main() = list_drop([1, 2], 10)',
       );
       checkResult(runtime, []);
     });
 
-    test('str.drop exceeds length returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.drop("ab", 10)');
+    test('str_drop exceeds length returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_drop("ab", 10)');
       checkResult(runtime, '""');
     });
 
-    test('list.removeAt first element', () {
+    test('list_removeAt first element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3], 0)',
+        'main() = list_removeAt([1, 2, 3], 0)',
       );
       checkResult(runtime, [2, 3]);
     });
 
-    test('list.removeAt last element', () {
+    test('list_removeAt last element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3], 2)',
+        'main() = list_removeAt([1, 2, 3], 2)',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('str.removeAt first character', () {
+    test('str_removeAt first character', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.removeAt("abc", 0)',
+        'main() = str_removeAt("abc", 0)',
       );
       checkResult(runtime, '"bc"');
     });
 
-    test('str.removeAt last character', () {
+    test('str_removeAt last character', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.removeAt("abc", 2)',
+        'main() = str_removeAt("abc", 2)',
       );
       checkResult(runtime, '"ab"');
     });
 
-    test('list.swap first and last elements', () {
+    test('list_swap first and last elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], 0, 2)',
+        'main() = list_swap([1, 2, 3], 0, 2)',
       );
       checkResult(runtime, [3, 2, 1]);
     });
 
-    test('list.swap same index returns unchanged', () {
+    test('list_swap same index returns unchanged', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], 1, 1)',
+        'main() = list_swap([1, 2, 3], 1, 1)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.set at first index', () {
+    test('list_set at first index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 0, 99)',
+        'main() = list_set([1, 2, 3], 0, 99)',
       );
       checkResult(runtime, [99, 2, 3]);
     });
 
-    test('list.set at last index', () {
+    test('list_set at last index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 2, 99)',
+        'main() = list_set([1, 2, 3], 2, 99)',
       );
       checkResult(runtime, [1, 2, 99]);
     });
 
-    test('list.first single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.first([42])');
+    test('list_first single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_first([42])');
       checkResult(runtime, 42);
     });
 
-    test('list.last single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.last([42])');
+    test('list_last single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_last([42])');
       checkResult(runtime, 42);
     });
 
-    test('str.first single character', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.first("x")');
+    test('str_first single character', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_first("x")');
       checkResult(runtime, '"x"');
     });
 
-    test('str.last single character', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.last("x")');
+    test('str_last single character', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_last("x")');
       checkResult(runtime, '"x"');
     });
   });
 
   group('Empty List Operations', () {
-    test('list.rest empty returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.rest([])');
+    test('list_rest empty returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_rest([])');
       checkResult(runtime, []);
     });
 
-    test('list.reverse empty returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.reverse([])');
+    test('list_reverse empty returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_reverse([])');
       checkResult(runtime, []);
     });
 
-    test('list.concat two empty lists', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.concat([], [])');
+    test('list_concat two empty lists', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_concat([], [])');
       checkResult(runtime, []);
     });
 
-    test('list.concat empty with non-empty', () {
+    test('list_concat empty with non-empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([], [1, 2])',
+        'main() = list_concat([], [1, 2])',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.concat non-empty with empty', () {
+    test('list_concat non-empty with empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([1, 2], [])',
+        'main() = list_concat([1, 2], [])',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.indexOf empty list returns negative one', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.indexOf([], 1)');
+    test('list_indexOf empty list returns negative one', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_indexOf([], 1)');
       checkResult(runtime, -1);
     });
 
-    test('list.indexOf element not found returns negative one', () {
+    test('list_indexOf element not found returns negative one', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([1, 2, 3], 5)',
+        'main() = list_indexOf([1, 2, 3], 5)',
       );
       checkResult(runtime, -1);
     });
 
-    test('list.contains empty list returns false', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.contains([], 1)');
+    test('list_contains empty list returns false', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_contains([], 1)');
       checkResult(runtime, false);
     });
 
-    test('list.contains element not in list returns false', () {
+    test('list_contains element not in list returns false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([1, 2, 3], 5)',
+        'main() = list_contains([1, 2, 3], 5)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.remove empty list returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.remove([], 1)');
+    test('list_remove empty list returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_remove([], 1)');
       checkResult(runtime, []);
     });
 
-    test('list.remove element not found returns unchanged', () {
+    test('list_remove element not found returns unchanged', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([1, 2, 3], 5)',
+        'main() = list_remove([1, 2, 3], 5)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.insertStart empty list', () {
+    test('list_insertStart empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertStart([], 1)',
+        'main() = list_insertStart([], 1)',
       );
       checkResult(runtime, [1]);
     });
 
-    test('list.insertEnd empty list', () {
+    test('list_insertEnd empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertEnd([], 1)',
+        'main() = list_insertEnd([], 1)',
       );
       checkResult(runtime, [1]);
     });
 
-    test('list.join empty list returns empty string', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.join([], ", ")');
+    test('list_join empty list returns empty string', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_join([], ", ")');
       checkResult(runtime, '""');
     });
 
-    test('list.join single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.join([1], ", ")');
+    test('list_join single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_join([1], ", ")');
       checkResult(runtime, '"1"');
     });
 
-    test('list.isEmpty empty list returns true', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.isEmpty([])');
+    test('list_isEmpty empty list returns true', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_isEmpty([])');
       checkResult(runtime, true);
     });
 
-    test('list.isEmpty non-empty list returns false', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.isEmpty([1])');
+    test('list_isEmpty non-empty list returns false', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_isEmpty([1])');
       checkResult(runtime, false);
     });
 
-    test('list.isNotEmpty empty list returns false', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.isNotEmpty([])');
+    test('list_isNotEmpty empty list returns false', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_isNotEmpty([])');
       checkResult(runtime, false);
     });
 
-    test('list.isNotEmpty non-empty list returns true', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.isNotEmpty([1])');
+    test('list_isNotEmpty non-empty list returns true', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_isNotEmpty([1])');
       checkResult(runtime, true);
     });
 
-    test('list.length empty list returns zero', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.length([])');
+    test('list_length empty list returns zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_length([])');
       checkResult(runtime, 0);
     });
 
-    test('list.take zero count returns empty', () {
+    test('list_take zero count returns empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3], 0)',
+        'main() = list_take([1, 2, 3], 0)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.drop zero count returns unchanged', () {
+    test('list_drop zero count returns unchanged', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3], 0)',
+        'main() = list_drop([1, 2, 3], 0)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.take empty list returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.take([], 5)');
+    test('list_take empty list returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_take([], 5)');
       checkResult(runtime, []);
     });
 
-    test('list.drop empty list returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.drop([], 5)');
+    test('list_drop empty list returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_drop([], 5)');
       checkResult(runtime, []);
     });
 
-    test('list.reverse single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.reverse([42])');
+    test('list_reverse single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_reverse([42])');
       checkResult(runtime, [42]);
     });
   });
 
   group('List Filled Boundary Cases', () {
-    test('list.filled zero count returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(0, 1)');
+    test('list_filled zero count returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(0, 1)');
       checkResult(runtime, []);
     });
 
-    test('list.filled negative count throws', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(-1, 1)');
+    test('list_filled negative count throws', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(-1, 1)');
       expect(runtime.executeMain, throwsA(isA<NegativeIndexError>()));
     });
 
-    test('list.filled single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(1, 42)');
+    test('list_filled single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(1, 42)');
       checkResult(runtime, [42]);
     });
   });
 
   group('Empty String Operations', () {
-    test('str.rest empty returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.rest("")');
+    test('str_rest empty returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_rest("")');
       checkResult(runtime, '""');
     });
 
-    test('str.reverse empty returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.reverse("")');
+    test('str_reverse empty returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_reverse("")');
       checkResult(runtime, '""');
     });
 
-    test('str.reverse single character', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.reverse("a")');
+    test('str_reverse single character', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_reverse("a")');
       checkResult(runtime, '"a"');
     });
 
-    test('str.indexOf empty string returns negative one', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.indexOf("", "a")');
+    test('str_indexOf empty string returns negative one', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_indexOf("", "a")');
       checkResult(runtime, -1);
     });
 
-    test('str.indexOf substring not found returns negative one', () {
+    test('str_indexOf substring not found returns negative one', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.indexOf("hello", "xyz")',
+        'main() = str_indexOf("hello", "xyz")',
       );
       checkResult(runtime, -1);
     });
 
-    test('str.indexOf empty substring returns zero', () {
+    test('str_indexOf empty substring returns zero', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.indexOf("hello", "")',
+        'main() = str_indexOf("hello", "")',
       );
       checkResult(runtime, 0);
     });
 
-    test('str.concat two empty strings', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.concat("", "")');
+    test('str_concat two empty strings', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_concat("", "")');
       checkResult(runtime, '""');
     });
 
-    test('str.concat empty with non-empty', () {
+    test('str_concat empty with non-empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.concat("", "hello")',
+        'main() = str_concat("", "hello")',
       );
       checkResult(runtime, '"hello"');
     });
 
-    test('str.concat non-empty with empty', () {
+    test('str_concat non-empty with empty', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.concat("hello", "")',
+        'main() = str_concat("hello", "")',
       );
       checkResult(runtime, '"hello"');
     });
 
-    test('str.contains empty string in non-empty returns true', () {
+    test('str_contains empty string in non-empty returns true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.contains("hello", "")',
+        'main() = str_contains("hello", "")',
       );
       checkResult(runtime, true);
     });
 
-    test('str.contains substring not found returns false', () {
+    test('str_contains substring not found returns false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.contains("hello", "xyz")',
-      );
-      checkResult(runtime, false);
-    });
-
-    test('str.contains empty string in empty returns true', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.contains("", "")');
-      checkResult(runtime, true);
-    });
-
-    test('str.startsWith empty prefix returns true', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = str.startsWith("hello", "")',
-      );
-      checkResult(runtime, true);
-    });
-
-    test('str.startsWith empty string with empty prefix returns true', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = str.startsWith("", "")',
-      );
-      checkResult(runtime, true);
-    });
-
-    test('str.startsWith empty string with non-empty prefix returns false', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = str.startsWith("", "a")',
+        'main() = str_contains("hello", "xyz")',
       );
       checkResult(runtime, false);
     });
 
-    test('str.endsWith empty suffix returns true', () {
+    test('str_contains empty string in empty returns true', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_contains("", "")');
+      checkResult(runtime, true);
+    });
+
+    test('str_startsWith empty prefix returns true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.endsWith("hello", "")',
+        'main() = str_startsWith("hello", "")',
       );
       checkResult(runtime, true);
     });
 
-    test('str.endsWith empty string with empty suffix returns true', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.endsWith("", "")');
+    test('str_startsWith empty string with empty prefix returns true', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_startsWith("", "")',
+      );
       checkResult(runtime, true);
     });
 
-    test('str.endsWith empty string with non-empty suffix returns false', () {
+    test('str_startsWith empty string with non-empty prefix returns false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.endsWith("", "a")',
+        'main() = str_startsWith("", "a")',
+      );
+      checkResult(runtime, false);
+    });
+
+    test('str_endsWith empty suffix returns true', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_endsWith("hello", "")',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('str_endsWith empty string with empty suffix returns true', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_endsWith("", "")');
+      checkResult(runtime, true);
+    });
+
+    test('str_endsWith empty string with non-empty suffix returns false', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = str_endsWith("", "a")',
       );
       checkResult(runtime, false);
     });
 
     test(
-      'str.split empty string with non-empty separator returns list with empty string',
+      'str_split empty string with non-empty separator returns list with empty string',
       () {
-        final RuntimeFacade runtime = getRuntime('main() = str.split("", ",")');
+        final RuntimeFacade runtime = getRuntime('main() = str_split("", ",")');
         checkResult(runtime, ['""']);
       },
     );
 
-    test('str.split empty string with empty separator returns empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.split("", "")');
+    test('str_split empty string with empty separator returns empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_split("", "")');
       checkResult(runtime, []);
     });
 
-    test('str.split with empty separator returns characters', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.split("abc", "")');
+    test('str_split with empty separator returns characters', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_split("abc", "")');
       checkResult(runtime, ['"a"', '"b"', '"c"']);
     });
 
-    test('str.isEmpty empty string returns true', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.isEmpty("")');
+    test('str_isEmpty empty string returns true', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_isEmpty("")');
       checkResult(runtime, true);
     });
 
-    test('str.isEmpty non-empty string returns false', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.isEmpty("a")');
+    test('str_isEmpty non-empty string returns false', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_isEmpty("a")');
       checkResult(runtime, false);
     });
 
-    test('str.isNotEmpty empty string returns false', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.isNotEmpty("")');
+    test('str_isNotEmpty empty string returns false', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_isNotEmpty("")');
       checkResult(runtime, false);
     });
 
-    test('str.isNotEmpty non-empty string returns true', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.isNotEmpty("a")');
+    test('str_isNotEmpty non-empty string returns true', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_isNotEmpty("a")');
       checkResult(runtime, true);
     });
 
-    test('str.length empty string returns zero', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.length("")');
+    test('str_length empty string returns zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_length("")');
       checkResult(runtime, 0);
     });
 
-    test('str.take zero count returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.take("hello", 0)');
+    test('str_take zero count returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_take("hello", 0)');
       checkResult(runtime, '""');
     });
 
-    test('str.drop zero count returns unchanged', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.drop("hello", 0)');
+    test('str_drop zero count returns unchanged', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_drop("hello", 0)');
       checkResult(runtime, '"hello"');
     });
 
-    test('str.take empty string returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.take("", 5)');
+    test('str_take empty string returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_take("", 5)');
       checkResult(runtime, '""');
     });
 
-    test('str.drop empty string returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.drop("", 5)');
+    test('str_drop empty string returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_drop("", 5)');
       checkResult(runtime, '""');
     });
   });
 
   group('Empty Map Operations', () {
-    test('map.keys empty map returns empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.keys({})');
+    test('map_keys empty map returns empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_keys({})');
       checkResult(runtime, []);
     });
 
-    test('map.values empty map returns empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.values({})');
+    test('map_values empty map returns empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_values({})');
       checkResult(runtime, []);
     });
 
-    test('map.set empty map adds entry', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.set({}, "a", 1)');
+    test('map_set empty map adds entry', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_set({}, "a", 1)');
       checkResult(runtime, {'"a"': 1});
     });
 
-    test('map.set updates existing key', () {
+    test('map_set updates existing key', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = map.set({"a": 1}, "a", 99)',
+        'main() = map_set({"a": 1}, "a", 99)',
       );
       checkResult(runtime, {'"a"': 99});
     });
 
-    test('map.removeAt empty map returns empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.removeAt({}, 1)');
+    test('map_removeAt empty map returns empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_removeAt({}, 1)');
       checkResult(runtime, {});
     });
 
-    test('map.removeAt non-existent key returns unchanged', () {
+    test('map_removeAt non-existent key returns unchanged', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = map.removeAt({1: "a"}, 2)',
+        'main() = map_removeAt({1: "a"}, 2)',
       );
       checkResult(runtime, {1: '"a"'});
     });
 
-    test('map.containsKey empty map returns false', () {
+    test('map_containsKey empty map returns false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = map.containsKey({}, "a")',
+        'main() = map_containsKey({}, "a")',
       );
       checkResult(runtime, false);
     });
 
-    test('map.containsKey key exists returns true', () {
+    test('map_containsKey key exists returns true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = map.containsKey({"a": 1}, "a")',
+        'main() = map_containsKey({"a": 1}, "a")',
       );
       checkResult(runtime, true);
     });
 
-    test('map.containsKey key not exists returns false', () {
+    test('map_containsKey key not exists returns false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = map.containsKey({"a": 1}, "b")',
+        'main() = map_containsKey({"a": 1}, "b")',
       );
       checkResult(runtime, false);
     });
 
-    test('map.isEmpty empty map returns true', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.isEmpty({})');
+    test('map_isEmpty empty map returns true', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_isEmpty({})');
       checkResult(runtime, true);
     });
 
-    test('map.isEmpty non-empty map returns false', () {
+    test('map_isEmpty non-empty map returns false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = map.isEmpty({"a": 1})',
+        'main() = map_isEmpty({"a": 1})',
       );
       checkResult(runtime, false);
     });
 
-    test('map.isNotEmpty empty map returns false', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.isNotEmpty({})');
+    test('map_isNotEmpty empty map returns false', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_isNotEmpty({})');
       checkResult(runtime, false);
     });
 
-    test('map.isNotEmpty non-empty map returns true', () {
+    test('map_isNotEmpty non-empty map returns true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = map.isNotEmpty({"a": 1})',
+        'main() = map_isNotEmpty({"a": 1})',
       );
       checkResult(runtime, true);
     });
 
-    test('map.length empty map returns zero', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.length({})');
+    test('map_length empty map returns zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_length({})');
       checkResult(runtime, 0);
     });
 
-    test('map.length single entry returns one', () {
-      final RuntimeFacade runtime = getRuntime('main() = map.length({"a": 1})');
+    test('map_length single entry returns one', () {
+      final RuntimeFacade runtime = getRuntime('main() = map_length({"a": 1})');
       checkResult(runtime, 1);
     });
   });
 
   group('Single Element Boundary Cases', () {
-    test('list.indexOf first element returns zero', () {
+    test('list_indexOf first element returns zero', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([1, 2, 3], 1)',
+        'main() = list_indexOf([1, 2, 3], 1)',
       );
       checkResult(runtime, 0);
     });
 
-    test('list.indexOf last element returns correct index', () {
+    test('list_indexOf last element returns correct index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([1, 2, 3], 3)',
+        'main() = list_indexOf([1, 2, 3], 3)',
       );
       checkResult(runtime, 2);
     });
 
-    test('list.contains first element returns true', () {
+    test('list_contains first element returns true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([1, 2, 3], 1)',
+        'main() = list_contains([1, 2, 3], 1)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains last element returns true', () {
+    test('list_contains last element returns true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([1, 2, 3], 3)',
+        'main() = list_contains([1, 2, 3], 3)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.remove all occurrences', () {
+    test('list_remove all occurrences', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([1, 2, 1, 3, 1], 1)',
+        'main() = list_remove([1, 2, 1, 3, 1], 1)',
       );
       checkResult(runtime, [2, 3]);
     });
 
-    test('list.removeAt single element list', () {
+    test('list_removeAt single element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([42], 0)',
+        'main() = list_removeAt([42], 0)',
       );
       checkResult(runtime, []);
     });
 
-    test('str.indexOf first character returns zero', () {
+    test('str_indexOf first character returns zero', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.indexOf("hello", "h")',
+        'main() = str_indexOf("hello", "h")',
       );
       checkResult(runtime, 0);
     });
 
-    test('str.indexOf last character returns correct index', () {
+    test('str_indexOf last character returns correct index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.indexOf("hello", "o")',
+        'main() = str_indexOf("hello", "o")',
       );
       checkResult(runtime, 4);
     });
 
-    test('str.removeAt single character string', () {
-      final RuntimeFacade runtime = getRuntime('main() = str.removeAt("x", 0)');
+    test('str_removeAt single character string', () {
+      final RuntimeFacade runtime = getRuntime('main() = str_removeAt("x", 0)');
       checkResult(runtime, '""');
     });
 
-    test('list.swap adjacent elements', () {
+    test('list_swap adjacent elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], 0, 1)',
+        'main() = list_swap([1, 2, 3], 0, 1)',
       );
       checkResult(runtime, [2, 1, 3]);
     });
 
-    test('list.swap single element list at same index', () {
+    test('list_swap single element list at same index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([42], 0, 0)',
+        'main() = list_swap([42], 0, 0)',
       );
       checkResult(runtime, [42]);
     });
 
-    test('list.set single element list', () {
+    test('list_set single element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1], 0, 99)',
+        'main() = list_set([1], 0, 99)',
       );
       checkResult(runtime, [99]);
     });

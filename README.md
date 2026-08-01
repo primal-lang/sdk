@@ -4,7 +4,7 @@
 
 <p align="center">
 <a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
-<a href="https://github.com/primal-lang/sdk/releases/tag/v0.5.2"><img src="https://img.shields.io/badge/Latest-0.5.2-blue" /></a>
+<a href="https://github.com/primal-lang/sdk/releases/tag/v0.5.3"><img src="https://img.shields.io/badge/Latest-0.5.3-blue" /></a>
 </p>
 
 # Primal
@@ -91,8 +91,8 @@ The syntax is designed to be simple and easy to read and consists of function de
 
 A function declaration is composed of:
 
-- **Name:** which must match the regular expression `[a-zA-Z][\w\.]*`
-- **Parameters (optional):** a list of identifiers, each matching the regular expression `[a-zA-Z][\w\.]*`
+- **Name:** which must match the regular expression `[a-zA-Z]\w*`
+- **Parameters (optional):** a list of identifiers, each matching the regular expression `[a-zA-Z]\w*`
 - **Body:** an expression which consists of combinations of:
   - Constants: `"Hello"`, `42`, `true`, `[1, 2, 3]`, etc
   - Operations: `foo + 3`, `!foo`, `foo >= bar`, etc
@@ -103,13 +103,13 @@ A function declaration is composed of:
 Here is an example of a function with parameters:
 
 ```javascript
-cube(n) = pow(n, 3)
+cube(n) = num_pow(n, 3)
 ```
 
 And here is an example of a function without parameters:
 
 ```javascript
-pi() = 3.14159;
+pi() = 3.14159
 ```
 
 Here is an example of a conditional expression:

@@ -36,10 +36,10 @@ false && expensive() // expensive() is NOT evaluated, returns false immediately
 This is useful for guarding expressions that should only run under certain conditions:
 
 ```
-list.isNotEmpty(items) && list.first(items) > 0
+list_isNotEmpty(items) && list_first(items) > 0
 ```
 
-If `items` is empty, `list.first(items)` would throw an error. But because `&&` uses lazy evaluation, the second expression is never evaluated when the list is empty.
+If `items` is empty, `list_first(items)` would throw an error. But because `&&` uses lazy evaluation, the second expression is never evaluated when the list is empty.
 
 ### Or Operator (`||`)
 
@@ -53,18 +53,18 @@ true || expensive() // expensive() is NOT evaluated, returns true immediately
 This is useful for providing fallback values or alternative conditions:
 
 ```
-cache.exists(key) || database.fetch(key)
+cache_exists(key) || database_fetch(key)
 ```
 
 The database fetch only happens if the cache check returns `false`.
 
 ### Demonstrating Short-Circuit Behavior
 
-You can observe lazy evaluation by using `error.throw` as the second operand:
+You can observe lazy evaluation by using `error_throw` as the second operand:
 
 ```
-false && error.throw(-1, "Never thrown") // returns false (no error)
-true || error.throw(-1, "Never thrown")  // returns true (no error)
+false && error_throw(-1, "Never thrown") // returns false (no error)
+true || error_throw(-1, "Never thrown")  // returns true (no error)
 ```
 
 If the second operand were eagerly evaluated, these expressions would throw errors. Instead, they return immediately because the second operand is never needed.
@@ -99,8 +99,8 @@ if (condition) thenBranch else elseBranch
 Only one branch is evaluated based on the condition:
 
 ```
-if (true) "yes" else error.throw(-1, "Never thrown")  // returns "yes"
-if (false) error.throw(-1, "Never thrown") else "no"  // returns "no"
+if (true) "yes" else error_throw(-1, "Never thrown")  // returns "yes"
+if (false) error_throw(-1, "Never thrown") else "no"  // returns "no"
 ```
 
 This allows you to safely write expressions that would fail in the non-taken branch:
@@ -113,15 +113,15 @@ When `n` is zero, the division is never attempted because the `else` branch is n
 
 ## When Evaluation Applies
 
-| Construct                 | Evaluation Strategy           |
-| ------------------------- | ----------------------------- |
-| Function arguments        | Eager (call-by-value)         |
-| `&&`, `and`, `\|\|`, `or` | Lazy (second operand)         |
-| `&`, `\|`                 | Eager (both operands)         |
-| `if-else` branches        | Lazy (non-taken branch)       |
-| `let` bindings            | Eager (sequential)            |
-| `try` arguments           | Lazy (fallback only on error) |
-| `assert.throws` argument  | Lazy (evaluated under a guard) |
+| Construct                 | Evaluation Strategy            |
+| ------------------------- | ------------------------------ |
+| Function arguments        | Eager (call-by-value)          |
+| `&&`, `and`, `\|\|`, `or` | Lazy (second operand)          |
+| `&`, `\|`                 | Eager (both operands)          |
+| `if-else` branches        | Lazy (non-taken branch)        |
+| `let` bindings            | Eager (sequential)             |
+| `try` arguments           | Lazy (fallback only on error)  |
+| `assert_throws` argument  | Lazy (evaluated under a guard) |
 
 ## Laziness Cannot Be Passed Along
 
@@ -130,12 +130,12 @@ always evaluates its arguments before its body runs, so wrapping a lazy
 construct in a function loses the laziness:
 
 ```
-expectThrow(e) = assert.throws(e)
-test.x() = expectThrow(to.number("z"))   // errors; the call never reaches assert.throws
+expectThrow(e) = assert_throws(e)
+test_x() = expectThrow(to_number("z"))   // errors; the call never reaches assert_throws
 ```
 
-`to.number("z")` is evaluated at the call boundary of `expectThrow`, so its
-error escapes before `assert.throws` can guard it. The same applies to `if` and
+`to_number("z")` is evaluated at the call boundary of `expectThrow`, so its
+error escapes before `assert_throws` can guard it. The same applies to `if` and
 `try`: `myIf(c, a, b) = if (c) a else b` evaluates both branches. Lazy
 constructs must be written at the site where the laziness is needed.
 
@@ -180,4 +180,4 @@ The `safeDefault()` is only evaluated if `riskyOperation()` throws an error.
 - [[lang/reference/core/operators]] - Operator reference including lazy and strict variants
 - [[lang/reference/primitives/logic]] - Boolean logic functions with evaluation details
 - [[lang/reference/core/control]] - Control flow constructs
-- [[lang/reference/core/assert]] - Assertions, including `assert.throws` and its abstraction limit
+- [[lang/reference/core/assert]] - Assertions, including `assert_throws` and its abstraction limit

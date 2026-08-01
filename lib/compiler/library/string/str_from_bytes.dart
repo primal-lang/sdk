@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrFromBytes extends NativeFunctionTerm {
   const StrFromBytes()
     : super(
-        name: 'str.fromBytes',
+        name: 'str_fromBytes',
         parameters: const [
           Parameter.list('a'),
         ],

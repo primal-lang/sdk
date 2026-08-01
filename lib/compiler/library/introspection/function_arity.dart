@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FunctionArity extends NativeFunctionTerm {
   const FunctionArity()
     : super(
-        name: 'function.arity',
+        name: 'function_arity',
         parameters: const [
           Parameter.function('a'),
         ],

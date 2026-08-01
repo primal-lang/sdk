@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrLastIndexOf extends NativeFunctionTerm {
   const StrLastIndexOf()
     : super(
-        name: 'str.lastIndexOf',
+        name: 'str_lastIndexOf',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

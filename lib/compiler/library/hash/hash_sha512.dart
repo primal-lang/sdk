@@ -8,7 +8,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class HashSha512 extends NativeFunctionTerm {
   const HashSha512()
     : super(
-        name: 'hash.sha512',
+        name: 'hash_sha512',
         parameters: const [
           Parameter.string('a'),
         ],

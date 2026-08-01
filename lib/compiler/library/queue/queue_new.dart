@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class QueueNew extends NativeFunctionTerm {
   const QueueNew()
     : super(
-        name: 'queue.new',
+        name: 'queue_new',
         parameters: const [
           Parameter.list('a'),
         ],

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ToBoolean extends NativeFunctionTerm {
   const ToBoolean()
     : super(
-        name: 'to.boolean',
+        name: 'to_boolean',
         parameters: const [
           Parameter.any('a'),
         ],

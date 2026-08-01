@@ -101,6 +101,12 @@ void main() {
       expect(term, isA<SetTerm>());
     });
 
+    test('Duration returns DurationTerm', () {
+      final ValueTerm term = ValueTerm.from(const Duration(hours: 2));
+      expect(term, isA<DurationTerm>());
+      expect((term as DurationTerm).value, equals(const Duration(hours: 2)));
+    });
+
     test('unsupported type throws InvalidLiteralValueError', () {
       expect(
         () => ValueTerm.from(Object()),
@@ -531,6 +537,41 @@ void main() {
       final DateTime dt = DateTime(2024, 6, 15);
       final TimestampTerm term = TimestampTerm(dt);
       expect(term.native(), dt);
+    });
+  });
+
+  group('DurationTerm', () {
+    test('type is DurationType', () {
+      const DurationTerm term = DurationTerm(Duration(hours: 2));
+      expect(term.type, isA<DurationType>());
+    });
+
+    test('native() returns Duration', () {
+      const DurationTerm term = DurationTerm(Duration(minutes: 90));
+      expect(term.native(), const Duration(minutes: 90));
+    });
+
+    test('terms with the same duration are equal', () {
+      const DurationTerm first = DurationTerm(Duration(hours: 1));
+      const DurationTerm second = DurationTerm(Duration(minutes: 60));
+      expect(first, equals(second));
+    });
+
+    test('terms with different durations are not equal', () {
+      const DurationTerm first = DurationTerm(Duration(hours: 1));
+      const DurationTerm second = DurationTerm(Duration(hours: 2));
+      expect(first, isNot(equals(second)));
+    });
+
+    test('equal terms share a hashCode', () {
+      const DurationTerm first = DurationTerm(Duration(hours: 1));
+      const DurationTerm second = DurationTerm(Duration(minutes: 60));
+      expect(first.hashCode, equals(second.hashCode));
+    });
+
+    test('toString() returns the formatted duration', () {
+      const DurationTerm term = DurationTerm(Duration(hours: 2));
+      expect(term.toString(), equals('0d 2h 00m 00s 000ms'));
     });
   });
 

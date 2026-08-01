@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeSubtract extends NativeFunctionTerm {
   const TimeSubtract()
     : super(
-        name: 'time.subtract',
+        name: 'time_subtract',
         parameters: const [
           Parameter.timestamp('a'),
           Parameter.duration('b'),

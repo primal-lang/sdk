@@ -12,14 +12,14 @@ void main() {
   group('Try/Catch Advanced', () {
     test('try catches empty list first', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(list.first([]), -1)',
+        'main() = try(list_first([]), -1)',
       );
       checkResult(runtime, -1);
     });
 
     test('try catches missing map key', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(map.at({}, "x"), "default")',
+        'main() = try(map_at({}, "x"), "default")',
       );
       checkResult(runtime, '"default"');
     });
@@ -44,16 +44,16 @@ void main() {
       checkResult(runtime, 99);
     });
 
-    test('try catches custom error.throw', () {
+    test('try catches custom error_throw', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(error.throw(404, "not found"), "caught")',
+        'main() = try(error_throw(404, "not found"), "caught")',
       );
       checkResult(runtime, '"caught"');
     });
 
     test('try catches JSON parse error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(json.decode("invalid"), "fallback")',
+        'main() = try(json_decode("invalid"), "fallback")',
       );
       checkResult(runtime, '"fallback"');
     });
@@ -89,7 +89,7 @@ main() = try(infinite(1), "caught recursion")
 
     test('try with conditional function that may error', () {
       final RuntimeFacade runtime = getRuntime('''
-mayFail(shouldFail) = if (shouldFail) error.throw(0, "fail") else 42
+mayFail(shouldFail) = if (shouldFail) error_throw(0, "fail") else 42
 main() = try(mayFail(true), -1)
 ''');
       checkResult(runtime, -1);
@@ -97,7 +97,7 @@ main() = try(mayFail(true), -1)
 
     test('try with conditional function that does not error', () {
       final RuntimeFacade runtime = getRuntime('''
-mayFail(shouldFail) = if (shouldFail) error.throw(0, "fail") else 42
+mayFail(shouldFail) = if (shouldFail) error_throw(0, "fail") else 42
 main() = try(mayFail(false), -1)
 ''');
       checkResult(runtime, 42);
@@ -210,7 +210,7 @@ main() = fib(10)
 
     test('recursion with multiple parameters', () {
       final RuntimeFacade runtime = getRuntime('''
-gcd(a, b) = if (b == 0) a else gcd(b, num.mod(a, b))
+gcd(a, b) = if (b == 0) a else gcd(b, num_mod(a, b))
 main() = gcd(48, 18)
 ''');
       checkResult(runtime, 6);
@@ -253,7 +253,7 @@ main() = countUp(0, 5)
 
     test('recursion with list processing', () {
       final RuntimeFacade runtime = getRuntime('''
-length(lst) = if (list.isEmpty(lst)) 0 else 1 + length(list.rest(lst))
+length(lst) = if (list_isEmpty(lst)) 0 else 1 + length(list_rest(lst))
 main() = length([1, 2, 3, 4, 5])
 ''');
       checkResult(runtime, 5);
@@ -369,7 +369,7 @@ main() = allTrue(5)
 
     test('recursion building a list', () {
       final RuntimeFacade runtime = getRuntime('''
-buildList(n) = if (n <= 0) [] else list.insertStart(buildList(n - 1), n)
+buildList(n) = if (n <= 0) [] else list_insertStart(buildList(n - 1), n)
 main() = buildList(3)
 ''');
       checkResult(runtime, [3, 2, 1]);
@@ -412,7 +412,7 @@ main() = funcA(1)
 
     test('recursion with map building', () {
       final RuntimeFacade runtime = getRuntime('''
-buildMap(n, accumulator) = if (n <= 0) accumulator else buildMap(n - 1, map.set(accumulator, to.string(n), n))
+buildMap(n, accumulator) = if (n <= 0) accumulator else buildMap(n - 1, map_set(accumulator, to_string(n), n))
 main() = buildMap(3, {})
 ''');
       checkResult(runtime, '{"3": 3, "2": 2, "1": 1}');
@@ -420,7 +420,7 @@ main() = buildMap(3, {})
 
     test('recursion summing list elements', () {
       final RuntimeFacade runtime = getRuntime('''
-sumList(items) = if (list.isEmpty(items)) 0 else list.first(items) + sumList(list.rest(items))
+sumList(items) = if (list_isEmpty(items)) 0 else list_first(items) + sumList(list_rest(items))
 main() = sumList([1, 2, 3, 4, 5])
 ''');
       checkResult(runtime, 15);
@@ -428,7 +428,7 @@ main() = sumList([1, 2, 3, 4, 5])
 
     test('recursion with empty list returns zero', () {
       final RuntimeFacade runtime = getRuntime('''
-sumList(items) = if (list.isEmpty(items)) 0 else list.first(items) + sumList(list.rest(items))
+sumList(items) = if (list_isEmpty(items)) 0 else list_first(items) + sumList(list_rest(items))
 main() = sumList([])
 ''');
       checkResult(runtime, 0);
@@ -436,7 +436,7 @@ main() = sumList([])
 
     test('recursion with single element list', () {
       final RuntimeFacade runtime = getRuntime('''
-sumList(items) = if (list.isEmpty(items)) 0 else list.first(items) + sumList(list.rest(items))
+sumList(items) = if (list_isEmpty(items)) 0 else list_first(items) + sumList(list_rest(items))
 main() = sumList([42])
 ''');
       checkResult(runtime, 42);
@@ -444,7 +444,7 @@ main() = sumList([42])
 
     test('recursion returning list of lists', () {
       final RuntimeFacade runtime = getRuntime('''
-nest(n) = if (n <= 0) [] else list.insertStart(nest(n - 1), [n])
+nest(n) = if (n <= 0) [] else list_insertStart(nest(n - 1), [n])
 main() = nest(3)
 ''');
       checkResult(runtime, [
@@ -472,7 +472,7 @@ main() = countToZero(-5)
 
     test('recursion with string building', () {
       final RuntimeFacade runtime = getRuntime('''
-buildString(n, accumulator) = if (n <= 0) accumulator else buildString(n - 1, str.concat(accumulator, to.string(n)))
+buildString(n, accumulator) = if (n <= 0) accumulator else buildString(n - 1, str_concat(accumulator, to_string(n)))
 main() = buildString(5, "")
 ''');
       checkResult(runtime, '"54321"');
@@ -488,7 +488,7 @@ main() = sumEvens(10, 0)
 
     test('recursive find in list', () {
       final RuntimeFacade runtime = getRuntime('''
-contains(items, target) = if (list.isEmpty(items)) false else if (list.first(items) == target) true else contains(list.rest(items), target)
+contains(items, target) = if (list_isEmpty(items)) false else if (list_first(items) == target) true else contains(list_rest(items), target)
 main() = contains([1, 2, 3, 4, 5], 3)
 ''');
       checkResult(runtime, true);
@@ -496,7 +496,7 @@ main() = contains([1, 2, 3, 4, 5], 3)
 
     test('recursive find not in list', () {
       final RuntimeFacade runtime = getRuntime('''
-contains(items, target) = if (list.isEmpty(items)) false else if (list.first(items) == target) true else contains(list.rest(items), target)
+contains(items, target) = if (list_isEmpty(items)) false else if (list_first(items) == target) true else contains(list_rest(items), target)
 main() = contains([1, 2, 3, 4, 5], 10)
 ''');
       checkResult(runtime, false);
@@ -504,7 +504,7 @@ main() = contains([1, 2, 3, 4, 5], 10)
 
     test('recursion with list reversal', () {
       final RuntimeFacade runtime = getRuntime('''
-reverseHelper(items, accumulator) = if (list.isEmpty(items)) accumulator else reverseHelper(list.rest(items), list.insertStart(accumulator, list.first(items)))
+reverseHelper(items, accumulator) = if (list_isEmpty(items)) accumulator else reverseHelper(list_rest(items), list_insertStart(accumulator, list_first(items)))
 reverse(items) = reverseHelper(items, [])
 main() = reverse([1, 2, 3])
 ''');
@@ -530,7 +530,7 @@ main() = increment(0)
 
     test('recursion combining multiple data types', () {
       final RuntimeFacade runtime = getRuntime('''
-process(n, text, items) = if (n <= 0) [text, items] else process(n - 1, str.concat(text, "x"), list.insertEnd(items, n))
+process(n, text, items) = if (n <= 0) [text, items] else process(n - 1, str_concat(text, "x"), list_insertEnd(items, n))
 main() = process(3, "", [])
 ''');
       checkResult(runtime, [
@@ -604,7 +604,7 @@ main() = try(ping(1), "mutual recursion caught")
 
     test('try catches error in recursive function before limit', () {
       final RuntimeFacade runtime = getRuntime('''
-failAt(n, target) = if (n == target) error.throw(0, "reached target") else failAt(n + 1, target)
+failAt(n, target) = if (n == target) error_throw(0, "reached target") else failAt(n + 1, target)
 main() = try(failAt(0, 5), "caught before limit")
 ''');
       checkResult(runtime, '"caught before limit"');
@@ -648,42 +648,42 @@ main() = try(1 / 0, sum(5))
 
     test('try catches IndexOutOfBoundsError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(list.at([1, 2, 3], 100), "out of bounds")',
+        'main() = try(list_at([1, 2, 3], 100), "out of bounds")',
       );
       checkResult(runtime, '"out of bounds"');
     });
 
     test('try catches NegativeIndexError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(list.at([1, 2, 3], -5), "negative index")',
+        'main() = try(list_at([1, 2, 3], -5), "negative index")',
       );
       checkResult(runtime, '"negative index"');
     });
 
-    test('try catches EmptyCollectionError from stack.pop', () {
+    test('try catches EmptyCollectionError from stack_pop', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(stack.pop(stack.new([])), "empty stack")',
+        'main() = try(stack_pop(stack_new([])), "empty stack")',
       );
       checkResult(runtime, '"empty stack"');
     });
 
     test('try catches DivisionByZeroError from modulo', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(num.mod(10, 0), "modulo by zero")',
+        'main() = try(num_mod(10, 0), "modulo by zero")',
       );
       checkResult(runtime, '"modulo by zero"');
     });
 
     test('try catches InvalidNumericOperationError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(num.sqrt(-4), "invalid sqrt")',
+        'main() = try(num_sqrt(-4), "invalid sqrt")',
       );
       checkResult(runtime, '"invalid sqrt"');
     });
 
     test('try with triple nested try', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(try(try(1 / 0, error.throw(0, "inner")), error.throw(0, "middle")), "outer")',
+        'main() = try(try(try(1 / 0, error_throw(0, "inner")), error_throw(0, "middle")), "outer")',
       );
       checkResult(runtime, '"outer"');
     });
@@ -695,9 +695,9 @@ main() = try(1 / 0, sum(5))
       checkResult(runtime, 42);
     });
 
-    test('try catches ParseError from to.number', () {
+    test('try catches ParseError from to_number', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(to.number("not a number"), 0)',
+        'main() = try(to_number("not a number"), 0)',
       );
       checkResult(runtime, 0);
     });
@@ -787,8 +787,8 @@ main() = process(4, true)
 
     test('recursive function with error handling inside', () {
       final RuntimeFacade runtime = getRuntime('''
-safeFirst(items) = try(list.first(items), -1)
-countValid(items) = if (list.isEmpty(items)) 0 else (if (safeFirst(items) >= 0) 1 else 0) + countValid(list.rest(items))
+safeFirst(items) = try(list_first(items), -1)
+countValid(items) = if (list_isEmpty(items)) 0 else (if (safeFirst(items) >= 0) 1 else 0) + countValid(list_rest(items))
 main() = countValid([1, 2, 3])
 ''');
       checkResult(runtime, 3);

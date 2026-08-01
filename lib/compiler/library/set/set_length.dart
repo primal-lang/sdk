@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetLength extends NativeFunctionTerm {
   const SetLength()
     : super(
-        name: 'set.length',
+        name: 'set_length',
         parameters: const [
           Parameter.set('a'),
         ],

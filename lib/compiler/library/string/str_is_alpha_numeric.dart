@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrIsAlphaNumeric extends NativeFunctionTerm {
   const StrIsAlphaNumeric()
     : super(
-        name: 'str.isAlphaNumeric',
+        name: 'str_isAlphaNumeric',
         parameters: const [
           Parameter.string('a'),
         ],

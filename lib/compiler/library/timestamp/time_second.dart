@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeSecond extends NativeFunctionTerm {
   const TimeSecond()
     : super(
-        name: 'time.second',
+        name: 'time_second',
         parameters: const [
           Parameter.timestamp('a'),
         ],

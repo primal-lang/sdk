@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StackLength extends NativeFunctionTerm {
   const StackLength()
     : super(
-        name: 'stack.length',
+        name: 'stack_length',
         parameters: const [
           Parameter.stack('a'),
         ],

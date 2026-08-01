@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetIsSuperset extends NativeFunctionTerm {
   const SetIsSuperset()
     : super(
-        name: 'set.isSuperset',
+        name: 'set_isSuperset',
         parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),

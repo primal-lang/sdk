@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class CompEq extends NativeFunctionTerm {
   const CompEq()
     : super(
-        name: 'comp.eq',
+        name: 'comp_eq',
         parameters: const [
           Parameter.equatable('a'),
           Parameter.equatable('b'),

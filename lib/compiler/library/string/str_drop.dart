@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrDrop extends NativeFunctionTerm {
   const StrDrop()
     : super(
-        name: 'str.drop',
+        name: 'str_drop',
         parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),

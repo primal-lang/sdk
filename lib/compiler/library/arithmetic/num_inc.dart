@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumInc extends NativeFunctionTerm {
   const NumInc()
     : super(
-        name: 'num.inc',
+        name: 'num_inc',
         parameters: const [
           Parameter.number('a'),
         ],

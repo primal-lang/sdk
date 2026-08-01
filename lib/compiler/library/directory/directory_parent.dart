@@ -8,7 +8,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DirectoryParent extends NativeFunctionTerm {
   const DirectoryParent()
     : super(
-        name: 'directory.parent',
+        name: 'directory_parent',
         parameters: const [
           Parameter.directory('a'),
         ],

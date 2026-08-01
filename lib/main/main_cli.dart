@@ -15,14 +15,14 @@ import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
 import 'package:primal/utils/self_install.dart';
 
-const String version = '0.5.2';
+const String version = '0.5.3';
 
 /// Reserved prefix for user test functions discovered by `--test`.
 ///
 /// The standard library must never register a function under this prefix:
 /// doing so would turn every existing user test into a duplicated-function
 /// compile error.
-const String testPrefix = 'test.';
+const String testPrefix = 'test_';
 
 /// Width of the widest `--test` result status (`ERROR`), used to align names.
 const int _statusWidth = 5;
@@ -35,7 +35,7 @@ Options:
   --version, -v    Print the version string
   --debug, -d      Enable debug mode (timing, trace, verbose errors)
   --watch, -w      Watch file for changes and re-run on modification
-  --test, -t       Run the "test." functions in a file
+  --test, -t       Run the "test_" functions in a file
   --update         Install the latest release over this one
   --uninstall      Remove Primal and its PATH entry
 
@@ -218,7 +218,7 @@ int runCli(
   }
 }
 
-/// Compiles and runs the `test.` functions of a single file.
+/// Compiles and runs the `test_` functions of a single file.
 ///
 /// The file is compiled once and every discovered test is evaluated against the
 /// same runtime, in source-declaration order.

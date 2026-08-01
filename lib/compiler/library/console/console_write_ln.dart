@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ConsoleWriteLn extends NativeFunctionTerm {
   const ConsoleWriteLn()
     : super(
-        name: 'console.writeLn',
+        name: 'console_writeLn',
         parameters: const [
           Parameter.any('a'),
         ],

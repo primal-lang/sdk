@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileLastModified extends NativeFunctionTerm {
   const FileLastModified()
     : super(
-        name: 'file.lastModified',
+        name: 'file_lastModified',
         parameters: const [
           Parameter.file('a'),
         ],

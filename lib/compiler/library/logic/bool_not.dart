@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class BoolNot extends NativeFunctionTerm {
   const BoolNot()
     : super(
-        name: 'bool.not',
+        name: 'bool_not',
         parameters: const [
           Parameter.boolean('a'),
         ],

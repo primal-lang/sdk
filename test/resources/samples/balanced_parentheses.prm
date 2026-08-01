@@ -3,19 +3,19 @@
   Output: true if the parentheses are balanced, false otherwise
 */
 
-balancedParenthesis(list) = balancedParenthesis.helper(list, stack.new([]))
+balancedParenthesis(list) = balancedParenthesis_helper(list, stack_new([]))
 
-balancedParenthesis.helper(list, stack) =
-    if (str.isEmpty(list))
-        stack.isEmpty(stack)
-    else if (str.first(list) == '(')
-        balancedParenthesis.helper(str.rest(list), stack.push(stack, '('))
-    else if (str.first(list) == ')')
-        if ((stack.isNotEmpty(stack)) && (stack.peek(stack) == '('))
-            balancedParenthesis.helper(str.rest(list), stack.pop(stack))
+balancedParenthesis_helper(list, stack) =
+    if (str_isEmpty(list))
+        stack_isEmpty(stack)
+    else if (str_first(list) == '(')
+        balancedParenthesis_helper(str_rest(list), stack_push(stack, '('))
+    else if (str_first(list) == ')')
+        if ((stack_isNotEmpty(stack)) && (stack_peek(stack) == '('))
+            balancedParenthesis_helper(str_rest(list), stack_pop(stack))
         else
             false
     else
-        error.throw(-1, 'Invalid element in the list: "' + str.first(list) + '"')
+        error_throw(-1, 'Invalid element in the list: "' + str_first(list) + '"')
 
 main() = balancedParenthesis("((((()()(()))())))")

@@ -1015,7 +1015,7 @@ void main() {
     test('can instantiate PlatformConsoleCli', () {
       final PlatformConsoleCli instance = PlatformConsoleCli();
 
-      expect(instance, isNotNull);
+      expect(instance, isA<PlatformConsoleBase>());
     });
 
     test('multiple instances are independent', () {

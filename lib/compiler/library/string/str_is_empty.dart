@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrIsEmpty extends NativeFunctionTerm {
   const StrIsEmpty()
     : super(
-        name: 'str.isEmpty',
+        name: 'str_isEmpty',
         parameters: const [
           Parameter.string('a'),
         ],

@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsQueue extends NativeFunctionTerm {
   const IsQueue()
     : super(
-        name: 'is.queue',
+        name: 'is_queue',
         parameters: const [
           Parameter.any('a'),
         ],

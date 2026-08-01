@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileMove extends NativeFunctionTerm {
   const FileMove()
     : super(
-        name: 'file.move',
+        name: 'file_move',
         parameters: const [
           Parameter.file('a'),
           Parameter.file('b'),

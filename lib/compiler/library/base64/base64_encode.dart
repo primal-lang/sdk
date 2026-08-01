@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class Base64Encode extends NativeFunctionTerm {
   const Base64Encode()
     : super(
-        name: 'base64.encode',
+        name: 'base64_encode',
         parameters: const [
           Parameter.string('a'),
         ],

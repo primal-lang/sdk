@@ -339,8 +339,13 @@ void main() {
         'lib/compiler/library',
         ['runtime/'], // Library legitimately imports runtime
       );
-      // Should find violations since library imports from runtime
-      expect(result, isNotEmpty);
+      // Should find violations in nested directories, not just at the top level
+      expect(
+        result.any(
+          (String violation) => violation.contains('lib/compiler/library/'),
+        ),
+        isTrue,
+      );
     });
 
     test('violation message includes full relative path', () {

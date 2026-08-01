@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListSort extends NativeFunctionTerm {
   const ListSort()
     : super(
-        name: 'list.sort',
+        name: 'list_sort',
         parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),

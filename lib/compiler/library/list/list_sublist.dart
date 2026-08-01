@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListSublist extends NativeFunctionTerm {
   const ListSublist()
     : super(
-        name: 'list.sublist',
+        name: 'list_sublist',
         parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),

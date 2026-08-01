@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrRepeat extends NativeFunctionTerm {
   const StrRepeat()
     : super(
-        name: 'str.repeat',
+        name: 'str_repeat',
         parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),

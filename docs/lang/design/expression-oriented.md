@@ -32,7 +32,7 @@ You can use the result of `if`/`else` anywhere you would use any other value:
 ```
 // Using if/else inline
 greet(name, formal) =
-    string.concat(if (formal) "Dear " else "Hi ", name)
+    str_concat(if (formal) "Dear " else "Hi ", name)
 
 // Nesting if/else expressions
 classify(n) =
@@ -49,8 +49,8 @@ Every function in Primal returns a value. There is no concept of a "void" functi
 Even functions that perform I/O return meaningful values:
 
 ```
-// console.writeLn returns the string it printed
-main() = console.writeLn("Hello, world!")
+// console_writeLn returns the string it printed
+main() = console_writeLn("Hello, world!")
 ```
 
 This design means you can always compose functions and chain operations.
@@ -75,8 +75,8 @@ The entire `let` construct is an expression. Its value is whatever the expressio
 ```
 // Chaining operations naturally
 process(data) =
-    list.filter(
-        list.map(data, transform),
+    list_filter(
+        list_map(data, transform),
         isValid
     )
 ```
@@ -90,7 +90,7 @@ process(data) =
 max(a, b) = if (a > b) a else b
 
 // Works in any context
-doubled = list.map([1, 2, 3], (n) => if (n > 1) n * 2 else n)
+doubled = list_map([1, 2, 3], (n) => if (n > 1) n * 2 else n)
 ```
 
 ## Practical Examples
@@ -111,12 +111,12 @@ shipping(subtotal, isPremium) =
 
 ```
 formatPrice(price, showCents) =
-    string.concat(
+    str_concat(
         "$",
         if (showCents)
-            to.string(price)
+            to_string(price)
         else
-            to.string(num.floor(price))
+            to_string(num_floor(price))
     )
 ```
 
@@ -124,9 +124,9 @@ formatPrice(price, showCents) =
 
 ```
 summarize(scores) =
-    let sorted = list.sort(scores, num.compare) in
-    let count = list.length(sorted) in
-    let total = list.reduce(sorted, 0, num.add) in
+    let sorted = list_sort(scores, num_compare) in
+    let count = list_length(sorted) in
+    let total = list_reduce(sorted, 0, num_add) in
     let average = total / count in
     {"count": count, "total": total, "average": average}
 ```

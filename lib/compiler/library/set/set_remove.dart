@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetRemove extends NativeFunctionTerm {
   const SetRemove()
     : super(
-        name: 'set.remove',
+        name: 'set_remove',
         parameters: const [
           Parameter.set('a'),
           Parameter.hashable('b'),

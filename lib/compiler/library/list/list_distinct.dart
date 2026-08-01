@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListDistinct extends NativeFunctionTerm {
   const ListDistinct()
     : super(
-        name: 'list.distinct',
+        name: 'list_distinct',
         parameters: const [Parameter.list('a')],
       );
 

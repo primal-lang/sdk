@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetUnion extends NativeFunctionTerm {
   const SetUnion()
     : super(
-        name: 'set.union',
+        name: 'set_union',
         parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),

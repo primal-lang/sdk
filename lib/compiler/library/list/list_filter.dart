@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListFilter extends NativeFunctionTerm {
   const ListFilter()
     : super(
-        name: 'list.filter',
+        name: 'list_filter',
         parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),

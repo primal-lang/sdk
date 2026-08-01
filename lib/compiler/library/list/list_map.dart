@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListMap extends NativeFunctionTerm {
   const ListMap()
     : super(
-        name: 'list.map',
+        name: 'list_map',
         parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),

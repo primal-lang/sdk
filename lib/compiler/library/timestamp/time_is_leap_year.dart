@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeIsLeapYear extends NativeFunctionTerm {
   const TimeIsLeapYear()
     : super(
-        name: 'time.isLeapYear',
+        name: 'time_isLeapYear',
         parameters: const [
           Parameter.number('a'),
         ],

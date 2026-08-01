@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumMul extends NativeFunctionTerm {
   const NumMul()
     : super(
-        name: 'num.mul',
+        name: 'num_mul',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

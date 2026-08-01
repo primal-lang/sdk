@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class EnvHas extends NativeFunctionTerm {
   const EnvHas()
     : super(
-        name: 'env.has',
+        name: 'env_has',
         parameters: const [
           Parameter.string('a'),
         ],

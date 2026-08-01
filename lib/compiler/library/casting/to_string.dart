@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ToString extends NativeFunctionTerm {
   const ToString()
     : super(
-        name: 'to.string',
+        name: 'to_string',
         parameters: const [
           Parameter.any('a'),
         ],

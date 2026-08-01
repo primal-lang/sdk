@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ToInteger extends NativeFunctionTerm {
   const ToInteger()
     : super(
-        name: 'to.integer',
+        name: 'to_integer',
         parameters: const [
           Parameter.any('a'),
         ],

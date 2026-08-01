@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrIsUppercase extends NativeFunctionTerm {
   const StrIsUppercase()
     : super(
-        name: 'str.isUppercase',
+        name: 'str_isUppercase',
         parameters: const [
           Parameter.string('a'),
         ],

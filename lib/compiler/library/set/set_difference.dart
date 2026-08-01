@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetDifference extends NativeFunctionTerm {
   const SetDifference()
     : super(
-        name: 'set.difference',
+        name: 'set_difference',
         parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),

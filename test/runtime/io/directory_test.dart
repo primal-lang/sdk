@@ -31,69 +31,69 @@ void main() {
       childDirectory.createSync();
     });
 
-    test('directory.fromPath', () {
+    test('directory_fromPath', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.fromPath(${primalString(existingDirectory.path)})',
+        'main() = directory_fromPath(${primalString(existingDirectory.path)})',
       );
       checkResult(runtime, primalString(existingDirectory.absolute.path));
     });
 
-    test('directory.exists returns true for existing directory', () {
+    test('directory_exists returns true for existing directory', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.exists(directory.fromPath(${primalString(existingDirectory.path)}))',
+        'main() = directory_exists(directory_fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(runtime, true);
     });
 
-    test('directory.exists returns false for non-existing directory', () {
+    test('directory_exists returns false for non-existing directory', () {
       final Directory missingDirectory = Directory(
         path.join(tempDir.path, 'missing'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.exists(directory.fromPath(${primalString(missingDirectory.path)}))',
+        'main() = directory_exists(directory_fromPath(${primalString(missingDirectory.path)}))',
       );
       checkResult(runtime, false);
     });
 
-    test('directory.create', () {
+    test('directory_create', () {
       final Directory createdDirectory = Directory(
         path.join(tempDir.path, 'created', 'child'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.create(directory.fromPath(${primalString(createdDirectory.path)}))',
+        'main() = directory_create(directory_fromPath(${primalString(createdDirectory.path)}))',
       );
       checkResult(runtime, true);
       expect(createdDirectory.existsSync(), isTrue);
     });
 
-    test('directory.delete returns true for existing directory', () {
+    test('directory_delete returns true for existing directory', () {
       final Directory deletableDirectory = Directory(
         path.join(tempDir.path, 'delete-me'),
       );
       deletableDirectory.createSync();
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.delete(directory.fromPath(${primalString(deletableDirectory.path)}))',
+        'main() = directory_delete(directory_fromPath(${primalString(deletableDirectory.path)}))',
       );
       checkResult(runtime, true);
       expect(deletableDirectory.existsSync(), isFalse);
     });
 
-    test('directory.delete returns false for non-existing directory', () {
+    test('directory_delete returns false for non-existing directory', () {
       final Directory missingDirectory = Directory(
         path.join(tempDir.path, 'missing'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.delete(directory.fromPath(${primalString(missingDirectory.path)}))',
+        'main() = directory_delete(directory_fromPath(${primalString(missingDirectory.path)}))',
       );
       checkResult(runtime, false);
     });
 
-    test('directory.copy', () {
+    test('directory_copy', () {
       final Directory destinationDirectory = Directory(
         path.join(tempDir.path, 'copy'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.copy(directory.fromPath(${primalString(existingDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        'main() = directory_copy(directory_fromPath(${primalString(existingDirectory.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
       );
       checkResult(runtime, true);
       expect(
@@ -106,7 +106,7 @@ void main() {
       );
     });
 
-    test('directory.move', () {
+    test('directory_move', () {
       final Directory sourceDirectory = Directory(
         path.join(tempDir.path, 'move-source'),
       );
@@ -119,20 +119,20 @@ void main() {
         path.join(tempDir.path, 'move-target'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.move(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        'main() = directory_move(directory_fromPath(${primalString(sourceDirectory.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
       );
       checkResult(runtime, true);
       expect(sourceDirectory.existsSync(), isFalse);
       expect(destinationDirectory.existsSync(), isTrue);
     });
 
-    test('directory.rename', () {
+    test('directory_rename', () {
       final Directory sourceDirectory = Directory(
         path.join(tempDir.path, 'rename-me'),
       );
       sourceDirectory.createSync();
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.rename(directory.fromPath(${primalString(sourceDirectory.path)}), ${primalString('renamed')})',
+        'main() = directory_rename(directory_fromPath(${primalString(sourceDirectory.path)}), ${primalString('renamed')})',
       );
       checkResult(runtime, true);
       expect(
@@ -141,23 +141,23 @@ void main() {
       );
     });
 
-    test('directory.path', () {
+    test('directory_path', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.path(directory.fromPath(${primalString(existingDirectory.path)}))',
+        'main() = directory_path(directory_fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(runtime, primalString(existingDirectory.absolute.path));
     });
 
-    test('directory.name', () {
+    test('directory_name', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.name(directory.fromPath(${primalString(existingDirectory.path)}))',
+        'main() = directory_name(directory_fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(runtime, primalString('source'));
     });
 
-    test('directory.parent', () {
+    test('directory_parent', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.parent(directory.fromPath(${primalString(existingDirectory.path)}))',
+        'main() = directory_parent(directory_fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(
         runtime,
@@ -166,10 +166,10 @@ void main() {
     });
 
     test(
-      'directory.list returns files and directories without order assumptions',
+      'directory_list returns files and directories without order assumptions',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.list(directory.fromPath(${primalString(existingDirectory.path)}))',
+          'main() = directory_list(directory_fromPath(${primalString(existingDirectory.path)}))',
         );
         final List<dynamic> children =
             runtime.evaluateToTerm(runtime.mainExpression([])).native()
@@ -188,26 +188,26 @@ void main() {
       },
     );
 
-    test('directory.list returns empty list for empty directory', () {
+    test('directory_list returns empty list for empty directory', () {
       final Directory emptyDirectory = Directory(
         path.join(tempDir.path, 'empty'),
       );
       emptyDirectory.createSync();
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.list(directory.fromPath(${primalString(emptyDirectory.path)}))',
+        'main() = directory_list(directory_fromPath(${primalString(emptyDirectory.path)}))',
       );
       checkResult(runtime, '[]');
     });
 
-    test('directory.create returns true when directory already exists', () {
+    test('directory_create returns true when directory already exists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.create(directory.fromPath(${primalString(existingDirectory.path)}))',
+        'main() = directory_create(directory_fromPath(${primalString(existingDirectory.path)}))',
       );
       checkResult(runtime, true);
       expect(existingDirectory.existsSync(), isTrue);
     });
 
-    test('directory.copy returns false for non-existing source', () {
+    test('directory_copy returns false for non-existing source', () {
       final Directory missingSource = Directory(
         path.join(tempDir.path, 'missing-source'),
       );
@@ -215,12 +215,12 @@ void main() {
         path.join(tempDir.path, 'copy-destination'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.copy(directory.fromPath(${primalString(missingSource.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        'main() = directory_copy(directory_fromPath(${primalString(missingSource.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
       );
       checkResult(runtime, false);
     });
 
-    test('directory.move returns false for non-existing source', () {
+    test('directory_move returns false for non-existing source', () {
       final Directory missingSource = Directory(
         path.join(tempDir.path, 'missing-move-source'),
       );
@@ -228,22 +228,22 @@ void main() {
         path.join(tempDir.path, 'move-destination'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.move(directory.fromPath(${primalString(missingSource.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        'main() = directory_move(directory_fromPath(${primalString(missingSource.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
       );
       checkResult(runtime, false);
     });
 
-    test('directory.rename returns false for non-existing directory', () {
+    test('directory_rename returns false for non-existing directory', () {
       final Directory missingDirectory = Directory(
         path.join(tempDir.path, 'missing-rename'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.rename(directory.fromPath(${primalString(missingDirectory.path)}), ${primalString('new-name')})',
+        'main() = directory_rename(directory_fromPath(${primalString(missingDirectory.path)}), ${primalString('new-name')})',
       );
       checkResult(runtime, false);
     });
 
-    test('directory.delete removes directory with nested content', () {
+    test('directory_delete removes directory with nested content', () {
       final Directory directoryWithContent = Directory(
         path.join(tempDir.path, 'delete-recursive'),
       );
@@ -256,13 +256,13 @@ void main() {
         'content',
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.delete(directory.fromPath(${primalString(directoryWithContent.path)}))',
+        'main() = directory_delete(directory_fromPath(${primalString(directoryWithContent.path)}))',
       );
       checkResult(runtime, true);
       expect(directoryWithContent.existsSync(), isFalse);
     });
 
-    test('directory.copy preserves nested directory structure', () {
+    test('directory_copy preserves nested directory structure', () {
       final Directory sourceDirectory = Directory(
         path.join(tempDir.path, 'deep-source'),
       );
@@ -279,7 +279,7 @@ void main() {
         path.join(tempDir.path, 'deep-copy'),
       );
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+        'main() = directory_copy(directory_fromPath(${primalString(sourceDirectory.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
       );
       checkResult(runtime, true);
       expect(
@@ -297,9 +297,9 @@ void main() {
     });
 
     group('edge cases', () {
-      test('directory.fromPath with relative path resolves to absolute', () {
+      test('directory_fromPath with relative path resolves to absolute', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.fromPath(${primalString('.')})',
+          'main() = directory_fromPath(${primalString('.')})',
         );
         final String result = runtime.executeMain();
         expect(result.startsWith('"'), isTrue);
@@ -307,40 +307,40 @@ void main() {
         expect(result.contains('/'), isTrue);
       });
 
-      test('directory.fromPath with path containing spaces', () {
+      test('directory_fromPath with path containing spaces', () {
         final Directory directoryWithSpaces = Directory(
           path.join(tempDir.path, 'directory with spaces'),
         );
         directoryWithSpaces.createSync();
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.fromPath(${primalString(directoryWithSpaces.path)})',
+          'main() = directory_fromPath(${primalString(directoryWithSpaces.path)})',
         );
         checkResult(runtime, primalString(directoryWithSpaces.absolute.path));
       });
 
-      test('directory.name for hidden directory', () {
+      test('directory_name for hidden directory', () {
         final Directory hiddenDirectory = Directory(
           path.join(tempDir.path, '.hidden'),
         );
         hiddenDirectory.createSync();
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.name(directory.fromPath(${primalString(hiddenDirectory.path)}))',
+          'main() = directory_name(directory_fromPath(${primalString(hiddenDirectory.path)}))',
         );
         checkResult(runtime, primalString('.hidden'));
       });
 
-      test('directory.name for directory with spaces', () {
+      test('directory_name for directory with spaces', () {
         final Directory directoryWithSpaces = Directory(
           path.join(tempDir.path, 'name with spaces'),
         );
         directoryWithSpaces.createSync();
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.name(directory.fromPath(${primalString(directoryWithSpaces.path)}))',
+          'main() = directory_name(directory_fromPath(${primalString(directoryWithSpaces.path)}))',
         );
         checkResult(runtime, primalString('name with spaces'));
       });
 
-      test('directory.list returns only files when no subdirectories', () {
+      test('directory_list returns only files when no subdirectories', () {
         final Directory filesOnlyDirectory = Directory(
           path.join(tempDir.path, 'files-only'),
         );
@@ -352,7 +352,7 @@ void main() {
           'b',
         );
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.list(directory.fromPath(${primalString(filesOnlyDirectory.path)}))',
+          'main() = directory_list(directory_fromPath(${primalString(filesOnlyDirectory.path)}))',
         );
         final List<dynamic> children =
             runtime.evaluateToTerm(runtime.mainExpression([])).native()
@@ -361,7 +361,7 @@ void main() {
         expect(children.every((child) => child is File), isTrue);
       });
 
-      test('directory.list returns only directories when no files', () {
+      test('directory_list returns only directories when no files', () {
         final Directory directoriesOnlyDirectory = Directory(
           path.join(tempDir.path, 'directories-only'),
         );
@@ -373,7 +373,7 @@ void main() {
           path.join(directoriesOnlyDirectory.path, 'sub2'),
         ).createSync();
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.list(directory.fromPath(${primalString(directoriesOnlyDirectory.path)}))',
+          'main() = directory_list(directory_fromPath(${primalString(directoriesOnlyDirectory.path)}))',
         );
         final List<dynamic> children =
             runtime.evaluateToTerm(runtime.mainExpression([])).native()
@@ -382,7 +382,7 @@ void main() {
         expect(children.every((child) => child is Directory), isTrue);
       });
 
-      test('directory.copy overwrites existing destination', () {
+      test('directory_copy overwrites existing destination', () {
         final Directory sourceDirectory = Directory(
           path.join(tempDir.path, 'copy-source-overwrite'),
         );
@@ -400,7 +400,7 @@ void main() {
         );
 
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+          'main() = directory_copy(directory_fromPath(${primalString(sourceDirectory.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
         );
         checkResult(runtime, true);
         expect(
@@ -415,7 +415,7 @@ void main() {
         );
       });
 
-      test('directory.copy to nested non-existing path', () {
+      test('directory_copy to nested non-existing path', () {
         final Directory sourceDirectory = Directory(
           path.join(tempDir.path, 'copy-source-nested'),
         );
@@ -428,7 +428,7 @@ void main() {
           path.join(tempDir.path, 'nested', 'path', 'destination'),
         );
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+          'main() = directory_copy(directory_fromPath(${primalString(sourceDirectory.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
         );
         checkResult(runtime, true);
         expect(destinationDirectory.existsSync(), isTrue);
@@ -440,7 +440,7 @@ void main() {
         );
       });
 
-      test('directory.move preserves file content', () {
+      test('directory_move preserves file content', () {
         final Directory sourceDirectory = Directory(
           path.join(tempDir.path, 'move-source-content'),
         );
@@ -453,7 +453,7 @@ void main() {
           path.join(tempDir.path, 'move-destination-content'),
         );
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.move(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+          'main() = directory_move(directory_fromPath(${primalString(sourceDirectory.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
         );
         checkResult(runtime, true);
         expect(sourceDirectory.existsSync(), isFalse);
@@ -465,13 +465,13 @@ void main() {
         );
       });
 
-      test('directory.rename with name containing spaces', () {
+      test('directory_rename with name containing spaces', () {
         final Directory sourceDirectory = Directory(
           path.join(tempDir.path, 'rename-spaces'),
         );
         sourceDirectory.createSync();
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.rename(directory.fromPath(${primalString(sourceDirectory.path)}), ${primalString('name with spaces')})',
+          'main() = directory_rename(directory_fromPath(${primalString(sourceDirectory.path)}), ${primalString('name with spaces')})',
         );
         checkResult(runtime, true);
         expect(
@@ -480,13 +480,13 @@ void main() {
         );
       });
 
-      test('directory.parent returns parent directory', () {
+      test('directory_parent returns parent directory', () {
         final Directory nestedDirectory = Directory(
           path.join(tempDir.path, 'parent-test', 'child'),
         );
         nestedDirectory.createSync(recursive: true);
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.path(directory.parent(directory.fromPath(${primalString(nestedDirectory.path)})))',
+          'main() = directory_path(directory_parent(directory_fromPath(${primalString(nestedDirectory.path)})))',
         );
         checkResult(
           runtime,
@@ -494,13 +494,13 @@ void main() {
         );
       });
 
-      test('directory.parent of parent navigates up hierarchy', () {
+      test('directory_parent of parent navigates up hierarchy', () {
         final Directory deepDirectory = Directory(
           path.join(tempDir.path, 'level1', 'level2', 'level3'),
         );
         deepDirectory.createSync(recursive: true);
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.path(directory.parent(directory.parent(directory.fromPath(${primalString(deepDirectory.path)}))))',
+          'main() = directory_path(directory_parent(directory_parent(directory_fromPath(${primalString(deepDirectory.path)}))))',
         );
         checkResult(
           runtime,
@@ -508,27 +508,27 @@ void main() {
         );
       });
 
-      test('directory.create with deeply nested path', () {
+      test('directory_create with deeply nested path', () {
         final Directory deeplyNestedDirectory = Directory(
           path.join(tempDir.path, 'a', 'b', 'c', 'd', 'e'),
         );
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.create(directory.fromPath(${primalString(deeplyNestedDirectory.path)}))',
+          'main() = directory_create(directory_fromPath(${primalString(deeplyNestedDirectory.path)}))',
         );
         checkResult(runtime, true);
         expect(deeplyNestedDirectory.existsSync(), isTrue);
       });
 
-      test('directory.exists returns false for file path', () {
+      test('directory_exists returns false for file path', () {
         final File file = File(path.join(tempDir.path, 'not-a-directory.txt'));
         file.writeAsStringSync('content');
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.exists(directory.fromPath(${primalString(file.path)}))',
+          'main() = directory_exists(directory_fromPath(${primalString(file.path)}))',
         );
         checkResult(runtime, false);
       });
 
-      test('directory.list includes hidden files', () {
+      test('directory_list includes hidden files', () {
         final Directory directoryWithHidden = Directory(
           path.join(tempDir.path, 'hidden-test'),
         );
@@ -542,7 +542,7 @@ void main() {
           'visible',
         );
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.list(directory.fromPath(${primalString(directoryWithHidden.path)}))',
+          'main() = directory_list(directory_fromPath(${primalString(directoryWithHidden.path)}))',
         );
         final List<dynamic> children =
             runtime.evaluateToTerm(runtime.mainExpression([])).native()
@@ -550,19 +550,19 @@ void main() {
         expect(children.length, equals(2));
       });
 
-      test('directory.delete on empty directory', () {
+      test('directory_delete on empty directory', () {
         final Directory emptyDirectory = Directory(
           path.join(tempDir.path, 'empty-delete'),
         );
         emptyDirectory.createSync();
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.delete(directory.fromPath(${primalString(emptyDirectory.path)}))',
+          'main() = directory_delete(directory_fromPath(${primalString(emptyDirectory.path)}))',
         );
         checkResult(runtime, true);
         expect(emptyDirectory.existsSync(), isFalse);
       });
 
-      test('directory.copy preserves file content', () {
+      test('directory_copy preserves file content', () {
         final Directory sourceDirectory = Directory(
           path.join(tempDir.path, 'copy-content-source'),
         );
@@ -575,7 +575,7 @@ void main() {
           path.join(tempDir.path, 'copy-content-destination'),
         );
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+          'main() = directory_copy(directory_fromPath(${primalString(sourceDirectory.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
         );
         checkResult(runtime, true);
         expect(
@@ -586,7 +586,7 @@ void main() {
         );
       });
 
-      test('directory.copy does not modify source', () {
+      test('directory_copy does not modify source', () {
         final Directory sourceDirectory = Directory(
           path.join(tempDir.path, 'copy-no-modify-source'),
         );
@@ -599,7 +599,7 @@ void main() {
           path.join(tempDir.path, 'copy-no-modify-destination'),
         );
         final RuntimeFacade runtime = getRuntime(
-          'main() = directory.copy(directory.fromPath(${primalString(sourceDirectory.path)}), directory.fromPath(${primalString(destinationDirectory.path)}))',
+          'main() = directory_copy(directory_fromPath(${primalString(sourceDirectory.path)}), directory_fromPath(${primalString(destinationDirectory.path)}))',
         );
         checkResult(runtime, true);
         expect(sourceDirectory.existsSync(), isTrue);

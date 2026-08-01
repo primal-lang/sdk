@@ -21,7 +21,7 @@ name(parameters) = body
 
 Where:
 
-- **name** identifies the function and must match the pattern `[a-zA-Z][\w.]*`
+- **name** identifies the function and must match the pattern `[a-zA-Z]\w*`
 - **parameters** is a comma-separated list of parameter names (can be empty)
 - **body** is a single expression that produces the result
 
@@ -30,8 +30,8 @@ Where:
 Function names must:
 
 - Start with a letter (uppercase or lowercase)
-- Contain only letters, digits, underscores, or dots
-- Match the regular expression `[a-zA-Z][\w.]*`
+- Contain only letters, digits, and underscores
+- Match the regular expression `[a-zA-Z]\w*`
 
 Parameter names follow the same pattern.
 
@@ -40,7 +40,7 @@ Valid names:
 ```
 add
 calculateTotal
-user.getName
+user_getName
 process2
 my_function
 ```
@@ -51,6 +51,7 @@ Invalid names:
 2fast      // cannot start with a digit
 _hidden    // cannot start with underscore
 add-nums   // hyphens not allowed
+user.name  // dots are reserved for member access
 ```
 
 ## Zero-Parameter Functions
@@ -60,7 +61,7 @@ Functions that take no arguments still require empty parentheses in their defini
 ```
 pi() = 3.14159
 greeting() = "Hello, world!"
-now() = time.now()
+now() = time_now()
 ```
 
 To call a zero-parameter function, use empty parentheses:
@@ -93,7 +94,7 @@ Complex expressions using let:
 hypotenuse(a, b) =
   let squareA = a * a,
       squareB = b * b
-  in num.sqrt(squareA + squareB)
+  in num_sqrt(squareA + squareB)
 ```
 
 ## The main() Function
@@ -145,14 +146,14 @@ isPositive(n) = n > 0
 
 ```
 // Sum all numbers in a list
-sum(numbers) = list.reduce(numbers, 0, num.add)
+sum(numbers) = list_reduce(numbers, 0, num_add)
 
 // Double every element
-doubleAll(numbers) = list.map(numbers, double)
+doubleAll(numbers) = list_map(numbers, double)
 double(n) = n * 2
 
 // Count even numbers
-countEven(numbers) = list.count(numbers, num.isEven)
+countEven(numbers) = list_count(numbers, num_isEven)
 ```
 
 ### String Processing
@@ -162,7 +163,7 @@ countEven(numbers) = list.count(numbers, num.isEven)
 greet(name) = "Hello, " + name + "!"
 
 // Check if string is empty
-isBlank(text) = string.length(text) == 0
+isBlank(text) = str_length(text) == 0
 
 // Repeat a string n times
 repeat(text, n) =
@@ -184,6 +185,6 @@ main() = applyTwice(increment, 5) // returns 7
 
 // Binding a core function
 sum(numbers) =
-  let add = num.add
-  in list.reduce(numbers, 0, add)
+  let add = num_add
+  in list_reduce(numbers, 0, add)
 ```

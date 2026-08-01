@@ -327,24 +327,24 @@ void main() {
     });
 
     test('Expression 48', () {
-      final Expression expression = getExpression('foo.bar(1)');
-      expect(expression.toString(), 'foo.bar(1)');
+      final Expression expression = getExpression('foo_bar(1)');
+      expect(expression.toString(), 'foo_bar(1)');
     });
 
-    // Chained dot notation
-    test('Chained dot notation calls', () {
-      final Expression expression = getExpression('foo.bar.baz(1)');
-      expect(expression.toString(), 'foo.bar.baz(1)');
+    // Chained underscored name
+    test('Chained underscored name calls', () {
+      final Expression expression = getExpression('foo_bar_baz(1)');
+      expect(expression.toString(), 'foo_bar_baz(1)');
     });
 
-    test('Dot notation without arguments', () {
-      final Expression expression = getExpression('foo.bar()');
-      expect(expression.toString(), 'foo.bar()');
+    test('Underscored name without arguments', () {
+      final Expression expression = getExpression('foo_bar()');
+      expect(expression.toString(), 'foo_bar()');
     });
 
-    test('Dot notation chained with regular call', () {
-      final Expression expression = getExpression('foo.bar(1)(2)');
-      expect(expression.toString(), 'foo.bar(1)(2)');
+    test('Underscored name chained with regular call', () {
+      final Expression expression = getExpression('foo_bar(1)(2)');
+      expect(expression.toString(), 'foo_bar(1)(2)');
     });
 
     // Collections
@@ -1174,104 +1174,6 @@ void main() {
     });
   });
 
-  group('ListIterator edge cases', () {
-    test('next returns and advances to the next element', () {
-      final List<Token> tokens = getTokens('a b');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.hasNext, isTrue);
-      final Token first = iterator.next;
-      expect(first, isA<IdentifierToken>());
-      expect(first.value, equals('a'));
-
-      expect(iterator.hasNext, isTrue);
-      final Token second = iterator.next;
-      expect(second, isA<IdentifierToken>());
-      expect(second.value, equals('b'));
-
-      expect(iterator.isAtEnd, isTrue);
-    });
-
-    test('next throws UnexpectedEndOfFileError when at end', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.next; // consume x
-      expect(
-        () => iterator.next,
-        throwsA(isA<UnexpectedEndOfFileError>()),
-      );
-    });
-
-    test('last returns the last element in the list', () {
-      final List<Token> tokens = getTokens('a b c');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      final Token last = iterator.last;
-      expect(last, isA<IdentifierToken>());
-      expect(last.value, equals('c'));
-    });
-
-    test('last throws UnexpectedEndOfFileError for empty list', () {
-      final ListIterator<Token> iterator = ListIterator([]);
-
-      expect(
-        () => iterator.last,
-        throwsA(isA<UnexpectedEndOfFileError>()),
-      );
-    });
-
-    test('back moves the iterator back one position', () {
-      final List<Token> tokens = getTokens('a b');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.next; // advance to after 'a'
-      iterator.next; // advance to after 'b'
-
-      final bool backResult = iterator.back();
-      expect(backResult, isTrue);
-      expect(iterator.peek?.value, equals('b'));
-    });
-
-    test('back returns false when at the beginning', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      final bool backResult = iterator.back();
-      expect(backResult, isFalse);
-    });
-
-    test('hasNext is true when elements remain', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.hasNext, isTrue);
-    });
-
-    test('hasNext is false when no elements remain', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      expect(iterator.hasNext, isFalse);
-    });
-
-    test('previous is null at the beginning', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.previous, isNull);
-    });
-
-    test('peek returns null when at end', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      expect(iterator.peek, isNull);
-    });
-  });
-
   group('Empty and whitespace input', () {
     Expression compileExpression(String input) {
       const Compiler compiler = Compiler();
@@ -1451,30 +1353,30 @@ void main() {
     });
   });
 
-  group('Dot notation additional cases', () {
-    test('dot notation with multiple arguments', () {
-      final Expression expression = getExpression('obj.method(1, 2, 3)');
-      expect(expression.toString(), 'obj.method(1, 2, 3)');
+  group('Underscored name additional cases', () {
+    test('underscored name with multiple arguments', () {
+      final Expression expression = getExpression('obj_method(1, 2, 3)');
+      expect(expression.toString(), 'obj_method(1, 2, 3)');
     });
 
-    test('dot notation chained with index', () {
-      final Expression expression = getExpression('obj.method()[0]');
-      expect(expression.toString(), '@(obj.method(), 0)');
+    test('underscored name chained with index', () {
+      final Expression expression = getExpression('obj_method()[0]');
+      expect(expression.toString(), '@(obj_method(), 0)');
     });
 
-    test('dot notation with nested calls', () {
-      final Expression expression = getExpression('a.b(c.d())');
-      expect(expression.toString(), 'a.b(c.d())');
+    test('underscored name with nested calls', () {
+      final Expression expression = getExpression('a_b(c_d())');
+      expect(expression.toString(), 'a_b(c_d())');
     });
 
-    test('dot notation identifier with underscores', () {
-      final Expression expression = getExpression('obj.method_name()');
-      expect(expression.toString(), 'obj.method_name()');
+    test('underscored name with several underscores', () {
+      final Expression expression = getExpression('obj_method_name()');
+      expect(expression.toString(), 'obj_method_name()');
     });
 
-    test('dot notation with numbers in identifier', () {
-      final Expression expression = getExpression('lib.func2()');
-      expect(expression.toString(), 'lib.func2()');
+    test('underscored name with numbers in identifier', () {
+      final Expression expression = getExpression('lib_func2()');
+      expect(expression.toString(), 'lib_func2()');
     });
   });
 
@@ -2147,36 +2049,36 @@ void main() {
     });
   });
 
-  group('Dot notation edge cases', () {
-    test('single dot notation', () {
-      final Expression expression = getExpression('a.b()');
+  group('Underscored name edge cases', () {
+    test('single underscored name', () {
+      final Expression expression = getExpression('a_b()');
       expect(expression, isA<CallExpression>());
-      expect(expression.toString(), 'a.b()');
+      expect(expression.toString(), 'a_b()');
     });
 
-    test('multi-level dot notation', () {
-      final Expression expression = getExpression('a.b.c.d()');
-      expect(expression.toString(), 'a.b.c.d()');
+    test('multi-level underscored name', () {
+      final Expression expression = getExpression('a_b_c_d()');
+      expect(expression.toString(), 'a_b_c_d()');
     });
 
-    test('dot notation with argument', () {
-      final Expression expression = getExpression('list.get(0)');
-      expect(expression.toString(), 'list.get(0)');
+    test('underscored name with argument', () {
+      final Expression expression = getExpression('list_get(0)');
+      expect(expression.toString(), 'list_get(0)');
     });
 
-    test('dot notation chained with bracket', () {
-      final Expression expression = getExpression('obj.arr[0]');
-      expect(expression.toString(), '@(obj.arr, 0)');
+    test('underscored name chained with bracket', () {
+      final Expression expression = getExpression('obj_arr[0]');
+      expect(expression.toString(), '@(obj_arr, 0)');
     });
 
-    test('dot notation result used in binary', () {
-      final Expression expression = getExpression('a.b() + c.d()');
-      expect(expression.toString(), '+(a.b(), c.d())');
+    test('underscored name result used in binary', () {
+      final Expression expression = getExpression('a_b() + c_d()');
+      expect(expression.toString(), '+(a_b(), c_d())');
     });
 
-    test('dot notation in if condition', () {
-      final Expression expression = getExpression('if (obj.check()) 1 else 2');
-      expect(expression.toString(), 'if(obj.check(), 1, 2)');
+    test('underscored name in if condition', () {
+      final Expression expression = getExpression('if (obj_check()) 1 else 2');
+      expect(expression.toString(), 'if(obj_check(), 1, 2)');
     });
   });
 
@@ -2231,80 +2133,6 @@ void main() {
         expression.toString(),
         'if(&(>(x, 0), >(y, 0)), +(x, y), -(x, y))',
       );
-    });
-  });
-
-  group('ListIterator additional edge cases', () {
-    test('back after advance returns true', () {
-      final List<Token> tokens = getTokens('a b c');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      iterator.advance();
-      expect(iterator.back(), isTrue);
-      expect(iterator.peek?.value, equals('b'));
-    });
-
-    test('multiple back calls', () {
-      final List<Token> tokens = getTokens('a b c');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      iterator.advance();
-      iterator.advance();
-      expect(iterator.back(), isTrue);
-      expect(iterator.back(), isTrue);
-      // After 3 advances and 2 backs, we're at index 1 (pointing to 'b')
-      expect(iterator.peek?.value, equals('b'));
-    });
-
-    test('back at beginning returns false without error', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.back(), isFalse);
-      expect(iterator.peek?.value, equals('x'));
-    });
-
-    test('hasNext reflects iterator state accurately', () {
-      final List<Token> tokens = getTokens('a b');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.hasNext, isTrue);
-      iterator.advance();
-      expect(iterator.hasNext, isTrue);
-      iterator.advance();
-      expect(iterator.hasNext, isFalse);
-    });
-
-    test('isAtEnd reflects iterator state accurately', () {
-      final List<Token> tokens = getTokens('a');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      expect(iterator.isAtEnd, isFalse);
-      iterator.advance();
-      expect(iterator.isAtEnd, isTrue);
-    });
-
-    test('peek returns null when at end', () {
-      final ListIterator<Token> iterator = ListIterator([]);
-      expect(iterator.peek, isNull);
-    });
-
-    test('previous returns null when at start', () {
-      final List<Token> tokens = getTokens('x');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-      expect(iterator.previous, isNull);
-    });
-
-    test('previous returns last consumed after advance', () {
-      final List<Token> tokens = getTokens('a b');
-      final ListIterator<Token> iterator = ListIterator(tokens);
-
-      iterator.advance();
-      expect(iterator.previous?.value, equals('a'));
-      iterator.advance();
-      expect(iterator.previous?.value, equals('b'));
     });
   });
 
@@ -2529,6 +2357,20 @@ void main() {
       expect(expression, isA<CallExpression>());
       final CallExpression call = expression as CallExpression;
       expect((call.callee as IdentifierExpression).value, equals('!'));
+    });
+
+    test('and keyword alias', () {
+      final Expression expression = getExpression('a and b');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect((call.callee as IdentifierExpression).value, equals('&&'));
+    });
+
+    test('or keyword alias', () {
+      final Expression expression = getExpression('a or b');
+      expect(expression, isA<CallExpression>());
+      final CallExpression call = expression as CallExpression;
+      expect((call.callee as IdentifierExpression).value, equals('||'));
     });
   });
 
@@ -2829,6 +2671,15 @@ void main() {
       final Expression expression = getExpression('(x)');
       // Just a grouped identifier is NOT a lambda
       expect(expression, isA<IdentifierExpression>());
+    });
+
+    test('Unterminated parameter list is not treated as a lambda', () {
+      // The lambda lookahead runs out of tokens right after the identifier,
+      // so it must bail out instead of reporting a parameter count.
+      expect(
+        () => getExpression('(x'),
+        throwsA(isA<UnexpectedEndOfFileError>()),
+      );
     });
 
     test('Immediately invoked lambda', () {

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumFloor extends NativeFunctionTerm {
   const NumFloor()
     : super(
-        name: 'num.floor',
+        name: 'num_floor',
         parameters: const [
           Parameter.number('a'),
         ],

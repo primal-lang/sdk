@@ -148,7 +148,7 @@ void main() {
 
     test('debug return value is usable in expressions', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = list.first(debug("x", [1 + 2]))',
+        source: 'main() = list_first(debug("x", [1 + 2]))',
       );
 
       expect(result.stdout.toString(), equals('[debug] x: [3]\n'));
@@ -159,7 +159,7 @@ void main() {
   group('Debug Return Value Usage', () {
     test('debug return value used in arithmetic', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = num.add(debug("a", 5), debug("b", 10))',
+        source: 'main() = num_add(debug("a", 5), debug("b", 10))',
       );
 
       expect(
@@ -183,12 +183,12 @@ void main() {
 
     test('debug with function returns callable function', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("abs", num.abs)(-5)',
+        source: 'main() = debug("abs", num_abs)(-5)',
       );
 
       expect(
         result.stdout.toString(),
-        equals('[debug] abs: num.abs(a: Number)\n'),
+        equals('[debug] abs: num_abs(a: Number)\n'),
       );
       expect(result.stderr.toString().trim(), equals('5'));
     });
@@ -236,7 +236,7 @@ void main() {
 
     test('debug with empty set', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("empty set", set.new([]))',
+        source: 'main() = debug("empty set", set_new([]))',
       );
 
       expect(result.stdout.toString(), equals('[debug] empty set: {}\n'));
@@ -276,7 +276,7 @@ void main() {
 
     test('debug with infinity', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("inf", num.infinity())',
+        source: 'main() = debug("inf", num_infinity())',
       );
 
       expect(result.stdout.toString(), equals('[debug] inf: Infinity\n'));
@@ -311,9 +311,9 @@ void main() {
       expect(result.stderr.toString().trim(), equals('1'));
     });
 
-    test('debug used in list.map', () async {
+    test('debug used in list_map', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = list.map([1, 2], (x) -> debug("item", x))',
+        source: 'main() = list_map([1, 2], (x) -> debug("item", x))',
       );
 
       expect(
@@ -331,7 +331,7 @@ void main() {
 factorial(n) = if (n <= 1)
                   debug("base case", 1)
                else
-                  n * debug("factorial(" + to.string(n - 1) + ")", factorial(n - 1))
+                  n * debug("factorial(" + to_string(n - 1) + ")", factorial(n - 1))
 
 main() = factorial(4)
 ''',
@@ -354,8 +354,8 @@ main() = factorial(4)
     test('debug intermediate pipeline values', () async {
       final ProcessResult result = await runDebugProgram(
         source: '''
-process(items) = let filtered = debug("after filter", list.filter(items, (x) -> x > 0)),
-                     mapped = debug("after map", list.map(filtered, (x) -> x * 2))
+process(items) = let filtered = debug("after filter", list_filter(items, (x) -> x > 0)),
+                     mapped = debug("after map", list_map(filtered, (x) -> x * 2))
                  in mapped
 
 main() = process([-1, 2, -3, 4])
@@ -401,7 +401,7 @@ main() = process([-1, 2, -3, 4])
   group('Debug System Types', () {
     test('debug with file', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("f", file.fromPath("/tmp/test.txt"))',
+        source: 'main() = debug("f", file_fromPath("/tmp/test.txt"))',
       );
 
       expect(
@@ -412,7 +412,7 @@ main() = process([-1, 2, -3, 4])
 
     test('debug with directory', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("d", directory.fromPath("/tmp"))',
+        source: 'main() = debug("d", directory_fromPath("/tmp"))',
       );
 
       expect(
@@ -423,7 +423,7 @@ main() = process([-1, 2, -3, 4])
 
     test('debug with timestamp has datetime format', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("t", time.now())',
+        source: 'main() = debug("t", time_now())',
       );
 
       // Timestamp format includes year-month-day
@@ -435,7 +435,7 @@ main() = process([-1, 2, -3, 4])
   group('Debug Collection Types', () {
     test('debug with stack', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("s", stack.new([1, 2, 3]))',
+        source: 'main() = debug("s", stack_new([1, 2, 3]))',
       );
 
       expect(result.stdout.toString(), equals('[debug] s: [1, 2, 3]\n'));
@@ -443,7 +443,7 @@ main() = process([-1, 2, -3, 4])
 
     test('debug with queue', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("q", queue.new([1, 2, 3]))',
+        source: 'main() = debug("q", queue_new([1, 2, 3]))',
       );
 
       expect(result.stdout.toString(), equals('[debug] q: [1, 2, 3]\n'));
@@ -451,7 +451,7 @@ main() = process([-1, 2, -3, 4])
 
     test('debug with vector', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("v", vector.new([1, 2, 3]))',
+        source: 'main() = debug("v", vector_new([1, 2, 3]))',
       );
 
       expect(result.stdout.toString(), equals('[debug] v: [1, 2, 3]\n'));
@@ -459,7 +459,7 @@ main() = process([-1, 2, -3, 4])
 
     test('debug with set', () async {
       final ProcessResult result = await runDebugProgram(
-        source: 'main() = debug("set", set.add(set.add(set.new([]), 1), 2))',
+        source: 'main() = debug("set", set_add(set_add(set_new([]), 1), 2))',
       );
 
       // Set output format

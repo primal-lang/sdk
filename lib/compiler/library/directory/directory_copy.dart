@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DirectoryCopy extends NativeFunctionTerm {
   const DirectoryCopy()
     : super(
-        name: 'directory.copy',
+        name: 'directory_copy',
         parameters: const [
           Parameter.directory('a'),
           Parameter.directory('b'),

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListFirst extends NativeFunctionTerm {
   const ListFirst()
     : super(
-        name: 'list.first',
+        name: 'list_first',
         parameters: const [
           Parameter.list('a'),
         ],

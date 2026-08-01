@@ -17,19 +17,19 @@ Number of functions: 2
 
 ### Encode
 
-- **Signature:** `base64.encode(a: String): String`
+- **Signature:** `base64_encode(a: String): String`
 - **Input:** A string to encode.
 - **Output:** The Base64-encoded string.
 - **Purity:** Pure
 - **Example:**
 
 ```
-base64.encode("Hello, World!") // returns "SGVsbG8sIFdvcmxkIQ=="
+base64_encode("Hello, World!") // returns "SGVsbG8sIFdvcmxkIQ=="
 ```
 
 ### Decode
 
-- **Signature:** `base64.decode(a: String): String`
+- **Signature:** `base64_decode(a: String): String`
 - **Input:** A Base64-encoded string to decode.
 - **Output:** The decoded string.
 - **Constraints:** Throws an error if the string is not valid Base64
@@ -37,5 +37,5 @@ base64.encode("Hello, World!") // returns "SGVsbG8sIFdvcmxkIQ=="
 - **Example:**
 
 ```
-base64.decode("SGVsbG8sIFdvcmxkIQ==") // returns "Hello, World!"
+base64_decode("SGVsbG8sIFdvcmxkIQ==") // returns "Hello, World!"
 ```

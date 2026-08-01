@@ -4,7 +4,7 @@
 */
 
 toRoman(n) = if (n < 0)
-                 error.throw(-1, "Cannot convert a non-positive number to Roman numerals")
+                 error_throw(-1, "Cannot convert a non-positive number to Roman numerals")
              else if (n >= 1000)
                  "M" + toRoman(n - 1000)
              else if (n >= 900)

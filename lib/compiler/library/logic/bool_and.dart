@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class BoolAnd extends NativeFunctionTerm {
   const BoolAnd()
     : super(
-        name: 'bool.and',
+        name: 'bool_and',
         parameters: const [
           Parameter.boolean('a'),
           Parameter.boolean('b'),

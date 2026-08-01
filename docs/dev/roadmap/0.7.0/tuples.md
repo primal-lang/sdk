@@ -129,8 +129,8 @@ Add fixed-size heterogeneous collections:
 point() = (3, 4)
 person() = ("Alice", 30, true)
 
-x() = tuple.first(point())
-name() = tuple.at(person(), 0)
+x() = tuple_first(point())
+name() = tuple_at(person(), 0)
 ```
 
 **Why it belongs:** Lists are currently used for many things, but they do not communicate "fixed-size structured value". Tuples would be a lightweight way to return multiple values and model small product data.

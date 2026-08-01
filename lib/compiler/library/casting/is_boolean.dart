@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsBoolean extends NativeFunctionTerm {
   const IsBoolean()
     : super(
-        name: 'is.boolean',
+        name: 'is_boolean',
         parameters: const [
           Parameter.any('a'),
         ],

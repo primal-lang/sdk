@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StackNew extends NativeFunctionTerm {
   const StackNew()
     : super(
-        name: 'stack.new',
+        name: 'stack_new',
         parameters: const [
           Parameter.list('a'),
         ],

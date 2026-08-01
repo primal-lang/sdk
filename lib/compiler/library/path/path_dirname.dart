@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class PathDirname extends NativeFunctionTerm {
   const PathDirname()
     : super(
-        name: 'path.dirname',
+        name: 'path_dirname',
         parameters: const [Parameter.string('a')],
       );
 

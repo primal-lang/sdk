@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StackPeek extends NativeFunctionTerm {
   const StackPeek()
     : super(
-        name: 'stack.peek',
+        name: 'stack_peek',
         parameters: const [
           Parameter.stack('a'),
         ],

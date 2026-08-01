@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumClamp extends NativeFunctionTerm {
   const NumClamp()
     : super(
-        name: 'num.clamp',
+        name: 'num_clamp',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

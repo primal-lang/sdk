@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class EnvGet extends NativeFunctionTerm {
   const EnvGet()
     : super(
-        name: 'env.get',
+        name: 'env_get',
         parameters: const [
           Parameter.string('a'),
         ],

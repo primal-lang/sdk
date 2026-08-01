@@ -11,133 +11,133 @@ import '../../helpers/pipeline_helpers.dart';
 void main() {
   group('Logic', () {
     group('Short-circuit behavior', () {
-      test('bool.and skips the second argument when the first is false', () {
+      test('bool_and skips the second argument when the first is false', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = bool.and(false, error.throw(-1, "Not evaluated"))',
+          'main() = bool_and(false, error_throw(-1, "Not evaluated"))',
         );
         checkResult(runtime, false);
       });
 
-      test('bool.or skips the second argument when the first is true', () {
+      test('bool_or skips the second argument when the first is true', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = bool.or(true, error.throw(-1, "Not evaluated"))',
+          'main() = bool_or(true, error_throw(-1, "Not evaluated"))',
         );
         checkResult(runtime, true);
       });
     });
 
-    test('bool.and returns true when both are true', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.and(true, true)');
+    test('bool_and returns true when both are true', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_and(true, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.and returns false when first is false', () {
+    test('bool_and returns false when first is false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = bool.and(false, true)',
+        'main() = bool_and(false, true)',
       );
       checkResult(runtime, false);
     });
 
-    test('bool.and returns false when second is false', () {
+    test('bool_and returns false when second is false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = bool.and(true, false)',
+        'main() = bool_and(true, false)',
       );
       checkResult(runtime, false);
     });
 
-    test('bool.and returns false when both are false', () {
+    test('bool_and returns false when both are false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = bool.and(false, false)',
+        'main() = bool_and(false, false)',
       );
       checkResult(runtime, false);
     });
 
-    test('bool.or returns true when both are true', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.or(true, true)');
+    test('bool_or returns true when both are true', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_or(true, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.or returns true when first is true', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.or(true, false)');
+    test('bool_or returns true when first is true', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_or(true, false)');
       checkResult(runtime, true);
     });
 
-    test('bool.or returns true when second is true', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.or(false, true)');
+    test('bool_or returns true when second is true', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_or(false, true)');
       checkResult(runtime, true);
     });
 
-    test('bool.or returns false when both are false', () {
+    test('bool_or returns false when both are false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = bool.or(false, false)',
+        'main() = bool_or(false, false)',
       );
       checkResult(runtime, false);
     });
 
-    test('bool.xor returns false when both are true', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.xor(true, true)');
+    test('bool_xor returns false when both are true', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_xor(true, true)');
       checkResult(runtime, false);
     });
 
-    test('bool.xor returns true when only first is true', () {
+    test('bool_xor returns true when only first is true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = bool.xor(true, false)',
-      );
-      checkResult(runtime, true);
-    });
-
-    test('bool.xor returns true when only second is true', () {
-      final RuntimeFacade runtime = getRuntime(
-        'main() = bool.xor(false, true)',
+        'main() = bool_xor(true, false)',
       );
       checkResult(runtime, true);
     });
 
-    test('bool.xor returns false when both are false', () {
+    test('bool_xor returns true when only second is true', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = bool.xor(false, false)',
+        'main() = bool_xor(false, true)',
+      );
+      checkResult(runtime, true);
+    });
+
+    test('bool_xor returns false when both are false', () {
+      final RuntimeFacade runtime = getRuntime(
+        'main() = bool_xor(false, false)',
       );
       checkResult(runtime, false);
     });
 
-    test('bool.not negates true to false', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.not(true)');
+    test('bool_not negates true to false', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_not(true)');
       checkResult(runtime, false);
     });
 
-    test('bool.not negates false to true', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.not(false)');
+    test('bool_not negates false to true', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_not(false)');
       checkResult(runtime, true);
     });
 
     group('Strict evaluation', () {
-      test('bool.andStrict returns false when left is false', () {
+      test('bool_andStrict returns false when left is false', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = bool.andStrict(false, false)',
+          'main() = bool_andStrict(false, false)',
         );
         checkResult(runtime, false);
       });
 
-      test('bool.andStrict evaluates the second argument eagerly', () {
+      test('bool_andStrict evaluates the second argument eagerly', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = bool.andStrict(false, error.throw(-1, "Boom"))',
+          'main() = bool_andStrict(false, error_throw(-1, "Boom"))',
         );
         expect(runtime.executeMain, throwsA(isA<CustomError>()));
       });
 
       test(
-        'bool.orStrict returns true when left is false and right is true',
+        'bool_orStrict returns true when left is false and right is true',
         () {
           final RuntimeFacade runtime = getRuntime(
-            'main() = bool.orStrict(false, true)',
+            'main() = bool_orStrict(false, true)',
           );
           checkResult(runtime, true);
         },
       );
 
-      test('bool.orStrict evaluates the second argument eagerly', () {
+      test('bool_orStrict evaluates the second argument eagerly', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = bool.orStrict(true, error.throw(-1, "Boom"))',
+          'main() = bool_orStrict(true, error_throw(-1, "Boom"))',
         );
         expect(runtime.executeMain, throwsA(isA<CustomError>()));
       });
@@ -145,92 +145,92 @@ void main() {
   });
 
   group('Logic Type Errors', () {
-    test('bool.and throws for number arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.and(1, 2)');
+    test('bool_and throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_and(1, 2)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.and throws when first is boolean but second is number', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.and(true, 1)');
+    test('bool_and throws when first is boolean but second is number', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_and(true, 1)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.and throws for string arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.and("a", "b")');
+    test('bool_and throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_and("a", "b")');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.and throws for list arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.and([1], [2])');
+    test('bool_and throws for list arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_and([1], [2])');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.or throws for number arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.or(1, 2)');
+    test('bool_or throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_or(1, 2)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.or throws when first is false but second is number', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.or(false, 1)');
+    test('bool_or throws when first is false but second is number', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_or(false, 1)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.or throws for string arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.or("a", "b")');
+    test('bool_or throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_or("a", "b")');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.or throws for list arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.or([1], [2])');
+    test('bool_or throws for list arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_or([1], [2])');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.andStrict throws for string arguments', () {
+    test('bool_andStrict throws for string arguments', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = bool.andStrict("a", "b")',
+        'main() = bool_andStrict("a", "b")',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.orStrict throws for list arguments', () {
+    test('bool_orStrict throws for list arguments', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = bool.orStrict([1], [2])',
+        'main() = bool_orStrict([1], [2])',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.not throws for number argument', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.not(1)');
+    test('bool_not throws for number argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_not(1)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.not throws for string argument', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.not("a")');
+    test('bool_not throws for string argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_not("a")');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.not throws for list argument', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.not([1])');
+    test('bool_not throws for list argument', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_not([1])');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.xor throws for string arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.xor("a", "b")');
+    test('bool_xor throws for string arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_xor("a", "b")');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.xor throws for number arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.xor(1, 2)');
+    test('bool_xor throws for number arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_xor(1, 2)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.xor throws for list arguments', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.xor([1], [2])');
+    test('bool_xor throws for list arguments', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_xor([1], [2])');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('bool.xor throws when first is boolean but second is number', () {
-      final RuntimeFacade runtime = getRuntime('main() = bool.xor(true, 1)');
+    test('bool_xor throws when first is boolean but second is number', () {
+      final RuntimeFacade runtime = getRuntime('main() = bool_xor(true, 1)');
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
   });

@@ -54,7 +54,7 @@ type Stack<T> = List<T>
 
 ```primal
 enum Weekday = (Monday, Tuesday, Wednesday, Thrusday, Friday, Saturday, Sunday)
-enum.values(e: Enum): List
+enum_values(e: Enum): List
 ```
 
 ```primal
@@ -64,16 +64,16 @@ data Person = (name: String, age: Integer, married: Boolean)
 Person("John Smith", 42, true)
 
 // get
-data.get(person, "name"): T
+data_get(person, "name"): T
 
 // set
-data.set(person, "age", 50): Person
+data_set(person, "age", 50): Person
 
 // keys
-data.keys(a: Data): List
+data_keys(a: Data): List
 
 // values
-data.values(a: Data): List
+data_values(a: Data): List
 ```
 
 ```primal

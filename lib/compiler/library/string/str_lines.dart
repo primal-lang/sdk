@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrLines extends NativeFunctionTerm {
   const StrLines()
     : super(
-        name: 'str.lines',
+        name: 'str_lines',
         parameters: const [
           Parameter.string('a'),
         ],

@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class PathBasename extends NativeFunctionTerm {
   const PathBasename()
     : super(
-        name: 'path.basename',
+        name: 'path_basename',
         parameters: const [Parameter.string('a')],
       );
 

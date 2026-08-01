@@ -20,7 +20,7 @@ void main() {
 
     test('main with multiple arguments', () {
       final RuntimeFacade runtime = getRuntime(
-        'main(a, b, c) = to.string(a) + to.string(b) + to.string(c)',
+        'main(a, b, c) = to_string(a) + to_string(b) + to_string(c)',
       );
       expect(runtime.executeMain(['aaa', 'bbb', 'ccc']), '"aaabbbccc"');
     });
@@ -159,20 +159,20 @@ void main() {
 
     group('standard library integration', () {
       test('main calls standard library function directly', () {
-        final RuntimeFacade runtime = getRuntime('main() = num.add(10, 20)');
+        final RuntimeFacade runtime = getRuntime('main() = num_add(10, 20)');
         checkResult(runtime, 30);
       });
 
       test('main uses string concatenation via standard library', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = str.concat("hello", " world")',
+          'main() = str_concat("hello", " world")',
         );
         checkResult(runtime, '"hello world"');
       });
 
       test('main uses list operations', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.length([1, 2, 3])',
+          'main() = list_length([1, 2, 3])',
         );
         checkResult(runtime, 3);
       });
@@ -191,7 +191,7 @@ void main() {
 
       test('main argument is used in computation', () {
         final RuntimeFacade runtime = getRuntime(
-          'main(x) = to.number(x) * 2',
+          'main(x) = to_number(x) * 2',
         );
         expect(runtime.executeMain(['21']), '42');
       });
@@ -439,23 +439,23 @@ void main() {
     });
 
     group('higher order functions', () {
-      test('main uses list.map with custom function', () {
+      test('main uses list_map with custom function', () {
         final RuntimeFacade runtime = getRuntime(
-          'double(x) = x * 2\nmain() = list.map([1, 2, 3], double)',
+          'double(x) = x * 2\nmain() = list_map([1, 2, 3], double)',
         );
         checkResult(runtime, '[2, 4, 6]');
       });
 
-      test('main uses list.filter with custom predicate', () {
+      test('main uses list_filter with custom predicate', () {
         final RuntimeFacade runtime = getRuntime(
-          'isPositive(x) = x > 0\nmain() = list.filter([-1, 0, 1, 2], isPositive)',
+          'isPositive(x) = x > 0\nmain() = list_filter([-1, 0, 1, 2], isPositive)',
         );
         checkResult(runtime, '[1, 2]');
       });
 
-      test('main uses list.reduce with standard library function', () {
+      test('main uses list_reduce with standard library function', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.reduce([1, 2, 3, 4], 0, num.add)',
+          'main() = list_reduce([1, 2, 3, 4], 0, num_add)',
         );
         checkResult(runtime, 10);
       });
@@ -478,26 +478,26 @@ void main() {
     group('set operations', () {
       test('main returns set from list', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = set.new([1, 2, 2, 3])',
+          'main() = set_new([1, 2, 2, 3])',
         );
         checkResult(runtime, '{1, 2, 3}');
       });
 
       test('main returns empty set', () {
-        final RuntimeFacade runtime = getRuntime('main() = set.new([])');
+        final RuntimeFacade runtime = getRuntime('main() = set_new([])');
         checkResult(runtime, '{}');
       });
 
       test('main checks set membership', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = set.contains(set.new([1, 2, 3]), 2)',
+          'main() = set_contains(set_new([1, 2, 3]), 2)',
         );
         checkResult(runtime, true);
       });
 
       test('main returns set length', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = set.length(set.new([1, 2, 3]))',
+          'main() = set_length(set_new([1, 2, 3]))',
         );
         checkResult(runtime, 3);
       });
@@ -531,14 +531,14 @@ void main() {
 
       test('main with many arguments', () {
         final RuntimeFacade runtime = getRuntime(
-          'main(a, b, c, d, e) = to.string(a) + to.string(b) + to.string(c) + to.string(d) + to.string(e)',
+          'main(a, b, c, d, e) = to_string(a) + to_string(b) + to_string(c) + to_string(d) + to_string(e)',
         );
         expect(runtime.executeMain(['1', '2', '3', '4', '5']), '"12345"');
       });
 
       test('main argument used in arithmetic after conversion', () {
         final RuntimeFacade runtime = getRuntime(
-          'main(a, b) = to.number(a) + to.number(b)',
+          'main(a, b) = to_number(a) + to_number(b)',
         );
         expect(runtime.executeMain(['10', '20']), '30');
       });
@@ -561,7 +561,7 @@ void main() {
 
       test('main with conditional in function call', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = num.add(if (true) 10 else 0, if (false) 0 else 5)',
+          'main() = num_add(if (true) 10 else 0, if (false) 0 else 5)',
         );
         checkResult(runtime, 15);
       });
@@ -584,35 +584,35 @@ void main() {
     group('list operations from main', () {
       test('main returns list first element', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.first([1, 2, 3])',
+          'main() = list_first([1, 2, 3])',
         );
         checkResult(runtime, 1);
       });
 
       test('main returns list rest', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.rest([1, 2, 3])',
+          'main() = list_rest([1, 2, 3])',
         );
         checkResult(runtime, '[2, 3]');
       });
 
       test('main returns list length', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.length([1, 2, 3, 4, 5])',
+          'main() = list_length([1, 2, 3, 4, 5])',
         );
         checkResult(runtime, 5);
       });
 
       test('main returns list concatenation', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.concat([1, 2], [3, 4])',
+          'main() = list_concat([1, 2], [3, 4])',
         );
         checkResult(runtime, '[1, 2, 3, 4]');
       });
 
       test('main returns reversed list', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.reverse([1, 2, 3])',
+          'main() = list_reverse([1, 2, 3])',
         );
         checkResult(runtime, '[3, 2, 1]');
       });
@@ -633,28 +633,28 @@ void main() {
 
       test('main returns map keys', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = map.keys({"a": 1, "b": 2})',
+          'main() = map_keys({"a": 1, "b": 2})',
         );
         checkResult(runtime, '["a", "b"]');
       });
 
       test('main returns map values', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = map.values({"a": 1, "b": 2})',
+          'main() = map_values({"a": 1, "b": 2})',
         );
         checkResult(runtime, '[1, 2]');
       });
 
       test('main checks map contains key', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = map.containsKey({"a": 1}, "a")',
+          'main() = map_containsKey({"a": 1}, "a")',
         );
         checkResult(runtime, true);
       });
 
       test('main returns map length', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = map.length({"a": 1, "b": 2, "c": 3})',
+          'main() = map_length({"a": 1, "b": 2, "c": 3})',
         );
         checkResult(runtime, 3);
       });
@@ -663,49 +663,49 @@ void main() {
     group('string operations from main', () {
       test('main returns string length', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = str.length("hello")',
+          'main() = str_length("hello")',
         );
         checkResult(runtime, 5);
       });
 
       test('main returns uppercase string', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = str.uppercase("hello")',
+          'main() = str_uppercase("hello")',
         );
         checkResult(runtime, '"HELLO"');
       });
 
       test('main returns lowercase string', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = str.lowercase("HELLO")',
+          'main() = str_lowercase("HELLO")',
         );
         checkResult(runtime, '"hello"');
       });
 
       test('main returns substring', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = str.substring("hello world", 0, 5)',
+          'main() = str_substring("hello world", 0, 5)',
         );
         checkResult(runtime, '"hello"');
       });
 
       test('main returns string contains check', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = str.contains("hello world", "world")',
+          'main() = str_contains("hello world", "world")',
         );
         checkResult(runtime, true);
       });
 
       test('main returns split string as list', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = str.split("a,b,c", ",")',
+          'main() = str_split("a,b,c", ",")',
         );
         checkResult(runtime, '["a", "b", "c"]');
       });
 
       test('main returns trimmed string', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = str.trim("  hello  ")',
+          'main() = str_trim("  hello  ")',
         );
         checkResult(runtime, '"hello"');
       });
@@ -714,7 +714,7 @@ void main() {
     group('boundary conditions', () {
       test('main returns empty list head via safe operation', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.length([])',
+          'main() = list_length([])',
         );
         checkResult(runtime, 0);
       });
@@ -736,14 +736,14 @@ void main() {
 
       test('main with boolean expression evaluating entire list', () {
         final RuntimeFacade runtime = getRuntime(
-          'id(x) = x\nmain() = list.all([true, true, true], id)',
+          'id(x) = x\nmain() = list_all([true, true, true], id)',
         );
         checkResult(runtime, true);
       });
 
       test('main with boolean expression evaluating any', () {
         final RuntimeFacade runtime = getRuntime(
-          'id(x) = x\nmain() = list.any([false, false, true], id)',
+          'id(x) = x\nmain() = list_any([false, false, true], id)',
         );
         checkResult(runtime, true);
       });
@@ -759,14 +759,14 @@ void main() {
 
       test('main with sum of list via recursion', () {
         final RuntimeFacade runtime = getRuntime(
-          'sumList(items) = if (list.length(items) == 0) 0 else list.first(items) + sumList(list.rest(items))\nmain() = sumList([1, 2, 3, 4, 5])',
+          'sumList(items) = if (list_length(items) == 0) 0 else list_first(items) + sumList(list_rest(items))\nmain() = sumList([1, 2, 3, 4, 5])',
         );
         checkResult(runtime, 15);
       });
 
       test('main with count down via recursion', () {
         final RuntimeFacade runtime = getRuntime(
-          'countdown(n) = if (n <= 0) [] else list.concat([n], countdown(n - 1))\nmain() = countdown(5)',
+          'countdown(n) = if (n <= 0) [] else list_concat([n], countdown(n - 1))\nmain() = countdown(5)',
         );
         checkResult(runtime, '[5, 4, 3, 2, 1]');
       });
@@ -781,52 +781,52 @@ void main() {
 
     group('type coercion and conversion', () {
       test('main converts number to string', () {
-        final RuntimeFacade runtime = getRuntime('main() = to.string(42)');
+        final RuntimeFacade runtime = getRuntime('main() = to_string(42)');
         checkResult(runtime, '"42"');
       });
 
       test('main converts boolean to string', () {
-        final RuntimeFacade runtime = getRuntime('main() = to.string(true)');
+        final RuntimeFacade runtime = getRuntime('main() = to_string(true)');
         checkResult(runtime, '"true"');
       });
 
       test('main converts string to number', () {
-        final RuntimeFacade runtime = getRuntime('main() = to.number("42")');
+        final RuntimeFacade runtime = getRuntime('main() = to_number("42")');
         checkResult(runtime, 42);
       });
 
       test('main converts string to boolean', () {
-        final RuntimeFacade runtime = getRuntime('main() = to.boolean("true")');
+        final RuntimeFacade runtime = getRuntime('main() = to_boolean("true")');
         checkResult(runtime, true);
       });
 
       test('main checks if value is number', () {
-        final RuntimeFacade runtime = getRuntime('main() = is.number(42)');
+        final RuntimeFacade runtime = getRuntime('main() = is_number(42)');
         checkResult(runtime, true);
       });
 
       test('main checks if value is string', () {
-        final RuntimeFacade runtime = getRuntime('main() = is.string("hello")');
+        final RuntimeFacade runtime = getRuntime('main() = is_string("hello")');
         checkResult(runtime, true);
       });
 
       test('main checks if value is list', () {
-        final RuntimeFacade runtime = getRuntime('main() = is.list([1, 2, 3])');
+        final RuntimeFacade runtime = getRuntime('main() = is_list([1, 2, 3])');
         checkResult(runtime, true);
       });
 
       test('main checks if value is boolean', () {
-        final RuntimeFacade runtime = getRuntime('main() = is.boolean(true)');
+        final RuntimeFacade runtime = getRuntime('main() = is_boolean(true)');
         checkResult(runtime, true);
       });
 
       test('main checks if number is not a string', () {
-        final RuntimeFacade runtime = getRuntime('main() = is.string(42)');
+        final RuntimeFacade runtime = getRuntime('main() = is_string(42)');
         checkResult(runtime, false);
       });
 
       test('main checks if string is not a number', () {
-        final RuntimeFacade runtime = getRuntime('main() = is.number("hello")');
+        final RuntimeFacade runtime = getRuntime('main() = is_number("hello")');
         checkResult(runtime, false);
       });
     });

@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsDirectory extends NativeFunctionTerm {
   const IsDirectory()
     : super(
-        name: 'is.directory',
+        name: 'is_directory',
         parameters: const [
           Parameter.any('a'),
         ],

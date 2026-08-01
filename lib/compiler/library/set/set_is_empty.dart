@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetIsEmpty extends NativeFunctionTerm {
   const SetIsEmpty()
     : super(
-        name: 'set.isEmpty',
+        name: 'set_isEmpty',
         parameters: const [
           Parameter.set('a'),
         ],

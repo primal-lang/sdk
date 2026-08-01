@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumAsDegrees extends NativeFunctionTerm {
   const NumAsDegrees()
     : super(
-        name: 'num.asDegrees',
+        name: 'num_asDegrees',
         parameters: const [
           Parameter.number('a'),
         ],

@@ -84,7 +84,7 @@ Term reduce() {
 
 This enables safe expressions like `if (n == 0) 0 else 100 / n` where the division is never attempted when `n` is zero.
 
-### Short-Circuit And (`&&`, `bool.and`)
+### Short-Circuit And (`&&`, `bool_and`)
 
 The second operand is evaluated only if the first is `true`:
 
@@ -113,7 +113,7 @@ static BooleanTerm execute({
 }
 ```
 
-### Short-Circuit Or (`||`, `bool.or`)
+### Short-Circuit Or (`||`, `bool_or`)
 
 The second operand is evaluated only if the first is `false`:
 

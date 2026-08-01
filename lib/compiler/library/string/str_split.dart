@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrSplit extends NativeFunctionTerm {
   const StrSplit()
     : super(
-        name: 'str.split',
+        name: 'str_split',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

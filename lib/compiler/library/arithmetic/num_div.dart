@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumDiv extends NativeFunctionTerm {
   const NumDiv()
     : super(
-        name: 'num.div',
+        name: 'num_div',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

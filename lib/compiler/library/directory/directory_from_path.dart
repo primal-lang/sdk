@@ -8,7 +8,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DirectoryFromPath extends NativeFunctionTerm {
   const DirectoryFromPath()
     : super(
-        name: 'directory.fromPath',
+        name: 'directory_fromPath',
         parameters: const [
           Parameter.string('a'),
         ],

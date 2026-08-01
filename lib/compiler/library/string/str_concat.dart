@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrConcat extends NativeFunctionTerm {
   const StrConcat()
     : super(
-        name: 'str.concat',
+        name: 'str_concat',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

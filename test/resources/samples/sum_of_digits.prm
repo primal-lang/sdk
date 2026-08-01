@@ -4,10 +4,10 @@
 */
 
 sumOfDigits(n) = if (n < 0)
-                     error.throw(0, "Cannot calculate sum of digits of a negative number")
+                     error_throw(0, "Cannot calculate sum of digits of a negative number")
                  else if (n == 0)
                      0
                  else
-                     n % 10 + sumOfDigits(to.integer(n / 10))
+                     n % 10 + sumOfDigits(to_integer(n / 10))
 
 main() = sumOfDigits(123456789)

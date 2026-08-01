@@ -30,11 +30,11 @@ numbers() = [1, 2, 3]
 
 main() =
     let original = numbers() in
-    let modified = list.insertEnd(original, 4) in
-    list.length(original) // returns 3, not 4
+    let modified = list_insertEnd(original, 4) in
+    list_length(original) // returns 3, not 4
 ```
 
-The `original` list still has 3 elements after we create `modified`. The `list.insertEnd` function did not change `original`; it created a brand new list with 4 elements.
+The `original` list still has 3 elements after we create `modified`. The `list_insertEnd` function did not change `original`; it created a brand new list with 4 elements.
 
 ## List Operations Return New Lists
 
@@ -42,17 +42,17 @@ All list operations follow this pattern. Functions that seem like they would mod
 
 ```
 // Adding elements
-list.insertStart([2, 3], 1)     // returns [1, 2, 3]
-list.insertEnd([1, 2], 3)       // returns [1, 2, 3]
-list.concat([1, 2], [3, 4])     // returns [1, 2, 3, 4]
+list_insertStart([2, 3], 1)     // returns [1, 2, 3]
+list_insertEnd([1, 2], 3)       // returns [1, 2, 3]
+list_concat([1, 2], [3, 4])     // returns [1, 2, 3, 4]
 
 // Removing elements
-list.remove([1, 2, 3, 2], 2)    // returns [1, 3]
-list.removeAt([1, 2, 3], 1)     // returns [1, 3]
+list_remove([1, 2, 3, 2], 2)    // returns [1, 3]
+list_removeAt([1, 2, 3], 1)     // returns [1, 3]
 
 // Modifying elements
-list.set([1, 2, 3], 1, 99)      // returns [1, 99, 3]
-list.reverse([1, 2, 3])         // returns [3, 2, 1]
+list_set([1, 2, 3], 1, 99)      // returns [1, 99, 3]
+list_reverse([1, 2, 3])         // returns [3, 2, 1]
 ```
 
 In each case, the original list passed to the function is unchanged.
@@ -64,9 +64,9 @@ The same principle applies to maps:
 ```
 // Creating and "modifying" a map
 let users = {"alice": 1, "bob": 2} in
-let updated = map.set(users, "charlie", 3) in
-map.length(users)    // returns 2
-map.length(updated)  // returns 3
+let updated = map_set(users, "charlie", 3) in
+map_length(users)    // returns 2
+map_length(updated)  // returns 3
 ```
 
 The `users` map still has 2 entries. The `updated` map is a new map with 3 entries.
@@ -89,9 +89,9 @@ Here is a common pattern using `let` expressions to chain transformations:
 
 ```
 processNumbers(numbers) =
-    let doubled = list.map(numbers, double) in
-    let filtered = list.filter(doubled, isPositive) in
-    let sorted = list.sort(filtered, num.compare) in
+    let doubled = list_map(numbers, double) in
+    let filtered = list_filter(doubled, isPositive) in
+    let sorted = list_sort(filtered, num_compare) in
     sorted
 ```
 

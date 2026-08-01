@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class AssertTrue extends NativeFunctionTerm {
   const AssertTrue()
     : super(
-        name: 'assert.true',
+        name: 'assert_true',
         parameters: const [
           Parameter.boolean('a'),
         ],

@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumAsRadians extends NativeFunctionTerm {
   const NumAsRadians()
     : super(
-        name: 'num.asRadians',
+        name: 'num_asRadians',
         parameters: const [
           Parameter.number('a'),
         ],

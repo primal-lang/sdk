@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class JsonEncode extends NativeFunctionTerm {
   const JsonEncode()
     : super(
-        name: 'json.encode',
+        name: 'json_encode',
         parameters: const [
           Parameter.any('a'),
         ],

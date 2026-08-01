@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeMonth extends NativeFunctionTerm {
   const TimeMonth()
     : super(
-        name: 'time.month',
+        name: 'time_month',
         parameters: const [
           Parameter.timestamp('a'),
         ],

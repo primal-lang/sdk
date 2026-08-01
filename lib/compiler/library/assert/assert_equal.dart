@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class AssertEqual extends NativeFunctionTerm {
   const AssertEqual()
     : super(
-        name: 'assert.equal',
+        name: 'assert_equal',
         parameters: const [
           Parameter.equatable('a'),
           Parameter.equatable('b'),

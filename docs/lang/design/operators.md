@@ -35,7 +35,7 @@ Every operator in Primal is syntactic sugar for a function call. When the compil
 | `a @ b`    | `@(a, b)`   |
 | `a[b]`     | `@(a, b)`   |
 
-Each symbol names a core function of its own, so an operator accepts every type that function accepts: `+` adds numbers, concatenates strings and lists, merges sets, and adds durations, while `num.add` only adds numbers.
+Each symbol names a core function of its own, so an operator accepts every type that function accepts: `+` adds numbers, concatenates strings and lists, merges sets, and adds durations, while `num_add` only adds numbers.
 
 These names exist inside the compiler and are not valid source: the functions are reachable only through the operator syntax, so `+(1, 2)` does not parse.
 
@@ -208,7 +208,7 @@ Strings are indexed by character, not by byte, so multi-byte characters count as
 {"x": 1, "y": 2}["y"]                 // returns 2
 ```
 
-Accessing a non-existent key throws an error. Guard the access with `map.containsKey`, or wrap it in `try` to supply a fallback:
+Accessing a non-existent key throws an error. Guard the access with `map_containsKey`, or wrap it in `try` to supply a fallback:
 
 ```
 try({"x": 1}["y"], 0) // returns 0
@@ -258,7 +258,7 @@ totalPrice(price, quantity, taxRate) =
 
 // Compute average
 average(numbers) =
-  list.reduce(numbers, 0, num.add) / list.length(numbers)
+  list_reduce(numbers, 0, num_add) / list_length(numbers)
 ```
 
 ### Conditional Logic
@@ -290,7 +290,7 @@ getOrDefault(maybeValue, default) =
 
 // Guard against empty list
 firstOrZero(numbers) =
-  if (list.isNotEmpty(numbers)) list.first(numbers) else 0
+  if (list_isNotEmpty(numbers)) list_first(numbers) else 0
 ```
 
 ### String Operations
@@ -303,7 +303,7 @@ greet(firstName, lastName) =
 // Create a formatted message
 formatCount(count, singular, plural) =
   let noun = if (count == 1) singular else plural
-  in to.string(count) + " " + noun
+  in to_string(count) + " " + noun
 ```
 
 ### Collection Access
@@ -311,11 +311,11 @@ formatCount(count, singular, plural) =
 ```
 // Get first element safely
 getFirst(items) =
-  if (list.length(items) > 0) items[0] else null
+  if (list_length(items) > 0) items[0] else null
 
 // Look up a value in a map
 lookup(data, key, default) =
-  if (map.containsKey(data, key)) data[key] else default
+  if (map_containsKey(data, key)) data[key] else default
 
 // Process nested data
 getName(user) = user["profile"]["name"]

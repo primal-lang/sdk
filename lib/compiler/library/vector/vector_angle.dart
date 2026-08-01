@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class VectorAngle extends NativeFunctionTerm {
   const VectorAngle()
     : super(
-        name: 'vector.angle',
+        name: 'vector_angle',
         parameters: const [
           Parameter.vector('a'),
           Parameter.vector('b'),

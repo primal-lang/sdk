@@ -17,40 +17,40 @@ Number of functions: 3
 
 ### Write
 
-- **Signature:** `console.write(a: Any): Any`
+- **Signature:** `console_write(a: Any): Any`
 - **Input:** An argument of any type.
 - **Output:** It writes the argument in the standard output and returns it.
 - **Purity:** Impure
 - **Example:**
 
 ```
-console.write("hello") // prints "hello" and returns "hello"
+console_write("hello") // prints "hello" and returns "hello"
 ```
 
 ### Write Line
 
-- **Signature:** `console.writeLn(a: Any): Any`
+- **Signature:** `console_writeLn(a: Any): Any`
 - **Input:** An argument of any type.
 - **Output:** It writes the argument in the standard output, followed by a newline, and returns it.
 - **Purity:** Impure
 - **Example:**
 
 ```
-console.writeLn("hello") // prints "hello\n" and returns "hello"
+console_writeLn("hello") // prints "hello\n" and returns "hello"
 ```
 
 ## Input
 
 ### Read
 
-- **Signature:** `console.read(): String`
+- **Signature:** `console_read(): String`
 - **Input:** None.
 - **Output:** Reads a line from the standard input and returns it as a string.
 - **Purity:** Impure
 - **Example:**
 
 ```
-console.read() // waits for input and returns the entered string
+console_read() // waits for input and returns the entered string
 ```
 
 > **Note:** This function is not implemented on the web platform.

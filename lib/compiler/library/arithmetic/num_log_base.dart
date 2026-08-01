@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumLogBase extends NativeFunctionTerm {
   const NumLogBase()
     : super(
-        name: 'num.logBase',
+        name: 'num_logBase',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

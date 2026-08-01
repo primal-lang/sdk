@@ -3,9 +3,9 @@
   Output: the maximum number in the list
 */
 
-findMax(list) = if (list.isEmpty(list))
-                    error.throw(-1, 'Cannot find max number in an empty list')
+findMax(list) = if (list_isEmpty(list))
+                    error_throw(-1, 'Cannot find max number in an empty list')
                 else
-                    list.reduce(list.rest(list), list.first(list), num.max)
+                    list_reduce(list_rest(list), list_first(list), num_max)
 
 main() = findMax([1, 7, -13, 9, 2])

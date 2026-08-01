@@ -14,7 +14,7 @@ sources:
 
 ## Overview
 
-Every value in Primal has exactly one type. The type system is flat with no inheritance hierarchy, meaning types do not have subtypes or parent types. Values can be converted between types using `to.*` functions and checked using `is.*` functions.
+Every value in Primal has exactly one type. The type system is flat with no inheritance hierarchy, meaning types do not have subtypes or parent types. Values can be converted between types using `to_*` functions and checked using `is_*` functions.
 
 ## Primitive Types
 
@@ -43,10 +43,10 @@ Represents both integers and floating-point numbers. There is no separate intege
 -17      // negative
 1.5e10   // scientific notation
 
-num.add(1, 2)       // returns 3
-num.mul(3.5, 2)     // returns 7
-num.isEven(4)       // returns true
-num.isInteger(3.0)  // returns true
+num_add(1, 2)       // returns 3
+num_mul(3.5, 2)     // returns 7
+num_isEven(4)       // returns true
+is_integer(3.0)     // returns true
 ```
 
 ### String
@@ -58,9 +58,9 @@ Represents sequences of characters.
 "line1\nline2"       // with escape sequence
 ""                   // empty string
 
-str.length("hello")       // returns 5
-str.concat("a", "b")      // returns "ab"
-str.split("a,b,c", ",")   // returns ["a", "b", "c"]
+str_length("hello")       // returns 5
+str_concat("a", "b")      // returns "ab"
+str_split("a,b,c", ",")   // returns ["a", "b", "c"]
 ```
 
 ## Collection Types
@@ -77,9 +77,9 @@ An ordered, indexable sequence of elements. Lists are the most commonly used col
 [1, "mixed", true]     // mixed types allowed
 []                     // empty list
 
-list.at([10, 20, 30], 1)     // returns 20
-list.length([1, 2, 3])       // returns 3
-list.map([1, 2, 3], double)  // returns [2, 4, 6]
+list_at([10, 20, 30], 1)     // returns 20
+list_length([1, 2, 3])       // returns 3
+list_map([1, 2, 3], double)  // returns [2, 4, 6]
 ```
 
 ### Map
@@ -90,9 +90,9 @@ A collection of key-value pairs with unique keys. Keys must be hashable: numbers
 {"name": "Alice", "age": 30}   // map literal
 {}                              // empty map
 
-map.at({"a": 1}, "a")           // returns 1
-map.set({"a": 1}, "b", 2)       // returns {"a": 1, "b": 2}
-map.keys({"x": 1, "y": 2})      // returns ["x", "y"]
+map_at({"a": 1}, "a")           // returns 1
+map_set({"a": 1}, "b", 2)       // returns {"a": 1, "b": 2}
+map_keys({"x": 1, "y": 2})      // returns ["x", "y"]
 ```
 
 ### Set
@@ -100,12 +100,12 @@ map.keys({"x": 1, "y": 2})      // returns ["x", "y"]
 An unordered collection of unique elements.
 
 ```
-set.new([1, 2, 3])              // create from list
-set.new([1, 1, 2, 2, 3])        // duplicates removed: {1, 2, 3}
+set_new([1, 2, 3])              // create from list
+set_new([1, 1, 2, 2, 3])        // duplicates removed: {1, 2, 3}
 
-set.contains(set.new([1, 2]), 1)    // returns true
-set.add(set.new([1, 2]), 3)         // returns {1, 2, 3}
-set.union(set.new([1, 2]), set.new([2, 3]))  // returns {1, 2, 3}
+set_contains(set_new([1, 2]), 1)    // returns true
+set_add(set_new([1, 2]), 3)         // returns {1, 2, 3}
+set_union(set_new([1, 2]), set_new([2, 3]))  // returns {1, 2, 3}
 ```
 
 ### Stack
@@ -113,11 +113,11 @@ set.union(set.new([1, 2]), set.new([2, 3]))  // returns {1, 2, 3}
 A last-in, first-out (LIFO) collection.
 
 ```
-stack.new([1, 2, 3])           // create stack
+stack_new([1, 2, 3])           // create stack
 
-stack.push(stack.new([1, 2]), 3)   // returns stack with 3 on top
-stack.peek(stack.new([1, 2, 3]))   // returns 3 (top element)
-stack.pop(stack.new([1, 2, 3]))    // returns stack with top removed
+stack_push(stack_new([1, 2]), 3)   // returns stack with 3 on top
+stack_peek(stack_new([1, 2, 3]))   // returns 3 (top element)
+stack_pop(stack_new([1, 2, 3]))    // returns stack with top removed
 ```
 
 ### Queue
@@ -125,11 +125,11 @@ stack.pop(stack.new([1, 2, 3]))    // returns stack with top removed
 A first-in, first-out (FIFO) collection.
 
 ```
-queue.new([1, 2, 3])           // create queue
+queue_new([1, 2, 3])           // create queue
 
-queue.enqueue(queue.new([1, 2]), 3)  // adds 3 to back
-queue.peek(queue.new([1, 2, 3]))     // returns 1 (front element)
-queue.dequeue(queue.new([1, 2, 3]))  // removes front element
+queue_enqueue(queue_new([1, 2]), 3)  // adds 3 to back
+queue_peek(queue_new([1, 2, 3]))     // returns 1 (front element)
+queue_dequeue(queue_new([1, 2, 3]))  // removes front element
 ```
 
 ### Vector
@@ -137,10 +137,10 @@ queue.dequeue(queue.new([1, 2, 3]))  // removes front element
 A fixed-size, indexed collection optimized for mathematical operations.
 
 ```
-vector.new([1.0, 2.0, 3.0])    // create vector
+vector_new([1.0, 2.0, 3.0])    // create vector
 
-vector.at(vector.new([1, 2, 3]), 0)   // returns 1
-vector.length(vector.new([1, 2, 3]))  // returns 3
+vector_magnitude(vector_new([3, 4]))  // returns 5
+vector_dot(vector_new([1, 2]), vector_new([3, 4]))  // returns 11
 ```
 
 ## System Types
@@ -152,9 +152,9 @@ System types represent external resources and runtime constructs.
 Represents a file on the filesystem.
 
 ```
-file.fromPath("data.txt")           // create file reference
-file.read(file.fromPath("data.txt")) // read file contents
-file.exists(file.fromPath("data.txt")) // check if file exists
+file_fromPath("data.txt")           // create file reference
+file_read(file_fromPath("data.txt")) // read file contents
+file_exists(file_fromPath("data.txt")) // check if file exists
 ```
 
 ### Directory
@@ -162,8 +162,8 @@ file.exists(file.fromPath("data.txt")) // check if file exists
 Represents a directory on the filesystem.
 
 ```
-directory.fromPath("/home/user")        // create directory reference
-directory.list(directory.fromPath(".")) // list directory contents
+directory_fromPath("/home/user")        // create directory reference
+directory_list(directory_fromPath(".")) // list directory contents
 ```
 
 ### Timestamp
@@ -171,9 +171,9 @@ directory.list(directory.fromPath(".")) // list directory contents
 Represents a point in time.
 
 ```
-time.now()                   // current timestamp
-time.year(time.now())        // extract year
-time.format(time.now(), "yyyy-MM-dd")  // format as string
+time_now()                   // current timestamp
+time_year(time_now())        // extract year
+time_format(time_now(), "yyyy-MM-dd")  // format as string
 ```
 
 ### Duration
@@ -181,12 +181,12 @@ time.format(time.now(), "yyyy-MM-dd")  // format as string
 Represents a span of time.
 
 ```
-duration.fromSeconds(30)     // 30 seconds
-duration.fromHours(2)        // 2 hours
-duration.from(1, 2, 30, 0, 0)  // 1 day, 2 hours, 30 minutes
+duration_fromSeconds(30)     // 30 seconds
+duration_fromHours(2)        // 2 hours
+duration_from(1, 2, 30, 0, 0)  // 1 day, 2 hours, 30 minutes
 
-duration.toMinutes(duration.fromSeconds(90))  // returns 1.5
-duration.format(duration.fromHours(2), "HH:mm:ss")  // "02:00:00"
+duration_toMinutes(duration_fromSeconds(90))  // returns 1.5
+duration_format(duration_fromHours(2), "HH:mm:ss")  // "02:00:00"
 ```
 
 ### Function
@@ -195,70 +195,70 @@ Functions are first-class values and can be passed as arguments or stored in var
 
 ```
 double(x) = x * 2
-list.map([1, 2, 3], double)  // pass function as argument
+list_map([1, 2, 3], double)  // pass function as argument
 
 // Core functions are also values
-list.map([1, 2, 3], num.abs)  // use core function directly
+list_map([1, 2, 3], num_abs)  // use core function directly
 ```
 
 ## Type Checking
 
-Use `is.*` functions to check a value's type at runtime:
+Use `is_*` functions to check a value's type at runtime:
 
 ```
-is.boolean(true)       // returns true
-is.number(42)          // returns true
-is.string("hello")     // returns true
-is.list([1, 2, 3])     // returns true
-is.map({"a": 1})       // returns true
-is.set(set.new([1]))   // returns true
-is.stack(stack.new([]))    // returns true
-is.queue(queue.new([]))    // returns true
-is.vector(vector.new([]))  // returns true
-is.file(file.fromPath("x"))       // returns true
-is.directory(directory.fromPath("."))  // returns true
-is.timestamp(time.now())   // returns true
-is.duration(duration.fromSeconds(1))  // returns true
-is.function(num.add)       // returns true
+is_boolean(true)       // returns true
+is_number(42)          // returns true
+is_string("hello")     // returns true
+is_list([1, 2, 3])     // returns true
+is_map({"a": 1})       // returns true
+is_set(set_new([1]))   // returns true
+is_stack(stack_new([]))    // returns true
+is_queue(queue_new([]))    // returns true
+is_vector(vector_new([]))  // returns true
+is_file(file_fromPath("x"))       // returns true
+is_directory(directory_fromPath("."))  // returns true
+is_timestamp(time_now())   // returns true
+is_duration(duration_fromSeconds(1))  // returns true
+is_function(num_add)       // returns true
 ```
 
 Additional checks for number subtypes:
 
 ```
-is.integer(3)      // returns true
-is.integer(3.5)    // returns false
-is.decimal(3.5)    // returns true
-is.infinite(num.infinity())  // returns true
+is_integer(3)      // returns true
+is_integer(3.5)    // returns false
+is_decimal(3.5)    // returns true
+is_infinite(num_infinity())  // returns true
 ```
 
 ## Type Conversions
 
-Use `to.*` functions to convert between types:
+Use `to_*` functions to convert between types:
 
 ### To Primitives
 
 ```
-to.number("42")        // returns 42
-to.number(true)        // returns 1
-to.integer(3.7)        // returns 3 (truncates)
-to.decimal("3.14")     // returns 3.14
+to_number("42")        // returns 42
+to_number(true)        // returns 1
+to_integer(3.7)        // returns 3 (truncates)
+to_decimal("3.14")     // returns 3.14
 
-to.string(42)          // returns "42"
-to.string(true)        // returns "true"
-to.string([1, 2, 3])   // returns "[1, 2, 3]"
+to_string(42)          // returns "42"
+to_string(true)        // returns "true"
+to_string([1, 2, 3])   // returns "[1, 2, 3]"
 
-to.boolean(1)          // returns true
-to.boolean(0)          // returns false
-to.boolean("true")     // returns true
+to_boolean(1)          // returns true
+to_boolean(0)          // returns false
+to_boolean("true")     // returns true
 ```
 
 ### Between Collections
 
 ```
-to.list(set.new([1, 2, 3]))    // set to list
-to.list(stack.new([1, 2, 3]))  // stack to list
-to.list(queue.new([1, 2, 3]))  // queue to list
-to.list(vector.new([1, 2, 3])) // vector to list
+to_list(set_new([1, 2, 3]))    // set to list
+to_list(stack_new([1, 2, 3]))  // stack to list
+to_list(queue_new([1, 2, 3]))  // queue to list
+to_list(vector_new([1, 2, 3])) // vector to list
 ```
 
 ## Practical Examples
@@ -269,12 +269,12 @@ Write functions that work with any type:
 
 ```
 describe(value) =
-  if (is.number(value))
+  if (is_number(value))
     "a number"
-  else if (is.string(value))
+  else if (is_string(value))
     "a string"
-  else if (is.list(value))
-    str.concat("a list with ", to.string(list.length(value)), " elements")
+  else if (is_list(value))
+    str_concat("a list with ", to_string(list_length(value)), " elements")
   else
     "something else"
 ```
@@ -285,7 +285,7 @@ Convert between collection types as needed:
 
 ```
 // Remove duplicates from a list using set
-removeDuplicates(items) = to.list(set.new(items))
+removeDuplicates(items) = to_list(set_new(items))
 
 // Process items: [1, 2, 2, 3, 1] becomes [1, 2, 3]
 ```
@@ -296,10 +296,10 @@ Convert with fallback for invalid input:
 
 ```
 safeToNumber(value) =
-  if (is.number(value))
+  if (is_number(value))
     value
-  else if (is.string(value))
-    try(to.number(value), 0)
+  else if (is_string(value))
+    try(to_number(value), 0)
   else
     0
 ```

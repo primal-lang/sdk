@@ -8,7 +8,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class HashSha256 extends NativeFunctionTerm {
   const HashSha256()
     : super(
-        name: 'hash.sha256',
+        name: 'hash_sha256',
         parameters: const [
           Parameter.string('a'),
         ],

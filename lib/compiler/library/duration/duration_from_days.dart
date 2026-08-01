@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DurationFromDays extends NativeFunctionTerm {
   const DurationFromDays()
     : super(
-        name: 'duration.fromDays',
+        name: 'duration_fromDays',
         parameters: const [
           Parameter.number('a'),
         ],

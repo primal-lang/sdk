@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class Throw extends NativeFunctionTerm {
   const Throw()
     : super(
-        name: 'error.throw',
+        name: 'error_throw',
         parameters: const [
           Parameter.any('a'),
           Parameter.string('b'),

@@ -100,126 +100,126 @@ void main() {
 
     test('== returns true for equal timestamps', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") == time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, true);
     });
 
     test('== returns false for unequal timestamps', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") == time.fromIso("2024-09-02T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") == time_fromIso("2024-09-02T00:00:00")',
       );
       checkResult(runtime, false);
     });
 
     test('== returns true for empty sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([]) == set.new([])',
+        'main() = set_new([]) == set_new([])',
       );
       checkResult(runtime, true);
     });
 
     test('== returns true for equal sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2, 3]) == set.new([1, 2, 3])',
+        'main() = set_new([1, 2, 3]) == set_new([1, 2, 3])',
       );
       checkResult(runtime, true);
     });
 
     test('== returns false for unequal sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2]) == set.new([2])',
+        'main() = set_new([1, 2]) == set_new([2])',
       );
       checkResult(runtime, false);
     });
 
     test('== returns true for empty stacks', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = stack.new([]) == stack.new([])',
+        'main() = stack_new([]) == stack_new([])',
       );
       checkResult(runtime, true);
     });
 
     test('== returns true for equal stacks', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = stack.new([1, 2, 3]) == stack.new([1, 2, 3])',
+        'main() = stack_new([1, 2, 3]) == stack_new([1, 2, 3])',
       );
       checkResult(runtime, true);
     });
 
     test('== returns false for unequal stacks', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = stack.new([1, 2]) == stack.new([2])',
+        'main() = stack_new([1, 2]) == stack_new([2])',
       );
       checkResult(runtime, false);
     });
 
     test('== returns true for empty queues', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = queue.new([]) == queue.new([])',
+        'main() = queue_new([]) == queue_new([])',
       );
       checkResult(runtime, true);
     });
 
     test('== returns true for equal queues', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = queue.new([1, 2, 3]) == queue.new([1, 2, 3])',
+        'main() = queue_new([1, 2, 3]) == queue_new([1, 2, 3])',
       );
       checkResult(runtime, true);
     });
 
     test('== returns false for unequal queues', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = queue.new([1, 2]) == queue.new([2])',
+        'main() = queue_new([1, 2]) == queue_new([2])',
       );
       checkResult(runtime, false);
     });
 
     test('== returns true for empty vectors', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([]) == vector.new([])',
+        'main() = vector_new([]) == vector_new([])',
       );
       checkResult(runtime, true);
     });
 
     test('== returns true for equal vectors', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([1, 2, 3]) == vector.new([1, 2, 3])',
+        'main() = vector_new([1, 2, 3]) == vector_new([1, 2, 3])',
       );
       checkResult(runtime, true);
     });
 
     test('== returns false for unequal vectors', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([1, 2]) == vector.new([2])',
+        'main() = vector_new([1, 2]) == vector_new([2])',
       );
       checkResult(runtime, false);
     });
 
     test('== returns true for equal files', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = file.fromPath(".") == file.fromPath(".")',
+        'main() = file_fromPath(".") == file_fromPath(".")',
       );
       checkResult(runtime, true);
     });
 
     test('== returns false for unequal files', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = file.fromPath(".") == file.fromPath("..")',
+        'main() = file_fromPath(".") == file_fromPath("..")',
       );
       checkResult(runtime, false);
     });
 
     test('== returns true for equal directories', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.fromPath(".") == directory.fromPath(".")',
+        'main() = directory_fromPath(".") == directory_fromPath(".")',
       );
       checkResult(runtime, true);
     });
 
     test('== returns false for unequal directories', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.fromPath(".") == directory.fromPath("..")',
+        'main() = directory_fromPath(".") == directory_fromPath("..")',
       );
       checkResult(runtime, false);
     });
@@ -285,126 +285,126 @@ void main() {
 
     test('!= returns false for equal timestamps', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") != time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns true for unequal timestamps', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") != time.fromIso("2024-09-02T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") != time_fromIso("2024-09-02T00:00:00")',
       );
       checkResult(runtime, true);
     });
 
     test('!= returns false for empty sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([]) != set.new([])',
+        'main() = set_new([]) != set_new([])',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns false for equal sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2, 3]) != set.new([1, 2, 3])',
+        'main() = set_new([1, 2, 3]) != set_new([1, 2, 3])',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns true for unequal sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2]) != set.new([2])',
+        'main() = set_new([1, 2]) != set_new([2])',
       );
       checkResult(runtime, true);
     });
 
     test('!= returns false for empty stacks', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = stack.new([]) != stack.new([])',
+        'main() = stack_new([]) != stack_new([])',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns false for equal stacks', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = stack.new([1, 2, 3]) != stack.new([1, 2, 3])',
+        'main() = stack_new([1, 2, 3]) != stack_new([1, 2, 3])',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns true for unequal stacks', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = stack.new([1, 2]) != stack.new([2])',
+        'main() = stack_new([1, 2]) != stack_new([2])',
       );
       checkResult(runtime, true);
     });
 
     test('!= returns false for empty queues', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = queue.new([]) != queue.new([])',
+        'main() = queue_new([]) != queue_new([])',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns false for equal queues', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = queue.new([1, 2, 3]) != queue.new([1, 2, 3])',
+        'main() = queue_new([1, 2, 3]) != queue_new([1, 2, 3])',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns true for unequal queues', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = queue.new([1, 2]) != queue.new([2])',
+        'main() = queue_new([1, 2]) != queue_new([2])',
       );
       checkResult(runtime, true);
     });
 
     test('!= returns false for empty vectors', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([]) != vector.new([])',
+        'main() = vector_new([]) != vector_new([])',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns false for equal vectors', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([1, 2, 3]) != vector.new([1, 2, 3])',
+        'main() = vector_new([1, 2, 3]) != vector_new([1, 2, 3])',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns true for unequal vectors', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([1, 2]) != vector.new([2])',
+        'main() = vector_new([1, 2]) != vector_new([2])',
       );
       checkResult(runtime, true);
     });
 
     test('!= returns false for equal files', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = file.fromPath(".") != file.fromPath(".")',
+        'main() = file_fromPath(".") != file_fromPath(".")',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns true for unequal files', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = file.fromPath(".") != file.fromPath("..")',
+        'main() = file_fromPath(".") != file_fromPath("..")',
       );
       checkResult(runtime, true);
     });
 
     test('!= returns false for equal directories', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.fromPath(".") != directory.fromPath(".")',
+        'main() = directory_fromPath(".") != directory_fromPath(".")',
       );
       checkResult(runtime, false);
     });
 
     test('!= returns true for unequal directories', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = directory.fromPath(".") != directory.fromPath("..")',
+        'main() = directory_fromPath(".") != directory_fromPath("..")',
       );
       checkResult(runtime, true);
     });
@@ -431,14 +431,14 @@ void main() {
 
     test('> returns false when left timestamp is earlier', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") > time.fromIso("2024-09-02T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") > time_fromIso("2024-09-02T00:00:00")',
       );
       checkResult(runtime, false);
     });
 
     test('> returns true when left timestamp is later', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-02T00:00:00") > time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-02T00:00:00") > time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, true);
     });
@@ -465,14 +465,14 @@ void main() {
 
     test('< returns true when left timestamp is earlier', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") < time.fromIso("2024-09-02T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") < time_fromIso("2024-09-02T00:00:00")',
       );
       checkResult(runtime, true);
     });
 
     test('< returns false when left timestamp is later', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-02T00:00:00") < time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-02T00:00:00") < time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, false);
     });
@@ -509,21 +509,21 @@ void main() {
 
     test('>= returns true for equal timestamps', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") >= time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") >= time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, true);
     });
 
     test('>= returns true when left timestamp is later', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-02T00:00:00") >= time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-02T00:00:00") >= time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, true);
     });
 
     test('>= returns false when left timestamp is earlier', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") >= time.fromIso("2024-09-02T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") >= time_fromIso("2024-09-02T00:00:00")',
       );
       checkResult(runtime, false);
     });
@@ -560,21 +560,21 @@ void main() {
 
     test('<= returns true for equal timestamps', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") <= time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") <= time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, true);
     });
 
     test('<= returns true when left timestamp is earlier', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") <= time.fromIso("2024-09-02T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") <= time_fromIso("2024-09-02T00:00:00")',
       );
       checkResult(runtime, true);
     });
 
     test('<= returns false when left timestamp is later', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-02T00:00:00") <= time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-02T00:00:00") <= time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, false);
     });
@@ -596,72 +596,72 @@ void main() {
 
     test('+ adds two empty vectors', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([]) + vector.new([])',
+        'main() = vector_new([]) + vector_new([])',
       );
       checkResult(runtime, []);
     });
 
     test('+ adds two non-empty vectors element-wise', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([1, 2]) + vector.new([3, 4])',
+        'main() = vector_new([1, 2]) + vector_new([3, 4])',
       );
       checkResult(runtime, [4, 6]);
     });
 
     test('+ adds element to empty set from right', () {
-      final RuntimeFacade runtime = getRuntime('main() = set.new([]) + 1');
+      final RuntimeFacade runtime = getRuntime('main() = set_new([]) + 1');
       checkResult(runtime, {1});
     });
 
     test('+ adds element to empty set from left', () {
-      final RuntimeFacade runtime = getRuntime('main() = 1 + set.new([])');
+      final RuntimeFacade runtime = getRuntime('main() = 1 + set_new([])');
       checkResult(runtime, {1});
     });
 
     test('+ adds new element to non-empty set from right', () {
-      final RuntimeFacade runtime = getRuntime('main() = set.new([1, 2]) + 3');
+      final RuntimeFacade runtime = getRuntime('main() = set_new([1, 2]) + 3');
       checkResult(runtime, {1, 2, 3});
     });
 
     test('+ adds new element to non-empty set from left', () {
-      final RuntimeFacade runtime = getRuntime('main() = 3 + set.new([1, 2])');
+      final RuntimeFacade runtime = getRuntime('main() = 3 + set_new([1, 2])');
       checkResult(runtime, {1, 2, 3});
     });
 
     test('+ adds duplicate element to set from right', () {
-      final RuntimeFacade runtime = getRuntime('main() = set.new([1, 2]) + 2');
+      final RuntimeFacade runtime = getRuntime('main() = set_new([1, 2]) + 2');
       checkResult(runtime, {1, 2});
     });
 
     test('+ adds duplicate element to set from left', () {
-      final RuntimeFacade runtime = getRuntime('main() = 2 + set.new([1, 2])');
+      final RuntimeFacade runtime = getRuntime('main() = 2 + set_new([1, 2])');
       checkResult(runtime, {1, 2});
     });
 
     test('+ unions two empty sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([]) + set.new([])',
+        'main() = set_new([]) + set_new([])',
       );
       checkResult(runtime, {});
     });
 
     test('+ unions non-empty set with smaller set', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2]) + set.new([3])',
+        'main() = set_new([1, 2]) + set_new([3])',
       );
       checkResult(runtime, {1, 2, 3});
     });
 
     test('+ unions smaller set with non-empty set', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1]) + set.new([2, 3])',
+        'main() = set_new([1]) + set_new([2, 3])',
       );
       checkResult(runtime, {1, 2, 3});
     });
 
     test('+ unions two overlapping sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2]) + set.new([2, 3])',
+        'main() = set_new([1, 2]) + set_new([2, 3])',
       );
       checkResult(runtime, {1, 2, 3});
     });
@@ -683,14 +683,14 @@ void main() {
 
     test('- subtracts two empty vectors', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([]) - vector.new([])',
+        'main() = vector_new([]) - vector_new([])',
       );
       checkResult(runtime, []);
     });
 
     test('- subtracts two non-empty vectors element-wise', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([1, 2]) - vector.new([3, 4])',
+        'main() = vector_new([1, 2]) - vector_new([3, 4])',
       );
       checkResult(runtime, [-2, -2]);
     });
@@ -742,7 +742,7 @@ void main() {
 
     test('& does not short-circuit (strict evaluation)', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = false & error.throw(-1, "Error")',
+        'main() = false & error_throw(-1, "Error")',
       );
       expect(runtime.executeMain, throwsA(isA<CustomError>()));
     });
@@ -764,7 +764,7 @@ void main() {
 
     test('&& short-circuits on false left operand', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = false && error.throw(-1, "Error")',
+        'main() = false && error_throw(-1, "Error")',
       );
       checkResult(runtime, false);
     });
@@ -786,7 +786,7 @@ void main() {
 
     test('and short-circuits on false left operand', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = false and error.throw(-1, "Error")',
+        'main() = false and error_throw(-1, "Error")',
       );
       checkResult(runtime, false);
     });
@@ -813,7 +813,7 @@ void main() {
 
     test('| does not short-circuit (strict evaluation)', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = true | error.throw(-1, "Error")',
+        'main() = true | error_throw(-1, "Error")',
       );
       expect(runtime.executeMain, throwsA(isA<CustomError>()));
     });
@@ -835,7 +835,7 @@ void main() {
 
     test('|| short-circuits on true left operand', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = true || error.throw(-1, "Error")',
+        'main() = true || error_throw(-1, "Error")',
       );
       checkResult(runtime, true);
     });
@@ -857,7 +857,7 @@ void main() {
 
     test('or short-circuits on true left operand', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = true or error.throw(-1, "Error")',
+        'main() = true or error_throw(-1, "Error")',
       );
       checkResult(runtime, true);
     });
@@ -1030,7 +1030,7 @@ void main() {
 
     test('+ throws on vector length mismatch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([1, 2]) + vector.new([3])',
+        'main() = vector_new([1, 2]) + vector_new([3])',
       );
       expect(
         runtime.executeMain,
@@ -1042,35 +1042,35 @@ void main() {
   group('Subtraction with Sets', () {
     test('- computes difference of two empty sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([]) - set.new([])',
+        'main() = set_new([]) - set_new([])',
       );
       checkResult(runtime, {});
     });
 
     test('- computes difference of non-empty set with empty set', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2, 3]) - set.new([])',
+        'main() = set_new([1, 2, 3]) - set_new([])',
       );
       checkResult(runtime, {1, 2, 3});
     });
 
     test('- computes difference of two overlapping sets', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2, 3]) - set.new([2, 3, 4])',
+        'main() = set_new([1, 2, 3]) - set_new([2, 3, 4])',
       );
       checkResult(runtime, {1});
     });
 
     test('- removes existing element from set', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2, 3]) - 2',
+        'main() = set_new([1, 2, 3]) - 2',
       );
       checkResult(runtime, {1, 3});
     });
 
     test('- removes non-existing element from set', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2, 3]) - 5',
+        'main() = set_new([1, 2, 3]) - 5',
       );
       checkResult(runtime, {1, 2, 3});
     });
@@ -1084,7 +1084,7 @@ void main() {
 
     test('- throws on vector length mismatch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = vector.new([1, 2]) - vector.new([3])',
+        'main() = vector_new([1, 2]) - vector_new([3])',
       );
       expect(
         runtime.executeMain,
@@ -1116,14 +1116,14 @@ void main() {
 
     test('> returns false when timestamps are equal', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") > time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") > time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, false);
     });
 
     test('< returns false when timestamps are equal', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = time.fromIso("2024-09-01T00:00:00") < time.fromIso("2024-09-01T00:00:00")',
+        'main() = time_fromIso("2024-09-01T00:00:00") < time_fromIso("2024-09-01T00:00:00")',
       );
       checkResult(runtime, false);
     });
@@ -1223,7 +1223,7 @@ void main() {
 
     test('== returns true for sets with different order', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = set.new([1, 2, 3]) == set.new([3, 2, 1])',
+        'main() = set_new([1, 2, 3]) == set_new([3, 2, 1])',
       );
       checkResult(runtime, true);
     });

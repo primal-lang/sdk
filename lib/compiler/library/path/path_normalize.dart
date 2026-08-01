@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class PathNormalize extends NativeFunctionTerm {
   const PathNormalize()
     : super(
-        name: 'path.normalize',
+        name: 'path_normalize',
         parameters: const [Parameter.string('a')],
       );
 
