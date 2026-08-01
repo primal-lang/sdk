@@ -191,7 +191,7 @@ still prints `Runtime error: …`.
 | ----------------------------------- | -------------------------------------------------- |
 | `InvalidArgumentTypesError`         | Wrong argument types for a native function         |
 | `InvalidArgumentCountError`         | Wrong number of arguments at runtime               |
-| `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `vector.add`) |
+| `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `vector_add`) |
 
 ### Value Errors
 
@@ -204,7 +204,7 @@ still prints `Runtime error: …`.
 
 | Error                   | When Thrown                                   |
 | ----------------------- | --------------------------------------------- |
-| `InvalidMapIndexError`  | Key not found in map via `map.at`             |
+| `InvalidMapIndexError`  | Key not found in map via `map_at`             |
 | `ElementNotFoundError`  | Element not found at index                    |
 | `EmptyCollectionError`  | Accessing first/last/peek on empty collection |
 | `IndexOutOfBoundsError` | Index outside valid range                     |
@@ -222,16 +222,16 @@ still prints `Runtime error: …`.
 
 | Error                          | When Thrown                                |
 | ------------------------------ | ------------------------------------------ |
-| `DivisionByZeroError`          | Division by zero in `num.div`, `num.mod`   |
+| `DivisionByZeroError`          | Division by zero in `num_div`, `num_mod`   |
 | `InvalidNumericOperationError` | Domain error (e.g., `log(-1)`, `sqrt(-1)`) |
 
 ### Parsing Errors
 
 | Error              | When Thrown                                          |
 | ------------------ | ---------------------------------------------------- |
-| `ParseError`       | Failed string conversion (e.g., `to.integer("abc")`) |
-| `JsonParseError`   | Invalid JSON string in `json.decode`                 |
-| `Base64ParseError` | Invalid Base64 string in `base64.decode`             |
+| `ParseError`       | Failed string conversion (e.g., `to_integer("abc")`) |
+| `JsonParseError`   | Invalid JSON string in `json_decode`                 |
+| `Base64ParseError` | Invalid Base64 string in `base64_decode`             |
 
 ### Recursion Error
 
@@ -243,7 +243,7 @@ still prints `Runtime error: …`.
 
 | Error         | When Thrown                                        |
 | ------------- | -------------------------------------------------- |
-| `CustomError` | Explicitly raised via `error.throw(code, message)` |
+| `CustomError` | Explicitly raised via `error_throw(code, message)` |
 
 **File**: `lib/compiler/library/error/throw.dart`
 
@@ -261,10 +261,10 @@ The `code` can be any value (number, string, list, etc.), allowing users to atta
 
 ### Assertion Errors
 
-| Error                    | When Thrown                                                   |
-| ------------------------ | ------------------------------------------------------------- |
-| `AssertionFailedError`   | An assertion's expectation was not met                        |
-| `AssertionArgumentError` | An assertion was given an argument of the wrong type          |
+| Error                    | When Thrown                                          |
+| ------------------------ | ---------------------------------------------------- |
+| `AssertionFailedError`   | An assertion's expectation was not met               |
+| `AssertionArgumentError` | An assertion was given an argument of the wrong type |
 
 **File**: `lib/compiler/errors/runtime_error.dart`, raised from `lib/compiler/library/assert/`
 
@@ -300,19 +300,19 @@ class AssertionArgumentError extends RuntimeError {
 
 It forwards `cause.message` verbatim and keeps the inherited `Runtime error`
 category, so it renders byte-identically to the `InvalidArgumentTypesError` it
-wraps. It exists solely so `assert.throws` can refuse to absorb it: a misused
-nested assertion (`assert.throws(assert.true(1))`) must be an error, while a
-type error raised by the code under test (`assert.throws(num.add(1, "x"))`)
+wraps. It exists solely so `assert_throws` can refuse to absorb it: a misused
+nested assertion (`assert_throws(assert_true(1))`) must be an error, while a
+type error raised by the code under test (`assert_throws(num_add(1, "x"))`)
 must still pass. The two are the same Dart class, so they can only be
 distinguished by who raised them.
 
 That is also why `InvalidArgumentTypesError` retains a `function` field. The
 assertion helpers wrap only errors whose `function` is their own name: an
-`assert.equal` over collections reduces its elements lazily inside `CompEq`, so
-a type error from the *expression under test* surfaces at exactly the same
+`assert_equal` over collections reduces its elements lazily inside `CompEq`, so
+a type error from the _expression under test_ surfaces at exactly the same
 `catch` as a genuine element-kind mismatch. Comparing the name is what separates
-`assert.equal([1], ["x"])` (the assertion's own error, wrapped) from
-`assert.equal([num.add(1, "x")], [2])` (the code under test's error, rethrown
+`assert_equal([1], ["x"])` (the assertion's own error, wrapped) from
+`assert_equal([num_add(1, "x")], [2])` (the code under test's error, rethrown
 unchanged).
 
 ---

@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsFunction extends NativeFunctionTerm {
   const IsFunction()
     : super(
-        name: 'is.function',
+        name: 'is_function',
         parameters: const [
           Parameter.any('a'),
         ],

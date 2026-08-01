@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class CompGt extends NativeFunctionTerm {
   const CompGt()
     : super(
-        name: 'comp.gt',
+        name: 'comp_gt',
         parameters: const [
           Parameter.ordered('a'),
           Parameter.ordered('b'),

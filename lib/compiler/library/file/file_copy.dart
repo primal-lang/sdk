@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileCopy extends NativeFunctionTerm {
   const FileCopy()
     : super(
-        name: 'file.copy',
+        name: 'file_copy',
         parameters: const [
           Parameter.file('a'),
           Parameter.file('b'),

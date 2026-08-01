@@ -90,17 +90,17 @@ class TermWithArguments extends NativeFunctionTermWithArguments {
 
 ```primal
 // Safe division with fallback
-try(num.div(10, 0), 0)  // Returns 0 instead of throwing DivisionByZeroError
+try(num_div(10, 0), 0)  // Returns 0 instead of throwing DivisionByZeroError
 
 // Chain of fallbacks
-try(map.at(config, "port"), try(env.get("PORT"), 8080))
+try(map_at(config, "port"), try(env_get("PORT"), 8080))
 ```
 
 ---
 
-## The `error.throw()` Function
+## The `error_throw()` Function
 
-The `error.throw()` function allows user code to raise custom errors.
+The `error_throw()` function allows user code to raise custom errors.
 
 **File**: `lib/compiler/library/error/throw.dart`
 
@@ -108,7 +108,7 @@ The `error.throw()` function allows user code to raise custom errors.
 class Throw extends NativeFunctionTerm {
   const Throw()
     : super(
-        name: 'error.throw',
+        name: 'error_throw',
         parameters: const [
           Parameter.any('a'),
           Parameter.string('b'),
@@ -158,13 +158,13 @@ class CustomError extends RuntimeError {
 
 ```primal
 // Throw an error with a numeric code
-error.throw(404, "Resource not found")
+error_throw(404, "Resource not found")
 
 // Throw an error with a string code
-error.throw("VALIDATION_ERROR", "Email must contain @")
+error_throw("VALIDATION_ERROR", "Email must contain @")
 
 // Catch and provide fallback
-try(error.throw(1, "fail"), "recovered")  // Returns "recovered"
+try(error_throw(1, "fail"), "recovered")  // Returns "recovered"
 ```
 
 ---
@@ -278,13 +278,13 @@ Native function throws ──> Exception propagates up
 ### Example: Division by Zero
 
 ```primal
-// Expression: num.div(10, num.div(5, 0))
+// Expression: num_div(10, num_div(5, 0))
 ```
 
-1. Outer `num.div` receives arguments `10` and `num.div(5, 0)`
+1. Outer `num_div` receives arguments `10` and `num_div(5, 0)`
 2. Arguments are reduced (call-by-value)
-3. Inner `num.div(5, 0)` throws `DivisionByZeroError`
-4. Error propagates up through the outer `num.div`
+3. Inner `num_div(5, 0)` throws `DivisionByZeroError`
+4. Error propagates up through the outer `num_div`
 5. Error propagates up through `CallTerm.reduce()`
 6. Error reaches `RuntimeFacade.evaluate()` or `try()` boundary
 
@@ -361,7 +361,7 @@ Let errors propagate and handle them at the top level:
 ```primal
 // If validation fails, error propagates and terminates
 validateInput(x) =
-  if (x < 0) error.throw("INVALID", "x must be non-negative")
+  if (x < 0) error_throw("INVALID", "x must be non-negative")
   else x
 
 processData(x) =
@@ -376,7 +376,7 @@ main() = processData(-1)  // Terminates with error
 Catch errors close to the source and provide defaults:
 
 ```primal
-safeGet(map, key, default) = try(map.at(map, key), default)
+safeGet(map, key, default) = try(map_at(map, key), default)
 
 main() =
   let config = {"port": 8080}
@@ -390,8 +390,8 @@ Catch and re-throw with more context:
 ```primal
 loadConfig(path) =
   try(
-    json.decode(file.read(path)),
-    error.throw("CONFIG_ERROR", str.concat("Failed to load: ", path))
+    json_decode(file_read(path)),
+    error_throw("CONFIG_ERROR", str_concat("Failed to load: ", path))
   )
 ```
 

@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsDuration extends NativeFunctionTerm {
   const IsDuration()
     : super(
-        name: 'is.duration',
+        name: 'is_duration',
         parameters: const [
           Parameter.any('a'),
         ],

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrMatch extends NativeFunctionTerm {
   const StrMatch()
     : super(
-        name: 'str.match',
+        name: 'str_match',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

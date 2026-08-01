@@ -8,7 +8,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class HashMd5 extends NativeFunctionTerm {
   const HashMd5()
     : super(
-        name: 'hash.md5',
+        name: 'hash_md5',
         parameters: const [
           Parameter.string('a'),
         ],

@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileAppend extends NativeFunctionTerm {
   const FileAppend()
     : super(
-        name: 'file.append',
+        name: 'file_append',
         parameters: const [
           Parameter.file('a'),
           Parameter.string('b'),

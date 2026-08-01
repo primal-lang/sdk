@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetAdd extends NativeFunctionTerm {
   const SetAdd()
     : super(
-        name: 'set.add',
+        name: 'set_add',
         parameters: const [
           Parameter.set('a'),
           Parameter.hashable('b'),

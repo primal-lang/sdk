@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrLowercase extends NativeFunctionTerm {
   const StrLowercase()
     : super(
-        name: 'str.lowercase',
+        name: 'str_lowercase',
         parameters: const [
           Parameter.string('a'),
         ],

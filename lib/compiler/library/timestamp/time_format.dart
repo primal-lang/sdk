@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeFormat extends NativeFunctionTerm {
   const TimeFormat()
     : super(
-        name: 'time.format',
+        name: 'time_format',
         parameters: const [
           Parameter.timestamp('a'),
           Parameter.string('b'),

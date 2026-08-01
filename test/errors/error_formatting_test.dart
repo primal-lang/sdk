@@ -1017,7 +1017,7 @@ void main() {
   group('AssertionFailedError', () {
     test('has errorType "Assertion error"', () {
       final AssertionFailedError error = AssertionFailedError(
-        function: 'assert.equal',
+        function: 'assert_equal',
         actual: '3',
         expected: '2',
       );
@@ -1027,20 +1027,20 @@ void main() {
 
     test('toString() reports expected before actual', () {
       final AssertionFailedError error = AssertionFailedError(
-        function: 'assert.equal',
+        function: 'assert_equal',
         actual: '3',
         expected: '2',
       );
 
       expect(
         error.toString(),
-        equals('Assertion error: "assert.equal" failed: expected 2, actual 3'),
+        equals('Assertion error: "assert_equal" failed: expected 2, actual 3'),
       );
     });
 
-    test('toString() keeps the "not" prefix of assert.notEqual', () {
+    test('toString() keeps the "not" prefix of assert_notEqual', () {
       final AssertionFailedError error = AssertionFailedError(
-        function: 'assert.notEqual',
+        function: 'assert_notEqual',
         actual: '1',
         expected: 'not 1',
       );
@@ -1048,14 +1048,14 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Assertion error: "assert.notEqual" failed: expected not 1, actual 1',
+          'Assertion error: "assert_notEqual" failed: expected not 1, actual 1',
         ),
       );
     });
 
     test('is a RuntimeError', () {
       final AssertionFailedError error = AssertionFailedError(
-        function: 'assert.true',
+        function: 'assert_true',
         actual: 'false',
         expected: 'true',
       );
@@ -1067,7 +1067,7 @@ void main() {
   group('AssertionArgumentError', () {
     test('renders identically to the error it wraps', () {
       final InvalidArgumentTypesError cause = InvalidArgumentTypesError(
-        function: 'assert.true',
+        function: 'assert_true',
         expected: const [BooleanType()],
         actual: const [NumberType()],
       );
@@ -1077,7 +1077,7 @@ void main() {
       expect(
         error.toString(),
         equals(
-          'Runtime error: Invalid argument types for function "assert.true". '
+          'Runtime error: Invalid argument types for function "assert_true". '
           'Expected: (Boolean). Actual: (Number)',
         ),
       );
@@ -1086,7 +1086,7 @@ void main() {
     test('keeps the "Runtime error" category, not "Assertion error"', () {
       final AssertionArgumentError error = AssertionArgumentError(
         InvalidArgumentTypesError(
-          function: 'assert.equal',
+          function: 'assert_equal',
           expected: const [EquatableType(), EquatableType()],
           actual: const [StringType(), NumberType()],
         ),
@@ -1098,7 +1098,7 @@ void main() {
     test('is not an AssertionFailedError', () {
       final AssertionArgumentError error = AssertionArgumentError(
         InvalidArgumentTypesError(
-          function: 'assert.true',
+          function: 'assert_true',
           expected: const [BooleanType()],
           actual: const [NumberType()],
         ),
@@ -1124,7 +1124,7 @@ void main() {
         const ElementNotFoundError('0'),
         const NotFoundInScopeError('x'),
         const InvalidFunctionError('x'),
-        const UnimplementedFunctionWebError('file.read'),
+        const UnimplementedFunctionWebError('file_read'),
         EmptyCollectionError(function: 'f', collectionType: 'list'),
         IndexOutOfBoundsError(function: 'f', index: 5, length: 2),
         NegativeIndexError(function: 'f', index: -1),
@@ -1137,7 +1137,7 @@ void main() {
         NegativeDurationError(function: 'f'),
         AssertionArgumentError(
           InvalidArgumentTypesError(
-            function: 'assert.true',
+            function: 'assert_true',
             expected: const [BooleanType()],
             actual: const [NumberType()],
           ),

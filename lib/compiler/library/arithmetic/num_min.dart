@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumMin extends NativeFunctionTerm {
   const NumMin()
     : super(
-        name: 'num.min',
+        name: 'num_min',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

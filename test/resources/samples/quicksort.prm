@@ -4,13 +4,13 @@
 */
 
 quicksort(list) =
-    if (list.isEmpty(list))
+    if (list_isEmpty(list))
         []
     else
         let
-            pivot = list.first(list),
-            rest = list.rest(list)
+            pivot = list_first(list),
+            rest = list_rest(list)
         in
-            quicksort(list.filter(rest, (x) -> x < pivot)) + pivot + quicksort(list.filter(rest, (x) -> x >= pivot))
+            quicksort(list_filter(rest, (x) -> x < pivot)) + pivot + quicksort(list_filter(rest, (x) -> x >= pivot))
 
 main() = quicksort([38, 27, 43, 3, 9])

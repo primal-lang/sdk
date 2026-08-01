@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileLength extends NativeFunctionTerm {
   const FileLength()
     : super(
-        name: 'file.length',
+        name: 'file_length',
         parameters: const [
           Parameter.file('a'),
         ],

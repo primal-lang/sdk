@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumRound extends NativeFunctionTerm {
   const NumRound()
     : super(
-        name: 'num.round',
+        name: 'num_round',
         parameters: const [
           Parameter.number('a'),
         ],

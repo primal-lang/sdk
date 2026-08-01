@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FunctionParameters extends NativeFunctionTerm {
   const FunctionParameters()
     : super(
-        name: 'function.parameters',
+        name: 'function_parameters',
         parameters: const [
           Parameter.function('a'),
         ],

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeCompare extends NativeFunctionTerm {
   const TimeCompare()
     : super(
-        name: 'time.compare',
+        name: 'time_compare',
         parameters: const [
           Parameter.timestamp('a'),
           Parameter.timestamp('b'),

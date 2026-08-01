@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumSqrt extends NativeFunctionTerm {
   const NumSqrt()
     : super(
-        name: 'num.sqrt',
+        name: 'num_sqrt',
         parameters: const [
           Parameter.number('a'),
         ],

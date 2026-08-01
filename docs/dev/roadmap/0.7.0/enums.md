@@ -61,14 +61,14 @@ isPrimary(c) = if (c is Color.Red) true
 
 | Function            | Description                          | Example                                                        |
 | ------------------- | ------------------------------------ | -------------------------------------------------------------- |
-| `enum.name(value)`  | Returns the variant name as a string | `enum.name(Color.Red)` => `"Red"`                              |
-| `enum.values(type)` | Returns a list of all variants       | `enum.values(Color)` => `[Color.Red, Color.Green, Color.Blue]` |
-| `enum.type(value)`  | Returns the enum type                | `enum.type(Color.Red)` => `Color`                              |
+| `enum_name(value)`  | Returns the variant name as a string | `enum_name(Color.Red)` => `"Red"`                              |
+| `enum_values(type)` | Returns a list of all variants       | `enum_values(Color)` => `[Color.Red, Color.Green, Color.Blue]` |
+| `enum_type(value)`  | Returns the enum type                | `enum_type(Color.Red)` => `Color`                              |
 
 ## Runtime Type
 
-Simple enum values have the type `Enum` at runtime. The `type.of` function returns `"Enum"` for any enum value.
+Simple enum values have the type `Enum` at runtime. The `type_of` function returns `"Enum"` for any enum value.
 
 ```primal
-type.of(Color.Red)  // => "Enum"
+type_of(Color.Red)  // => "Enum"
 ```

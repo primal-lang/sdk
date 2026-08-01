@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumSub extends NativeFunctionTerm {
   const NumSub()
     : super(
-        name: 'num.sub',
+        name: 'num_sub',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

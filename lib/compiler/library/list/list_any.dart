@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListAny extends NativeFunctionTerm {
   const ListAny()
     : super(
-        name: 'list.any',
+        name: 'list_any',
         parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),

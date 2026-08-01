@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ToDecimal extends NativeFunctionTerm {
   const ToDecimal()
     : super(
-        name: 'to.decimal',
+        name: 'to_decimal',
         parameters: const [
           Parameter.any('a'),
         ],

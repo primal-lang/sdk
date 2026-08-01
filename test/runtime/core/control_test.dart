@@ -133,14 +133,14 @@ void main() {
 
     test('if/else short-circuits and does not evaluate unused branch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = if (true) 1 else error.throw(0, "should not be evaluated")',
+        'main() = if (true) 1 else error_throw(0, "should not be evaluated")',
       );
       checkResult(runtime, 1);
     });
 
     test('if/else short-circuits when condition is false', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = if (false) error.throw(0, "should not be evaluated") else 2',
+        'main() = if (false) error_throw(0, "should not be evaluated") else 2',
       );
       checkResult(runtime, 2);
     });
@@ -338,14 +338,14 @@ void main() {
 
     test('try/catch 2', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(error.throw(0, "Does not compute"), 42)',
+        'main() = try(error_throw(0, "Does not compute"), 42)',
       );
       checkResult(runtime, 42);
     });
 
     test('try/catch evaluates fallback expression', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(error.throw(0, "fail"), 1 + 2)',
+        'main() = try(error_throw(0, "fail"), 1 + 2)',
       );
       checkResult(runtime, 3);
     });
@@ -357,21 +357,21 @@ void main() {
 
     test('try catches parse error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(to.number("abc"), 0)',
+        'main() = try(to_number("abc"), 0)',
       );
       checkResult(runtime, 0);
     });
 
     test('try catches empty collection error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(stack.pop(stack.new([])), "empty")',
+        'main() = try(stack_pop(stack_new([])), "empty")',
       );
       checkResult(runtime, '"empty"');
     });
 
     test('try catches invalid map index error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(map.at({}, "x"), "missing")',
+        'main() = try(map_at({}, "x"), "missing")',
       );
       checkResult(runtime, '"missing"');
     });
@@ -385,21 +385,21 @@ void main() {
 
     test('try catches index out of bounds error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(list.at([1, 2], 10), -1)',
+        'main() = try(list_at([1, 2], 10), -1)',
       );
       checkResult(runtime, -1);
     });
 
     test('try catches empty queue dequeue error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(queue.dequeue(queue.new([])), "empty queue")',
+        'main() = try(queue_dequeue(queue_new([])), "empty queue")',
       );
       checkResult(runtime, '"empty queue"');
     });
 
     test('try with nested try returns outer fallback', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(try(1 / 0, error.throw(0, "inner")), "outer")',
+        'main() = try(try(1 / 0, error_throw(0, "inner")), "outer")',
       );
       checkResult(runtime, '"outer"');
     });
@@ -462,7 +462,7 @@ void main() {
 
     test('try catches negative index error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(list.at([1, 2, 3], -1), "negative index")',
+        'main() = try(list_at([1, 2, 3], -1), "negative index")',
       );
       checkResult(runtime, '"negative index"');
     });
@@ -490,14 +490,14 @@ void main() {
 
     test('try catches empty list first error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(list.first([]), "empty list")',
+        'main() = try(list_first([]), "empty list")',
       );
       checkResult(runtime, '"empty list"');
     });
 
     test('try catches empty list last error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(list.last([]), "empty list")',
+        'main() = try(list_last([]), "empty list")',
       );
       checkResult(runtime, '"empty list"');
     });
@@ -532,14 +532,14 @@ void main() {
 
     test('try catches string concatenation type error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(str.concat(1, 2), "type error")',
+        'main() = try(str_concat(1, 2), "type error")',
       );
       checkResult(runtime, '"type error"');
     });
 
     test('try catches invalid sqrt argument error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(num.sqrt(-1), "invalid sqrt")',
+        'main() = try(num_sqrt(-1), "invalid sqrt")',
       );
       checkResult(runtime, '"invalid sqrt"');
     });
@@ -553,7 +553,7 @@ void main() {
 
     test('try with error in fallback propagates error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(1 / 0, error.throw(0, "fallback error"))',
+        'main() = try(1 / 0, error_throw(0, "fallback error"))',
       );
       expect(
         runtime.executeMain,
@@ -569,7 +569,7 @@ void main() {
 
     test('try with empty map access error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(map.at({}, "missing"), "no key")',
+        'main() = try(map_at({}, "missing"), "no key")',
       );
       checkResult(runtime, '"no key"');
     });
@@ -590,7 +590,7 @@ void main() {
 
     test('try catches json parse error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(json.decode("invalid json"), "parse error")',
+        'main() = try(json_decode("invalid json"), "parse error")',
       );
       checkResult(runtime, '"parse error"');
     });
@@ -611,7 +611,7 @@ void main() {
 
     test('try with list operations succeeds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(list.length([1, 2, 3]), 0)',
+        'main() = try(list_length([1, 2, 3]), 0)',
       );
       checkResult(runtime, 3);
     });
@@ -620,14 +620,14 @@ void main() {
   group('Error', () {
     test('throw', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(-1, "Segmentation fault")',
+        'main() = error_throw(-1, "Segmentation fault")',
       );
       expect(runtime.executeMain, throwsA(isA<CustomError>()));
     });
 
     test('throw with string error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw("ERR001", "Custom error")',
+        'main() = error_throw("ERR001", "Custom error")',
       );
       expect(
         runtime.executeMain,
@@ -643,7 +643,7 @@ void main() {
 
     test('throw with numeric error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(404, "Not found")',
+        'main() = error_throw(404, "Not found")',
       );
       expect(
         runtime.executeMain,
@@ -659,7 +659,7 @@ void main() {
 
     test('throw with list error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw([1, 2], "List error")',
+        'main() = error_throw([1, 2], "List error")',
       );
       expect(
         runtime.executeMain,
@@ -675,7 +675,7 @@ void main() {
 
     test('throw with boolean error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(false, "Boolean error")',
+        'main() = error_throw(false, "Boolean error")',
       );
       expect(
         runtime.executeMain,
@@ -691,7 +691,7 @@ void main() {
 
     test('throw with non-string message throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(1, 123)',
+        'main() = error_throw(1, 123)',
       );
       expect(
         runtime.executeMain,
@@ -699,7 +699,7 @@ void main() {
           isA<InvalidArgumentTypesError>().having(
             (e) => e.toString(),
             'message',
-            allOf(contains('error.throw'), contains('Number')),
+            allOf(contains('error_throw'), contains('Number')),
           ),
         ),
       );
@@ -707,7 +707,7 @@ void main() {
 
     test('throw with list as message throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(1, [1, 2, 3])',
+        'main() = error_throw(1, [1, 2, 3])',
       );
       expect(
         runtime.executeMain,
@@ -715,7 +715,7 @@ void main() {
           isA<InvalidArgumentTypesError>().having(
             (e) => e.toString(),
             'message',
-            allOf(contains('error.throw'), contains('List')),
+            allOf(contains('error_throw'), contains('List')),
           ),
         ),
       );
@@ -723,7 +723,7 @@ void main() {
 
     test('throw with boolean as message throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(1, true)',
+        'main() = error_throw(1, true)',
       );
       expect(
         runtime.executeMain,
@@ -731,7 +731,7 @@ void main() {
           isA<InvalidArgumentTypesError>().having(
             (e) => e.toString(),
             'message',
-            allOf(contains('error.throw'), contains('Boolean')),
+            allOf(contains('error_throw'), contains('Boolean')),
           ),
         ),
       );
@@ -739,7 +739,7 @@ void main() {
 
     test('throw with expression as message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(0, str.concat("error: ", "details"))',
+        'main() = error_throw(0, str_concat("error: ", "details"))',
       );
       expect(
         runtime.executeMain,
@@ -755,7 +755,7 @@ void main() {
 
     test('throw with expression as error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(1 + 1, "computed code")',
+        'main() = error_throw(1 + 1, "computed code")',
       );
       expect(
         runtime.executeMain,
@@ -771,7 +771,7 @@ void main() {
 
     test('throw propagates through function calls', () {
       final RuntimeFacade runtime = getRuntime(
-        'fail() = error.throw(0, "inner failure")\nmain() = fail()',
+        'fail() = error_throw(0, "inner failure")\nmain() = fail()',
       );
       expect(
         runtime.executeMain,
@@ -787,21 +787,21 @@ void main() {
 
     test('throw can be caught by try in outer scope', () {
       final RuntimeFacade runtime = getRuntime(
-        'fail() = error.throw(0, "inner")\nmain() = try(fail(), "caught")',
+        'fail() = error_throw(0, "inner")\nmain() = try(fail(), "caught")',
       );
       checkResult(runtime, '"caught"');
     });
 
     test('throw with empty string message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(0, "")',
+        'main() = error_throw(0, "")',
       );
       expect(runtime.executeMain, throwsA(isA<CustomError>()));
     });
 
     test('throw with map error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw({"code": 500}, "Server error")',
+        'main() = error_throw({"code": 500}, "Server error")',
       );
       expect(
         runtime.executeMain,
@@ -817,7 +817,7 @@ void main() {
 
     test('throw with zero error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(0, "Zero error")',
+        'main() = error_throw(0, "Zero error")',
       );
       expect(
         runtime.executeMain,
@@ -833,7 +833,7 @@ void main() {
 
     test('throw with float error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(3.14, "Float error")',
+        'main() = error_throw(3.14, "Float error")',
       );
       expect(
         runtime.executeMain,
@@ -849,7 +849,7 @@ void main() {
 
     test('throw with negative error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(-100, "Negative code")',
+        'main() = error_throw(-100, "Negative code")',
       );
       expect(
         runtime.executeMain,
@@ -865,7 +865,7 @@ void main() {
 
     test('throw with map as message throws InvalidArgumentTypesError', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(1, {"key": "value"})',
+        'main() = error_throw(1, {"key": "value"})',
       );
       expect(
         runtime.executeMain,
@@ -873,7 +873,7 @@ void main() {
           isA<InvalidArgumentTypesError>().having(
             (e) => e.toString(),
             'message',
-            allOf(contains('error.throw'), contains('Map')),
+            allOf(contains('error_throw'), contains('Map')),
           ),
         ),
       );
@@ -881,7 +881,7 @@ void main() {
 
     test('throw with deeply nested function calls', () {
       final RuntimeFacade runtime = getRuntime(
-        'level3() = error.throw(3, "deep")\nlevel2() = level3()\nlevel1() = level2()\nmain() = level1()',
+        'level3() = error_throw(3, "deep")\nlevel2() = level3()\nlevel1() = level2()\nmain() = level1()',
       );
       expect(
         runtime.executeMain,
@@ -897,14 +897,14 @@ void main() {
 
     test('throw caught at intermediate level', () {
       final RuntimeFacade runtime = getRuntime(
-        'failing() = error.throw(0, "fail")\nhandling() = try(failing(), "handled")\nmain() = handling()',
+        'failing() = error_throw(0, "fail")\nhandling() = try(failing(), "handled")\nmain() = handling()',
       );
       checkResult(runtime, '"handled"');
     });
 
     test('throw with very long message', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(0, "This is a very long error message that contains a lot of text to ensure that the error handling can cope with lengthy descriptions")',
+        'main() = error_throw(0, "This is a very long error message that contains a lot of text to ensure that the error handling can cope with lengthy descriptions")',
       );
       expect(
         runtime.executeMain,
@@ -920,7 +920,7 @@ void main() {
 
     test('throw with empty list error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw([], "Empty list code")',
+        'main() = error_throw([], "Empty list code")',
       );
       expect(
         runtime.executeMain,
@@ -936,7 +936,7 @@ void main() {
 
     test('throw with empty map error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw({}, "Empty map code")',
+        'main() = error_throw({}, "Empty map code")',
       );
       expect(
         runtime.executeMain,
@@ -952,7 +952,7 @@ void main() {
 
     test('throw with nested data structure as error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw({"errors": [1, 2, 3]}, "Nested code")',
+        'main() = error_throw({"errors": [1, 2, 3]}, "Nested code")',
       );
       expect(
         runtime.executeMain,
@@ -968,7 +968,7 @@ void main() {
 
     test('throw with function result as error code', () {
       final RuntimeFacade runtime = getRuntime(
-        'getCode() = 42\nmain() = error.throw(getCode(), "Function code")',
+        'getCode() = 42\nmain() = error_throw(getCode(), "Function code")',
       );
       expect(
         runtime.executeMain,
@@ -984,7 +984,7 @@ void main() {
 
     test('throw with function result as message', () {
       final RuntimeFacade runtime = getRuntime(
-        'getMessage() = "Dynamic message"\nmain() = error.throw(0, getMessage())',
+        'getMessage() = "Dynamic message"\nmain() = error_throw(0, getMessage())',
       );
       expect(
         runtime.executeMain,
@@ -1000,7 +1000,7 @@ void main() {
 
     test('throw preserves error code type as number', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw(123, "Number code")',
+        'main() = error_throw(123, "Number code")',
       );
       expect(
         runtime.executeMain,
@@ -1016,7 +1016,7 @@ void main() {
 
     test('throw preserves error code type as string', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = error.throw("ERR_CODE", "String code")',
+        'main() = error_throw("ERR_CODE", "String code")',
       );
       expect(
         runtime.executeMain,

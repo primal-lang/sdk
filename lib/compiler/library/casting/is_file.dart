@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsFile extends NativeFunctionTerm {
   const IsFile()
     : super(
-        name: 'is.file',
+        name: 'is_file',
         parameters: const [
           Parameter.any('a'),
         ],

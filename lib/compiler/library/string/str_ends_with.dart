@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrEndsWith extends NativeFunctionTerm {
   const StrEndsWith()
     : super(
-        name: 'str.endsWith',
+        name: 'str_endsWith',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

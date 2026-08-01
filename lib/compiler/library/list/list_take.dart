@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListTake extends NativeFunctionTerm {
   const ListTake()
     : super(
-        name: 'list.take',
+        name: 'list_take',
         parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),

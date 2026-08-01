@@ -101,7 +101,7 @@ extension StringExtensions on String {
       isOpenBraces ||
       isUnaryOperator;
 
-  bool get isIdentifier => isLetter || isDigit || isDot || isUnderscore;
+  bool get isIdentifier => isLetter || isDigit || isUnderscore;
 
   bool get isBinaryOperator =>
       isMinus ||

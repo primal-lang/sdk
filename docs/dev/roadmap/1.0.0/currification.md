@@ -10,7 +10,7 @@ sources: []
 
 **TLDR**: Partial application support allowing functions to be called with fewer arguments than required, returning a new function that expects the remaining arguments, either through automatic currying (`mul(2)`) or placeholder syntax (`add(5, _)`).
 
-The standard library already has higher-order functions such as `list.map`, `list.filter`, and `list.reduce`. Partial application would make them much easier to use with existing multi-argument functions.
+The standard library already has higher-order functions such as `list_map`, `list_filter`, and `list_reduce`. Partial application would make them much easier to use with existing multi-argument functions.
 
 **Design notes:**
 

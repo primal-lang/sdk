@@ -8,7 +8,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DirectoryList extends NativeFunctionTerm {
   const DirectoryList()
     : super(
-        name: 'directory.list',
+        name: 'directory_list',
         parameters: const [
           Parameter.directory('a'),
         ],

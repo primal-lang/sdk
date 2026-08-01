@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumCeil extends NativeFunctionTerm {
   const NumCeil()
     : super(
-        name: 'num.ceil',
+        name: 'num_ceil',
         parameters: const [
           Parameter.number('a'),
         ],

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimestampToEpoch extends NativeFunctionTerm {
   const TimestampToEpoch()
     : super(
-        name: 'time.toEpoch',
+        name: 'time_toEpoch',
         parameters: const [
           Parameter.timestamp('a'),
         ],

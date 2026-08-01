@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumAdd extends NativeFunctionTerm {
   const NumAdd()
     : super(
-        name: 'num.add',
+        name: 'num_add',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

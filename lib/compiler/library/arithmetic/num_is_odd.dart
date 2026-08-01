@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumIsOdd extends NativeFunctionTerm {
   const NumIsOdd()
     : super(
-        name: 'num.isOdd',
+        name: 'num_isOdd',
         parameters: const [
           Parameter.number('a'),
         ],

@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class JsonDecode extends NativeFunctionTerm {
   const JsonDecode()
     : super(
-        name: 'json.decode',
+        name: 'json_decode',
         parameters: const [
           Parameter.string('a'),
         ],

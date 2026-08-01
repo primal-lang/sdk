@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class PathIsAbsolute extends NativeFunctionTerm {
   const PathIsAbsolute()
     : super(
-        name: 'path.isAbsolute',
+        name: 'path_isAbsolute',
         parameters: const [Parameter.string('a')],
       );
 

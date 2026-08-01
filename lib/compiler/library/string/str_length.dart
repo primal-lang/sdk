@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrLength extends NativeFunctionTerm {
   const StrLength()
     : super(
-        name: 'str.length',
+        name: 'str_length',
         parameters: const [
           Parameter.string('a'),
         ],

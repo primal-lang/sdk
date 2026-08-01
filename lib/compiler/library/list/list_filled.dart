@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListFilled extends NativeFunctionTerm {
   const ListFilled()
     : super(
-        name: 'list.filled',
+        name: 'list_filled',
         parameters: const [
           Parameter.number('a'),
           Parameter.any('b'),

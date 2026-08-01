@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class BoolXor extends NativeFunctionTerm {
   const BoolXor()
     : super(
-        name: 'bool.xor',
+        name: 'bool_xor',
         parameters: const [
           Parameter.boolean('a'),
           Parameter.boolean('b'),

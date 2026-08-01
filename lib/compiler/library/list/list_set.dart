@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListSet extends NativeFunctionTerm {
   const ListSet()
     : super(
-        name: 'list.set',
+        name: 'list_set',
         parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),

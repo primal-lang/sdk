@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumMod extends NativeFunctionTerm {
   const NumMod()
     : super(
-        name: 'num.mod',
+        name: 'num_mod',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class BoolOr extends NativeFunctionTerm {
   const BoolOr()
     : super(
-        name: 'bool.or',
+        name: 'bool_or',
         parameters: const [
           Parameter.boolean('a'),
           Parameter.boolean('b'),

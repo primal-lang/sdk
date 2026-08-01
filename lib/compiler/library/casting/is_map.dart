@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsMap extends NativeFunctionTerm {
   const IsMap()
     : super(
-        name: 'is.map',
+        name: 'is_map',
         parameters: const [
           Parameter.any('a'),
         ],

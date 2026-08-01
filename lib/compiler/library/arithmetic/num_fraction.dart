@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumFraction extends NativeFunctionTerm {
   const NumFraction()
     : super(
-        name: 'num.fraction',
+        name: 'num_fraction',
         parameters: const [
           Parameter.number('a'),
         ],

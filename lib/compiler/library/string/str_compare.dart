@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrCompare extends NativeFunctionTerm {
   const StrCompare()
     : super(
-        name: 'str.compare',
+        name: 'str_compare',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListContains extends NativeFunctionTerm {
   const ListContains()
     : super(
-        name: 'list.contains',
+        name: 'list_contains',
         parameters: const [
           Parameter.list('a'),
           Parameter.equatable('b'),

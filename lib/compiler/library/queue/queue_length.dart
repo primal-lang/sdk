@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class QueueLength extends NativeFunctionTerm {
   const QueueLength()
     : super(
-        name: 'queue.length',
+        name: 'queue_length',
         parameters: const [
           Parameter.queue('a'),
         ],

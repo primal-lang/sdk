@@ -327,12 +327,19 @@ void main() {
         expect(true, equals('a'.isIdentifier));
         expect(true, equals('Z'.isIdentifier));
         expect(true, equals('0'.isIdentifier));
-        expect(true, equals('.'.isIdentifier));
         expect(true, equals('_'.isIdentifier));
+        expect(false, equals('.'.isIdentifier));
         expect(false, equals(' '.isIdentifier));
         expect(false, equals('+'.isIdentifier));
         expect(false, equals(','.isIdentifier));
         expect(false, equals('('.isIdentifier));
+      });
+
+      test('isIdentifier excludes the dot that isDot still accepts', () {
+        // The dot is reserved for member access, but number lexing keeps
+        // isDot for decimal literals.
+        expect(false, equals('.'.isIdentifier));
+        expect(true, equals('.'.isDot));
       });
 
       test('isBinaryOperator', () {

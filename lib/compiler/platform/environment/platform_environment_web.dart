@@ -4,9 +4,9 @@ import 'package:primal/compiler/platform/environment/platform_environment_base.d
 class PlatformEnvironmentWeb extends PlatformEnvironmentBase {
   @override
   String getVariable(String name) =>
-      throw const UnimplementedFunctionWebError('env.get');
+      throw const UnimplementedFunctionWebError('env_get');
 
   @override
   bool hasVariable(String name) =>
-      throw const UnimplementedFunctionWebError('env.has');
+      throw const UnimplementedFunctionWebError('env_has');
 }

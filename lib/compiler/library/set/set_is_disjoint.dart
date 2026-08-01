@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetIsDisjoint extends NativeFunctionTerm {
   const SetIsDisjoint()
     : super(
-        name: 'set.isDisjoint',
+        name: 'set_isDisjoint',
         parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),

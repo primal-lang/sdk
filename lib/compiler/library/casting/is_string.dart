@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsString extends NativeFunctionTerm {
   const IsString()
     : super(
-        name: 'is.string',
+        name: 'is_string',
         parameters: const [
           Parameter.any('a'),
         ],

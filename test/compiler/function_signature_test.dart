@@ -70,10 +70,10 @@ void main() {
 
     test('toString formats correctly', () {
       const FunctionSignature sig = FunctionSignature(
-        name: 'test.func',
+        name: 'test_func',
         parameters: [Parameter.any('x'), Parameter.any('y')],
       );
-      expect(sig.toString(), equals('test.func(x, y)'));
+      expect(sig.toString(), equals('test_func(x, y)'));
     });
 
     test('toString with no parameters', () {
@@ -148,12 +148,12 @@ void main() {
       expect(sig.toString(), equals('identity(value)'));
     });
 
-    test('toString with namespaced function name', () {
+    test('toString with prefixed function name', () {
       const FunctionSignature sig = FunctionSignature(
-        name: 'math.add',
+        name: 'math_add',
         parameters: [Parameter.number('a'), Parameter.number('b')],
       );
-      expect(sig.toString(), equals('math.add(a, b)'));
+      expect(sig.toString(), equals('math_add(a, b)'));
     });
 
     test('equality with empty parameters', () {
@@ -615,46 +615,46 @@ void main() {
 
     test('equality with special characters in function name', () {
       const FunctionSignature sig1 = FunctionSignature(
-        name: 'module.submodule.function',
+        name: 'module_submodule_function',
         parameters: [Parameter.any('x')],
       );
       const FunctionSignature sig2 = FunctionSignature(
-        name: 'module.submodule.function',
+        name: 'module_submodule_function',
         parameters: [Parameter.any('x')],
       );
       expect(sig1, equals(sig2));
     });
 
-    test('inequality with different nested namespaces', () {
+    test('inequality with different prefixed names', () {
       const FunctionSignature sig1 = FunctionSignature(
-        name: 'a.b.c',
+        name: 'a_b_c',
         parameters: [],
       );
       const FunctionSignature sig2 = FunctionSignature(
-        name: 'a.b.d',
+        name: 'a_b_d',
         parameters: [],
       );
       expect(sig1, isNot(equals(sig2)));
     });
 
-    test('hashCode with deeply nested namespace', () {
+    test('hashCode with a deeply prefixed name', () {
       const FunctionSignature sig1 = FunctionSignature(
-        name: 'a.b.c.d.e',
+        name: 'a_b_c_d_e',
         parameters: [Parameter.any('x')],
       );
       const FunctionSignature sig2 = FunctionSignature(
-        name: 'a.b.c.d.e',
+        name: 'a_b_c_d_e',
         parameters: [Parameter.any('x')],
       );
       expect(sig1.hashCode, equals(sig2.hashCode));
     });
 
-    test('toString with deeply nested namespace', () {
+    test('toString with a deeply prefixed name', () {
       const FunctionSignature sig = FunctionSignature(
-        name: 'a.b.c.d.e',
+        name: 'a_b_c_d_e',
         parameters: [Parameter.any('x'), Parameter.any('y')],
       );
-      expect(sig.toString(), equals('a.b.c.d.e(x, y)'));
+      expect(sig.toString(), equals('a_b_c_d_e(x, y)'));
     });
 
     test('equality with numeric-like parameter names', () {

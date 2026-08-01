@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListDrop extends NativeFunctionTerm {
   const ListDrop()
     : super(
-        name: 'list.drop',
+        name: 'list_drop',
         parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),

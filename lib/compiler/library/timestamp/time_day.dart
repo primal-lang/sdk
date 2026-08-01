@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeDay extends NativeFunctionTerm {
   const TimeDay()
     : super(
-        name: 'time.day',
+        name: 'time_day',
         parameters: const [
           Parameter.timestamp('a'),
         ],

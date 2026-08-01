@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class QueueReverse extends NativeFunctionTerm {
   const QueueReverse()
     : super(
-        name: 'queue.reverse',
+        name: 'queue_reverse',
         parameters: const [
           Parameter.queue('a'),
         ],

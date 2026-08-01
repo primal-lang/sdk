@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StackPush extends NativeFunctionTerm {
   const StackPush()
     : super(
-        name: 'stack.push',
+        name: 'stack_push',
         parameters: const [
           Parameter.stack('a'),
           Parameter.any('b'),

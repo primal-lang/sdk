@@ -25,7 +25,7 @@ isBiggerThan10(x) = if (x > 10)   // if x is greater than 10, return true
                         false
 
 factorial(n) = if (n < 0)
-			       error.throw(0, 'Cannot calculate factorial of a negative number')
+			       error_throw(0, 'Cannot calculate factorial of a negative number')
 			   else if (n == 0)
 				   1
 			   else
@@ -35,47 +35,47 @@ main() = factorial(4)
 
 // --- Constants ---
 
-test.greeting() = assert.equal(greeting(), "Hello, world!")
+test_greeting() = assert_equal(greeting(), "Hello, world!")
 
-test.farewell() = assert.equal(farewell(), "Goodbye, world!")
+test_farewell() = assert_equal(farewell(), "Goodbye, world!")
 
-test.pi() = assert.equal(pi(), 3.14)
+test_pi() = assert_equal(pi(), 3.14)
 
-test.rationalNumber() = assert.equal(rationalNumber(), pi())
+test_rationalNumber() = assert_equal(rationalNumber(), pi())
 
-test.isToday() = assert.true(isToday())
+test_isToday() = assert_true(isToday())
 
 // --- Predicates ---
 
-test.isZero() =
-    assert.true(isZero(0)) &&
-    assert.false(isZero(1)) &&
-    assert.false(isZero(-1))
+test_isZero() =
+    assert_true(isZero(0)) &&
+    assert_false(isZero(1)) &&
+    assert_false(isZero(-1))
 
-test.isEven() =
-    assert.true(isEven(0)) &&
-    assert.true(isEven(4)) &&
-    assert.true(isEven(-2)) &&
-    assert.false(isEven(3))
+test_isEven() =
+    assert_true(isEven(0)) &&
+    assert_true(isEven(4)) &&
+    assert_true(isEven(-2)) &&
+    assert_false(isEven(3))
 
-test.isOdd() =
-    assert.true(isOdd(3)) &&
-    assert.false(isOdd(4)) &&
-    assert.notEqual(isOdd(7), isEven(7))
+test_isOdd() =
+    assert_true(isOdd(3)) &&
+    assert_false(isOdd(4)) &&
+    assert_notEqual(isOdd(7), isEven(7))
 
-test.isBiggerThan10() =
-    assert.true(isBiggerThan10(11)) &&
-    assert.false(isBiggerThan10(10)) &&
-    assert.false(isBiggerThan10(-5))
+test_isBiggerThan10() =
+    assert_true(isBiggerThan10(11)) &&
+    assert_false(isBiggerThan10(10)) &&
+    assert_false(isBiggerThan10(-5))
 
 // --- Factorial ---
 
-test.factorial.base() = assert.equal(factorial(0), 1)
+test_factorial_base() = assert_equal(factorial(0), 1)
 
-test.factorial.one() = assert.equal(factorial(1), 1)
+test_factorial_one() = assert_equal(factorial(1), 1)
 
-test.factorial.small() = assert.equal(factorial(4), 24)
+test_factorial_small() = assert_equal(factorial(4), 24)
 
-test.factorial.larger() = assert.equal(factorial(5), 120)
+test_factorial_larger() = assert_equal(factorial(5), 120)
 
-test.factorial.negative() = assert.throws(factorial(-1))
+test_factorial_negative() = assert_throws(factorial(-1))

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StackIsNotEmpty extends NativeFunctionTerm {
   const StackIsNotEmpty()
     : super(
-        name: 'stack.isNotEmpty',
+        name: 'stack_isNotEmpty',
         parameters: const [
           Parameter.stack('a'),
         ],

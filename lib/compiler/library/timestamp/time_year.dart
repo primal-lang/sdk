@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeYear extends NativeFunctionTerm {
   const TimeYear()
     : super(
-        name: 'time.year',
+        name: 'time_year',
         parameters: const [
           Parameter.timestamp('a'),
         ],

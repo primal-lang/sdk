@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListFlatten extends NativeFunctionTerm {
   const ListFlatten()
     : super(
-        name: 'list.flatten',
+        name: 'list_flatten',
         parameters: const [Parameter.list('a')],
       );
 

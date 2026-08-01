@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsStack extends NativeFunctionTerm {
   const IsStack()
     : super(
-        name: 'is.stack',
+        name: 'is_stack',
         parameters: const [
           Parameter.any('a'),
         ],

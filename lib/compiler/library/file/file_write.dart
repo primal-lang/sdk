@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileWrite extends NativeFunctionTerm {
   const FileWrite()
     : super(
-        name: 'file.write',
+        name: 'file_write',
         parameters: const [
           Parameter.file('a'),
           Parameter.string('b'),

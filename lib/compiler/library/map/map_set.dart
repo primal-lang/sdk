@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MapSet extends NativeFunctionTerm {
   const MapSet()
     : super(
-        name: 'map.set',
+        name: 'map_set',
         parameters: const [
           Parameter.map('a'),
           Parameter.hashable('b'),

@@ -8,9 +8,9 @@ sources: []
 
 # Try Expression
 
-**TLDR**: Enhanced try/catch syntax for error handling, allowing pattern matching on error types and optional error values in `error.throw`, with potential integration into let-bindings for inline error checking.
+**TLDR**: Enhanced try/catch syntax for error handling, allowing pattern matching on error types and optional error values in `error_throw`, with potential integration into let-bindings for inline error checking.
 
-Make second parameter of `error.throw` optional to be able to do `error.throw(-1)`
+Make second parameter of `error_throw` optional to be able to do `error_throw(-1)`
 
 ```primal
 try

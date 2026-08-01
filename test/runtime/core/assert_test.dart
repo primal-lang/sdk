@@ -29,76 +29,76 @@ Matcher throwsAssertionArgument(String message) => throwsA(
 );
 
 void main() {
-  group('assert.equal', () {
+  group('assert_equal', () {
     test('returns true for equal numbers', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.equal(1, 1)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_equal(1, 1)');
       checkResult(runtime, true);
     });
 
     test('returns true for equal strings', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal("a", "a")',
+        'main() = assert_equal("a", "a")',
       );
       checkResult(runtime, true);
     });
 
     test('returns true for equal collections', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal([1, 2], [1, 2])',
+        'main() = assert_equal([1, 2], [1, 2])',
       );
       checkResult(runtime, true);
     });
 
     test('passes for an integer and its decimal representation', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.equal(1, 1.0)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_equal(1, 1.0)');
       checkResult(runtime, true);
     });
 
     test('fails when the values differ', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.equal(3, 2)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_equal(3, 2)');
       expect(
         runtime.executeMain,
         throwsAssertionFailure(
-          'Assertion error: "assert.equal" failed: expected 2, actual 3',
+          'Assertion error: "assert_equal" failed: expected 2, actual 3',
         ),
       );
     });
 
     test('renders strings with quotes, through Runtime.format', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal("3", "2")',
+        'main() = assert_equal("3", "2")',
       );
       expect(
         runtime.executeMain,
         throwsAssertionFailure(
-          'Assertion error: "assert.equal" failed: expected "2", actual "3"',
+          'Assertion error: "assert_equal" failed: expected "2", actual "3"',
         ),
       );
     });
 
     test('fails for collections of different length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal([1, 2], [1, 2, 3])',
+        'main() = assert_equal([1, 2], [1, 2, 3])',
       );
       expect(runtime.executeMain, throwsA(isA<AssertionFailedError>()));
     });
 
     test('errors for operands of different kinds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal("1", 1)',
+        'main() = assert_equal("1", 1)',
       );
       expect(
         runtime.executeMain,
         throwsAssertionArgument(
-          'Invalid argument types for function "assert.equal". '
+          'Invalid argument types for function "assert_equal". '
           'Expected: (Equatable, Equatable). Actual: (String, Number)',
         ),
       );
     });
 
-    test('type error names assert.equal, not comp.eq', () {
+    test('type error names assert_equal, not comp_eq', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal("1", 1)',
+        'main() = assert_equal("1", 1)',
       );
       expect(
         runtime.executeMain,
@@ -106,7 +106,7 @@ void main() {
           isA<AssertionArgumentError>().having(
             (AssertionArgumentError error) => error.toString(),
             'toString()',
-            isNot(contains('comp.eq')),
+            isNot(contains('comp_eq')),
           ),
         ),
       );
@@ -114,7 +114,7 @@ void main() {
 
     test('errors for equal-length lists with mismatched element kinds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal([1], ["x"])',
+        'main() = assert_equal([1], ["x"])',
       );
       expect(
         runtime.executeMain,
@@ -124,28 +124,28 @@ void main() {
 
     test('errors for maps with mismatched value kinds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal({"a": 1}, {"a": "x"})',
+        'main() = assert_equal({"a": 1}, {"a": "x"})',
       );
       expect(runtime.executeMain, throwsA(isA<AssertionArgumentError>()));
     });
 
     test('fails, not errors, for sets with mismatched element kinds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal(set.new([1]), set.new(["x"]))',
+        'main() = assert_equal(set_new([1]), set_new(["x"]))',
       );
       expect(runtime.executeMain, throwsA(isA<AssertionFailedError>()));
     });
 
     test('fails, not errors, for maps with mismatched key kinds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal({1: "a"}, {"1": "a"})',
+        'main() = assert_equal({1: "a"}, {"1": "a"})',
       );
       expect(runtime.executeMain, throwsA(isA<AssertionFailedError>()));
     });
 
     test('propagates an error raised while reducing an operand', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal(to.number("x"), 1)',
+        'main() = assert_equal(to_number("x"), 1)',
       );
       expect(runtime.executeMain, throwsA(isA<ParseError>()));
     });
@@ -155,7 +155,7 @@ void main() {
       // code under test surfaces at the same place as a comparison type error.
       // Only the latter belongs to the assertion.
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal([num.add(1, "x")], [2])',
+        'main() = assert_equal([num_add(1, "x")], [2])',
       );
       expect(
         runtime.executeMain,
@@ -166,7 +166,7 @@ void main() {
             isA<InvalidArgumentTypesError>().having(
               (InvalidArgumentTypesError error) => error.function,
               'function',
-              equals('num.add'),
+              equals('num_add'),
             ),
           ),
         ),
@@ -175,62 +175,62 @@ void main() {
 
     test('declares its parameters as a and b', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = function.parameters(assert.equal)',
+        'main() = function_parameters(assert_equal)',
       );
       checkResult(runtime, ['"a"', '"b"']);
     });
   });
 
-  group('assert.notEqual', () {
+  group('assert_notEqual', () {
     test('returns true when the values differ', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.notEqual(1, 2)',
+        'main() = assert_notEqual(1, 2)',
       );
       checkResult(runtime, true);
     });
 
     test('returns true for collections of different length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.notEqual([1, 2], [1, 2, 3])',
+        'main() = assert_notEqual([1, 2], [1, 2, 3])',
       );
       checkResult(runtime, true);
     });
 
     test('fails when the values are equal', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.notEqual(1, 1)',
+        'main() = assert_notEqual(1, 1)',
       );
       expect(
         runtime.executeMain,
         throwsAssertionFailure(
-          'Assertion error: "assert.notEqual" failed: expected not 1, actual 1',
+          'Assertion error: "assert_notEqual" failed: expected not 1, actual 1',
         ),
       );
     });
 
     test('fails for an integer and its decimal representation', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.notEqual(1, 1.0)',
+        'main() = assert_notEqual(1, 1.0)',
       );
       expect(runtime.executeMain, throwsA(isA<AssertionFailedError>()));
     });
 
     test('errors, rather than passing, for operands of different kinds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.notEqual("1", 1)',
+        'main() = assert_notEqual("1", 1)',
       );
       expect(
         runtime.executeMain,
         throwsAssertionArgument(
-          'Invalid argument types for function "assert.notEqual". '
+          'Invalid argument types for function "assert_notEqual". '
           'Expected: (Equatable, Equatable). Actual: (String, Number)',
         ),
       );
     });
 
-    test('type error names assert.notEqual, not comp.neq or comp.eq', () {
+    test('type error names assert_notEqual, not comp_neq or comp_eq', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.notEqual("1", 1)',
+        'main() = assert_notEqual("1", 1)',
       );
       expect(
         runtime.executeMain,
@@ -238,7 +238,7 @@ void main() {
           isA<AssertionArgumentError>().having(
             (AssertionArgumentError error) => error.toString(),
             'toString()',
-            allOf(isNot(contains('comp.neq')), isNot(contains('comp.eq'))),
+            allOf(isNot(contains('comp_neq')), isNot(contains('comp_eq'))),
           ),
         ),
       );
@@ -246,53 +246,53 @@ void main() {
 
     test('errors for equal-length lists with mismatched element kinds', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.notEqual([1], ["x"])',
+        'main() = assert_notEqual([1], ["x"])',
       );
       expect(runtime.executeMain, throwsA(isA<AssertionArgumentError>()));
     });
 
     test('propagates an error raised while reducing an operand', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.notEqual(to.number("x"), 1)',
+        'main() = assert_notEqual(to_number("x"), 1)',
       );
       expect(runtime.executeMain, throwsA(isA<ParseError>()));
     });
 
     test('declares its parameters as a and b', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = function.parameters(assert.notEqual)',
+        'main() = function_parameters(assert_notEqual)',
       );
       checkResult(runtime, ['"a"', '"b"']);
     });
   });
 
-  group('assert.true', () {
+  group('assert_true', () {
     test('returns true for a true condition', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.true(true)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_true(true)');
       checkResult(runtime, true);
     });
 
     test('returns true for a true expression', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.true(1 < 2)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_true(1 < 2)');
       checkResult(runtime, true);
     });
 
     test('fails for a false condition', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.true(false)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_true(false)');
       expect(
         runtime.executeMain,
         throwsAssertionFailure(
-          'Assertion error: "assert.true" failed: expected true, actual false',
+          'Assertion error: "assert_true" failed: expected true, actual false',
         ),
       );
     });
 
     test('errors for a non-boolean condition', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.true(1)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_true(1)');
       expect(
         runtime.executeMain,
         throwsAssertionArgument(
-          'Runtime error: Invalid argument types for function "assert.true". '
+          'Runtime error: Invalid argument types for function "assert_true". '
           'Expected: (Boolean). Actual: (Number)',
         ),
       );
@@ -300,34 +300,34 @@ void main() {
 
     test('declares its parameter as a', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = function.parameters(assert.true)',
+        'main() = function_parameters(assert_true)',
       );
       checkResult(runtime, ['"a"']);
     });
   });
 
-  group('assert.false', () {
+  group('assert_false', () {
     test('returns true for a false condition', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.false(false)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_false(false)');
       checkResult(runtime, true);
     });
 
     test('fails for a true condition', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.false(true)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_false(true)');
       expect(
         runtime.executeMain,
         throwsAssertionFailure(
-          'Assertion error: "assert.false" failed: expected false, actual true',
+          'Assertion error: "assert_false" failed: expected false, actual true',
         ),
       );
     });
 
     test('errors for a non-boolean condition', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.false("x")');
+      final RuntimeFacade runtime = getRuntime('main() = assert_false("x")');
       expect(
         runtime.executeMain,
         throwsAssertionArgument(
-          'Runtime error: Invalid argument types for function "assert.false". '
+          'Runtime error: Invalid argument types for function "assert_false". '
           'Expected: (Boolean). Actual: (String)',
         ),
       );
@@ -335,40 +335,40 @@ void main() {
 
     test('declares its parameter as a', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = function.parameters(assert.false)',
+        'main() = function_parameters(assert_false)',
       );
       checkResult(runtime, ['"a"']);
     });
   });
 
-  group('assert.throws', () {
+  group('assert_throws', () {
     test('returns true when the expression throws a runtime error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.throws(to.number("not a number"))',
+        'main() = assert_throws(to_number("not a number"))',
       );
       checkResult(runtime, true);
     });
 
     test('returns true when the expression throws a custom error', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.throws(error.throw(404, "not found"))',
+        'main() = assert_throws(error_throw(404, "not found"))',
       );
       checkResult(runtime, true);
     });
 
     test('returns true for a type error raised by the code under test', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.throws(num.add(1, "x"))',
+        'main() = assert_throws(num_add(1, "x"))',
       );
       checkResult(runtime, true);
     });
 
     test('fails when the expression completes normally', () {
-      final RuntimeFacade runtime = getRuntime('main() = assert.throws(42)');
+      final RuntimeFacade runtime = getRuntime('main() = assert_throws(42)');
       expect(
         runtime.executeMain,
         throwsAssertionFailure(
-          'Assertion error: "assert.throws" failed: '
+          'Assertion error: "assert_throws" failed: '
           'expected a thrown error, actual 42',
         ),
       );
@@ -376,36 +376,36 @@ void main() {
 
     test('rethrows a nested assertion failure unchanged', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.throws(assert.equal(1, 2))',
+        'main() = assert_throws(assert_equal(1, 2))',
       );
       expect(
         runtime.executeMain,
         throwsAssertionFailure(
-          'Assertion error: "assert.equal" failed: expected 2, actual 1',
+          'Assertion error: "assert_equal" failed: expected 2, actual 1',
         ),
       );
     });
 
-    test('rethrows a nested assertion misuse unchanged (assert.true)', () {
+    test('rethrows a nested assertion misuse unchanged (assert_true)', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.throws(assert.true(1))',
+        'main() = assert_throws(assert_true(1))',
       );
       expect(
         runtime.executeMain,
         throwsAssertionArgument(
-          'Invalid argument types for function "assert.true"',
+          'Invalid argument types for function "assert_true"',
         ),
       );
     });
 
-    test('rethrows a nested assertion misuse unchanged (assert.equal)', () {
+    test('rethrows a nested assertion misuse unchanged (assert_equal)', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.throws(assert.equal("1", 1))',
+        'main() = assert_throws(assert_equal("1", 1))',
       );
       expect(
         runtime.executeMain,
         throwsAssertionArgument(
-          'Invalid argument types for function "assert.equal"',
+          'Invalid argument types for function "assert_equal"',
         ),
       );
     });
@@ -414,28 +414,28 @@ void main() {
       // The error comes from the code under test, not from the assertion, so
       // the expectation is legitimate and must pass.
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.throws(assert.equal([num.add(1, "x")], [2]))',
+        'main() = assert_throws(assert_equal([num_add(1, "x")], [2]))',
       );
       checkResult(runtime, true);
     });
 
     test('still rethrows a genuine element-kind mismatch', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.throws(assert.equal([1], ["x"]))',
+        'main() = assert_throws(assert_equal([1], ["x"]))',
       );
       expect(runtime.executeMain, throwsA(isA<AssertionArgumentError>()));
     });
 
     test('rethrows RecursionLimitError rather than absorbing it', () {
       final RuntimeFacade runtime = getRuntime(
-        'loop(n) = loop(n + 1)\nmain() = assert.throws(loop(0))',
+        'loop(n) = loop(n + 1)\nmain() = assert_throws(loop(0))',
       );
       expect(runtime.executeMain, throwsA(isA<RecursionLimitError>()));
     });
 
     test('declares its parameter as a', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = function.parameters(assert.throws)',
+        'main() = function_parameters(assert_throws)',
       );
       checkResult(runtime, ['"a"']);
     });
@@ -449,7 +449,7 @@ void main() {
       expect(
         term.reduce,
         throwsAssertionFailure(
-          'Assertion error: "assert.throws" failed: '
+          'Assertion error: "assert_throws" failed: '
           'expected a thrown error, actual x',
         ),
       );
@@ -460,17 +460,17 @@ void main() {
     test('&& chains several assertions in one expression', () {
       final RuntimeFacade runtime = getRuntime(
         'main() = '
-        'assert.equal(str.length("abc"), 3) && '
-        'assert.notEqual(str.length("abc"), 0) && '
-        'assert.true(str.startsWith("abc", "a")) && '
-        'assert.false(str.isEmpty("abc"))',
+        'assert_equal(str_length("abc"), 3) && '
+        'assert_notEqual(str_length("abc"), 0) && '
+        'assert_true(str_startsWith("abc", "a")) && '
+        'assert_false(str_isEmpty("abc"))',
       );
       checkResult(runtime, true);
     });
 
     test('a failing assertion stops a && chain at the first failure', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.equal(1, 2) && assert.equal(3, 4)',
+        'main() = assert_equal(1, 2) && assert_equal(3, 4)',
       );
       expect(
         runtime.executeMain,
@@ -480,22 +480,22 @@ void main() {
 
     test('& chains assertions identically', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = assert.true(true) & assert.false(false)',
+        'main() = assert_true(true) & assert_false(false)',
       );
       checkResult(runtime, true);
     });
 
     test('try swallows a failed assertion', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = try(assert.equal(1, 2), true)',
+        'main() = try(assert_equal(1, 2), true)',
       );
       checkResult(runtime, true);
     });
 
-    test('assert.throws cannot be abstracted behind a custom function', () {
+    test('assert_throws cannot be abstracted behind a custom function', () {
       final RuntimeFacade runtime = getRuntime(
-        'expectThrow(e) = assert.throws(e)\n'
-        'main() = expectThrow(to.number("z"))',
+        'expectThrow(e) = assert_throws(e)\n'
+        'main() = expectThrow(to_number("z"))',
       );
       expect(runtime.executeMain, throwsA(isA<ParseError>()));
     });

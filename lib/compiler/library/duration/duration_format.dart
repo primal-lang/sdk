@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DurationFormat extends NativeFunctionTerm {
   const DurationFormat()
     : super(
-        name: 'duration.format',
+        name: 'duration_format',
         parameters: const [
           Parameter.duration('a'),
           Parameter.string('b'),

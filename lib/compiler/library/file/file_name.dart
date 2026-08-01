@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileName extends NativeFunctionTerm {
   const FileName()
     : super(
-        name: 'file.name',
+        name: 'file_name',
         parameters: const [
           Parameter.file('a'),
         ],

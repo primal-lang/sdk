@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListIndexOf extends NativeFunctionTerm {
   const ListIndexOf()
     : super(
-        name: 'list.indexOf',
+        name: 'list_indexOf',
         parameters: const [
           Parameter.list('a'),
           Parameter.equatable('b'),

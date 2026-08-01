@@ -17,7 +17,7 @@ Number of functions: 18
 
 ### From Milliseconds
 
-- **Signature:** `duration.fromMilliseconds(a: Number): Duration`
+- **Signature:** `duration_fromMilliseconds(a: Number): Duration`
 - **Input:** A number representing the number of milliseconds.
 - **Output:** A duration instance representing the specified number of milliseconds.
 - **Constraints:** Throws `NegativeDurationError` if input is negative
@@ -25,12 +25,12 @@ Number of functions: 18
 - **Example:**
 
 ```
-duration.fromMilliseconds(5000) // returns a duration of 5000 milliseconds
+duration_fromMilliseconds(5000) // returns a duration of 5000 milliseconds
 ```
 
 ### From Seconds
 
-- **Signature:** `duration.fromSeconds(a: Number): Duration`
+- **Signature:** `duration_fromSeconds(a: Number): Duration`
 - **Input:** A number representing the number of seconds.
 - **Output:** A duration instance representing the specified number of seconds.
 - **Constraints:** Throws `NegativeDurationError` if input is negative
@@ -38,12 +38,12 @@ duration.fromMilliseconds(5000) // returns a duration of 5000 milliseconds
 - **Example:**
 
 ```
-duration.fromSeconds(3600) // returns a duration of 3600 seconds
+duration_fromSeconds(3600) // returns a duration of 3600 seconds
 ```
 
 ### From Minutes
 
-- **Signature:** `duration.fromMinutes(a: Number): Duration`
+- **Signature:** `duration_fromMinutes(a: Number): Duration`
 - **Input:** A number representing the number of minutes.
 - **Output:** A duration instance representing the specified number of minutes.
 - **Constraints:** Throws `NegativeDurationError` if input is negative
@@ -51,12 +51,12 @@ duration.fromSeconds(3600) // returns a duration of 3600 seconds
 - **Example:**
 
 ```
-duration.fromMinutes(90) // returns a duration of 90 minutes
+duration_fromMinutes(90) // returns a duration of 90 minutes
 ```
 
 ### From Hours
 
-- **Signature:** `duration.fromHours(a: Number): Duration`
+- **Signature:** `duration_fromHours(a: Number): Duration`
 - **Input:** A number representing the number of hours.
 - **Output:** A duration instance representing the specified number of hours.
 - **Constraints:** Throws `NegativeDurationError` if input is negative
@@ -64,12 +64,12 @@ duration.fromMinutes(90) // returns a duration of 90 minutes
 - **Example:**
 
 ```
-duration.fromHours(24) // returns a duration of 24 hours
+duration_fromHours(24) // returns a duration of 24 hours
 ```
 
 ### From Days
 
-- **Signature:** `duration.fromDays(a: Number): Duration`
+- **Signature:** `duration_fromDays(a: Number): Duration`
 - **Input:** A number representing the number of days.
 - **Output:** A duration instance representing the specified number of days.
 - **Constraints:** Throws `NegativeDurationError` if input is negative
@@ -77,12 +77,12 @@ duration.fromHours(24) // returns a duration of 24 hours
 - **Example:**
 
 ```
-duration.fromDays(7) // returns a duration of 7 days
+duration_fromDays(7) // returns a duration of 7 days
 ```
 
 ### From
 
-- **Signature:** `duration.from(a: Number, b: Number, c: Number, d: Number, e: Number): Duration`
+- **Signature:** `duration_from(a: Number, b: Number, c: Number, d: Number, e: Number): Duration`
 - **Input:** Five numbers representing days (a), hours (b), minutes (c), seconds (d), and milliseconds (e).
 - **Output:** A duration instance created from the specified components.
 - **Constraints:** Validates left-to-right; throws `NegativeDurationError` at first negative component (includes component name and value in error message)
@@ -90,7 +90,7 @@ duration.fromDays(7) // returns a duration of 7 days
 - **Example:**
 
 ```
-duration.from(1, 2, 30, 0, 0) // returns a duration of 1 day, 2 hours, 30 minutes
+duration_from(1, 2, 30, 0, 0) // returns a duration of 1 day, 2 hours, 30 minutes
 ```
 
 ## Total Conversion
@@ -99,62 +99,62 @@ These functions return the total duration converted to the specified unit as a f
 
 ### To Milliseconds
 
-- **Signature:** `duration.toMilliseconds(a: Duration): Number`
+- **Signature:** `duration_toMilliseconds(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The total duration converted to milliseconds.
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.toMilliseconds(duration.fromSeconds(2)) // returns 2000
+duration_toMilliseconds(duration_fromSeconds(2)) // returns 2000
 ```
 
 ### To Seconds
 
-- **Signature:** `duration.toSeconds(a: Duration): Number`
+- **Signature:** `duration_toSeconds(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The total duration converted to seconds.
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.toSeconds(duration.fromMinutes(5)) // returns 300
+duration_toSeconds(duration_fromMinutes(5)) // returns 300
 ```
 
 ### To Minutes
 
-- **Signature:** `duration.toMinutes(a: Duration): Number`
+- **Signature:** `duration_toMinutes(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The total duration converted to minutes.
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.toMinutes(duration.fromHours(2)) // returns 120
+duration_toMinutes(duration_fromHours(2)) // returns 120
 ```
 
 ### To Hours
 
-- **Signature:** `duration.toHours(a: Duration): Number`
+- **Signature:** `duration_toHours(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The total duration converted to hours.
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.toHours(duration.fromDays(1)) // returns 24
+duration_toHours(duration_fromDays(1)) // returns 24
 ```
 
 ### To Days
 
-- **Signature:** `duration.toDays(a: Duration): Number`
+- **Signature:** `duration_toDays(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The total duration converted to days.
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.toDays(duration.fromHours(48)) // returns 2
+duration_toDays(duration_fromHours(48)) // returns 2
 ```
 
 ## Component Extraction
@@ -163,83 +163,83 @@ These functions extract a specific component of the duration as an integer remai
 
 ### Milliseconds
 
-- **Signature:** `duration.milliseconds(a: Duration): Number`
+- **Signature:** `duration_milliseconds(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The milliseconds component of the duration (0-999).
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.milliseconds(duration.from(0, 0, 0, 1, 500)) // returns 500
+duration_milliseconds(duration_from(0, 0, 0, 1, 500)) // returns 500
 ```
 
 ### Seconds
 
-- **Signature:** `duration.seconds(a: Duration): Number`
+- **Signature:** `duration_seconds(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The seconds component of the duration (0-59).
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.seconds(duration.from(0, 0, 1, 30, 0)) // returns 30
+duration_seconds(duration_from(0, 0, 1, 30, 0)) // returns 30
 ```
 
 ### Minutes
 
-- **Signature:** `duration.minutes(a: Duration): Number`
+- **Signature:** `duration_minutes(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The minutes component of the duration (0-59).
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.minutes(duration.from(0, 1, 45, 0, 0)) // returns 45
+duration_minutes(duration_from(0, 1, 45, 0, 0)) // returns 45
 ```
 
 ### Hours
 
-- **Signature:** `duration.hours(a: Duration): Number`
+- **Signature:** `duration_hours(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The hours component of the duration (0-23).
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.hours(duration.from(1, 12, 0, 0, 0)) // returns 12
+duration_hours(duration_from(1, 12, 0, 0, 0)) // returns 12
 ```
 
 ### Days
 
-- **Signature:** `duration.days(a: Duration): Number`
+- **Signature:** `duration_days(a: Duration): Number`
 - **Input:** A duration instance.
 - **Output:** The days component of the duration.
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.days(duration.from(2, 5, 30, 0, 0)) // returns 2
+duration_days(duration_from(2, 5, 30, 0, 0)) // returns 2
 ```
 
 ## Comparison
 
 ### Compare
 
-- **Signature:** `duration.compare(a: Duration, b: Duration): Number`
+- **Signature:** `duration_compare(a: Duration, b: Duration): Number`
 - **Input:** Two duration instances.
 - **Output:** 1 if the first duration is longer, -1 if shorter, 0 if equal.
 - **Purity:** Pure
 - **Example:**
 
 ```
-duration.compare(duration.fromHours(2), duration.fromHours(1)) // returns 1
+duration_compare(duration_fromHours(2), duration_fromHours(1)) // returns 1
 ```
 
 ## Formatting
 
 ### Format
 
-- **Signature:** `duration.format(a: Duration, b: String): String`
+- **Signature:** `duration_format(a: Duration, b: String): String`
 - **Input:** A duration and a format pattern string.
 - **Output:** The duration formatted according to the pattern.
 - **Purity:** Pure
@@ -258,5 +258,5 @@ duration.compare(duration.fromHours(2), duration.fromHours(1)) // returns 1
 - **Example:**
 
 ```
-duration.format(duration.from(1, 2, 30, 0, 0), "d:HH:mm:ss") // returns "1:02:30:00"
+duration_format(duration_from(1, 2, 30, 0, 0), "d:HH:mm:ss") // returns "1:02:30:00"
 ```

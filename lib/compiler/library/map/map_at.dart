@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MapAt extends NativeFunctionTerm {
   const MapAt()
     : super(
-        name: 'map.at',
+        name: 'map_at',
         parameters: const [
           Parameter.map('a'),
           Parameter.hashable('b'),

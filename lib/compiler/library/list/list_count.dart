@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListCount extends NativeFunctionTerm {
   const ListCount()
     : super(
-        name: 'list.count',
+        name: 'list_count',
         parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),

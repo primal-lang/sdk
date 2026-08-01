@@ -327,24 +327,24 @@ void main() {
     });
 
     test('Expression 48', () {
-      final Expression expression = getExpression('foo.bar(1)');
-      expect(expression.toString(), 'foo.bar(1)');
+      final Expression expression = getExpression('foo_bar(1)');
+      expect(expression.toString(), 'foo_bar(1)');
     });
 
-    // Chained dot notation
-    test('Chained dot notation calls', () {
-      final Expression expression = getExpression('foo.bar.baz(1)');
-      expect(expression.toString(), 'foo.bar.baz(1)');
+    // Chained underscored name
+    test('Chained underscored name calls', () {
+      final Expression expression = getExpression('foo_bar_baz(1)');
+      expect(expression.toString(), 'foo_bar_baz(1)');
     });
 
-    test('Dot notation without arguments', () {
-      final Expression expression = getExpression('foo.bar()');
-      expect(expression.toString(), 'foo.bar()');
+    test('Underscored name without arguments', () {
+      final Expression expression = getExpression('foo_bar()');
+      expect(expression.toString(), 'foo_bar()');
     });
 
-    test('Dot notation chained with regular call', () {
-      final Expression expression = getExpression('foo.bar(1)(2)');
-      expect(expression.toString(), 'foo.bar(1)(2)');
+    test('Underscored name chained with regular call', () {
+      final Expression expression = getExpression('foo_bar(1)(2)');
+      expect(expression.toString(), 'foo_bar(1)(2)');
     });
 
     // Collections
@@ -1451,30 +1451,30 @@ void main() {
     });
   });
 
-  group('Dot notation additional cases', () {
-    test('dot notation with multiple arguments', () {
-      final Expression expression = getExpression('obj.method(1, 2, 3)');
-      expect(expression.toString(), 'obj.method(1, 2, 3)');
+  group('Underscored name additional cases', () {
+    test('underscored name with multiple arguments', () {
+      final Expression expression = getExpression('obj_method(1, 2, 3)');
+      expect(expression.toString(), 'obj_method(1, 2, 3)');
     });
 
-    test('dot notation chained with index', () {
-      final Expression expression = getExpression('obj.method()[0]');
-      expect(expression.toString(), '@(obj.method(), 0)');
+    test('underscored name chained with index', () {
+      final Expression expression = getExpression('obj_method()[0]');
+      expect(expression.toString(), '@(obj_method(), 0)');
     });
 
-    test('dot notation with nested calls', () {
-      final Expression expression = getExpression('a.b(c.d())');
-      expect(expression.toString(), 'a.b(c.d())');
+    test('underscored name with nested calls', () {
+      final Expression expression = getExpression('a_b(c_d())');
+      expect(expression.toString(), 'a_b(c_d())');
     });
 
-    test('dot notation identifier with underscores', () {
-      final Expression expression = getExpression('obj.method_name()');
-      expect(expression.toString(), 'obj.method_name()');
+    test('underscored name with several underscores', () {
+      final Expression expression = getExpression('obj_method_name()');
+      expect(expression.toString(), 'obj_method_name()');
     });
 
-    test('dot notation with numbers in identifier', () {
-      final Expression expression = getExpression('lib.func2()');
-      expect(expression.toString(), 'lib.func2()');
+    test('underscored name with numbers in identifier', () {
+      final Expression expression = getExpression('lib_func2()');
+      expect(expression.toString(), 'lib_func2()');
     });
   });
 
@@ -2147,36 +2147,36 @@ void main() {
     });
   });
 
-  group('Dot notation edge cases', () {
-    test('single dot notation', () {
-      final Expression expression = getExpression('a.b()');
+  group('Underscored name edge cases', () {
+    test('single underscored name', () {
+      final Expression expression = getExpression('a_b()');
       expect(expression, isA<CallExpression>());
-      expect(expression.toString(), 'a.b()');
+      expect(expression.toString(), 'a_b()');
     });
 
-    test('multi-level dot notation', () {
-      final Expression expression = getExpression('a.b.c.d()');
-      expect(expression.toString(), 'a.b.c.d()');
+    test('multi-level underscored name', () {
+      final Expression expression = getExpression('a_b_c_d()');
+      expect(expression.toString(), 'a_b_c_d()');
     });
 
-    test('dot notation with argument', () {
-      final Expression expression = getExpression('list.get(0)');
-      expect(expression.toString(), 'list.get(0)');
+    test('underscored name with argument', () {
+      final Expression expression = getExpression('list_get(0)');
+      expect(expression.toString(), 'list_get(0)');
     });
 
-    test('dot notation chained with bracket', () {
-      final Expression expression = getExpression('obj.arr[0]');
-      expect(expression.toString(), '@(obj.arr, 0)');
+    test('underscored name chained with bracket', () {
+      final Expression expression = getExpression('obj_arr[0]');
+      expect(expression.toString(), '@(obj_arr, 0)');
     });
 
-    test('dot notation result used in binary', () {
-      final Expression expression = getExpression('a.b() + c.d()');
-      expect(expression.toString(), '+(a.b(), c.d())');
+    test('underscored name result used in binary', () {
+      final Expression expression = getExpression('a_b() + c_d()');
+      expect(expression.toString(), '+(a_b(), c_d())');
     });
 
-    test('dot notation in if condition', () {
-      final Expression expression = getExpression('if (obj.check()) 1 else 2');
-      expect(expression.toString(), 'if(obj.check(), 1, 2)');
+    test('underscored name in if condition', () {
+      final Expression expression = getExpression('if (obj_check()) 1 else 2');
+      expect(expression.toString(), 'if(obj_check(), 1, 2)');
     });
   });
 

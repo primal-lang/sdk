@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MapMerge extends NativeFunctionTerm {
   const MapMerge()
     : super(
-        name: 'map.merge',
+        name: 'map_merge',
         parameters: const [
           Parameter.map('a'),
           Parameter.map('b'),

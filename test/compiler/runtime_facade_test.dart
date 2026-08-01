@@ -49,7 +49,7 @@ void main() {
 
       test('executes main with multiple arguments', () {
         final RuntimeFacade runtime = getRuntime(
-          'main(a, b) = to.string(a) + to.string(b)',
+          'main(a, b) = to_string(a) + to_string(b)',
         );
         expect(runtime.executeMain(['foo', 'bar']), '"foobar"');
       });
@@ -203,7 +203,7 @@ void main() {
         );
         // Use a real standard library function name
         final FunctionDefinition definition = compiler.functionDefinition(
-          'num.add() = 1',
+          'num_add() = 1',
         )!;
 
         expect(
@@ -265,9 +265,9 @@ void main() {
           IntermediateRepresentation.empty(),
           compiler.expression,
         );
-        // Use num.mul which is the standard library multiply function
+        // Use num_mul which is the standard library multiply function
         final FunctionDefinition definition = compiler.functionDefinition(
-          'double(x) = num.mul(x, 2)',
+          'double(x) = num_mul(x, 2)',
         )!;
 
         runtime.defineFunction(definition);
@@ -375,7 +375,7 @@ void main() {
         runtime.reset();
 
         // Standard library functions should still work
-        expect(runtime.evaluate(getExpression('num.add(1, 2)')), '3');
+        expect(runtime.evaluate(getExpression('num_add(1, 2)')), '3');
       });
     });
 
@@ -485,7 +485,7 @@ void main() {
         );
 
         expect(
-          () => runtime.deleteFunction('num.add'),
+          () => runtime.deleteFunction('num_add'),
           throwsA(isA<CannotDeleteStandardLibraryError>()),
         );
       });
@@ -566,7 +566,7 @@ void main() {
         );
 
         expect(
-          () => runtime.renameFunction('num.add', 'myAdd'),
+          () => runtime.renameFunction('num_add', 'myAdd'),
           throwsA(isA<CannotRenameStandardLibraryError>()),
         );
       });
@@ -604,7 +604,7 @@ void main() {
           runtime.defineFunction(definition);
 
           expect(
-            () => runtime.renameFunction('myFunc', 'num.add'),
+            () => runtime.renameFunction('myFunc', 'num_add'),
             throwsA(isA<FunctionAlreadyExistsError>()),
           );
         },
@@ -928,7 +928,7 @@ void main() {
           IntermediateRepresentation.empty(),
           compiler.expression,
         );
-        final Expression expression = getExpression('set.new([1, 2, 3])');
+        final Expression expression = getExpression('set_new([1, 2, 3])');
 
         final Term result = runtime.evaluateToTerm(expression);
 
@@ -954,7 +954,7 @@ void main() {
           IntermediateRepresentation.empty(),
           compiler.expression,
         );
-        final Expression expression = getExpression('num.add');
+        final Expression expression = getExpression('num_add');
 
         final Term result = runtime.evaluateToTerm(expression);
 
@@ -1091,7 +1091,7 @@ void main() {
           compiler.expression,
         );
         final IntermediateRepresentation representation =
-            getIntermediateRepresentation('square(x) = num.mul(x, x)');
+            getIntermediateRepresentation('square(x) = num_mul(x, x)');
 
         runtime.loadFromIntermediateRepresentation(representation);
 
@@ -1224,7 +1224,7 @@ void main() {
 
         expect(runtime.userDefinedFunctionSignatures, isEmpty);
         // Standard library functions should still work
-        expect(runtime.evaluate(getExpression('num.add(1, 2)')), '3');
+        expect(runtime.evaluate(getExpression('num_add(1, 2)')), '3');
       });
 
       test('preserves function signature format with underscores', () {
@@ -1297,7 +1297,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'sumList(items) = list.reduce(items, 0, num.add)',
+          'sumList(items) = list_reduce(items, 0, num_add)',
         )!;
 
         runtime.defineFunction(definition);
@@ -1434,7 +1434,7 @@ void main() {
           );
           expect(
             runtime.intermediateRepresentation.standardLibrarySignatures
-                .containsKey('num.add'),
+                .containsKey('num_add'),
             isTrue,
           );
         },
@@ -1535,7 +1535,7 @@ void main() {
         );
 
         expect(
-          () => runtime.evaluate(getExpression('num.add(1)')),
+          () => runtime.evaluate(getExpression('num_add(1)')),
           throwsA(isA<InvalidNumberOfArgumentsError>()),
         );
       });
@@ -1547,7 +1547,7 @@ void main() {
         );
 
         expect(
-          () => runtime.evaluate(getExpression('num.add(1, 2, 3)')),
+          () => runtime.evaluate(getExpression('num_add(1, 2, 3)')),
           throwsA(isA<InvalidNumberOfArgumentsError>()),
         );
       });
@@ -1788,7 +1788,7 @@ void main() {
           compiler.expression,
         );
         final FunctionDefinition definition = compiler.functionDefinition(
-          'makeSet(items) = set.new(items)',
+          'makeSet(items) = set_new(items)',
         )!;
         runtime.defineFunction(definition);
 
@@ -1807,7 +1807,7 @@ void main() {
           'doubleValue(x) = x * 2',
         )!;
         final FunctionDefinition doubleAll = compiler.functionDefinition(
-          'doubleAll(items) = list.map(items, doubleValue)',
+          'doubleAll(items) = list_map(items, doubleValue)',
         )!;
         runtime.defineFunction(doubleValue);
         runtime.defineFunction(doubleAll);
@@ -2019,7 +2019,7 @@ void main() {
         runtime.defineFunction(double);
 
         expect(
-          runtime.evaluate(getExpression('list.map([1, 2, 3], double)')),
+          runtime.evaluate(getExpression('list_map([1, 2, 3], double)')),
           '[2, 4, 6]',
         );
       });
@@ -2031,7 +2031,7 @@ void main() {
         );
 
         expect(
-          runtime.evaluate(getExpression('list.map([1, 2, 3], num.abs)')),
+          runtime.evaluate(getExpression('list_map([1, 2, 3], num_abs)')),
           '[1, 2, 3]',
         );
       });
@@ -2554,10 +2554,10 @@ void main() {
             compiler.expression,
           );
 
-          // After let, we can still use num.add outside the let
+          // After let, we can still use num_add outside the let
           expect(
             runtime.evaluate(
-              getExpression('(let num.add = 100 in num.add) + num.add(1, 2)'),
+              getExpression('(let num_add = 100 in num_add) + num_add(1, 2)'),
             ),
             '103',
           );
@@ -2610,13 +2610,13 @@ void main() {
 
           expect(
             runtime.evaluate(
-              getExpression('let add = num.add in add(3, 4)'),
+              getExpression('let add = num_add in add(3, 4)'),
             ),
             '7',
           );
         });
 
-        test('let binding used with list.map', () {
+        test('let binding used with list_map', () {
           final RuntimeFacade runtime = RuntimeFacade(
             IntermediateRepresentation.empty(),
             compiler.expression,
@@ -2628,7 +2628,7 @@ void main() {
 
           expect(
             runtime.evaluate(
-              getExpression('let f = double in list.map([1, 2, 3], f)'),
+              getExpression('let f = double in list_map([1, 2, 3], f)'),
             ),
             '[2, 4, 6]',
           );
@@ -2660,7 +2660,7 @@ void main() {
 
           expect(
             runtime.evaluate(
-              getExpression('let add = num.add in add(5, 3)'),
+              getExpression('let add = num_add in add(5, 3)'),
             ),
             '8',
           );
@@ -2861,7 +2861,7 @@ void main() {
 
           expect(
             runtime.evaluate(
-              getExpression('let items = [1, 2, 3] in list.length(items)'),
+              getExpression('let items = [1, 2, 3] in list_length(items)'),
             ),
             '3',
           );
@@ -2875,7 +2875,7 @@ void main() {
 
           expect(
             runtime.evaluate(
-              getExpression('let m = {"a": 1} in map.at(m, "a")'),
+              getExpression('let m = {"a": 1} in map_at(m, "a")'),
             ),
             '1',
           );
@@ -2890,7 +2890,7 @@ void main() {
           expect(
             runtime.evaluate(
               getExpression(
-                'let s = set.new([1, 2, 3]) in set.contains(s, 2)',
+                'let s = set_new([1, 2, 3]) in set_contains(s, 2)',
               ),
             ),
             'true',
@@ -2934,7 +2934,7 @@ void main() {
           );
 
           final Term result = runtime.evaluateToTerm(
-            getExpression('let f = num.add in f'),
+            getExpression('let f = num_add in f'),
           );
 
           expect(result, isA<FunctionTerm>());

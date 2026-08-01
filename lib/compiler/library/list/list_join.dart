@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListJoin extends NativeFunctionTerm {
   const ListJoin()
     : super(
-        name: 'list.join',
+        name: 'list_join',
         parameters: const [
           Parameter.list('a'),
           Parameter.string('b'),

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StackReverse extends NativeFunctionTerm {
   const StackReverse()
     : super(
-        name: 'stack.reverse',
+        name: 'stack_reverse',
         parameters: const [
           Parameter.stack('a'),
         ],

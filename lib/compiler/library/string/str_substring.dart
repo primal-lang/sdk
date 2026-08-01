@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrSubstring extends NativeFunctionTerm {
   const StrSubstring()
     : super(
-        name: 'str.substring',
+        name: 'str_substring',
         parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),

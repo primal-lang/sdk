@@ -118,45 +118,45 @@ main() = f(10)(100)
     });
 
     group('Higher-order functions with lambdas', () {
-      test('list.map with lambda', () {
+      test('list_map with lambda', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.map([1, 2, 3], (x) -> x * 2)',
+          'main() = list_map([1, 2, 3], (x) -> x * 2)',
         );
         checkResult(runtime, '[2, 4, 6]');
       });
 
-      test('list.filter with lambda', () {
+      test('list_filter with lambda', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.filter([1, 2, 3, 4], (x) -> x > 2)',
+          'main() = list_filter([1, 2, 3, 4], (x) -> x > 2)',
         );
         checkResult(runtime, '[3, 4]');
       });
 
-      test('list.reduce with lambda', () {
+      test('list_reduce with lambda', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.reduce([1, 2, 3], 0, (acc, x) -> acc + x)',
+          'main() = list_reduce([1, 2, 3], 0, (acc, x) -> acc + x)',
         );
         checkResult(runtime, 6);
       });
 
-      test('list.sort with lambda', () {
+      test('list_sort with lambda', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.sort([3, 1, 2], (a, b) -> a - b)',
+          'main() = list_sort([3, 1, 2], (a, b) -> a - b)',
         );
         checkResult(runtime, '[1, 2, 3]');
       });
 
-      test('list.sort descending with lambda', () {
+      test('list_sort descending with lambda', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.sort([1, 3, 2], (a, b) -> b - a)',
+          'main() = list_sort([1, 3, 2], (a, b) -> b - a)',
         );
         checkResult(runtime, '[3, 2, 1]');
       });
 
       test('Chained higher-order functions', () {
         final RuntimeFacade runtime = getRuntime('''
-main() = list.reduce(
-  list.map([1, 2, 3], (x) -> x * 2),
+main() = list_reduce(
+  list_map([1, 2, 3], (x) -> x * 2),
   0,
   (acc, x) -> acc + x
 )
@@ -341,14 +341,14 @@ main() = f(1)(2)(3)(4)
 
       test('Lambda with string body', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = ((x) -> str.concat(x, "!"))("hello")',
+          'main() = ((x) -> str_concat(x, "!"))("hello")',
         );
         checkResult(runtime, '"hello!"');
       });
 
       test('Lambda with list operations', () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = ((xs) -> list.first(xs))([1, 2, 3])',
+          'main() = ((xs) -> list_first(xs))([1, 2, 3])',
         );
         checkResult(runtime, 1);
       });

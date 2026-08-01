@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrStartsWith extends NativeFunctionTerm {
   const StrStartsWith()
     : super(
-        name: 'str.startsWith',
+        name: 'str_startsWith',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

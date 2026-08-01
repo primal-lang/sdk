@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsDecimal extends NativeFunctionTerm {
   const IsDecimal()
     : super(
-        name: 'is.decimal',
+        name: 'is_decimal',
         parameters: const [
           Parameter.any('a'),
         ],

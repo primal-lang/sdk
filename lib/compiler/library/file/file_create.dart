@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileCreate extends NativeFunctionTerm {
   const FileCreate()
     : super(
-        name: 'file.create',
+        name: 'file_create',
         parameters: const [
           Parameter.file('a'),
         ],

@@ -177,10 +177,16 @@ Identifiers must start with an ASCII letter (`a-z`, `A-Z`) and may continue with
 
 - Letters (`a-z`, `A-Z`)
 - Digits (`0-9`)
-- Dots (`.`)
 - Underscores (`_`)
 
-This allows dotted names like `math.pi` or `list.head` to be parsed as single identifier tokens.
+The dot is **not** an identifier character. Standard library names use the underscore form (`num_abs`, `list_filter`), and a dot in identifier position falls through `IdentifierState` to `InvalidCharacterError` — the same error a leading dot has always produced:
+
+```
+$ primal old.prm
+Error: Invalid character "." at [1, 4]
+```
+
+`isDot` itself is retained, because `IntegerState` transitions to `DecimalInitState` on a dot. Decimal literals such as `1.5` never enter `IdentifierState`, so they are unaffected. The dot is reserved for the member access operator that the record, enum, tuple, and module features will need.
 
 Keywords are not recognized by dedicated `InitState` branches. Instead, `IdentifierState` accumulates all identifier characters and checks the final lexeme value:
 

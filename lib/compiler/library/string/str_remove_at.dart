@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrRemoveAt extends NativeFunctionTerm {
   const StrRemoveAt()
     : super(
-        name: 'str.removeAt',
+        name: 'str_removeAt',
         parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),

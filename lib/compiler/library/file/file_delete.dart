@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileDelete extends NativeFunctionTerm {
   const FileDelete()
     : super(
-        name: 'file.delete',
+        name: 'file_delete',
         parameters: const [
           Parameter.file('a'),
         ],

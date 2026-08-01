@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetIntersection extends NativeFunctionTerm {
   const SetIntersection()
     : super(
-        name: 'set.intersection',
+        name: 'set_intersection',
         parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),

@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListNone extends NativeFunctionTerm {
   const ListNone()
     : super(
-        name: 'list.none',
+        name: 'list_none',
         parameters: const [
           Parameter.list('a'),
           Parameter.function('b'),

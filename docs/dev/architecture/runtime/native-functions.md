@@ -26,7 +26,7 @@ Every native function consists of:
 1. **Definition class** (`NativeFunctionTerm` subclass): Declares the function name, parameters, and types.
 2. **Evaluation class** (`NativeFunctionTermWithArguments` subclass): Implements the actual computation logic.
 
-### Example: `num.add`
+### Example: `num_add`
 
 ```dart
 // From lib/compiler/library/arithmetic/num_add.dart
@@ -35,7 +35,7 @@ Every native function consists of:
 class NumAdd extends NativeFunctionTerm {
   const NumAdd()
     : super(
-        name: 'num.add',
+        name: 'num_add',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),
@@ -230,7 +230,7 @@ This factory handles: `bool`, `num`, `String`, `DateTime`, `File`, `Directory`, 
 
 ### Rendering a Term for a Message
 
-A native that needs to *describe* a value — for example when building an error
+A native that needs to _describe_ a value — for example when building an error
 message — must not use `Term.toString()`: `ValueTerm` renders through
 `value.toString()`, which drops the quotes on strings and makes `"3"`
 indistinguishable from `3`.
@@ -283,7 +283,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MyFunction extends NativeFunctionTerm {
   const MyFunction()
     : super(
-        name: 'namespace.function',  // e.g., 'list.reverse', 'str.length'
+        name: 'namespace_function',  // e.g., 'list_reverse', 'str_length'
         parameters: const [
           Parameter.list('items'),    // Use appropriate Parameter factory
           Parameter.number('count'),
@@ -386,27 +386,27 @@ Native functions typically throw these runtime errors:
 | `DivisionByZeroError`       | Division or modulo by zero                        |
 | `InvalidValueError`         | Value cannot be processed                         |
 | `AssertionFailedError`      | An assertion's expectation was not met            |
-| `AssertionArgumentError`    | An assertion was misused (`assert.*` only)        |
+| `AssertionArgumentError`    | An assertion was misused (`assert_*` only)        |
 
 ## Standard Library Organization
 
 Functions are organized by namespace prefix:
 
-| Prefix     | Domain          | Example Functions                        |
-| ---------- | --------------- | ---------------------------------------- |
-| `assert.*` | Assertions      | `assert.equal`, `assert.true`, `assert.throws` |
-| `num.*`  | Arithmetic      | `num.add`, `num.sqrt`, `num.max`         |
-| `bool.*` | Logic           | `bool.and`, `bool.or`, `bool.not`        |
-| `str.*`  | Strings         | `str.length`, `str.concat`, `str.split`  |
-| `list.*` | Lists           | `list.map`, `list.filter`, `list.reduce` |
-| `map.*`  | Maps            | `map.at`, `map.keys`, `map.set`          |
-| `set.*`  | Sets            | `set.add`, `set.union`, `set.contains`   |
-| `file.*` | File I/O        | `file.read`, `file.write`, `file.exists` |
-| `dir.*`  | Directory I/O   | `dir.list`, `dir.create`, `dir.delete`   |
-| `time.*` | Timestamps      | `time.now`, `time.format`, `time.year`   |
-| `json.*` | JSON            | `json.encode`, `json.decode`             |
-| `comp.*` | Comparison      | `comp.eq`, `comp.lt`, `comp.gt`          |
-| `is.*`   | Type checking   | `is.number`, `is.string`, `is.list`      |
-| `to.*`   | Type conversion | `to.integer`, `to.string`, `to.list`     |
+| Prefix     | Domain          | Example Functions                              |
+| ---------- | --------------- | ---------------------------------------------- |
+| `assert_*` | Assertions      | `assert_equal`, `assert_true`, `assert_throws` |
+| `num_*`    | Arithmetic      | `num_add`, `num_sqrt`, `num_max`               |
+| `bool_*`   | Logic           | `bool_and`, `bool_or`, `bool_not`              |
+| `str_*`    | Strings         | `str_length`, `str_concat`, `str_split`        |
+| `list_*`   | Lists           | `list_map`, `list_filter`, `list_reduce`       |
+| `map_*`    | Maps            | `map_at`, `map_keys`, `map_set`                |
+| `set_*`    | Sets            | `set_add`, `set_union`, `set_contains`         |
+| `file_*`   | File I/O        | `file_read`, `file_write`, `file_exists`       |
+| `dir.*`    | Directory I/O   | `dir.list`, `dir.create`, `dir.delete`         |
+| `time_*`   | Timestamps      | `time_now`, `time_format`, `time_year`         |
+| `json_*`   | JSON            | `json_encode`, `json_decode`                   |
+| `comp_*`   | Comparison      | `comp_eq`, `comp_lt`, `comp_gt`                |
+| `is_*`     | Type checking   | `is_number`, `is_string`, `is_list`            |
+| `to_*`     | Type conversion | `to_integer`, `to_string`, `to_list`           |
 
 Control flow functions (`if`, `try`) and infix operators (`+`, `-`, `&&`, etc.) use simple names without namespace prefixes.

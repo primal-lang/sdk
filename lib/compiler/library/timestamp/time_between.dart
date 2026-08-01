@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeBetween extends NativeFunctionTerm {
   const TimeBetween()
     : super(
-        name: 'time.between',
+        name: 'time_between',
         parameters: const [
           Parameter.timestamp('a'),
           Parameter.timestamp('b'),

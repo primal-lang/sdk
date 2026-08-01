@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsList extends NativeFunctionTerm {
   const IsList()
     : super(
-        name: 'is.list',
+        name: 'is_list',
         parameters: const [
           Parameter.any('a'),
         ],

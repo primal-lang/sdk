@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DurationCompare extends NativeFunctionTerm {
   const DurationCompare()
     : super(
-        name: 'duration.compare',
+        name: 'duration_compare',
         parameters: const [
           Parameter.duration('a'),
           Parameter.duration('b'),

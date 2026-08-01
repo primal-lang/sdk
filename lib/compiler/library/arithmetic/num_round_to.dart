@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumRoundTo extends NativeFunctionTerm {
   const NumRoundTo()
     : super(
-        name: 'num.roundTo',
+        name: 'num_roundTo',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

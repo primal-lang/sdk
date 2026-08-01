@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class TimeToIso extends NativeFunctionTerm {
   const TimeToIso()
     : super(
-        name: 'time.toIso',
+        name: 'time_toIso',
         parameters: const [
           Parameter.timestamp('a'),
         ],

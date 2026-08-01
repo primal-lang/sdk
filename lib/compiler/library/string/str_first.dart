@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrFirst extends NativeFunctionTerm {
   const StrFirst()
     : super(
-        name: 'str.first',
+        name: 'str_first',
         parameters: const [
           Parameter.string('a'),
         ],

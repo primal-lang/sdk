@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListInsertEnd extends NativeFunctionTerm {
   const ListInsertEnd()
     : super(
-        name: 'list.insertEnd',
+        name: 'list_insertEnd',
         parameters: const [
           Parameter.list('a'),
           Parameter.any('b'),

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MapEntries extends NativeFunctionTerm {
   const MapEntries()
     : super(
-        name: 'map.entries',
+        name: 'map_entries',
         parameters: const [
           Parameter.map('a'),
         ],

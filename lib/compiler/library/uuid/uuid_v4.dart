@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class UuidV4 extends NativeFunctionTerm {
   const UuidV4()
     : super(
-        name: 'uuid.v4',
+        name: 'uuid_v4',
         parameters: const <Parameter>[],
       );
 

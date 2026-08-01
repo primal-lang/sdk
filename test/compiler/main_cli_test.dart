@@ -1088,7 +1088,7 @@ void main() {
 
       test('cannot redefine standard library function', () {
         final FakePlatformConsole platformConsole = FakePlatformConsole(
-          inputs: ['num.abs(x) = x'],
+          inputs: ['num_abs(x) = x'],
         );
         final ScriptedConsole console = ScriptedConsole(
           platformConsole,
@@ -1489,7 +1489,7 @@ void main() {
         runCli(
           ['program.prm', ''],
           console: console,
-          readFile: (_) => 'main(a) = str.length(a)',
+          readFile: (_) => 'main(a) = str_length(a)',
         );
 
         expect(platformConsole.outLines, equals(['0']));
@@ -1639,7 +1639,7 @@ void main() {
     group('REPL expressions with functions', () {
       test('expression using standard library function evaluates', () {
         final FakePlatformConsole platformConsole = FakePlatformConsole(
-          inputs: ['num.abs(-42)'],
+          inputs: ['num_abs(-42)'],
         );
         final ScriptedConsole console = ScriptedConsole(
           platformConsole,
@@ -2032,13 +2032,13 @@ void main() {
 
     group('--test mode', () {
       const String threeTests = '''
-test.first() = assert.equal(1 + 1, 2)
-test.second() = assert.true(true)
-test.third() = assert.throws(to.number("x"))
+test_first() = assert_equal(1 + 1, 2)
+test_second() = assert_true(true)
+test_third() = assert_throws(to_number("x"))
 main() = "not executed under --test"
 ''';
 
-      test('runs every zero-argument test. function and returns 0', () {
+      test('runs every zero-argument test_ function and returns 0', () {
         final FakePlatformConsole platformConsole = FakePlatformConsole();
         final Console console = Console(platformConsole);
 
@@ -2052,12 +2052,72 @@ main() = "not executed under --test"
         expect(
           platformConsole.outLines,
           equals([
-            passLine('test.first'),
-            passLine('test.second'),
-            passLine('test.third'),
+            passLine('test_first'),
+            passLine('test_second'),
+            passLine('test_third'),
             '',
             '3 tests: 3 passed',
           ]),
+        );
+      });
+
+      // The discovery prefix moved from `test.` to `test_` when the dot left
+      // the identifier character set. Missing that change is quiet: nothing
+      // fails to compile, the runner just never finds a test.
+      test('discovers test_ functions, including nested underscored names', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) =>
+              'test_factorial_base() = assert_true(true)\n'
+              'test_isEven() = assert_true(true)',
+        );
+
+        expect(code, equals(0));
+        expect(
+          platformConsole.outLines.take(2),
+          equals([passLine('test_factorial_base'), passLine('test_isEven')]),
+        );
+      });
+
+      test('a helper named test_helper is still discovered as a test', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test_helper() = assert_true(true)',
+        );
+
+        expect(code, equals(0));
+        expect(platformConsole.outLines.first, equals(passLine('test_helper')));
+      });
+
+      test('a file using the old test. names fails at the lexer', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole();
+        final Console console = Console(platformConsole);
+
+        final int code = runCli(
+          ['--test', 'tests.prm'],
+          console: console,
+          readFile: (_) => 'test.first() = assert_true(true)',
+        );
+
+        expect(code, equals(2));
+        expect(platformConsole.outLines, isEmpty);
+        // The lexer rejects the dot, rather than the runner reporting that it
+        // found no tests — which would read as a user error, not a break.
+        expect(
+          platformConsole.errorLines.first,
+          contains('Invalid character "."'),
+        );
+        expect(
+          platformConsole.errorLines.first,
+          isNot(contains('no zero-argument functions')),
         );
       });
 
@@ -2068,11 +2128,11 @@ main() = "not executed under --test"
         final int code = runCli(
           ['-t', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.only() = assert.true(true)',
+          readFile: (_) => 'test_only() = assert_true(true)',
         );
 
         expect(code, equals(0));
-        expect(platformConsole.outLines.first, equals(passLine('test.only')));
+        expect(platformConsole.outLines.first, equals(passLine('test_only')));
       });
 
       test('executes tests in source-declaration order', () {
@@ -2083,14 +2143,14 @@ main() = "not executed under --test"
           ['--test', 'tests.prm'],
           console: console,
           readFile: (_) => '''
-test.zebra() = assert.true(true)
-test.apple() = assert.true(true)
+test_zebra() = assert_true(true)
+test_apple() = assert_true(true)
 ''',
         );
 
         expect(
           platformConsole.outLines.take(2),
-          equals([passLine('test.zebra'), passLine('test.apple')]),
+          equals([passLine('test_zebra'), passLine('test_apple')]),
         );
       });
 
@@ -2102,8 +2162,8 @@ test.apple() = assert.true(true)
           ['--test', 'tests.prm'],
           console: console,
           readFile: (_) => '''
-test.only() = assert.true(true)
-main() = console.writeLn("main ran")
+test_only() = assert_true(true)
+main() = console_writeLn("main ran")
 ''',
         );
 
@@ -2125,7 +2185,7 @@ main() = console.writeLn("main ran")
         runCli(
           ['--test', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.only() = assert.true(true)',
+          readFile: (_) => 'test_only() = assert_true(true)',
         );
 
         // The REPL banner is the observable sign of a fallthrough.
@@ -2140,18 +2200,18 @@ main() = console.writeLn("main ran")
         final int code = runCli(
           ['--test', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.stillEqual() = assert.notEqual(1, 1)',
+          readFile: (_) => 'test_stillEqual() = assert_notEqual(1, 1)',
         );
 
         const String detail =
-            '      Assertion error: "assert.notEqual" failed: '
+            '      Assertion error: "assert_notEqual" failed: '
             'expected not 1, actual 1';
 
         expect(code, equals(1));
         expect(
           platformConsole.outLines,
           equals([
-            failLine('test.stillEqual'),
+            failLine('test_stillEqual'),
             detail,
             '',
             '1 test: 1 failed',
@@ -2166,18 +2226,18 @@ main() = console.writeLn("main ran")
         final int code = runCli(
           ['--test', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.notBoolean() = assert.true(1)',
+          readFile: (_) => 'test_notBoolean() = assert_true(1)',
         );
 
         const String detail =
             '      Runtime error: Invalid argument types for function '
-            '"assert.true". Expected: (Boolean). Actual: (Number)';
+            '"assert_true". Expected: (Boolean). Actual: (Number)';
 
         expect(code, equals(1));
         expect(
           platformConsole.outLines,
           equals([
-            errorLine('test.notBoolean'),
+            errorLine('test_notBoolean'),
             detail,
             '',
             '1 test: 1 error',
@@ -2192,15 +2252,15 @@ main() = console.writeLn("main ran")
         final int code = runCli(
           ['--test', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.bad() = 42',
+          readFile: (_) => 'test_bad() = 42',
         );
 
         expect(code, equals(1));
         expect(
           platformConsole.outLines,
           equals([
-            errorLine('test.bad'),
-            '      test "test.bad" did not return true (returned 42)',
+            errorLine('test_bad'),
+            '      test "test_bad" did not return true (returned 42)',
             '',
             '1 test: 1 error',
           ]),
@@ -2214,15 +2274,15 @@ main() = console.writeLn("main ran")
         final int code = runCli(
           ['--test', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.bad() = "true"',
+          readFile: (_) => 'test_bad() = "true"',
         );
 
         expect(code, equals(1));
         expect(
           platformConsole.outLines,
           equals([
-            errorLine('test.bad'),
-            '      test "test.bad" did not return true (returned "true")',
+            errorLine('test_bad'),
+            '      test "test_bad" did not return true (returned "true")',
             '',
             '1 test: 1 error',
           ]),
@@ -2237,9 +2297,9 @@ main() = console.writeLn("main ran")
           ['--test', 'tests.prm'],
           console: console,
           readFile: (_) => '''
-test.math.addition() = assert.equal(1 + 1, 2)
-test.stillEqual() = assert.notEqual(1, 1)
-test.notBoolean() = assert.true(1)
+test_math_addition() = assert_equal(1 + 1, 2)
+test_stillEqual() = assert_notEqual(1, 1)
+test_notBoolean() = assert_true(1)
 ''',
         );
 
@@ -2258,9 +2318,9 @@ test.notBoolean() = assert.true(1)
           ['--test', 'tests.prm'],
           console: console,
           readFile: (_) => '''
-test.ok() = assert.true(true)
-test.stillEqual() = assert.notEqual(1, 1)
-test.notBoolean() = assert.true(1)
+test_ok() = assert_true(true)
+test_stillEqual() = assert_notEqual(1, 1)
+test_notBoolean() = assert_true(1)
 ''',
         );
 
@@ -2269,15 +2329,15 @@ test.notBoolean() = assert.true(1)
         // change what the runner emits.
         expect(
           platformConsole.outLines[0],
-          equals('\x1b[32mPASS\x1b[0m  test.ok'),
+          equals('\x1b[32mPASS\x1b[0m  test_ok'),
         );
         expect(
           platformConsole.outLines[1],
-          equals('\x1b[31mFAIL\x1b[0m  test.stillEqual'),
+          equals('\x1b[31mFAIL\x1b[0m  test_stillEqual'),
         );
         expect(
           platformConsole.outLines[3],
-          equals('\x1b[31mERROR\x1b[0m test.notBoolean'),
+          equals('\x1b[31mERROR\x1b[0m test_notBoolean'),
         );
       });
 
@@ -2288,7 +2348,7 @@ test.notBoolean() = assert.true(1)
         runCli(
           ['--test', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.only() = assert.true(true)',
+          readFile: (_) => 'test_only() = assert_true(true)',
         );
 
         expect(platformConsole.outLines.last, equals('1 test: 1 passed'));
@@ -2302,8 +2362,8 @@ test.notBoolean() = assert.true(1)
           ['--test', 'tests.prm'],
           console: console,
           readFile: (_) => '''
-test.helper(x) = assert.equal(x, x)
-test.real() = assert.true(true)
+test_helper(x) = assert_equal(x, x)
+test_real() = assert_true(true)
 ''',
         );
 
@@ -2311,14 +2371,14 @@ test.real() = assert.true(true)
         expect(
           platformConsole.errorLines.single,
           contains(
-            'Error: skipped "test.helper" — test functions must take no '
+            'Error: skipped "test_helper" — test functions must take no '
             'parameters',
           ),
         );
         expect(
           platformConsole.outLines,
           equals([
-            passLine('test.real'),
+            passLine('test_real'),
             '',
             '2 tests: 1 passed, 1 skipped',
           ]),
@@ -2340,7 +2400,7 @@ test.real() = assert.true(true)
         expect(
           platformConsole.errorLines.single,
           contains(
-            'Error: no zero-argument functions with the "test." prefix found '
+            'Error: no zero-argument functions with the "test_" prefix found '
             'in sample.prm',
           ),
         );
@@ -2353,7 +2413,7 @@ test.real() = assert.true(true)
         final int code = runCli(
           ['--test', 'broken.prm'],
           console: console,
-          readFile: (_) => 'test.x() = undefined_function(1)',
+          readFile: (_) => 'test_x() = undefined_function(1)',
         );
 
         expect(code, equals(2));
@@ -2381,7 +2441,7 @@ test.real() = assert.true(true)
         final int code = runCli(
           ['--test', '--watch', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.only() = assert.true(true)',
+          readFile: (_) => 'test_only() = assert_true(true)',
         );
 
         expect(code, equals(2));
@@ -2411,7 +2471,7 @@ test.real() = assert.true(true)
         final int code = runCli(
           ['--test', 'a.prm', 'b.prm'],
           console: console,
-          readFile: (_) => 'test.only() = assert.true(true)',
+          readFile: (_) => 'test_only() = assert_true(true)',
         );
 
         expect(code, equals(2));
@@ -2428,11 +2488,11 @@ test.real() = assert.true(true)
         final int code = runCli(
           ['tests.prm', '--test'],
           console: console,
-          readFile: (_) => 'test.only() = assert.true(true)',
+          readFile: (_) => 'test_only() = assert_true(true)',
         );
 
         expect(code, equals(0));
-        expect(platformConsole.outLines.first, equals(passLine('test.only')));
+        expect(platformConsole.outLines.first, equals(passLine('test_only')));
       });
 
       test('combines with --debug written first', () {
@@ -2442,7 +2502,7 @@ test.real() = assert.true(true)
         runCli(
           ['--debug', '--test', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.only() = assert.true(true)',
+          readFile: (_) => 'test_only() = assert_true(true)',
         );
 
         expect(
@@ -2452,7 +2512,7 @@ test.real() = assert.true(true)
         expect(
           platformConsole.outLines[1],
           matches(
-            RegExp('^${RegExp.escape(passLine('test.only'))} \\[\\d+ms\\]\$'),
+            RegExp('^${RegExp.escape(passLine('test_only'))} \\[\\d+ms\\]\$'),
           ),
         );
       });
@@ -2464,7 +2524,7 @@ test.real() = assert.true(true)
         runCli(
           ['--test', 'tests.prm', '--debug'],
           console: console,
-          readFile: (_) => 'test.only() = assert.true(true)',
+          readFile: (_) => 'test_only() = assert_true(true)',
         );
 
         expect(
@@ -2474,7 +2534,7 @@ test.real() = assert.true(true)
         expect(
           platformConsole.outLines[1],
           matches(
-            RegExp('^${RegExp.escape(passLine('test.only'))} \\[\\d+ms\\]\$'),
+            RegExp('^${RegExp.escape(passLine('test_only'))} \\[\\d+ms\\]\$'),
           ),
         );
       });
@@ -2486,7 +2546,7 @@ test.real() = assert.true(true)
         runCli(
           ['--test', '--debug', 'tests.prm'],
           console: console,
-          readFile: (_) => 'test.bad() = assert.equal(1, 2)',
+          readFile: (_) => 'test_bad() = assert_equal(1, 2)',
         );
 
         expect(
@@ -2496,7 +2556,7 @@ test.real() = assert.true(true)
         expect(
           platformConsole.outLines[2],
           equals(
-            '      Assertion error: "assert.equal" failed: '
+            '      Assertion error: "assert_equal" failed: '
             'expected 2, actual 1',
           ),
         );
@@ -2511,12 +2571,12 @@ test.real() = assert.true(true)
           console: console,
           readFile: (_) => '''
 unused(x) = 1
-test.only() = assert.equal(unused(1), 1)
+test_only() = assert_equal(unused(1), 1)
 ''',
         );
 
         expect(platformConsole.errorLines.join('\n'), contains('Warning'));
-        expect(platformConsole.outLines.first, equals(passLine('test.only')));
+        expect(platformConsole.outLines.first, equals(passLine('test_only')));
       });
 
       test('aborts on a non-RuntimeError, keeping the partial report', () {
@@ -2526,22 +2586,22 @@ test.only() = assert.equal(unused(1), 1)
         final int code = runCli(
           ['--test', 'tests.prm'],
           console: console,
-          compiler: const _ExplodingCompiler('test.second()'),
+          compiler: const _ExplodingCompiler('test_second()'),
           readFile: (_) => '''
-test.first() = assert.true(true)
-test.second() = assert.true(true)
-test.third() = assert.true(true)
+test_first() = assert_true(true)
+test_second() = assert_true(true)
+test_third() = assert_true(true)
 ''',
         );
 
         expect(code, equals(2));
         expect(
           platformConsole.outLines,
-          equals([passLine('test.first'), '', '1 test: 1 passed']),
+          equals([passLine('test_first'), '', '1 test: 1 passed']),
         );
         expect(
           platformConsole.errorLines.single,
-          contains('Error: aborted at "test.second"'),
+          contains('Error: aborted at "test_second"'),
         );
       });
 
@@ -2552,8 +2612,8 @@ test.third() = assert.true(true)
         final int code = runCli(
           ['--test', 'tests.prm'],
           console: console,
-          compiler: const _ExplodingCompiler('test.first()'),
-          readFile: (_) => 'test.first() = assert.true(true)',
+          compiler: const _ExplodingCompiler('test_first()'),
+          readFile: (_) => 'test_first() = assert_true(true)',
         );
 
         // "0 tests: 0 passed" would read green on a run that measured nothing.
@@ -2561,7 +2621,7 @@ test.third() = assert.true(true)
         expect(platformConsole.outLines, isEmpty);
         expect(
           platformConsole.errorLines.single,
-          contains('Error: aborted at "test.first"'),
+          contains('Error: aborted at "test_first"'),
         );
       });
 

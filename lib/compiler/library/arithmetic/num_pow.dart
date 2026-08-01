@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumPow extends NativeFunctionTerm {
   const NumPow()
     : super(
-        name: 'num.pow',
+        name: 'num_pow',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

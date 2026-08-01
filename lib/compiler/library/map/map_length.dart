@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MapLength extends NativeFunctionTerm {
   const MapLength()
     : super(
-        name: 'map.length',
+        name: 'map_length',
         parameters: const [
           Parameter.map('a'),
         ],

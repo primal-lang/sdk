@@ -73,7 +73,7 @@ class PlatformConsoleWeb extends PlatformConsoleBase {
 
   @override
   String readLine() =>
-      throw const UnimplementedFunctionWebError('console.read');
+      throw const UnimplementedFunctionWebError('console_read');
 }
 ```
 
@@ -150,11 +150,11 @@ The SDK provides platform abstractions for five domains:
 
 Several Primal language features require platform-specific behavior:
 
-1. **File system operations** - `file.read`, `file.write`, `directory.list` require `dart:io` APIs unavailable in browsers
+1. **File system operations** - `file_read`, `file_write`, `directory_list` require `dart:io` APIs unavailable in browsers
 
-2. **Console I/O** - `console.read` requires `stdin` which has no browser equivalent
+2. **Console I/O** - `console_read` requires `stdin` which has no browser equivalent
 
-3. **Environment variables** - `env.get` accesses `Platform.environment` from `dart:io`
+3. **Environment variables** - `env_get` accesses `Platform.environment` from `dart:io`
 
 4. **Path handling** - Platform-specific path separators and resolution
 

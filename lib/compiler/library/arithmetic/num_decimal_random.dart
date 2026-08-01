@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumDecimalRandom extends NativeFunctionTerm {
   const NumDecimalRandom()
     : super(
-        name: 'num.decimalRandom',
+        name: 'num_decimalRandom',
         parameters: const [],
       );
 

@@ -869,7 +869,7 @@ void main() {
 
     test('string concatenation equivalent in list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = [str.concat("Hello", " World")]',
+        'main() = [str_concat("Hello", " World")]',
       );
       checkResult(runtime, ['"Hello World"']);
     });
@@ -1105,13 +1105,13 @@ void main() {
 
   group('Additional Number Edge Cases', () {
     test('positive infinity', () {
-      final RuntimeFacade runtime = getRuntime('main() = num.infinity()');
+      final RuntimeFacade runtime = getRuntime('main() = num_infinity()');
       checkResult(runtime, double.infinity);
     });
 
     test('negative infinity', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = num.negative(num.infinity())',
+        'main() = num_negative(num_infinity())',
       );
       checkResult(runtime, double.negativeInfinity);
     });

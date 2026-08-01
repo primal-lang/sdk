@@ -3,13 +3,13 @@
   Output: the list of all the divisors of that number
 */
 
-divisors(n) = divisors.helper(n, 1)
+divisors(n) = divisors_helper(n, 1)
 
-divisors.helper(n, x) = if (x > n)
+divisors_helper(n, x) = if (x > n)
                             []
                         else if ((n % x) == 0)
-                            x + divisors.helper(n, x + 1)
+                            x + divisors_helper(n, x + 1)
                         else
-                            divisors.helper(n, x + 1)
+                            divisors_helper(n, x + 1)
 
 main() = divisors(10)

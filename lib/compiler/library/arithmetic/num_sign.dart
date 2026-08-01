@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumSign extends NativeFunctionTerm {
   const NumSign()
     : super(
-        name: 'num.sign',
+        name: 'num_sign',
         parameters: const [
           Parameter.number('a'),
         ],

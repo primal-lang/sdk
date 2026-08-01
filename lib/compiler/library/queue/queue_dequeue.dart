@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class QueueDequeue extends NativeFunctionTerm {
   const QueueDequeue()
     : super(
-        name: 'queue.dequeue',
+        name: 'queue_dequeue',
         parameters: const [
           Parameter.queue('a'),
         ],

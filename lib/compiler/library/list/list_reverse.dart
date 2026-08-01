@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListReverse extends NativeFunctionTerm {
   const ListReverse()
     : super(
-        name: 'list.reverse',
+        name: 'list_reverse',
         parameters: const [
           Parameter.list('a'),
         ],

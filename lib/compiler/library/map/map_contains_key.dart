@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class MapContainsKey extends NativeFunctionTerm {
   const MapContainsKey()
     : super(
-        name: 'map.containsKey',
+        name: 'map_containsKey',
         parameters: const [
           Parameter.map('a'),
           Parameter.hashable('b'),

@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsTimestamp extends NativeFunctionTerm {
   const IsTimestamp()
     : super(
-        name: 'is.timestamp',
+        name: 'is_timestamp',
         parameters: const [
           Parameter.any('a'),
         ],

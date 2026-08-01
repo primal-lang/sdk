@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileRead extends NativeFunctionTerm {
   const FileRead()
     : super(
-        name: 'file.read',
+        name: 'file_read',
         parameters: const [
           Parameter.file('a'),
         ],

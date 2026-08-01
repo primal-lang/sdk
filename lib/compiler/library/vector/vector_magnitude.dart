@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class VectorMagnitude extends NativeFunctionTerm {
   const VectorMagnitude()
     : super(
-        name: 'vector.magnitude',
+        name: 'vector_magnitude',
         parameters: const [
           Parameter.vector('a'),
         ],

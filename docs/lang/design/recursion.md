@@ -9,7 +9,7 @@ sources:
 
 # Recursion
 
-**TLDR**: Primal has no loop constructs. Recursion is the fundamental mechanism for iteration, with higher-order functions like `list.map` and `list.reduce` providing declarative alternatives for common patterns.
+**TLDR**: Primal has no loop constructs. Recursion is the fundamental mechanism for iteration, with higher-order functions like `list_map` and `list_reduce` providing declarative alternatives for common patterns.
 
 ## Overview
 
@@ -53,8 +53,8 @@ Note: This naive implementation has exponential time complexity. See the accumul
 Recursion naturally processes list structures:
 
 ```
-sum(items) = if (list.isEmpty(items)) 0
-             else list.first(items) + sum(list.rest(items))
+sum(items) = if (list_isEmpty(items)) 0
+             else list_first(items) + sum(list_rest(items))
 ```
 
 ```
@@ -104,8 +104,8 @@ This version runs in linear time instead of exponential time.
 
 ```
 reverseHelper(items, accumulator) =
-    if (list.isEmpty(items)) accumulator
-    else reverseHelper(list.rest(items), list.insertStart(accumulator, list.first(items)))
+    if (list_isEmpty(items)) accumulator
+    else reverseHelper(list_rest(items), list_insertStart(accumulator, list_first(items)))
 
 reverse(items) = reverseHelper(items, [])
 ```
@@ -114,64 +114,64 @@ reverse(items) = reverseHelper(items, [])
 
 For many common patterns, Primal's higher-order functions provide cleaner, more declarative alternatives to explicit recursion.
 
-### Using list.map
+### Using list_map
 
 Transform each element without explicit recursion:
 
 ```
 // Explicit recursion
-doubleAll(items) = if (list.isEmpty(items)) []
-                   else list.insertStart(doubleAll(list.rest(items)),
-                                         list.first(items) * 2)
+doubleAll(items) = if (list_isEmpty(items)) []
+                   else list_insertStart(doubleAll(list_rest(items)),
+                                         list_first(items) * 2)
 
-// Using list.map
-doubleAll(items) = list.map(items, (x) => x * 2)
+// Using list_map
+doubleAll(items) = list_map(items, (x) => x * 2)
 ```
 
 ```
 doubleAll([1, 2, 3]) // returns [2, 4, 6]
 ```
 
-### Using list.filter
+### Using list_filter
 
 Select elements matching a condition:
 
 ```
 // Explicit recursion
-evens(items) = if (list.isEmpty(items)) []
-               else if (list.first(items) % 2 == 0)
-                    list.insertStart(evens(list.rest(items)), list.first(items))
-               else evens(list.rest(items))
+evens(items) = if (list_isEmpty(items)) []
+               else if (list_first(items) % 2 == 0)
+                    list_insertStart(evens(list_rest(items)), list_first(items))
+               else evens(list_rest(items))
 
-// Using list.filter
-evens(items) = list.filter(items, (x) => x % 2 == 0)
+// Using list_filter
+evens(items) = list_filter(items, (x) => x % 2 == 0)
 ```
 
 ```
 evens([1, 2, 3, 4, 5, 6]) // returns [2, 4, 6]
 ```
 
-### Using list.reduce
+### Using list_reduce
 
 Combine all elements into a single value:
 
 ```
 // Explicit recursion
-sum(items) = if (list.isEmpty(items)) 0
-             else list.first(items) + sum(list.rest(items))
+sum(items) = if (list_isEmpty(items)) 0
+             else list_first(items) + sum(list_rest(items))
 
-// Using list.reduce
-sum(items) = list.reduce(items, 0, num.add)
+// Using list_reduce
+sum(items) = list_reduce(items, 0, num_add)
 ```
 
 ```
 sum([1, 2, 3, 4, 5]) // returns 15
 ```
 
-The `list.reduce` function takes a list, an initial value, and a combining function. It processes each element, accumulating the result.
+The `list_reduce` function takes a list, an initial value, and a combining function. It processes each element, accumulating the result.
 
 ```
-product(items) = list.reduce(items, 1, num.mul)
+product(items) = list_reduce(items, 1, num_mul)
 product([2, 3, 4]) // returns 24
 ```
 
@@ -183,18 +183,18 @@ Some problems are naturally solved by dividing them into smaller subproblems.
 
 ```
 merge(left, right) =
-    if (list.isEmpty(left)) right
-    else if (list.isEmpty(right)) left
-    else if (list.first(left) <= list.first(right))
-         list.insertStart(merge(list.rest(left), right), list.first(left))
-    else list.insertStart(merge(left, list.rest(right)), list.first(right))
+    if (list_isEmpty(left)) right
+    else if (list_isEmpty(right)) left
+    else if (list_first(left) <= list_first(right))
+         list_insertStart(merge(list_rest(left), right), list_first(left))
+    else list_insertStart(merge(left, list_rest(right)), list_first(right))
 
 mergeSort(items) =
-    let length = list.length(items) in
+    let length = list_length(items) in
     if (length <= 1) items
     else let mid = length / 2,
-             left = list.take(items, mid),
-             right = list.drop(items, mid)
+             left = list_take(items, mid),
+             right = list_drop(items, mid)
          in merge(mergeSort(left), mergeSort(right))
 ```
 
@@ -204,12 +204,12 @@ mergeSort(items) =
 binarySearch(items, target, low, high) =
     if (low > high) -1
     else let mid = (low + high) / 2,
-             midValue = list.at(items, mid)
+             midValue = list_at(items, mid)
          in if (midValue == target) mid
             else if (midValue < target) binarySearch(items, target, mid + 1, high)
             else binarySearch(items, target, low, mid - 1)
 
-search(items, target) = binarySearch(items, target, 0, list.length(items) - 1)
+search(items, target) = binarySearch(items, target, 0, list_length(items) - 1)
 ```
 
 ## Common Patterns Summary
@@ -218,9 +218,9 @@ search(items, target) = binarySearch(items, target, 0, list.length(items) - 1)
 | ------------------ | ------------------------------------------------ | -------------------------------- |
 | Basic recursion    | Simple problems with clear base case             | `factorial`, `fibonacci`         |
 | Accumulator        | When you need tail recursion or to carry state   | `factorialTail`, `reverseHelper` |
-| `list.map`         | Transform each element uniformly                 | `doubleAll`, `toUpperCase`       |
-| `list.filter`      | Select elements matching a condition             | `evens`, `positives`             |
-| `list.reduce`      | Combine elements into a single value             | `sum`, `product`, `max`          |
+| `list_map`         | Transform each element uniformly                 | `doubleAll`, `toUpperCase`       |
+| `list_filter`      | Select elements matching a condition             | `evens`, `positives`             |
+| `list_reduce`      | Combine elements into a single value             | `sum`, `product`, `max`          |
 | Divide and conquer | Problems that split into independent subproblems | `mergeSort`, `binarySearch`      |
 
 ## Recursion Limits
@@ -228,7 +228,7 @@ search(items, target) = binarySearch(items, target, 0, list.length(items) - 1)
 Primal enforces a maximum recursion depth of 1000 to prevent stack overflow. If your recursive function exceeds this limit, consider:
 
 1. Using the accumulator pattern for tail recursion
-2. Replacing explicit recursion with higher-order functions like `list.reduce`
+2. Replacing explicit recursion with higher-order functions like `list_reduce`
 3. Restructuring the algorithm to reduce recursion depth
 
 ## Related Topics

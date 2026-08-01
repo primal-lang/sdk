@@ -27,8 +27,8 @@ Primal is expression-oriented, but practical scripting still needs a readable wa
 main() =
 do
     xs = [1, 2, 3, 4]
-    evens = list.filter(xs, isEven)
-    doubled = list.map(evens, double)
+    evens = list_filter(xs, isEven)
+    doubled = list_map(evens, double)
     doubled
 end
 ```
@@ -37,8 +37,8 @@ Blocks should also support wildcard bindings for sequencing effectful expression
 
 ```primal
 main() = do
-            _ = console.writeLn("starting")
-            value = console.read()
+            _ = console_writeLn("starting")
+            value = console_read()
             value
          end
 ```
@@ -61,9 +61,9 @@ Allow evaluating expressions in order and returning the last one:
 
 ```
 main() = do
-            console.writeLn("Enter name:")
-            name = console.read()
-            console.writeLn("Hello, " + name)
+            console_writeLn("Enter name:")
+            name = console_read()
+            console_writeLn("Hello, " + name)
             name
          end
 ```

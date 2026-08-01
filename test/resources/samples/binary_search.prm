@@ -4,20 +4,20 @@
 */
 
 binarySearch(list, element) =
-    if (list.isEmpty(list))
+    if (list_isEmpty(list))
         false
     else
         let
-            index = num.floor(list.length(list) / 2)
+            index = num_floor(list_length(list) / 2)
         in
-            binarySearch.helper(list, element, index)
+            binarySearch_helper(list, element, index)
 
-binarySearch.helper(list, element, index) =
+binarySearch_helper(list, element, index) =
     if (element == list[index])
         true
     else if (element < list[index])
-        binarySearch(list.sublist(list, 0, index), element)
+        binarySearch(list_sublist(list, 0, index), element)
     else
-        binarySearch(list.sublist(list, index + 1, list.length(list)), element)
+        binarySearch(list_sublist(list, index + 1, list_length(list)), element)
 
 main() = binarySearch([1, 2, 3, 4, 6, 7, 8, 9, 10], 5)

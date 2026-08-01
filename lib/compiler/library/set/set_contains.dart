@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetContains extends NativeFunctionTerm {
   const SetContains()
     : super(
-        name: 'set.contains',
+        name: 'set_contains',
         parameters: const [
           Parameter.set('a'),
           Parameter.hashable('b'),

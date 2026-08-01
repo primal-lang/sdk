@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListReduce extends NativeFunctionTerm {
   const ListReduce()
     : super(
-        name: 'list.reduce',
+        name: 'list_reduce',
         parameters: const [
           Parameter.list('a'),
           Parameter.any('b'),

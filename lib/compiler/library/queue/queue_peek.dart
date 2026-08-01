@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class QueuePeek extends NativeFunctionTerm {
   const QueuePeek()
     : super(
-        name: 'queue.peek',
+        name: 'queue_peek',
         parameters: const [
           Parameter.queue('a'),
         ],

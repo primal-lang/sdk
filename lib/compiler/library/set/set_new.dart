@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetNew extends NativeFunctionTerm {
   const SetNew()
     : super(
-        name: 'set.new',
+        name: 'set_new',
         parameters: const [
           Parameter.list('a'),
         ],

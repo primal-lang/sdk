@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class ListChunk extends NativeFunctionTerm {
   const ListChunk()
     : super(
-        name: 'list.chunk',
+        name: 'list_chunk',
         parameters: const [
           Parameter.list('a'),
           Parameter.number('b'),

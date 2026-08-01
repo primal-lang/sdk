@@ -88,100 +88,100 @@ main() = foo([2])
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.insertStart prepends element to empty list', () {
+    test('list_insertStart prepends element to empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertStart([], 42)',
+        'main() = list_insertStart([], 42)',
       );
       checkResult(runtime, [42]);
     });
 
-    test('list.insertStart prepends element to non-empty list', () {
+    test('list_insertStart prepends element to non-empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertStart([true], 1)',
+        'main() = list_insertStart([true], 1)',
       );
       checkResult(runtime, [1, true]);
     });
 
-    test('list.insertEnd appends element to empty list', () {
+    test('list_insertEnd appends element to empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertEnd([], 42)',
+        'main() = list_insertEnd([], 42)',
       );
       checkResult(runtime, [42]);
     });
 
-    test('list.insertEnd appends element to non-empty list', () {
+    test('list_insertEnd appends element to non-empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertEnd([true], 1)',
+        'main() = list_insertEnd([true], 1)',
       );
       checkResult(runtime, [true, 1]);
     });
 
-    test('list.at returns element at given index', () {
+    test('list_at returns element at given index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([0, 1, 2], 1)',
+        'main() = list_at([0, 1, 2], 1)',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.at returns reduced expression at given index', () {
+    test('list_at returns reduced expression at given index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([0, 2 + 3, 4], 1)',
+        'main() = list_at([0, 2 + 3, 4], 1)',
       );
       checkResult(runtime, 5);
     });
 
-    test('list.set replaces element at given index', () {
+    test('list_set replaces element at given index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3, 4, 5], 2, 42)',
+        'main() = list_set([1, 2, 3, 4, 5], 2, 42)',
       );
       checkResult(runtime, [1, 2, 42, 4, 5]);
     });
 
-    test('list.set replaces first element', () {
+    test('list_set replaces first element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 0, 99)',
+        'main() = list_set([1, 2, 3], 0, 99)',
       );
       checkResult(runtime, [99, 2, 3]);
     });
 
-    test('list.set replaces last element', () {
+    test('list_set replaces last element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 2, 99)',
+        'main() = list_set([1, 2, 3], 2, 99)',
       );
       checkResult(runtime, [1, 2, 99]);
     });
 
-    test('list.set preserves list length', () {
+    test('list_set preserves list length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length(list.set([1, 2, 3, 4, 5], 2, 42))',
+        'main() = list_length(list_set([1, 2, 3, 4, 5], 2, 42))',
       );
       checkResult(runtime, 5);
     });
 
-    test('list.set in single element list', () {
+    test('list_set in single element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1], 0, 99)',
+        'main() = list_set([1], 0, 99)',
       );
       checkResult(runtime, [99]);
     });
 
-    test('list.set with string value', () {
+    test('list_set with string value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 1, "hello")',
+        'main() = list_set([1, 2, 3], 1, "hello")',
       );
       checkResult(runtime, [1, '"hello"', 3]);
     });
 
-    test('list.set with boolean value', () {
+    test('list_set with boolean value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 1, true)',
+        'main() = list_set([1, 2, 3], 1, true)',
       );
       checkResult(runtime, [1, true, 3]);
     });
 
-    test('list.set with nested list value', () {
+    test('list_set with nested list value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 1, [4, 5])',
+        'main() = list_set([1, 2, 3], 1, [4, 5])',
       );
       checkResult(runtime, [
         1,
@@ -190,219 +190,219 @@ main() = foo([2])
       ]);
     });
 
-    test('list.set evaluates value expression', () {
+    test('list_set evaluates value expression', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 1, 10 + 5)',
+        'main() = list_set([1, 2, 3], 1, 10 + 5)',
       );
       checkResult(runtime, [1, 15, 3]);
     });
 
-    test('list.join concatenates elements with separator', () {
+    test('list_join concatenates elements with separator', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join(["Hello", "world!"], ", ")',
+        'main() = list_join(["Hello", "world!"], ", ")',
       );
       checkResult(runtime, '"Hello, world!"');
     });
 
-    test('list.join returns empty string for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.join([], ",")');
+    test('list_join returns empty string for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_join([], ",")');
       checkResult(runtime, '""');
     });
 
-    test('list.length returns zero for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.length([])');
+    test('list_length returns zero for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_length([])');
       checkResult(runtime, 0);
     });
 
-    test('list.length returns count of elements', () {
+    test('list_length returns count of elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length([1, 2, 3])',
+        'main() = list_length([1, 2, 3])',
       );
       checkResult(runtime, 3);
     });
 
-    test('list.concat returns empty list when both lists are empty', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.concat([], [])');
+    test('list_concat returns empty list when both lists are empty', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_concat([], [])');
       checkResult(runtime, []);
     });
 
-    test('list.concat appends empty list to non-empty list', () {
+    test('list_concat appends empty list to non-empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([1, 2], [])',
+        'main() = list_concat([1, 2], [])',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.concat appends non-empty list to empty list', () {
+    test('list_concat appends non-empty list to empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([], [1, 2])',
+        'main() = list_concat([], [1, 2])',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.concat joins two non-empty lists', () {
+    test('list_concat joins two non-empty lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([1, 2], [3, 4])',
+        'main() = list_concat([1, 2], [3, 4])',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.isEmpty returns true for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.isEmpty([])');
+    test('list_isEmpty returns true for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_isEmpty([])');
       checkResult(runtime, true);
     });
 
-    test('list.isEmpty returns false for non-empty list', () {
+    test('list_isEmpty returns false for non-empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.isEmpty([1, 2, 3])',
+        'main() = list_isEmpty([1, 2, 3])',
       );
       checkResult(runtime, false);
     });
 
-    test('list.isNotEmpty returns false for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.isNotEmpty([])');
+    test('list_isNotEmpty returns false for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_isNotEmpty([])');
       checkResult(runtime, false);
     });
 
-    test('list.isNotEmpty returns true for non-empty list', () {
+    test('list_isNotEmpty returns true for non-empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.isNotEmpty([1, 2, 3])',
+        'main() = list_isNotEmpty([1, 2, 3])',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains returns false for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.contains([], 1)');
+    test('list_contains returns false for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_contains([], 1)');
       checkResult(runtime, false);
     });
 
-    test('list.contains returns true when element exists', () {
+    test('list_contains returns true when element exists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([1, 2, 3], 1)',
+        'main() = list_contains([1, 2, 3], 1)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains returns true when reduced expression matches', () {
+    test('list_contains returns true when reduced expression matches', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([1, 2 + 2, 3], 4)',
+        'main() = list_contains([1, 2 + 2, 3], 4)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains returns false when element does not exist', () {
+    test('list_contains returns false when element does not exist', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([1, 2, 3], 4)',
+        'main() = list_contains([1, 2, 3], 4)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.first', () {
+    test('list_first', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.first([1, 2, 3])',
+        'main() = list_first([1, 2, 3])',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.last', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.last([1, 2, 3])');
+    test('list_last', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_last([1, 2, 3])');
       checkResult(runtime, 3);
     });
 
-    test('list.init', () {
+    test('list_init', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.init([1, 2, 3, 4, 5])',
+        'main() = list_init([1, 2, 3, 4, 5])',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.rest returns empty list for empty input', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.rest([])');
+    test('list_rest returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_rest([])');
       checkResult(runtime, []);
     });
 
-    test('list.rest returns all elements except the first', () {
+    test('list_rest returns all elements except the first', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.rest([1, 2, 3, 4, 5])',
+        'main() = list_rest([1, 2, 3, 4, 5])',
       );
       checkResult(runtime, [2, 3, 4, 5]);
     });
 
-    test('list.take returns empty list when taking zero elements', () {
+    test('list_take returns empty list when taking zero elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3, 4, 5], 0)',
+        'main() = list_take([1, 2, 3, 4, 5], 0)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.take returns first n elements', () {
+    test('list_take returns first n elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3, 4, 5], 4)',
+        'main() = list_take([1, 2, 3, 4, 5], 4)',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.drop returns full list when dropping zero elements', () {
+    test('list_drop returns full list when dropping zero elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3, 4, 5], 0)',
+        'main() = list_drop([1, 2, 3, 4, 5], 0)',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.drop removes first n elements', () {
+    test('list_drop removes first n elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3, 4, 5], 2)',
+        'main() = list_drop([1, 2, 3, 4, 5], 2)',
       );
       checkResult(runtime, [3, 4, 5]);
     });
 
-    test('list.remove returns unchanged list when element not found', () {
+    test('list_remove returns unchanged list when element not found', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([1, 2, 3, 4, 5], 0)',
+        'main() = list_remove([1, 2, 3, 4, 5], 0)',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.remove removes single occurrence of element', () {
+    test('list_remove removes single occurrence of element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([1, 2, 3, 4, 5], 2)',
+        'main() = list_remove([1, 2, 3, 4, 5], 2)',
       );
       checkResult(runtime, [1, 3, 4, 5]);
     });
 
-    test('list.remove removes all occurrences of element', () {
+    test('list_remove removes all occurrences of element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([1, 2, 2, 4, 5], 2)',
+        'main() = list_remove([1, 2, 2, 4, 5], 2)',
       );
       checkResult(runtime, [1, 4, 5]);
     });
 
-    test('list.removeAt', () {
+    test('list_removeAt', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3, 4, 5], 2)',
+        'main() = list_removeAt([1, 2, 3, 4, 5], 2)',
       );
       checkResult(runtime, [1, 2, 4, 5]);
     });
 
-    test('list.reverse', () {
+    test('list_reverse', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reverse([1, 2, 3])',
+        'main() = list_reverse([1, 2, 3])',
       );
       checkResult(runtime, [3, 2, 1]);
     });
 
-    test('list.filled returns empty list when count is zero', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(0, 1)');
+    test('list_filled returns empty list when count is zero', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(0, 1)');
       checkResult(runtime, []);
     });
 
-    test('list.filled returns list with repeated value', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(3, 1)');
+    test('list_filled returns list with repeated value', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(3, 1)');
       checkResult(runtime, [1, 1, 1]);
     });
 
-    test('list.filled throws NegativeIndexError for negative count', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(-1, 1)');
+    test('list_filled throws NegativeIndexError for negative count', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(-1, 1)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -411,86 +411,86 @@ main() = foo([2])
             'message',
             allOf(
               contains('-1'),
-              contains('list.filled'),
+              contains('list_filled'),
             ),
           ),
         ),
       );
     });
 
-    test('list.indexOf returns -1 when element not found', () {
+    test('list_indexOf returns -1 when element not found', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([1, 2, 3], 4)',
+        'main() = list_indexOf([1, 2, 3], 4)',
       );
       checkResult(runtime, -1);
     });
 
-    test('list.indexOf returns index of existing element', () {
+    test('list_indexOf returns index of existing element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([1, 2, 3], 2)',
+        'main() = list_indexOf([1, 2, 3], 2)',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.swap', () {
+    test('list_swap', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3, 4, 5], 1, 3)',
+        'main() = list_swap([1, 2, 3, 4, 5], 1, 3)',
       );
       checkResult(runtime, [1, 4, 3, 2, 5]);
     });
 
-    test('list.sublist', () {
+    test('list_sublist', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3, 4, 5], 1, 3)',
+        'main() = list_sublist([1, 2, 3, 4, 5], 1, 3)',
       );
       checkResult(runtime, [2, 3]);
     });
 
-    test('list.map returns empty list for empty input', () {
+    test('list_map returns empty list for empty input', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([], num.abs)',
+        'main() = list_map([], num_abs)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.map applies function to each element', () {
+    test('list_map applies function to each element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, -2 - 6, 3 * -3, -4, num.negative(7)], num.abs)',
+        'main() = list_map([1, -2 - 6, 3 * -3, -4, num_negative(7)], num_abs)',
       );
       checkResult(runtime, [1, 8, 9, 4, 7]);
     });
 
-    test('list.filter returns empty list for empty input', () {
+    test('list_filter returns empty list for empty input', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([], num.isEven)',
+        'main() = list_filter([], num_isEven)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.filter keeps only elements matching predicate', () {
+    test('list_filter keeps only elements matching predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([-3, -2, -1, 0, 1, 2, 3], num.isEven)',
+        'main() = list_filter([-3, -2, -1, 0, 1, 2, 3], num_isEven)',
       );
       checkResult(runtime, [-2, 0, 2]);
     });
 
-    test('list.filter returns empty list when no elements match', () {
+    test('list_filter returns empty list when no elements match', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([-3, -2, -1, 1, 2, 3], num.isZero)',
+        'main() = list_filter([-3, -2, -1, 1, 2, 3], num_isZero)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.filter throws when predicate returns non-boolean', () {
+    test('list_filter throws when predicate returns non-boolean', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([1, 2, 3], num.abs)',
+        'main() = list_filter([1, 2, 3], num_abs)',
       );
       expect(runtime.executeMain, throwsA(isA<InvalidArgumentTypesError>()));
     });
 
-    test('list.all throws when predicate returns non-boolean', () {
+    test('list_all throws when predicate returns non-boolean', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([1, 2, 3], num.abs)',
+        'main() = list_all([1, 2, 3], num_abs)',
       );
       expect(
         runtime.executeMain,
@@ -499,7 +499,7 @@ main() = foo([2])
             (e) => e.toString(),
             'message',
             allOf(
-              contains('list.all'),
+              contains('list_all'),
               contains('Boolean'),
               contains('Number'),
             ),
@@ -508,9 +508,9 @@ main() = foo([2])
       );
     });
 
-    test('list.any throws when predicate returns non-boolean', () {
+    test('list_any throws when predicate returns non-boolean', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([1, 2, 3], num.abs)',
+        'main() = list_any([1, 2, 3], num_abs)',
       );
       expect(
         runtime.executeMain,
@@ -519,7 +519,7 @@ main() = foo([2])
             (e) => e.toString(),
             'message',
             allOf(
-              contains('list.any'),
+              contains('list_any'),
               contains('Boolean'),
               contains('Number'),
             ),
@@ -528,9 +528,9 @@ main() = foo([2])
       );
     });
 
-    test('list.none throws when predicate returns non-boolean', () {
+    test('list_none throws when predicate returns non-boolean', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([1, 2, 3], num.abs)',
+        'main() = list_none([1, 2, 3], num_abs)',
       );
       expect(
         runtime.executeMain,
@@ -539,7 +539,7 @@ main() = foo([2])
             (e) => e.toString(),
             'message',
             allOf(
-              contains('list.none'),
+              contains('list_none'),
               contains('Boolean'),
               contains('Number'),
             ),
@@ -548,135 +548,135 @@ main() = foo([2])
       );
     });
 
-    test('list.reduce returns initial value for empty list', () {
+    test('list_reduce returns initial value for empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([], 0, num.add)',
+        'main() = list_reduce([], 0, num_add)',
       );
       checkResult(runtime, 0);
     });
 
-    test('list.reduce accumulates values with function', () {
+    test('list_reduce accumulates values with function', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([1, 2, 3, 4, 5], 10, num.add)',
+        'main() = list_reduce([1, 2, 3, 4, 5], 10, num_add)',
       );
       checkResult(runtime, 25);
     });
 
-    test('list.all returns true for empty list', () {
+    test('list_all returns true for empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([], num.isEven)',
+        'main() = list_all([], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.all returns false when some elements fail predicate', () {
+    test('list_all returns false when some elements fail predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([2, 4, 5], num.isEven)',
+        'main() = list_all([2, 4, 5], num_isEven)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.all returns true when all elements pass predicate', () {
+    test('list_all returns true when all elements pass predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([2, 4, 6], num.isEven)',
+        'main() = list_all([2, 4, 6], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.none returns true for empty list', () {
+    test('list_none returns true for empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([], num.isEven)',
+        'main() = list_none([], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.none returns false when some elements match predicate', () {
+    test('list_none returns false when some elements match predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([1, 2, 3], num.isEven)',
+        'main() = list_none([1, 2, 3], num_isEven)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.none returns true when no elements match predicate', () {
+    test('list_none returns true when no elements match predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([1, 3, 7], num.isEven)',
+        'main() = list_none([1, 3, 7], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.any returns false for empty list', () {
+    test('list_any returns false for empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([], num.isEven)',
+        'main() = list_any([], num_isEven)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.any returns false when no elements match predicate', () {
+    test('list_any returns false when no elements match predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([1, 3, 5], num.isEven)',
+        'main() = list_any([1, 3, 5], num_isEven)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.any returns true when some elements match predicate', () {
+    test('list_any returns true when some elements match predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([1, 2, 3], num.isEven)',
+        'main() = list_any([1, 2, 3], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.zip returns empty list for two empty lists', () {
+    test('list_zip returns empty list for two empty lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([], [], num.add)',
+        'main() = list_zip([], [], num_add)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.zip pads shorter second list with unzipped elements', () {
+    test('list_zip pads shorter second list with unzipped elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 3, 5], [2, 4], num.add)',
+        'main() = list_zip([1, 3, 5], [2, 4], num_add)',
       );
       checkResult(runtime, [3, 7, 5]);
     });
 
-    test('list.zip pads shorter first list with unzipped elements', () {
+    test('list_zip pads shorter first list with unzipped elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 3], [2, 4, 6], num.add)',
+        'main() = list_zip([1, 3], [2, 4, 6], num_add)',
       );
       checkResult(runtime, [3, 7, 6]);
     });
 
-    test('list.zip combines equal-length lists element-wise', () {
+    test('list_zip combines equal-length lists element-wise', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 3, 5], [2, 4, 6], num.add)',
+        'main() = list_zip([1, 3, 5], [2, 4, 6], num_add)',
       );
       checkResult(runtime, [3, 7, 11]);
     });
 
-    test('list.zip evaluates expressions before combining', () {
+    test('list_zip evaluates expressions before combining', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1 + 1 + 1, 3, 5], [2, 4, 6], num.add)',
+        'main() = list_zip([1 + 1 + 1, 3, 5], [2, 4, 6], num_add)',
       );
       checkResult(runtime, [5, 7, 11]);
     });
 
-    test('list.sort returns empty list for empty input', () {
+    test('list_sort returns empty list for empty input', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([], num.compare)',
+        'main() = list_sort([], num_compare)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.sort sorts numbers in ascending order', () {
+    test('list_sort sorts numbers in ascending order', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([3, 1, 5, 2, 4], num.compare)',
+        'main() = list_sort([3, 1, 5, 2, 4], num_compare)',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.sort sorts strings in alphabetical order', () {
+    test('list_sort sorts strings in alphabetical order', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort(["Peter", "Alice", "John", "Bob", "Daniel"], str.compare)',
+        'main() = list_sort(["Peter", "Alice", "John", "Bob", "Daniel"], str_compare)',
       );
       checkResult(runtime, [
         '"Alice"',
@@ -687,131 +687,131 @@ main() = foo([2])
       ]);
     });
 
-    test('list.sort handles comparator returning decimal values', () {
+    test('list_sort handles comparator returning decimal values', () {
       final RuntimeFacade runtime = getRuntime('''
-decimalCompare(a, b) = num.mul(num.sub(a, b), 1.5)
-main() = list.sort([3, 1, 5, 2, 4], decimalCompare)
+decimalCompare(a, b) = num_mul(num_sub(a, b), 1.5)
+main() = list_sort([3, 1, 5, 2, 4], decimalCompare)
 ''');
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.init returns empty list for single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.init([1])');
+    test('list_init returns empty list for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_init([1])');
       checkResult(runtime, []);
     });
 
-    test('list.init returns empty list for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.init([])');
+    test('list_init returns empty list for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_init([])');
       checkResult(runtime, []);
     });
 
-    test('list.rest returns empty list for single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.rest([1])');
+    test('list_rest returns empty list for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_rest([1])');
       checkResult(runtime, []);
     });
 
-    test('list.reverse returns empty list for empty input', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.reverse([])');
+    test('list_reverse returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_reverse([])');
       checkResult(runtime, []);
     });
 
-    test('list.reverse returns same list for single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.reverse([42])');
+    test('list_reverse returns same list for single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_reverse([42])');
       checkResult(runtime, [42]);
     });
 
-    test('list.indexOf returns -1 for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.indexOf([], 1)');
+    test('list_indexOf returns -1 for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_indexOf([], 1)');
       checkResult(runtime, -1);
     });
 
-    test('list.join returns element string for single element list', () {
+    test('list_join returns element string for single element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join(["hello"], ", ")',
+        'main() = list_join(["hello"], ", ")',
       );
       checkResult(runtime, '"hello"');
     });
 
-    test('list.sublist returns empty list for equal start and end', () {
+    test('list_sublist returns empty list for equal start and end', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 1, 1)',
+        'main() = list_sublist([1, 2, 3], 1, 1)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.sublist returns full list for zero to length', () {
+    test('list_sublist returns full list for zero to length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 0, 3)',
+        'main() = list_sublist([1, 2, 3], 0, 3)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.swap with same index returns unchanged list', () {
+    test('list_swap with same index returns unchanged list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], 1, 1)',
+        'main() = list_swap([1, 2, 3], 1, 1)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.remove returns empty list for empty input', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.remove([], 1)');
+    test('list_remove returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_remove([], 1)');
       checkResult(runtime, []);
     });
 
-    test('list.first returns element for single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.first([42])');
+    test('list_first returns element for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_first([42])');
       checkResult(runtime, 42);
     });
 
-    test('list.last returns element for single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.last([42])');
+    test('list_last returns element for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_last([42])');
       checkResult(runtime, 42);
     });
 
-    test('list.zip with first list empty returns second list elements', () {
+    test('list_zip with first list empty returns second list elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([], [1, 2, 3], num.add)',
+        'main() = list_zip([], [1, 2, 3], num_add)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.zip with second list empty returns first list elements', () {
+    test('list_zip with second list empty returns first list elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 2, 3], [], num.add)',
+        'main() = list_zip([1, 2, 3], [], num_add)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.sort returns single element list unchanged', () {
+    test('list_sort returns single element list unchanged', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([42], num.compare)',
+        'main() = list_sort([42], num_compare)',
       );
       checkResult(runtime, [42]);
     });
 
-    test('list.sort handles list with duplicate values', () {
+    test('list_sort handles list with duplicate values', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([3, 1, 2, 1, 3], num.compare)',
+        'main() = list_sort([3, 1, 2, 1, 3], num_compare)',
       );
       checkResult(runtime, [1, 1, 2, 3, 3]);
     });
 
-    test('list.sort handles already sorted list', () {
+    test('list_sort handles already sorted list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([1, 2, 3, 4, 5], num.compare)',
+        'main() = list_sort([1, 2, 3, 4, 5], num_compare)',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.sort handles reverse sorted list', () {
+    test('list_sort handles reverse sorted list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([5, 4, 3, 2, 1], num.compare)',
+        'main() = list_sort([5, 4, 3, 2, 1], num_compare)',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.at on empty list throws IndexOutOfBoundsError', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.at([], 0)');
+    test('list_at on empty list throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_at([], 0)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -821,15 +821,15 @@ main() = list.sort([3, 1, 5, 2, 4], decimalCompare)
             allOf(
               contains('0'),
               contains('length: 0'),
-              contains('list.at'),
+              contains('list_at'),
             ),
           ),
         ),
       );
     });
 
-    test('list.set on empty list throws IndexOutOfBoundsError', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.set([], 0, 42)');
+    test('list_set on empty list throws IndexOutOfBoundsError', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_set([], 0, 42)');
       expect(
         runtime.executeMain,
         throwsA(
@@ -839,23 +839,23 @@ main() = list.sort([3, 1, 5, 2, 4], decimalCompare)
             allOf(
               contains('0'),
               contains('length: 0'),
-              contains('list.set'),
+              contains('list_set'),
             ),
           ),
         ),
       );
     });
 
-    test('list.sublist on empty list with zero indices returns empty list', () {
+    test('list_sublist on empty list with zero indices returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([], 0, 0)',
+        'main() = list_sublist([], 0, 0)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.sublist throws NegativeIndexError for negative end index', () {
+    test('list_sublist throws NegativeIndexError for negative end index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 0, -1)',
+        'main() = list_sublist([1, 2, 3], 0, -1)',
       );
       expect(
         runtime.executeMain,
@@ -865,107 +865,107 @@ main() = list.sort([3, 1, 5, 2, 4], decimalCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.sublist'),
+              contains('list_sublist'),
             ),
           ),
         ),
       );
     });
 
-    test('list.swap first and last elements', () {
+    test('list_swap first and last elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3, 4, 5], 0, 4)',
+        'main() = list_swap([1, 2, 3, 4, 5], 0, 4)',
       );
       checkResult(runtime, [5, 2, 3, 4, 1]);
     });
 
-    test('list.swap in two element list', () {
+    test('list_swap in two element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2], 0, 1)',
+        'main() = list_swap([1, 2], 0, 1)',
       );
       checkResult(runtime, [2, 1]);
     });
 
-    test('list.take on empty list returns empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.take([], 5)');
+    test('list_take on empty list returns empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_take([], 5)');
       checkResult(runtime, []);
     });
 
-    test('list.drop on empty list returns empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.drop([], 5)');
+    test('list_drop on empty list returns empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_drop([], 5)');
       checkResult(runtime, []);
     });
 
-    test('list.reduce with single element list', () {
+    test('list_reduce with single element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([5], 10, num.add)',
+        'main() = list_reduce([5], 10, num_add)',
       );
       checkResult(runtime, 15);
     });
 
-    test('list.zip with single element lists', () {
+    test('list_zip with single element lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1], [2], num.add)',
+        'main() = list_zip([1], [2], num_add)',
       );
       checkResult(runtime, [3]);
     });
 
-    test('list.indexOf returns first occurrence with duplicates', () {
+    test('list_indexOf returns first occurrence with duplicates', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([1, 2, 2, 3], 2)',
+        'main() = list_indexOf([1, 2, 2, 3], 2)',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.contains returns true for single element list', () {
+    test('list_contains returns true for single element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([42], 42)',
+        'main() = list_contains([42], 42)',
       );
       checkResult(runtime, true);
     });
 
     test(
-      'list.contains returns false for single element list when not found',
+      'list_contains returns false for single element list when not found',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.contains([42], 99)',
+          'main() = list_contains([42], 99)',
         );
         checkResult(runtime, false);
       },
     );
 
-    test('list.length returns one for single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.length([42])');
+    test('list_length returns one for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_length([42])');
       checkResult(runtime, 1);
     });
 
-    test('list.join concatenates numbers with separator', () {
+    test('list_join concatenates numbers with separator', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join([1, 2, 3], "-")',
+        'main() = list_join([1, 2, 3], "-")',
       );
       checkResult(runtime, '"1-2-3"');
     });
 
-    test('list.join with empty separator', () {
+    test('list_join with empty separator', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join(["a", "b", "c"], "")',
+        'main() = list_join(["a", "b", "c"], "")',
       );
       checkResult(runtime, '"abc"');
     });
 
-    test('list.filled with boolean value', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(3, true)');
+    test('list_filled with boolean value', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(3, true)');
       checkResult(runtime, [true, true, true]);
     });
 
-    test('list.filled with string value', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(2, "x")');
+    test('list_filled with string value', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(2, "x")');
       checkResult(runtime, ['"x"', '"x"']);
     });
 
-    test('list.filled with list value', () {
+    test('list_filled with list value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filled(2, [1, 2])',
+        'main() = list_filled(2, [1, 2])',
       );
       checkResult(runtime, [
         [1, 2],
@@ -973,46 +973,46 @@ main() = list.sort([3, 1, 5, 2, 4], decimalCompare)
       ]);
     });
 
-    test('list.remove from single element list when element matches', () {
+    test('list_remove from single element list when element matches', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([42], 42)',
+        'main() = list_remove([42], 42)',
       );
       checkResult(runtime, []);
     });
 
     test(
-      'list.remove from single element list when element does not match',
+      'list_remove from single element list when element does not match',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.remove([42], 99)',
+          'main() = list_remove([42], 99)',
         );
         checkResult(runtime, [42]);
       },
     );
 
-    test('list.isEmpty returns true for single element list is false', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.isEmpty([1])');
+    test('list_isEmpty returns true for single element list is false', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_isEmpty([1])');
       checkResult(runtime, false);
     });
 
-    test('list.isNotEmpty returns true for single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.isNotEmpty([1])');
+    test('list_isNotEmpty returns true for single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_isNotEmpty([1])');
       checkResult(runtime, true);
     });
 
-    test('list.init on two element list returns single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.init([1, 2])');
+    test('list_init on two element list returns single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_init([1, 2])');
       checkResult(runtime, [1]);
     });
 
-    test('list.rest on two element list returns single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.rest([1, 2])');
+    test('list_rest on two element list returns single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_rest([1, 2])');
       checkResult(runtime, [2]);
     });
 
-    test('list.concat with nested lists', () {
+    test('list_concat with nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([[1, 2]], [[3, 4]])',
+        'main() = list_concat([[1, 2]], [[3, 4]])',
       );
       checkResult(runtime, [
         [1, 2],
@@ -1020,80 +1020,80 @@ main() = list.sort([3, 1, 5, 2, 4], decimalCompare)
       ]);
     });
 
-    test('list.map with identity function', () {
+    test('list_map with identity function', () {
       final RuntimeFacade runtime = getRuntime('''
 identity(x) = x
-main() = list.map([1, 2, 3], identity)
+main() = list_map([1, 2, 3], identity)
 ''');
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.filter keeps all elements when all match', () {
+    test('list_filter keeps all elements when all match', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([2, 4, 6], num.isEven)',
+        'main() = list_filter([2, 4, 6], num_isEven)',
       );
       checkResult(runtime, [2, 4, 6]);
     });
 
-    test('list.all returns true for single element matching predicate', () {
+    test('list_all returns true for single element matching predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([2], num.isEven)',
+        'main() = list_all([2], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
     test(
-      'list.all returns false for single element not matching predicate',
+      'list_all returns false for single element not matching predicate',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.all([3], num.isEven)',
+          'main() = list_all([3], num_isEven)',
         );
         checkResult(runtime, false);
       },
     );
 
-    test('list.any returns true for single element matching predicate', () {
+    test('list_any returns true for single element matching predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([2], num.isEven)',
+        'main() = list_any([2], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
     test(
-      'list.any returns false for single element not matching predicate',
+      'list_any returns false for single element not matching predicate',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.any([3], num.isEven)',
+          'main() = list_any([3], num_isEven)',
         );
         checkResult(runtime, false);
       },
     );
 
-    test('list.none returns false for single element matching predicate', () {
+    test('list_none returns false for single element matching predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([2], num.isEven)',
+        'main() = list_none([2], num_isEven)',
       );
       checkResult(runtime, false);
     });
 
     test(
-      'list.none returns true for single element not matching predicate',
+      'list_none returns true for single element not matching predicate',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.none([3], num.isEven)',
+          'main() = list_none([3], num_isEven)',
         );
         checkResult(runtime, true);
       },
     );
 
-    test('list.reverse on two element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.reverse([1, 2])');
+    test('list_reverse on two element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_reverse([1, 2])');
       checkResult(runtime, [2, 1]);
     });
 
-    test('list.insertStart with nested list element', () {
+    test('list_insertStart with nested list element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertStart([1, 2], [0])',
+        'main() = list_insertStart([1, 2], [0])',
       );
       checkResult(runtime, [
         [0],
@@ -1102,9 +1102,9 @@ main() = list.map([1, 2, 3], identity)
       ]);
     });
 
-    test('list.insertEnd with nested list element', () {
+    test('list_insertEnd with nested list element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertEnd([1, 2], [3])',
+        'main() = list_insertEnd([1, 2], [3])',
       );
       checkResult(runtime, [
         1,
@@ -1113,224 +1113,224 @@ main() = list.map([1, 2, 3], identity)
       ]);
     });
 
-    test('list.removeAt in middle of list', () {
+    test('list_removeAt in middle of list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3, 4, 5], 2)',
+        'main() = list_removeAt([1, 2, 3, 4, 5], 2)',
       );
       checkResult(runtime, [1, 2, 4, 5]);
     });
 
-    test('list.take from single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.take([1], 1)');
+    test('list_take from single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_take([1], 1)');
       checkResult(runtime, [1]);
     });
 
-    test('list.drop from single element list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.drop([1], 1)');
+    test('list_drop from single element list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_drop([1], 1)');
       checkResult(runtime, []);
     });
 
-    test('list.sublist extracts single element', () {
+    test('list_sublist extracts single element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3, 4, 5], 2, 3)',
+        'main() = list_sublist([1, 2, 3, 4, 5], 2, 3)',
       );
       checkResult(runtime, [3]);
     });
 
-    test('list.at truncates decimal index to integer', () {
+    test('list_at truncates decimal index to integer', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([10, 20, 30], 1.9)',
+        'main() = list_at([10, 20, 30], 1.9)',
       );
       checkResult(runtime, 20);
     });
 
-    test('list.set truncates decimal index to integer', () {
+    test('list_set truncates decimal index to integer', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 1.7, 99)',
+        'main() = list_set([1, 2, 3], 1.7, 99)',
       );
       checkResult(runtime, [1, 99, 3]);
     });
 
-    test('list.map with single element list', () {
+    test('list_map with single element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([5], num.abs)',
+        'main() = list_map([5], num_abs)',
       );
       checkResult(runtime, [5]);
     });
 
-    test('list.filter with single element matching', () {
+    test('list_filter with single element matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([2], num.isEven)',
+        'main() = list_filter([2], num_isEven)',
       );
       checkResult(runtime, [2]);
     });
 
-    test('list.filter with single element not matching', () {
+    test('list_filter with single element not matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([3], num.isEven)',
+        'main() = list_filter([3], num_isEven)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.reduce with multiplication', () {
+    test('list_reduce with multiplication', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([1, 2, 3, 4], 1, num.mul)',
+        'main() = list_reduce([1, 2, 3, 4], 1, num_mul)',
       );
       checkResult(runtime, 24);
     });
 
-    test('list.reduce with subtraction', () {
+    test('list_reduce with subtraction', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([1, 2, 3], 10, num.sub)',
+        'main() = list_reduce([1, 2, 3], 10, num_sub)',
       );
       checkResult(runtime, 4);
     });
 
-    test('list.indexOf with single element list matching', () {
+    test('list_indexOf with single element list matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([42], 42)',
+        'main() = list_indexOf([42], 42)',
       );
       checkResult(runtime, 0);
     });
 
-    test('list.indexOf with single element list not matching', () {
+    test('list_indexOf with single element list not matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([42], 99)',
+        'main() = list_indexOf([42], 99)',
       );
       checkResult(runtime, -1);
     });
 
-    test('list.sort with negative numbers', () {
+    test('list_sort with negative numbers', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([-3, 1, -5, 2, -4], num.compare)',
+        'main() = list_sort([-3, 1, -5, 2, -4], num_compare)',
       );
       checkResult(runtime, [-5, -4, -3, 1, 2]);
     });
 
-    test('list.sort with mixed positive and negative numbers', () {
+    test('list_sort with mixed positive and negative numbers', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([0, -1, 1, -2, 2], num.compare)',
+        'main() = list_sort([0, -1, 1, -2, 2], num_compare)',
       );
       checkResult(runtime, [-2, -1, 0, 1, 2]);
     });
 
-    test('list.join with booleans', () {
+    test('list_join with booleans', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join([true, false, true], " and ")',
+        'main() = list_join([true, false, true], " and ")',
       );
       checkResult(runtime, '"true and false and true"');
     });
 
-    test('list.join with mixed numbers and booleans', () {
+    test('list_join with mixed numbers and booleans', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join([1, true, 2], ":")',
+        'main() = list_join([1, true, 2], ":")',
       );
       checkResult(runtime, '"1:true:2"');
     });
 
-    test('list.swap in single element list with same index', () {
+    test('list_swap in single element list with same index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([42], 0, 0)',
+        'main() = list_swap([42], 0, 0)',
       );
       checkResult(runtime, [42]);
     });
 
-    test('list.concat with single element lists', () {
+    test('list_concat with single element lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([1], [2])',
+        'main() = list_concat([1], [2])',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.zip with string concatenation function', () {
+    test('list_zip with string concatenation function', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip(["a", "b"], ["1", "2"], str.concat)',
+        'main() = list_zip(["a", "b"], ["1", "2"], str_concat)',
       );
       checkResult(runtime, ['"a1"', '"b2"']);
     });
 
-    test('list.zip with multiplication function', () {
+    test('list_zip with multiplication function', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([2, 3, 4], [5, 6, 7], num.mul)',
+        'main() = list_zip([2, 3, 4], [5, 6, 7], num_mul)',
       );
       checkResult(runtime, [10, 18, 28]);
     });
 
-    test('list.contains with nested list', () {
+    test('list_contains with nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([[1, 2], [3, 4]], [1, 2])',
+        'main() = list_contains([[1, 2], [3, 4]], [1, 2])',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains with nested list not found', () {
+    test('list_contains with nested list not found', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([[1, 2], [3, 4]], [1, 3])',
+        'main() = list_contains([[1, 2], [3, 4]], [1, 3])',
       );
       checkResult(runtime, false);
     });
 
-    test('list.remove with nested list element', () {
+    test('list_remove with nested list element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([[1, 2], [3, 4], [1, 2]], [1, 2])',
+        'main() = list_remove([[1, 2], [3, 4], [1, 2]], [1, 2])',
       );
       checkResult(runtime, [
         [3, 4],
       ]);
     });
 
-    test('list.indexOf with nested list', () {
+    test('list_indexOf with nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([[1, 2], [3, 4]], [3, 4])',
+        'main() = list_indexOf([[1, 2], [3, 4]], [3, 4])',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.take truncates decimal count to integer', () {
+    test('list_take truncates decimal count to integer', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3, 4, 5], 2.9)',
+        'main() = list_take([1, 2, 3, 4, 5], 2.9)',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.drop truncates decimal count to integer', () {
+    test('list_drop truncates decimal count to integer', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3, 4, 5], 2.9)',
+        'main() = list_drop([1, 2, 3, 4, 5], 2.9)',
       );
       checkResult(runtime, [3, 4, 5]);
     });
 
-    test('list.sublist truncates decimal indices to integers', () {
+    test('list_sublist truncates decimal indices to integers', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3, 4, 5], 1.2, 3.8)',
+        'main() = list_sublist([1, 2, 3, 4, 5], 1.2, 3.8)',
       );
       checkResult(runtime, [2, 3]);
     });
 
-    test('list.swap truncates decimal indices to integers', () {
+    test('list_swap truncates decimal indices to integers', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], 0.5, 2.9)',
+        'main() = list_swap([1, 2, 3], 0.5, 2.9)',
       );
       checkResult(runtime, [3, 2, 1]);
     });
 
-    test('list.removeAt truncates decimal index to integer', () {
+    test('list_removeAt truncates decimal index to integer', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3], 1.7)',
+        'main() = list_removeAt([1, 2, 3], 1.7)',
       );
       checkResult(runtime, [1, 3]);
     });
 
-    test('list.filled truncates decimal count to integer', () {
+    test('list_filled truncates decimal count to integer', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filled(3.9, "x")',
+        'main() = list_filled(3.9, "x")',
       );
       checkResult(runtime, ['"x"', '"x"', '"x"']);
     });
 
-    test('list.reverse with nested lists', () {
+    test('list_reverse with nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reverse([[1, 2], [3, 4], [5, 6]])',
+        'main() = list_reverse([[1, 2], [3, 4], [5, 6]])',
       );
       checkResult(runtime, [
         [5, 6],
@@ -1339,96 +1339,96 @@ main() = list.map([1, 2, 3], identity)
       ]);
     });
 
-    test('list.map with constant function', () {
+    test('list_map with constant function', () {
       final RuntimeFacade runtime = getRuntime('''
 always42(x) = 42
-main() = list.map([1, 2, 3], always42)
+main() = list_map([1, 2, 3], always42)
 ''');
       checkResult(runtime, [42, 42, 42]);
     });
 
-    test('list.filter removes all elements when none match', () {
+    test('list_filter removes all elements when none match', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([1, 3, 5, 7], num.isEven)',
+        'main() = list_filter([1, 3, 5, 7], num_isEven)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.reduce with empty accumulator function', () {
+    test('list_reduce with empty accumulator function', () {
       final RuntimeFacade runtime = getRuntime('''
 takeSecond(a, b) = b
-main() = list.reduce([1, 2, 3], 0, takeSecond)
+main() = list_reduce([1, 2, 3], 0, takeSecond)
 ''');
       checkResult(runtime, 3);
     });
 
-    test('list.reduce with take first function', () {
+    test('list_reduce with take first function', () {
       final RuntimeFacade runtime = getRuntime('''
 takeFirst(a, b) = a
-main() = list.reduce([1, 2, 3], 0, takeFirst)
+main() = list_reduce([1, 2, 3], 0, takeFirst)
 ''');
       checkResult(runtime, 0);
     });
 
-    test('list.all with all elements matching', () {
+    test('list_all with all elements matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([0, 0, 0, 0], num.isZero)',
+        'main() = list_all([0, 0, 0, 0], num_isZero)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.any with last element matching', () {
+    test('list_any with last element matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([1, 3, 5, 2], num.isEven)',
+        'main() = list_any([1, 3, 5, 2], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.none with all elements matching predicate', () {
+    test('list_none with all elements matching predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([2, 4, 6], num.isEven)',
+        'main() = list_none([2, 4, 6], num_isEven)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.sort with two element list', () {
+    test('list_sort with two element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([2, 1], num.compare)',
+        'main() = list_sort([2, 1], num_compare)',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.sort with two equal elements', () {
+    test('list_sort with two equal elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([5, 5], num.compare)',
+        'main() = list_sort([5, 5], num_compare)',
       );
       checkResult(runtime, [5, 5]);
     });
 
-    test('list.length with nested lists counts outer elements only', () {
+    test('list_length with nested lists counts outer elements only', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length([[1, 2, 3], [4, 5], [6]])',
+        'main() = list_length([[1, 2, 3], [4, 5], [6]])',
       );
       checkResult(runtime, 3);
     });
 
-    test('list.first with nested list', () {
+    test('list_first with nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.first([[1, 2], [3, 4]])',
+        'main() = list_first([[1, 2], [3, 4]])',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.last with nested list', () {
+    test('list_last with nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.last([[1, 2], [3, 4]])',
+        'main() = list_last([[1, 2], [3, 4]])',
       );
       checkResult(runtime, [3, 4]);
     });
 
-    test('list.init with nested lists', () {
+    test('list_init with nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.init([[1, 2], [3, 4], [5, 6]])',
+        'main() = list_init([[1, 2], [3, 4], [5, 6]])',
       );
       checkResult(runtime, [
         [1, 2],
@@ -1436,9 +1436,9 @@ main() = list.reduce([1, 2, 3], 0, takeFirst)
       ]);
     });
 
-    test('list.rest with nested lists', () {
+    test('list_rest with nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.rest([[1, 2], [3, 4], [5, 6]])',
+        'main() = list_rest([[1, 2], [3, 4], [5, 6]])',
       );
       checkResult(runtime, [
         [3, 4],
@@ -1446,9 +1446,9 @@ main() = list.reduce([1, 2, 3], 0, takeFirst)
       ]);
     });
 
-    test('list.take from nested lists', () {
+    test('list_take from nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([[1], [2], [3]], 2)',
+        'main() = list_take([[1], [2], [3]], 2)',
       );
       checkResult(runtime, [
         [1],
@@ -1456,9 +1456,9 @@ main() = list.reduce([1, 2, 3], 0, takeFirst)
       ]);
     });
 
-    test('list.drop from nested lists', () {
+    test('list_drop from nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([[1], [2], [3]], 1)',
+        'main() = list_drop([[1], [2], [3]], 1)',
       );
       checkResult(runtime, [
         [2],
@@ -1466,9 +1466,9 @@ main() = list.reduce([1, 2, 3], 0, takeFirst)
       ]);
     });
 
-    test('list.sublist from nested lists', () {
+    test('list_sublist from nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([[1], [2], [3], [4]], 1, 3)',
+        'main() = list_sublist([[1], [2], [3], [4]], 1, 3)',
       );
       checkResult(runtime, [
         [2],
@@ -1476,45 +1476,45 @@ main() = list.reduce([1, 2, 3], 0, takeFirst)
       ]);
     });
 
-    test('list.set with function value', () {
+    test('list_set with function value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = (list.set([1, 2, 3], 1, num.abs))[1](-5)',
+        'main() = (list_set([1, 2, 3], 1, num_abs))[1](-5)',
       );
       checkResult(runtime, 5);
     });
 
-    test('list.swap adjacent elements', () {
+    test('list_swap adjacent elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3, 4], 1, 2)',
+        'main() = list_swap([1, 2, 3, 4], 1, 2)',
       );
       checkResult(runtime, [1, 3, 2, 4]);
     });
 
-    test('list.filled with function value', () {
+    test('list_filled with function value', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = (list.filled(2, num.abs))[0](-7)',
+        'main() = (list_filled(2, num_abs))[0](-7)',
       );
       checkResult(runtime, 7);
     });
 
-    test('list.concat preserves order', () {
+    test('list_concat preserves order', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([3, 2, 1], [6, 5, 4])',
+        'main() = list_concat([3, 2, 1], [6, 5, 4])',
       );
       checkResult(runtime, [3, 2, 1, 6, 5, 4]);
     });
 
-    test('list.map transforms nested list', () {
+    test('list_map transforms nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([[1, 2], [3, 4]], list.first)',
+        'main() = list_map([[1, 2], [3, 4]], list_first)',
       );
       checkResult(runtime, [1, 3]);
     });
 
-    test('list.filter on nested lists with length predicate', () {
+    test('list_filter on nested lists with length predicate', () {
       final RuntimeFacade runtime = getRuntime('''
-hasTwo(lst) = comp.eq(list.length(lst), 2)
-main() = list.filter([[1], [2, 3], [4, 5, 6], [7, 8]], hasTwo)
+hasTwo(lst) = comp_eq(list_length(lst), 2)
+main() = list_filter([[1], [2, 3], [4, 5, 6], [7, 8]], hasTwo)
 ''');
       checkResult(runtime, [
         [2, 3],
@@ -1522,288 +1522,288 @@ main() = list.filter([[1], [2, 3], [4, 5, 6], [7, 8]], hasTwo)
       ]);
     });
 
-    test('list.reduce building a list', () {
+    test('list_reduce building a list', () {
       final RuntimeFacade runtime = getRuntime('''
-append(lst, elem) = list.insertEnd(lst, elem)
-main() = list.reduce([1, 2, 3], [], append)
+append(lst, elem) = list_insertEnd(lst, elem)
+main() = list_reduce([1, 2, 3], [], append)
 ''');
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.all on nested lists', () {
+    test('list_all on nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([[1], [2], [3]], list.isNotEmpty)',
+        'main() = list_all([[1], [2], [3]], list_isNotEmpty)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.any on nested lists', () {
+    test('list_any on nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([[], [1], []], list.isNotEmpty)',
+        'main() = list_any([[], [1], []], list_isNotEmpty)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.none on nested lists', () {
+    test('list_none on nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([[], [], []], list.isNotEmpty)',
+        'main() = list_none([[], [], []], list_isNotEmpty)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.zip applies function with correct argument order', () {
+    test('list_zip applies function with correct argument order', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([10, 20], [3, 4], num.sub)',
+        'main() = list_zip([10, 20], [3, 4], num_sub)',
       );
       checkResult(runtime, [7, 16]);
     });
 
-    test('list.sort is stable for equal elements', () {
+    test('list_sort is stable for equal elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([3, 3, 3], num.compare)',
+        'main() = list_sort([3, 3, 3], num_compare)',
       );
       checkResult(runtime, [3, 3, 3]);
     });
 
-    test('list.contains with boolean value in boolean list', () {
+    test('list_contains with boolean value in boolean list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([true, false, true], true)',
+        'main() = list_contains([true, false, true], true)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains with string value in string list', () {
+    test('list_contains with string value in string list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains(["hello", "world", "foo"], "world")',
+        'main() = list_contains(["hello", "world", "foo"], "world")',
       );
       checkResult(runtime, true);
     });
 
-    test('list.indexOf with string value in string list', () {
+    test('list_indexOf with string value in string list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf(["one", "two", "three"], "two")',
+        'main() = list_indexOf(["one", "two", "three"], "two")',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.indexOf with boolean value in boolean list', () {
+    test('list_indexOf with boolean value in boolean list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([true, false, true], false)',
+        'main() = list_indexOf([true, false, true], false)',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.remove with string value from string list', () {
+    test('list_remove with string value from string list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove(["a", "b", "c", "b"], "b")',
+        'main() = list_remove(["a", "b", "c", "b"], "b")',
       );
       checkResult(runtime, ['"a"', '"c"']);
     });
 
-    test('list.remove with boolean value from boolean list', () {
+    test('list_remove with boolean value from boolean list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([true, false, true], true)',
+        'main() = list_remove([true, false, true], true)',
       );
       checkResult(runtime, [false]);
     });
 
     test('list chained operations', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reverse(list.take(list.drop([1, 2, 3, 4, 5], 1), 3))',
+        'main() = list_reverse(list_take(list_drop([1, 2, 3, 4, 5], 1), 3))',
       );
       checkResult(runtime, [4, 3, 2]);
     });
 
     test('list double reverse returns original', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reverse(list.reverse([1, 2, 3, 4, 5]))',
+        'main() = list_reverse(list_reverse([1, 2, 3, 4, 5]))',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
     test('list init and rest on same list are complementary', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat(list.init([1, 2, 3, 4]), [list.last([1, 2, 3, 4])])',
+        'main() = list_concat(list_init([1, 2, 3, 4]), [list_last([1, 2, 3, 4])])',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
     test('list first and rest on same list are complementary', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([list.first([1, 2, 3, 4])], list.rest([1, 2, 3, 4]))',
+        'main() = list_concat([list_first([1, 2, 3, 4])], list_rest([1, 2, 3, 4]))',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.length after insertStart increases by one', () {
+    test('list_length after insertStart increases by one', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length(list.insertStart([1, 2], 0))',
+        'main() = list_length(list_insertStart([1, 2], 0))',
       );
       checkResult(runtime, 3);
     });
 
-    test('list.length after insertEnd increases by one', () {
+    test('list_length after insertEnd increases by one', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length(list.insertEnd([1, 2], 3))',
+        'main() = list_length(list_insertEnd([1, 2], 3))',
       );
       checkResult(runtime, 3);
     });
 
-    test('list.length after removeAt decreases by one', () {
+    test('list_length after removeAt decreases by one', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length(list.removeAt([1, 2, 3], 1))',
+        'main() = list_length(list_removeAt([1, 2, 3], 1))',
       );
       checkResult(runtime, 2);
     });
 
-    test('list.take and drop are complementary', () {
+    test('list_take and drop are complementary', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat(list.take([1, 2, 3, 4, 5], 2), list.drop([1, 2, 3, 4, 5], 2))',
+        'main() = list_concat(list_take([1, 2, 3, 4, 5], 2), list_drop([1, 2, 3, 4, 5], 2))',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
     test('list operations preserve element expressions', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.first(list.reverse([1 + 1, 2 + 2, 3 + 3]))',
+        'main() = list_first(list_reverse([1 + 1, 2 + 2, 3 + 3]))',
       );
       checkResult(runtime, 6);
     });
 
-    test('list.join with newline separator', () {
+    test('list_join with newline separator', () {
       final RuntimeFacade runtime = getRuntime(
-        r'main() = list.join(["line1", "line2"], "\n")',
+        r'main() = list_join(["line1", "line2"], "\n")',
       );
       checkResult(runtime, '"line1\nline2"');
     });
 
-    test('list.isEmpty after removing all elements', () {
+    test('list_isEmpty after removing all elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.isEmpty(list.remove([1, 1, 1], 1))',
+        'main() = list_isEmpty(list_remove([1, 1, 1], 1))',
       );
       checkResult(runtime, true);
     });
 
-    test('list.isNotEmpty after adding to empty list', () {
+    test('list_isNotEmpty after adding to empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.isNotEmpty(list.insertStart([], 1))',
+        'main() = list_isNotEmpty(list_insertStart([], 1))',
       );
       checkResult(runtime, true);
     });
 
     test('list large input with filled', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length(list.filled(100, 0))',
+        'main() = list_length(list_filled(100, 0))',
       );
       checkResult(runtime, 100);
     });
 
     test('list large input with map', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length(list.map(list.filled(50, 1), num.abs))',
+        'main() = list_length(list_map(list_filled(50, 1), num_abs))',
       );
       checkResult(runtime, 50);
     });
 
     test('list large input with filter', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length(list.filter(list.filled(50, 1), num.isPositive))',
+        'main() = list_length(list_filter(list_filled(50, 1), num_isPositive))',
       );
       checkResult(runtime, 50);
     });
 
     test('list large input with reduce', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce(list.filled(20, 1), 0, num.add)',
+        'main() = list_reduce(list_filled(20, 1), 0, num_add)',
       );
       checkResult(runtime, 20);
     });
 
-    test('list.filled with single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(1, 42)');
+    test('list_filled with single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(1, 42)');
       checkResult(runtime, [42]);
     });
 
-    test('list.at accesses last valid index', () {
+    test('list_at accesses last valid index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([10, 20, 30], 2)',
+        'main() = list_at([10, 20, 30], 2)',
       );
       checkResult(runtime, 30);
     });
 
-    test('list.at accesses first index explicitly', () {
+    test('list_at accesses first index explicitly', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([10, 20, 30], 0)',
+        'main() = list_at([10, 20, 30], 0)',
       );
       checkResult(runtime, 10);
     });
 
-    test('list.sort with decimal numbers', () {
+    test('list_sort with decimal numbers', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([3.5, 1.2, 2.8, 1.1, 2.9], num.compare)',
+        'main() = list_sort([3.5, 1.2, 2.8, 1.1, 2.9], num_compare)',
       );
       checkResult(runtime, [1.1, 1.2, 2.8, 2.9, 3.5]);
     });
 
-    test('list.sort with mixed integer and decimal numbers', () {
+    test('list_sort with mixed integer and decimal numbers', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([3, 1.5, 2, 1.1, 3.0], num.compare)',
+        'main() = list_sort([3, 1.5, 2, 1.1, 3.0], num_compare)',
       );
       checkResult(runtime, [1.1, 1.5, 2, 3, 3.0]);
     });
 
-    test('list.reduce to build string', () {
+    test('list_reduce to build string', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce(["a", "b", "c"], "", str.concat)',
+        'main() = list_reduce(["a", "b", "c"], "", str_concat)',
       );
       checkResult(runtime, '"abc"');
     });
 
-    test('list.reduce with num.max to find maximum', () {
+    test('list_reduce with num_max to find maximum', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([3, 7, 2, 9, 1], 0, num.max)',
+        'main() = list_reduce([3, 7, 2, 9, 1], 0, num_max)',
       );
       checkResult(runtime, 9);
     });
 
-    test('list.reduce with num.min to find minimum', () {
+    test('list_reduce with num_min to find minimum', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([3, 7, 2, 9, 1], 100, num.min)',
+        'main() = list_reduce([3, 7, 2, 9, 1], 100, num_min)',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.filter with num.isPositive', () {
+    test('list_filter with num_isPositive', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([-2, -1, 0, 1, 2], num.isPositive)',
+        'main() = list_filter([-2, -1, 0, 1, 2], num_isPositive)',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.filter with num.isNegative', () {
+    test('list_filter with num_isNegative', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([-2, -1, 0, 1, 2], num.isNegative)',
+        'main() = list_filter([-2, -1, 0, 1, 2], num_isNegative)',
       );
       checkResult(runtime, [-2, -1]);
     });
 
-    test('list.swap with reversed indices second less than first', () {
+    test('list_swap with reversed indices second less than first', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3, 4, 5], 3, 1)',
+        'main() = list_swap([1, 2, 3, 4, 5], 3, 1)',
       );
       checkResult(runtime, [1, 4, 3, 2, 5]);
     });
 
-    test('list.indexOf returns index of last element', () {
+    test('list_indexOf returns index of last element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([10, 20, 30, 40], 40)',
+        'main() = list_indexOf([10, 20, 30, 40], 40)',
       );
       checkResult(runtime, 3);
     });
 
-    test('list.indexOf returns index of first element', () {
+    test('list_indexOf returns index of first element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([10, 20, 30, 40], 10)',
+        'main() = list_indexOf([10, 20, 30, 40], 10)',
       );
       checkResult(runtime, 0);
     });
@@ -1836,16 +1836,16 @@ main() = [10, 20, 30][getIndex(1)]
       checkResult(runtime, 20);
     });
 
-    test('list.set with consecutive updates', () {
+    test('list_set with consecutive updates', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set(list.set([1, 2, 3], 0, 10), 2, 30)',
+        'main() = list_set(list_set([1, 2, 3], 0, 10), 2, 30)',
       );
       checkResult(runtime, [10, 2, 30]);
     });
 
-    test('list.concat with deeply nested lists', () {
+    test('list_concat with deeply nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([[[1, 2]]], [[[3, 4]]])',
+        'main() = list_concat([[[1, 2]]], [[[3, 4]]])',
       );
       checkResult(runtime, [
         [
@@ -1857,44 +1857,44 @@ main() = [10, 20, 30][getIndex(1)]
       ]);
     });
 
-    test('list.map preserves nested list structure', () {
+    test('list_map preserves nested list structure', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([[1, 2], [3, 4]], list.length)',
+        'main() = list_map([[1, 2], [3, 4]], list_length)',
       );
       checkResult(runtime, [2, 2]);
     });
 
-    test('list.all with first element failing predicate', () {
+    test('list_all with first element failing predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([1, 2, 4, 6], num.isEven)',
+        'main() = list_all([1, 2, 4, 6], num_isEven)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.any with only first element matching predicate', () {
+    test('list_any with only first element matching predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([2, 1, 3, 5], num.isEven)',
+        'main() = list_any([2, 1, 3, 5], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.none with first element matching predicate', () {
+    test('list_none with first element matching predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([2, 1, 3, 5], num.isEven)',
+        'main() = list_none([2, 1, 3, 5], num_isEven)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.filter preserves order', () {
+    test('list_filter preserves order', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([5, 2, 8, 1, 4], num.isEven)',
+        'main() = list_filter([5, 2, 8, 1, 4], num_isEven)',
       );
       checkResult(runtime, [2, 8, 4]);
     });
 
-    test('list.reverse preserves element types', () {
+    test('list_reverse preserves element types', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reverse([1, "two", true, [4]])',
+        'main() = list_reverse([1, "two", true, [4]])',
       );
       checkResult(runtime, [
         [4],
@@ -1904,235 +1904,235 @@ main() = [10, 20, 30][getIndex(1)]
       ]);
     });
 
-    test('list.sublist returns full list from start', () {
+    test('list_sublist returns full list from start', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3, 4, 5], 0, 5)',
+        'main() = list_sublist([1, 2, 3, 4, 5], 0, 5)',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.sublist returns single last element', () {
+    test('list_sublist returns single last element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3, 4, 5], 4, 5)',
+        'main() = list_sublist([1, 2, 3, 4, 5], 4, 5)',
       );
       checkResult(runtime, [5]);
     });
 
-    test('list.sublist returns single first element', () {
+    test('list_sublist returns single first element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3, 4, 5], 0, 1)',
+        'main() = list_sublist([1, 2, 3, 4, 5], 0, 1)',
       );
       checkResult(runtime, [1]);
     });
 
-    test('list.zip with division function', () {
+    test('list_zip with division function', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([10, 20, 30], [2, 4, 5], num.div)',
+        'main() = list_zip([10, 20, 30], [2, 4, 5], num_div)',
       );
       checkResult(runtime, [5.0, 5.0, 6.0]);
     });
 
-    test('list.join with tab separator', () {
+    test('list_join with tab separator', () {
       final RuntimeFacade runtime = getRuntime(
-        r'main() = list.join(["a", "b", "c"], "\t")',
+        r'main() = list_join(["a", "b", "c"], "\t")',
       );
       checkResult(runtime, '"a\tb\tc"');
     });
 
-    test('list.join with nested lists converts to string', () {
+    test('list_join with nested lists converts to string', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join([[1, 2], [3, 4]], " | ")',
+        'main() = list_join([[1, 2], [3, 4]], " | ")',
       );
       checkResult(runtime, '"[1, 2] | [3, 4]"');
     });
 
-    test('list.length after multiple operations', () {
+    test('list_length after multiple operations', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.length(list.concat(list.take([1, 2, 3], 2), list.drop([4, 5, 6], 1)))',
+        'main() = list_length(list_concat(list_take([1, 2, 3], 2), list_drop([4, 5, 6], 1)))',
       );
       checkResult(runtime, 4);
     });
 
-    test('list.isEmpty after filter removes all elements', () {
+    test('list_isEmpty after filter removes all elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.isEmpty(list.filter([1, 3, 5], num.isEven))',
+        'main() = list_isEmpty(list_filter([1, 3, 5], num_isEven))',
       );
       checkResult(runtime, true);
     });
 
-    test('list.isNotEmpty after filter keeps some elements', () {
+    test('list_isNotEmpty after filter keeps some elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.isNotEmpty(list.filter([1, 2, 3], num.isEven))',
+        'main() = list_isNotEmpty(list_filter([1, 2, 3], num_isEven))',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains after insertStart', () {
+    test('list_contains after insertStart', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains(list.insertStart([2, 3], 1), 1)',
+        'main() = list_contains(list_insertStart([2, 3], 1), 1)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains after insertEnd', () {
+    test('list_contains after insertEnd', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains(list.insertEnd([1, 2], 3), 3)',
+        'main() = list_contains(list_insertEnd([1, 2], 3), 3)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.contains after remove', () {
+    test('list_contains after remove', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains(list.remove([1, 2, 3], 2), 2)',
+        'main() = list_contains(list_remove([1, 2, 3], 2), 2)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.indexOf after reverse', () {
+    test('list_indexOf after reverse', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf(list.reverse([10, 20, 30]), 10)',
+        'main() = list_indexOf(list_reverse([10, 20, 30]), 10)',
       );
       checkResult(runtime, 2);
     });
 
-    test('list.first after sort', () {
+    test('list_first after sort', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.first(list.sort([5, 3, 8, 1], num.compare))',
+        'main() = list_first(list_sort([5, 3, 8, 1], num_compare))',
       );
       checkResult(runtime, 1);
     });
 
-    test('list.last after sort', () {
+    test('list_last after sort', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.last(list.sort([5, 3, 8, 1], num.compare))',
+        'main() = list_last(list_sort([5, 3, 8, 1], num_compare))',
       );
       checkResult(runtime, 8);
     });
 
-    test('list.reduce on nested list to flatten', () {
+    test('list_reduce on nested list to flatten', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce([[1, 2], [3, 4], [5]], [], list.concat)',
+        'main() = list_reduce([[1, 2], [3, 4], [5]], [], list_concat)',
       );
       checkResult(runtime, [1, 2, 3, 4, 5]);
     });
 
-    test('list.map with num.negative', () {
+    test('list_map with num_negative', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 2, 3], num.negative)',
+        'main() = list_map([1, 2, 3], num_negative)',
       );
       checkResult(runtime, [-1, -2, -3]);
     });
 
-    test('list.map with num.inc', () {
+    test('list_map with num_inc', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 2, 3], num.inc)',
+        'main() = list_map([1, 2, 3], num_inc)',
       );
       checkResult(runtime, [2, 3, 4]);
     });
 
-    test('list.map with num.abs', () {
+    test('list_map with num_abs', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([-1, -2, 3, -4], num.abs)',
+        'main() = list_map([-1, -2, 3, -4], num_abs)',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.filter with num.isOdd', () {
+    test('list_filter with num_isOdd', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([1, 2, 3, 4, 5], num.isOdd)',
+        'main() = list_filter([1, 2, 3, 4, 5], num_isOdd)',
       );
       checkResult(runtime, [1, 3, 5]);
     });
 
-    test('list.all with num.isPositive', () {
+    test('list_all with num_isPositive', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([1, 2, 3, 4], num.isPositive)',
+        'main() = list_all([1, 2, 3, 4], num_isPositive)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.all with num.isPositive when one is zero', () {
+    test('list_all with num_isPositive when one is zero', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([1, 0, 3, 4], num.isPositive)',
+        'main() = list_all([1, 0, 3, 4], num_isPositive)',
       );
       checkResult(runtime, false);
     });
 
-    test('list.any with num.isNegative', () {
+    test('list_any with num_isNegative', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([1, -2, 3, 4], num.isNegative)',
+        'main() = list_any([1, -2, 3, 4], num_isNegative)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.none with num.isNegative', () {
+    test('list_none with num_isNegative', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([1, 2, 3, 4], num.isNegative)',
+        'main() = list_none([1, 2, 3, 4], num_isNegative)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.zip combining lists of different sizes with subtraction', () {
+    test('list_zip combining lists of different sizes with subtraction', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([10, 20, 30, 40], [1, 2], num.sub)',
+        'main() = list_zip([10, 20, 30, 40], [1, 2], num_sub)',
       );
       checkResult(runtime, [9, 18, 30, 40]);
     });
 
-    test('list.sort with all equal elements', () {
+    test('list_sort with all equal elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([5, 5, 5, 5], num.compare)',
+        'main() = list_sort([5, 5, 5, 5], num_compare)',
       );
       checkResult(runtime, [5, 5, 5, 5]);
     });
 
-    test('list.sort with alternating elements', () {
+    test('list_sort with alternating elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([1, 9, 2, 8, 3, 7], num.compare)',
+        'main() = list_sort([1, 9, 2, 8, 3, 7], num_compare)',
       );
       checkResult(runtime, [1, 2, 3, 7, 8, 9]);
     });
 
-    test('list.filled with zero creates empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(0, 42)');
+    test('list_filled with zero creates empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(0, 42)');
       checkResult(runtime, []);
     });
 
-    test('list.insertStart preserves order of existing elements', () {
+    test('list_insertStart preserves order of existing elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertStart([2, 3, 4], 1)',
+        'main() = list_insertStart([2, 3, 4], 1)',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.insertEnd preserves order of existing elements', () {
+    test('list_insertEnd preserves order of existing elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertEnd([1, 2, 3], 4)',
+        'main() = list_insertEnd([1, 2, 3], 4)',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.removeAt from two element list removing first', () {
+    test('list_removeAt from two element list removing first', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2], 0)',
+        'main() = list_removeAt([1, 2], 0)',
       );
       checkResult(runtime, [2]);
     });
 
-    test('list.removeAt from two element list removing second', () {
+    test('list_removeAt from two element list removing second', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2], 1)',
+        'main() = list_removeAt([1, 2], 1)',
       );
       checkResult(runtime, [1]);
     });
 
-    test('list.init on three element list returns two elements', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.init([1, 2, 3])');
+    test('list_init on three element list returns two elements', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_init([1, 2, 3])');
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.rest on three element list returns two elements', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.rest([1, 2, 3])');
+    test('list_rest on three element list returns two elements', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_rest([1, 2, 3])');
       checkResult(runtime, [2, 3]);
     });
 
@@ -2157,23 +2157,23 @@ main() = [10, 20, 30][getIndex(1)]
       checkResult(runtime, [[], [], []]);
     });
 
-    test('list.contains with empty nested list', () {
+    test('list_contains with empty nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains([[], [1]], [])',
+        'main() = list_contains([[], [1]], [])',
       );
       checkResult(runtime, true);
     });
 
-    test('list.indexOf with empty nested list', () {
+    test('list_indexOf with empty nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf([[], [1], [2]], [])',
+        'main() = list_indexOf([[], [1], [2]], [])',
       );
       checkResult(runtime, 0);
     });
 
-    test('list.remove removes empty nested list', () {
+    test('list_remove removes empty nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove([[], [1], [], [2]], [])',
+        'main() = list_remove([[], [1], [], [2]], [])',
       );
       checkResult(runtime, [
         [1],
@@ -2181,124 +2181,124 @@ main() = [10, 20, 30][getIndex(1)]
       ]);
     });
 
-    test('list.reduce accumulating count of elements', () {
+    test('list_reduce accumulating count of elements', () {
       final RuntimeFacade runtime = getRuntime('''
-increment(acc, elem) = num.add(acc, 1)
-main() = list.reduce([10, 20, 30, 40, 50], 0, increment)
+increment(acc, elem) = num_add(acc, 1)
+main() = list_reduce([10, 20, 30, 40, 50], 0, increment)
 ''');
       checkResult(runtime, 5);
     });
 
-    test('list.filter with custom predicate on strings', () {
+    test('list_filter with custom predicate on strings', () {
       final RuntimeFacade runtime = getRuntime('''
-isShort(s) = comp.lt(str.length(s), 4)
-main() = list.filter(["hi", "hello", "hey", "howdy"], isShort)
+isShort(s) = comp_lt(str_length(s), 4)
+main() = list_filter(["hi", "hello", "hey", "howdy"], isShort)
 ''');
       checkResult(runtime, ['"hi"', '"hey"']);
     });
 
-    test('list.map with str.length on strings', () {
+    test('list_map with str_length on strings', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map(["a", "bb", "ccc"], str.length)',
+        'main() = list_map(["a", "bb", "ccc"], str_length)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.sort strings by length', () {
+    test('list_sort strings by length', () {
       final RuntimeFacade runtime = getRuntime('''
-compareByLength(a, b) = num.sub(str.length(a), str.length(b))
-main() = list.sort(["hello", "hi", "hey"], compareByLength)
+compareByLength(a, b) = num_sub(str_length(a), str_length(b))
+main() = list_sort(["hello", "hi", "hey"], compareByLength)
 ''');
       checkResult(runtime, ['"hi"', '"hey"', '"hello"']);
     });
 
-    test('list.zip with modulo function', () {
+    test('list_zip with modulo function', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([10, 15, 20], [3, 4, 6], num.mod)',
+        'main() = list_zip([10, 15, 20], [3, 4, 6], num_mod)',
       );
       checkResult(runtime, [1, 3, 2]);
     });
 
-    test('list.all on two element list both matching', () {
+    test('list_all on two element list both matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([2, 4], num.isEven)',
+        'main() = list_all([2, 4], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.any on two element list one matching', () {
+    test('list_any on two element list one matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([1, 2], num.isEven)',
+        'main() = list_any([1, 2], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.none on two element list none matching', () {
+    test('list_none on two element list none matching', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([1, 3], num.isEven)',
+        'main() = list_none([1, 3], num_isEven)',
       );
       checkResult(runtime, true);
     });
 
-    test('list.swap swaps same index in two element list', () {
+    test('list_swap swaps same index in two element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2], 1, 1)',
+        'main() = list_swap([1, 2], 1, 1)',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.concat multiple times', () {
+    test('list_concat multiple times', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat(list.concat([1], [2]), [3])',
+        'main() = list_concat(list_concat([1], [2]), [3])',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.take entire list', () {
+    test('list_take entire list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3], 3)',
+        'main() = list_take([1, 2, 3], 3)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.drop entire list', () {
+    test('list_drop entire list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3], 3)',
+        'main() = list_drop([1, 2, 3], 3)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.set at index zero in multi-element list', () {
+    test('list_set at index zero in multi-element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3, 4, 5], 0, 10)',
+        'main() = list_set([1, 2, 3, 4, 5], 0, 10)',
       );
       checkResult(runtime, [10, 2, 3, 4, 5]);
     });
 
-    test('list.set at last index in multi-element list', () {
+    test('list_set at last index in multi-element list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3, 4, 5], 4, 50)',
+        'main() = list_set([1, 2, 3, 4, 5], 4, 50)',
       );
       checkResult(runtime, [1, 2, 3, 4, 50]);
     });
 
-    test('list.join with multi-character separator', () {
+    test('list_join with multi-character separator', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join(["a", "b", "c"], " => ")',
+        'main() = list_join(["a", "b", "c"], " => ")',
       );
       checkResult(runtime, '"a => b => c"');
     });
 
-    test('list.reverse on string list', () {
+    test('list_reverse on string list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reverse(["a", "b", "c"])',
+        'main() = list_reverse(["a", "b", "c"])',
       );
       checkResult(runtime, ['"c"', '"b"', '"a"']);
     });
 
-    test('list.reverse on boolean list', () {
+    test('list_reverse on boolean list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reverse([true, false, true])',
+        'main() = list_reverse([true, false, true])',
       );
       checkResult(runtime, [true, false, true]);
     });
@@ -2324,48 +2324,48 @@ main() = list.sort(["hello", "hi", "hey"], compareByLength)
   });
 
   group('List Type Errors', () {
-    test('list.length throws for wrong type', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.length("hello")');
+    test('list_length throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_length("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.first throws for wrong type', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.first("hello")');
+    test('list_first throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_first("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.last throws for wrong type', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.last("hello")');
+    test('list_last throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_last("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.isEmpty throws for wrong type', () {
+    test('list_isEmpty throws for wrong type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.isEmpty("hello")',
+        'main() = list_isEmpty("hello")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.reverse throws for wrong type', () {
+    test('list_reverse throws for wrong type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reverse("hello")',
+        'main() = list_reverse("hello")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.sort throws for wrong type', () {
+    test('list_sort throws for wrong type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort("hello", num.compare)',
+        'main() = list_sort("hello", num_compare)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
     test(
-      'list.sort throws InvalidArgumentTypesError for non-numeric comparator result',
+      'list_sort throws InvalidArgumentTypesError for non-numeric comparator result',
       () {
         final RuntimeFacade runtime = getRuntime('''
 badCompare(a, b) = true
-main() = list.sort([3, 1, 2], badCompare)
+main() = list_sort([3, 1, 2], badCompare)
 ''');
         expect(
           runtime.executeMain,
@@ -2374,7 +2374,7 @@ main() = list.sort([3, 1, 2], badCompare)
               (e) => e.toString(),
               'message',
               allOf(
-                contains('list.sort'),
+                contains('list_sort'),
                 contains('Number'),
                 contains('Boolean'),
               ),
@@ -2384,16 +2384,16 @@ main() = list.sort([3, 1, 2], badCompare)
       },
     );
 
-    test('list.contains throws for wrong type', () {
+    test('list_contains throws for wrong type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.contains("hello", 1)',
+        'main() = list_contains("hello", 1)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.map throws for wrong type', () {
+    test('list_map throws for wrong type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map("hello", num.abs)',
+        'main() = list_map("hello", num_abs)',
       );
       expect(
         runtime.executeMain,
@@ -2402,7 +2402,7 @@ main() = list.sort([3, 1, 2], badCompare)
             (e) => e.toString(),
             'message',
             allOf(
-              contains('list.map'),
+              contains('list_map'),
               contains('String'),
               contains('Function'),
             ),
@@ -2411,304 +2411,304 @@ main() = list.sort([3, 1, 2], badCompare)
       );
     });
 
-    test('list.isNotEmpty throws for wrong type', () {
+    test('list_isNotEmpty throws for wrong type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.isNotEmpty("hello")',
+        'main() = list_isNotEmpty("hello")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.init throws for wrong type', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.init("hello")');
+    test('list_init throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_init("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.rest throws for wrong type', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.rest("hello")');
+    test('list_rest throws for wrong type', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_rest("hello")');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.concat throws for wrong first argument type', () {
+    test('list_concat throws for wrong first argument type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat("hello", [1, 2])',
+        'main() = list_concat("hello", [1, 2])',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.concat throws for wrong second argument type', () {
+    test('list_concat throws for wrong second argument type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.concat([1, 2], "hello")',
+        'main() = list_concat([1, 2], "hello")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.take throws for wrong list type', () {
+    test('list_take throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take("hello", 2)',
+        'main() = list_take("hello", 2)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.drop throws for wrong list type', () {
+    test('list_drop throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop("hello", 2)',
+        'main() = list_drop("hello", 2)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.at throws for wrong list type', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.at("hello", 1)');
+    test('list_at throws for wrong list type', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_at("hello", 1)');
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.set throws for wrong list type', () {
+    test('list_set throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set("hello", 1, 42)',
+        'main() = list_set("hello", 1, 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.sublist throws for wrong list type', () {
+    test('list_sublist throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist("hello", 0, 2)',
+        'main() = list_sublist("hello", 0, 2)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.swap throws for wrong list type', () {
+    test('list_swap throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap("hello", 0, 1)',
+        'main() = list_swap("hello", 0, 1)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.remove throws for wrong list type', () {
+    test('list_remove throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.remove("hello", "l")',
+        'main() = list_remove("hello", "l")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.removeAt throws for wrong list type', () {
+    test('list_removeAt throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt("hello", 1)',
+        'main() = list_removeAt("hello", 1)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.indexOf throws for wrong list type', () {
+    test('list_indexOf throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.indexOf("hello", "l")',
+        'main() = list_indexOf("hello", "l")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.insertStart throws for wrong list type', () {
+    test('list_insertStart throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertStart("hello", 1)',
+        'main() = list_insertStart("hello", 1)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.insertEnd throws for wrong list type', () {
+    test('list_insertEnd throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.insertEnd("hello", 1)',
+        'main() = list_insertEnd("hello", 1)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.join throws for wrong list type', () {
+    test('list_join throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join("hello", ",")',
+        'main() = list_join("hello", ",")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.join throws for wrong separator type', () {
+    test('list_join throws for wrong separator type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.join([1, 2], 42)',
+        'main() = list_join([1, 2], 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.filter throws for wrong list type', () {
+    test('list_filter throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter("hello", num.isEven)',
+        'main() = list_filter("hello", num_isEven)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.filter throws for wrong function type', () {
+    test('list_filter throws for wrong function type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filter([1, 2, 3], 42)',
+        'main() = list_filter([1, 2, 3], 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.reduce throws for wrong list type', () {
+    test('list_reduce throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.reduce("hello", 0, num.add)',
+        'main() = list_reduce("hello", 0, num_add)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.all throws for wrong list type', () {
+    test('list_all throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all("hello", num.isEven)',
+        'main() = list_all("hello", num_isEven)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.all throws for wrong function type', () {
+    test('list_all throws for wrong function type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.all([1, 2, 3], 42)',
+        'main() = list_all([1, 2, 3], 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.any throws for wrong list type', () {
+    test('list_any throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any("hello", num.isEven)',
+        'main() = list_any("hello", num_isEven)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.any throws for wrong function type', () {
+    test('list_any throws for wrong function type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.any([1, 2, 3], 42)',
+        'main() = list_any([1, 2, 3], 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.none throws for wrong list type', () {
+    test('list_none throws for wrong list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none("hello", num.isEven)',
+        'main() = list_none("hello", num_isEven)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.none throws for wrong function type', () {
+    test('list_none throws for wrong function type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.none([1, 2, 3], 42)',
+        'main() = list_none([1, 2, 3], 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.zip throws for wrong first list type', () {
+    test('list_zip throws for wrong first list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip("hello", [1, 2], num.add)',
+        'main() = list_zip("hello", [1, 2], num_add)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.zip throws for wrong second list type', () {
+    test('list_zip throws for wrong second list type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 2], "hello", num.add)',
+        'main() = list_zip([1, 2], "hello", num_add)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.zip throws for wrong function type', () {
+    test('list_zip throws for wrong function type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.zip([1, 2], [3, 4], 42)',
+        'main() = list_zip([1, 2], [3, 4], 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.filled throws for wrong count type', () {
+    test('list_filled throws for wrong count type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.filled("hello", 42)',
+        'main() = list_filled("hello", 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.map throws for wrong function type', () {
+    test('list_map throws for wrong function type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.map([1, 2, 3], 42)',
+        'main() = list_map([1, 2, 3], 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.sort throws for wrong function type', () {
+    test('list_sort throws for wrong function type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sort([1, 2, 3], "compare")',
+        'main() = list_sort([1, 2, 3], "compare")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.at throws for wrong index type', () {
+    test('list_at throws for wrong index type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([1, 2, 3], "one")',
+        'main() = list_at([1, 2, 3], "one")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.set throws for wrong index type', () {
+    test('list_set throws for wrong index type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], "one", 42)',
+        'main() = list_set([1, 2, 3], "one", 42)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.sublist throws for wrong start index type', () {
+    test('list_sublist throws for wrong start index type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], "one", 2)',
+        'main() = list_sublist([1, 2, 3], "one", 2)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.sublist throws for wrong end index type', () {
+    test('list_sublist throws for wrong end index type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], 0, "two")',
+        'main() = list_sublist([1, 2, 3], 0, "two")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.swap throws for wrong first index type', () {
+    test('list_swap throws for wrong first index type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], "one", 2)',
+        'main() = list_swap([1, 2, 3], "one", 2)',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.swap throws for wrong second index type', () {
+    test('list_swap throws for wrong second index type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], 0, "two")',
+        'main() = list_swap([1, 2, 3], 0, "two")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.take throws for wrong count type', () {
+    test('list_take throws for wrong count type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3], "two")',
+        'main() = list_take([1, 2, 3], "two")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.drop throws for wrong count type', () {
+    test('list_drop throws for wrong count type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3], "two")',
+        'main() = list_drop([1, 2, 3], "two")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.removeAt throws for wrong index type', () {
+    test('list_removeAt throws for wrong index type', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3], "one")',
+        'main() = list_removeAt([1, 2, 3], "one")',
       );
       expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
     });
 
-    test('list.filled throws for non-integer count', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.filled(2.5, 1)');
+    test('list_filled throws for non-integer count', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_filled(2.5, 1)');
       checkResult(runtime, [1, 1]);
     });
 
     test(
-      'list.reduce throws for wrong initial value type when function expects specific type',
+      'list_reduce throws for wrong initial value type when function expects specific type',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.reduce([1, 2, 3], "zero", num.add)',
+          'main() = list_reduce([1, 2, 3], "zero", num_add)',
         );
         expect(runtime.executeMain, throwsA(isA<RuntimeError>()));
       },
@@ -2716,9 +2716,9 @@ main() = list.sort([3, 1, 2], badCompare)
   });
 
   group('List Error Cases', () {
-    test('list.at throws IndexOutOfBoundsError for out-of-bounds index', () {
+    test('list_at throws IndexOutOfBoundsError for out-of-bounds index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([1, 2, 3], 10)',
+        'main() = list_at([1, 2, 3], 10)',
       );
       expect(
         runtime.executeMain,
@@ -2729,16 +2729,16 @@ main() = list.sort([3, 1, 2], badCompare)
             allOf(
               contains('10'),
               contains('length: 3'),
-              contains('list.at'),
+              contains('list_at'),
             ),
           ),
         ),
       );
     });
 
-    test('list.at throws NegativeIndexError for negative index', () {
+    test('list_at throws NegativeIndexError for negative index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.at([1, 2, 3], -1)',
+        'main() = list_at([1, 2, 3], -1)',
       );
       expect(
         runtime.executeMain,
@@ -2748,15 +2748,15 @@ main() = list.sort([3, 1, 2], badCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.at'),
+              contains('list_at'),
             ),
           ),
         ),
       );
     });
 
-    test('list.first throws EmptyCollectionError for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.first([])');
+    test('list_first throws EmptyCollectionError for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_first([])');
       expect(
         runtime.executeMain,
         throwsA(
@@ -2766,15 +2766,15 @@ main() = list.sort([3, 1, 2], badCompare)
             allOf(
               contains('empty'),
               contains('list'),
-              contains('list.first'),
+              contains('list_first'),
             ),
           ),
         ),
       );
     });
 
-    test('list.last throws EmptyCollectionError for empty list', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.last([])');
+    test('list_last throws EmptyCollectionError for empty list', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_last([])');
       expect(
         runtime.executeMain,
         throwsA(
@@ -2784,7 +2784,7 @@ main() = list.sort([3, 1, 2], badCompare)
             allOf(
               contains('empty'),
               contains('list'),
-              contains('list.last'),
+              contains('list_last'),
             ),
           ),
         ),
@@ -2792,10 +2792,10 @@ main() = list.sort([3, 1, 2], badCompare)
     });
 
     test(
-      'list.reduce throws InvalidArgumentTypesError with non-function accumulator',
+      'list_reduce throws InvalidArgumentTypesError with non-function accumulator',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.reduce([1, 2, 3], 0, 42)',
+          'main() = list_reduce([1, 2, 3], 0, 42)',
         );
         expect(
           runtime.executeMain,
@@ -2804,7 +2804,7 @@ main() = list.sort([3, 1, 2], badCompare)
               (e) => e.toString(),
               'message',
               allOf(
-                contains('list.reduce'),
+                contains('list_reduce'),
                 contains('List'),
                 contains('Number'),
               ),
@@ -2814,16 +2814,16 @@ main() = list.sort([3, 1, 2], badCompare)
       },
     );
 
-    test('list.drop clamps to length for out-of-bounds count', () {
+    test('list_drop clamps to length for out-of-bounds count', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3], 10)',
+        'main() = list_drop([1, 2, 3], 10)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.drop throws NegativeIndexError for negative count', () {
+    test('list_drop throws NegativeIndexError for negative count', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.drop([1, 2, 3], -1)',
+        'main() = list_drop([1, 2, 3], -1)',
       );
       expect(
         runtime.executeMain,
@@ -2833,23 +2833,23 @@ main() = list.sort([3, 1, 2], badCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.drop'),
+              contains('list_drop'),
             ),
           ),
         ),
       );
     });
 
-    test('list.take clamps to length for out-of-bounds count', () {
+    test('list_take clamps to length for out-of-bounds count', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3], 10)',
+        'main() = list_take([1, 2, 3], 10)',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.take throws NegativeIndexError for negative count', () {
+    test('list_take throws NegativeIndexError for negative count', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.take([1, 2, 3], -1)',
+        'main() = list_take([1, 2, 3], -1)',
       );
       expect(
         runtime.executeMain,
@@ -2859,16 +2859,16 @@ main() = list.sort([3, 1, 2], badCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.take'),
+              contains('list_take'),
             ),
           ),
         ),
       );
     });
 
-    test('list.set throws NegativeIndexError for negative index', () {
+    test('list_set throws NegativeIndexError for negative index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], -1, 42)',
+        'main() = list_set([1, 2, 3], -1, 42)',
       );
       expect(
         runtime.executeMain,
@@ -2878,16 +2878,16 @@ main() = list.sort([3, 1, 2], badCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.set'),
+              contains('list_set'),
             ),
           ),
         ),
       );
     });
 
-    test('list.set throws IndexOutOfBoundsError for out-of-bounds index', () {
+    test('list_set throws IndexOutOfBoundsError for out-of-bounds index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.set([1, 2, 3], 10, 42)',
+        'main() = list_set([1, 2, 3], 10, 42)',
       );
       expect(
         runtime.executeMain,
@@ -2898,16 +2898,16 @@ main() = list.sort([3, 1, 2], badCompare)
             allOf(
               contains('10'),
               contains('length: 3'),
-              contains('list.set'),
+              contains('list_set'),
             ),
           ),
         ),
       );
     });
 
-    test('list.sublist throws NegativeIndexError for negative start', () {
+    test('list_sublist throws NegativeIndexError for negative start', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.sublist([1, 2, 3], -1, 2)',
+        'main() = list_sublist([1, 2, 3], -1, 2)',
       );
       expect(
         runtime.executeMain,
@@ -2917,7 +2917,7 @@ main() = list.sort([3, 1, 2], badCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.sublist'),
+              contains('list_sublist'),
             ),
           ),
         ),
@@ -2925,10 +2925,10 @@ main() = list.sort([3, 1, 2], badCompare)
     });
 
     test(
-      'list.sublist throws IndexOutOfBoundsError when start exceeds length',
+      'list_sublist throws IndexOutOfBoundsError when start exceeds length',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.sublist([1, 2, 3], 10, 12)',
+          'main() = list_sublist([1, 2, 3], 10, 12)',
         );
         expect(
           runtime.executeMain,
@@ -2939,7 +2939,7 @@ main() = list.sort([3, 1, 2], badCompare)
               allOf(
                 contains('10'),
                 contains('length: 3'),
-                contains('list.sublist'),
+                contains('list_sublist'),
               ),
             ),
           ),
@@ -2948,10 +2948,10 @@ main() = list.sort([3, 1, 2], badCompare)
     );
 
     test(
-      'list.sublist throws IndexOutOfBoundsError when end is less than start',
+      'list_sublist throws IndexOutOfBoundsError when end is less than start',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.sublist([1, 2, 3], 2, 1)',
+          'main() = list_sublist([1, 2, 3], 2, 1)',
         );
         expect(
           runtime.executeMain,
@@ -2961,7 +2961,7 @@ main() = list.sort([3, 1, 2], badCompare)
               'message',
               allOf(
                 contains('1'),
-                contains('list.sublist'),
+                contains('list_sublist'),
               ),
             ),
           ),
@@ -2970,10 +2970,10 @@ main() = list.sort([3, 1, 2], badCompare)
     );
 
     test(
-      'list.sublist throws IndexOutOfBoundsError when end exceeds length',
+      'list_sublist throws IndexOutOfBoundsError when end exceeds length',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.sublist([1, 2, 3], 0, 10)',
+          'main() = list_sublist([1, 2, 3], 0, 10)',
         );
         expect(
           runtime.executeMain,
@@ -2984,7 +2984,7 @@ main() = list.sort([3, 1, 2], badCompare)
               allOf(
                 contains('10'),
                 contains('length: 3'),
-                contains('list.sublist'),
+                contains('list_sublist'),
               ),
             ),
           ),
@@ -2992,9 +2992,9 @@ main() = list.sort([3, 1, 2], badCompare)
       },
     );
 
-    test('list.swap throws NegativeIndexError for negative first index', () {
+    test('list_swap throws NegativeIndexError for negative first index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], -1, 2)',
+        'main() = list_swap([1, 2, 3], -1, 2)',
       );
       expect(
         runtime.executeMain,
@@ -3004,16 +3004,16 @@ main() = list.sort([3, 1, 2], badCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.swap'),
+              contains('list_swap'),
             ),
           ),
         ),
       );
     });
 
-    test('list.swap throws NegativeIndexError for negative second index', () {
+    test('list_swap throws NegativeIndexError for negative second index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([1, 2, 3], 0, -1)',
+        'main() = list_swap([1, 2, 3], 0, -1)',
       );
       expect(
         runtime.executeMain,
@@ -3023,7 +3023,7 @@ main() = list.sort([3, 1, 2], badCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.swap'),
+              contains('list_swap'),
             ),
           ),
         ),
@@ -3031,10 +3031,10 @@ main() = list.sort([3, 1, 2], badCompare)
     });
 
     test(
-      'list.swap throws IndexOutOfBoundsError for out-of-bounds first index',
+      'list_swap throws IndexOutOfBoundsError for out-of-bounds first index',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.swap([1, 2, 3], 10, 1)',
+          'main() = list_swap([1, 2, 3], 10, 1)',
         );
         expect(
           runtime.executeMain,
@@ -3045,7 +3045,7 @@ main() = list.sort([3, 1, 2], badCompare)
               allOf(
                 contains('10'),
                 contains('length: 3'),
-                contains('list.swap'),
+                contains('list_swap'),
               ),
             ),
           ),
@@ -3054,10 +3054,10 @@ main() = list.sort([3, 1, 2], badCompare)
     );
 
     test(
-      'list.swap throws IndexOutOfBoundsError for out-of-bounds second index',
+      'list_swap throws IndexOutOfBoundsError for out-of-bounds second index',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.swap([1, 2, 3], 0, 10)',
+          'main() = list_swap([1, 2, 3], 0, 10)',
         );
         expect(
           runtime.executeMain,
@@ -3068,7 +3068,7 @@ main() = list.sort([3, 1, 2], badCompare)
               allOf(
                 contains('10'),
                 contains('length: 3'),
-                contains('list.swap'),
+                contains('list_swap'),
               ),
             ),
           ),
@@ -3076,9 +3076,9 @@ main() = list.sort([3, 1, 2], badCompare)
       },
     );
 
-    test('list.removeAt throws NegativeIndexError for negative index', () {
+    test('list_removeAt throws NegativeIndexError for negative index', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3], -1)',
+        'main() = list_removeAt([1, 2, 3], -1)',
       );
       expect(
         runtime.executeMain,
@@ -3088,7 +3088,7 @@ main() = list.sort([3, 1, 2], badCompare)
             'message',
             allOf(
               contains('-1'),
-              contains('list.removeAt'),
+              contains('list_removeAt'),
             ),
           ),
         ),
@@ -3096,10 +3096,10 @@ main() = list.sort([3, 1, 2], badCompare)
     });
 
     test(
-      'list.removeAt throws IndexOutOfBoundsError for out-of-bounds index',
+      'list_removeAt throws IndexOutOfBoundsError for out-of-bounds index',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.removeAt([1, 2, 3], 10)',
+          'main() = list_removeAt([1, 2, 3], 10)',
         );
         expect(
           runtime.executeMain,
@@ -3110,7 +3110,7 @@ main() = list.sort([3, 1, 2], badCompare)
               allOf(
                 contains('10'),
                 contains('length: 3'),
-                contains('list.removeAt'),
+                contains('list_removeAt'),
               ),
             ),
           ),
@@ -3118,30 +3118,30 @@ main() = list.sort([3, 1, 2], badCompare)
       },
     );
 
-    test('list.removeAt removes first element', () {
+    test('list_removeAt removes first element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3], 0)',
+        'main() = list_removeAt([1, 2, 3], 0)',
       );
       checkResult(runtime, [2, 3]);
     });
 
-    test('list.removeAt removes last element', () {
+    test('list_removeAt removes last element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([1, 2, 3], 2)',
+        'main() = list_removeAt([1, 2, 3], 2)',
       );
       checkResult(runtime, [1, 2]);
     });
 
-    test('list.removeAt on single element list returns empty list', () {
+    test('list_removeAt on single element list returns empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([42], 0)',
+        'main() = list_removeAt([42], 0)',
       );
       checkResult(runtime, []);
     });
 
-    test('list.swap throws IndexOutOfBoundsError on empty list', () {
+    test('list_swap throws IndexOutOfBoundsError on empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.swap([], 0, 0)',
+        'main() = list_swap([], 0, 0)',
       );
       expect(
         runtime.executeMain,
@@ -3152,16 +3152,16 @@ main() = list.sort([3, 1, 2], badCompare)
             allOf(
               contains('0'),
               contains('length: 0'),
-              contains('list.swap'),
+              contains('list_swap'),
             ),
           ),
         ),
       );
     });
 
-    test('list.removeAt throws IndexOutOfBoundsError on empty list', () {
+    test('list_removeAt throws IndexOutOfBoundsError on empty list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.removeAt([], 0)',
+        'main() = list_removeAt([], 0)',
       );
       expect(
         runtime.executeMain,
@@ -3172,7 +3172,7 @@ main() = list.sort([3, 1, 2], badCompare)
             allOf(
               contains('0'),
               contains('length: 0'),
-              contains('list.removeAt'),
+              contains('list_removeAt'),
             ),
           ),
         ),
@@ -3180,10 +3180,10 @@ main() = list.sort([3, 1, 2], badCompare)
     });
 
     test(
-      'list.sublist throws IndexOutOfBoundsError on empty list with non-zero indices',
+      'list_sublist throws IndexOutOfBoundsError on empty list with non-zero indices',
       () {
         final RuntimeFacade runtime = getRuntime(
-          'main() = list.sublist([], 0, 1)',
+          'main() = list_sublist([], 0, 1)',
         );
         expect(
           runtime.executeMain,
@@ -3194,7 +3194,7 @@ main() = list.sort([3, 1, 2], badCompare)
               allOf(
                 contains('1'),
                 contains('length: 0'),
-                contains('list.sublist'),
+                contains('list_sublist'),
               ),
             ),
           ),
@@ -3202,36 +3202,36 @@ main() = list.sort([3, 1, 2], badCompare)
       },
     );
 
-    // list.flatten tests
-    test('list.flatten returns empty list for empty input', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.flatten([])');
+    // list_flatten tests
+    test('list_flatten returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_flatten([])');
       checkResult(runtime, []);
     });
 
-    test('list.flatten returns same list when no nested lists', () {
+    test('list_flatten returns same list when no nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.flatten([1, 2, 3])',
+        'main() = list_flatten([1, 2, 3])',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.flatten flattens nested lists one level', () {
+    test('list_flatten flattens nested lists one level', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.flatten([[1, 2], [3, 4]])',
+        'main() = list_flatten([[1, 2], [3, 4]])',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.flatten handles mixed nested and flat elements', () {
+    test('list_flatten handles mixed nested and flat elements', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.flatten([1, [2, 3], 4])',
+        'main() = list_flatten([1, [2, 3], 4])',
       );
       checkResult(runtime, [1, 2, 3, 4]);
     });
 
-    test('list.flatten only flattens one level', () {
+    test('list_flatten only flattens one level', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.flatten([[[1, 2]], [[3, 4]]])',
+        'main() = list_flatten([[[1, 2]], [[3, 4]]])',
       );
       checkResult(runtime, [
         [1, 2],
@@ -3239,117 +3239,117 @@ main() = list.sort([3, 1, 2], badCompare)
       ]);
     });
 
-    test('list.flatten handles empty nested lists', () {
+    test('list_flatten handles empty nested lists', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.flatten([[], [1], []])',
+        'main() = list_flatten([[], [1], []])',
       );
       checkResult(runtime, [1]);
     });
 
-    test('list.flatten with single nested list', () {
+    test('list_flatten with single nested list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.flatten([[1, 2, 3]])',
+        'main() = list_flatten([[1, 2, 3]])',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    // list.distinct tests
-    test('list.distinct returns empty list for empty input', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.distinct([])');
+    // list_distinct tests
+    test('list_distinct returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_distinct([])');
       checkResult(runtime, []);
     });
 
-    test('list.distinct returns same list when no duplicates', () {
+    test('list_distinct returns same list when no duplicates', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.distinct([1, 2, 3])',
+        'main() = list_distinct([1, 2, 3])',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.distinct removes duplicate numbers', () {
+    test('list_distinct removes duplicate numbers', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.distinct([1, 2, 2, 3, 1])',
+        'main() = list_distinct([1, 2, 2, 3, 1])',
       );
       checkResult(runtime, [1, 2, 3]);
     });
 
-    test('list.distinct preserves first occurrence order', () {
+    test('list_distinct preserves first occurrence order', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.distinct([3, 1, 2, 1, 3])',
+        'main() = list_distinct([3, 1, 2, 1, 3])',
       );
       checkResult(runtime, [3, 1, 2]);
     });
 
-    test('list.distinct removes duplicate strings', () {
+    test('list_distinct removes duplicate strings', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.distinct(["a", "b", "a", "c"])',
+        'main() = list_distinct(["a", "b", "a", "c"])',
       );
       checkResult(runtime, ['"a"', '"b"', '"c"']);
     });
 
-    test('list.distinct removes duplicate booleans', () {
+    test('list_distinct removes duplicate booleans', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.distinct([true, false, true, false])',
+        'main() = list_distinct([true, false, true, false])',
       );
       checkResult(runtime, [true, false]);
     });
 
-    test('list.distinct with single element', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.distinct([42])');
+    test('list_distinct with single element', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_distinct([42])');
       checkResult(runtime, [42]);
     });
 
-    test('list.distinct with all duplicates', () {
+    test('list_distinct with all duplicates', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.distinct([1, 1, 1, 1])',
+        'main() = list_distinct([1, 1, 1, 1])',
       );
       checkResult(runtime, [1]);
     });
 
-    // list.count tests
-    test('list.count returns zero for empty list', () {
+    // list_count tests
+    test('list_count returns zero for empty list', () {
       final RuntimeFacade runtime = getRuntime('''
 isEven(x) = x % 2 == 0
-main() = list.count([], isEven)
+main() = list_count([], isEven)
 ''');
       checkResult(runtime, 0);
     });
 
-    test('list.count counts matching elements', () {
+    test('list_count counts matching elements', () {
       final RuntimeFacade runtime = getRuntime('''
 isEven(x) = x % 2 == 0
-main() = list.count([1, 2, 3, 4, 5, 6], isEven)
+main() = list_count([1, 2, 3, 4, 5, 6], isEven)
 ''');
       checkResult(runtime, 3);
     });
 
-    test('list.count returns zero when none match', () {
+    test('list_count returns zero when none match', () {
       final RuntimeFacade runtime = getRuntime('''
 isNegative(x) = x < 0
-main() = list.count([1, 2, 3], isNegative)
+main() = list_count([1, 2, 3], isNegative)
 ''');
       checkResult(runtime, 0);
     });
 
-    test('list.count returns length when all match', () {
+    test('list_count returns length when all match', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(x) = x > 0
-main() = list.count([1, 2, 3], isPositive)
+main() = list_count([1, 2, 3], isPositive)
 ''');
       checkResult(runtime, 3);
     });
 
-    test('list.count with lambda predicate', () {
+    test('list_count with lambda predicate', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.count([1, 2, 3, 4], (x) -> x > 2)',
+        'main() = list_count([1, 2, 3, 4], (x) -> x > 2)',
       );
       checkResult(runtime, 2);
     });
 
-    test('list.count throws error when predicate does not return boolean', () {
+    test('list_count throws error when predicate does not return boolean', () {
       final RuntimeFacade runtime = getRuntime('''
 double(x) = x * 2
-main() = list.count([1, 2, 3], double)
+main() = list_count([1, 2, 3], double)
 ''');
       expect(
         runtime.executeMain,
@@ -3363,15 +3363,15 @@ main() = list.count([1, 2, 3], double)
       );
     });
 
-    // list.chunk tests
-    test('list.chunk returns empty list for empty input', () {
-      final RuntimeFacade runtime = getRuntime('main() = list.chunk([], 2)');
+    // list_chunk tests
+    test('list_chunk returns empty list for empty input', () {
+      final RuntimeFacade runtime = getRuntime('main() = list_chunk([], 2)');
       checkResult(runtime, []);
     });
 
-    test('list.chunk splits list into equal chunks', () {
+    test('list_chunk splits list into equal chunks', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.chunk([1, 2, 3, 4], 2)',
+        'main() = list_chunk([1, 2, 3, 4], 2)',
       );
       checkResult(runtime, [
         [1, 2],
@@ -3379,9 +3379,9 @@ main() = list.count([1, 2, 3], double)
       ]);
     });
 
-    test('list.chunk handles last chunk smaller than size', () {
+    test('list_chunk handles last chunk smaller than size', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.chunk([1, 2, 3, 4, 5], 2)',
+        'main() = list_chunk([1, 2, 3, 4, 5], 2)',
       );
       checkResult(runtime, [
         [1, 2],
@@ -3390,18 +3390,18 @@ main() = list.count([1, 2, 3], double)
       ]);
     });
 
-    test('list.chunk with chunk size larger than list', () {
+    test('list_chunk with chunk size larger than list', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.chunk([1, 2, 3], 10)',
+        'main() = list_chunk([1, 2, 3], 10)',
       );
       checkResult(runtime, [
         [1, 2, 3],
       ]);
     });
 
-    test('list.chunk with chunk size of 1', () {
+    test('list_chunk with chunk size of 1', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.chunk([1, 2, 3], 1)',
+        'main() = list_chunk([1, 2, 3], 1)',
       );
       checkResult(runtime, [
         [1],
@@ -3410,18 +3410,18 @@ main() = list.count([1, 2, 3], double)
       ]);
     });
 
-    test('list.chunk with chunk size equal to list length', () {
+    test('list_chunk with chunk size equal to list length', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.chunk([1, 2, 3], 3)',
+        'main() = list_chunk([1, 2, 3], 3)',
       );
       checkResult(runtime, [
         [1, 2, 3],
       ]);
     });
 
-    test('list.chunk throws NegativeIndexError on negative chunk size', () {
+    test('list_chunk throws NegativeIndexError on negative chunk size', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.chunk([1, 2, 3], -1)',
+        'main() = list_chunk([1, 2, 3], -1)',
       );
       expect(
         runtime.executeMain,
@@ -3429,15 +3429,15 @@ main() = list.count([1, 2, 3], double)
           isA<NegativeIndexError>().having(
             (NegativeIndexError e) => e.toString(),
             'message',
-            allOf(contains('-1'), contains('list.chunk')),
+            allOf(contains('-1'), contains('list_chunk')),
           ),
         ),
       );
     });
 
-    test('list.chunk throws error on zero chunk size', () {
+    test('list_chunk throws error on zero chunk size', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.chunk([1, 2, 3], 0)',
+        'main() = list_chunk([1, 2, 3], 0)',
       );
       expect(
         runtime.executeMain,
@@ -3451,9 +3451,9 @@ main() = list.count([1, 2, 3], double)
       );
     });
 
-    test('list.chunk with single element', () {
+    test('list_chunk with single element', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = list.chunk([42], 5)',
+        'main() = list_chunk([42], 5)',
       );
       checkResult(runtime, [
         [42],

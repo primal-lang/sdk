@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumCompare extends NativeFunctionTerm {
   const NumCompare()
     : super(
-        name: 'num.compare',
+        name: 'num_compare',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

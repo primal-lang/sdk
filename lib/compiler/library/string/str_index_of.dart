@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrIndexOf extends NativeFunctionTerm {
   const StrIndexOf()
     : super(
-        name: 'str.indexOf',
+        name: 'str_indexOf',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

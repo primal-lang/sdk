@@ -65,5 +65,5 @@ in
 - **Example:**
 
 ```
-try(num.div(10, 0), "Division by zero") // returns "Division by zero"
+try(num_div(10, 0), "Division by zero") // returns "Division by zero"
 ```

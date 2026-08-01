@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class AssertThrows extends NativeFunctionTerm {
   const AssertThrows()
     : super(
-        name: 'assert.throws',
+        name: 'assert_throws',
         parameters: const [
           Parameter.any('a'),
         ],

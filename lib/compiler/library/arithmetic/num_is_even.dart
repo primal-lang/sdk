@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumIsEven extends NativeFunctionTerm {
   const NumIsEven()
     : super(
-        name: 'num.isEven',
+        name: 'num_isEven',
         parameters: const [
           Parameter.number('a'),
         ],

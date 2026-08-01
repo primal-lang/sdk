@@ -8,7 +8,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileParent extends NativeFunctionTerm {
   const FileParent()
     : super(
-        name: 'file.parent',
+        name: 'file_parent',
         parameters: const [
           Parameter.file('a'),
         ],

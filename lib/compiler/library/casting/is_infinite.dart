@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsInfinite extends NativeFunctionTerm {
   const IsInfinite()
     : super(
-        name: 'is.infinite',
+        name: 'is_infinite',
         parameters: const [
           Parameter.any('a'),
         ],

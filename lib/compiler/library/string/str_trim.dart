@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrTrim extends NativeFunctionTerm {
   const StrTrim()
     : super(
-        name: 'str.trim',
+        name: 'str_trim',
         parameters: const [
           Parameter.string('a'),
         ],

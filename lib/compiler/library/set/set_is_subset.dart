@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class SetIsSubset extends NativeFunctionTerm {
   const SetIsSubset()
     : super(
-        name: 'set.isSubset',
+        name: 'set_isSubset',
         parameters: const [
           Parameter.set('a'),
           Parameter.set('b'),

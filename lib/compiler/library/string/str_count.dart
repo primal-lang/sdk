@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrCount extends NativeFunctionTerm {
   const StrCount()
     : super(
-        name: 'str.count',
+        name: 'str_count',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

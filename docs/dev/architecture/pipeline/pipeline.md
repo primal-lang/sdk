@@ -196,29 +196,29 @@ The standard library provides 316 built-in functions, organized by namespace:
 
 | Namespace     | Count | Examples                                                 |
 | ------------- | ----- | -------------------------------------------------------- |
-| `assert.*`    | 5     | `assert.equal`, `assert.true`, `assert.throws`           |
-| `num.*`       | 38    | `num.add`, `num.sqrt`, `num.sin`, `num.clamp`            |
-| `str.*`       | 44    | `str.length`, `str.split`, `str.replace`, `str.reverse`  |
-| `list.*`      | 37    | `list.map`, `list.filter`, `list.reduce`, `list.sort`    |
-| `bool.*`      | 6     | `bool.and`, `bool.or`, `bool.not`, `bool.xor`            |
-| `comp.*`      | 6     | `comp.eq`, `comp.lt`, `comp.ge`                          |
-| `map.*`       | 13    | `map.at`, `map.set`, `map.keys`, `map.values`            |
-| `set.*`       | 13    | `set.add`, `set.union`, `set.intersection`               |
-| `stack.*`     | 8     | `stack.push`, `stack.pop`, `stack.peek`                  |
-| `queue.*`     | 8     | `queue.enqueue`, `queue.dequeue`, `queue.peek`           |
-| `vector.*`    | 9     | `vector.add`, `vector.magnitude`, `vector.normalize`     |
-| `time.*`      | 19    | `time.now`, `time.fromIso`, `time.year`                  |
-| `file.*`      | 16    | `file.read`, `file.write`, `file.exists`                 |
-| `directory.*` | 11    | `directory.create`, `directory.list`, `directory.exists` |
-| `path.*`      | 6     | `path.join`, `path.dirname`, `path.basename`             |
-| `hash.*`      | 4     | `hash.md5`, `hash.sha256`                                |
-| `json.*`      | 2     | `json.encode`, `json.decode`                             |
-| `base64.*`    | 2     | `base64.encode`, `base64.decode`                         |
-| `console.*`   | 3     | `console.write`, `console.read`                          |
-| `env.*`       | 2     | `env.get`, `env.has`                                     |
-| `uuid.*`      | 1     | `uuid.v4`                                                |
-| `error.*`     | 1     | `error.throw`                                            |
-| Casting       | 22    | `is.boolean`, `to.string`, `to.integer`                  |
+| `assert_*`    | 5     | `assert_equal`, `assert_true`, `assert_throws`           |
+| `num_*`       | 38    | `num_add`, `num_sqrt`, `num_sin`, `num_clamp`            |
+| `str_*`       | 44    | `str_length`, `str_split`, `str_replace`, `str_reverse`  |
+| `list_*`      | 37    | `list_map`, `list_filter`, `list_reduce`, `list_sort`    |
+| `bool_*`      | 6     | `bool_and`, `bool_or`, `bool_not`, `bool_xor`            |
+| `comp_*`      | 6     | `comp_eq`, `comp_lt`, `comp_ge`                          |
+| `map_*`       | 13    | `map_at`, `map_set`, `map_keys`, `map_values`            |
+| `set_*`       | 13    | `set_add`, `set_union`, `set_intersection`               |
+| `stack_*`     | 8     | `stack_push`, `stack_pop`, `stack_peek`                  |
+| `queue_*`     | 8     | `queue_enqueue`, `queue_dequeue`, `queue_peek`           |
+| `vector_*`    | 9     | `vector_add`, `vector_magnitude`, `vector_normalize`     |
+| `time_*`      | 19    | `time_now`, `time_fromIso`, `time_year`                  |
+| `file_*`      | 16    | `file_read`, `file_write`, `file_exists`                 |
+| `directory_*` | 11    | `directory_create`, `directory_list`, `directory_exists` |
+| `path_*`      | 6     | `path_join`, `path_dirname`, `path_basename`             |
+| `hash_*`      | 4     | `hash_md5`, `hash_sha256`                                |
+| `json_*`      | 2     | `json_encode`, `json_decode`                             |
+| `base64_*`    | 2     | `base64_encode`, `base64_decode`                         |
+| `console_*`   | 3     | `console_write`, `console_read`                          |
+| `env_*`       | 2     | `env_get`, `env_has`                                     |
+| `uuid_*`      | 1     | `uuid_v4`                                                |
+| `error_*`     | 1     | `error_throw`                                            |
+| Casting       | 22    | `is_boolean`, `to_string`, `to_integer`                  |
 | Operators     | 16    | `+`, `-`, `*`, `/`, `==`, `&&`                           |
 | Control flow  | 2     | `if`, `try`                                              |
 | Other         | 1     | `debug`                                                  |
@@ -226,18 +226,18 @@ The standard library provides 316 built-in functions, organized by namespace:
 The per-namespace counts above are indicative; `StandardLibrary.get()` is the
 only authority for the total.
 
-### Reserved Namespaces
+### Reserved Prefixes
 
-The `test.` prefix is **reserved for user test functions** and the standard
+The `test_` prefix is **reserved for user test functions** and the standard
 library must never register a function under it. Nothing enforces this in code —
 `StandardLibrary.get()` is a hand-maintained list — so it is a policy recorded
-here. Claiming `test.` later would turn every existing user test into a
+here. Claiming `test_` later would turn every existing user test into a
 `DuplicatedFunctionError`, since collision detection compares whole names.
 
 The reservation runs in that direction only, and it is **not** extended to
-`assert.`: users may define `assert.somethingElse` today and still may
-afterwards. Only the five exact names `assert.equal`, `assert.notEqual`,
-`assert.true`, `assert.false` and `assert.throws` collide.
+`assert_`: users may define `assert_somethingElse` today and still may
+afterwards. Only the five exact names `assert_equal`, `assert_notEqual`,
+`assert_true`, `assert_false` and `assert_throws` collide.
 
 ---
 
@@ -277,30 +277,30 @@ Raised during compilation and abort the pipeline:
 
 Raised during execution:
 
-| Error                               | Cause                                              |
-| ----------------------------------- | -------------------------------------------------- |
-| `InvalidArgumentTypesError`         | Wrong argument types for a native function         |
-| `InvalidArgumentCountError`         | Wrong number of arguments at runtime               |
-| `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `vector.add`) |
-| `InvalidLiteralValueError`          | Invalid literal value                              |
-| `InvalidValueError`                 | Invalid computed value                             |
-| `InvalidMapIndexError`              | Key not found in map                               |
-| `ElementNotFoundError`              | Element not in collection                          |
-| `NotFoundInScopeError`              | Function not found in runtime scope                |
-| `InvalidFunctionError`              | Callee is not a function                           |
-| `UnimplementedFunctionWebError`     | I/O function called on web platform                |
-| `EmptyCollectionError`              | Attempting to access an empty collection           |
-| `IndexOutOfBoundsError`             | Index outside collection range                     |
-| `NegativeIndexError`                | Negative index provided where disallowed           |
-| `DivisionByZeroError`               | Division by zero                                   |
-| `InvalidNumericOperationError`      | Domain error (e.g., `log(-1)`, `sqrt(-1)`)         |
-| `ParseError`                        | Failed string conversion                           |
-| `JsonParseError`                    | Invalid JSON string                                |
-| `RecursionLimitError`               | Maximum recursion depth exceeded                   |
-| `NegativeDurationError`             | Negative duration where disallowed                 |
+| Error                               | Cause                                                                 |
+| ----------------------------------- | --------------------------------------------------------------------- |
+| `InvalidArgumentTypesError`         | Wrong argument types for a native function                            |
+| `InvalidArgumentCountError`         | Wrong number of arguments at runtime                                  |
+| `IterablesWithDifferentLengthError` | Mismatched collection lengths (e.g., `vector_add`)                    |
+| `InvalidLiteralValueError`          | Invalid literal value                                                 |
+| `InvalidValueError`                 | Invalid computed value                                                |
+| `InvalidMapIndexError`              | Key not found in map                                                  |
+| `ElementNotFoundError`              | Element not in collection                                             |
+| `NotFoundInScopeError`              | Function not found in runtime scope                                   |
+| `InvalidFunctionError`              | Callee is not a function                                              |
+| `UnimplementedFunctionWebError`     | I/O function called on web platform                                   |
+| `EmptyCollectionError`              | Attempting to access an empty collection                              |
+| `IndexOutOfBoundsError`             | Index outside collection range                                        |
+| `NegativeIndexError`                | Negative index provided where disallowed                              |
+| `DivisionByZeroError`               | Division by zero                                                      |
+| `InvalidNumericOperationError`      | Domain error (e.g., `log(-1)`, `sqrt(-1)`)                            |
+| `ParseError`                        | Failed string conversion                                              |
+| `JsonParseError`                    | Invalid JSON string                                                   |
+| `RecursionLimitError`               | Maximum recursion depth exceeded                                      |
+| `NegativeDurationError`             | Negative duration where disallowed                                    |
 | `AssertionFailedError`              | An assertion's expectation was not met (renders as `Assertion error`) |
-| `AssertionArgumentError`            | An assertion was given the wrong argument type     |
-| `CustomError`                       | Explicitly raised via `error.throw`                |
+| `AssertionArgumentError`            | An assertion was given the wrong argument type                        |
+| `CustomError`                       | Explicitly raised via `error_throw`                                   |
 
 ---
 
@@ -349,7 +349,7 @@ first non-flag argument is the file; the rest are program arguments.
 #### Test Mode (`--test` / `-t`)
 
 `primal --test file.prm` compiles the file once and executes every
-zero-argument custom function whose name starts with `test.`, in
+zero-argument custom function whose name starts with `test_`, in
 source-declaration order, against a single `RuntimeFacade`. `main` is never
 executed and there is no REPL fallthrough. Each test is evaluated with
 `RuntimeFacade.evaluateToTerm` (not `evaluate`, whose formatted `String` would
@@ -365,16 +365,16 @@ compile. Left to `runCli`'s catch-all, a build failure would return `1` and
 `runCli` returns an `int` and `main` assigns it to `exitCode`; `exit()` is never
 called from inside `runCli`, because it is unit-tested in-process.
 
-| Path                                     | Returns |
-| ---------------------------------------- | ------- |
-| `--help`, `--version`                    | `0`     |
-| file executed successfully               | `0`     |
-| watch mode started, REPL                 | `0`     |
-| compile or runtime failure (non-test)    | `1`     |
-| watch-mode usage errors                  | `2`     |
-| `--test`: all tests passed, none skipped | `0`     |
-| `--test`: a test failed or errored       | `1`     |
-| `--test`: usage error, unreadable file, compile error, no tests found, a skipped `test.` function, or an internal abort | `2` |
+| Path                                                                                                                    | Returns |
+| ----------------------------------------------------------------------------------------------------------------------- | ------- |
+| `--help`, `--version`                                                                                                   | `0`     |
+| file executed successfully                                                                                              | `0`     |
+| watch mode started, REPL                                                                                                | `0`     |
+| compile or runtime failure (non-test)                                                                                   | `1`     |
+| watch-mode usage errors                                                                                                 | `2`     |
+| `--test`: all tests passed, none skipped                                                                                | `0`     |
+| `--test`: a test failed or errored                                                                                      | `1`     |
+| `--test`: usage error, unreadable file, compile error, no tests found, a skipped `test_` function, or an internal abort | `2`     |
 
 The `1` for a failing non-test run is a change from earlier versions, which
 exited `0` on every failure and could therefore not be scripted.

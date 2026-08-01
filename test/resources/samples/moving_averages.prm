@@ -4,11 +4,11 @@
 */
 
 movingAverage(list, window) = 
-    if (list.length(list) < window)
+    if (list_length(list) < window)
         []
     else
-        average(list.sublist(list, 0, window)) + movingAverage(list.rest(list), window)
+        average(list_sublist(list, 0, window)) + movingAverage(list_rest(list), window)
 
-average(list) = num.round(list.reduce(list, 0, num.add) / list.length(list))
+average(list) = num_round(list_reduce(list, 0, num_add) / list_length(list))
 
 main() = movingAverage([89, 8, 68, 47, 86, 42, 71, 60, 30, 12], 3)

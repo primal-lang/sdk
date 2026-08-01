@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumSin extends NativeFunctionTerm {
   const NumSin()
     : super(
-        name: 'num.sin',
+        name: 'num_sin',
         parameters: const [
           Parameter.number('a'),
         ],

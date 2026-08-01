@@ -5,16 +5,16 @@
 
 isPalindrome(string) =
     let
-        end = str.length(string) - 1
+        end = str_length(string) - 1
     in
-        isPalindrome.helper(string, 0, end)
+        isPalindrome_helper(string, 0, end)
 
-isPalindrome.helper(string, start, end) =
+isPalindrome_helper(string, start, end) =
     if (start >= end)
         true
     else if (string[start] != string[end])
         false
     else
-        isPalindrome.helper(string, start + 1, end - 1)
+        isPalindrome_helper(string, start + 1, end - 1)
 
 main() = isPalindrome("level")

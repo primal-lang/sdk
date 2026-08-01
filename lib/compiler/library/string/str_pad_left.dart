@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrPadLeft extends NativeFunctionTerm {
   const StrPadLeft()
     : super(
-        name: 'str.padLeft',
+        name: 'str_padLeft',
         parameters: const [
           Parameter.string('a'),
           Parameter.number('b'),

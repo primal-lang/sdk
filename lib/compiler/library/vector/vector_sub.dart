@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class VectorSub extends NativeFunctionTerm {
   const VectorSub()
     : super(
-        name: 'vector.sub',
+        name: 'vector_sub',
         parameters: const [
           Parameter.vector('a'),
           Parameter.vector('b'),

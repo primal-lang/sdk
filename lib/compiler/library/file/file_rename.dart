@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FileRename extends NativeFunctionTerm {
   const FileRename()
     : super(
-        name: 'file.rename',
+        name: 'file_rename',
         parameters: const [
           Parameter.file('a'),
           Parameter.string('b'),

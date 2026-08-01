@@ -37,7 +37,7 @@ Native functions follow a consistent pattern for type validation. The implementa
 class NumAdd extends NativeFunctionTerm {
   const NumAdd()
     : super(
-        name: 'num.add',
+        name: 'num_add',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),
@@ -212,7 +212,7 @@ class InvalidArgumentTypesError extends RuntimeError {
 Example error message:
 
 ```
-Runtime error: Invalid argument types for function "num.add". Expected: (Number, Number). Actual: (String, Number)
+Runtime error: Invalid argument types for function "num_add". Expected: (Number, Number). Actual: (String, Number)
 ```
 
 ### InvalidArgumentCountError

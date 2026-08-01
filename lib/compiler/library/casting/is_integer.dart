@@ -4,7 +4,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class IsInteger extends NativeFunctionTerm {
   const IsInteger()
     : super(
-        name: 'is.integer',
+        name: 'is_integer',
         parameters: const [
           Parameter.any('a'),
         ],

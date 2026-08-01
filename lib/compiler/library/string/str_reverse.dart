@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrReverse extends NativeFunctionTerm {
   const StrReverse()
     : super(
-        name: 'str.reverse',
+        name: 'str_reverse',
         parameters: const [
           Parameter.string('a'),
         ],

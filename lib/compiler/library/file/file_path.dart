@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class FilePath extends NativeFunctionTerm {
   const FilePath()
     : super(
-        name: 'file.path',
+        name: 'file_path',
         parameters: const [
           Parameter.file('a'),
         ],

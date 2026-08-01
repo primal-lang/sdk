@@ -653,26 +653,15 @@ void main() {
     });
 
     test('Identifier with dot', () {
-      final List<Token> tokens = getTokens('is.even');
-      checkTokens(tokens, [
-        IdentifierToken(
-          const Lexeme(
-            value: 'is.even',
-            location: Location(
-              row: 1,
-              column: 1,
-            ),
-          ),
-        ),
-      ]);
+      expect(() => getTokens('is.even'), throwsA(isA<InvalidCharacterError>()));
     });
 
     test('Identifier complex', () {
-      final List<Token> tokens = getTokens('isToday_butNot.31st');
+      final List<Token> tokens = getTokens('isToday_butNot_31st');
       checkTokens(tokens, [
         IdentifierToken(
           const Lexeme(
-            value: 'isToday_butNot.31st',
+            value: 'isToday_butNot_31st',
             location: Location(
               row: 1,
               column: 1,
@@ -4721,15 +4710,7 @@ pi() = 3.14
       });
 
       test('Identifier with multiple dots', () {
-        final List<Token> tokens = getTokens('a.b.c');
-        checkTokens(tokens, [
-          IdentifierToken(
-            const Lexeme(
-              value: 'a.b.c',
-              location: Location(row: 1, column: 1),
-            ),
-          ),
-        ]);
+        expect(() => getTokens('a.b.c'), throwsA(isA<InvalidCharacterError>()));
       });
 
       test('Identifier with multiple underscores', () {
@@ -4742,6 +4723,25 @@ pi() = 3.14
             ),
           ),
         ]);
+      });
+
+      test('Underscored standard library name', () {
+        final List<Token> tokens = getTokens('num_abs');
+        checkTokens(tokens, [
+          IdentifierToken(
+            const Lexeme(
+              value: 'num_abs',
+              location: Location(row: 1, column: 1),
+            ),
+          ),
+        ]);
+      });
+
+      test('Identifier cannot start with an underscore', () {
+        expect(
+          () => getTokens('_foo'),
+          throwsA(isA<InvalidCharacterError>()),
+        );
       });
 
       test('Identifier with trailing underscore', () {
@@ -4757,15 +4757,7 @@ pi() = 3.14
       });
 
       test('Identifier with trailing dot', () {
-        final List<Token> tokens = getTokens('x.');
-        checkTokens(tokens, [
-          IdentifierToken(
-            const Lexeme(
-              value: 'x.',
-              location: Location(row: 1, column: 1),
-            ),
-          ),
-        ]);
+        expect(() => getTokens('x.'), throwsA(isA<InvalidCharacterError>()));
       });
 
       test('Identifier followed by open parenthesis', () {
@@ -7356,6 +7348,72 @@ pi() = 3.14
             ),
           ),
         ]);
+      });
+    });
+
+    // The dot is reserved for member access, so it is not an identifier
+    // character. It remains an ordinary character for number lexing.
+    group('Dot is not an identifier character', () {
+      void checkInvalidDot(String source, int row, int column) {
+        expect(
+          () => getTokens(source),
+          throwsA(
+            isA<InvalidCharacterError>().having(
+              (InvalidCharacterError error) => error.toString(),
+              'message',
+              contains('Invalid character "." at [$row, $column]'),
+            ),
+          ),
+        );
+      }
+
+      test('Dotted call site', () {
+        checkInvalidDot('num.abs(1)', 1, 4);
+      });
+
+      test('Dotted definition', () {
+        checkInvalidDot('foo.bar(n) = n', 1, 4);
+      });
+
+      test('Leading dot behaves as it always has', () {
+        checkInvalidDot('.foo(n) = n', 1, 1);
+      });
+
+      test('Trailing dot in a definition name', () {
+        checkInvalidDot('foo.(n) = n', 1, 4);
+      });
+
+      test('Dotted parameter name', () {
+        checkInvalidDot('foo(a.b) = a', 1, 6);
+      });
+
+      test('Dotted let binding name', () {
+        checkInvalidDot('main() = let a.b = 1 in a', 1, 15);
+      });
+
+      test('Underscored names lex as single identifiers', () {
+        for (final String name in ['num_abs', 'foo_', 'foo__bar', 'a1_b2']) {
+          final List<Token> tokens = getTokens(name);
+
+          expect(tokens, hasLength(1));
+          expect(tokens.single, isA<IdentifierToken>());
+          expect(tokens.single.value, equals(name));
+        }
+      });
+
+      test('Decimal literals still lex, guarding the isDot retention', () {
+        for (final String literal in ['1.5', '1.5e3', '0.5', '1_000.5']) {
+          final List<Token> tokens = getTokens(literal);
+
+          expect(tokens, hasLength(1));
+          expect(tokens.single, isA<NumberToken>());
+        }
+      });
+
+      test('Ranges are still not supported', () {
+        // This change frees the dot; it does not give IntegerState the
+        // lookahead that `1..10` would need.
+        checkInvalidDot('1..10', 1, 3);
       });
     });
   });

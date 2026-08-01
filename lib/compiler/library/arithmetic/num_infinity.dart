@@ -3,7 +3,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumInfinity extends NativeFunctionTerm {
   const NumInfinity()
     : super(
-        name: 'num.infinity',
+        name: 'num_infinity',
         parameters: const [],
       );
 

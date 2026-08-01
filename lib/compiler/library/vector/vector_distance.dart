@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class VectorDistance extends NativeFunctionTerm {
   const VectorDistance()
     : super(
-        name: 'vector.distance',
+        name: 'vector_distance',
         parameters: const [
           Parameter.vector('a'),
           Parameter.vector('b'),

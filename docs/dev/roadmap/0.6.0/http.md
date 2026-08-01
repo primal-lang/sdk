@@ -8,38 +8,38 @@ sources: []
 
 # HTTP
 
-**TLDR**: Standard library functions for HTTP requests (`http.get`, `http.post`, `http.put`, `http.patch`, `http.delete`) returning `HttpResponse` values with helpers to extract status, body, and headers, addressing the challenge of asynchronous operations in an eager interpreter.
+**TLDR**: Standard library functions for HTTP requests (`http_get`, `http_post`, `http_put`, `http_patch`, `http_delete`) returning `HttpResponse` values with helpers to extract status, body, and headers, addressing the challenge of asynchronous operations in an eager interpreter.
 
 Problem: HTTP requests are asynchronous which complicates how the interpreter expects the evaluation of a term.
 
 ```primal
-http.get(a: String, b: Map): HttpResponse
+http_get(a: String, b: Map): HttpResponse
 ```
 
 ```primal
-http.post(a: String, b: Map, c: String): HttpResponse
+http_post(a: String, b: Map, c: String): HttpResponse
 ```
 
 ```primal
-http.put(a: String, b: Map, c: String): HttpResponse
+http_put(a: String, b: Map, c: String): HttpResponse
 ```
 
 ```primal
-http.patch(a: String, b: Map, c: String): HttpResponse
+http_patch(a: String, b: Map, c: String): HttpResponse
 ```
 
 ```primal
-http.delete(a: String, b: Map): HttpResponse
+http_delete(a: String, b: Map): HttpResponse
 ```
 
 ```primal
-http.status(a: HttpResponse): Number
+http_status(a: HttpResponse): Number
 ```
 
 ```primal
-http.body(a: HttpResponse): String
+http_body(a: HttpResponse): String
 ```
 
 ```primal
-http.headers(a: HttpResponse): Map
+http_headers(a: HttpResponse): Map
 ```

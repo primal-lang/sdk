@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class NumSum extends NativeFunctionTerm {
   const NumSum()
     : super(
-        name: 'num.sum',
+        name: 'num_sum',
         parameters: const [
           Parameter.number('a'),
           Parameter.number('b'),

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DurationToSeconds extends NativeFunctionTerm {
   const DurationToSeconds()
     : super(
-        name: 'duration.toSeconds',
+        name: 'duration_toSeconds',
         parameters: const [
           Parameter.duration('a'),
         ],

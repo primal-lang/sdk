@@ -195,10 +195,10 @@ void main() {
 
     test('Standard library functions are accessible', () {
       final IntermediateRepresentation intermediateRepresentation = compiler
-          .compile('main() = num.add(1, 2)');
+          .compile('main() = num_add(1, 2)');
       expect(
         intermediateRepresentation.standardLibrarySignatures.containsKey(
-          'num.add',
+          'num_add',
         ),
         isTrue,
       );
@@ -832,7 +832,7 @@ void main() {
       'Redefining standard library function throws CannotRedefineStandardLibraryError equivalent',
       () {
         expect(
-          () => compiler.compile('num.add(x, y) = x + y'),
+          () => compiler.compile('num_add(x, y) = x + y'),
           throwsA(isA<DuplicatedFunctionError>()),
         );
       },
@@ -1091,7 +1091,7 @@ void main() {
           .compile('myFunc() = 42');
       final Set<String> allNames = intermediateRepresentation.allFunctionNames;
       expect(allNames.contains('myFunc'), isTrue);
-      expect(allNames.contains('num.add'), isTrue);
+      expect(allNames.contains('num_add'), isTrue);
     });
 
     test(
@@ -1100,7 +1100,7 @@ void main() {
         final IntermediateRepresentation intermediateRepresentation = compiler
             .compile('');
         expect(
-          intermediateRepresentation.getStandardLibrarySignature('num.add'),
+          intermediateRepresentation.getStandardLibrarySignature('num_add'),
           isNotNull,
         );
       },
@@ -1281,13 +1281,17 @@ void main() {
       expect(definition.parameters, equals(['n']));
     });
 
-    test('returns FunctionDefinition with dotted name', () {
+    test('returns FunctionDefinition with underscored name', () {
       final FunctionDefinition? definition = compiler.functionDefinition(
-        'my.func() = 42',
+        'my_func() = 42',
       );
 
       expect(definition, isNotNull);
-      expect(definition!.name, equals('my.func'));
+      expect(definition!.name, equals('my_func'));
+    });
+
+    test('returns null for dotted name', () {
+      expect(compiler.functionDefinition('my.func() = 42'), isNull);
     });
 
     test('returns null for comment only', () {
@@ -1372,7 +1376,7 @@ void main() {
     test('containsFunction returns true for standard library functions', () {
       final IntermediateRepresentation representation =
           IntermediateRepresentation.empty();
-      expect(representation.containsFunction('num.add'), isTrue);
+      expect(representation.containsFunction('num_add'), isTrue);
     });
 
     test('containsFunction returns false for custom functions', () {
@@ -1619,20 +1623,27 @@ void main() {
       expect((expression as IdentifierExpression).value, equals('var123'));
     });
 
-    test('Dotted identifier', () {
-      final Expression expression = compiler.expression('foo.bar');
+    test('Underscored identifier', () {
+      final Expression expression = compiler.expression('foo_bar');
       expect(expression, isA<IdentifierExpression>());
-      expect((expression as IdentifierExpression).value, equals('foo.bar'));
+      expect((expression as IdentifierExpression).value, equals('foo_bar'));
     });
 
-    test('Call on dotted identifier', () {
-      final Expression expression = compiler.expression('num.add(1, 2)');
+    test('Dotted identifier is rejected', () {
+      expect(
+        () => compiler.expression('foo.bar'),
+        throwsA(isA<InvalidCharacterError>()),
+      );
+    });
+
+    test('Call on underscored identifier', () {
+      final Expression expression = compiler.expression('num_add(1, 2)');
       expect(expression, isA<CallExpression>());
       final CallExpression callExpression = expression as CallExpression;
       expect(callExpression.callee, isA<IdentifierExpression>());
       expect(
         (callExpression.callee as IdentifierExpression).value,
-        equals('num.add'),
+        equals('num_add'),
       );
     });
 

@@ -7,7 +7,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class DirectoryExists extends NativeFunctionTerm {
   const DirectoryExists()
     : super(
-        name: 'directory.exists',
+        name: 'directory_exists',
         parameters: const [
           Parameter.directory('a'),
         ],

@@ -6,7 +6,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrInit extends NativeFunctionTerm {
   const StrInit()
     : super(
-        name: 'str.init',
+        name: 'str_init',
         parameters: const [
           Parameter.string('a'),
         ],

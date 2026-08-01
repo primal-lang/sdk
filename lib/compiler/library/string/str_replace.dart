@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrReplace extends NativeFunctionTerm {
   const StrReplace()
     : super(
-        name: 'str.replace',
+        name: 'str_replace',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

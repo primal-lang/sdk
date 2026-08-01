@@ -61,8 +61,8 @@ The inner `y` binding can see the outer `x` binding, but `x` cannot see `y`.
 You can bind function references to local names:
 
 ```
-let square = num.mul in square(4, 4)    // returns 16
-let add = num.add in list.reduce([1, 2, 3], 0, add)    // returns 6
+let square = num_mul in square(4, 4)    // returns 16
+let add = num_add in list_reduce([1, 2, 3], 0, add)    // returns 6
 ```
 
 ## Scoping Rules
@@ -112,13 +112,13 @@ in expensive + expensive    // computeValue() is called only once
 // Calculate compound interest
 compoundInterest(principal, rate, years) =
   let factor = 1 + rate,
-      multiplier = num.pow(factor, years)
+      multiplier = num_pow(factor, years)
   in principal * multiplier
 
 // Quadratic formula (positive root)
 quadraticRoot(a, b, c) =
   let discriminant = b * b - 4 * a * c,
-      sqrtDisc = num.sqrt(discriminant)
+      sqrtDisc = num_sqrt(discriminant)
   in (-b + sqrtDisc) / (2 * a)
 ```
 
@@ -127,8 +127,8 @@ quadraticRoot(a, b, c) =
 ```
 // Calculate statistics
 stats(numbers) =
-  let total = list.reduce(numbers, 0, num.add),
-      count = list.length(numbers),
+  let total = list_reduce(numbers, 0, num_add),
+      count = list_length(numbers),
       average = total / count
   in { "sum": total, "count": count, "average": average }
 ```
@@ -143,7 +143,7 @@ safeDivide(a, b, default) =
 
 // Classify a number
 classify(n) =
-  let absValue = num.abs(n),
+  let absValue = num_abs(n),
       isSmall = absValue < 10,
       isMedium = absValue < 100
   in if (isSmall) "small"

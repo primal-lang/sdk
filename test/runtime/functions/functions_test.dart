@@ -11,28 +11,28 @@ void main() {
   group('Function Composition', () {
     test('nested core function calls', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = num.abs(num.negative(5))',
+        'main() = num_abs(num_negative(5))',
       );
       checkResult(runtime, 5);
     });
 
     test('composed arithmetic', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = num.pow(num.add(1, 2), num.sub(5, 2))',
+        'main() = num_pow(num_add(1, 2), num_sub(5, 2))',
       );
       checkResult(runtime, 27);
     });
 
     test('chained string operations', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = str.uppercase(str.reverse("hello"))',
+        'main() = str_uppercase(str_reverse("hello"))',
       );
       checkResult(runtime, '"OLLEH"');
     });
 
     test('composed list and arithmetic', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = num.add(list.first([10, 20]), list.last([30, 40]))',
+        'main() = num_add(list_first([10, 20]), list_last([30, 40]))',
       );
       checkResult(runtime, 50);
     });
@@ -86,8 +86,8 @@ main() = classify(0)
 
     test('custom function with list operations', () {
       final RuntimeFacade runtime = getRuntime('''
-sumList(xs) = list.reduce(xs, 0, num.add)
-average(xs) = sumList(xs) / list.length(xs)
+sumList(xs) = list_reduce(xs, 0, num_add)
+average(xs) = sumList(xs) / list_length(xs)
 main() = average([10, 20, 30])
 ''');
       checkResult(runtime, 20.0);
@@ -160,7 +160,7 @@ main() = isPositive(-5)
 
     test('function with map operations', () {
       final RuntimeFacade runtime = getRuntime('''
-getValue(m, k) = map.at(m, k)
+getValue(m, k) = map_at(m, k)
 main() = getValue({"x": 10, "y": 20}, "y")
 ''');
       checkResult(runtime, 20);
@@ -168,8 +168,8 @@ main() = getValue({"x": 10, "y": 20}, "y")
 
     test('function with set operations', () {
       final RuntimeFacade runtime = getRuntime('''
-makeSet(xs) = set.new(xs)
-main() = set.length(makeSet([1, 2, 2, 3]))
+makeSet(xs) = set_new(xs)
+main() = set_length(makeSet([1, 2, 2, 3]))
 ''');
       checkResult(runtime, 3);
     });
@@ -189,7 +189,7 @@ main() = d(5)
 
     test('deeply nested core function calls', () {
       final RuntimeFacade runtime = getRuntime(
-        'main() = num.abs(num.negative(num.abs(num.negative(5))))',
+        'main() = num_abs(num_negative(num_abs(num_negative(5))))',
       );
       checkResult(runtime, 5);
     });
@@ -197,8 +197,8 @@ main() = d(5)
     test('composition with different types', () {
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
-stringify(n) = to.string(n)
-prefix(s) = str.concat("Value: ", s)
+stringify(n) = to_string(n)
+prefix(s) = str_concat("Value: ", s)
 main() = prefix(stringify(double(21)))
 ''');
       checkResult(runtime, '"Value: 42"');
@@ -206,7 +206,7 @@ main() = prefix(stringify(double(21)))
 
     test('composition with list to number', () {
       final RuntimeFacade runtime = getRuntime('''
-sum(xs) = list.reduce(xs, 0, num.add)
+sum(xs) = list_reduce(xs, 0, num_add)
 double(n) = n * 2
 main() = double(sum([1, 2, 3, 4, 5]))
 ''');
@@ -228,7 +228,7 @@ main() = tripled()
     test('parameterless function returning list', () {
       final RuntimeFacade runtime = getRuntime('''
 numbers() = [1, 2, 3, 4, 5]
-main() = list.length(numbers())
+main() = list_length(numbers())
 ''');
       checkResult(runtime, 5);
     });
@@ -236,7 +236,7 @@ main() = list.length(numbers())
     test('parameterless function returning map', () {
       final RuntimeFacade runtime = getRuntime('''
 config() = {"name": "test", "value": 42}
-main() = map.at(config(), "value")
+main() = map_at(config(), "value")
 ''');
       checkResult(runtime, 42);
     });
@@ -244,7 +244,7 @@ main() = map.at(config(), "value")
     test('parameterless function returning empty list', () {
       final RuntimeFacade runtime = getRuntime('''
 empty() = []
-main() = list.length(empty())
+main() = list_length(empty())
 ''');
       checkResult(runtime, 0);
     });
@@ -253,7 +253,7 @@ main() = list.length(empty())
   group('Function Composition Edge Cases', () {
     test('composition with empty string', () {
       final RuntimeFacade runtime = getRuntime('''
-wrap(s) = str.concat("[", str.concat(s, "]"))
+wrap(s) = str_concat("[", str_concat(s, "]"))
 main() = wrap("")
 ''');
       checkResult(runtime, '"[]"');
@@ -261,7 +261,7 @@ main() = wrap("")
 
     test('composition with empty list', () {
       final RuntimeFacade runtime = getRuntime('''
-count(xs) = list.length(xs)
+count(xs) = list_length(xs)
 double(n) = n * 2
 main() = double(count([]))
 ''');
@@ -270,7 +270,7 @@ main() = double(count([]))
 
     test('composition with single element list', () {
       final RuntimeFacade runtime = getRuntime('''
-getFirst(xs) = list.first(xs)
+getFirst(xs) = list_first(xs)
 double(n) = n * 2
 main() = double(getFirst([21]))
 ''');
@@ -306,7 +306,7 @@ main() = safeDivide(10, 0)
 
     test('try with nested function calls', () {
       final RuntimeFacade runtime = getRuntime('''
-getFirst(xs) = list.first(xs)
+getFirst(xs) = list_first(xs)
 safeFirst(xs) = try(getFirst(xs), -1)
 main() = safeFirst([])
 ''');
@@ -316,7 +316,7 @@ main() = safeFirst([])
     test('error propagates through function calls', () {
       final RuntimeFacade runtime = getRuntime('''
 double(n) = n * 2
-unsafe(xs) = double(list.first(xs))
+unsafe(xs) = double(list_first(xs))
 main() = try(unsafe([]), 0)
 ''');
       checkResult(runtime, 0);
@@ -324,7 +324,7 @@ main() = try(unsafe([]), 0)
 
     test('try in middle of composition chain', () {
       final RuntimeFacade runtime = getRuntime('''
-parse(s) = try(to.number(s), 0)
+parse(s) = try(to_number(s), 0)
 double(n) = n * 2
 main() = double(parse("abc"))
 ''');
@@ -391,7 +391,7 @@ main() = isNonPositive(-5)
 
     test('function with list concatenation', () {
       final RuntimeFacade runtime = getRuntime('''
-combine(xs, ys) = list.concat(xs, ys)
+combine(xs, ys) = list_concat(xs, ys)
 main() = combine([1, 2], [3, 4])
 ''');
       checkResult(runtime, [1, 2, 3, 4]);
@@ -591,15 +591,15 @@ main() = piApprox()
     test('parameterless function returning empty map', () {
       final RuntimeFacade runtime = getRuntime('''
 emptyMap() = {}
-main() = map.length(emptyMap())
+main() = map_length(emptyMap())
 ''');
       checkResult(runtime, 0);
     });
 
     test('parameterless function returning set', () {
       final RuntimeFacade runtime = getRuntime('''
-uniqueNumbers() = set.new([1, 2, 3])
-main() = set.length(uniqueNumbers())
+uniqueNumbers() = set_new([1, 2, 3])
+main() = set_length(uniqueNumbers())
 ''');
       checkResult(runtime, 3);
     });
@@ -619,8 +619,8 @@ main() = d()
   group('Complex Function Interactions', () {
     test('function composition with type conversion', () {
       final RuntimeFacade runtime = getRuntime('''
-numberToString(n) = to.string(n)
-addPrefix(s) = str.concat("Value: ", s)
+numberToString(n) = to_string(n)
+addPrefix(s) = str_concat("Value: ", s)
 main() = addPrefix(numberToString(42))
 ''');
       checkResult(runtime, '"Value: 42"');
@@ -629,7 +629,7 @@ main() = addPrefix(numberToString(42))
     test('function composition with boolean conversion', () {
       final RuntimeFacade runtime = getRuntime('''
 isPositive(n) = n > 0
-boolToString(b) = to.string(b)
+boolToString(b) = to_string(b)
 main() = boolToString(isPositive(-5))
 ''');
       checkResult(runtime, '"false"');
@@ -661,7 +661,7 @@ main() = clamp(-50, 0, 100)
 
     test('function returning list from computation', () {
       final RuntimeFacade runtime = getRuntime('''
-range(start, endVal) = if (start >= endVal) [] else list.insertStart(range(start + 1, endVal), start)
+range(start, endVal) = if (start >= endVal) [] else list_insertStart(range(start + 1, endVal), start)
 main() = range(1, 5)
 ''');
       checkResult(runtime, [1, 2, 3, 4]);
@@ -670,7 +670,7 @@ main() = range(1, 5)
     test('function with map creation and access', () {
       final RuntimeFacade runtime = getRuntime('''
 createPerson(name, age) = {"name": name, "age": age}
-getName(person) = map.at(person, "name")
+getName(person) = map_at(person, "name")
 main() = getName(createPerson("Alice", 30))
 ''');
       checkResult(runtime, '"Alice"');
@@ -679,7 +679,7 @@ main() = getName(createPerson("Alice", 30))
     test('function chaining with multiple types', () {
       final RuntimeFacade runtime = getRuntime('''
 createList(x) = [x]
-getFirst(xs) = list.first(xs)
+getFirst(xs) = list_first(xs)
 double(n) = n * 2
 main() = double(getFirst(createList(21)))
 ''');
@@ -714,7 +714,7 @@ main() = addSmall(0)
 
     test('function preserving unicode in string', () {
       final RuntimeFacade runtime = getRuntime('''
-addEmoji(s) = str.concat(s, " \u2764")
+addEmoji(s) = str_concat(s, " \u2764")
 main() = addEmoji("Hello")
 ''');
       checkResult(runtime, '"Hello \u2764"');
@@ -722,7 +722,7 @@ main() = addEmoji("Hello")
 
     test('function with empty string parameter', () {
       final RuntimeFacade runtime = getRuntime('''
-wrapInBrackets(s) = str.concat("[", str.concat(s, "]"))
+wrapInBrackets(s) = str_concat("[", str_concat(s, "]"))
 main() = wrapInBrackets("")
 ''');
       checkResult(runtime, '"[]"');
@@ -730,7 +730,7 @@ main() = wrapInBrackets("")
 
     test('function with whitespace string', () {
       final RuntimeFacade runtime = getRuntime('''
-trimAndLength(s) = str.length(str.trim(s))
+trimAndLength(s) = str_length(str_trim(s))
 main() = trimAndLength("   ")
 ''');
       checkResult(runtime, 0);
@@ -936,7 +936,7 @@ main() = makeItems(10, 20)
 
     test('function returning map with list value', () {
       final RuntimeFacade runtime = getRuntime('''
-makeContainer(xs) = {"items": xs, "count": list.length(xs)}
+makeContainer(xs) = {"items": xs, "count": list_length(xs)}
 main() = makeContainer([1, 2, 3])
 ''');
       checkResult(runtime, '{"items": [1, 2, 3], "count": 3}');
@@ -964,7 +964,7 @@ main() = safeGet([1, 2, 3], 10)
 
     test('try catches map key not found', () {
       final RuntimeFacade runtime = getRuntime('''
-getKey(m, k) = map.at(m, k)
+getKey(m, k) = map_at(m, k)
 safeGetKey(m, k) = try(getKey(m, k), "not found")
 main() = safeGetKey({"a": 1}, "b")
 ''');
@@ -973,8 +973,8 @@ main() = safeGetKey({"a": 1}, "b")
 
     test('nested try with multiple error sources', () {
       final RuntimeFacade runtime = getRuntime('''
-mayFail1(x) = if (x < 0) error.throw(0, "negative") else x
-mayFail2(x) = if (x > 100) error.throw(0, "too large") else x
+mayFail1(x) = if (x < 0) error_throw(0, "negative") else x
+mayFail2(x) = if (x > 100) error_throw(0, "too large") else x
 validate(x) = try(mayFail1(try(mayFail2(x), 50)), 0)
 main() = validate(150)
 ''');
@@ -983,8 +983,8 @@ main() = validate(150)
 
     test('nested try with outer error', () {
       final RuntimeFacade runtime = getRuntime('''
-mayFail1(x) = if (x < 0) error.throw(0, "negative") else x
-mayFail2(x) = if (x > 100) error.throw(0, "too large") else x
+mayFail1(x) = if (x < 0) error_throw(0, "negative") else x
+mayFail2(x) = if (x > 100) error_throw(0, "too large") else x
 validate(x) = try(mayFail1(try(mayFail2(x), -10)), 0)
 main() = validate(150)
 ''');

@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class StrContains extends NativeFunctionTerm {
   const StrContains()
     : super(
-        name: 'str.contains',
+        name: 'str_contains',
         parameters: const [
           Parameter.string('a'),
           Parameter.string('b'),

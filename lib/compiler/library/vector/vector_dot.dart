@@ -5,7 +5,7 @@ import 'package:primal/compiler/runtime/term.dart';
 class VectorDot extends NativeFunctionTerm {
   const VectorDot()
     : super(
-        name: 'vector.dot',
+        name: 'vector_dot',
         parameters: const [
           Parameter.vector('a'),
           Parameter.vector('b'),

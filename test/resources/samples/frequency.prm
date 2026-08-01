@@ -3,18 +3,18 @@
   Output: a map with the elements as keys and the amount of appearances in the list as a value
 */
 
-frequency(list) = frequency.helper(list, {})
+frequency(list) = frequency_helper(list, {})
 
-frequency.helper(list, result) =
-    if (list.isEmpty(list))
+frequency_helper(list, result) =
+    if (list_isEmpty(list))
         result
     else
-        frequency.count(list.first(list), list.rest(list), result)
+        frequency_count(list_first(list), list_rest(list), result)
 
-frequency.count(first, rest, result) =
-    if (map.containsKey(result, first))
-        frequency.helper(rest, map.set(result, first, result[first] + 1))
+frequency_count(first, rest, result) =
+    if (map_containsKey(result, first))
+        frequency_helper(rest, map_set(result, first, result[first] + 1))
     else
-        frequency.helper(rest, map.set(result, first, 1))
+        frequency_helper(rest, map_set(result, first, 1))
 
 main() = frequency([1, 2, 2, 3, 1, 4, 5, 2, 2, 5])

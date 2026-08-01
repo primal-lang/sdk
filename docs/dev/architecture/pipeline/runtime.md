@@ -136,7 +136,7 @@ Each native function follows a two-class pattern:
 // 1. Definition class - declares name, parameters, and types
 class FunctionName extends NativeFunctionTerm {
   FunctionName() : super(
-    name: 'namespace.function',
+    name: 'namespace_function',
     parameters: [Parameter.type('arg1'), Parameter.any('arg2')],
   );
 
