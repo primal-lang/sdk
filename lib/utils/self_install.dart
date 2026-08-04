@@ -33,6 +33,7 @@ Future<int> runSelfInstall(
   Future<List<int>> Function(String url)? downloadScript,
   Future<int> Function(String executable, List<String> arguments)? runCommand,
   Directory Function()? createWorkingDirectory,
+  String? Function()? resolveShell,
 }) async {
   final Console currentConsole = console ?? Console();
   final bool uninstall = arguments.contains(uninstallFlag);
@@ -61,6 +62,20 @@ Future<int> runSelfInstall(
     );
 
     return 2;
+  }
+
+  // Looked for before the download, since a machine with no shell to run the
+  // installer in has no use for one.
+  final String? shell = (resolveShell ?? _resolveShell)();
+
+  if (shell == null) {
+    currentConsole.error(
+      'Error: $flag needs bash to run the installer, and no Git Bash was '
+      'found. Install Git for Windows, or reinstall from '
+      'https://primal-lang.org/start instead.',
+    );
+
+    return 1;
   }
 
   final String installDirectory = File(executable).parent.path;
@@ -92,7 +107,7 @@ Future<int> runSelfInstall(
     // got, leaving the installation in whatever state half a script produces.
     script.writeAsBytesSync(installer);
 
-    return await (runCommand ?? _runCommand)('bash', <String>[
+    return await (runCommand ?? _runCommand)(shell, <String>[
       shellPath(script.path),
       '--install-dir',
       shellPath(installDirectory),
@@ -149,6 +164,64 @@ String shellPath(String path) {
   }
 
   return '/${path[0].toLowerCase()}${path.substring(2).replaceAll(r'\', '/')}';
+}
+
+/// The bash to run the installer with on Windows, or null when the machine has
+/// none, given its [environment] and a way to ask whether a path [exists].
+///
+/// Deliberately not the bash that PATH answers with. On a stock Windows that is
+/// '%SystemRoot%\System32\bash.exe', the launcher for the WSL distribution,
+/// whose bash is a Linux shell looking at a Linux filesystem: the installer
+/// would run there as if it were on Linux, fetch the Linux release, write it
+/// into a directory inside the distribution that has nothing to do with the
+/// installation this binary was started from, and report success. Finding no
+/// shell at all is the better outcome, so only the shells that share a
+/// filesystem with this binary are looked for, where Git for Windows and MSYS2
+/// put them.
+String? windowsShell(
+  Map<String, String> environment,
+  bool Function(String path) exists,
+) {
+  final List<String?> roots = <String?>[
+    // The installation whose shell this process was started from, which both
+    // Git for Windows and MSYS2 name here. Tried first: it is the shell that
+    // ran the installer that put this binary in place.
+    environment['EXEPATH'],
+    environment['GIT_INSTALL_ROOT'],
+    _pathIn(environment['ProgramW6432'], 'Git'),
+    _pathIn(environment['ProgramFiles'], 'Git'),
+    _pathIn(environment['ProgramFiles(x86)'], 'Git'),
+    _pathIn(environment['LOCALAPPDATA'], r'Programs\Git'),
+  ];
+
+  for (final String? root in roots) {
+    // Git for Windows keeps bash in 'bin', MSYS2 in 'usr\bin'.
+    for (final String directory in const <String>['bin', r'usr\bin']) {
+      final String? candidate = _pathIn(root, '$directory\\bash.exe');
+
+      if (candidate != null && exists(candidate)) {
+        return candidate;
+      }
+    }
+  }
+
+  return null;
+}
+
+String? _pathIn(String? directory, String name) =>
+    (directory == null || directory.isEmpty) ? null : '$directory\\$name';
+
+/// Everywhere but Windows the shell is on PATH under its own name, and PATH has
+/// no impostor to offer for it.
+String? _resolveShell() {
+  if (!Platform.isWindows) {
+    return 'bash';
+  }
+
+  return windowsShell(
+    Platform.environment,
+    (String path) => File(path).existsSync(),
+  );
 }
 
 String _resolveExecutable() => Platform.resolvedExecutable;

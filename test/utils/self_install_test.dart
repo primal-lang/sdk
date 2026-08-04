@@ -205,6 +205,40 @@ void main() {
       expect(platformConsole.errorLines.single, contains('bash'));
     });
 
+    test('reports a machine with no shell to run the installer in', () async {
+      final int code = await runSelfInstall(
+        <String>['--uninstall'],
+        console: console,
+        resolveExecutable: () => '/usr/local/bin/primal',
+        downloadScript: download,
+        runCommand: recordCommand(),
+        resolveShell: () => null,
+      );
+
+      // Nothing was fetched: an installer that cannot be run is not worth
+      // downloading.
+      expect(code, equals(1));
+      expect(requestedUrls, isEmpty);
+      expect(executables, isEmpty);
+      expect(platformConsole.errorLines.single, contains('Git Bash'));
+    });
+
+    test('runs the shell it resolves to', () async {
+      await runSelfInstall(
+        <String>['--update'],
+        console: console,
+        resolveExecutable: () => '/usr/local/bin/primal',
+        downloadScript: download,
+        runCommand: recordCommand(),
+        resolveShell: () => r'C:\Program Files\Git\bin\bash.exe',
+      );
+
+      expect(
+        executables,
+        equals(<String>[r'C:\Program Files\Git\bin\bash.exe']),
+      );
+    });
+
     test('reports a temporary directory that cannot be created', () async {
       final int code = await runSelfInstall(
         <String>['--update'],
@@ -297,6 +331,84 @@ void main() {
       expect(
         shellPath('/home/user/.local/bin'),
         equals('/home/user/.local/bin'),
+      );
+    });
+  });
+
+  group('windowsShell()', () {
+    bool Function(String path) installed(List<String> paths) {
+      return (String path) => paths.contains(path);
+    }
+
+    test('takes the shell of the installation it was started from', () {
+      expect(
+        windowsShell(
+          <String, String>{
+            'EXEPATH': r'C:\Program Files\Git',
+            'ProgramFiles': r'C:\Program Files',
+          },
+          installed(<String>[r'C:\Program Files\Git\bin\bash.exe']),
+        ),
+        equals(r'C:\Program Files\Git\bin\bash.exe'),
+      );
+    });
+
+    test('takes the MSYS2 layout as readily as the Git one', () {
+      expect(
+        windowsShell(
+          <String, String>{'EXEPATH': r'C:\msys64'},
+          installed(<String>[r'C:\msys64\usr\bin\bash.exe']),
+        ),
+        equals(r'C:\msys64\usr\bin\bash.exe'),
+      );
+    });
+
+    test('falls back to an installation under Program Files', () {
+      expect(
+        windowsShell(
+          <String, String>{'ProgramFiles': r'C:\Program Files'},
+          installed(<String>[r'C:\Program Files\Git\bin\bash.exe']),
+        ),
+        equals(r'C:\Program Files\Git\bin\bash.exe'),
+      );
+    });
+
+    test('falls back to a per-user installation', () {
+      expect(
+        windowsShell(
+          <String, String>{'LOCALAPPDATA': r'C:\Users\grego\AppData\Local'},
+          installed(<String>[
+            r'C:\Users\grego\AppData\Local\Programs\Git\bin\bash.exe',
+          ]),
+        ),
+        equals(r'C:\Users\grego\AppData\Local\Programs\Git\bin\bash.exe'),
+      );
+    });
+
+    // The whole point of looking the shell up rather than letting PATH answer:
+    // the WSL launcher is a Linux shell on a Linux filesystem, and the
+    // installer run there would install the wrong release somewhere else
+    // entirely and call it a success.
+    test('never answers with the WSL launcher', () {
+      expect(
+        windowsShell(
+          <String, String>{
+            'PATH': r'C:\Windows\System32',
+            'ProgramFiles': r'C:\Program Files',
+          },
+          installed(<String>[r'C:\Windows\System32\bash.exe']),
+        ),
+        isNull,
+      );
+    });
+
+    test('answers nothing when no shell is installed', () {
+      expect(
+        windowsShell(
+          <String, String>{'ProgramFiles': r'C:\Program Files'},
+          installed(<String>[]),
+        ),
+        isNull,
       );
     });
   });
