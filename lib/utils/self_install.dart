@@ -93,9 +93,9 @@ Future<int> runSelfInstall(
     script.writeAsBytesSync(installer);
 
     return await (runCommand ?? _runCommand)('bash', <String>[
-      script.path,
+      shellPath(script.path),
       '--install-dir',
-      installDirectory,
+      shellPath(installDirectory),
       if (uninstall) uninstallFlag,
     ]);
   } on ProcessException {
@@ -123,6 +123,32 @@ Future<int> runSelfInstall(
   } finally {
     workingDirectory?.deleteSync(recursive: true);
   }
+}
+
+/// [path] in the form the shell running the installer reads it.
+///
+/// A Windows path does not survive the trip to bash: the command line it is
+/// handed on is parsed with the backslashes separating its components taken as
+/// escape characters, so 'C:\Users\me\install.sh' arrives as
+/// 'C:Usersmeinstall.sh' and names nothing. The same file written the way that
+/// shell names it, '/c/Users/me/install.sh', leaves nothing in the path for
+/// that parse to consume.
+///
+/// It is also the form the installer already works in, which matters for the
+/// install directory as much as for the script. Run from a shell the installer
+/// takes that directory from HOME and writes the string into the PATH entry it
+/// adds; naming the same directory the Windows way would leave an update adding
+/// a second entry alongside the first and an uninstall unable to find either.
+///
+/// Only a drive-letter path is rewritten, and nothing but a Windows path is
+/// one, so what every other platform resolves its executable to is returned
+/// untouched.
+String shellPath(String path) {
+  if (!RegExp(r'^[A-Za-z]:[\\/]').hasMatch(path)) {
+    return path;
+  }
+
+  return '/${path[0].toLowerCase()}${path.substring(2).replaceAll(r'\', '/')}';
 }
 
 String _resolveExecutable() => Platform.resolvedExecutable;
