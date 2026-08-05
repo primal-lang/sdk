@@ -11,3 +11,5 @@ tags:
     description: "Unit tests (models, utils, extensions, platform)"
   cli:
     description: "CLI tests run on every desktop platform (entrypoint, dart:io platform layer, installer)"
+  binary:
+    description: "Smoke tests for the compiled binary, which must be built before they can run"

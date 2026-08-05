@@ -70,6 +70,14 @@ jobs:
           rm -f "bin/${{ matrix.target }}"
           bash scripts/build_desktop.sh
 
+      # Run against the artifact itself, before it is uploaded: ahead-of-time
+      # compilation can break what 'dart run' never exercises, and a binary
+      # that fails here must not become a release asset.
+      - name: Test binary
+        run: dart test test/compiler/binary_test.dart
+        env:
+          PRIMAL_BINARY: bin/${{ matrix.target }}
+
       - name: Upload
         uses: actions/upload-artifact@v7
         with:
