@@ -55,6 +55,13 @@ jobs:
       - name: Install dependencies
         run: dart pub get
 
+      # Only the tests tagged 'cli' run here: they cover the entrypoint, the
+      # dart:io platform layer and the installer, which are the parts whose
+      # behaviour actually differs per platform. The rest of the suite is
+      # platform-agnostic and is covered by the Linux run alone.
+      - name: Test
+        run: dart test -t cli
+
       # The committed binaries in bin/ are removed first so a failed compilation
       # can never cause a stale binary to be uploaded as the artifact.
       - name: Build

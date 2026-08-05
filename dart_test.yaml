@@ -9,3 +9,5 @@ tags:
     description: "I/O tests (file, directory, console, environment)"
   unit:
     description: "Unit tests (models, utils, extensions, platform)"
+  cli:
+    description: "CLI tests run on every desktop platform (entrypoint, dart:io platform layer, installer)"

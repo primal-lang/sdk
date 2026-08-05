@@ -1,8 +1,9 @@
-@Tags(['compiler'])
+@Tags(['compiler', 'cli'])
 @TestOn('vm')
 library;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -26,6 +27,9 @@ void main() {
     }
 
     Future<ProcessResult> runCli(List<String> args) {
+      // dart:io always encodes stdout and stderr as UTF-8, but Process.run
+      // decodes with systemEncoding, which is a legacy code page on Windows.
+      // Decoding explicitly keeps non-ASCII output intact on every platform.
       return Process.run(
         Platform.resolvedExecutable,
         ['run', 'lib/main/main_cli.dart', ...args],
@@ -33,6 +37,8 @@ void main() {
           'HOME': tempDir.path,
           'XDG_CONFIG_HOME': tempDir.path,
         },
+        stdoutEncoding: utf8,
+        stderrEncoding: utf8,
       );
     }
 
@@ -455,21 +461,45 @@ main() = 42 // inline comment
     });
 
     group('edge cases', () {
+      // A file without a main function drops the CLI into the REPL, which never
+      // exits. The process is started directly rather than through runCli() so
+      // that it can be killed and reaped: putting a timeout on the runCli()
+      // future would only abandon it and leave the child running, which on
+      // Windows also keeps the temporary directory locked against tearDown.
+      Future<void> expectStartsRepl(File file) async {
+        final Process process = await Process.start(
+          Platform.resolvedExecutable,
+          ['run', 'lib/main/main_cli.dart', file.path],
+          environment: {
+            'HOME': tempDir.path,
+            'XDG_CONFIG_HOME': tempDir.path,
+          },
+        );
+
+        // Both pipes are drained so a full buffer can never stall the process.
+        unawaited(process.stdout.drain<void>());
+        unawaited(process.stderr.drain<void>());
+
+        const int stillRunning = -1;
+        final int exitCode = await process.exitCode.timeout(
+          const Duration(seconds: 2),
+          onTimeout: () => stillRunning,
+        );
+
+        expect(
+          exitCode,
+          equals(stillRunning),
+          reason: 'the CLI should still be waiting for REPL input',
+        );
+
+        process.kill();
+        await process.exitCode;
+      }
+
       test('handles empty file', () async {
         final File tmpFile = writeProgram('empty.prm', '');
-        final ProcessResult result =
-            await runCli(
-              [tmpFile.path],
-            ).timeout(
-              const Duration(seconds: 2),
-              onTimeout: () {
-                return ProcessResult(0, 1, '', 'timeout');
-              },
-            );
 
-        // Empty file should not have main, so it would start REPL
-        // We use timeout to detect that behavior
-        expect(result.stderr.toString(), equals('timeout'));
+        await expectStartsRepl(tmpFile);
       });
 
       test('handles file with only whitespace', () async {
@@ -477,18 +507,8 @@ main() = 42 // inline comment
           'whitespace.prm',
           '   \n\n\t\t\n   ',
         );
-        final ProcessResult result =
-            await runCli(
-              [tmpFile.path],
-            ).timeout(
-              const Duration(seconds: 2),
-              onTimeout: () {
-                return ProcessResult(0, 1, '', 'timeout');
-              },
-            );
 
-        // Whitespace-only file should start REPL (no main)
-        expect(result.stderr.toString(), equals('timeout'));
+        await expectStartsRepl(tmpFile);
       });
 
       test('handles unicode content in program', () async {
@@ -762,7 +782,7 @@ main(a, b, c, d, e, f, g, h, i, j) = count(a, b, c, d, e, f, g, h, i, j)
             captured.split('\n').any((String line) => line.trim() == '123');
 
         final StreamSubscription<String> subscription = process.stdout
-            .transform(const SystemEncoding().decoder)
+            .transform(utf8.decoder)
             .listen(
               (String chunk) {
                 output.write(chunk);

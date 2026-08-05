@@ -1,4 +1,4 @@
-@Tags(['compiler'])
+@Tags(['compiler', 'cli'])
 @TestOn('vm')
 library;
 

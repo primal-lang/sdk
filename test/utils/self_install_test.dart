@@ -1,4 +1,4 @@
-@Tags(['unit'])
+@Tags(['unit', 'cli'])
 @TestOn('vm')
 library;
 
@@ -62,6 +62,7 @@ void main() {
         <String>['--update'],
         console: console,
         resolveExecutable: () => '/opt/primal/bin/primal',
+        resolveShell: () => 'bash',
         downloadScript: download,
         runCommand: recordCommand(),
       );
@@ -81,6 +82,7 @@ void main() {
         <String>['--uninstall'],
         console: console,
         resolveExecutable: () => '/home/user/.local/bin/primal',
+        resolveShell: () => 'bash',
         downloadScript: download,
         runCommand: recordCommand(),
       );
@@ -100,6 +102,7 @@ void main() {
         <String>['--update'],
         console: console,
         resolveExecutable: () => '/usr/local/bin/primal',
+        resolveShell: () => 'bash',
         downloadScript: download,
         runCommand: recordCommand(code: 7),
       );
@@ -109,14 +112,24 @@ void main() {
 
     test('hands the downloaded script to the shell', () async {
       String? contents;
+      final Directory workingDirectory = Directory.systemTemp.createTempSync(
+        'primal_installer_test_',
+      );
 
       await runSelfInstall(
         <String>['--update'],
         console: console,
         resolveExecutable: () => '/usr/local/bin/primal',
+        resolveShell: () => 'bash',
         downloadScript: download,
+        createWorkingDirectory: () => workingDirectory,
         runCommand: (String executable, List<String> arguments) async {
-          contents = File(arguments.first).readAsStringSync();
+          // Read through the injected directory rather than through
+          // arguments.first: that argument is the path as bash reads it, which
+          // on Windows is a '/c/...' form the Dart file API cannot open.
+          contents = File(
+            '${workingDirectory.path}${Platform.pathSeparator}install.sh',
+          ).readAsStringSync();
 
           return 0;
         },
@@ -126,21 +139,34 @@ void main() {
     });
 
     test('removes the script once the installer has run', () async {
-      late String scriptPath;
+      final Directory workingDirectory = Directory.systemTemp.createTempSync(
+        'primal_installer_test_',
+      );
 
       await runSelfInstall(
         <String>['--update'],
         console: console,
         resolveExecutable: () => '/usr/local/bin/primal',
+        resolveShell: () => 'bash',
         downloadScript: download,
+        createWorkingDirectory: () => workingDirectory,
         runCommand: (String executable, List<String> arguments) async {
-          scriptPath = arguments.first;
+          // The script has to still be there while the installer is running.
+          expect(
+            File(
+              '${workingDirectory.path}${Platform.pathSeparator}install.sh',
+            ).existsSync(),
+            isTrue,
+          );
 
           return 0;
         },
       );
 
-      expect(File(scriptPath).existsSync(), isFalse);
+      // Asserted on the real path rather than on arguments.first, which is the
+      // bash-form path and on Windows never names a file the Dart file API can
+      // see: the check would then pass without the cleanup having run.
+      expect(workingDirectory.existsSync(), isFalse);
     });
 
     test('rejects being combined with another argument', () async {
@@ -181,6 +207,7 @@ void main() {
         <String>['--update'],
         console: console,
         resolveExecutable: () => '/usr/local/bin/primal',
+        resolveShell: () => 'bash',
         downloadScript: (String url) async =>
             throw const SocketException('no route to host'),
         runCommand: recordCommand(),
@@ -196,6 +223,7 @@ void main() {
         <String>['--uninstall'],
         console: console,
         resolveExecutable: () => '/usr/local/bin/primal',
+        resolveShell: () => 'bash',
         downloadScript: download,
         runCommand: (String executable, List<String> arguments) async =>
             throw ProcessException(executable, arguments, 'not found', 2),
@@ -244,6 +272,7 @@ void main() {
         <String>['--update'],
         console: console,
         resolveExecutable: () => '/usr/local/bin/primal',
+        resolveShell: () => 'bash',
         downloadScript: download,
         runCommand: recordCommand(),
         createWorkingDirectory: () =>
@@ -276,6 +305,7 @@ void main() {
           <String>['--update'],
           console: console,
           resolveExecutable: () => '/usr/local/bin/primal',
+          resolveShell: () => 'bash',
           downloadScript: download,
           runCommand: recordCommand(),
           createWorkingDirectory: () => workingDirectory,

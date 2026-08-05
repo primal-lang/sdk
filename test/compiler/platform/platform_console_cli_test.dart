@@ -1,4 +1,4 @@
-@Tags(['unit'])
+@Tags(['unit', 'cli'])
 @TestOn('vm')
 library;
 
@@ -12,12 +12,20 @@ import 'package:test/test.dart';
 void main() {
   group('PlatformConsoleCli', () {
     Future<ProcessResult> runConsoleWrite(String mode, [String content = '']) {
-      return Process.run(Platform.resolvedExecutable, [
-        'run',
-        'test/helpers/platform_console_write_runner.dart',
-        mode,
-        content,
-      ]);
+      // dart:io always encodes stdout and stderr as UTF-8, but Process.run
+      // decodes with systemEncoding, which is a legacy code page on Windows.
+      // Decoding explicitly keeps non-ASCII output intact on every platform.
+      return Process.run(
+        Platform.resolvedExecutable,
+        [
+          'run',
+          'test/helpers/platform_console_write_runner.dart',
+          mode,
+          content,
+        ],
+        stdoutEncoding: utf8,
+        stderrEncoding: utf8,
+      );
     }
 
     test('outWrite writes to stdout', () async {
@@ -234,6 +242,10 @@ void main() {
         ['run', 'test/helpers/platform_console_read_runner.dart'],
       );
 
+      // readLine() reads a piped stdin with stdin.readLineSync(), which decodes
+      // using systemEncoding. Encode the input the same way so the round-trip
+      // holds on Windows, where systemEncoding is a legacy code page.
+      process.stdin.encoding = systemEncoding;
       process.stdin.writeln('unicode: \u00e9\u00f1');
       await process.stdin.close();
 
@@ -846,6 +858,9 @@ void main() {
       expect(result.stderr.toString(), equals('line1\r\nline2\n'));
     });
 
+    // readLine() decodes a piped stdin with systemEncoding. On Windows that is
+    // a legacy code page which cannot represent emoji or CJK at all, so these
+    // round-trips are only meaningful where systemEncoding is UTF-8.
     test('readLine handles emoji input', () async {
       final Process process = await Process.start(
         Platform.resolvedExecutable,
@@ -864,7 +879,7 @@ void main() {
       }
 
       expect(stdout.trim(), equals('hello \u{1F600}'));
-    });
+    }, testOn: '!windows');
 
     test('readLine handles CJK input', () async {
       final Process process = await Process.start(
@@ -884,7 +899,7 @@ void main() {
       }
 
       expect(stdout.trim(), equals('\u4E2D\u6587'));
-    });
+    }, testOn: '!windows');
 
     test('readLine handles backslash input', () async {
       final Process process = await Process.start(

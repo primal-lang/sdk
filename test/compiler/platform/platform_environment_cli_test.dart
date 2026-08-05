@@ -1,6 +1,8 @@
-@Tags(['unit'])
+@Tags(['unit', 'cli'])
 @TestOn('vm')
 library;
+
+import 'dart:io';
 
 import 'package:primal/compiler/platform/environment/platform_environment_base.dart';
 import 'package:primal/compiler/platform/environment/platform_environment_cli.dart';
@@ -29,8 +31,11 @@ void main() {
       expect(result, equals(''));
     });
 
-    test('getVariable returns HOME', () {
-      final String result = environment.getVariable('HOME');
+    test('getVariable returns the home directory', () {
+      // Windows exposes the home directory as USERPROFILE instead of HOME
+      final String result = environment.getVariable(
+        Platform.isWindows ? 'USERPROFILE' : 'HOME',
+      );
 
       expect(result, isNotEmpty);
     });
@@ -48,13 +53,14 @@ void main() {
       expect(firstResult, equals(secondResult));
     });
 
-    test('getVariable is case sensitive', () {
-      // PATH exists, path typically does not on Unix systems
+    test('getVariable matches the case sensitivity of the platform', () {
       final String upperCase = environment.getVariable('PATH');
       final String lowerCase = environment.getVariable('path');
 
       expect(upperCase, isNotEmpty);
-      expect(lowerCase, equals(''));
+      // Windows environment variables are case-insensitive, so both spellings
+      // resolve to the same value there. On Unix only the exact name matches.
+      expect(lowerCase, Platform.isWindows ? equals(upperCase) : equals(''));
     });
 
     test(
@@ -66,8 +72,11 @@ void main() {
       },
     );
 
-    test('getVariable returns USER', () {
-      final String result = environment.getVariable('USER');
+    test('getVariable returns the current user', () {
+      // Windows exposes the current user as USERNAME instead of USER
+      final String result = environment.getVariable(
+        Platform.isWindows ? 'USERNAME' : 'USER',
+      );
 
       expect(result, isNotEmpty);
     });
@@ -197,8 +206,8 @@ void main() {
     test('getVariable PATH contains path separator', () {
       final String result = environment.getVariable('PATH');
 
-      // PATH should contain at least one colon (Unix path separator)
-      expect(result, contains(':'));
+      // PATH entries are separated by ';' on Windows and ':' elsewhere
+      expect(result, contains(Platform.isWindows ? ';' : ':'));
     });
 
     test('getVariable returns LANG or empty string', () {
