@@ -32,6 +32,18 @@ import '../helpers/test_line_helpers.dart';
 /// so the version assertion below would fail against them for the whole stretch
 /// of a release between the version being bumped and the new binaries being
 /// committed.
+///
+/// The two self-install tests need the network: they fetch the published
+/// installer, and `--update` also asks GitHub for the current release and
+/// downloads it. They are the only tests in the suite that do, and both run
+/// against a copy of the binary rather than the binary itself, since the
+/// installer replaces and deletes what it is aimed at.
+///
+/// What they read of that installer's output belongs to it rather than to this
+/// repository: it is deployed at https://primal-lang.org/install.sh and its
+/// wording is not something a change here can grep for. The assertions are
+/// kept to the lines
+/// that name what the installer did, which are the last thing it would reword.
 void main() {
   final String? configured = Platform.environment[binaryVariable];
 
@@ -102,10 +114,11 @@ void main() {
     // which is a legacy code page on Windows. Decoding explicitly keeps the
     // output intact on every platform. The home directory is pointed at the
     // temporary one for the same reason cli_test.dart does it: nothing here
-    // should read or write the real one.
-    Future<ProcessResult> run(List<String> arguments) {
+    // should read or write the real one, and it is what keeps the PATH entry
+    // the installer writes out of the real shell profile.
+    Future<ProcessResult> runAt(String binaryPath, List<String> arguments) {
       return Process.run(
-        executable,
+        binaryPath,
         arguments,
         environment: <String, String>{
           'HOME': tempDir.path,
@@ -114,6 +127,50 @@ void main() {
         stdoutEncoding: utf8,
         stderrEncoding: utf8,
       );
+    }
+
+    Future<ProcessResult> run(List<String> arguments) =>
+        runAt(executable, arguments);
+
+    // A throwaway installation for the tests that let the installer loose on
+    // one. Both self-install flags act on the directory the running executable
+    // resolves to, so aiming either at the artifact itself would overwrite the
+    // build under test with the last released one, or delete it before the
+    // workflow uploads it. Named the way the installer resolves its target, so
+    // that it acts on this file instead of installing a second one beside it.
+    File installCopy() {
+      // Deliberately not under the per-test temporary directory, which is
+      // deleted the moment the test ends. This copy is executed, and deleting
+      // an executable straight after the process using it exited is the same
+      // source of flakiness setUpAll avoids above, so its directory is removed
+      // best-effort instead of taking the test down with it.
+      final Directory directory = Directory.systemTemp.createTempSync(
+        'primal_binary_install_',
+      );
+
+      addTearDown(() {
+        try {
+          if (directory.existsSync()) {
+            directory.deleteSync(recursive: true);
+          }
+        } on FileSystemException {
+          // A temporary directory the operating system is still holding open,
+          // left for it to reap.
+        }
+      });
+
+      final File copy = File(
+        path_lib.join(
+          directory.path,
+          Platform.isWindows ? 'primal.exe' : 'primal',
+        ),
+      );
+
+      // copySync carries the executable bit across with the file, so there is
+      // nothing left for the caller to chmod.
+      binary.copySync(copy.path);
+
+      return copy;
     }
 
     test('--version prints the version it was built from', () async {
@@ -275,6 +332,109 @@ void main() {
       // The banner and one prompt, rather than a prompt per read forever.
       expect(output.length, lessThan(4096));
     });
+
+    // The self-install flags below are the only part of the CLI that cannot be
+    // covered under 'dart run' at all: runSelfInstall refuses to aim the
+    // installer at the Dart SDK's own bin directory, so self_install_test.dart
+    // can only reach them with the real download and the real shell replaced by
+    // fakes. A compiled binary is the one place the whole path runs.
+
+    test('--update rejects being combined with another argument', () async {
+      final ProcessResult result = await run(<String>['--update', 'extra']);
+
+      expect(result.exitCode, equals(2));
+      expect(
+        result.stderr.toString(),
+        contains('--update cannot be combined with other arguments'),
+      );
+    });
+
+    test('--uninstall rejects being combined with another argument', () async {
+      final ProcessResult result = await run(<String>['--uninstall', 'extra']);
+
+      expect(result.exitCode, equals(2));
+      expect(
+        result.stderr.toString(),
+        contains('--uninstall cannot be combined with other arguments'),
+      );
+    });
+
+    // Fetches the installer, asks GitHub for the current release and downloads
+    // it, so it is given far longer than the suite default.
+    test(
+      '--update brings the installation up to the released version',
+      timeout: const Timeout(Duration(minutes: 5)),
+      () async {
+        final File installed = installCopy();
+
+        final ProcessResult result = await runAt(installed.path, <String>[
+          '--update',
+        ]);
+
+        // The installer prints through the inherited stdio of the process that
+        // started it, so its rail is what ends up here to explain a failure.
+        final String output =
+            result.stdout.toString() + result.stderr.toString();
+
+        expect(result.exitCode, equals(0), reason: output);
+        // Asserted rather than taking the exit code for the whole story: the
+        // installer resolves the release before it decides what to do, so a
+        // lookup that never happened would otherwise pass as an update.
+        expect(output, contains('Latest release'), reason: output);
+        // Which of the two it lands on is the version this binary was built
+        // from against the one currently published, and both are correct. A
+        // release branch is ahead of the published release and downloads it; a
+        // binary built from a released version has nothing to do. Naming both
+        // is what keeps a run that quietly did neither from passing.
+        expect(
+          output,
+          anyOf(contains('Already up to date'), contains('updated in')),
+          reason: output,
+        );
+
+        // Left running is the contract that holds either way, so it is checked
+        // rather than which version answers.
+        final ProcessResult updated = await runAt(installed.path, <String>[
+          '--version',
+        ]);
+
+        expect(updated.exitCode, equals(0), reason: updated.stderr.toString());
+        expect(
+          updated.stdout.toString().trim(),
+          matches(RegExp(r'^\d+\.\d+\.\d+')),
+        );
+      },
+    );
+
+    // Declared last: it is the one test here that destroys the installation it
+    // was given. That installation is a copy, so the artifact under test
+    // survives it and nothing below would be affected either way, but the order
+    // says what the test does without having to read it.
+    test(
+      '--uninstall removes the installation it was run from',
+      timeout: const Timeout(Duration(minutes: 5)),
+      () async {
+        final File installed = installCopy();
+
+        final ProcessResult result = await runAt(installed.path, <String>[
+          '--uninstall',
+        ]);
+
+        final String output =
+            result.stdout.toString() + result.stderr.toString();
+
+        expect(result.exitCode, equals(0), reason: output);
+        // Only that the uninstall path ran to its end rather than stopping
+        // somewhere in the middle: the installer closes with this line whether
+        // or not it found anything to remove, so it says nothing about the
+        // removal itself.
+        expect(output, contains('Primal SDK uninstalled'), reason: output);
+        // Which is what the removal is read from. The file was put there by
+        // installCopy moments earlier, so it going missing is the installer
+        // having taken it.
+        expect(installed.existsSync(), isFalse, reason: output);
+      },
+    );
   });
 }
 
