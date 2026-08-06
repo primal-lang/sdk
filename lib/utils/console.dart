@@ -25,24 +25,18 @@ class Console {
   /// Reads and handles one line, returning whether there may be another.
   ///
   /// False means the input has ended: prompting again would print a prompt
-  /// nobody can answer, and looping on it would never stop. Both a read that
-  /// returned nothing and a read that failed end it — a stdin that cannot be
-  /// read from does not recover, and asking it again spins exactly the way
-  /// reading a closed one used to.
+  /// nobody can answer, and looping on it would never stop.
   ///
-  /// A handler that threw is a different thing: the line it was given was real,
-  /// so the error is reported and reading carries on.
+  /// A read that fails is not an ending and is deliberately not caught here. A
+  /// stdin that cannot be read from is a run that failed rather than a session
+  /// that finished, so the error travels out to whoever decides the exit code.
+  ///
+  /// A handler that threw is a different thing again: the line it was given was
+  /// real, so the error is reported and reading carries on.
   bool promptOnce(void Function(String) handler) {
-    final String? input;
+    _platformConsole.outWrite(inputPrompt);
 
-    try {
-      _platformConsole.outWrite(inputPrompt);
-      input = _platformConsole.readLine();
-    } catch (e) {
-      error(e);
-
-      return false;
-    }
+    final String? input = _platformConsole.readLine();
 
     if (input == null) {
       return false;

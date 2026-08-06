@@ -79,7 +79,8 @@ Future<void> main(List<String> args) async {
 /// responsible for assigning the returned code to [exitCode].
 ///
 /// - `0` — the run succeeded.
-/// - `1` — the program under test failed to compile or threw at runtime.
+/// - `1` — the program under test failed to compile or threw at runtime, or the
+///   REPL could not read its input. A REPL whose input merely ended is `0`.
 /// - `2` — the invocation was wrong, so the run did not measure what it claimed
 ///   to (usage errors, and every failure of a `--test` run to reach the tests).
 int runCli(

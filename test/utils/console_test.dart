@@ -308,14 +308,16 @@ void main() {
       expect(platformConsole.errorLines.single, contains('Bad state: boom'));
     });
 
-    test('reports read errors via console.error', () {
+    // Not reported here, unlike a handler error: a stdin that cannot be read
+    // from is a failed run rather than a finished session, so the caller that
+    // decides the exit code is the one that gets to see it.
+    test('lets read errors travel out to the caller', () {
       platformConsole = FakePlatformConsole()..readError = StateError('stop');
       console = Console(platformConsole);
 
-      console.promptOnce((_) {});
-
+      expect(() => console.promptOnce((_) {}), throwsStateError);
       expect(platformConsole.outWrites, equals(['> ']));
-      expect(platformConsole.errorLines.single, contains('Bad state: stop'));
+      expect(platformConsole.errorLines, isEmpty);
     });
 
     test('forwards whitespace-only input to handler', () {
@@ -457,15 +459,6 @@ void main() {
       expect(console.promptOnce((_) {}), isFalse);
     });
 
-    test('answers false after a failed read, which does not recover', () {
-      platformConsole = FakePlatformConsole(inputs: ['unused'])
-        ..readError = StateError('boom');
-      console = Console(platformConsole);
-
-      expect(console.promptOnce((_) {}), isFalse);
-      expect(platformConsole.errorLines, hasLength(1));
-    });
-
     test('answers true after a failed handler, since the read worked', () {
       platformConsole = FakePlatformConsole(inputs: ['hello']);
       console = Console(platformConsole);
@@ -505,17 +498,16 @@ void main() {
 
     // A stdin that cannot be read from at all — a closed descriptor rather than
     // one at its end — used to be retried forever, reporting the same failure
-    // on every pass.
-    test('returns when the input cannot be read from', () {
+    // on every pass. It now leaves the loop the way it leaves promptOnce.
+    test('lets a failed read out rather than looping on it', () {
       platformConsole = FakePlatformConsole(inputs: ['unreachable'])
         ..readError = StateError('boom');
       console = Console(platformConsole);
       bool called = false;
 
-      console.prompt((_) => called = true);
-
+      expect(() => console.prompt((_) => called = true), throwsStateError);
       expect(called, isFalse);
-      expect(platformConsole.errorLines, hasLength(1));
+      expect(platformConsole.errorLines, isEmpty);
     });
 
     test('calls promptOnce repeatedly', () {
