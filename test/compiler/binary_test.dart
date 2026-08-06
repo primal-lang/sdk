@@ -41,9 +41,9 @@ import '../helpers/test_line_helpers.dart';
 ///
 /// What they read of that installer's output belongs to it rather than to this
 /// repository: it is deployed at https://primal-lang.org/install.sh and its
-/// wording is not something a change here can grep for. The assertions are
-/// kept to the lines
-/// that name what the installer did, which are the last thing it would reword.
+/// wording is not something a change here can grep for. The assertions are kept
+/// to the lines that name what the installer did, which are the last thing it
+/// would reword.
 void main() {
   final String? configured = Platform.environment[binaryVariable];
 
