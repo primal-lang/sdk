@@ -239,6 +239,42 @@ void main() {
       // REPL got far enough to be reading input rather than exiting early.
       expect(output, contains(version));
     });
+
+    // The REPL used to read a closed stdin as an unending run of blank lines
+    // and spin reprinting its prompt, so 'primal < file' never came back and
+    // burned a core until it was killed.
+    test('the REPL ends when its input is closed', () async {
+      final Process process = await Process.start(
+        executable,
+        <String>[],
+        environment: <String, String>{
+          'HOME': tempDir.path,
+          'XDG_CONFIG_HOME': tempDir.path,
+        },
+      );
+
+      addTearDown(process.kill);
+
+      // Closed without writing anything: the first read is already the end.
+      await process.stdin.close();
+
+      final Future<String> pendingOutput = process.stdout
+          .transform(utf8.decoder)
+          .join();
+      final Future<String> pendingError = process.stderr
+          .transform(utf8.decoder)
+          .join();
+
+      final int exitCode = await process.exitCode.timeout(
+        const Duration(seconds: 30),
+      );
+      final String output = await pendingOutput;
+      final String errorOutput = await pendingError;
+
+      expect(exitCode, equals(0), reason: errorOutput);
+      // The banner and one prompt, rather than a prompt per read forever.
+      expect(output.length, lessThan(4096));
+    });
   });
 }
 

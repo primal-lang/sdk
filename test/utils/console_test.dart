@@ -444,13 +444,80 @@ void main() {
       final List<String> inputs = <String>[];
 
       console.promptOnce(inputs.add);
-      console.promptOnce(inputs.add); // No more inputs, returns empty string
+      console.promptOnce(inputs.add); // No more inputs, nothing to hand over
 
       expect(inputs, equals(['only']));
+    });
+
+    test('answers true while input remains and false once it ends', () {
+      platformConsole = FakePlatformConsole(inputs: ['only']);
+      console = Console(platformConsole);
+
+      expect(console.promptOnce((_) {}), isTrue);
+      expect(console.promptOnce((_) {}), isFalse);
+    });
+
+    test('answers false after a failed read, which does not recover', () {
+      platformConsole = FakePlatformConsole(inputs: ['unused'])
+        ..readError = StateError('boom');
+      console = Console(platformConsole);
+
+      expect(console.promptOnce((_) {}), isFalse);
+      expect(platformConsole.errorLines, hasLength(1));
+    });
+
+    test('answers true after a failed handler, since the read worked', () {
+      platformConsole = FakePlatformConsole(inputs: ['hello']);
+      console = Console(platformConsole);
+
+      expect(console.promptOnce((_) => throw StateError('boom')), isTrue);
+      expect(platformConsole.errorLines, hasLength(1));
     });
   });
 
   group('Console.prompt()', () {
+    // The real loop, not ScriptedConsole's counted stand-in. Before the input
+    // could report that it had ended, this would have run forever: every read
+    // past the end came back as an empty line, which is a line like any other.
+    test('returns once the input has ended', () {
+      platformConsole = FakePlatformConsole(inputs: ['first', 'second']);
+      console = Console(platformConsole);
+      final List<String> inputs = <String>[];
+
+      console.prompt(inputs.add);
+
+      expect(inputs, equals(['first', 'second']));
+      // Three prompts for two lines: the last one is what the ended input
+      // answered.
+      expect(platformConsole.outWrites, equals(['> ', '> ', '> ']));
+    });
+
+    test('returns immediately when there was never any input', () {
+      platformConsole = FakePlatformConsole();
+      console = Console(platformConsole);
+      bool called = false;
+
+      console.prompt((_) => called = true);
+
+      expect(called, isFalse);
+      expect(platformConsole.outWrites, equals(['> ']));
+    });
+
+    // A stdin that cannot be read from at all — a closed descriptor rather than
+    // one at its end — used to be retried forever, reporting the same failure
+    // on every pass.
+    test('returns when the input cannot be read from', () {
+      platformConsole = FakePlatformConsole(inputs: ['unreachable'])
+        ..readError = StateError('boom');
+      console = Console(platformConsole);
+      bool called = false;
+
+      console.prompt((_) => called = true);
+
+      expect(called, isFalse);
+      expect(platformConsole.errorLines, hasLength(1));
+    });
+
     test('calls promptOnce repeatedly', () {
       platformConsole = FakePlatformConsole(inputs: ['a', 'b', 'c']);
       final ScriptedConsole scriptedConsole = ScriptedConsole(

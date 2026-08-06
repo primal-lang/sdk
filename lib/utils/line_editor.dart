@@ -26,10 +26,13 @@ class LineEditor {
 
   /// Reads a line of input with history navigation support.
   ///
-  /// Returns the entered line (trimmed), or empty string on EOF.
-  String readLine() {
+  /// Returns the entered line (trimmed), or null once the input has ended:
+  /// a closed stdin, or Ctrl+D on an empty line. Distinct from the empty string
+  /// a blank line gives, which a caller reading in a loop should read again
+  /// after. Reading again after null would never return anything else.
+  String? readLine() {
     if (!stdin.hasTerminal) {
-      return stdin.readLineSync()?.trim() ?? '';
+      return stdin.readLineSync()?.trim();
     }
 
     // On Windows, raw terminal mode often has issues with character echo
@@ -37,7 +40,7 @@ class LineEditor {
     // Fall back to simple line reading which handles echo natively.
     // This sacrifices history navigation but ensures reliable input display.
     if (Platform.isWindows) {
-      return stdin.readLineSync()?.trim() ?? '';
+      return stdin.readLineSync()?.trim();
     }
 
     // On Unix-like systems, we can use raw mode for history navigation.
@@ -52,11 +55,15 @@ class LineEditor {
       stdin.echoMode = false;
     } on StdinException {
       // Terminal mode changes not supported; fall back to simple reading
-      return stdin.readLineSync()?.trim() ?? '';
+      return stdin.readLineSync()?.trim();
     }
 
     try {
-      final String line = _readLineRaw();
+      final String? line = _readLineRaw();
+
+      if (line == null) {
+        return null;
+      }
 
       if (line.isNotEmpty) {
         _history.add(line);
@@ -70,7 +77,8 @@ class LineEditor {
     }
   }
 
-  String _readLineRaw() {
+  /// The line read in raw mode, or null once the input has ended.
+  String? _readLineRaw() {
     final List<int> buffer = [];
     int cursorPosition = 0;
     String savedInput = '';
@@ -79,8 +87,9 @@ class LineEditor {
       final int byte = stdin.readByteSync();
 
       if (byte == -1) {
-        // EOF
-        return buffer.isEmpty ? '' : String.fromCharCodes(buffer).trim();
+        // EOF. Anything already typed is still a line; it is the next read that
+        // has nothing left to return.
+        return buffer.isEmpty ? null : String.fromCharCodes(buffer).trim();
       }
 
       if (byte == 10 || byte == 13) {
@@ -107,10 +116,13 @@ class LineEditor {
       }
 
       if (byte == 4) {
-        // Ctrl+D (EOF)
+        // Ctrl+D (EOF). Reported as the end of the input rather than exiting
+        // here, so the caller unwinds through the same path a closed stdin
+        // takes and the terminal modes saved above are restored on the way out.
         if (buffer.isEmpty) {
           stdout.writeln();
-          exit(0);
+
+          return null;
         }
         continue;
       }

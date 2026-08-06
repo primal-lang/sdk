@@ -205,8 +205,9 @@ int runCli(
     }
 
     // Watch mode returns while the process is still alive: the file
-    // subscription is what keeps it up, and SIGINT exits with 0. The REPL is
-    // unreachable here in production because Console.prompt loops forever.
+    // subscription is what keeps it up, and SIGINT exits with 0. The REPL
+    // returns here once its input ends, which is a session that is over rather
+    // than a failure, so it exits with 0 as ':quit' does.
     return 0;
   } catch (e, stackTrace) {
     currentConsole.error(e);

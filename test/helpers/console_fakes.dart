@@ -26,13 +26,15 @@ class FakePlatformConsole extends PlatformConsoleBase {
   void errorWriteLn(String content) => errorLines.add(content);
 
   @override
-  String readLine() {
+  String? readLine() {
     if (readError != null) {
       throw readError!;
     }
 
+    // Running out of scripted input is the end of the input, which is what a
+    // closed stdin gives the real console.
     if (_inputIndex >= inputs.length) {
-      return '';
+      return null;
     }
 
     return inputs[_inputIndex++];
@@ -50,7 +52,9 @@ class ScriptedConsole extends Console {
   @override
   void prompt(void Function(String) handler) {
     for (int i = 0; i < promptIterations; i++) {
-      promptOnce(handler);
+      if (!promptOnce(handler)) {
+        return;
+      }
     }
   }
 }

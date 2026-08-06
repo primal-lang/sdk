@@ -42,7 +42,7 @@ abstract class PlatformConsoleBase {
   void outWriteLn(String content);
   void errorWrite(String content);
   void errorWriteLn(String content);
-  String readLine();
+  String? readLine();
 }
 ```
 
@@ -57,7 +57,7 @@ class PlatformConsoleCli extends PlatformConsoleBase {
   void outWrite(String content) => stdout.write(content);
 
   @override
-  String readLine() => _lineEditor.readLine();
+  String? readLine() => _lineEditor.readLine();
 }
 ```
 
@@ -72,7 +72,7 @@ class PlatformConsoleWeb extends PlatformConsoleBase {
   void outWrite(String content) => print(content);
 
   @override
-  String readLine() =>
+  String? readLine() =>
       throw const UnimplementedFunctionWebError('console_read');
 }
 ```

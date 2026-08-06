@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:primal/utils/console.dart';
 import 'package:test/test.dart';
 import '../helpers/temp_helpers.dart';
 import '../helpers/test_line_helpers.dart';
@@ -461,11 +462,12 @@ main() = 42 // inline comment
     });
 
     group('edge cases', () {
-      // A file without a main function drops the CLI into the REPL, which never
-      // exits. The process is started directly rather than through runCli() so
-      // that it can be killed and reaped: putting a timeout on the runCli()
-      // future would only abandon it and leave the child running, which on
-      // Windows also keeps the temporary directory locked against tearDown.
+      // A file without a main function drops the CLI into the REPL, which then
+      // waits on a stdin nothing ever writes to. The process is started
+      // directly rather than through runCli() so that it can be killed and
+      // reaped: putting a timeout on the runCli() future would only abandon it
+      // and leave the child running, which on Windows also keeps the temporary
+      // directory locked against tearDown.
       Future<void> expectStartsRepl(File file) async {
         final Process process = await Process.start(
           Platform.resolvedExecutable,
@@ -510,6 +512,78 @@ main() = 42 // inline comment
 
         await expectStartsRepl(tmpFile);
       });
+
+      // The REPL used to read a closed stdin as an unending run of blank lines
+      // and spin reprinting its prompt, so 'primal < file' never came back and
+      // burned a core until it was killed.
+      test('the REPL ends when its input is closed', () async {
+        final Process process = await Process.start(
+          Platform.resolvedExecutable,
+          ['run', 'lib/main/main_cli.dart'],
+          environment: {
+            'HOME': tempDir.path,
+            'XDG_CONFIG_HOME': tempDir.path,
+          },
+        );
+
+        addTearDown(process.kill);
+
+        // Closed without writing anything: the first read is already the end.
+        await process.stdin.close();
+
+        final Future<String> pendingOutput = process.stdout
+            .transform(utf8.decoder)
+            .join();
+        final Future<String> pendingError = process.stderr
+            .transform(utf8.decoder)
+            .join();
+
+        final int exitCode = await process.exitCode.timeout(
+          const Duration(seconds: 30),
+        );
+        final String output = await pendingOutput;
+
+        expect(exitCode, equals(0), reason: await pendingError);
+        // The banner and one prompt, rather than a prompt per read forever.
+        expect(output, contains(Console.inputPrompt));
+        expect(output.length, lessThan(4096));
+      });
+
+      test(
+        'the REPL evaluates what it is given before its input ends',
+        () async {
+          final Process process = await Process.start(
+            Platform.resolvedExecutable,
+            ['run', 'lib/main/main_cli.dart'],
+            environment: {
+              'HOME': tempDir.path,
+              'XDG_CONFIG_HOME': tempDir.path,
+            },
+          );
+
+          addTearDown(process.kill);
+
+          process.stdin.writeln('1 + 1');
+          await process.stdin.close();
+
+          final Future<String> pendingOutput = process.stdout
+              .transform(utf8.decoder)
+              .join();
+          final Future<String> pendingError = process.stderr
+              .transform(utf8.decoder)
+              .join();
+
+          final int exitCode = await process.exitCode.timeout(
+            const Duration(seconds: 30),
+          );
+          final String output = await pendingOutput;
+
+          expect(exitCode, equals(0), reason: await pendingError);
+          // The prompt carries no newline, so the result lands on the same line
+          // it was typed on.
+          expect(output, contains('${Console.inputPrompt}2'));
+        },
+      );
 
       test('handles unicode content in program', () async {
         final File tmpFile = writeProgram(

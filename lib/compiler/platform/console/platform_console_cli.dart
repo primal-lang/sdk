@@ -18,5 +18,5 @@ class PlatformConsoleCli extends PlatformConsoleBase {
   void errorWriteLn(String content) => stderr.writeln(content);
 
   @override
-  String readLine() => _lineEditor.readLine();
+  String? readLine() => _lineEditor.readLine();
 }
