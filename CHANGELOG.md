@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.5.4 - Bronze Axe
+
+### CLI
+
+#### Fixed
+
+- **`--update` and `--uninstall` on Windows** - The installer now runs in a shell that shares a filesystem with the binary it is updating
+
 ## 0.5.3 - Bronze Axe
 
 ### Language
