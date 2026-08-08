@@ -56,6 +56,10 @@ sources: []
 
 ## Roadmap
 
+### 0.5.5
+
+- [[dev/roadmap/0.5.5/function-declaration-update]] — Declaring functions without parameters
+
 ### 0.6.0
 
 - [[dev/roadmap/0.6.0/http]] — HTTP client
