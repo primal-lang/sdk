@@ -1,8 +1,9 @@
-@Tags(['unit'])
+@Tags(['unit', 'cli'])
 @TestOn('vm')
 library;
 
 import 'dart:io';
+import 'package:path/path.dart' as path_lib;
 import 'package:primal/compiler/platform/file/platform_file_cli.dart';
 import 'package:test/test.dart';
 
@@ -307,7 +308,7 @@ void main() {
         final File file = File('relative.txt');
 
         final String absolutePath = platform.path(file);
-        expect(absolutePath.startsWith('/'), isTrue);
+        expect(path_lib.isAbsolute(absolutePath), isTrue);
         expect(absolutePath.endsWith('relative.txt'), isTrue);
       });
     });

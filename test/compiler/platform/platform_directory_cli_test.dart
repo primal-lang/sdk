@@ -1,4 +1,4 @@
-@Tags(['unit'])
+@Tags(['unit', 'cli'])
 @TestOn('vm')
 library;
 
@@ -212,7 +212,7 @@ void main() {
 
       final String result = platform.path(directory);
 
-      expect(result, startsWith('/'));
+      expect(path_lib.isAbsolute(result), isTrue);
     });
 
     test('name returns directory name for deeply nested path', () {
@@ -330,7 +330,7 @@ void main() {
 
       final String result = platform.path(nonexistent);
 
-      expect(result, startsWith('/'));
+      expect(path_lib.isAbsolute(result), isTrue);
       expect(result, contains('does_not_exist'));
     });
 
@@ -477,7 +477,7 @@ void main() {
 
       final String result = platform.path(directory);
 
-      expect(result, startsWith('/'));
+      expect(path_lib.isAbsolute(result), isTrue);
       expect(result, contains('subdir'));
     });
 
@@ -726,11 +726,15 @@ void main() {
     });
 
     test('path for root directory', () {
-      final Directory root = Directory('/');
+      // The root is '/' on POSIX and a drive prefix such as 'C:\' on Windows,
+      // where '/' alone is not absolute and would be resolved against the
+      // current drive instead of being returned unchanged.
+      final String rootPath = path_lib.rootPrefix(Directory.current.path);
+      final Directory root = Directory(rootPath);
 
       final String result = platform.path(root);
 
-      expect(result, equals('/'));
+      expect(result, equals(rootPath));
     });
 
     test('name for directory with trailing slash in path', () {
@@ -757,11 +761,12 @@ void main() {
     });
 
     test('parent of root returns root', () {
-      final Directory root = Directory('/');
+      final String rootPath = path_lib.rootPrefix(Directory.current.path);
+      final Directory root = Directory(rootPath);
 
       final Directory parentDirectory = platform.parent(root);
 
-      expect(parentDirectory.path, equals('/'));
+      expect(parentDirectory.path, equals(rootPath));
     });
 
     test('parent returns correct type', () {
@@ -776,14 +781,19 @@ void main() {
       final Directory directory = Directory('${tempDir.path}/a/b/c')
         ..createSync(recursive: true);
 
+      // The chain converges on '/' under POSIX and on the drive prefix of the
+      // temporary directory under Windows, so the target is derived rather
+      // than hardcoded.
+      final String rootPath = path_lib.rootPrefix(directory.absolute.path);
+
       Directory current = directory;
       int depth = 0;
-      while (current.path != '/' && depth < 100) {
+      while (current.path != rootPath && depth < 100) {
         current = platform.parent(current);
         depth++;
       }
 
-      expect(current.path, equals('/'));
+      expect(current.path, equals(rootPath));
     });
 
     test('list returns correct types for mixed contents', () {
@@ -869,6 +879,8 @@ void main() {
       );
     });
 
+    // Creating a symbolic link on Windows needs an elevated process or
+    // Developer Mode, so this stays POSIX-only.
     test('exists with symbolic link to directory', () {
       final Directory target = Directory('${tempDir.path}/link_target')
         ..createSync();
@@ -877,8 +889,10 @@ void main() {
       final Directory directoryAtLink = Directory(link.path);
 
       expect(platform.exists(directoryAtLink), isTrue);
-    });
+    }, testOn: '!windows');
 
+    // Creating a symbolic link on Windows needs an elevated process or
+    // Developer Mode, so this stays POSIX-only.
     test('exists returns false for broken symbolic link', () {
       final Directory target = Directory('${tempDir.path}/broken_target')
         ..createSync();
@@ -888,7 +902,7 @@ void main() {
       final Directory directoryAtLink = Directory(link.path);
 
       expect(platform.exists(directoryAtLink), isFalse);
-    });
+    }, testOn: '!windows');
 
     test('create in nonexistent parent creates entire path', () {
       final Directory directory = Directory(
@@ -936,7 +950,7 @@ void main() {
 
       final List<FileSystemEntity> contents = platform.list(directory);
 
-      expect(contents.first.path, startsWith('/'));
+      expect(path_lib.isAbsolute(contents.first.path), isTrue);
     });
 
     test('fromPath preserves exact path string', () {
@@ -1012,7 +1026,7 @@ void main() {
 
       final String result = platform.path(directory);
 
-      expect(result, startsWith('/'));
+      expect(path_lib.isAbsolute(result), isTrue);
     });
 
     test('multiple sequential operations on same directory', () {
@@ -1037,6 +1051,8 @@ void main() {
       expect(directory.existsSync(), isFalse);
     });
 
+    // Creating a symbolic link on Windows needs an elevated process or
+    // Developer Mode, so this stays POSIX-only.
     test('copy with symbolic link in source directory', () {
       final Directory source = Directory('${tempDir.path}/link_copy_src')
         ..createSync();
@@ -1049,8 +1065,10 @@ void main() {
 
       expect(platform.copy(source, destination), isTrue);
       expect(File('${destination.path}/regular.txt').existsSync(), isTrue);
-    });
+    }, testOn: '!windows');
 
+    // Creating a symbolic link on Windows needs an elevated process or
+    // Developer Mode, so this stays POSIX-only.
     test('list includes symbolic links', () {
       final Directory directory = Directory('${tempDir.path}/link_list')
         ..createSync();
@@ -1062,7 +1080,7 @@ void main() {
       final List<FileSystemEntity> contents = platform.list(directory);
 
       expect(contents.length, equals(2));
-    });
+    }, testOn: '!windows');
 
     test('rename with empty string fails', () {
       final Directory directory = Directory('${tempDir.path}/rename_empty')
@@ -1084,6 +1102,8 @@ void main() {
       expect(File('${destination.path}/empty.txt').lengthSync(), equals(0));
     });
 
+    // Creating a symbolic link on Windows needs an elevated process or
+    // Developer Mode, so this stays POSIX-only.
     test('move handles directory with symbolic links', () {
       final Directory source = Directory('${tempDir.path}/mv_link_src')
         ..createSync();
@@ -1095,7 +1115,7 @@ void main() {
       expect(platform.move(source, destination), isTrue);
       expect(destination.existsSync(), isTrue);
       expect(source.existsSync(), isFalse);
-    });
+    }, testOn: '!windows');
 
     test('name for empty path returns empty string', () {
       final Directory directory = Directory('');
@@ -1113,6 +1133,8 @@ void main() {
       expect(parentDirectory.path, equals('.'));
     });
 
+    // Creating a symbolic link on Windows needs an elevated process or
+    // Developer Mode, so this stays POSIX-only.
     test('exists returns true for symbolic link to directory', () {
       final Directory target = Directory(
         '${tempDir.path}/symlink_exists_target',
@@ -1123,8 +1145,10 @@ void main() {
 
       expect(platform.exists(directoryAtLink), isTrue);
       expect(target.existsSync(), isTrue);
-    });
+    }, testOn: '!windows');
 
+    // Creating a symbolic link on Windows needs an elevated process or
+    // Developer Mode, so this stays POSIX-only.
     test('delete symbolic link removes only link not target', () {
       final Directory target = Directory(
         '${tempDir.path}/symlink_delete_target',
@@ -1138,7 +1162,7 @@ void main() {
       expect(link.existsSync(), isFalse);
       expect(target.existsSync(), isTrue);
       expect(File('${target.path}/file.txt').existsSync(), isTrue);
-    });
+    }, testOn: '!windows');
 
     test('create directory at path where file exists returns false', () {
       final File file = File('${tempDir.path}/file_exists.txt')..createSync();
@@ -1147,23 +1171,29 @@ void main() {
       expect(platform.create(directory), isFalse);
     });
 
-    test('copy with file having no read permissions fails gracefully', () {
-      final Directory source = Directory('${tempDir.path}/no_read_src')
-        ..createSync();
-      final File file = File('${source.path}/restricted.txt')
-        ..writeAsStringSync('restricted');
-      // Remove read permissions
-      Process.runSync('chmod', ['000', file.path]);
-      final Directory destination = Directory('${tempDir.path}/no_read_dst');
+    // POSIX permission bits: there is no chmod on Windows and the ACL
+    // model has no equivalent, so this stays POSIX-only.
+    test(
+      'copy with file having no read permissions fails gracefully',
+      () {
+        final Directory source = Directory('${tempDir.path}/no_read_src')
+          ..createSync();
+        final File file = File('${source.path}/restricted.txt')
+          ..writeAsStringSync('restricted');
+        // Remove read permissions
+        Process.runSync('chmod', ['000', file.path]);
+        final Directory destination = Directory('${tempDir.path}/no_read_dst');
 
-      // Should return false due to permission error
-      final bool result = platform.copy(source, destination);
+        // Should return false due to permission error
+        final bool result = platform.copy(source, destination);
 
-      // Restore permissions for cleanup
-      Process.runSync('chmod', ['644', file.path]);
+        // Restore permissions for cleanup
+        Process.runSync('chmod', ['644', file.path]);
 
-      expect(result, isFalse);
-    });
+        expect(result, isFalse);
+      },
+      testOn: '!windows',
+    );
 
     test('move to existing non-empty directory path fails', () {
       final Directory source = Directory('${tempDir.path}/mv_exists_src')
@@ -1179,6 +1209,10 @@ void main() {
       expect(destination.existsSync(), isTrue);
     });
 
+    // POSIX rename(2) replaces an existing destination directory when it is
+    // empty. Windows refuses any existing destination, so this stays
+    // POSIX-only. The non-empty case above fails on both platforms and
+    // therefore still runs everywhere.
     test('move to existing empty directory path succeeds', () {
       final Directory source = Directory('${tempDir.path}/mv_empty_exists_src')
         ..createSync();
@@ -1191,7 +1225,7 @@ void main() {
       expect(destination.existsSync(), isTrue);
       expect(source.existsSync(), isFalse);
       expect(File('${destination.path}/file.txt').existsSync(), isTrue);
-    });
+    }, testOn: '!windows');
 
     test('rename to existing non-empty directory name fails', () {
       final Directory directory = Directory('${tempDir.path}/rename_exists_src')
@@ -1207,6 +1241,7 @@ void main() {
       expect(existing.existsSync(), isTrue);
     });
 
+    // POSIX-only for the same reason as the move case above.
     test('rename to existing empty directory name succeeds', () {
       final Directory directory = Directory(
         '${tempDir.path}/rename_empty_exists_src',
@@ -1226,7 +1261,7 @@ void main() {
         ).existsSync(),
         isTrue,
       );
-    });
+    }, testOn: '!windows');
 
     test('fromPath with multiple consecutive slashes', () {
       final String pathWithSlashes = '${tempDir.path}//double//slashes';
@@ -1252,7 +1287,7 @@ void main() {
       final String result = platform.path(directory);
 
       // The implementation uses directory.absolute.path which preserves ..
-      expect(result, startsWith('/'));
+      expect(path_lib.isAbsolute(result), isTrue);
       expect(result, contains('..'));
     });
 
@@ -1303,6 +1338,8 @@ void main() {
       );
     });
 
+    // POSIX permission bits: there is no chmod on Windows and the ACL
+    // model has no equivalent, so this stays POSIX-only.
     test('move directory with read-only file succeeds', () {
       final Directory source = Directory('${tempDir.path}/mv_readonly_src')
         ..createSync();
@@ -1322,8 +1359,10 @@ void main() {
 
       expect(result, isTrue);
       expect(destination.existsSync(), isTrue);
-    });
+    }, testOn: '!windows');
 
+    // POSIX permission bits: there is no chmod on Windows and the ACL
+    // model has no equivalent, so this stays POSIX-only.
     test('exists for directory with no execute permission', () {
       final Directory directory = Directory('${tempDir.path}/no_exec')
         ..createSync();
@@ -1335,22 +1374,28 @@ void main() {
       Process.runSync('chmod', ['755', directory.path]);
 
       expect(result, isTrue);
-    });
+    }, testOn: '!windows');
 
-    test('list directory with no read permission throws exception', () {
-      final Directory directory = Directory('${tempDir.path}/no_read_list')
-        ..createSync();
-      File('${directory.path}/file.txt').createSync();
-      Process.runSync('chmod', ['000', directory.path]);
+    // POSIX permission bits: there is no chmod on Windows and the ACL
+    // model has no equivalent, so this stays POSIX-only.
+    test(
+      'list directory with no read permission throws exception',
+      () {
+        final Directory directory = Directory('${tempDir.path}/no_read_list')
+          ..createSync();
+        File('${directory.path}/file.txt').createSync();
+        Process.runSync('chmod', ['000', directory.path]);
 
-      expect(
-        () => platform.list(directory),
-        throwsA(isA<FileSystemException>()),
-      );
+        expect(
+          () => platform.list(directory),
+          throwsA(isA<FileSystemException>()),
+        );
 
-      // Restore permissions for cleanup
-      Process.runSync('chmod', ['755', directory.path]);
-    });
+        // Restore permissions for cleanup
+        Process.runSync('chmod', ['755', directory.path]);
+      },
+      testOn: '!windows',
+    );
 
     test('copy with hidden directory', () {
       final Directory source = Directory('${tempDir.path}/hidden_dir_src')
@@ -1391,7 +1436,7 @@ void main() {
 
       final String result = platform.path(directory);
 
-      expect(result, startsWith('/'));
+      expect(path_lib.isAbsolute(result), isTrue);
     });
 
     test('name for path ending with multiple slashes', () {

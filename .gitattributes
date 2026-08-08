@@ -1,0 +1,11 @@
+# The CLI tests compare program output byte-for-byte, so sources and fixtures
+# must keep LF endings even when checked out on Windows. Dart is included
+# because the tests embed Primal programs in string literals, and a CR in one
+# of those shifts every column an error is reported at.
+*.prm text eol=lf
+*.dart text eol=lf
+*.sh text eol=lf
+test/resources/** text eol=lf
+
+# The compiled binaries must never be touched by end-of-line normalisation.
+bin/primal-* binary

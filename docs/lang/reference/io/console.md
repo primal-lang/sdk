@@ -45,12 +45,14 @@ console_writeLn("hello") // prints "hello\n" and returns "hello"
 
 - **Signature:** `console_read(): String`
 - **Input:** None.
-- **Output:** Reads a line from the standard input and returns it as a string.
+- **Output:** Reads a line from the standard input and returns it as a string. Once the input has ended, it returns the empty string, and every call after that returns the empty string too.
 - **Purity:** Impure
 - **Example:**
 
 ```
 console_read() // waits for input and returns the entered string
 ```
+
+> **Note:** A blank line and an ended input both read as the empty string, so a program that reads in a loop needs its own way to stop, such as a sentinel line.
 
 > **Note:** This function is not implemented on the web platform.

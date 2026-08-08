@@ -56,10 +56,6 @@ sources: []
 
 ## Roadmap
 
-### 0.5.3
-
-- [[dev/roadmap/0.5.3/dot-to-underscore]] — Disallow `.` in function names
-
 ### 0.6.0
 
 - [[dev/roadmap/0.6.0/http]] — HTTP client

@@ -15,23 +15,42 @@ class Console {
   Console([PlatformConsoleBase? platformConsole])
     : _platformConsole = platformConsole ?? PlatformInterface().console;
 
+  /// Reads and handles input until there is none left.
   void prompt(void Function(String) handler) {
-    while (true) {
-      promptOnce(handler);
+    while (promptOnce(handler)) {
+      // Reading continues until the input ends.
     }
   }
 
-  void promptOnce(void Function(String) handler) {
-    try {
-      _platformConsole.outWrite(inputPrompt);
-      final String input = _platformConsole.readLine();
+  /// Reads and handles one line, returning whether there may be another.
+  ///
+  /// False means the input has ended: prompting again would print a prompt
+  /// nobody can answer, and looping on it would never stop.
+  ///
+  /// A read that fails is not an ending and is deliberately not caught here. A
+  /// stdin that cannot be read from is a run that failed rather than a session
+  /// that finished, so the error travels out to whoever decides the exit code.
+  ///
+  /// A handler that threw is a different thing again: the line it was given was
+  /// real, so the error is reported and reading carries on.
+  bool promptOnce(void Function(String) handler) {
+    _platformConsole.outWrite(inputPrompt);
 
+    final String? input = _platformConsole.readLine();
+
+    if (input == null) {
+      return false;
+    }
+
+    try {
       if (input.isNotEmpty) {
         handler(input);
       }
     } catch (e) {
       error(e);
     }
+
+    return true;
   }
 
   void write(String message) => _platformConsole.outWrite(message);

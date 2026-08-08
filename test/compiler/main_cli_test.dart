@@ -1,4 +1,4 @@
-@Tags(['compiler'])
+@Tags(['compiler', 'cli'])
 @TestOn('vm')
 library;
 
@@ -1550,6 +1550,9 @@ void main() {
     });
 
     group('REPL prompt error handling', () {
+      // Reported by runCli's own error boundary rather than by the prompt: a
+      // read that fails ends the run, so it takes the path a failed program
+      // takes and not the one an unusable line takes.
       test('console read error during prompt shows error', () {
         final FakePlatformConsole platformConsole = FakePlatformConsole();
         platformConsole.readError = StateError('read error');
@@ -2005,6 +2008,33 @@ void main() {
         );
 
         expect(runCli([], console: console), equals(0));
+      });
+
+      // The real prompt loop rather than ScriptedConsole's counted stand-in:
+      // what ends this one is the input running out, which is what a REPL
+      // reading a file or a closed stdin actually meets.
+      test('the REPL returns 0 once its input ends', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole(
+          inputs: ['1 + 1'],
+        );
+        final Console console = Console(platformConsole);
+
+        expect(runCli([], console: console), equals(0));
+        expect(platformConsole.outLines, contains('2'));
+      });
+
+      // A session that ended and a stdin that broke are different outcomes, and
+      // a caller reading the exit code has to be able to tell them apart.
+      test('the REPL returns 1 when its input cannot be read', () {
+        final FakePlatformConsole platformConsole = FakePlatformConsole()
+          ..readError = StateError('stdin is gone');
+        final Console console = Console(platformConsole);
+
+        expect(runCli([], console: console), equals(1));
+        expect(
+          platformConsole.errorLines.single,
+          contains('Bad state: stdin is gone'),
+        );
       });
 
       test('the REPL returns 0 even when the last input raised an error', () {

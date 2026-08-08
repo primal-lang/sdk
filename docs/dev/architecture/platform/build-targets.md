@@ -215,6 +215,15 @@ The SDK requires Dart 3.11.4 or later.
    from the Actions tab. It runs `scripts/build_desktop.sh` on a Linux, macOS and
    Windows runner, and publishes one artifact per platform.
 
+   Each runner is gated twice. Before building it runs `dart test -t cli`, the
+   tests covering what differs per platform, so a regression is caught on the
+   platform it affects. After building it runs `test/compiler/binary_test.dart`
+   against the artifact it has just produced, with `PRIMAL_BINARY` pointing at
+   it, so that whatever only ahead-of-time compilation breaks is caught before
+   the binary is uploaded. A failure at either point leaves that platform
+   without an artifact and does not stop the other two, which build
+   independently.
+
 4. **Output Artifacts**:
    - `bin/primal-linux-x86-64`, `bin/primal-macos-arm64`, `bin/primal-windows-x86-64` - Native executables
    - `output/primal.js` - JavaScript bundle

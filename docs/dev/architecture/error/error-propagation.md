@@ -225,6 +225,11 @@ void _runRepl(...) {
 | Batch | Error terminates the program after printing the error message |
 | REPL  | Error is printed and the prompt continues                     |
 
+The REPL row covers errors raised by an evaluated line. A failed *read* is not one of
+those: `Console.promptOnce` deliberately lets it out, so it reaches the boundary above
+and ends the session with exit code `1`. An input that merely ended is not an error at
+all — the prompt returns and the run exits `0`.
+
 In debug mode (`--debug` or `-d`), the full Dart stack trace is also printed.
 
 ### Web Mode

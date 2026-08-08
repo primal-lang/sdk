@@ -9,7 +9,11 @@ class ConsoleRead extends NativeFunctionTerm {
         parameters: const [],
       );
 
+  // A program reading past the end of the input gets the empty string, the same
+  // as it gets for a blank line. The distinction the platform draws between the
+  // two is there for the REPL, which has to stop reading; a Primal program is
+  // free to keep calling this and keep getting nothing.
   @override
   Term term(List<Term> arguments) =>
-      StringTerm(PlatformInterface().console.readLine());
+      StringTerm(PlatformInterface().console.readLine() ?? '');
 }

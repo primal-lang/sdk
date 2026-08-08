@@ -15,7 +15,7 @@ import 'package:primal/utils/console.dart';
 import 'package:primal/utils/file_reader.dart';
 import 'package:primal/utils/self_install.dart';
 
-const String version = '0.5.3';
+const String version = '0.5.4';
 
 /// Reserved prefix for user test functions discovered by `--test`.
 ///
@@ -79,7 +79,8 @@ Future<void> main(List<String> args) async {
 /// responsible for assigning the returned code to [exitCode].
 ///
 /// - `0` — the run succeeded.
-/// - `1` — the program under test failed to compile or threw at runtime.
+/// - `1` — the program under test failed to compile or threw at runtime, or the
+///   REPL could not read its input. A REPL whose input merely ended is `0`.
 /// - `2` — the invocation was wrong, so the run did not measure what it claimed
 ///   to (usage errors, and every failure of a `--test` run to reach the tests).
 int runCli(
@@ -205,8 +206,9 @@ int runCli(
     }
 
     // Watch mode returns while the process is still alive: the file
-    // subscription is what keeps it up, and SIGINT exits with 0. The REPL is
-    // unreachable here in production because Console.prompt loops forever.
+    // subscription is what keeps it up, and SIGINT exits with 0. The REPL
+    // returns here once its input ends, which is a session that is over rather
+    // than a failure, so it exits with 0 as ':quit' does.
     return 0;
   } catch (e, stackTrace) {
     currentConsole.error(e);
