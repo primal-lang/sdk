@@ -40,6 +40,7 @@ description: Prepares the next SDK release by updating version, syncing document
    d. If the build fails, report the error and stop
 
 5. **Manual Steps Reminder**: Inform the user of the remaining manual steps:
+   - **Run the apocalypse bug review**: Run the `apocalypse-bug-review` skill
    - **Website updates**: Run the skill `sync-sdk` in the website repository
    - **Deploy website**: Deploy the updated website
    - **Git workflow**: Merge the release branch into `main`
