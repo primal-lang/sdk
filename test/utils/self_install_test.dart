@@ -202,6 +202,21 @@ void main() {
       expect(platformConsole.errorLines.single, contains('dart run'));
     });
 
+    test('refuses to run against the Dart VM on a Windows path', () async {
+      final int code = await runSelfInstall(
+        <String>['--update'],
+        console: console,
+        resolveExecutable: () => r'C:\Program Files\dart\bin\dart.exe',
+        downloadScript: download,
+        runCommand: recordCommand(),
+      );
+
+      expect(code, equals(2));
+      expect(requestedUrls, isEmpty);
+      expect(executables, isEmpty);
+      expect(platformConsole.errorLines.single, contains('dart run'));
+    });
+
     test('reports a failed download without running anything', () async {
       final int code = await runSelfInstall(
         <String>['--update'],

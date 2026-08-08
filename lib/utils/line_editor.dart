@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 /// A line editor that supports command history navigation with up/down arrow keys.
@@ -32,7 +33,7 @@ class LineEditor {
   /// after. Reading again after null would never return anything else.
   String? readLine() {
     if (!stdin.hasTerminal) {
-      return stdin.readLineSync()?.trim();
+      return _readLineSimple();
     }
 
     // On Windows, raw terminal mode often has issues with character echo
@@ -40,7 +41,7 @@ class LineEditor {
     // Fall back to simple line reading which handles echo natively.
     // This sacrifices history navigation but ensures reliable input display.
     if (Platform.isWindows) {
-      return stdin.readLineSync()?.trim();
+      return _readLineSimple();
     }
 
     // On Unix-like systems, we can use raw mode for history navigation.
@@ -55,7 +56,7 @@ class LineEditor {
       stdin.echoMode = false;
     } on StdinException {
       // Terminal mode changes not supported; fall back to simple reading
-      return stdin.readLineSync()?.trim();
+      return _readLineSimple();
     }
 
     try {
@@ -76,6 +77,22 @@ class LineEditor {
       stdin.echoMode = wasEchoMode;
     }
   }
+
+  /// The line read whole rather than byte by byte, or null once the input has
+  /// ended.
+  ///
+  /// Decoded as UTF-8 rather than with the systemEncoding [Stdin.readLineSync]
+  /// otherwise defaults to, which everywhere but Windows is UTF-8 anyway. On
+  /// Windows it is a legacy code page, and reading with it turns every
+  /// non-ASCII character into mojibake: the console is left on the UTF-8 code
+  /// page the VM sets at startup, and a pipe carries whatever wrote it, which
+  /// for anything dart:io wrote is UTF-8 as well.
+  ///
+  /// The trade is a producer that really does write a legacy code page, which
+  /// used to be read correctly on Windows and is now malformed input. That
+  /// fails the read there as it already did everywhere else, rather than being
+  /// silently taken for the characters those bytes spell in UTF-8.
+  String? _readLineSimple() => stdin.readLineSync(encoding: utf8)?.trim();
 
   /// The line read in raw mode, or null once the input has ended.
   String? _readLineRaw() {

@@ -51,7 +51,13 @@ Future<int> runSelfInstall(
   }
 
   final String executable = (resolveExecutable ?? _resolveExecutable)();
-  final String executableName = executable.split(Platform.pathSeparator).last;
+  // Split on both separators rather than on the one this platform builds its
+  // own paths with: what is named here is whatever resolveExecutable reports
+  // and not a path this process assembled, and Windows takes one written
+  // either way. A backslash is a legal character in a name everywhere else, so
+  // a binary installed as 'my\dart' is read as the VM here; nothing is named
+  // that, and the alternative is a check that only holds on its own platform.
+  final String executableName = executable.split(RegExp(r'[\\/]')).last;
 
   // Under 'dart run' the executable this resolves to is the Dart VM, so the
   // installer would be aimed at the Dart SDK's own bin directory and would
