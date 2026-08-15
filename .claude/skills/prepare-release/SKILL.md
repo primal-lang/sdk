@@ -18,8 +18,8 @@ description: Prepares the next SDK release by updating version, syncing document
    d. Run the command `dart pub get` to update dependencies and lockfile
 
 2. **Documentation Audit**: Perform a comprehensive audit to ensure `docs/` is in sync with `lib/`.
-   a. For each standard library module in `lib/`, verify a corresponding reference page exists in `docs/reference/`
-   b. For each function documented in `docs/reference/`, verify it exists and matches the implementation
+   a. For each standard library module in `lib/`, verify a corresponding reference page exists in `docs/lang/reference/`
+   b. For each function documented in `docs/lang/reference/`, verify it exists and matches the implementation
    c. Check that function signatures, parameters, and return types are accurately documented
    d. Update any outdated or missing documentation
 
@@ -40,7 +40,7 @@ description: Prepares the next SDK release by updating version, syncing document
    d. If the build fails, report the error and stop
 
 5. **Manual Steps Reminder**: Inform the user of the remaining manual steps:
-   - **Run the apocalypse bug review**: Run the `apocalypse-bug-review` skill
+   - **Run the bug audit**: Run the `audit-bugs` skill
    - **Website updates**: Run the skill `sync-sdk` in the website repository
    - **Deploy website**: Deploy the updated website
    - **Git workflow**: Merge the release branch into `main`

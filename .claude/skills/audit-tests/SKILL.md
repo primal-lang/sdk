@@ -37,15 +37,15 @@ f. Implement missing tests directly in the assigned test file
 
 Consult these docs to understand expected behavior:
 
-| Source directory              | Documentation                |
-| ----------------------------- | ---------------------------- |
-| `lib/compiler/reader/`        | `docs/compiler/reader.md`    |
-| `lib/compiler/lexical/`       | `docs/compiler/lexical.md`   |
-| `lib/compiler/syntactic/`     | `docs/compiler/syntactic.md` |
-| `lib/compiler/semantic/`      | `docs/compiler/semantic.md`  |
-| `lib/compiler/runtime/`       | `docs/compiler/runtime.md`   |
-| `lib/compiler/models/`        | `docs/compiler/models.md`    |
-| `lib/compiler/library/<name>` | `docs/reference/<name>.md`   |
+| Source directory              | Documentation                                 |
+| ----------------------------- | --------------------------------------------- |
+| `lib/compiler/reader/`        | `docs/dev/architecture/pipeline/reader.md`    |
+| `lib/compiler/lexical/`       | `docs/dev/architecture/pipeline/lexical.md`   |
+| `lib/compiler/syntactic/`     | `docs/dev/architecture/pipeline/syntactic.md` |
+| `lib/compiler/semantic/`      | `docs/dev/architecture/pipeline/semantic.md`  |
+| `lib/compiler/runtime/`       | `docs/dev/architecture/pipeline/runtime.md`   |
+| `lib/compiler/models/`        | `docs/dev/architecture/pipeline/models.md`    |
+| `lib/compiler/library/<name>` | `docs/lang/reference/<category>/<name>.md`    |
 
 ## Coverage Rules
 
