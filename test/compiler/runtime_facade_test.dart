@@ -10,6 +10,7 @@ import 'package:primal/compiler/semantic/intermediate_representation.dart';
 import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:test/test.dart';
+
 import '../helpers/pipeline_helpers.dart';
 
 void main() {
@@ -1673,10 +1674,10 @@ void main() {
         final FunctionDefinition triple = compiler.functionDefinition(
           'triple(x) = x * 3',
         )!;
-        final FunctionDefinition
-        conditionalMultiply = compiler.functionDefinition(
-          'conditionalMultiply(x, useDouble) = if (useDouble) double(x) else triple(x)',
-        )!;
+        final FunctionDefinition conditionalMultiply = compiler
+            .functionDefinition(
+              'conditionalMultiply(x, useDouble) = if (useDouble) double(x) else triple(x)',
+            )!;
         runtime.defineFunction(double);
         runtime.defineFunction(triple);
         runtime.defineFunction(conditionalMultiply);

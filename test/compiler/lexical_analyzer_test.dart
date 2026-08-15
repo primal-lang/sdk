@@ -7,6 +7,7 @@ import 'package:primal/compiler/lexical/lexeme.dart';
 import 'package:primal/compiler/lexical/token.dart';
 import 'package:primal/compiler/models/location.dart';
 import 'package:test/test.dart';
+
 import '../helpers/assertion_helpers.dart';
 import '../helpers/pipeline_helpers.dart';
 

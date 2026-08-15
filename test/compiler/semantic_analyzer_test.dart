@@ -11,6 +11,7 @@ import 'package:primal/compiler/semantic/semantic_node.dart';
 import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/compiler/warnings/semantic_warning.dart';
 import 'package:test/test.dart';
+
 import '../helpers/assertion_helpers.dart';
 import '../helpers/pipeline_helpers.dart';
 
