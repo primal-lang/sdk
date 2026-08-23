@@ -1,0 +1,26 @@
+For the past few years, I’ve been building Primal, a minimalist, functional programming language designed to make core programming concepts simple, accessible, and fun to learn.
+
+💡 Why build another language?
+Modern languages are powerful, but they often come with layers of syntax, configuration, and cognitive overhead. Primal strips away that complexity to focus on what matters: pure, declarative problem-solving.
+
+✨ Pure Functional Simplicity:
+Primal is inspired by Lambda Calculus, where every value is immutable, and everything is an expression.
+
+🎓 Built for Learning:
+Primal is designed with an educational-first mindset. It offers an intuitive syntax where functions and expressions read cleanly without boilerplate.
+
+🛠️ Batteries Included:
+• 300+ standard library functions (math, collections, time, strings, I/O, encoding and more)
+• Interactive CLI with [[[command history and live function definition]]]
+• Built-in test runner
+• Available on Linux, macOS, and Windows
+
+🌲 Latest release contains:
+• Let expressions
+• Anonymous functions
+• 70+ standard library functions
+• Self updating CLI
+
+Check out Primal at https://primal-lang.org
+
+#ProgrammingLanguages #FunctionalProgramming #OpenSource #SoftwareEngineering #Developers #Coding #Compilers
