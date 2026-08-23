@@ -4,7 +4,7 @@ For the past few years, I’ve been building Primal — a minimalist, declarativ
 Modern languages are powerful, but they often come with layers of complex syntax, heavy configuration, and cognitive overhead. Primal strips away that complexity to focus on what truly matters: declarative problem-solving.
 
 ✨ Functional Simplicity:
-Inspired by Lambda Calculus — every value is immutable, and everything is an expression.
+Inspired by Lambda Calculus — every value is immutable, functions are first-class, and everything is an expression.
 
 🎓 Built for Learning:
 Designed with an education-first mindset. Designed to introduce programming concepts with a small syntax and minimal boilerplate.
