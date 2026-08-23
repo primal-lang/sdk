@@ -24,7 +24,7 @@ Designed with an education-first mindset. Clean, intuitive syntax where function
 
 👇 Links to the website and GitHub repo are in the comments below.
 
-#FunctionalProgramming #ProgrammingLanguages #OpenSource #SoftwareEngineering #Compilers
+#ProgrammingLanguages #FunctionalProgramming #OpenSource #Compilers
 
 ---
 
