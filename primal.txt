@@ -14,6 +14,7 @@ Designed with an education-first mindset. Clean, intuitive syntax where function
 • Interactive REPL with persistent history & live evaluation
 • Built-in test runner
 • Cross-platform (Linux, macOS, and Windows)
+• 100% Free & Open Source
 
 🚀 In the latest release:
 • Let expressions
