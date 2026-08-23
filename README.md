@@ -79,7 +79,7 @@ Both flags must be used on their own, and require `bash` to be available.
 
 ## Philosophy
 
-Everything in `Primal` is a function, which can be composed to create more complex functions. Functions are first-class values, meaning they can be passed as arguments to other functions and returned as results. The language includes a comprehensive set of over 300 core functions, providing developers with a wide range of useful tools. The full list can be found in the [reference](https://primal-lang.org/reference) page.
+Everything in `Primal` is an expression that produces a value. Functions are first-class values, meaning they can be passed as arguments to other functions and returned as results. The language includes a comprehensive set of over 300 core functions, providing developers with a wide range of useful tools. The full list can be found in the [reference](https://primal-lang.org/reference) page.
 
 Being a functional language, `Primal` does not have loop constructions. Instead, it uses recursion to perform repetitive tasks, allowing for a more declarative style of programming.
 
