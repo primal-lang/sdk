@@ -1,9 +1,9 @@
 For the past few years, I’ve been building Primal — a minimalist, declarative programming language designed to make core programming concepts simple and accessible.
 
 💡 Why build another language?
-Modern languages are powerful, but they often come with layers of complex syntax, heavy configuration, and cognitive overhead. Primal strips away that complexity to focus on what truly matters: pure, declarative problem-solving.
+Modern languages are powerful, but they often come with layers of complex syntax, heavy configuration, and cognitive overhead. Primal strips away that complexity to focus on what truly matters: declarative problem-solving.
 
-✨ Pure Functional Simplicity:
+✨ Functional Simplicity:
 Inspired by Lambda Calculus — every value is immutable, and everything is an expression.
 
 🎓 Built for Learning:
