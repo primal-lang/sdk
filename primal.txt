@@ -1,26 +1,33 @@
-For the past few years, I’ve been building Primal, a minimalist, functional programming language designed to make core programming concepts simple, accessible, and fun to learn.
+For the past few years, I’ve been building Primal — a minimalist, declarative programming language designed to make core programming concepts simple and accessible.
 
 💡 Why build another language?
-Modern languages are powerful, but they often come with layers of syntax, configuration, and cognitive overhead. Primal strips away that complexity to focus on what matters: pure, declarative problem-solving.
+Modern languages are powerful, but they often come with layers of complex syntax, heavy configuration, and cognitive overhead. Primal strips away that complexity to focus on what truly matters: pure, declarative problem-solving.
 
 ✨ Pure Functional Simplicity:
-Primal is inspired by Lambda Calculus, where every value is immutable, and everything is an expression.
+Inspired by Lambda Calculus — every value is immutable, and everything is an expression.
 
 🎓 Built for Learning:
-Primal is designed with an educational-first mindset. It offers an intuitive syntax where functions and expressions read cleanly without boilerplate.
+Designed with an education-first mindset. Clean, intuitive syntax where functions and expressions read naturally without boilerplate.
 
-🛠️ Batteries Included:
+🛠️ Key Highlights:
 • 300+ standard library functions (math, collections, time, strings, I/O, encoding and more)
-• Interactive CLI with [[[command history and live function definition]]]
+• Interactive REPL with persistent history & live evaluation
 • Built-in test runner
-• Available on Linux, macOS, and Windows
+• Cross-platform (Linux, Windows and macOS)
 
-🌲 Latest release contains:
+🚀 In the latest release:
 • Let expressions
-• Anonymous functions
-• 70+ standard library functions
-• Self updating CLI
+• Anonymous functions (lambdas)
+• 70+ new built-in functions
+• Self-updating CLI
 
-Check out Primal at https://primal-lang.org
+Link in the comments below.
 
 #ProgrammingLanguages #FunctionalProgramming #OpenSource #SoftwareEngineering #Developers #Coding #Compilers
+
+---
+
+Comment:
+
+Website & Docs: https://primal-lang.org
+GitHub: https://github.com/primal-lang/sdk
