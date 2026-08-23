@@ -10,10 +10,10 @@ Inspired by Lambda Calculus — every value is immutable, and everything is an e
 Designed with an education-first mindset. Clean, intuitive syntax where functions and expressions read naturally without boilerplate.
 
 🛠️ Key Highlights:
-• 300+ standard library functions (math, collections, time, strings, I/O, encoding and more)
+300+ standard library functions (math, collections, time, strings, I/O, encoding, and more)
 • Interactive REPL with persistent history & live evaluation
 • Built-in test runner
-• Cross-platform (Linux, Windows and macOS)
+• Cross-platform (Linux, macOS, and Windows)
 
 🚀 In the latest release:
 • Let expressions
@@ -21,13 +21,13 @@ Designed with an education-first mindset. Clean, intuitive syntax where function
 • 70+ new built-in functions
 • Self-updating CLI
 
-Links in the comments below.
+👇 Links to the website and GitHub repo are in the comments below.
 
-#ProgrammingLanguages #FunctionalProgramming #OpenSource #SoftwareEngineering #Developers #Coding #Compilers
+#FunctionalProgramming #ProgrammingLanguages #OpenSource #SoftwareEngineering #Compilers
 
 ---
 
 Comment:
 
-Website & Docs: https://primal-lang.org
-GitHub: https://github.com/primal-lang/sdk
+🌐 Website: https://primal-lang.org
+⭐ GitHub: https://github.com/primal-lang/sdk
