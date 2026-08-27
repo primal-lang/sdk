@@ -1,0 +1,48 @@
+/*
+  Input: a list with the values in each position of the grid
+  Output: a list wit the values of the solved sudoku
+*/
+
+solveSudoku(list) =
+  let
+    row1 = [list[0], list[1], list[2], list[3], list[4], list[5], list[6], list[7], list[8]],
+    row2 = [list[9], list[10], list[11], list[12], list[13], list[14], list[15], list[16], list[17]],
+    row3 = [list[18], list[19], list[20], list[21], list[22], list[23], list[24], list[25], list[26]],
+    row4 = [list[27], list[28], list[29], list[30], list[31], list[32], list[33], list[34], list[35]],
+    row5 = [list[36], list[37], list[38], list[39], list[40], list[41], list[42], list[43], list[44]],
+    row6 = [list[45], list[46], list[47], list[48], list[49], list[50], list[51], list[52], list[53]],
+    row7 = [list[54], list[55], list[56], list[57], list[58], list[59], list[60], list[61], list[62]],
+    row8 = [list[63], list[64], list[65], list[66], list[67], list[68], list[69], list[70], list[71]],
+    row9 = [list[72], list[73], list[74], list[75], list[76], list[77], list[78], list[79], list[80]],
+    col1 = [list[0], list[9], list[18], list[27], list[36], list[45], list[54], list[63], list[72]],
+    col2 = [list[1], list[10], list[19], list[28], list[37], list[46], list[55], list[64], list[73]],
+    col3 = [list[2], list[11], list[20], list[29], list[38], list[47], list[56], list[65], list[74]],
+    col4 = [list[3], list[12], list[21], list[30], list[39], list[48], list[57], list[66], list[75]],
+    col5 = [list[4], list[13], list[22], list[31], list[40], list[49], list[58], list[67], list[76]],
+    col6 = [list[5], list[14], list[23], list[32], list[41], list[50], list[59], list[68], list[77]],
+    col7 = [list[6], list[15], list[24], list[33], list[42], list[51], list[60], list[69], list[78]],
+    col8 = [list[7], list[16], list[25], list[34], list[43], list[52], list[61], list[70], list[79]],
+    col9 = [list[8], list[17], list[26], list[35], list[44], list[53], list[62], list[71], list[80]],
+    blo1 = [list[0], list[1], list[2], list[9], list[10], list[11], list[18], list[19], list[20]],
+    blo2 = [list[3], list[4], list[5], list[12], list[13], list[14], list[21], list[22], list[23]],
+    blo3 = [list[6], list[7], list[8], list[15], list[16], list[17], list[24], list[25], list[26]],
+    blo4 = [list[27], list[28], list[29], list[36], list[37], list[38], list[45], list[46], list[47]],
+    blo5 = [list[30], list[31], list[32], list[39], list[40], list[41], list[48], list[49], list[50]],
+    blo6 = [list[33], list[34], list[35], list[42], list[43], list[44], list[51], list[52], list[53]],
+    blo7 = [list[54], list[55], list[56], list[63], list[64], list[65], list[72], list[73], list[74]],
+    blo8 = [list[57], list[58], list[59], list[66], list[67], list[68], list[75], list[76], list[77]],
+    blo9 = [list[60], list[61], list[62], list[69], list[70], list[71], list[78], list[79], list[80]]
+  in
+    []
+
+main() = solveSudoku([
+  0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0
+])
