@@ -25,6 +25,8 @@ getCandidates(value, values, row, col, blo) =
 removeFromValues(values, numbers) =
   list_filter(values, (v) -> !list_contains(numbers, v))
 
+solveCandidates(list) = []
+
 solveSudoku(list) =
   let
     rows = getRows(list),
@@ -138,7 +140,7 @@ solveSudoku(list) =
     pos98 = getCandidates(list[79], values, row9, col8, blo9),
     pos99 = getCandidates(list[80], values, row9, col9, blo9)
   in
-    [
+    solveCandidates([
       pos11, pos12, pos13,   pos14, pos15, pos16,   pos17, pos18, pos19,
       pos21, pos22, pos23,   pos24, pos25, pos26,   pos27, pos28, pos29,
       pos31, pos32, pos33,   pos34, pos35, pos36,   pos37, pos38, pos39,
@@ -150,7 +152,7 @@ solveSudoku(list) =
       pos71, pos72, pos73,   pos74, pos75, pos76,   pos77, pos78, pos79,
       pos81, pos82, pos83,   pos84, pos85, pos86,   pos87, pos88, pos89,
       pos91, pos92, pos93,   pos94, pos95, pos96,   pos97, pos98, pos99
-    ]
+    ])
 
 main() = solveSudoku([
   9, 0, 0,   5, 0, 8,   0, 0, 7,
