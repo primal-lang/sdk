@@ -1,19 +1,14 @@
-/*
-  Input: a list with the values in each position of the grid
-  Output: a list wit the values of the solved sudoku
-*/
-
 getRows(list) =
   list_chunk(list, 9)
 
-getColumns(rows, columnIndex) =
-  list_map(rows, (row) -> row[columnIndex])
+getColumns(rows, colIndex) =
+  list_map(rows, (row) -> row[colIndex])
 
-getBlocks(rows, rowIndex, columnIndex) =
+getBlocks(rows, rowIndex, colIndex) =
   list_flatten([
-    list_sublist(rows[rowIndex], columnIndex, columnIndex + 3),
-    list_sublist(rows[rowIndex + 1], columnIndex, columnIndex + 3),
-    list_sublist(rows[rowIndex + 2], columnIndex, columnIndex + 3)
+    list_sublist(rows[rowIndex], colIndex, colIndex + 3),
+    list_sublist(rows[rowIndex + 1], colIndex, colIndex + 3),
+    list_sublist(rows[rowIndex + 2], colIndex, colIndex + 3)
   ])
 
 getCandidates(value, values, row, col, blo) =
@@ -25,134 +20,40 @@ getCandidates(value, values, row, col, blo) =
 removeFromValues(values, numbers) =
   list_filter(values, (v) -> !list_contains(numbers, v))
 
-solveCandidates(list) = []
+candidatesForCell(list, index) =
+  let
+    rows = getRows(list),
+    rowIndex = num_floor(index / 9),
+    colIndex = num_mod(index, 9),
+    bloRow = num_floor(rowIndex / 3) * 3,
+    bloCol = num_floor(colIndex / 3) * 3,
+    row = rows[rowIndex],
+    col = getColumns(rows, colIndex),
+    blo = getBlocks(rows, bloRow, bloCol),
+    values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  in
+    getCandidates(list[index], values, row, col, blo)
+
+tryCandidates(candidates, list, index) =
+  if (list_isEmpty(candidates))
+    []
+  else
+    let
+      attempt = solveSudoku(list_set(list, index, list_first(candidates)))
+    in
+      if (list_isNotEmpty(attempt))
+        attempt
+      else
+        tryCandidates(list_rest(candidates), list, index)
 
 solveSudoku(list) =
   let
-    rows = getRows(list),
-    row1 = rows[0],
-    row2 = rows[1],
-    row3 = rows[2],
-    row4 = rows[3],
-    row5 = rows[4],
-    row6 = rows[5],
-    row7 = rows[6],
-    row8 = rows[7],
-    row9 = rows[8],
-    col1 = getColumns(rows, 0),
-    col2 = getColumns(rows, 1),
-    col3 = getColumns(rows, 2),
-    col4 = getColumns(rows, 3),
-    col5 = getColumns(rows, 4),
-    col6 = getColumns(rows, 5),
-    col7 = getColumns(rows, 6),
-    col8 = getColumns(rows, 7),
-    col9 = getColumns(rows, 8),
-    blo1 = getBlocks(rows, 0, 0),
-    blo2 = getBlocks(rows, 0, 3),
-    blo3 = getBlocks(rows, 0, 6),
-    blo4 = getBlocks(rows, 3, 0),
-    blo5 = getBlocks(rows, 3, 3),
-    blo6 = getBlocks(rows, 3, 6),
-    blo7 = getBlocks(rows, 6, 0),
-    blo8 = getBlocks(rows, 6, 3),
-    blo9 = getBlocks(rows, 6, 6),
-    values = [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    pos11 = getCandidates(list[0], values, row1, col1, blo1),
-    pos12 = getCandidates(list[1], values, row1, col2, blo1),
-    pos13 = getCandidates(list[2], values, row1, col3, blo1),
-    pos14 = getCandidates(list[3], values, row1, col4, blo2),
-    pos15 = getCandidates(list[4], values, row1, col5, blo2),
-    pos16 = getCandidates(list[5], values, row1, col6, blo2),
-    pos17 = getCandidates(list[6], values, row1, col7, blo3),
-    pos18 = getCandidates(list[7], values, row1, col8, blo3),
-    pos19 = getCandidates(list[8], values, row1, col9, blo3),
-    pos21 = getCandidates(list[9], values, row2, col1, blo1),
-    pos22 = getCandidates(list[10], values, row2, col2, blo1),
-    pos23 = getCandidates(list[11], values, row2, col3, blo1),
-    pos24 = getCandidates(list[12], values, row2, col4, blo2),
-    pos25 = getCandidates(list[13], values, row2, col5, blo2),
-    pos26 = getCandidates(list[14], values, row2, col6, blo2),
-    pos27 = getCandidates(list[15], values, row2, col7, blo3),
-    pos28 = getCandidates(list[16], values, row2, col8, blo3),
-    pos29 = getCandidates(list[17], values, row2, col9, blo3),
-    pos31 = getCandidates(list[18], values, row3, col1, blo1),
-    pos32 = getCandidates(list[19], values, row3, col2, blo1),
-    pos33 = getCandidates(list[20], values, row3, col3, blo1),
-    pos34 = getCandidates(list[21], values, row3, col4, blo2),
-    pos35 = getCandidates(list[22], values, row3, col5, blo2),
-    pos36 = getCandidates(list[23], values, row3, col6, blo2),
-    pos37 = getCandidates(list[24], values, row3, col7, blo3),
-    pos38 = getCandidates(list[25], values, row3, col8, blo3),
-    pos39 = getCandidates(list[26], values, row3, col9, blo3),
-    pos41 = getCandidates(list[27], values, row4, col1, blo4),
-    pos42 = getCandidates(list[28], values, row4, col2, blo4),
-    pos43 = getCandidates(list[29], values, row4, col3, blo4),
-    pos44 = getCandidates(list[30], values, row4, col4, blo5),
-    pos45 = getCandidates(list[31], values, row4, col5, blo5),
-    pos46 = getCandidates(list[32], values, row4, col6, blo5),
-    pos47 = getCandidates(list[33], values, row4, col7, blo6),
-    pos48 = getCandidates(list[34], values, row4, col8, blo6),
-    pos49 = getCandidates(list[35], values, row4, col9, blo6),
-    pos51 = getCandidates(list[36], values, row5, col1, blo4),
-    pos52 = getCandidates(list[37], values, row5, col2, blo4),
-    pos53 = getCandidates(list[38], values, row5, col3, blo4),
-    pos54 = getCandidates(list[39], values, row5, col4, blo5),
-    pos55 = getCandidates(list[40], values, row5, col5, blo5),
-    pos56 = getCandidates(list[41], values, row5, col6, blo5),
-    pos57 = getCandidates(list[42], values, row5, col7, blo6),
-    pos58 = getCandidates(list[43], values, row5, col8, blo6),
-    pos59 = getCandidates(list[44], values, row5, col9, blo6),
-    pos61 = getCandidates(list[45], values, row6, col1, blo4),
-    pos62 = getCandidates(list[46], values, row6, col2, blo4),
-    pos63 = getCandidates(list[47], values, row6, col3, blo4),
-    pos64 = getCandidates(list[48], values, row6, col4, blo5),
-    pos65 = getCandidates(list[49], values, row6, col5, blo5),
-    pos66 = getCandidates(list[50], values, row6, col6, blo5),
-    pos67 = getCandidates(list[51], values, row6, col7, blo6),
-    pos68 = getCandidates(list[52], values, row6, col8, blo6),
-    pos69 = getCandidates(list[53], values, row6, col9, blo6),
-    pos71 = getCandidates(list[54], values, row7, col1, blo7),
-    pos72 = getCandidates(list[55], values, row7, col2, blo7),
-    pos73 = getCandidates(list[56], values, row7, col3, blo7),
-    pos74 = getCandidates(list[57], values, row7, col4, blo8),
-    pos75 = getCandidates(list[58], values, row7, col5, blo8),
-    pos76 = getCandidates(list[59], values, row7, col6, blo8),
-    pos77 = getCandidates(list[60], values, row7, col7, blo9),
-    pos78 = getCandidates(list[61], values, row7, col8, blo9),
-    pos79 = getCandidates(list[62], values, row7, col9, blo9),
-    pos81 = getCandidates(list[63], values, row8, col1, blo7),
-    pos82 = getCandidates(list[64], values, row8, col2, blo7),
-    pos83 = getCandidates(list[65], values, row8, col3, blo7),
-    pos84 = getCandidates(list[66], values, row8, col4, blo8),
-    pos85 = getCandidates(list[67], values, row8, col5, blo8),
-    pos86 = getCandidates(list[68], values, row8, col6, blo8),
-    pos87 = getCandidates(list[69], values, row8, col7, blo9),
-    pos88 = getCandidates(list[70], values, row8, col8, blo9),
-    pos89 = getCandidates(list[71], values, row8, col9, blo9),
-    pos91 = getCandidates(list[72], values, row9, col1, blo7),
-    pos92 = getCandidates(list[73], values, row9, col2, blo7),
-    pos93 = getCandidates(list[74], values, row9, col3, blo7),
-    pos94 = getCandidates(list[75], values, row9, col4, blo8),
-    pos95 = getCandidates(list[76], values, row9, col5, blo8),
-    pos96 = getCandidates(list[77], values, row9, col6, blo8),
-    pos97 = getCandidates(list[78], values, row9, col7, blo9),
-    pos98 = getCandidates(list[79], values, row9, col8, blo9),
-    pos99 = getCandidates(list[80], values, row9, col9, blo9)
+    emptyIndex = list_indexOf(list, 0)
   in
-    solveCandidates([
-      pos11, pos12, pos13,   pos14, pos15, pos16,   pos17, pos18, pos19,
-      pos21, pos22, pos23,   pos24, pos25, pos26,   pos27, pos28, pos29,
-      pos31, pos32, pos33,   pos34, pos35, pos36,   pos37, pos38, pos39,
-
-      pos41, pos42, pos43,   pos44, pos45, pos46,   pos47, pos48, pos49,
-      pos51, pos52, pos53,   pos54, pos55, pos56,   pos57, pos58, pos59,
-      pos61, pos62, pos63,   pos64, pos65, pos66,   pos67, pos68, pos69,
-
-      pos71, pos72, pos73,   pos74, pos75, pos76,   pos77, pos78, pos79,
-      pos81, pos82, pos83,   pos84, pos85, pos86,   pos87, pos88, pos89,
-      pos91, pos92, pos93,   pos94, pos95, pos96,   pos97, pos98, pos99
-    ])
+    if (emptyIndex == -1)
+      list
+    else
+      tryCandidates(candidatesForCell(list, emptyIndex), list, emptyIndex)
 
 main() = solveSudoku([
   9, 0, 0,   5, 0, 8,   0, 0, 7,
