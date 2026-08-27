@@ -6,14 +6,14 @@
 getRows(list) =
   list_chunk(list, 9)
 
-getColumns(rows, c) =
-  list_map(rows, (row) -> row[c])
+getColumns(rows, columnIndex) =
+  list_map(rows, (row) -> row[columnIndex])
 
-getBlocks(rows, r, c) =
+getBlocks(rows, rowIndex, columnIndex) =
   list_flatten([
-    list_sublist(rows[r], c, c + 3),
-    list_sublist(rows[r + 1], c, c + 3),
-    list_sublist(rows[r + 2], c, c + 3)
+    list_sublist(rows[rowIndex], columnIndex, columnIndex + 3),
+    list_sublist(rows[rowIndex + 1], columnIndex, columnIndex + 3),
+    list_sublist(rows[rowIndex + 2], columnIndex, columnIndex + 3)
   ])
 
 getCandidates(value, values, row, col, blo) =
