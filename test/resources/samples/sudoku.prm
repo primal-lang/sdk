@@ -1,3 +1,8 @@
+/*
+  Input: a list of numbers representing each position in the grid (0 for empty cells)
+  Output: the pretty-printed solved Sudoku grid
+*/
+
 getRows(list) =
   list_chunk(list, 9)
 
