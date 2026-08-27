@@ -1,38 +1,38 @@
 getRows(list) =
   list_chunk(list, 9)
 
-getColumns(rows, colIndex) =
-  list_map(rows, (row) -> row[colIndex])
+getColumns(rows, columnIndex) =
+  list_map(rows, (row) -> row[columnIndex])
 
-getBlocks(rows, rowIndex, colIndex) =
+getBlocks(rows, rowIndex, columnIndex) =
   list_flatten([
-    list_sublist(rows[rowIndex], colIndex, colIndex + 3),
-    list_sublist(rows[rowIndex + 1], colIndex, colIndex + 3),
-    list_sublist(rows[rowIndex + 2], colIndex, colIndex + 3)
+    list_sublist(rows[rowIndex], columnIndex, columnIndex + 3),
+    list_sublist(rows[rowIndex + 1], columnIndex, columnIndex + 3),
+    list_sublist(rows[rowIndex + 2], columnIndex, columnIndex + 3)
   ])
 
-getCandidates(value, values, row, col, blo) =
+getCandidates(value, values, row, column, block) =
   if (value != 0)
     [value]
   else
-    removeFromValues(values, list_flatten([row, col, blo]))
+    removeFromValues(values, list_flatten([row, column, block]))
 
 removeFromValues(values, numbers) =
-  list_filter(values, (v) -> !list_contains(numbers, v))
+  list_filter(values, (value) -> !list_contains(numbers, value))
 
 candidatesForCell(list, index) =
   let
     rows = getRows(list),
     rowIndex = num_floor(index / 9),
-    colIndex = num_mod(index, 9),
-    bloRow = num_floor(rowIndex / 3) * 3,
-    bloCol = num_floor(colIndex / 3) * 3,
+    columnIndex = num_mod(index, 9),
+    blockRow = num_floor(rowIndex / 3) * 3,
+    blockColumn = num_floor(columnIndex / 3) * 3,
     row = rows[rowIndex],
-    col = getColumns(rows, colIndex),
-    blo = getBlocks(rows, bloRow, bloCol),
+    column = getColumns(rows, columnIndex),
+    block = getBlocks(rows, blockRow, blockColumn),
     values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   in
-    getCandidates(list[index], values, row, col, blo)
+    getCandidates(list[index], values, row, column, block)
 
 tryCandidates(candidates, list, index) =
   if (list_isEmpty(candidates))
@@ -57,32 +57,32 @@ solveSudoku(list) =
 
 formatRow(row) =
   let
-    p1 = list_join(list_sublist(row, 0, 3), " "),
-    p2 = list_join(list_sublist(row, 3, 6), " "),
-    p3 = list_join(list_sublist(row, 6, 9), " ")
+    group1 = list_join(list_sublist(row, 0, 3), " "),
+    group2 = list_join(list_sublist(row, 3, 6), " "),
+    group3 = list_join(list_sublist(row, 6, 9), " ")
   in
-    list_join([p1, p2, p3], " | ")
+    list_join([group1, group2, group3], " | ")
 
 prettyPrint(list) =
   let
     rows = getRows(list),
-    r1 = formatRow(rows[0]),
-    r2 = formatRow(rows[1]),
-    r3 = formatRow(rows[2]),
-    r4 = formatRow(rows[3]),
-    r5 = formatRow(rows[4]),
-    r6 = formatRow(rows[5]),
-    r7 = formatRow(rows[6]),
-    r8 = formatRow(rows[7]),
-    r9 = formatRow(rows[8]),
+    row1 = formatRow(rows[0]),
+    row2 = formatRow(rows[1]),
+    row3 = formatRow(rows[2]),
+    row4 = formatRow(rows[3]),
+    row5 = formatRow(rows[4]),
+    row6 = formatRow(rows[5]),
+    row7 = formatRow(rows[6]),
+    row8 = formatRow(rows[7]),
+    row9 = formatRow(rows[8]),
     divider = "------+-------+------"
   in
     "\n" + list_join([
-      r1, r2, r3,
+      row1, row2, row3,
       divider,
-      r4, r5, r6,
+      row4, row5, row6,
       divider,
-      r7, r8, r9
+      row7, row8, row9
     ], "\n") + "\n"
 
 main() = prettyPrint(solveSudoku([
