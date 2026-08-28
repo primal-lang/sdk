@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://primal-lang.org"><img src="https://primal-lang.org/img/rounded.png" alt="Primal" height="170"></a>
+  <a href="https://primal-lang.org"><img src="https://primal-lang.org/img/icon.png" alt="Primal" height="170"></a>
 </p>
 
 <p align="center">
