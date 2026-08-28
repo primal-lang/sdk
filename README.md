@@ -56,9 +56,9 @@ curl -fsSL https://primal-lang.org/install.sh | bash
 
 This installs the `primal` binary to `~/.local/bin` and updates your shell configuration.
 
-### Manual installation
+### Running a program
 
-Pre-built binaries are available for Linux, macOS, and Windows. Download the appropriate release from the [GitHub releases](https://github.com/primal-lang/sdk/releases) page, extract it, and add the `bin` folder to your PATH. Then run the interpreter with a source file as an argument:
+Run the interpreter with a source file as an argument:
 
 ```bash
 primal program.prm
