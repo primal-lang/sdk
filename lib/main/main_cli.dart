@@ -37,7 +37,7 @@ Options:
   --watch, -w      Watch file for changes and re-run on modification
   --test, -t       Run the "test_" functions in a file
   --update         Install the latest release over this one
-  --uninstall      Remove Primal and its PATH entry
+  --uninstall      Remove Primal
 
 Examples:
   primal                     Start the REPL

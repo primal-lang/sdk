@@ -72,7 +72,7 @@ An installed binary maintains itself by re-running the published installer again
 
 ```bash
 primal --update      # install the latest release over this one
-primal --uninstall   # remove Primal and its PATH entry
+primal --uninstall   # remove Primal
 ```
 
 Both flags must be used on their own, and require `bash` to be available.
