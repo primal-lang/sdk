@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:primal/compiler/platform/console/platform_console_base.dart';
 import 'package:primal/utils/console.dart';
 import 'package:primal/utils/line_editor.dart';

@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.5.5 - Bronze Axe
+
+### Internal
+
+#### Changed
+
+- **Development tooling** - Added the `test-runner` agent for delegating wide test runs, documented the verification commands in `AGENTS.md`.
+
 ## 0.5.4 - Bronze Axe
 
 ### CLI

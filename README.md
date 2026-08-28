@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://primal-lang.org"><img src="https://primal-lang.org/img/rounded.png" alt="Primal" height="170"></a>
+  <a href="https://primal-lang.org"><img src="https://primal-lang.org/img/icon.png" alt="Primal" height="170"></a>
 </p>
 
 <p align="center">
 <a href="https://github.com/primal-lang/sdk/blob/main/LICENSE.md" target="_blank"><img height=20 src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
-<a href="https://github.com/primal-lang/sdk/releases/tag/v0.5.3"><img src="https://img.shields.io/badge/Latest-0.5.3-blue" /></a>
+<a href="https://github.com/primal-lang/sdk/releases/tag/v0.5.5"><img src="https://img.shields.io/badge/Latest-0.5.5-blue" /></a>
 </p>
 
 # Primal
@@ -56,9 +56,9 @@ curl -fsSL https://primal-lang.org/install.sh | bash
 
 This installs the `primal` binary to `~/.local/bin` and updates your shell configuration.
 
-### Manual installation
+### Running a program
 
-Pre-built binaries are available for Linux, macOS, and Windows. Download the appropriate release from the [GitHub releases](https://github.com/primal-lang/sdk/releases) page, extract it, and add the `bin` folder to your PATH. Then run the interpreter with a source file as an argument:
+Run the interpreter with a source file as an argument:
 
 ```bash
 primal program.prm
@@ -79,7 +79,7 @@ Both flags must be used on their own, and require `bash` to be available.
 
 ## Philosophy
 
-Everything in `Primal` is a function, which can be composed to create more complex functions. Functions are first-class values, meaning they can be passed as arguments to other functions and returned as results. The language includes a comprehensive set of over 200 core functions, providing developers with a wide range of useful tools. The full list can be found in the [reference](https://primal-lang.org/reference) page.
+Everything in `Primal` is an expression that produces a value. Functions are first-class values, meaning they can be passed as arguments to other functions and returned as results. The language includes a comprehensive set of over 300 core functions, providing developers with a wide range of useful tools. The full list can be found in the [reference](https://primal-lang.org/reference) page.
 
 Being a functional language, `Primal` does not have loop constructions. Instead, it uses recursion to perform repetitive tasks, allowing for a more declarative style of programming.
 

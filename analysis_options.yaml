@@ -92,7 +92,6 @@ linter:
     - sort_child_properties_last
     - throw_in_finally
     - type_init_formals
-    - unnecessary_await_in_return
     - unnecessary_brace_in_string_interps
     - unnecessary_const
     - unnecessary_getters_setters

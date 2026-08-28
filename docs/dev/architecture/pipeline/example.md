@@ -691,7 +691,7 @@ The analyzer operates in two passes:
 
 | Step | Action                           | Result                                                            |
 | ---- | -------------------------------- | ----------------------------------------------------------------- |
-| 1    | Load standard library signatures | 200+ built-in functions including `*`, `>=`, `if`, `+`, `-`, etc. |
+| 1    | Load standard library signatures | 300+ built-in functions including `*`, `>=`, `if`, `+`, `-`, etc. |
 | 2    | Extract `square` signature       | `FunctionSignature(name: "square", parameters: [n])`              |
 | 3    | Extract `max` signature          | `FunctionSignature(name: "max", parameters: [a, b])`              |
 | 4    | Extract `main` signature         | `FunctionSignature(name: "main", parameters: [])`                 |
@@ -864,7 +864,7 @@ IntermediateRepresentation(
     "*": FunctionSignature(name: "*", arity: 2),
     ">=": FunctionSignature(name: ">=", arity: 2),
     "if": FunctionSignature(name: "if", arity: 3),
-    ... (200+ more)
+    ... (300+ more)
   },
   warnings: []
 )
@@ -892,7 +892,7 @@ IntermediateRepresentation(
 | Input type                           | `List<FunctionDefinition>`   |
 | Output type                          | `IntermediateRepresentation` |
 | Custom functions analyzed            | 3                            |
-| Standard library functions available | 200+                         |
+| Standard library functions available | 300+                         |
 | Identifiers resolved                 | 10                           |
 | Bound variables created              | 6                            |
 | Function references created          | 6                            |
@@ -1143,7 +1143,7 @@ The `Lowerer` produces a `Map<String, FunctionTerm>` combining custom and standa
   "*": NativeFunctionTerm(...),
   ">=": NativeFunctionTerm(...),
   "if": NativeFunctionTerm(...),
-  ... (200+ more)
+  ... (300+ more)
 }
 ```
 
@@ -1198,7 +1198,7 @@ main() = max(square(3), square(4))
 | Input type               | `IntermediateRepresentation` |
 | Output type              | `Map<String, FunctionTerm>`  |
 | Custom functions lowered | 3                            |
-| Stdlib functions added   | 200+                         |
+| Stdlib functions added   | 300+                         |
 | Semantic nodes lowered   | 15                           |
 | Runtime terms created    | 15                           |
 | Source locations         | Stripped                     |

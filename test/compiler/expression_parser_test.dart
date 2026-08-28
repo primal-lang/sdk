@@ -8,6 +8,7 @@ import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/compiler/syntactic/expression_parser.dart';
 import 'package:primal/utils/list_iterator.dart';
 import 'package:test/test.dart';
+
 import '../helpers/pipeline_helpers.dart';
 
 void main() {

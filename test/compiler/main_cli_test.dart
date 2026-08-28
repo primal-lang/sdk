@@ -7,6 +7,7 @@ import 'package:primal/compiler/syntactic/expression.dart';
 import 'package:primal/main/main_cli.dart';
 import 'package:primal/utils/console.dart';
 import 'package:test/test.dart';
+
 import '../helpers/console_fakes.dart';
 import '../helpers/test_line_helpers.dart';
 

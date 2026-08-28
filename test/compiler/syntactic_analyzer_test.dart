@@ -10,6 +10,7 @@ import 'package:primal/compiler/syntactic/function_definition.dart';
 import 'package:primal/compiler/syntactic/syntactic_analyzer.dart';
 import 'package:primal/utils/list_iterator.dart';
 import 'package:test/test.dart';
+
 import '../helpers/assertion_helpers.dart';
 import '../helpers/pipeline_helpers.dart';
 import '../helpers/resource_helpers.dart';

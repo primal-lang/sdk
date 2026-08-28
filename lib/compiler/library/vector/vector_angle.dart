@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:primal/compiler/errors/runtime_error.dart';
 import 'package:primal/compiler/library/vector/vector_magnitude.dart';
 import 'package:primal/compiler/models/parameter.dart';

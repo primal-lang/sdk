@@ -6,6 +6,7 @@ import 'package:primal/compiler/library/assert/assert_throws.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:primal/compiler/runtime/term.dart';
 import 'package:test/test.dart';
+
 import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';
 

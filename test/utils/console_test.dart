@@ -6,6 +6,7 @@ import 'package:primal/compiler/warnings/generic_warning.dart';
 import 'package:primal/compiler/warnings/semantic_warning.dart';
 import 'package:primal/utils/console.dart';
 import 'package:test/test.dart';
+
 import '../helpers/console_fakes.dart';
 
 void main() {

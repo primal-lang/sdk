@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:primal/utils/console.dart';
 import 'package:primal/utils/self_install.dart';
 import 'package:test/test.dart';
+
 import '../helpers/console_fakes.dart';
 
 void main() {

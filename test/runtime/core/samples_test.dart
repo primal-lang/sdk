@@ -4,6 +4,7 @@ library;
 import 'package:primal/compiler/library/error/throw.dart';
 import 'package:primal/compiler/lowering/runtime_facade.dart';
 import 'package:test/test.dart';
+
 import '../../helpers/assertion_helpers.dart';
 import '../../helpers/pipeline_helpers.dart';
 import '../../helpers/resource_helpers.dart';
@@ -147,6 +148,27 @@ void main() {
         loadFile('samples/to_roman_numerals.prm'),
       );
       checkResult(runtime, '"MCMLXXXIV"');
+    });
+
+    test('sudoku', () {
+      final RuntimeFacade runtime = getRuntime(
+        loadFile('samples/sudoku.prm'),
+      );
+      checkResult(
+        runtime,
+        '"\n'
+        '9 1 3 | 5 6 8 | 4 2 7\n'
+        '6 8 7 | 3 4 2 | 9 1 5\n'
+        '2 5 4 | 1 9 7 | 6 8 3\n'
+        '------+-------+------\n'
+        '4 7 9 | 6 8 5 | 1 3 2\n'
+        '1 6 2 | 7 3 4 | 5 9 8\n'
+        '5 3 8 | 2 1 9 | 7 6 4\n'
+        '------+-------+------\n'
+        '3 4 5 | 9 2 6 | 8 7 1\n'
+        '7 2 6 | 8 5 1 | 3 4 9\n'
+        '8 9 1 | 4 7 3 | 2 5 6\n"',
+      );
     });
   });
 

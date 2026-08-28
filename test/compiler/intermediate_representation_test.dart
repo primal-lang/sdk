@@ -450,10 +450,10 @@ void main() {
     });
 
     test('function calling another custom function is resolved', () {
-      final IntermediateRepresentation
-      intermediateRepresentation = getIntermediateRepresentation(
-        'double(x) = x * 2\nquadruple(x) = double(double(x))\nmain() = quadruple(5)',
-      );
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'double(x) = x * 2\nquadruple(x) = double(double(x))\nmain() = quadruple(5)',
+          );
 
       expect(
         intermediateRepresentation.customFunctions.containsKey('double'),
@@ -1575,10 +1575,10 @@ void main() {
     });
 
     test('function calling itself recursively compiles', () {
-      final IntermediateRepresentation
-      intermediateRepresentation = getIntermediateRepresentation(
-        'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)\nmain() = factorial(5)',
-      );
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'factorial(n) = if (n == 0) 1 else n * factorial(n - 1)\nmain() = factorial(5)',
+          );
 
       expect(
         intermediateRepresentation.customFunctions.containsKey('factorial'),
@@ -1588,10 +1588,10 @@ void main() {
     });
 
     test('mutually recursive functions compile', () {
-      final IntermediateRepresentation
-      intermediateRepresentation = getIntermediateRepresentation(
-        'isEven(n) = if (n == 0) true else isOdd(n - 1)\nisOdd(n) = if (n == 0) false else isEven(n - 1)\nmain() = isEven(4)',
-      );
+      final IntermediateRepresentation intermediateRepresentation =
+          getIntermediateRepresentation(
+            'isEven(n) = if (n == 0) true else isOdd(n - 1)\nisOdd(n) = if (n == 0) false else isEven(n - 1)\nmain() = isEven(4)',
+          );
 
       expect(
         intermediateRepresentation.customFunctions.containsKey('isEven'),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:primal/compiler/lowering/runtime_facade.dart';
+
 import 'pipeline_helpers.dart';
 
 void main(List<String> args) {

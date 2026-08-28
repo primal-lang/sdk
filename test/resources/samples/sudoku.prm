@@ -1,0 +1,105 @@
+/*
+  Input: a list of numbers representing each position in the grid (0 for empty cells)
+  Output: the pretty-printed solved Sudoku grid
+*/
+
+getRows(list) =
+  list_chunk(list, 9)
+
+getColumns(rows, columnIndex) =
+  list_map(rows, (row) -> row[columnIndex])
+
+getBlocks(rows, rowIndex, columnIndex) =
+  list_flatten([
+    list_sublist(rows[rowIndex], columnIndex, columnIndex + 3),
+    list_sublist(rows[rowIndex + 1], columnIndex, columnIndex + 3),
+    list_sublist(rows[rowIndex + 2], columnIndex, columnIndex + 3)
+  ])
+
+getCandidates(value, values, row, column, block) =
+  if (value != 0)
+    [value]
+  else
+    removeFromValues(values, list_flatten([row, column, block]))
+
+removeFromValues(values, numbers) =
+  list_filter(values, (value) -> !list_contains(numbers, value))
+
+candidatesForCell(list, index) =
+  let
+    rows = getRows(list),
+    rowIndex = num_floor(index / 9),
+    columnIndex = num_mod(index, 9),
+    blockRow = num_floor(rowIndex / 3) * 3,
+    blockColumn = num_floor(columnIndex / 3) * 3,
+    row = rows[rowIndex],
+    column = getColumns(rows, columnIndex),
+    block = getBlocks(rows, blockRow, blockColumn),
+    values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  in
+    getCandidates(list[index], values, row, column, block)
+
+tryCandidates(candidates, list, index) =
+  if (list_isEmpty(candidates))
+    []
+  else
+    let
+      attempt = solveSudoku(list_set(list, index, list_first(candidates)))
+    in
+      if (list_isNotEmpty(attempt))
+        attempt
+      else
+        tryCandidates(list_rest(candidates), list, index)
+
+solveSudoku(list) =
+  let
+    emptyIndex = list_indexOf(list, 0)
+  in
+    if (emptyIndex == -1)
+      list
+    else
+      tryCandidates(candidatesForCell(list, emptyIndex), list, emptyIndex)
+
+formatRow(row) =
+  let
+    group1 = list_join(list_sublist(row, 0, 3), " "),
+    group2 = list_join(list_sublist(row, 3, 6), " "),
+    group3 = list_join(list_sublist(row, 6, 9), " ")
+  in
+    list_join([group1, group2, group3], " | ")
+
+prettyPrint(list) =
+  let
+    rows = getRows(list),
+    row1 = formatRow(rows[0]),
+    row2 = formatRow(rows[1]),
+    row3 = formatRow(rows[2]),
+    row4 = formatRow(rows[3]),
+    row5 = formatRow(rows[4]),
+    row6 = formatRow(rows[5]),
+    row7 = formatRow(rows[6]),
+    row8 = formatRow(rows[7]),
+    row9 = formatRow(rows[8]),
+    divider = "------+-------+------"
+  in
+    "\n" + list_join([
+      row1, row2, row3,
+      divider,
+      row4, row5, row6,
+      divider,
+      row7, row8, row9
+    ], "\n") + "\n"
+
+main() = prettyPrint(solveSudoku([
+  9, 0, 0,   5, 0, 8,   0, 0, 7,
+  0, 8, 0,   3, 0, 2,   9, 0, 5,
+  0, 5, 4,   0, 0, 0,   0, 8, 0,
+
+  0, 7, 0,   6, 8, 0,   0, 3, 2,
+  1, 0, 0,   0, 0, 4,   0, 0, 8,
+  5, 0, 0,   2, 1, 9,   0, 6, 0,
+
+  0, 0, 0,   9, 0, 6,   0, 0, 1,
+  7, 2, 6,   0, 0, 1,   0, 4, 0,
+  0, 0, 1,   4, 7, 0,   0, 5, 6
+]))

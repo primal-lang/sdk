@@ -9,7 +9,7 @@ description: Audits test coverage across all pipeline stages, identifies gaps, a
 
 ## Phase 1: Coverage Analysis
 
-1. Run `dart test --coverage` to generate coverage data
+1. Run `dart test --coverage=coverage -r failures-only` to generate coverage data
 2. Run `dart run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib` to format coverage
 3. Parse the coverage report to identify:
    - Files with less than 100% line coverage
@@ -41,7 +41,7 @@ For each language feature (literals, operators, control flow, collections, etc.)
 
 ## Phase 3: Feature Coverage Analysis
 
-1. Read all files in `docs/reference/*.md` to extract documented core functions
+1. Read all files in `docs/lang/reference/**/*.md` to extract documented core functions
 2. For each documented function, search for corresponding tests in `test/runtime/`
 3. Generate a coverage matrix:
 
@@ -181,7 +181,7 @@ After generating the report, implement missing tests to achieve 100% coverage:
 After implementing tests:
 
 1. Run `dart test` to verify all tests pass
-2. Run `dart test --coverage` again to measure new coverage
+2. Run `dart test --coverage=coverage -r failures-only` again to measure new coverage
 3. Report the coverage improvement: "Coverage improved from X% to Y%"
 4. If coverage is not 100%, return to Phase 8 and continue implementing tests
 5. Run `dart format .` to ensure code style

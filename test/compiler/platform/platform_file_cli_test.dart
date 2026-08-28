@@ -3,6 +3,7 @@
 library;
 
 import 'dart:io';
+
 import 'package:path/path.dart' as path_lib;
 import 'package:primal/compiler/platform/file/platform_file_cli.dart';
 import 'package:test/test.dart';

@@ -82,19 +82,19 @@ void main() {
     });
 
     test('Nested function calls compile successfully', () {
-      final IntermediateRepresentation
-      intermediateRepresentation = compiler.compile(
-        'double(x) = x * 2\nquadruple(x) = double(double(x))\nmain() = quadruple(3)',
-      );
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'double(x) = x * 2\nquadruple(x) = double(double(x))\nmain() = quadruple(3)',
+          );
       expect(intermediateRepresentation.containsFunction('double'), isTrue);
       expect(intermediateRepresentation.containsFunction('quadruple'), isTrue);
     });
 
     test('Recursive function definition compiles successfully', () {
-      final IntermediateRepresentation
-      intermediateRepresentation = compiler.compile(
-        'countdown(n) = if (n <= 0) 0 else countdown(n - 1)\nmain() = countdown(10)',
-      );
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'countdown(n) = if (n <= 0) 0 else countdown(n - 1)\nmain() = countdown(10)',
+          );
       expect(intermediateRepresentation.containsFunction('countdown'), isTrue);
       expect(intermediateRepresentation.warnings, isEmpty);
     });
@@ -205,10 +205,10 @@ void main() {
     });
 
     test('Mutual recursion compiles successfully', () {
-      final IntermediateRepresentation
-      intermediateRepresentation = compiler.compile(
-        'isEven(n) = if (n == 0) true else isOdd(n - 1)\nisOdd(n) = if (n == 0) false else isEven(n - 1)\nmain() = isEven(4)',
-      );
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'isEven(n) = if (n == 0) true else isOdd(n - 1)\nisOdd(n) = if (n == 0) false else isEven(n - 1)\nmain() = isEven(4)',
+          );
       expect(intermediateRepresentation.containsFunction('isEven'), isTrue);
       expect(intermediateRepresentation.containsFunction('isOdd'), isTrue);
     });
@@ -1744,10 +1744,10 @@ void main() {
     });
 
     test('Function with many parameters', () {
-      final IntermediateRepresentation
-      intermediateRepresentation = compiler.compile(
-        'f(a, b, c, d, e, f, g, h, i, j) = a\nmain() = f(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)',
-      );
+      final IntermediateRepresentation intermediateRepresentation = compiler
+          .compile(
+            'f(a, b, c, d, e, f, g, h, i, j) = a\nmain() = f(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)',
+          );
       expect(intermediateRepresentation.containsFunction('f'), isTrue);
       expect(intermediateRepresentation.warnings.length, equals(9));
     });
