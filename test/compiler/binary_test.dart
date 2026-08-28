@@ -378,6 +378,19 @@ void main() {
         final String output =
             result.stdout.toString() + result.stderr.toString();
 
+        // The installer resolves the release through the unauthenticated
+        // GitHub API, whose hourly limit is per address and shared with every
+        // other job on the same runner. Being refused there says nothing about
+        // the binary under test, and the macOS runners exhaust it often enough
+        // that failing would make a release build red for a reason no change
+        // to this repository can fix. Skipped instead, so the assertions below
+        // still run on every build that gets an answer.
+        if (output.contains('GitHub API rate limit exceeded')) {
+          markTestSkipped('GitHub API rate limit exceeded');
+
+          return;
+        }
+
         expect(result.exitCode, equals(0), reason: output);
         // Asserted rather than taking the exit code for the whole story: the
         // installer resolves the release before it decides what to do, so a
