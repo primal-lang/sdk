@@ -15,7 +15,16 @@ description: Prepares the next SDK release by updating version, syncing document
    a. Validate that the input follows semver format (`X.Y.Z` where X, Y, Z are non-negative integers)
    b. If invalid, explain the expected format and prompt again
    c. Update the `version` field in `pubspec.yaml`
-   d. Run the command `dart pub get` to update dependencies and lockfile
+   d. Update the `version` constant in `lib/main/main_cli.dart` — it backs `--version`, the REPL `:version` command and the REPL banner
+   e. Update the badge line in `README.md` — both the release-tag URL and the `Latest-X.Y.Z` badge label
+   f. Run the command `dart pub get` to update dependencies and lockfile
+   g. Verify that no stale version string remains:
+
+   ```bash
+   git grep -F "<old-version>" -- . ':(exclude)CHANGELOG.md' ':(exclude)pubspec.lock' ':(exclude)bin'
+   ```
+
+   Expect no matches. `CHANGELOG.md` and `pubspec.lock` legitimately retain older versions, and `bin/` holds the previous release's binaries, which the `Build Desktop` workflow replaces in step 5. Any other hit is a version location this step is missing — update it, then add it to this list.
 
 2. **Documentation Audit**: Perform a comprehensive audit to ensure `docs/` is in sync with `lib/`.
    a. For each standard library module in `lib/`, verify a corresponding reference page exists in `docs/lang/reference/`
